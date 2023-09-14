@@ -728,6 +728,10 @@ namespace OpenDental {
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => DatabaseMaintenances.UpdateInsurancePlanType("Category");
 			progressOD.ShowDialogProgress();
+			if(progressOD.IsCancelled){
+				return;
+			}
+			MsgBox.Show(this,"Done.");
 		}
 
 		private void ChangeToPercentageInsurancePlanType() {
@@ -741,6 +745,10 @@ namespace OpenDental {
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => DatabaseMaintenances.UpdateInsurancePlanType("Percentage");
 			progressOD.ShowDialogProgress();
+			if(progressOD.IsCancelled){
+				return;
+			}
+			MsgBox.Show(this,"Done.");
 		}
 
 		#endregion

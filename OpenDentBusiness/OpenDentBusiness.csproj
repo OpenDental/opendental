@@ -2716,10 +2716,10 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>OpenDentBusiness_OpenDentalServer_ServiceMain</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx">
+    <WebReferenceUrl Include="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\WebServiceMainHQ\</RelPath>
-      <UpdateFromURL>http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx</UpdateFromURL>
+      <UpdateFromURL>http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>

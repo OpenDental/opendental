@@ -1442,8 +1442,6 @@ namespace OpenDental {
 			this.panelOrthInfo.Controls.Add(this.label12);
 			this.panelOrthInfo.Controls.Add(this.groupBoxPerVisitAmounts);
 			this.panelOrthInfo.Controls.Add(this.groupBoxOD1);
-			this.panelOrthInfo.Controls.Add(this.comboExclusionFeeRule);
-			this.panelOrthInfo.Controls.Add(this.label11);
 			this.panelOrthInfo.Controls.Add(this.checkPpoSubWo);
 			this.panelOrthInfo.Controls.Add(this.comboBillType);
 			this.panelOrthInfo.Controls.Add(this.label38);
@@ -1559,15 +1557,17 @@ namespace OpenDental {
 			this.groupBoxOD1.Controls.Add(this.comboZeroWriteOffsOnLimitationOrAging);
 			this.groupBoxOD1.Controls.Add(this.comboBoxZeroWriteOffsOnAnnualMaxLimitation);
 			this.groupBoxOD1.Controls.Add(this.label39);
-			this.groupBoxOD1.Location = new System.Drawing.Point(72, 270);
+			this.groupBoxOD1.Controls.Add(this.comboExclusionFeeRule);
+			this.groupBoxOD1.Controls.Add(this.label11);
+			this.groupBoxOD1.Location = new System.Drawing.Point(72, 246);
 			this.groupBoxOD1.Name = "groupBoxOD1";
-			this.groupBoxOD1.Size = new System.Drawing.Size(367, 71);
+			this.groupBoxOD1.Size = new System.Drawing.Size(367, 95);
 			this.groupBoxOD1.TabIndex = 195;
-			this.groupBoxOD1.Text = "Zero Out Write-offs Override";
+			this.groupBoxOD1.Text = "Write-Offs for Non-Covered Services Overrides";
 			// 
 			// labelZeroWriteoffAnnualMax
 			// 
-			this.labelZeroWriteoffAnnualMax.Location = new System.Drawing.Point(8, 23);
+			this.labelZeroWriteoffAnnualMax.Location = new System.Drawing.Point(8, 47);
 			this.labelZeroWriteoffAnnualMax.Name = "labelZeroWriteoffAnnualMax";
 			this.labelZeroWriteoffAnnualMax.Size = new System.Drawing.Size(136, 19);
 			this.labelZeroWriteoffAnnualMax.TabIndex = 192;
@@ -1576,30 +1576,30 @@ namespace OpenDental {
 			// 
 			// comboZeroWriteOffsOnLimitationOrAging
 			// 
-			this.comboZeroWriteOffsOnLimitationOrAging.Location = new System.Drawing.Point(146, 45);
+			this.comboZeroWriteOffsOnLimitationOrAging.Location = new System.Drawing.Point(146, 69);
 			this.comboZeroWriteOffsOnLimitationOrAging.Name = "comboZeroWriteOffsOnLimitationOrAging";
 			this.comboZeroWriteOffsOnLimitationOrAging.Size = new System.Drawing.Size(212, 21);
 			this.comboZeroWriteOffsOnLimitationOrAging.TabIndex = 193;
 			// 
 			// comboBoxZeroWriteOffsOnAnnualMaxLimitation
 			// 
-			this.comboBoxZeroWriteOffsOnAnnualMaxLimitation.Location = new System.Drawing.Point(146, 21);
+			this.comboBoxZeroWriteOffsOnAnnualMaxLimitation.Location = new System.Drawing.Point(146, 45);
 			this.comboBoxZeroWriteOffsOnAnnualMaxLimitation.Name = "comboBoxZeroWriteOffsOnAnnualMaxLimitation";
 			this.comboBoxZeroWriteOffsOnAnnualMaxLimitation.Size = new System.Drawing.Size(212, 21);
 			this.comboBoxZeroWriteOffsOnAnnualMaxLimitation.TabIndex = 191;
 			// 
 			// label39
 			// 
-			this.label39.Location = new System.Drawing.Point(11, 47);
+			this.label39.Location = new System.Drawing.Point(11, 71);
 			this.label39.Name = "label39";
 			this.label39.Size = new System.Drawing.Size(133, 19);
 			this.label39.TabIndex = 194;
-			this.label39.Text = "Age or Frequency Limit";
+			this.label39.Text = "Age or Frequency Limits";
 			this.label39.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// comboExclusionFeeRule
 			// 
-			this.comboExclusionFeeRule.Location = new System.Drawing.Point(218, 246);
+			this.comboExclusionFeeRule.Location = new System.Drawing.Point(146, 21);
 			this.comboExclusionFeeRule.Name = "comboExclusionFeeRule";
 			this.comboExclusionFeeRule.Size = new System.Drawing.Size(212, 21);
 			this.comboExclusionFeeRule.TabIndex = 189;
@@ -1607,11 +1607,11 @@ namespace OpenDental {
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(74, 248);
+			this.label11.Location = new System.Drawing.Point(7, 23);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(142, 19);
+			this.label11.Size = new System.Drawing.Size(137, 19);
 			this.label11.TabIndex = 190;
-			this.label11.Text = "Exclusion Fee Rule";
+			this.label11.Text = "Exclusions";
 			this.label11.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// checkPpoSubWo

@@ -10,6 +10,7 @@ using CodeBase;
 using Ionic.Zip;
 using OpenDental.UI;
 using OpenDentBusiness;
+using static OpenDentBusiness.PayConnect2;
 
 namespace OpenDental{
 	/// <summary>
@@ -162,6 +163,7 @@ namespace OpenDental{
 				labelPassword.Text=Lan.g(this,"Password");
 				label2.Text=Lan.g(this,"Username");
 				checkForceRecurring.Visible=true;
+				butMerchantInfo.Visible=false;
 			}
 			//version 2
 			else {
@@ -178,6 +180,7 @@ namespace OpenDental{
 				checkSurcharge.Visible=true;
 				labelPassword.Visible=false;
 				checkForceRecurring.Visible=false;
+				butMerchantInfo.Visible=true;
 				FillGridTerminals();
 			}
 		}
@@ -426,6 +429,39 @@ namespace OpenDental{
 			Process.Start(ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),setupFileName));
 			MessageBox.Show(Lans.g(this,"Download complete. Run the Setup.exe file in")+" "+PrefC.GetTempFolderPath()+" "
 				+Lans.g(this,"if it does not start automatically."));
+		}
+
+		private void butMerchantInfo_Click(object sender,EventArgs e) {
+			long clinicNum=0;
+			if(PrefC.HasClinicsEnabled) {
+				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
+			}
+			PayConnect2Response payConnect2Response=null;
+			try {
+				payConnect2Response=PayConnect2.GetMerchantInfo(clinicNum,textAPISecret.Text);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+			}
+			if(payConnect2Response==null) {
+				MsgBox.Show(this,"Error occurred when getting merchant information.");
+				return;
+			}
+			string data=Lan.g(this,"Merchant ID")+$": {payConnect2Response.GetMerchantInfoResponse.MerchantId}\n"+
+									Lan.g(this,"Name")+$": {payConnect2Response.GetMerchantInfoResponse.Name}\n"+
+									Lan.g(this,"Status")+$": {payConnect2Response.GetMerchantInfoResponse.Status}\n"+
+									Lan.g(this,"Address 1")+$": {payConnect2Response.GetMerchantInfoResponse.Address1}\n"+
+									Lan.g(this,"Address 2")+$": {payConnect2Response.GetMerchantInfoResponse.Address2}\n"+
+									Lan.g(this,"City")+$": {payConnect2Response.GetMerchantInfoResponse.City}\n"+
+									Lan.g(this,"State")+$": {payConnect2Response.GetMerchantInfoResponse.State}\n"+
+									Lan.g(this,"Zip Code")+$": {payConnect2Response.GetMerchantInfoResponse.ZipCode}\n"+
+									Lan.g(this,"Phone Number")+$": {TelephoneNumbers.ReFormat(payConnect2Response.GetMerchantInfoResponse.PhoneNumber)}\n"+
+									Lan.g(this,"Email")+$": {payConnect2Response.GetMerchantInfoResponse.Email}\n"+
+									Lan.g(this,"DXC Group ID")+$": {payConnect2Response.GetMerchantInfoResponse.DxcGroupId}\n"+
+									Lan.g(this,"Reporting Emails")+$": {string.Join(", ",payConnect2Response.GetMerchantInfoResponse.ReportingEmails??new string[0])}\n"+
+									Lan.g(this,"Refund Without Reference Enabled")+$": {payConnect2Response.GetMerchantInfoResponse.RefundWithoutReferenceEnabled}\n"+
+									Lan.g(this,"Text 2 Pay Enabled")+$": {payConnect2Response.GetMerchantInfoResponse.Text2PayEnabled}\n";
+			MsgBox.Show(data);
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {

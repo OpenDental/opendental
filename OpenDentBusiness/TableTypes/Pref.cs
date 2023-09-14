@@ -2771,7 +2771,7 @@ namespace OpenDentBusiness {
 		[Description("No electronic billing")]
 		None,
 		///<summary>1.</summary>
-		[Description("Dental X Change")]
+		[Description("DentalXChange")]
 		EHG,
 		///<summary>2 - (xml file).</summary>
 		[Description("Output to file")]

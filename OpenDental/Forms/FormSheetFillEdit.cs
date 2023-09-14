@@ -35,6 +35,7 @@ namespace OpenDental {
 		///<summary>When user clicks on text, this list of rectangles is created, on for each char, so that we can hit test where they clicked.  It's class level so that we can draw the rectangles during debugging.</summary>
 		private List<RectangleF> _listRectangleFsChars=new List<RectangleF>();
 		private List<SignatureBoxWrapper> _listSignatureBoxWrappers=new List<SignatureBoxWrapper>();
+		private List<RichTextBox> _listRichTextBoxesSignatures=new List<RichTextBox>();
 		///<summary>Only used here to draw the dashed margin lines.</summary>
 		private Margins _marginsPrint=new Margins(0,0,40,60);
 		///<summary>The location where the PDF file has been created.</summary>
@@ -976,6 +977,7 @@ namespace OpenDental {
 				}
 				StringFormat stringFormat=new StringFormat();
 				stringFormat.Alignment=StringAlignment.Near;
+				stringFormat.SetTabStops(0.0f, new float[] {50.0f});
 				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField){
 					if(SheetCur.SheetFields[i].TextAlign==HorizontalAlignment.Center){
 						stringFormat.Alignment=StringAlignment.Center;
@@ -1387,6 +1389,10 @@ namespace OpenDental {
 				//sigBox.SetInvalid();
 				_listSignatureBoxWrappers[i].ClearSignature(clearTopazTablet:false);//The user is purposefully "invalidating" the old signature by changing the contents of the sheet. 
 			}
+			for(int i=0;i<_listRichTextBoxesSignatures.Count;i++) {
+				_listRichTextBoxesSignatures[i].Dispose();
+			}
+			_listRichTextBoxesSignatures.Clear();
 		}
 
 		///<summary>Pass in a point in sheet coords. This doesn't hit test for everything, but just for items that we might want to click on. Frequently returns null.</summary>
@@ -1618,6 +1624,7 @@ namespace OpenDental {
 					richTextBox.Font=new Font("Arial",LayoutManager.ScaleF(8.25f));
 					LayoutManager.Add(richTextBox,panelMain);
 					richTextBox.BringToFront();
+					_listRichTextBoxesSignatures.Add(richTextBox);
 				}
 				_listSignatureBoxWrappers.Add(signatureBoxWrapper);
 			}
@@ -1710,6 +1717,9 @@ namespace OpenDental {
 		///<summary>This is called after automatic growth to move a few controls to their new locations.  But most of the fields are just quickly drawn and they have no controls.</summary>
 		private void RepositionControls(){
 			for(int i=0;i<panelMain.Controls.Count;i++){
+				if(panelMain.Controls[i].Tag==null) {
+					continue;
+				}
 				SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
 				Point point=new Point(LayoutManager.Scale(sheetField.XPos),LayoutManager.Scale(sheetField.YPos));
 				LayoutManager.MoveLocation(panelMain.Controls[i],point);

@@ -899,7 +899,7 @@
       <s:element name="RetrieveWebFormURL">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -1258,20 +1258,6 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="UpdateFHIRKeyStatusResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="UpdateFHIRAPIKeys">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="UpdateFHIRAPIKeysResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="UpdateFHIRAPIKeysResult" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -2205,7 +2191,7 @@
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:message name="RetrieveWebFormURLHttpPostIn">
-    <wsdl:part name="shortGuid" type="s:string" />
+    <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
   <wsdl:message name="RetrieveWebFormURLHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
@@ -2361,12 +2347,6 @@
     <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
   <wsdl:message name="UpdateFHIRKeyStatusHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
-  </wsdl:message>
-  <wsdl:message name="UpdateFHIRAPIKeysHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
-  </wsdl:message>
-  <wsdl:message name="UpdateFHIRAPIKeysHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:portType name="WebServiceMainHQSoap">
@@ -2736,8 +2716,6 @@
       <wsdl:input message="tns:UpdateFHIRAPIKeysHttpPostIn" />
       <wsdl:output message="tns:UpdateFHIRAPIKeysHttpPostOut" />
     </wsdl:operation>
-  </wsdl:portType>
-  <wsdl:portType name="WebServiceMainHQHttpPost">
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesHttpPostIn" />
       <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesHttpPostOut" />
@@ -3106,9 +3084,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-  </wsdl:portType>
-  <wsdl:binding name="WebServiceMainHQSoap" type="tns:WebServiceMainHQSoap">
-    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
       <wsdl:input>
@@ -3922,9 +3897,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-  </wsdl:binding>
-  <wsdl:binding name="WebServiceMainHQSoap12" type="tns:WebServiceMainHQSoap">
-    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
       <wsdl:input>
@@ -4738,9 +4710,6 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
-  </wsdl:binding>
-  <wsdl:binding name="WebServiceMainHQHttpPost" type="tns:WebServiceMainHQHttpPost">
-    <http:binding verb="POST" />
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <http:operation location="/UploadRedactedDataPatientPortalInvites" />
       <wsdl:input>
@@ -5542,25 +5511,16 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="UpdateFHIRAPIKeys">
-      <http:operation location="/UpdateFHIRAPIKeys" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="WebServiceMainHQ">
     <wsdl:port name="WebServiceMainHQSoap" binding="tns:WebServiceMainHQSoap">
-      <soap:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
+      <soap:address location="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx" />
     </wsdl:port>
     <wsdl:port name="WebServiceMainHQSoap12" binding="tns:WebServiceMainHQSoap12">
-      <soap12:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
+      <soap12:address location="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx" />
     </wsdl:port>
     <wsdl:port name="WebServiceMainHQHttpPost" binding="tns:WebServiceMainHQHttpPost">
-      <http:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
+      <http:address location="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
