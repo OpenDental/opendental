@@ -423,7 +423,7 @@ namespace OpenDental {
 			//This regex looks for any tags of the syntax "[[img:FILE.EXT]]" where "FILE" is any valid file name and "EXT" is a file extension that matches one of the image formats specified below
 			//We check for a valid file extension to prevent matching against non-image links, e.g. "[[How To Check A Patient In]]"
 			string imageTagPattern="\\[\\[img:.*(bmp|gif|jpeg|jpg|png|svg)\\]\\]$";
-			doesContainHtml|=Regex.IsMatch(emailAutograph.AutographText,imageTagPattern);
+			doesContainHtml|=Regex.IsMatch(emailAutograph.AutographText,imageTagPattern,RegexOptions.IgnoreCase);
 			return doesContainHtml;
 		}
 

@@ -61,6 +61,17 @@
       <summary>.</summary>
     </column>
   </table>
+  <table name="creditcard">
+    <summary></summary>
+    <column order="16" name="CCSource" type="tinyint(4)">
+      <summary>Enum:CreditCardSource Indicates which application made this credit card and token.</summary>
+      <Enumeration name="CreditCardSource">
+        <summary></summary>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="grouppermission">
     <summary></summary>
     <column order="4" name="PermType" type="tinyint">
@@ -114,6 +125,28 @@
       <summary>This can be long and complex -- whatever you want. MediumText, so max length=16M.</summary>
     </column>
   </table>
+  <table name="payconnectresponseweb">
+    <summary></summary>
+    <column order="12" name="CCSource" type="tinyint(4)">
+      <summary>Enum:CreditCardSource .</summary>
+      <Enumeration name="CreditCardSource">
+        <summary></summary>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="payment">
+    <summary></summary>
+    <column order="16" name="PaymentSource" type="tinyint(4)">
+      <summary>Enum:CreditCardSource Indicates the origin of the payment if the payment came from a credit card or from an external API. Will be 'None' if this payment did not use a credit card or API</summary>
+      <Enumeration name="CreditCardSource">
+        <summary></summary>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="provider">
     <summary></summary>
     <column order="41" name="WebSchedDescript" type="varchar(500)">
@@ -165,6 +198,17 @@
         <EnumValue name="Text">1 - Attempt to send text message, if successful do not send via email. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</EnumValue>
         <EnumValue name="Email">2 - Attempt to send email message, if successful do not send via text. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</EnumValue>
         <EnumValue name="SecureEmail">3 - Attempt to send secure email message. </EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="xwebresponse">
+    <summary></summary>
+    <column order="33" name="CCSource" type="tinyint(4)">
+      <summary>Enum:CreditCardSource The source of where this transaction originated from.</summary>
+      <Enumeration name="CreditCardSource">
+        <summary></summary>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
   </table>

@@ -90,20 +90,20 @@ namespace OpenDental{
 			string billingPhone=textBillingPhone.Text;
 			string payTophone=textPayToPhone.Text;
 			if(!TelephoneNumbers.IsNumberValidTenDigit(ref phone)) {
-				MsgBox.Show(this,"Invalid Phone number.  Must contain exactly ten digits.");
+				MsgBox.Show(this,"Invalid Phone number. Must contain exactly ten digits.");
 				return;
 			}
 			if(!TelephoneNumbers.IsNumberValidTenDigit(ref billingPhone)) {
-				MsgBox.Show(this,"Invalid Billing section Phone number.  Must contain exactly ten digits.");
+				MsgBox.Show(this,"Invalid Billing section Phone number. Must contain exactly ten digits.");
 				return;
 			}
 			if(!TelephoneNumbers.IsNumberValidTenDigit(ref payTophone)) {
-				MsgBox.Show(this,"Invalid Pay To section Phone number.  Must contain exactly ten digits.");
+				MsgBox.Show(this,"Invalid Pay To section Phone number. Must contain exactly ten digits.");
 				return;
 			}
 			string fax=textFax.Text;
 			if(!TelephoneNumbers.IsNumberValidTenDigit(ref fax)) {
-				MsgBox.Show(this,"Invalid Fax.  Must contain exactly ten digits.");
+				MsgBox.Show(this,"Invalid Fax. Must contain exactly ten digits.");
 				return;
 			}
 			if(radioInsBillingProvSpecific.Checked && comboInsBillingProv.SelectedIndex ==-1){

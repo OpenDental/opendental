@@ -183,6 +183,13 @@ namespace OpenDentBusiness {
 			return response;
 		}
 
+		/// <summary>Throws exeptions.</summary>
+		public static PayConnect2Response GetMerchantInfo(long clinicNum,string merchantSecret) {
+			List<string> listHeaders=GetHeadersForApi(clinicNum,merchantSecret);
+			PayConnect2Response response=Request(ApiRoute.GetMerchantInfo,HttpMethod.Get,listHeaders,"");
+			return response;
+		}
+
 		///<summary>Handles Debug/Introspection overrides</summary>
 		public static string GetApiBaseUrl() {
 			string apiUrl=Introspection.GetOverride(Introspection.IntrospectionEntity.PayConnectRestURL,"https://api.dentalxchange.com/payments");
@@ -192,10 +199,13 @@ namespace OpenDentBusiness {
 			return apiUrl;
 		}
 
-		public static List<string> GetHeadersForApi(long clinicNum) {
+		public static List<string> GetHeadersForApi(long clinicNum,string secret="") {
 			List<string> retVal=new List<string>();
 			retVal.Add("API-Key: "+GetPayConnect2ApiKey());
-			retVal.Add("Secret: "+GetApiSecretForClinic(clinicNum));
+			if(string.IsNullOrEmpty(secret)) {
+				secret=GetApiSecretForClinic(clinicNum);
+			}
+			retVal.Add("Secret: "+secret);
 			return retVal;
 		}
 
@@ -305,6 +315,9 @@ namespace OpenDentBusiness {
 				case ApiRoute.CreateTerminalTransaction:
 					apiUrl+=$"/terminals/transactions";
 					break;
+				case ApiRoute.GetMerchantInfo:
+					apiUrl+=$"/merchants";
+					break;
 				default:
 					break;
 			}
@@ -321,6 +334,7 @@ namespace OpenDentBusiness {
 			VoidTransaction,
 			GetStatus,
 			CreateTerminalTransaction,
+			GetMerchantInfo,
 		}
 
 		#region Converters
@@ -363,6 +377,10 @@ namespace OpenDentBusiness {
 				case ApiRoute.CreateTerminalTransaction:
 					payConnect2Response.TerminalTransactionResponse=JsonConvert.DeserializeObject<TerminalTransactionResponse>(rawResponse,settings);
 					payConnect2Response.ResponseType=ResponseType.TerminalTransaction;
+					break;
+				case ApiRoute.GetMerchantInfo:
+					payConnect2Response.GetMerchantInfoResponse=JsonConvert.DeserializeObject<GetMerchantInfoResponse>(rawResponse,settings);
+					payConnect2Response.ResponseType=ResponseType.MerchantInfo;
 					break;
 				default:
 						break;
@@ -768,6 +786,7 @@ namespace OpenDentBusiness {
 			public iFrameResponse iFrameResponse;
 			public TerminalTransactionResponse TerminalTransactionResponse;
 			public HttpStatusCode httpStatusCode;
+			public GetMerchantInfoResponse GetMerchantInfoResponse;
 		}
 
 		[DataContract]
@@ -1434,6 +1453,59 @@ namespace OpenDentBusiness {
 			[DataMember(Name="status")]
 			public string TransactionStatus;
 		}
+
+		///<summary>https://staging-developer.dentalxchange.com/payment-api#tag/Merchant/operation/merchant-info</summary>
+		[DataContract]
+		public class GetMerchantInfoResponse {
+			///<summary>Merchant identification number</summary>
+			[DataMember(Name="merchantId")]
+			public int MerchantId;
+			///<summary>Name of the merchant</summary>
+			[DataMember(Name="name")]
+			public string Name;
+			///<summary>Street line 1 in merchant address</summary>
+			[DataMember(Name="address1")]
+			public string Address1;
+			///<summary>Street line 2 in merchant address</summary>
+			[DataMember(Name="address2")]
+			public string Address2;
+			///<summary>City in merchant address</summary>
+			[DataMember(Name="city")]
+			public string City;
+			///<summary>State in merchant address</summary>
+			[DataMember(Name="state")]
+			public string State;
+			///<summary>ZipCode in merchant address</summary>
+			[DataMember(Name="zipCode")]
+			public string ZipCode;
+			///<summary>Phone number of merchant</summary>
+			[DataMember(Name="phoneNumber")]
+			public string PhoneNumber;
+			///<summary>DentalXChange group identifier</summary>
+			[DataMember(Name="dxcGroupId")]
+			public int DxcGroupId;
+			///<summary>Email address of merchant</summary>
+			[DataMember(Name="email")]
+			public string Email;
+			///<summary>Reporting emails to send the reports</summary>
+			[DataMember(Name="reportingEmails")]
+			public string[] ReportingEmails;
+			///<summary>Refund without reference is enabled if true</summary>
+			[DataMember(Name="refundWithoutReferenceEnabled")]
+			public bool RefundWithoutReferenceEnabled;
+			///<summary>Text-to-Pay feature is enabled if true</summary>
+			[DataMember(Name="text2PayEnabled")]
+			public bool Text2PayEnabled;
+			///<summary>Enum: Active,Inactive</summary>
+			[DataMember(Name="status")]
+			public string Status;
+			///<summary>Date the merchant was created</summary>
+			[DataMember(Name="createdAt")]
+			public string CreatedAt;
+			///<summary>Date the merchant was updated</summary>
+			[DataMember(Name="updatedAt")]
+			public string UpdatedAt;
+		}
 		#endregion Response Objects
 
 		[JsonConverter(typeof(StringEnumConverter))]
@@ -1503,6 +1575,8 @@ namespace OpenDentBusiness {
 			[Description("Get Status")]
 			GetStatus,
 			TerminalTransaction,
+			[Description("Get Merchant Info")]
+			MerchantInfo,
 		}
 		#endregion Request/Response Objects
 

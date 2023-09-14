@@ -94,6 +94,9 @@ namespace OpenDentBusiness {
 		///<summary>11. This means the action done was for Integrated Texting.</summary>
 		[Description("Integrated Texting")]
 		IntegratedTexting,
+		///<summary>12. This means the action done was for the mobile app ODTouch.</summary>
+		[Description("ODTouch")]
+		ODTouch,
 	}
 
 	///<summary>Used by the API. Indicates how the appointment was originally made. Roughly corresponds to the eServiceType enumeration. </summary>
@@ -480,6 +483,18 @@ namespace OpenDentBusiness {
 		[Description("eClipboard - Error: Invalid amount to make payment")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorMakingPaymentInvalidAmount,
+		/// <summary>92 - EClipboard - QR scan window activated</summary>
+		[Description("QR scan window activated")]
+		[EServiceLogType(eServiceType.EClipboard,eServiceType.ODTouch)]
+		ECQRScanAttempt,
+		/// <summary>93 - EClipboard - QR scan window cancelled</summary>
+		[Description("QR scan cancelled")]
+		[EServiceLogType(eServiceType.EClipboard,eServiceType.ODTouch)]
+		ECQRScanCancel,
+		/// <summary>94 - EClipboard - QR scan window success</summary>
+		[Description("QR scan window success")]
+		[EServiceLogType(eServiceType.EClipboard,eServiceType.ODTouch)]
+		ECQRScanOk,
 	}
 
 	public class EServiceLogType:Attribute {

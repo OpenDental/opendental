@@ -38,7 +38,7 @@ namespace OpenDental {
 			checkBoxBillShowTransSinceZero.Checked=PrefC.GetBool(PrefName.BillingShowTransSinceBalZero);
 			checkIncludeAdjust.Checked=PrefC.GetBool(PrefName.BillingElectIncludeAdjustDescript);
 			checkIncludeClinicNum.Checked=PrefC.GetBool(PrefName.BillingElectIncludeClinicNums);
-			listElectBilling.Items.AddList(new string[] { "No electronic billing","Dental X Change","Output to file","ClaimX / ExtraDent","EDS" }, x => x);
+			listElectBilling.Items.AddList(new string[] { "No electronic billing","DentalXChange","Output to file","ClaimX / ExtraDent","EDS" }, x => x);
 			listElectBilling.SelectedIndex=0;
 			int billingUseElectronicIdx=PrefC.GetInt(PrefName.BillingUseElectronic);
 			if(billingUseElectronicIdx==1) {

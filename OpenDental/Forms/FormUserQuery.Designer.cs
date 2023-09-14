@@ -171,7 +171,7 @@ namespace OpenDental {
 			this.radioHuman.Checked = true;
 			this.radioHuman.Location = new System.Drawing.Point(6, 20);
 			this.radioHuman.Name = "radioHuman";
-			this.radioHuman.Size = new System.Drawing.Size(108, 16);
+			this.radioHuman.Size = new System.Drawing.Size(120, 17);
 			this.radioHuman.TabIndex = 0;
 			this.radioHuman.TabStop = true;
 			this.radioHuman.Text = "Human-readable";
@@ -191,7 +191,7 @@ namespace OpenDental {
 			// 
 			this.radioRaw.Location = new System.Drawing.Point(6, 43);
 			this.radioRaw.Name = "radioRaw";
-			this.radioRaw.Size = new System.Drawing.Size(104, 16);
+			this.radioRaw.Size = new System.Drawing.Size(104, 17);
 			this.radioRaw.TabIndex = 1;
 			this.radioRaw.Text = "Raw";
 			this.radioRaw.Click += new System.EventHandler(this.radioRaw_Click);
@@ -265,8 +265,9 @@ namespace OpenDental {
 			// textQuery
 			// 
 			this.textQuery.AcceptsTab = true;
-			this.textQuery.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+			this.textQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.textQuery.DetectUrls = false;
 			this.textQuery.Font = new System.Drawing.Font("Courier New", 9F);
 			this.textQuery.Location = new System.Drawing.Point(3, 7);
@@ -278,6 +279,7 @@ namespace OpenDental {
 			// 
 			// panel1
 			// 
+			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.panel1.Controls.Add(this.checkReportServer);
 			this.panel1.Controls.Add(this.butFavorite);
 			this.panel1.Controls.Add(this.butAdd);

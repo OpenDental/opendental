@@ -380,8 +380,8 @@ namespace OpenDental {
 			this.label18.Name = "label18";
 			this.label18.Size = new System.Drawing.Size(323, 38);
 			this.label18.TabIndex = 0;
-			this.label18.Text = "Optional.  Cannot be a PO Box if Use on Claims is checked.  Also overrides the pr" +
-    "actice address on Dental X Change statements.";
+			this.label18.Text = "Optional. Cannot be a PO Box if Use on Claims is checked. Also overrides the pr" +
+    "actice address on DentalXChange statements.";
 			this.label18.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// checkUseBillingAddressOnClaims
@@ -497,7 +497,7 @@ namespace OpenDental {
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(317, 33);
 			this.label17.TabIndex = 0;
-			this.label17.Text = "Optional for claims.  Can be a PO Box.  Sent in addition to treating or billing a" +
+			this.label17.Text = "Optional for claims. Can be a PO Box. Sent in addition to treating or billing a" +
     "ddress.";
 			// 
 			// label13

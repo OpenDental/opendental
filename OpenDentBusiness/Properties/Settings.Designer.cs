@@ -12,7 +12,7 @@ namespace OpenDentBusiness.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator","16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -36,7 +36,7 @@ namespace OpenDentBusiness.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx")]
         public string OpenDentBusiness_WebServiceMainHQ_WebServiceMainHQ {
             get {
                 return ((string)(this["OpenDentBusiness_WebServiceMainHQ_WebServiceMainHQ"]));
@@ -135,7 +135,7 @@ namespace OpenDentBusiness.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool OpenDentBusiness_WebServiceMainHq_Mock {
             get {
                 return ((bool)(this["OpenDentBusiness_WebServiceMainHq_Mock"]));

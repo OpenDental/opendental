@@ -363,7 +363,8 @@ namespace OpenDental.UI {
 			g.Clear(Color.White);
 			//we must ignore the Font because of accumulated rounding errors.
 			using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(8.25f));
-			_heightLine=(int)Math.Ceiling(font.GetHeight()+1);//bottoms of characters were getting cut off in rare cases due to font rounding.
+			//_heightLine=(int)Math.Ceiling(font.GetHeight()+1);//bottoms of characters were getting cut off in rare cases due to font rounding.
+			_heightLine=(int)Math.Ceiling(LayoutManager.ScaleMS(font.GetHeight()))+1;//bottoms of characters were getting cut off in rare cases due to font rounding.
 			if(DesignMode){
 				if(_itemStrings==null || _itemStrings.Length==0){
 					g.DrawString(this.Name,font,Brushes.Black,2,2);

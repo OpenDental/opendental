@@ -42,6 +42,7 @@ namespace OpenDental {
 			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.groupPaySettings = new OpenDental.UI.GroupBox();
+			this.butMerchantInfo = new OpenDental.UI.Button();
 			this.groupBoxVersion = new OpenDental.UI.GroupBox();
 			this.radioVersion2 = new System.Windows.Forms.RadioButton();
 			this.radioVersion1 = new System.Windows.Forms.RadioButton();
@@ -160,6 +161,7 @@ namespace OpenDental {
 			// 
 			// groupPaySettings
 			// 
+			this.groupPaySettings.Controls.Add(this.butMerchantInfo);
 			this.groupPaySettings.Controls.Add(this.groupBoxVersion);
 			this.groupPaySettings.Controls.Add(this.checkSurcharge);
 			this.groupPaySettings.Controls.Add(this.textAPISecret);
@@ -180,6 +182,17 @@ namespace OpenDental {
 			this.groupPaySettings.Size = new System.Drawing.Size(754, 173);
 			this.groupPaySettings.TabIndex = 4;
 			this.groupPaySettings.Text = "Clinic Payment Settings";
+			// 
+			// butMerchantInfo
+			// 
+			this.butMerchantInfo.Location = new System.Drawing.Point(21, 97);
+			this.butMerchantInfo.Name = "butMerchantInfo";
+			this.butMerchantInfo.Size = new System.Drawing.Size(106, 24);
+			this.butMerchantInfo.TabIndex = 13;
+			this.butMerchantInfo.Text = "Merchant Info";
+			this.butMerchantInfo.UseVisualStyleBackColor = true;
+			this.butMerchantInfo.Visible = false;
+			this.butMerchantInfo.Click += new System.EventHandler(this.butMerchantInfo_Click);
 			// 
 			// groupBoxVersion
 			// 
@@ -460,5 +473,6 @@ namespace OpenDental {
 		private TextBox textAPISecret;
 		private UI.CheckBox checkSurcharge;
 		private UI.Button butAddTerminal;
+		private UI.Button butMerchantInfo;
 	}
 }

@@ -1202,7 +1202,9 @@ using WpfControls.UI;
 					return;
 				}
 				if(EditableEnterMovesDown){
+					//code here is copied from editBox_NextCellRight().
 					textEdit.Visibility=Visibility.Collapsed;
+					textEdit_LostFocus(textEdit,new EventArgs());
 					if(_selectedCellOld.Row==ListGridRows.Count-1) {
 						return;//can't move down
 					}

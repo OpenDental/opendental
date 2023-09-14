@@ -3838,6 +3838,8 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="17" name="ClinicNum" type="bigint(20)" fk="clinic">
@@ -7872,7 +7874,7 @@
         <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
         <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
         <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
-        <EnumValue name="TextingAccountEdit">240 - Allows users to edit tendlc brand information </EnumValue>
+        <EnumValue name="TextingAccountEdit">240 - Only used at OD HQ. Allows users to make high level changes in regards to texting.</EnumValue>
         <EnumValue name="WebChatEdit">241 - Logs when web chat sessions are edited. For audit trails only.</EnumValue>
         <EnumValue name="SupplierEdit">242 - Allows users to access FormSuppliers</EnumValue>
         <EnumValue name="SupplyPurchases">243 - Logs when any supply purchases are created, placed, or deleted.</EnumValue>
@@ -11477,6 +11479,8 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="13" name="Amount" type="double">
@@ -11583,6 +11587,8 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="17" name="ProcessStatus" type="tinyint(4)">
@@ -15017,7 +15023,7 @@
         <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
         <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
         <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
-        <EnumValue name="TextingAccountEdit">240 - Allows users to edit tendlc brand information </EnumValue>
+        <EnumValue name="TextingAccountEdit">240 - Only used at OD HQ. Allows users to make high level changes in regards to texting.</EnumValue>
         <EnumValue name="WebChatEdit">241 - Logs when web chat sessions are edited. For audit trails only.</EnumValue>
         <EnumValue name="SupplierEdit">242 - Allows users to access FormSuppliers</EnumValue>
         <EnumValue name="SupplyPurchases">243 - Logs when any supply purchases are created, placed, or deleted.</EnumValue>
@@ -18459,6 +18465,8 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
+        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="34" name="OrderId" type="varchar(255)">

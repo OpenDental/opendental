@@ -901,7 +901,7 @@ namespace OpenDental {
 			// 
 			this.radioTIN.Location = new System.Drawing.Point(13, 35);
 			this.radioTIN.Name = "radioTIN";
-			this.radioTIN.Size = new System.Drawing.Size(104, 15);
+			this.radioTIN.Size = new System.Drawing.Size(104, 18);
 			this.radioTIN.TabIndex = 1;
 			this.radioTIN.Text = "TIN";
 			this.radioTIN.Click += new System.EventHandler(this.radioTIN_Click);
@@ -909,9 +909,9 @@ namespace OpenDental {
 			// radioSSN
 			// 
 			this.radioSSN.Checked = true;
-			this.radioSSN.Location = new System.Drawing.Point(13, 17);
+			this.radioSSN.Location = new System.Drawing.Point(13, 15);
 			this.radioSSN.Name = "radioSSN";
-			this.radioSSN.Size = new System.Drawing.Size(104, 15);
+			this.radioSSN.Size = new System.Drawing.Size(104, 18);
 			this.radioSSN.TabIndex = 0;
 			this.radioSSN.TabStop = true;
 			this.radioSSN.Text = "SSN";
