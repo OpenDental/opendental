@@ -17,6 +17,8 @@ namespace OpenDental {
 		public long EmailAddressNum;
 		///<summary>If true, a signal for invalid Email cache will be sent out upon closing.</summary>
 		public bool IsChanged;
+		///<summary>When in SelectionMode, If true, allows selecting an email address associated to a user.</summary>
+		public bool DoAllowSelectingAddressWithUsers;
 
 		public FormEmailAddresses() {
 			InitializeComponent();
@@ -150,7 +152,7 @@ namespace OpenDental {
 
 		private void butOK_Click(object sender,EventArgs e) {
 			if(IsSelectionMode) {
-				if(gridMain.SelectedTag<EmailAddress>() is null || gridMain.SelectedTag<EmailAddress>().UserNum!=0) {
+				if(gridMain.SelectedTag<EmailAddress>() is null || (!DoAllowSelectingAddressWithUsers && gridMain.SelectedTag<EmailAddress>().UserNum!=0)) {
 					MsgBox.Show(this,"Please select an existing email address that is not associated with a user or clinic.");
 					return;
 				}

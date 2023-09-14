@@ -1194,13 +1194,17 @@ namespace OpenDental{
 							areConditionsMet=false;
 							break;
 						}
-						if(!odDatePickerBirthDate.ReadOnly //if not masked
-							&& !IsBirthdateValid()) 
-						{
-							areConditionsMet=false;
-							break;
+						DateTime dateBirth=DateTime.MinValue;
+						if(!odDatePickerBirthDate.ReadOnly) { //if not masked
+							if(!IsBirthdateValid()) {  
+								areConditionsMet=false;
+								break;
+							}
+							dateBirth=PIn.Date(odDatePickerBirthDate.GetDateTime().ToString());
 						}
-						DateTime dateBirth=PIn.Date(odDatePickerBirthDate.GetDateTime().ToString());
+						else {//birthdate is masked
+							dateBirth=_patientOld.Birthdate;
+						}
 						int ageEntered=DateTime.Today.Year-dateBirth.Year;
 						if(dateBirth>DateTime.Today.AddYears(-ageEntered)) {
 							ageEntered--;

@@ -955,7 +955,7 @@ namespace OpenDental {
 			// 
 			this.checkShowAttachedPnI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkShowAttachedPnI.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowAttachedPnI.Location = new System.Drawing.Point(150, 465);
+			this.checkShowAttachedPnI.Location = new System.Drawing.Point(150, 461);
 			this.checkShowAttachedPnI.Name = "checkShowAttachedPnI";
 			this.checkShowAttachedPnI.Size = new System.Drawing.Size(144, 17);
 			this.checkShowAttachedPnI.TabIndex = 201;
@@ -968,7 +968,7 @@ namespace OpenDental {
 			this.butAddProd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAddProd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAddProd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddProd.Location = new System.Drawing.Point(593, 463);
+			this.butAddProd.Location = new System.Drawing.Point(593, 458);
 			this.butAddProd.Name = "butAddProd";
 			this.butAddProd.Size = new System.Drawing.Size(73, 22);
 			this.butAddProd.TabIndex = 36;
@@ -981,7 +981,7 @@ namespace OpenDental {
 			this.butDeleteProduction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDeleteProduction.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDeleteProduction.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDeleteProduction.Location = new System.Drawing.Point(3, 463);
+			this.butDeleteProduction.Location = new System.Drawing.Point(3, 458);
 			this.butDeleteProduction.Name = "butDeleteProduction";
 			this.butDeleteProduction.Size = new System.Drawing.Size(84, 22);
 			this.butDeleteProduction.TabIndex = 35;
@@ -993,7 +993,7 @@ namespace OpenDental {
 			this.butPrintProduction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrintProduction.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrintProduction.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrintProduction.Location = new System.Drawing.Point(300, 463);
+			this.butPrintProduction.Location = new System.Drawing.Point(300, 458);
 			this.butPrintProduction.Name = "butPrintProduction";
 			this.butPrintProduction.Size = new System.Drawing.Size(73, 22);
 			this.butPrintProduction.TabIndex = 31;
@@ -1009,7 +1009,7 @@ namespace OpenDental {
 			this.gridLinkedProduction.Location = new System.Drawing.Point(3, 3);
 			this.gridLinkedProduction.Name = "gridLinkedProduction";
 			this.gridLinkedProduction.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
-			this.gridLinkedProduction.Size = new System.Drawing.Size(663, 455);
+			this.gridLinkedProduction.Size = new System.Drawing.Size(663, 447);
 			this.gridLinkedProduction.TabIndex = 0;
 			this.gridLinkedProduction.Title = "Attached Production  ";
 			this.gridLinkedProduction.TranslationName = "TablePaymentPlanCredits";

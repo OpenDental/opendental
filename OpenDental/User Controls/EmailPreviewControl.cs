@@ -755,6 +755,7 @@ namespace OpenDental {
 		public EmailAddress PickEmailAccount() {
 			using FormEmailAddresses formEA=new FormEmailAddresses();
 			formEA.IsSelectionMode=true;
+			formEA.DoAllowSelectingAddressWithUsers=true;
 			formEA.ShowDialog();
 			if(formEA.DialogResult==DialogResult.OK) {
 				EmailAddress emailAccountSelected=EmailAddresses.GetFirstOrDefault(x => x.EmailAddressNum==formEA.EmailAddressNum);
