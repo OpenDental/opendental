@@ -61,7 +61,7 @@ namespace OpenDental {
 			gridPayPlanTemplates.ListGridRows.Clear();
 			List<PayPlanTemplate> listTemplates;
 			if(!comboBoxClinic.IsAllSelected) {
-				listTemplates=PayPlanTemplates.GetMany(comboBoxClinic.ClinicNumSelected);//Gets a list of all templates using the clinicNum from the DB.
+				listTemplates=PayPlanTemplates.GetMany(comboBoxClinic.SelectedClinicNum);//Gets a list of all templates using the clinicNum from the DB.
 			}
 			else {
 				listTemplates=PayPlanTemplates.GetAll();//Gets a list of all templates from the DB.
@@ -72,10 +72,7 @@ namespace OpenDental {
 				}
 				GridRow row=new GridRow();
 				row.Cells.Add(listTemplates[i].PayPlanTemplateName);//Name
-				if(PrefC.HasClinicsEnabled) {
-					string clinicAbbr=Clinics.GetAbbr(listTemplates[i].ClinicNum);
-					row.Cells.Add(clinicAbbr);//Clinic
-				}
+				row.Cells.Add(listTemplates[i].ClinicNum.ToString());//Clinic
 				row.Cells.Add(listTemplates[i].APR.ToString());//APR
 				row.Cells.Add(listTemplates[i].InterestDelay.ToString());//Interest Delay
 				//If Payment Amount was used, we don't want to show Number of Payments and vice versa.
@@ -129,5 +126,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void FormPayPlanTemplates_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

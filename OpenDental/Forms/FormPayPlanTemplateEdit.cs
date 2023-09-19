@@ -32,10 +32,10 @@ namespace OpenDental {
 			long curUserNum=Security.CurUser.UserNum;
 			List<UserClinic> listUserClinics=UserClinics.GetForUser(curUserNum);
 			if(_payPlanTemplate.ClinicNum==0 && listUserClinics.Count>0) {
-				comboBoxClinic.ClinicNumSelected=listUserClinics[0].ClinicNum;
+				comboBoxClinic.SelectedClinicNum=listUserClinics[0].ClinicNum;
 			}
 			else {
-				comboBoxClinic.ClinicNumSelected=_payPlanTemplate.ClinicNum;
+				comboBoxClinic.SelectedClinicNum=_payPlanTemplate.ClinicNum;
 			}
 			textAPR.Text=_payPlanTemplate.APR.ToString();
 			ToggleInterestDelayFieldsHelper();
@@ -164,9 +164,7 @@ namespace OpenDental {
 				return;
 			}
 			_payPlanTemplate.PayPlanTemplateName=textTemplateName.Text;
-			if(PrefC.HasClinicsEnabled) {
-				_payPlanTemplate.ClinicNum=comboBoxClinic.GetSelectedClinic().ClinicNum;
-			}
+			_payPlanTemplate.ClinicNum=comboBoxClinic.GetSelectedClinic().ClinicNum;
 			_payPlanTemplate.APR=PIn.Double(textAPR.Text);
 			_payPlanTemplate.InterestDelay=PIn.Int(textInterestDelay.Text);
 			_payPlanTemplate.PayAmt=PIn.Double(textPeriodPayment.Text);
@@ -182,6 +180,10 @@ namespace OpenDental {
 			}
 			PayPlanTemplates.Update(_payPlanTemplate);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void FormPayPlanTemplateEdit_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

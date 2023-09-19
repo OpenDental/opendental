@@ -327,6 +327,7 @@ namespace OpenDental {
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPayPlanTemplateEdit";
 			this.Text = "Edit Pay Plan Template";
+			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormPayPlanTemplateEdit_CloseXClicked);
 			this.Load += new System.EventHandler(this.FormPayPlanTemplateEdit_Load);
 			this.groupTreatmentPlanned.ResumeLayout(false);
 			this.groupBoxFrequency.ResumeLayout(false);

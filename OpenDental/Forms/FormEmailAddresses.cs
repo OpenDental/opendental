@@ -48,7 +48,7 @@ namespace OpenDental {
 				return;
 			}
 			if(IsSelectionMode) {
-				if(selectedAddress.UserNum!=0) {
+				if(!DoAllowSelectingAddressWithUsers && selectedAddress.UserNum!=0) {
 					MsgBox.Show(this,"Please select an existing email address that is not associated with a user or clinic.");
 					return;
 				}

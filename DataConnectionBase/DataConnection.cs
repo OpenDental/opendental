@@ -642,6 +642,45 @@ namespace DataConnectionBase {
 			}
 		}
 
+		public static bool GetCorruptedDatabasePref(string connectStr) {
+			MySqlConnection connection=new MySqlConnection(connectStr);
+			MySqlCommand command=new MySqlCommand();
+			command.Connection=connection;
+			command.CommandText="SELECT ValueString FROM preference WHERE PrefName='CorruptedDatabase'";
+			string result=null;//=command.ExecuteScalar().ToString();
+			connection.Open();
+			RunDbAction(new Action(() => result=command.ExecuteScalar().ToString()),connection,command);
+			connection.Close();
+			if(result=="0") {
+				return false;
+			}
+			return true;
+		}
+
+		public static string GetUpdateInProgressPref(string connectStr) {
+			MySqlConnection connection=new MySqlConnection(connectStr);
+			MySqlCommand command=new MySqlCommand();
+			command.Connection=connection;
+			command.CommandText="SELECT ValueString FROM preference WHERE PrefName='UpdateInProgressOnComputerName'";
+			string result=null;
+			connection.Open();
+			RunDbAction(new Action(() => result=command.ExecuteScalar().ToString()),connection,command);
+			connection.Close();
+			return result;
+		}
+
+		public static string GetProgramVersion(string connectStr) {
+			MySqlConnection connection=new MySqlConnection(connectStr);
+			MySqlCommand command=new MySqlCommand();
+			command.Connection=connection;
+			command.CommandText="SELECT ValueString FROM preference WHERE PrefName='ProgramVersion'";
+			string programVersion=null;
+			connection.Open();
+			RunDbAction(new Action(() => programVersion=command.ExecuteScalar().ToString()),connection,command);
+			connection.Close();
+			return programVersion;
+		}
+
 		public static bool IsTableCrashed(string tableName,bool doRetryConn=false) {
 			try {
 				using(DataConnection dconn=new DataConnection()) {

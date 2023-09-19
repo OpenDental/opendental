@@ -256,6 +256,7 @@ namespace OpenDental{
 			menuItemAccount.Add("Allocations",menuItemAllocations_Click);
 			_menuItemDefaultCCProcs=new MenuItemOD("Default CC Procedures",menuItemDefaultCCProcs_Click);
 			menuItemAccount.Add(_menuItemDefaultCCProcs);
+			menuItemAccount.Add("Pay Plan Templates",menuItemPayPlanTemplates_Click);
 		}
 
 		///<summary>Setup: Chart</summary>

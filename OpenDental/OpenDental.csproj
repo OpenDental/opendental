@@ -707,6 +707,18 @@
     <Compile Include="Forms\FormTaskSubscribers.Designer.cs">
       <DependentUpon>FormTaskSubscribers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormPayPlanTemplateEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPayPlanTemplateEdit.Designer.cs">
+      <DependentUpon>FormPayPlanTemplateEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPayPlanTemplates.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPayPlanTemplates.Designer.cs">
+      <DependentUpon>FormPayPlanTemplates.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormFaqEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7642,6 +7654,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTaskSubscribers.resx">
       <DependentUpon>FormTaskSubscribers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPayPlanTemplateEdit.resx">
+      <DependentUpon>FormPayPlanTemplateEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPayPlanTemplates.resx">
+      <DependentUpon>FormPayPlanTemplates.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCodeGroupEdit.resx">
       <DependentUpon>FormCodeGroupEdit.cs</DependentUpon>

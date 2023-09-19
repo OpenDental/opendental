@@ -5188,8 +5188,10 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Checks auto codes if the procedure is not complete or the user has permission to edit completed procedures, can prompt user.</summary>
-		public static void TryAutoCodesPrompt(ref Procedure procedure,Procedure procedureOld,ProcedureCode procedureCode,bool isMandibular,Patient patient,ref List<ClaimProc> listClaimProcsForProc,
+		///<summary>Checks auto codes if the procedure is not complete or the user has permission to edit completed procedures, can prompt user.
+		///Returns false if the user is required by the ProcEditRequireAutoCodes preference to use the suggested procedure code and they chose
+		///to return to the edit procedure window.</summary>
+		public static bool TryAutoCodesPrompt(ref Procedure procedure,Procedure procedureOld,ProcedureCode procedureCode,bool isMandibular,Patient patient,ref List<ClaimProc> listClaimProcsForProc,
 			Func<long,Procedure> funcPromptFormACLI)
 		{
 			Permissions perm=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteEdit,procedure);
@@ -5199,12 +5201,13 @@ namespace OpenDentBusiness {
 				if(AutoCodeItems.ShouldPromptForCodeChange(procedure,procedureCode,patient,isMandibular,listClaimProcsForProc,out long verifyCode)) {
 					Procedure proc=funcPromptFormACLI(verifyCode);
 					if(proc==null){
-						return;
+						return false;
 					}
 					procedure=proc;
 					listClaimProcsForProc=ClaimProcs.RefreshForProc(procedure.ProcNum);//funPromptFormACLI may have added claimprocs.
 				}
 			}
+			return true;
 		}
 
 		///<summary>Called in our mobile applications, mimics FormProcEdit logic.</summary>

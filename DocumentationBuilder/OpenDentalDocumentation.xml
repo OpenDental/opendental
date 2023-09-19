@@ -6706,6 +6706,7 @@
         <EnumValue name="WSGeneral">9. This means the action done was for unspecified WebSched.</EnumValue>
         <EnumValue name="Arrivals">10. This means the action done was for Arrivals.</EnumValue>
         <EnumValue name="IntegratedTexting">11. This means the action done was for Integrated Texting.</EnumValue>
+        <EnumValue name="ODTouch">12. This means the action done was for the mobile app ODTouch.</EnumValue>
       </Enumeration>
     </column>
     <column order="4" name="EServiceAction" type="smallint(6)">
@@ -6804,6 +6805,9 @@
         <EnumValue name="ECCreditCardErrorMakingPaymentWithAlias">89 - eClipboard - Error: error making payment</EnumValue>
         <EnumValue name="ECCreditCardErrorMakingPaymentPatientNotFound">90 - eClipboard - Error: Making Payment, patient not found</EnumValue>
         <EnumValue name="ECCreditCardErrorMakingPaymentInvalidAmount">91 - eClipboard - Error: Making Payment, invalid amount </EnumValue>
+        <EnumValue name="ECQRScanAttempt">92 - EClipboard - QR scan window activated</EnumValue>
+        <EnumValue name="ECQRScanCancel">93 - EClipboard - QR scan window cancelled</EnumValue>
+        <EnumValue name="ECQRScanOk">94 - EClipboard - QR scan window success</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="KeyType" type="smallint(6)">

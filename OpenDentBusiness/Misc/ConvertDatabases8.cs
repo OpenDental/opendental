@@ -416,5 +416,28 @@ namespace OpenDentBusiness {
 			//End of E46260
 		}//End of To23_2_9() method
 
+		private static void To23_2_19(){
+			//I44056 adding a new table called payplantemplate
+			string command="DROP TABLE IF EXISTS payplantemplate";
+			Db.NonQ(command);
+			command=@"CREATE TABLE payplantemplate (
+				PayPlanTemplateNum bigint NOT NULL auto_increment PRIMARY KEY,
+				PayPlanTemplateName varchar(255) NOT NULL,
+				ClinicNum bigint NOT NULL,
+				APR double NOT NULL,
+				InterestDelay int NOT NULL,
+				PayAmt double NOT NULL,
+				NumberOfPayments int NOT NULL,
+				ChargeFrequency tinyint NOT NULL,
+				DownPayment double NOT NULL,
+				DynamicPayPlanTPOption tinyint NOT NULL,
+				Note varchar(255) NOT NULL,
+				IsHidden tinyint NOT NULL,
+				INDEX(ClinicNum)
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			//End I44056
+		}//End of To23_2_19() method
+
 	}
 }
