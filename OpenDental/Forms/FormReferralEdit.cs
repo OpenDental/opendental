@@ -21,6 +21,8 @@ namespace OpenDental{
 		private List<SheetDef> _listSheetDefs;
 		///<summary>Tracks the list of clinics that the referral is associated with.</summary>
 		private List<ReferralClinicLink> _listReferralClinicLinks;
+		///<summary>Used to keep an in memory list of referral type commlogs. Only used when the referral IsNew.</summary>
+		private List<Commlog> _listCommlogIsNews=new List<Commlog>();
 
 		///<summary></summary>
 		public FormReferralEdit(Referral referral){
@@ -200,7 +202,13 @@ namespace OpenDental{
 		}
 
 		private void FillCommlogGrid() {
-			List<Commlog> listCommlogs=Commlogs.GetForReferral(ReferralCur.ReferralNum);
+			List<Commlog> listCommlogs=new List<Commlog>();
+			if(IsNew) {
+				listCommlogs=new List<Commlog>(_listCommlogIsNews);
+			}
+			else {
+				listCommlogs=Commlogs.GetForReferral(ReferralCur.ReferralNum);
+			}
 			//Handle unique grid sorting:
 			List<Commlog> listCommlogsAnchored=listCommlogs.FindAll(x => x.CommReferralBehavior==EnumCommReferralBehavior.TopAnchored);
 			listCommlogs.RemoveAll(x => x.CommReferralBehavior==EnumCommReferralBehavior.TopAnchored);
@@ -259,7 +267,8 @@ namespace OpenDental{
 
 		private void gridComm_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			using FormCommReferral formCommReferral=new FormCommReferral();
-			formCommReferral.CommlogCur=(Commlog)gridComm.ListGridRows[gridComm.GetSelectedIndex()].Tag;;
+			formCommReferral.CommlogCur=(Commlog)gridComm.ListGridRows[gridComm.GetSelectedIndex()].Tag;
+			formCommReferral.CommlogCur.IsNew=false;
 			if(formCommReferral.ShowDialog()==DialogResult.OK) {
 				FillCommlogGrid();
 			}
@@ -275,12 +284,19 @@ namespace OpenDental{
 			using FormCommReferral formCommReferral=new FormCommReferral();
 			formCommReferral.CommlogCur=commlog;
 			if(formCommReferral.ShowDialog()==DialogResult.OK) {
+				if(IsNew) {
+					_listCommlogIsNews.Add(formCommReferral.CommlogCur);
+				}
 				FillCommlogGrid();
 			}
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(IsNew) {
+				//User may have created referral commlogs. If so delete them.
+				for(int i=0;i<_listCommlogIsNews.Count;i++) {
+					Commlogs.Delete(_listCommlogIsNews[i]);
+				}
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
@@ -374,6 +390,12 @@ namespace OpenDental{
 				Referrals.Insert(ReferralCur);
 				Signalods.SetInvalid(InvalidType.Referral);//Make sure other instances have the new referral in their cache.
 				ReferralClinicLinks.InsertClinicLinksForReferral(ReferralCur.ReferralNum,comboClinicPicker.ListSelectedClinicNums,false);
+				//Referral IsNew and may have commlog entries, so update all the associated commlogs with the correct ReferralNum.
+				for(int i=0;i<_listCommlogIsNews.Count;i++) {
+					Commlog commlogOld=_listCommlogIsNews[i].Copy();
+					_listCommlogIsNews[i].ReferralNum=ReferralCur.ReferralNum;
+					Commlogs.Update(_listCommlogIsNews[i],commlogOld);
+				}
 			}
 			else{
 				string secLogText="Referral '"+ReferralCur.LName+", "+ReferralCur.FName+"' edited";
@@ -387,6 +409,12 @@ namespace OpenDental{
 		}
 
 		private void butCancel_Click(object sender, System.EventArgs e) {
+			//User canceled out of form, but may have created referral commlogs. If so delete them.
+			if(IsNew) {
+				for(int i=0;i<_listCommlogIsNews.Count;i++) {
+					Commlogs.Delete(_listCommlogIsNews[i]);
+				}
+			}
 			DialogResult=DialogResult.Cancel;
 		}
 
