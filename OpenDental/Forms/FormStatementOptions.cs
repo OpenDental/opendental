@@ -512,7 +512,8 @@ namespace OpenDental{
 					dataSet=AccountModules.GetSuperFamAccount(StatementCur,doIncludePatLName: checkShowLName.Checked,doShowHiddenPaySplits: StatementCur.IsReceipt,doExcludeTxfrs: checkExcludeTxfr.Checked);
 				}
 				else {
-					dataSet=AccountModules.GetAccount(StatementCur.PatNum,StatementCur,doIncludePatLName: checkShowLName.Checked,doShowHiddenPaySplits: StatementCur.IsReceipt,doExcludeTxfrs: checkExcludeTxfr.Checked);
+					long patNum=GetPatNumForGetAccount();
+					dataSet=AccountModules.GetAccount(patNum,StatementCur,doIncludePatLName: checkShowLName.Checked,doShowHiddenPaySplits: StatementCur.IsReceipt,doExcludeTxfrs: checkExcludeTxfr.Checked);
 				}
 			}
 			if(pdfFileName=="") {
@@ -667,7 +668,8 @@ namespace OpenDental{
 				dataSet=AccountModules.GetSuperFamAccount(StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			else {
-				dataSet=AccountModules.GetAccount(StatementCur.PatNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
+				long patNum=GetPatNumForGetAccount();
+				dataSet=AccountModules.GetAccount(patNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,StatementCur.PatNum,StatementCur.HidePayment);
 			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=StatementCur });
@@ -860,7 +862,8 @@ namespace OpenDental{
 				dataSet=AccountModules.GetSuperFamAccount(StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			else {
-				dataSet=AccountModules.GetAccount(StatementCur.PatNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
+				long patNum=GetPatNumForGetAccount();
+				dataSet=AccountModules.GetAccount(patNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,StatementCur.PatNum,StatementCur.HidePayment);
 			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=StatementCur });
@@ -877,6 +880,16 @@ namespace OpenDental{
 				formSheetFillEdit.StatementCur.Mode_=StatementMode.Email;
 				listMode.SetSelectedEnum(StatementMode.Email);
 			}
+		}
+
+		///<summary>Returns the PatNum of the patient that this statement is responsible for. Typically returns StatementCur.PatNum.
+		///Can return a different PatNum if this is a SinglePatient statement and there is only one PatNum StmtLink associated with this statement.</summary>
+		private long GetPatNumForGetAccount() {
+			long patNum=StatementCur.PatNum;
+			if(StatementCur.SinglePatient && StatementCur.ListPatNums.Distinct().Count()==1) {
+				patNum=StatementCur.ListPatNums.First();
+			}
+			return patNum;
 		}
 
 		private void SaveStatementAsDocument(Statement statement,Sheet sheet,DataSet dataSet,string pdfFileName) {

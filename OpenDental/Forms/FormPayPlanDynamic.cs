@@ -111,7 +111,7 @@ namespace OpenDental {
 				for(int i = 0;i<sheet.SheetFields.Count;i++) {
 					if(sheet.SheetFields[i].FieldType==SheetFieldType.SigBox) {
 						butPrint.Visible=false;
-						butSignPrint.Visible=true;					
+						butSignPrint.Visible=true;
 					}
 				}
 			}
@@ -500,6 +500,65 @@ namespace OpenDental {
 		private void ButCancelTerms_Click(object sender,EventArgs e) {
 			SetTermsFromDb();
 			LockTerms(false,FillCharges());//re-lock. Nothing is getting saved though since nothing changed. 
+		}
+
+		private void butTemplates_Click(object sender,EventArgs e) {
+			using FormPayPlanTemplates formPayPlanTemplates=new FormPayPlanTemplates();
+			formPayPlanTemplates.IsSelectionMode=true;
+			formPayPlanTemplates.ShowDialog();
+			if(formPayPlanTemplates.DialogResult==DialogResult.Cancel) {//Apply template to plan terms
+				return;
+			}
+			PayPlanTemplate payPlanTemplate=formPayPlanTemplates.PayPlanTemplateCur;
+			if(PIn.Double(textDownPayment.Text)!=payPlanTemplate.DownPayment && textDownPayment.ReadOnly) { 
+				if(!MsgBox.Show(MsgBoxButtons.YesNo,"You cannot change the downpayment. Would you like to apply everything else from the template?")) {
+					return;
+				}
+			}
+			else {
+				textDownPayment.Text=payPlanTemplate.DownPayment.ToString();
+			}
+			textAPR.Text=payPlanTemplate.APR.ToString();
+			if(payPlanTemplate.APR>0) {
+				textDateInterestStart.Text=PayPlanEdit.CalcNextPeriodDate(PIn.Date(textDateFirstPay.Text),
+					payPlanTemplate.InterestDelay,GetChargeFrequency()).ToShortDateString();
+			}
+			if(payPlanTemplate.NumberOfPayments>0) {
+				textPaymentCount.Text=payPlanTemplate.NumberOfPayments.ToString();
+				textPeriodPayment.Text="";
+			}
+			else {
+				textPeriodPayment.Text=payPlanTemplate.PayAmt.ToString();
+			}
+			switch(payPlanTemplate.ChargeFrequency) {
+				case PayPlanFrequency.Weekly:
+					radioWeekly.Checked=true;
+					break;
+				case PayPlanFrequency.EveryOtherWeek:
+					radioEveryOtherWeek.Checked=true;
+					break;
+				case PayPlanFrequency.OrdinalWeekday:
+					radioOrdinalWeekday.Checked=true;
+					break;
+				case PayPlanFrequency.Monthly:
+					radioMonthly.Checked=true;
+					break;
+				case PayPlanFrequency.Quarterly:
+					radioQuarterly.Checked=true;
+					break;
+				default://default to monthly for new plans (should be 0 and do this regardless)
+					radioMonthly.Checked=true;
+					break;
+			}
+			switch(payPlanTemplate.DynamicPayPlanTPOption) {
+				case DynamicPayPlanTPOptions.TreatAsComplete:
+					radioTpTreatAsComplete.Checked=true;
+					break;
+				case DynamicPayPlanTPOptions.AwaitComplete:
+				default:
+					radioTpAwaitComplete.Checked=true;
+					break;
+			}
 		}
 
 		///<summary></summary>

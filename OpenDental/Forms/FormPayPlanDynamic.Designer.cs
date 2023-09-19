@@ -53,6 +53,7 @@ namespace OpenDental {
 			this.label12 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.groupTerms = new OpenDental.UI.GroupBox();
+			this.butTemplates = new OpenDental.UI.Button();
 			this.groupTreatmentPlanned = new OpenDental.UI.GroupBox();
 			this.radioTpTreatAsComplete = new System.Windows.Forms.RadioButton();
 			this.radioTpAwaitComplete = new System.Windows.Forms.RadioButton();
@@ -328,6 +329,7 @@ namespace OpenDental {
 			// 
 			// groupTerms
 			// 
+			this.groupTerms.Controls.Add(this.butTemplates);
 			this.groupTerms.Controls.Add(this.groupTreatmentPlanned);
 			this.groupTerms.Controls.Add(this.labelDateInterestStart);
 			this.groupTerms.Controls.Add(this.textDateInterestStart);
@@ -358,6 +360,16 @@ namespace OpenDental {
 			this.groupTerms.Size = new System.Drawing.Size(360, 324);
 			this.groupTerms.TabIndex = 1;
 			this.groupTerms.Text = "Terms";
+			// 
+			// butTemplates
+			// 
+			this.butTemplates.Location = new System.Drawing.Point(251, 79);
+			this.butTemplates.Name = "butTemplates";
+			this.butTemplates.Size = new System.Drawing.Size(103, 24);
+			this.butTemplates.TabIndex = 203;
+			this.butTemplates.Text = "Templates";
+			this.butTemplates.UseVisualStyleBackColor = true;
+			this.butTemplates.Click += new System.EventHandler(this.butTemplates_Click);
 			// 
 			// groupTreatmentPlanned
 			// 
@@ -1229,5 +1241,6 @@ namespace OpenDental {
 		private UI.WarningIntegrity warningIntegrity1;
 		private UI.CheckBox checkUngrouped;
 		private UI.CheckBox checkShowAttachedPnI;
+		private UI.Button butTemplates;
 	}
 }

@@ -742,7 +742,7 @@ namespace OpenDentBusiness {
 			for(int i=0;i<listPayPlanChargeNums.Count;i++) {
 				StmtLinks.Insert(new StmtLink() { FKey=listPayPlanChargeNums[i],StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.PayPlanCharge });
 			}
-			if(limitedCustomFamily!=EnumLimitedCustomFamily.None) {
+			if(limitedCustomFamily!=EnumLimitedCustomFamily.None || listPatNumsSelected.Any(x => x!=patNum)) {
 				for(int i=0;i<listPatNumsSelected.Count;i++) {
 					StmtLinks.Insert(new StmtLink() { FKey=listPatNumsSelected[i],StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.PatNum });
 				}

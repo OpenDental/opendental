@@ -40,7 +40,7 @@ namespace OpenDental {
 			webBrowserWiki.StatusTextChanged += new EventHandler(WebBrowserWiki_StatusTextChanged);
 			Rectangle rectangleScreen=System.Windows.Forms.Screen.GetWorkingArea(this);
 			Width=LayoutManager.Scale(960);
-			Height=rectangleScreen.Height;
+			Height=rectangleScreen.Height+(int)LayoutManager.ScaleMS(8);//for the transparent 8 pixels at bottom
 			Left=rectangleScreen.Left+((rectangleScreen.Width-Width)/2);
 			Top=rectangleScreen.Top;
 			LayoutToolBar();
@@ -657,8 +657,9 @@ namespace OpenDental {
 
 		private void FormWiki_ResizeEnd(object sender,EventArgs e) {
 			Rectangle rectangleScreen=System.Windows.Forms.Screen.GetWorkingArea(this);
-			if(Height>rectangleScreen.Height){
-				Height=rectangleScreen.Height;
+			if(Height>rectangleScreen.Height+(int)LayoutManager.ScaleMS(8)){
+				//8 is for the transparent pixels at bottom
+				Height=rectangleScreen.Height+(int)LayoutManager.ScaleMS(8);
 				Top=rectangleScreen.Top;
 			}
 		}

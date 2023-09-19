@@ -12,7 +12,11 @@ using OpenDentBusiness.Crud;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class OrthoChartLogs{
-		public static void Log(string logData,string computerName,long patNum,long userNum){
+		public static void Log(string logData,string computerName,long patNum,long userNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,patNum,userNum);
+				return;
+			}
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}
@@ -25,7 +29,11 @@ namespace OpenDentBusiness{
 			OrthoChartLogCrud.Insert(orthoChartLog);
 		}
 
-		public static void Log(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum=0){
+		public static void Log(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum=0) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,orthoChartRow,userNum);
+				return;
+			}
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}
@@ -46,7 +54,11 @@ namespace OpenDentBusiness{
 			OrthoChartLogCrud.Insert(orthoChartLog);
 		}
 
-		public static void LogDb(string logData,string computerName,long orthoChartRowNum,long userNum){
+		public static void LogDb(string logData,string computerName,long orthoChartRowNum,long userNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,orthoChartRowNum,userNum);
+				return;
+			}
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}
@@ -60,7 +72,11 @@ namespace OpenDentBusiness{
 			OrthoChartLogCrud.Insert(orthoChartLog);
 		}
 
-		public static void LogDb(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum){
+		public static void LogDb(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,orthoChartRow,userNum);
+				return;
+			}
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}

@@ -131,7 +131,7 @@ namespace OpenDentBusiness {
 			//referred to (all handled with MySQL), this function will always be referred to the server from
 			//client machines.
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),serverName,user,pass,doVerify,isAutoBackup);
+				return Meth.GetString(MethodBase.GetCurrentMethod(),serverName,user,pass,doVerify,isAutoBackup,sslCa);
 			}
 			//UpdateStreamLinePassword is purposefully named poorly and used in an odd fashion to sort of obfuscate it from our users.
 			//GetStringNoCache() will return blank if pref does not exist.
