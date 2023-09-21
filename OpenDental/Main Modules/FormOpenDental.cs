@@ -1443,10 +1443,6 @@ namespace OpenDental{
 				MessageBox.Show(ex.Message);
 				return false;//shuts program down.
 			}
-			bool doVersionsMatch=CheckProgramVersionsReportandReadOnly(isSilentUpdate);
-			if(!doVersionsMatch) {
-				return false;
-			}
 			//The preference cache has been filled from the local database connection at this point.
 			//It is now safe to have all cache classes check for a read-only server and use it if set up correctly.
 			PrefC.HasReadOnlyServer=() => {
@@ -1482,20 +1478,18 @@ namespace OpenDental{
 					return false;
 				}
 				string updateComputerName=PrefC.GetStringSilent(PrefName.UpdateInProgressOnComputerName);
-				string updateComputerNameRR=CheckUpdateInProgressReportandRead(isSilentUpdate);
 				//The update could have been initiated from an older version of the program (prior to v21.3) via a Remote Desktop (RDP) session.
 				//Starting in v21.3, ODEnvironment.MachineName returns what is commonly referred to as the client name instead of the machine name.
 				//Allow access to the program when either of these names match for backwards compatibility purposes.
 				string clientNameUpper=ODEnvironment.MachineName.ToUpper();
 				string machineNameUpper=Environment.MachineName.ToUpper();
-				if((updateComputerName!="" && !updateComputerName.ToUpper().In(clientNameUpper,machineNameUpper)) || (!string.IsNullOrEmpty(updateComputerNameRR) && !updateComputerNameRR.ToUpper().In(clientNameUpper,machineNameUpper))) {
+				if(updateComputerName!="" && !updateComputerName.ToUpper().In(clientNameUpper,machineNameUpper)) {
 					if(isSilentUpdate) {
 						ExitCode=120;//Computer trying to access DB during update
 						Environment.Exit(ExitCode);
 						return false;
 					}
-					string compNameToDisplay=updateComputerName==""?updateComputerNameRR:updateComputerName;
-					using FormUpdateInProgress formUpdateInProgress=new FormUpdateInProgress(compNameToDisplay);
+					using FormUpdateInProgress formUpdateInProgress=new FormUpdateInProgress(updateComputerName);
 					DialogResult dialogResult=formUpdateInProgress.ShowDialog();
 					if(dialogResult!=DialogResult.OK) {
 						return false;//Either the user canceled out of the window or clicked the override button which 
@@ -1552,164 +1546,6 @@ namespace OpenDental{
 			LanguageForeigns.RefreshCache();//automatically skips if current culture is en-US
 			//menuItemMergeDatabases.Visible=PrefC.GetBool(PrefName.RandomPrimaryKeys");
 			return true;
-		}
-
-		private bool CheckProgramVersionsReportandReadOnly(bool isSilentUpdate) {
-			string programVersionReadOnly="";
-			string programVersionReport="";
-			string programversion=PrefC.GetString(PrefName.ProgramVersion);
-			string message="";
-			if(!string.IsNullOrEmpty(PrefC.ReadOnlyServer.Server)) {
-				string connectStrReadOnly="";
-				if(PrefC.ReadOnlyServer.IsMiddleTier) {
-					connectStrReadOnly=PrefC.ReadOnlyServer.URI;
-				}
-				else {
-					connectStrReadOnly=DataConnection.BuildSimpleConnectionString(DatabaseType.MySql,PrefC.ReadOnlyServer.Server, PrefC.ReadOnlyServer.Database,
-						PrefC.ReadOnlyServer.MySqlUser,PrefC.ReadOnlyServer.MySqlPass,PrefC.ReadOnlyServer.SslCa);
-				}
-				try {
-					programVersionReadOnly=DataConnection.GetProgramVersion(connectStrReadOnly);
-					if(programVersionReadOnly!=programversion) {
-						message+=$"Read Only version is {programVersionReadOnly}, which does not match local program version.\n";
-					}
-				}
-				catch(Exception ex){
-					if(!isSilentUpdate) {
-						MsgBox.Show("Read Only Server: "+ex.Message);
-					}
-					return false;
-				}
-			}
-			if(!string.IsNullOrEmpty(PrefC.ReportingServer.Server)) {
-				string connectStrReport="";
-				if(PrefC.ReportingServer.IsMiddleTier) {
-					connectStrReport=PrefC.ReportingServer.URI;
-				}
-				else {
-					connectStrReport=DataConnection.BuildSimpleConnectionString(DatabaseType.MySql,PrefC.ReportingServer.Server,PrefC.ReportingServer.Database, 
-						PrefC.ReportingServer.MySqlUser, PrefC.ReportingServer.MySqlPass);
-				}
-				try {
-					programVersionReport=DataConnection.GetProgramVersion(connectStrReport);
-					if(programVersionReport!=programversion) {
-						message+=$"Report Server version is {programVersionReport}, which does not match the local program version.\n";
-					}
-				}
-				catch(Exception ex) {
-					if(!isSilentUpdate) {
-						MsgBox.Show("Report Server: "+ex.Message);
-					}
-					return false;
-				}
-			}
-			if((!string.IsNullOrEmpty(message))) {
-				message+="Please fix this to run Open Dental properly.";
-				if(!isSilentUpdate) {
-					MsgBox.Show(message);
-				}
-				return false;
-			}
-			return true;
-		}
-
-		public static bool CheckCorruptedReportandRead() {
-			bool isReportCorrupted=false;
-			bool isReadOnlyCorrupted=false;
-			string message="";
-			if(!string.IsNullOrEmpty(PrefC.ReadOnlyServer.Server)) {
-				string connectStrReadOnly="";
-				if(PrefC.ReadOnlyServer.IsMiddleTier) {
-					connectStrReadOnly=PrefC.ReadOnlyServer.URI;
-				}
-				else {
-					connectStrReadOnly=DataConnection.BuildSimpleConnectionString(DatabaseType.MySql,PrefC.ReadOnlyServer.Server, PrefC.ReadOnlyServer.Database,
-						PrefC.ReadOnlyServer.MySqlUser,PrefC.ReadOnlyServer.MySqlPass,PrefC.ReadOnlyServer.SslCa);
-				}
-				try {
-					isReadOnlyCorrupted=DataConnection.GetCorruptedDatabasePref(connectStrReadOnly);
-					if(isReadOnlyCorrupted) {
-						message+="Read Only Server is corrupted.\n";
-					}
-				}
-				catch(Exception ex) {
-					MsgBox.Show("Read Only Server: "+ex.Message);
-					isReadOnlyCorrupted=true;
-				}
-			}
-			if(!string.IsNullOrEmpty(PrefC.ReportingServer.Server)) {
-				string connectStrReport="";
-				if(PrefC.ReportingServer.IsMiddleTier) {
-					connectStrReport=PrefC.ReportingServer.URI;
-				}
-				else {
-					connectStrReport=DataConnection.BuildSimpleConnectionString(DatabaseType.MySql,PrefC.ReportingServer.Server,PrefC.ReportingServer.Database, 
-						PrefC.ReportingServer.MySqlUser, PrefC.ReportingServer.MySqlPass);
-				}
-				try {
-					isReportCorrupted=DataConnection.GetCorruptedDatabasePref(connectStrReport);
-					if(isReportCorrupted) {
-						message+="Report Server is corrupted.";
-					}
-				}
-				catch(Exception ex) {
-					MsgBox.Show("Report Only Server: "+ex.Message);
-					isReportCorrupted=true;
-				}
-			}
-			if(!string.IsNullOrEmpty(message)) {
-				return true;
-			}
-			return false;
-		}
-
-		private static string CheckUpdateInProgressReportandRead(bool isSilentUpdate) {
-			string isReportUpdating="";
-			string isReadOnlyUpdating="";
-			if(!string.IsNullOrEmpty(PrefC.ReadOnlyServer.Server)) {
-				string connectStrReadOnly="";
-				if(PrefC.ReadOnlyServer.IsMiddleTier) {
-					connectStrReadOnly=PrefC.ReadOnlyServer.URI;
-				}
-				else {
-					connectStrReadOnly=DataConnection.BuildSimpleConnectionString(DatabaseType.MySql,PrefC.ReadOnlyServer.Server, PrefC.ReadOnlyServer.Database,
-						PrefC.ReadOnlyServer.MySqlUser,PrefC.ReadOnlyServer.MySqlPass,PrefC.ReadOnlyServer.SslCa);
-				}
-				try {
-					isReadOnlyUpdating=DataConnection.GetUpdateInProgressPref(connectStrReadOnly);
-					if(!string.IsNullOrEmpty(isReadOnlyUpdating)) {
-						return "Read Only Server: "+isReadOnlyUpdating;
-					}
-				}
-				catch(Exception ex) {
-					if(!isSilentUpdate) {
-						MsgBox.Show("Read Only Server: "+ex.Message);
-					}
-				}
-			}
-			if(!string.IsNullOrEmpty(PrefC.ReportingServer.Server)) {
-				string connectStrReport="";
-				if(PrefC.ReportingServer.IsMiddleTier) {
-					connectStrReport=PrefC.ReportingServer.URI;
-				}
-				else {
-					connectStrReport=DataConnection.BuildSimpleConnectionString(DatabaseType.MySql,PrefC.ReportingServer.Server,PrefC.ReportingServer.Database, 
-						PrefC.ReportingServer.MySqlUser, PrefC.ReportingServer.MySqlPass);
-				}
-				try {
-					isReportUpdating=DataConnection.GetUpdateInProgressPref(connectStrReport);
-					if(!string.IsNullOrEmpty(isReportUpdating)) {
-						return "Report Server: "+isReportUpdating;
-					}
-				}
-				catch(Exception ex) {
-					if(!isSilentUpdate) {
-						MsgBox.Show("Report Only Server: "+ex.Message);
-					}
-					return "";
-				}
-			}
-			return "";
 		}
 
 		///<summary>Refreshes certain rarely used data from database.  Must supply the types of data to refresh as flags.  Also performs a few other tasks that must be done when local data is changed.</summary>
@@ -3758,7 +3594,7 @@ namespace OpenDental{
 					+Lan.g(this,"You will have to restart")+" "+PrefC.GetString(PrefName.SoftwareName)+" "+Lan.g(this,"once the update has finished.");
 				return false;
 			}
-			if(PrefC.GetBool(PrefName.CorruptedDatabase) || CheckCorruptedReportandRead()) {
+			if(PrefC.GetBool(PrefName.CorruptedDatabase)) {
 				//only happens if the UpdateInProgressOnComputerName is blank and the CorruptedDatabase flag is set, i.e. an update has failed
 				errorMsg=Lan.g(this,"Your database is corrupted because an update failed.  Please contact us.  This database is unusable and you will "
 					+"need to restore from a backup.");
