@@ -1799,7 +1799,7 @@ namespace OpenDental {
 					Task task=Tasks.GetOne(taskNum);
 					if (task!=null) { //don't show the task search form and just open up the task that has been found
 						FormTaskEdit formTaskEdit=new FormTaskEdit(task);
-						formTaskEdit.Show(this);
+						formTaskEdit.Show();
 						return;
 					}
 				}
@@ -1808,7 +1808,7 @@ namespace OpenDental {
 			// this doesn't need to be disposed of as it is not shown modally (https://stackoverflow.com/a/3097383)
 			FormTaskSearch formTaskbarSearch=new FormTaskSearch();
 			_taskNumOld=-1; // reset _taskNumCur so if they click search again with same clipboard contents it will go straight to taskEdit
-			formTaskbarSearch.Show(this);
+			formTaskbarSearch.Show();
 		}
 
 		public void TaskGoToEvent(object sender,CancelEventArgs e) {

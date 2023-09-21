@@ -11864,6 +11864,59 @@
       <summary>DateTime. Date the link was created.  </summary>
     </column>
   </table>
+  <table name="payplantemplate">
+    <summary>A template of payplan terms that can be copied to a payment plan.  Only used for dynamic payment plans, not patient payment plans.</summary>
+    <column order="0" name="PayPlanTemplateNum" type="bigint(20)">
+      <summary>Primary key</summary>
+    </column>
+    <column order="1" name="PayPlanTemplateName" type="varchar(255)">
+      <summary>The name of the Pay Plan Template.</summary>
+    </column>
+    <column order="2" name="ClinicNum" type="bigint(20)" fk="clinic">
+      <summary>FK to clinic.ClinicNum. Can be 0.</summary>
+    </column>
+    <column order="3" name="APR" type="double">
+      <summary>Annual percentage rate.  eg 18.</summary>
+    </column>
+    <column order="4" name="InterestDelay" type="int(11)">
+      <summary>The number of payments before interest is applied.</summary>
+    </column>
+    <column order="5" name="PayAmt" type="double">
+      <summary>The total payment amount due for each period.</summary>
+    </column>
+    <column order="6" name="NumberOfPayments" type="int(11)">
+      <summary>The total number of periods for the payment plan. If the Pay Plan is dynamic and NumberOfPayments is not 0 then this is only used to calculate the PayAmt. After the PayAmt is calculated, NumberOfPayments is set to 0.</summary>
+    </column>
+    <column order="7" name="ChargeFrequency" type="tinyint(4)">
+      <summary>Enum:PayPlanFrequency How often charges are created for the payment plan. Monthly, weekly, etc.  Only for Dynamic Payment Plans.</summary>
+      <Enumeration name="PayPlanFrequency">
+        <summary></summary>
+        <EnumValue name="Weekly">0 - Weekly </EnumValue>
+        <EnumValue name="EveryOtherWeek">1 - Every Other Week</EnumValue>
+        <EnumValue name="OrdinalWeekday">2 - Specific day of month </EnumValue>
+        <EnumValue name="Monthly">3 - Monthly</EnumValue>
+        <EnumValue name="Quarterly">4 - Quarterly</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="8" name="DownPayment" type="double">
+      <summary>The amount paid toward the payment plan when it was first opened.</summary>
+    </column>
+    <column order="9" name="DynamicPayPlanTPOption" type="tinyint(4)">
+      <summary>Enum:DynamicPayPlanTPOptions Indicates the selected mode for how treatment planned procedures are handled by a dynamic payment plan.  None, AwaitComplete, or TreatAsComplete.</summary>
+      <Enumeration name="DynamicPayPlanTPOptions">
+        <summary>Enum that changes how treatment planned procedures are handled in dynamic payment plans.</summary>
+        <EnumValue name="None">0</EnumValue>
+        <EnumValue name="AwaitComplete">1</EnumValue>
+        <EnumValue name="TreatAsComplete">2</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="10" name="Note" type="varchar(255)">
+      <summary>A detailed note of the terms shows for future reference. Any changes made to the terms will be added to the note. Other notes can be added as needed.</summary>
+    </column>
+    <column order="11" name="IsHidden" type="tinyint(4)">
+      <summary>Templates can not be deleted, but can be hidden if not needed any more.</summary>
+    </column>
+  </table>
   <table name="paysplit">
     <summary>Always attached to a payment.  Always affects exactly one patient account and one provider.</summary>
     <column order="0" name="SplitNum" type="bigint(20)">

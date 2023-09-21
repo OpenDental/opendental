@@ -120,8 +120,6 @@ namespace OpenDental {
 			this.groupEClip = new OpenDental.UI.GroupBox();
 			this.labelIsMobileActive = new System.Windows.Forms.Label();
 			this.butUnlockEClip = new OpenDental.UI.Button();
-			this.butEClipboard = new OpenDental.UI.Button();
-			this.butAllExamsEclip = new OpenDental.UI.Button();
 			this.timerEClipCheck = new System.Windows.Forms.Timer(this.components);
 			this.butDefault = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
@@ -733,10 +731,10 @@ namespace OpenDental {
 			// contrPerio
 			// 
 			this.contrPerio.BackColor = System.Drawing.SystemColors.Window;
-			this.contrPerio.ShowCurrentExamOnly = true;
+			this.contrPerio.IdxExamSelected = 0;
 			this.contrPerio.Location = new System.Drawing.Point(390, 8);
 			this.contrPerio.Name = "contrPerio";
-			this.contrPerio.IdxExamSelected = 0;
+			this.contrPerio.ShowCurrentExamOnly = true;
 			this.contrPerio.Size = new System.Drawing.Size(608, 685);
 			this.contrPerio.TabIndex = 75;
 			this.contrPerio.Text = "contrPerio2";
@@ -939,8 +937,6 @@ namespace OpenDental {
 			// 
 			this.groupEClip.Controls.Add(this.labelIsMobileActive);
 			this.groupEClip.Controls.Add(this.butUnlockEClip);
-			this.groupEClip.Controls.Add(this.butEClipboard);
-			this.groupEClip.Controls.Add(this.butAllExamsEclip);
 			this.groupEClip.Location = new System.Drawing.Point(14, 293);
 			this.groupEClip.Name = "groupEClip";
 			this.groupEClip.Size = new System.Drawing.Size(289, 56);
@@ -969,27 +965,6 @@ namespace OpenDental {
 			this.butUnlockEClip.TabIndex = 93;
 			this.butUnlockEClip.Text = "Unlock";
 			this.butUnlockEClip.Click += new System.EventHandler(this.butUnlockEClip_Click);
-			// 
-			// butEClipboard
-			// 
-			this.butEClipboard.Image = global::OpenDental.Properties.Resources.arrowRightLine;
-			this.butEClipboard.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butEClipboard.Location = new System.Drawing.Point(2, 29);
-			this.butEClipboard.Name = "butEClipboard";
-			this.butEClipboard.Size = new System.Drawing.Size(90, 24);
-			this.butEClipboard.TabIndex = 92;
-			this.butEClipboard.Text = "Exam";
-			this.butEClipboard.Click += new System.EventHandler(this.butEClipboard_Click);
-			// 
-			// butAllExamsEclip
-			// 
-			this.butAllExamsEclip.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAllExamsEclip.Location = new System.Drawing.Point(98, 29);
-			this.butAllExamsEclip.Name = "butAllExamsEclip";
-			this.butAllExamsEclip.Size = new System.Drawing.Size(90, 24);
-			this.butAllExamsEclip.TabIndex = 91;
-			this.butAllExamsEclip.Text = "All Exams";
-			this.butAllExamsEclip.Click += new System.EventHandler(this.butAllExamsEclip_Click);
 			// 
 			// timerEClipCheck
 			// 
@@ -1214,8 +1189,6 @@ namespace OpenDental {
 		#endregion Controls
 
 		private UI.GroupBox groupEClip;
-		private UI.Button butEClipboard;
-		private UI.Button butAllExamsEclip;
 		private Timer timerEClipCheck;
 		private UI.Button butUnlockEClip;
 		private Label labelIsMobileActive;

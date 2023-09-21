@@ -729,8 +729,6 @@ namespace OpenDental{
 			butCopyNote.Enabled=!isEditingOnEClipBoard;
 			butCopyPrevious.Enabled=!isEditingOnEClipBoard;
 			butDelete.Enabled=!isEditingOnEClipBoard;
-			butEClipboard.Enabled=!isEditingOnEClipBoard;
-			butAllExamsEclip.Enabled=!isEditingOnEClipBoard;
 			butListen.Enabled=!isEditingOnEClipBoard;
 			butDefault.Enabled=!isEditingOnEClipBoard;
 			butUnlockEClip.Enabled=isEditingOnEClipBoard;
@@ -1575,47 +1573,6 @@ namespace OpenDental{
 //			RefreshListExams();
 //			gridODExam.SetSelected(examIndex,true);
 //		}
-
-		private void butAllExamsEclip_Click(object sender,EventArgs e) {
-			if(_patient==null) {
-				return;
-			}
-			contrPerio.SaveCurExam(_perioExam);
-			MobileDataByte funcInsertDataForUnlockCode(string unlockCode) {
-				if(MobileDataBytes.TryInsertPatientPerio(_patient,unlockCode,0,out string errorMsg,out MobileDataByte mobileDataByte)) {
-					return mobileDataByte;
-				}
-				MsgBox.Show(errorMsg);
-				return null;
-			};
-			using FormMobileCode formMobileCode=new FormMobileCode(funcInsertDataForUnlockCode);
-			formMobileCode.ShowDialog();
-			if(formMobileCode.HasMobileCodeBeenReceived) {
-				SetEClipBoardEditing(true);
-			}
-		}
-
-		private void butEClipboard_Click(object sender,EventArgs e) {
-			if(_perioExam==null || gridODExam.GetSelectedIndex()==-1) {
-				MsgBox.Show("No Perio exam selected, please select an exam first.");
-				return;
-			}
-			contrPerio.SaveCurExam(_perioExam);
-			Func<string,MobileDataByte> funcUnlock=InsertDataForUnlockCode;
-			using FormMobileCode formMobileCode=new FormMobileCode(funcUnlock);
-			formMobileCode.ShowDialog();
-			if(formMobileCode.HasMobileCodeBeenReceived) {
-				SetEClipBoardEditing(true);
-			}
-		}
-
-		private MobileDataByte InsertDataForUnlockCode(string unlockCode) {
-			if(MobileDataBytes.TryInsertPatientPerio(_patient,unlockCode,_perioExam.PerioExamNum,out string errorMsg,out MobileDataByte mobileDataByte)) {
-				return mobileDataByte;
-			}
-			MsgBox.Show(errorMsg);
-			return null;
-		}
 
 		private void butUnlockEClip_Click(object sender,EventArgs e) {
 			bool isExamInUse=MobileAppDevices.IsInUse(_patient.PatNum,MADPage.PerioExamEditPage,MADPage.PerioExamListPage);
