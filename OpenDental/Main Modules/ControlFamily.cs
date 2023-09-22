@@ -1191,6 +1191,10 @@ namespace OpenDental{
 					//the Select Patient window.
 					continue;
 				}
+				if(_family.ListPats[i].PatStatus==PatientStatus.Deleted) {
+					//Don't show deleted family members
+					continue;
+				}
 				row=new GridRow();
 				row.Cells.Add(_family.GetNameInFamLFI(i));
 				row.Cells.Add(Lan.g("enumPatientPosition",_family.ListPats[i].Position.ToString()));

@@ -1786,14 +1786,14 @@ namespace OpenDental {
 					Task task=Tasks.GetOne(taskNum);
 					if (task!=null) { //don't show the task search form and just open up the task that has been found
 						FormTaskEdit formTaskEdit=new FormTaskEdit(task);
-						formTaskEdit.Show(this);
+						formTaskEdit.Show();
 						return;
 					}
 				}
 			}
 			// if the tasknum was the same as last time then we have already tried this search once
 			FormTaskSearch formTaskbarSearch=new FormTaskSearch();
-			formTaskbarSearch.Show(this); //if there is no match, open the form as it normally would
+			formTaskbarSearch.Show(); //if there is no match, open the form as it normally would
 			// this doesn't need to be disposed of as it is not shown modally (https://stackoverflow.com/a/3097383)
 		}
 

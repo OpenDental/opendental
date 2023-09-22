@@ -979,7 +979,10 @@ namespace OpenDental {
 				if(sheetFieldDef==null) {
 					return;
 				}
-				if(sheetFieldDef.FieldType!=SheetFieldType.InputField && sheetFieldDef.FieldType!=SheetFieldType.CheckBox) {
+				if(sheetFieldDef.FieldType!=SheetFieldType.InputField 
+					&& sheetFieldDef.FieldType!=SheetFieldType.CheckBox 
+					&& sheetFieldDef.FieldType!=SheetFieldType.ComboBox) 
+				{
 					return;
 				}
 				if(_listSheetFieldDefsTabOrder.Contains(sheetFieldDef)) {

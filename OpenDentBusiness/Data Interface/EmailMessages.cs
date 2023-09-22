@@ -176,6 +176,8 @@ namespace OpenDentBusiness{
 			}
 			string fromAddress=POut.String(EmailMessages.GetAddressSimple(emailAddress.EmailUsername).Trim());
 			string recipientAddress=POut.String(emailAddress.EmailUsername.Trim());
+			string fromAddressSender=POut.String(EmailMessages.GetAddressSimple(emailAddress.SenderAddress).Trim());
+			string recipientAddressSender=POut.String(emailAddress.SenderAddress.Trim());
 			EmailPlatform emailTypesExcludeWebMail=EmailPlatform.All & ~EmailPlatform.WebMail;
 			List<EmailSentOrReceived> listReceivedTypes=GetReadTypes(emailTypesExcludeWebMail).Concat(GetUnreadTypes(emailTypesExcludeWebMail)).ToList();
 			string receivedTypesStr=string.Join(",",listReceivedTypes.Select(x => POut.Int((int)x)));
@@ -183,9 +185,18 @@ namespace OpenDentBusiness{
 			List<EmailSentOrReceived> listSentTypes=GetSentTypes(emailTypesExcludeAck);
 			string sentTypesStr=string.Join(",",listSentTypes.Select(x => POut.Int((int)x)));
 			string command=@"SELECT 
-				(CASE WHEN address.ToAddress='"+fromAddress+@"' THEN '' ELSE address.ToAddress END) ToAddress,
-				(CASE WHEN address.FromAddress='"+fromAddress+@"' THEN '' ELSE address.FromAddress END) FromAddress,
-				(CASE WHEN address.RecipientAddress='"+recipientAddress+@"' THEN '' ELSE address.RecipientAddress END) RecipientAddress,
+				(CASE
+					WHEN address.ToAddress IN ('"+fromAddress+@"', '"+fromAddressSender+@"') THEN '' 
+					ELSE address.ToAddress 
+				END) ToAddress,
+				(CASE
+					WHEN address.FromAddress IN ('"+fromAddress+@"', '"+fromAddressSender+@"') THEN '' 
+					ELSE address.FromAddress 
+				END) FromAddress,
+				(CASE
+					WHEN address.RecipientAddress IN ('"+recipientAddress+@"', '"+recipientAddressSender+@"') THEN '' 
+					ELSE address.RecipientAddress 
+				END) RecipientAddress,
 				address.CcAddress,
 				address.BccAddress
 				FROM (	
@@ -196,8 +207,8 @@ namespace OpenDentBusiness{
 					LEFT(emailmessage.CcAddress,500) CcAddress,
 					LEFT(emailmessage.BccAddress,500) BccAddress
 					FROM emailmessage
-					WHERE (SentOrReceived IN ("+receivedTypesStr+") AND RecipientAddress LIKE '%"+recipientAddress+"%') "
-						+"OR (SentOrReceived IN("+sentTypesStr+") AND FromAddress LIKE '%"+fromAddress+@"%') 
+					WHERE (SentOrReceived IN ("+receivedTypesStr+") AND (RecipientAddress LIKE '%"+recipientAddress+"%' OR RecipientAddress LIKE '%"+recipientAddressSender+"%')) "
+						+"OR (SentOrReceived IN("+sentTypesStr+") AND (FromAddress LIKE '%"+fromAddress+@"%' OR FromAddress LIKE '%"+fromAddressSender+@"%')) 
 			) address";
 			DataTable table=Db.GetTable(command);
 			List<EmailMessage> listMessages=new List<EmailMessage>();

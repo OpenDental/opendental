@@ -1213,6 +1213,11 @@ namespace OpenDentBusiness{
 				//adjustment row--------------------------------------------------------------------------------------
 				else if(type==typeof(TimeAdjust)) {
 					adjust=(TimeAdjust)mergedAL[i];
+					if(timeSpanPreviousHours!=TimeSpan.Zero) {//Add in previous pay period's hours for this week if the payperiod starts in the middle of the week.  Only need to do it once.
+						listWeek.Add(Tuple.Create(adjust.ClinicNum,timeSpanPreviousHours));
+						weekSpan+=timeSpanPreviousHours;
+						timeSpanPreviousHours=TimeSpan.Zero;
+					}
 					curDate=adjust.TimeEntry.Date;
 					if(!adjust.IsUnpaidProtectedLeave) {
 						//Adjust------------------------------

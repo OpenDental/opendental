@@ -274,20 +274,25 @@ namespace OpenDental{
 			_wordDocument=word_Application.Documents.Open(ref objectName,ref _objectMissing,ref _objectMissing,
 				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,
 				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing);
-			_wordDocument.Select();
-			word_MailMerge=_wordDocument.MailMerge;
-			//Attach the data file.
-			_wordDocument.MailMerge.OpenDataSource(dataFile,ref _objectMissing,ref _objectMissing,ref _objectMissing,
-				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,
-				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing);
-			word_MailMerge.Destination = Word.WdMailMergeDestination.wdSendToPrinter;
-			//WrdApp.ActivePrinter=pd.PrinterSettings.PrinterName;
-			//replaced with following 4 lines due to MS bug that changes computer default printer
-			object word_Basic = word_Application.WordBasic;
-			object[] objectArrayWBValues = new object[] { printDocument.PrinterSettings.PrinterName, 1 };
-			String[] stringArrayWBNames = new String[] { "Printer", "DoNotSetAsSysDefault" };
-			word_Basic.GetType().InvokeMember("FilePrintSetup", BindingFlags.InvokeMethod, null, word_Basic, objectArrayWBValues, null, null, stringArrayWBNames);
-			word_MailMerge.Execute(ref _objectFalse);
+			try {
+				_wordDocument.Select();
+				word_MailMerge=_wordDocument.MailMerge;
+				//Attach the data file.
+				_wordDocument.MailMerge.OpenDataSource(dataFile,ref _objectMissing,ref _objectMissing,ref _objectMissing,
+					ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,
+					ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing);
+				word_MailMerge.Destination = Word.WdMailMergeDestination.wdSendToPrinter;
+				//WrdApp.ActivePrinter=pd.PrinterSettings.PrinterName;
+				//replaced with following 4 lines due to MS bug that changes computer default printer
+				object word_Basic = word_Application.WordBasic;
+				object[] objectArrayWBValues = new object[] { printDocument.PrinterSettings.PrinterName, 1 };
+				String[] stringArrayWBNames = new String[] { "Printer", "DoNotSetAsSysDefault" };
+				word_Basic.GetType().InvokeMember("FilePrintSetup", BindingFlags.InvokeMethod, null, word_Basic, objectArrayWBValues, null, null, stringArrayWBNames);
+				word_MailMerge.Execute(ref _objectFalse);
+			}
+			catch {//Catches UE after hitting cancel
+				return;
+			}
 			if(letterMerge.ImageFolder!=0) {//if image folder exist for this letter, save to AtoZ folder
 				try {
 					_wordDocument.Select();

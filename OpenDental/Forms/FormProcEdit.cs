@@ -2523,7 +2523,12 @@ namespace OpenDental {
 			#endregion Additional UI syncing (_procedure fields). In Canada, Procedures.SetCanadianEditFields(...) can also create and/or update rows in the DB.
 			//Last chance to run this code before Proc gets updated.
 			Procedures.TryValidateProcFee(_procedure,_procedureOld,_patient,_listFees,_listPatPlans,_listInsSubs,_listInsPlans,_listBenefits,funcYesNoPrompt);
-			Procedures.TryAutoCodesPrompt(ref _procedure,_procedureOld,_procedureCode,(listBoxTeeth.SelectedIndices.Count < 1),_patient,ref _listClaimProcs,funcPromptFormACLI);
+			bool doClose=Procedures.TryAutoCodesPrompt(ref _procedure,_procedureOld,_procedureCode,(listBoxTeeth.SelectedIndices.Count < 1),_patient,ref _listClaimProcs,funcPromptFormACLI);
+			if(!doClose) {
+				//Preference is on to require use of suggested auto codes, but user didn't accept suggested code.
+				//Keep them on this window so they can select a treatment area appropriate for their current code.
+				return;
+			}
 			bool isProcLinkedToOrthoCase=Procedures.IsProcLinkedToOrthoCase(_procedureOld,_procedure,ref _orthoProcLink);
 			//The actual update----------------------------------------------------------------------------------------------------------------------------------
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA") && _procedure.ProcNumLab!=0) {
