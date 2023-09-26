@@ -5024,6 +5024,10 @@ namespace OpenDental {
 				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleData(0,isFullRefresh);
 			}
+			if(Pd.Patient!=null && Pd.Patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(Permissions.ArchivedPatientSelect,suppressMessage:true)) {
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
+				RefreshModuleData(0,isFullRefresh);
+			}
 			if(PrefC.IsODHQ) {
 				odInternalCustomerGrids.Visible=true;
 				odInternalCustomerGrids.BringToFront();

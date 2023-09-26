@@ -379,7 +379,7 @@ namespace OpenDentBusiness{
 			return ret;
 		}
 
-		public static long InsertFromCareCredit(long patNum,long provNum,long clinicNum,double amount,string payNote,CreditCardSource ccSource) {
+		public static long InsertFromCareCredit(long patNum,long provNum,long clinicNum,double amount,string payNote,CreditCardSource ccSource,double merchantFee=0) {
 			Payment payment=new Payment();
 			payment.ClinicNum=clinicNum;
 			payment.IsRecurringCC=false;
@@ -392,6 +392,7 @@ namespace OpenDentBusiness{
 				ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,clinicNum));
 			payment.ProcessStatus=ProcessStat.OnlinePending;
 			payment.PayNote=payNote;
+			payment.MerchantFee=merchantFee;
 			payment.IsCcCompleted=true;
 			if(PrefC.GetBool(PrefName.OnlinePaymentsMarkAsProcessed)) {
 				payment.ProcessStatus=ProcessStat.OnlineProcessed;

@@ -194,6 +194,10 @@ namespace OpenDental {
 				return;
 			}
 			DynamicPayPlanRowData rowData = (DynamicPayPlanRowData)gridCharges.ListGridRows[index].Tag;
+			if(rowData.IsDownPayment) {
+				MsgBox.Show(Lan.g(this,"Down payment charges cannot be altered. To make changes to the down payment, the current payment plan will need to be deleted and a new payment plan created in its place."));
+				return;
+			}
 			//Only charge rows can be edited
 			if(!rowData.IsChargeRow()) {
 				return;
@@ -506,9 +510,10 @@ namespace OpenDental {
 			using FormPayPlanTemplates formPayPlanTemplates=new FormPayPlanTemplates();
 			formPayPlanTemplates.IsSelectionMode=true;
 			formPayPlanTemplates.ShowDialog();
-			if(formPayPlanTemplates.DialogResult==DialogResult.Cancel) {//Apply template to plan terms
+			if(formPayPlanTemplates.DialogResult==DialogResult.Cancel || formPayPlanTemplates.PayPlanTemplateCur==null) {
 				return;
 			}
+			//Apply template to plan terms
 			PayPlanTemplate payPlanTemplate=formPayPlanTemplates.PayPlanTemplateCur;
 			if(PIn.Double(textDownPayment.Text)!=payPlanTemplate.DownPayment && textDownPayment.ReadOnly) { 
 				if(!MsgBox.Show(MsgBoxButtons.YesNo,"You cannot change the downpayment. Would you like to apply everything else from the template?")) {
@@ -843,6 +848,10 @@ namespace OpenDental {
 				return;
 			}
 			DynamicPayPlanRowData rowData=(DynamicPayPlanRowData)gridCharges.ListGridRows[e.Row].Tag;
+			if(rowData.IsDownPayment) {
+				MsgBox.Show(Lan.g(this,"Down payment charges cannot be altered. To make changes to the down payment, the current payment plan will need to be deleted and a new payment plan created in its place."));
+				return;
+			}
 			if(rowData.IsChargeRow()) {
 				List<PayPlanCharge> listPayPlanCharges=_dynamicPaymentPlanData.ListPayPlanChargesDb.FindAll(x=>rowData.ListPayPlanChargeNums.Contains(x.PayPlanChargeNum));
 				if(listPayPlanCharges.Count==0) {

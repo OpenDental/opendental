@@ -439,5 +439,16 @@ namespace OpenDentBusiness {
 			//End I44056
 		}//End of To23_2_19() method
 
+		private static void To23_2_21(){
+			string command="SELECT ProgramNum FROM program WHERE ProgName='Scanora'";
+			long programNum=Db.GetLong(command);
+			command="UPDATE programproperty "+
+				"SET PropertyValue='"+POut.String(@"C:\ProgramData\Scanora\Scanora.ini")+"' "+
+				"WHERE ProgramNum="+POut.Long(programNum)+" "+
+				"AND PropertyDesc='"+POut.String("Import.ini path")+"' "+
+				"AND PropertyValue='"+POut.String(@"C:\Scanora\Scanora.ini")+"'";
+			Db.NonQ(command);
+		}//End of To23_2_21 method
+
 	}
 }

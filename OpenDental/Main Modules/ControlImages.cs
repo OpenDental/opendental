@@ -1457,6 +1457,15 @@ namespace OpenDental {
 					FriendlyException.Show(Lan.g(this,"Error accessing images."),ex);
 				}
 			}
+			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(Permissions.ArchivedPatientSelect,suppressMessage:true)) {
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
+				try {
+					RefreshModuleData(0);
+				}
+				catch(Exception ex) {//Exception should never throw because RefreshModuleData() will return when PatNum is zero.
+					FriendlyException.Show(Lan.g(this,"Error accessing images."),ex);
+				}
+			}
 			RefreshModuleScreen();
 			if(panelNote.Visible) {//Notes and sig box may have been visible previously, with info from another image/patient
 				panelNote.Visible=false;

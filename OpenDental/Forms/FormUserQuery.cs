@@ -118,7 +118,17 @@ namespace OpenDental {
 			if(_doSubmitOnLoad) {
 				//Coming from FormOpenDental menu item click for query favorites.
 				//Existence in this list is taken to mean sql in these queries is considered safe to run.
-				SubmitQueryThreaded(true);
+				bool isAllowed=false;
+				try {
+					isAllowed=Db.IsSqlAllowed(textQuery.Text);
+				}
+				catch (Exception ex) {
+					MsgBox.Show(this,ex.Message);
+					return;
+				}
+				if(isAllowed) {
+					SubmitQueryThreaded(true);
+				}
 			}
 		}
 

@@ -641,6 +641,8 @@ namespace OpenDental {
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupAddPt);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "FormPatientSelect";
 			this.ShowInTaskbar = false;
 			this.Text = "Select Patient";

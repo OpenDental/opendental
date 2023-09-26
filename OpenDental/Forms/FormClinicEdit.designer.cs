@@ -946,9 +946,9 @@ namespace OpenDental {
 			// 
 			// labelInsAutoReceiveNoAssign
 			// 
-			this.labelInsAutoReceiveNoAssign.Location = new System.Drawing.Point(553, 347);
+			this.labelInsAutoReceiveNoAssign.Location = new System.Drawing.Point(517, 347);
 			this.labelInsAutoReceiveNoAssign.Name = "labelInsAutoReceiveNoAssign";
-			this.labelInsAutoReceiveNoAssign.Size = new System.Drawing.Size(269, 17);
+			this.labelInsAutoReceiveNoAssign.Size = new System.Drawing.Size(306, 17);
 			this.labelInsAutoReceiveNoAssign.TabIndex = 278;
 			this.labelInsAutoReceiveNoAssign.Text = "Auto receive claims with no assignment of benefits";
 			this.labelInsAutoReceiveNoAssign.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

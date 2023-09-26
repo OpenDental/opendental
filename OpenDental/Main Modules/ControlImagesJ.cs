@@ -464,6 +464,15 @@ namespace OpenDental
 					FriendlyException.Show(Lan.g(this,"Error accessing images."),ex);
 				}
 			}
+			if(_patCur!=null && _patCur.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(Permissions.ArchivedPatientSelect,suppressMessage:true)) {
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
+				try {
+					RefreshModuleData(0);
+				}
+				catch(Exception ex) {//Exception should never throw because RefreshModuleData() will return when PatNum is zero.
+					FriendlyException.Show(Lan.g(this,"Error accessing images."),ex);
+				}
+			}
 			RefreshModuleScreen();
 			if(docNum!=0) {
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,docNum));

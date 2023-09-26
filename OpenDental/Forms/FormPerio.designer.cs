@@ -117,7 +117,6 @@ namespace OpenDental {
 			this.labelListening = new System.Windows.Forms.Label();
 			this.labelNotes = new System.Windows.Forms.Label();
 			this.butCopyNote = new OpenDental.UI.Button();
-			this.groupEClip = new OpenDental.UI.GroupBox();
 			this.labelIsMobileActive = new System.Windows.Forms.Label();
 			this.butUnlockEClip = new OpenDental.UI.Button();
 			this.timerEClipCheck = new System.Windows.Forms.Timer(this.components);
@@ -127,7 +126,6 @@ namespace OpenDental {
 			this.gridODExam = new OpenDental.UI.GridOD();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
-			this.groupEClip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -933,33 +931,23 @@ namespace OpenDental {
 			this.butCopyNote.Text = "Copy Note";
 			this.butCopyNote.Click += new System.EventHandler(this.butCopyNote_Click);
 			// 
-			// groupEClip
-			// 
-			this.groupEClip.Controls.Add(this.labelIsMobileActive);
-			this.groupEClip.Controls.Add(this.butUnlockEClip);
-			this.groupEClip.Location = new System.Drawing.Point(14, 293);
-			this.groupEClip.Name = "groupEClip";
-			this.groupEClip.Size = new System.Drawing.Size(289, 56);
-			this.groupEClip.TabIndex = 92;
-			this.groupEClip.Text = "Send to eClipboard";
-			// 
 			// labelIsMobileActive
 			// 
 			this.labelIsMobileActive.ForeColor = System.Drawing.Color.ForestGreen;
 			this.labelIsMobileActive.Image = global::OpenDental.Properties.Resources.record;
 			this.labelIsMobileActive.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.labelIsMobileActive.Location = new System.Drawing.Point(145, 2);
+			this.labelIsMobileActive.Location = new System.Drawing.Point(113, 295);
 			this.labelIsMobileActive.Name = "labelIsMobileActive";
-			this.labelIsMobileActive.Size = new System.Drawing.Size(139, 19);
+			this.labelIsMobileActive.Size = new System.Drawing.Size(122, 19);
 			this.labelIsMobileActive.TabIndex = 93;
 			this.labelIsMobileActive.Text = "Editing on Mobile";
-			this.labelIsMobileActive.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelIsMobileActive.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.labelIsMobileActive.Visible = false;
 			// 
 			// butUnlockEClip
 			// 
 			this.butUnlockEClip.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butUnlockEClip.Location = new System.Drawing.Point(194, 29);
+			this.butUnlockEClip.Location = new System.Drawing.Point(17, 292);
 			this.butUnlockEClip.Name = "butUnlockEClip";
 			this.butUnlockEClip.Size = new System.Drawing.Size(90, 24);
 			this.butUnlockEClip.TabIndex = 93;
@@ -1020,9 +1008,10 @@ namespace OpenDental {
 			// FormPerio
 			// 
 			this.ClientSize = new System.Drawing.Size(1231, 696);
+			this.Controls.Add(this.butUnlockEClip);
+			this.Controls.Add(this.labelIsMobileActive);
 			this.Controls.Add(this.menuMain);
 			this.Controls.Add(this.butDefault);
-			this.Controls.Add(this.groupEClip);
 			this.Controls.Add(this.butCopyNote);
 			this.Controls.Add(this.textExamNotes);
 			this.Controls.Add(this.labelNotes);
@@ -1089,7 +1078,6 @@ namespace OpenDental {
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
-			this.groupEClip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1187,8 +1175,6 @@ namespace OpenDental {
 		//private OpenDental.ContrPerio gridP;
 		//private OpenDental.ContrPerio contrPerio1;
 		#endregion Controls
-
-		private UI.GroupBox groupEClip;
 		private Timer timerEClipCheck;
 		private UI.Button butUnlockEClip;
 		private Label labelIsMobileActive;

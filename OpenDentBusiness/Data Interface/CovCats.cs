@@ -239,6 +239,11 @@ namespace OpenDentBusiness {
 			return CovCats.GetFirstOrDefault(x => x.EbenefitCat==eben,true);
 		}
 
+		public static CovCat GetForDesc(string description) {
+			//No need to check Middletier; no call to db.
+			return CovCats.GetFirstOrDefault(x => x.Description==description,true);
+		}
+
 		///<summary>If none assigned, it will return None.</summary>
 		public static EbenefitCategory GetEbenCat(long covCatNum) {
 			//No need to check MiddleTierRole; no call to db.
@@ -254,23 +259,49 @@ namespace OpenDentBusiness {
 		public static void SetOrdersToDefault() {
 			//This can only be run if the validation checks have been run first.
 			//No need to check MiddleTierRole; no call to db.
-			SetOrder(GetForEbenCat(EbenefitCategory.General),0);
-			SetOrder(GetForEbenCat(EbenefitCategory.Diagnostic),1);
-			SetOrder(GetForEbenCat(EbenefitCategory.DiagnosticXRay),2);
-			SetOrder(GetForEbenCat(EbenefitCategory.RoutinePreventive),3);
-			SetOrder(GetForEbenCat(EbenefitCategory.Restorative),4);
-			SetOrder(GetForEbenCat(EbenefitCategory.Endodontics),5);
-			SetOrder(GetForEbenCat(EbenefitCategory.Periodontics),6);
-			SetOrder(GetForEbenCat(EbenefitCategory.OralSurgery),7);
-			SetOrder(GetForEbenCat(EbenefitCategory.Crowns),8);
-			SetOrder(GetForEbenCat(EbenefitCategory.Prosthodontics),9);
-			SetOrder(GetForEbenCat(EbenefitCategory.MaxillofacialProsth),10);
-			SetOrder(GetForEbenCat(EbenefitCategory.Accident),11);
-			SetOrder(GetForEbenCat(EbenefitCategory.Orthodontics),12);
-			SetOrder(GetForEbenCat(EbenefitCategory.Adjunctive),13);
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				SetOrder(GetForEbenCat(EbenefitCategory.General),0);
+				SetOrder(GetForEbenCat(EbenefitCategory.Diagnostic),1);
+				SetOrder(GetForEbenCat(EbenefitCategory.DiagnosticXRay),2);
+				SetOrder(GetForEbenCat(EbenefitCategory.RoutinePreventive),3);
+				SetOrder(GetForEbenCat(EbenefitCategory.Restorative),4);
+				SetOrder(GetForEbenCat(EbenefitCategory.Crowns),5);
+				SetOrder(GetForEbenCat(EbenefitCategory.Endodontics),6);
+				SetOrder(GetForEbenCat(EbenefitCategory.Periodontics),7);
+				SetOrder(GetForEbenCat(EbenefitCategory.Prosthodontics),8);
+				SetOrder(GetForEbenCat(EbenefitCategory.MaxillofacialProsth),9);
+				SetOrder(GetForEbenCat(EbenefitCategory.OralSurgery),10);
+				SetOrder(GetForEbenCat(EbenefitCategory.Orthodontics),11);
+				SetOrder(GetForEbenCat(EbenefitCategory.Adjunctive),12);
+				SetOrder(GetForDesc("Implants"),13);
+				SetOrder(GetForEbenCat(EbenefitCategory.Accident),14);
+				SetOrder(GetForDesc("SC/RP"),15);
+			}
+			else {
+				SetOrder(GetForEbenCat(EbenefitCategory.General),0);
+				SetOrder(GetForEbenCat(EbenefitCategory.Diagnostic),1);
+				SetOrder(GetForEbenCat(EbenefitCategory.DiagnosticXRay),2);
+				SetOrder(GetForEbenCat(EbenefitCategory.RoutinePreventive),3);
+				SetOrder(GetForEbenCat(EbenefitCategory.Restorative),4);
+				SetOrder(GetForEbenCat(EbenefitCategory.Endodontics),5);
+				SetOrder(GetForEbenCat(EbenefitCategory.Periodontics),6);
+				SetOrder(GetForEbenCat(EbenefitCategory.OralSurgery),7);
+				SetOrder(GetForEbenCat(EbenefitCategory.Crowns),8);
+				SetOrder(GetForEbenCat(EbenefitCategory.Prosthodontics),9);
+				SetOrder(GetForEbenCat(EbenefitCategory.MaxillofacialProsth),10);
+				SetOrder(GetForEbenCat(EbenefitCategory.Accident),11);
+				SetOrder(GetForEbenCat(EbenefitCategory.Orthodontics),12);
+				SetOrder(GetForEbenCat(EbenefitCategory.Adjunctive),13);
+			}
 			//now set the remaining categories to come after the ebens.
 			int idx=14;
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				idx=16;
+			}
 			List<CovCat> listCovCatsShort=CovCats.GetWhere(x => x.EbenefitCat==EbenefitCategory.None,true);
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				listCovCatsShort.RemoveAll(x => x.Description=="Implants" || x.Description=="SC/RP");
+			}
 			for(int i=0;i<listCovCatsShort.Count;i++) {
 				SetOrder(listCovCatsShort[i],idx);
 				idx++;
@@ -421,14 +452,14 @@ namespace OpenDentBusiness {
 			RecreateSpansForCategory(EbenefitCategory.Prosthodontics,"50000-56999","58000-69999");
 			RecreateSpansForCategory(EbenefitCategory.MaxillofacialProsth,"57000-57999");
 			RecreateSpansForCategory(EbenefitCategory.OralSurgery,"70000-79999");
-			RecreateSpansForCategory(EbenefitCategory.Orthodontics,"80000-89999");
-			RecreateSpansForCategory(EbenefitCategory.Adjunctive,"90000-99999");
+			RecreateSpansForCategory(EbenefitCategory.Orthodontics,"01901-01901","80000-89999","93330-93349");
+			RecreateSpansForCategory(EbenefitCategory.Adjunctive,"90000-93329","93350-99999");
+			RecreateSpansForCategoryCanada("Implants","79900-79999");
 			RecreateSpansForCategory(EbenefitCategory.Accident);
+			RecreateSpansForCategoryCanada("SC/RP","11111-11119","43421-43429");
 		}
 
-		///<summary>Deletes the current CovSpans for the given eBenefitCategory, then creates new code ranges from the ranges specified in arrayCodeRanges.  The values in arrayCodeRanges can be a single code such as "D0120" or a code range such as "D9000-D9999".</summary>
-		private static void RecreateSpansForCategory(EbenefitCategory eBenefitCategory,params string[] arrayCodeRanges) {
-			long covCatNum=GetForEbenCat(eBenefitCategory).CovCatNum;
+		private static void SetSpansForCovCatNum(long covCatNum,params string[] arrayCodeRanges) {
 			CovSpans.DeleteForCat(covCatNum);
 			for(int i=0;i<arrayCodeRanges.Length;i++) {
 				string codeRange=arrayCodeRanges[i];
@@ -444,6 +475,26 @@ namespace OpenDentBusiness {
 				}
 				CovSpans.Insert(span);
 			}
+		}
+
+		///<summary>Deletes the current CovSpans for the given eBenefitCategory, then creates new code ranges from the ranges specified in arrayCodeRanges.  The values in arrayCodeRanges can be a single code such as "D0120" or a code range such as "D9000-D9999".</summary>
+		private static void RecreateSpansForCategory(EbenefitCategory eBenefitCategory,params string[] arrayCodeRanges) {
+			SetSpansForCovCatNum(GetForEbenCat(eBenefitCategory).CovCatNum,arrayCodeRanges);
+		}
+
+		private static void RecreateSpansForCategoryCanada(string categoryName,params string[] arrayCodeRanges) {
+			CovCat covCat=GetForDesc(categoryName);
+			if(covCat==null) {
+				covCat=new CovCat();
+				covCat.Description=categoryName;
+				covCat.EbenefitCat=EbenefitCategory.None;
+				covCat.DefaultPercent=-1;
+				covCat.CovOrder=CovCats.GetDeepCopy().Count;
+				covCat.IsHidden=false;
+				CovCats.Insert(covCat);
+				CovCats.RefreshCache();
+			}
+			SetSpansForCovCatNum(covCat.CovCatNum,arrayCodeRanges);
 		}
 	}
 

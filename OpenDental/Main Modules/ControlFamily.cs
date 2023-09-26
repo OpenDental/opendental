@@ -564,6 +564,10 @@ namespace OpenDental{
 				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleData(0);
 			}
+			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(Permissions.ArchivedPatientSelect,suppressMessage:true)) {
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
+				RefreshModuleData(0);
+			}
 			RefreshModuleScreen();
 			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_loadData);
 			Plugins.HookAddCode(this,"ContrFamily.ModuleSelected_end",patNum);
