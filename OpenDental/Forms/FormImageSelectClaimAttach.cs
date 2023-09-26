@@ -24,6 +24,8 @@ namespace OpenDental{
 		public bool CanAttachTxt=false;
 		///<summary>Set to true to allow DOC/DOCX files.</summary>
 		public bool CanAttachDoc=false;
+		/// <summary>Set to true to allow PDF files.</summary>
+		public bool CanAttachPdf=false;
 		private static readonly string _snipSketchURI="ms-screensketch";
 		///<summary> Keeps track of how long we've been trying to kill all running Snip Tool processes </summary>
 		private Stopwatch _stopwatchKillSnipToolProcesses=new Stopwatch();
@@ -155,6 +157,8 @@ namespace OpenDental{
 				}
 				else if(CanAttachDoc && Path.GetExtension(document.FileName).ToLower().In(".doc",".docx")) {
 				}
+				else if(CanAttachPdf && Path.GetExtension(document.FileName).ToLower()==".pdf") {
+				}
 				else {
 					List<string> listAllowedFormats=new List<string>() { "images" };
 					if(CanAttachTxt) {
@@ -163,7 +167,10 @@ namespace OpenDental{
 					if(CanAttachDoc) {
 						listAllowedFormats.Add("Microsoft Word (doc/docx)");
 					}
-					MsgBox.Show(this,"Invalid file.  Only "+string.Join(",",listAllowedFormats)+" may be attached, no other file formats.");
+					if(CanAttachPdf) {
+						listAllowedFormats.Add("PDF");
+					}
+					MsgBox.Show(this,"Invalid file. Only "+string.Join(", ",listAllowedFormats)+" may be attached, no other file formats.");
 					return;
 				}
 			}
@@ -461,6 +468,8 @@ namespace OpenDental{
 				if(CanAttachTxt && extension.ToLower()==".txt") {
 				}
 				else if(CanAttachDoc && extension.ToLower().In(".doc",".docx")) {
+				}
+				else if(CanAttachPdf && extension.ToLower()==".pdf") {
 				}
 				else {
 					MsgBox.Show(Lan.g(this,"The file does not have a valid format. Please try again or call support."));

@@ -1017,7 +1017,7 @@ namespace OpenDental{
 								_errorProvider.SetError(textMedicaidState,Lan.g(this,"Invalid state abbreviation"));
 							}
 						}
-						CheckMedicaidIDLength();						
+						CheckMedicaidIDLength();
 						break;
 					case RequiredFieldName.MiddleInitial:
 						SetRequiredTextBox(labelPreferredAndMiddleI,textMiddleI,areConditionsMet);
@@ -1377,6 +1377,7 @@ namespace OpenDental{
 		private void CheckMedicaidIDLength() {
 			int reqLength=StateAbbrs.GetMedicaidIDLength(textMedicaidState.Text);
 			if(reqLength==0 || reqLength==textMedicaidID.Text.Length) {
+				_errorProvider.SetError(textMedicaidID, "");
 				return;
 			}
 			_isMissingRequiredFields=true;

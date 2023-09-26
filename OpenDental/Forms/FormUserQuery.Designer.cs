@@ -150,7 +150,7 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(127, 16);
+			this.label2.Location = new System.Drawing.Point(132, 16);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(113, 18);
 			this.label2.TabIndex = 18;
@@ -159,7 +159,7 @@ namespace OpenDental {
 			// 
 			// comboAlignment
 			// 
-			this.comboAlignment.Location = new System.Drawing.Point(243, 14);
+			this.comboAlignment.Location = new System.Drawing.Point(248, 14);
 			this.comboAlignment.Name = "comboAlignment";
 			this.comboAlignment.Size = new System.Drawing.Size(121, 21);
 			this.comboAlignment.TabIndex = 18;
@@ -171,7 +171,7 @@ namespace OpenDental {
 			this.radioHuman.Checked = true;
 			this.radioHuman.Location = new System.Drawing.Point(6, 20);
 			this.radioHuman.Name = "radioHuman";
-			this.radioHuman.Size = new System.Drawing.Size(108, 16);
+			this.radioHuman.Size = new System.Drawing.Size(125, 18);
 			this.radioHuman.TabIndex = 0;
 			this.radioHuman.TabStop = true;
 			this.radioHuman.Text = "Human-readable";
@@ -180,7 +180,7 @@ namespace OpenDental {
 			// checkNumberedRows
 			// 
 			this.checkNumberedRows.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkNumberedRows.Location = new System.Drawing.Point(120, 39);
+			this.checkNumberedRows.Location = new System.Drawing.Point(125, 39);
 			this.checkNumberedRows.Name = "checkNumberedRows";
 			this.checkNumberedRows.Size = new System.Drawing.Size(138, 18);
 			this.checkNumberedRows.TabIndex = 21;
@@ -191,7 +191,7 @@ namespace OpenDental {
 			// 
 			this.radioRaw.Location = new System.Drawing.Point(6, 43);
 			this.radioRaw.Name = "radioRaw";
-			this.radioRaw.Size = new System.Drawing.Size(104, 16);
+			this.radioRaw.Size = new System.Drawing.Size(104, 18);
 			this.radioRaw.TabIndex = 1;
 			this.radioRaw.Text = "Raw";
 			this.radioRaw.Click += new System.EventHandler(this.radioRaw_Click);
@@ -199,7 +199,7 @@ namespace OpenDental {
 			// checkWordWrap
 			// 
 			this.checkWordWrap.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkWordWrap.Location = new System.Drawing.Point(120, 59);
+			this.checkWordWrap.Location = new System.Drawing.Point(125, 59);
 			this.checkWordWrap.Name = "checkWordWrap";
 			this.checkWordWrap.Size = new System.Drawing.Size(138, 18);
 			this.checkWordWrap.TabIndex = 20;

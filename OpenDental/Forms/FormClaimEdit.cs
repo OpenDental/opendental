@@ -2542,6 +2542,7 @@ namespace OpenDental{
 			formImageSelectClaimAttach.PatNum=_claim.PatNum;
 			formImageSelectClaimAttach.CanAttachTxt=true;
 			formImageSelectClaimAttach.CanAttachDoc=true;
+			formImageSelectClaimAttach.CanAttachPdf=true;
 			formImageSelectClaimAttach.ShowDialog();
 			if(formImageSelectClaimAttach.DialogResult!=DialogResult.OK) {
 				return;
