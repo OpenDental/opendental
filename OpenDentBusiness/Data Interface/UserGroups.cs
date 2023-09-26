@@ -80,6 +80,18 @@ namespace OpenDentBusiness{
 			return GetWhere(x => includeCEMT || x.UserGroupNumCEMT==0);
 		}
 
+		///<summary>Gets a list of usergroups for the API. Set doIncludeCEMT true to include CEMT usergroups.</summary>
+		public static List<UserGroup> GetListForApi(bool doIncludeCEMT) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<UserGroup>>(MethodBase.GetCurrentMethod(),doIncludeCEMT);
+			}
+			string command="SELECT * FROM usergroup ";
+			if(!doIncludeCEMT) {
+				command+=" WHERE UserGroupNumCEMT=0";
+			}
+			return Crud.UserGroupCrud.SelectMany(command);
+		}
+
 		///<summary></summary>
 		public static void Update(UserGroup group){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

@@ -586,7 +586,6 @@ namespace OpenDental{
 			}
 			if(gridCharges.ListGridRows[e.Row].Tag.GetType()==typeof(PayPlanCharge)) {
 				PayPlanCharge payPlanCharge=(PayPlanCharge)gridCharges.ListGridRows[e.Row].Tag;
-				PayPlanCharge payPlanChargeOld=payPlanCharge.Copy();
 				double payPlanChargeOldAmt=payPlanCharge.Principal;
 				using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(payPlanCharge,_payPlan);//This automatically takes care of our in-memory list because the Tag is referencing our list of objects.
 				formPayPlanChargeEdit.ShowDialog();
@@ -615,7 +614,7 @@ namespace OpenDental{
 					}
 					textAmount.Text=(PIn.Double(textAmount.Text)+(amtChanged)).ToString("f");
 				}
-				if(formPayPlanChargeEdit.PayPlanChargeCur!=payPlanChargeOld) {
+				if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
 					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
 					_listLogs.Add(log);
 				}

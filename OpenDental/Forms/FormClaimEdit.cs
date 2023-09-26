@@ -2120,13 +2120,11 @@ namespace OpenDental{
 				Procedure procedure=Procedures.GetOneProc(_listClaimProcs[i].ProcNum,false);
 				ProcMultiVisits.UpdateGroupForProc(procedure.ProcNum,procedure.ProcStatus);
 			}
-			_claim.ClaimStatus="W";
-			if(listClaimProcsOriginal.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum))) {
-				_claim.ClaimStatus="I";
+			if(!listClaimProcsOriginal.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum)) && _claim.ClaimStatus=="I") {
+				_claim.ClaimStatus="W";
 			}
-			claimSplit.ClaimStatus="W";
-			if(listClaimProcsToSplit.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum))) {
-				claimSplit.ClaimStatus="I";
+			if(!listClaimProcsToSplit.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum)) && claimSplit.ClaimStatus=="I") {
+				claimSplit.ClaimStatus="W";
 			}
 			Claims.Update(claimSplit);
 			ClaimStatus claimStatus=_listClaimStatuses.Where(x=>x.GetDescription(useShortVersionIfAvailable:true)==_claim.ClaimStatus).FirstOrDefault();
@@ -2567,6 +2565,7 @@ namespace OpenDental{
 			formImageSelectClaimAttach.PatNum=_claim.PatNum;
 			formImageSelectClaimAttach.CanAttachTxt=true;
 			formImageSelectClaimAttach.CanAttachDoc=true;
+			formImageSelectClaimAttach.CanAttachPdf=true;
 			formImageSelectClaimAttach.ShowDialog();
 			if(formImageSelectClaimAttach.DialogResult!=DialogResult.OK) {
 				return;

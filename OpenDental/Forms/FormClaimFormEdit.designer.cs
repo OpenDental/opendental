@@ -415,6 +415,7 @@ namespace OpenDental {
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.panelControls);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MinimizeBox = false;
 			this.Name = "FormClaimFormEdit";
 			this.ShowInTaskbar = false;
 			this.Text = "Claim Form Edit";

@@ -2294,6 +2294,10 @@ namespace OpenDental {
 				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleData(0,isSelectingFamily);
 			}
+			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(Permissions.ArchivedPatientSelect,suppressMessage:true)) {
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
+				RefreshModuleData(0,isSelectingFamily);
+			}
 			Logger.LogAction("RefreshModuleScreen",LogPath.AccountModule,() => RefreshModuleScreen(isSelectingFamily));
 			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_loadData);
 			Plugins.HookAddCode(this,"ContrAccount.ModuleSelected_end",patNum,isSelectingFamily);
