@@ -516,7 +516,7 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			EmailAddress emailAddress=emailPreview.EmailAddressPreview;
 			try {
-				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.BodyText,_emailMessage.EmailMessageNum,emailAddress,isAck:true);//If decryption is successful, sets status to ReceivedDirect.		
+				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.BodyText,_emailMessage.EmailMessageNum,emailAddress,isAck:true,_emailMessage.SentOrReceived);//Does not change read status of email regardless of success.
 			}
 			catch(Exception ex) {
 				MessageBox.Show(Lan.g(this,"Decryption failed.")+"\r\n"+ex.Message);
@@ -525,8 +525,6 @@ namespace OpenDental {
 				Cursor=Cursors.Default;
 				return;
 			}
-			//The Direct message was decrypted.
-			EmailMessages.UpdateSentOrReceivedRead(_emailMessage);//Mark read, because we are already viewing the message within the current window.
 			RefreshAll();
 			DidEmailChange=true;	
 			Cursor=Cursors.Default;
@@ -606,7 +604,7 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			EmailAddress emailAddress=emailPreview.EmailAddressPreview;
 			try {
-				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.RawEmailIn,_emailMessage.EmailMessageNum,emailAddress,isAck:false);
+				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.RawEmailIn,_emailMessage.EmailMessageNum,emailAddress,isAck:false,_emailMessage.SentOrReceived);//Does not change read status of email regardless of success.
 			}
 			catch(Exception ex) {
 				MessageBox.Show(Lan.g(this,"Refreshing failed.")+"\r\n"+ex.Message);
@@ -614,7 +612,6 @@ namespace OpenDental {
 				return;
 			}
 			Cursor=Cursors.Default;
-			EmailMessages.UpdateSentOrReceivedRead(_emailMessage);//Mark read, because we are already viewing the message within the current window.
 			RefreshAll();
 			DidEmailChange=true;
 		}

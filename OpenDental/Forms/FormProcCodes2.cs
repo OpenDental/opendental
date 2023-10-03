@@ -230,10 +230,10 @@ namespace OpenDental {
 					List<long> listFeeSchedNumsSelected=new List<long>() { feeSchedNum1Selected,feeSchedNum2Selected,feeSchedNum3Selected }.FindAll(x => x>0);
 					List<FeeSchedGroup> listFeeSchedGroups=FeeSchedGroups.GetListFeeSchedGroups(listFeeSchedNumsSelected);
 					List<long> listClinicNums=_listClinics.Select(x => x.ClinicNum).ToList();
+					List<FeeSchedGroup> listFeeSchedGroups1=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedNum1Selected);
+					List<FeeSchedGroup> listFeeSchedGroups2=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedNum2Selected);
+					List<FeeSchedGroup> listFeeSchedGroups3=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedNum3Selected);
 					for(int i = 0;i<listClinicNums.Count();i++) {
-						List<FeeSchedGroup> listFeeSchedGroups1=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedGroupNum1Selected);
-						List<FeeSchedGroup> listFeeSchedGroups2=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedGroupNum2Selected);
-						List<FeeSchedGroup> listFeeSchedGroups3=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedGroupNum3Selected);
 						if(feeSchedNum1Selected>0 
 							&& checkGroups1.Checked 
 							&& listFeeSchedGroups1.Count>0)

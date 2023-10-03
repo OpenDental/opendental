@@ -356,7 +356,7 @@ namespace OpenDental{
 			// 
 			// timerTextChanged
 			// 
-			this.timerTextChanged.Interval = 500;
+			this.timerTextChanged.Interval = 3000;
 			this.timerTextChanged.Tick += new System.EventHandler(this.timerTextChanged_Tick);
 			// 
 			// FormSheetFillEdit

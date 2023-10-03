@@ -930,17 +930,15 @@ namespace OpenDentBusiness {
 			//This is so that procedures do not look like they have 'outstanding' value when associated with a payment plan.
 			List<FauxAccountEntry> listFauxAccountEntryProcCredits=listFauxAccountEntriesCredits.FindAll(x => x.AccountEntryProc!=null && !x.IsAdjustment && CompareDecimal.IsGreaterThanZero(x.AmountEnd));
 			for(int i=0;i<listFauxAccountEntryProcCredits.Count;i++) {
-				if(CompareDecimal.IsGreaterThanZero(listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd)) {
-					//Figure out how much value can be removed from the associated procedure.
-					//Ignore anything that insurance is going to pay in order to allow payment plans to 'overpay' the procedure before insurance does.
-					decimal amountForProcedure=listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd + listFauxAccountEntryProcCredits[i].AccountEntryProc.InsPayAmt;
-					decimal amountToRemove=Math.Min(amountForProcedure,listFauxAccountEntryProcCredits[i].AmountEnd);
-					listFauxAccountEntryProcCredits[i].AmountEnd-=amountToRemove;
-					listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd-=amountToRemove;
-					listFauxAccountEntryProcCredits[i].AccountEntryProc.ListPayPlanPrincipalApplieds.Add(
-						new PayPlanPrincipalApplied(listFauxAccountEntryProcCredits[i].PayPlanNum,amountToRemove)
-					);
-				}
+				//Figure out how much value can be removed from the associated procedure.
+				//Ignore anything that insurance is going to pay in order to allow payment plans to 'overpay' the procedure before insurance does.
+				decimal amountForProcedure=listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd + listFauxAccountEntryProcCredits[i].AccountEntryProc.InsPayAmt;
+				decimal amountToRemove=Math.Min(amountForProcedure,listFauxAccountEntryProcCredits[i].AmountEnd);
+				listFauxAccountEntryProcCredits[i].AmountEnd-=amountToRemove;
+				listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd-=amountToRemove;
+				listFauxAccountEntryProcCredits[i].AccountEntryProc.ListPayPlanPrincipalApplieds.Add(
+					new PayPlanPrincipalApplied(listFauxAccountEntryProcCredits[i].PayPlanNum,amountToRemove)
+				);
 			}
 			#endregion
 			#region Adjustment Credits (associated with procedures)

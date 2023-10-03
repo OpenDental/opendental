@@ -189,7 +189,10 @@ namespace OpenDentBusiness{
 				throw new Exception($"This practice or clinic is not signed up for eClipboard.\r\nGo to eServices | Signup Portal to sign up.");
 			}
 			try{
-				List<string> listTagValues=new List<string>() { treatPlan.Heading,treatPlan.TreatPlanNum.ToString(),hasPracticeSig.ToString(),
+				//If there is no heading present, than UTF8.GetBytes ignores empty strings, which means it doesn't put an empty header into the list of
+				//tags that gets sent over to eClipboard.
+				string treatPlanHeading=treatPlan.Heading.IsNullOrEmpty()?"(No heading)":treatPlan.Heading;
+				List<string> listTagValues=new List<string>() { treatPlanHeading,treatPlan.TreatPlanNum.ToString(),hasPracticeSig.ToString(),
 					treatPlan.DateTP.Ticks.ToString() };
 				TryInsertPDF(doc,treatPlan.PatNum,unlockCode,eActionType.TreatmentPlan
 					,out long mobileDataByteNum,out errorMsg,listTagValues

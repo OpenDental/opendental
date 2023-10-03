@@ -76,7 +76,7 @@ namespace OpenDental {
 			// 
 			// labelApptType
 			// 
-			this.labelApptType.Location = new System.Drawing.Point(16, 42);
+			this.labelApptType.Location = new System.Drawing.Point(12, 42);
 			this.labelApptType.Name = "labelApptType";
 			this.labelApptType.Size = new System.Drawing.Size(117, 17);
 			this.labelApptType.TabIndex = 126;
@@ -103,16 +103,16 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(151, 20);
+			this.label4.Location = new System.Drawing.Point(144, 20);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(358, 16);
+			this.label4.Size = new System.Drawing.Size(394, 16);
 			this.label4.TabIndex = 120;
 			this.label4.Text = "This operatory will be available for Web Sched Recall appointments.";
 			// 
 			// checkIsWebSched
 			// 
 			this.checkIsWebSched.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsWebSched.Location = new System.Drawing.Point(12, 19);
+			this.checkIsWebSched.Location = new System.Drawing.Point(8, 19);
 			this.checkIsWebSched.Name = "checkIsWebSched";
 			this.checkIsWebSched.Size = new System.Drawing.Size(135, 16);
 			this.checkIsWebSched.TabIndex = 119;
@@ -279,22 +279,22 @@ namespace OpenDental {
 			this.groupBoxApptType.Controls.Add(this.checkIsWebSched);
 			this.groupBoxApptType.Location = new System.Drawing.Point(26, 191);
 			this.groupBoxApptType.Name = "groupBoxApptType";
-			this.groupBoxApptType.Size = new System.Drawing.Size(515, 182);
+			this.groupBoxApptType.Size = new System.Drawing.Size(540, 186);
 			this.groupBoxApptType.TabIndex = 128;
 			this.groupBoxApptType.Text = "Web Sched Settings";
 			// 
 			// labelWSEPDesc
 			// 
-			this.labelWSEPDesc.Location = new System.Drawing.Point(133, 128);
+			this.labelWSEPDesc.Location = new System.Drawing.Point(127, 137);
 			this.labelWSEPDesc.Name = "labelWSEPDesc";
-			this.labelWSEPDesc.Size = new System.Drawing.Size(334, 45);
+			this.labelWSEPDesc.Size = new System.Drawing.Size(411, 47);
 			this.labelWSEPDesc.TabIndex = 133;
 			this.labelWSEPDesc.Text = "Only the above Appointment Types will be allowed within this operatory. Appt Type" +
     " is required to be considered for Web Sched Existing Patient.";
 			// 
 			// butWSEPPickApptTypes
 			// 
-			this.butWSEPPickApptTypes.Location = new System.Drawing.Point(386, 102);
+			this.butWSEPPickApptTypes.Location = new System.Drawing.Point(382, 113);
 			this.butWSEPPickApptTypes.Name = "butWSEPPickApptTypes";
 			this.butWSEPPickApptTypes.Size = new System.Drawing.Size(23, 22);
 			this.butWSEPPickApptTypes.TabIndex = 132;
@@ -304,7 +304,7 @@ namespace OpenDental {
 			// 
 			// textWSEPApptTypes
 			// 
-			this.textWSEPApptTypes.Location = new System.Drawing.Point(134, 103);
+			this.textWSEPApptTypes.Location = new System.Drawing.Point(130, 114);
 			this.textWSEPApptTypes.Name = "textWSEPApptTypes";
 			this.textWSEPApptTypes.ReadOnly = true;
 			this.textWSEPApptTypes.Size = new System.Drawing.Size(252, 20);
@@ -312,16 +312,16 @@ namespace OpenDental {
 			// 
 			// labelWSEPApptTypes
 			// 
-			this.labelWSEPApptTypes.Location = new System.Drawing.Point(2, 106);
+			this.labelWSEPApptTypes.Location = new System.Drawing.Point(2, 117);
 			this.labelWSEPApptTypes.Name = "labelWSEPApptTypes";
 			this.labelWSEPApptTypes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.labelWSEPApptTypes.Size = new System.Drawing.Size(131, 18);
+			this.labelWSEPApptTypes.Size = new System.Drawing.Size(127, 18);
 			this.labelWSEPApptTypes.TabIndex = 130;
 			this.labelWSEPApptTypes.Text = "Existing Pat Appt Types";
 			// 
 			// textWSNPAApptTypes
 			// 
-			this.textWSNPAApptTypes.Location = new System.Drawing.Point(134, 41);
+			this.textWSNPAApptTypes.Location = new System.Drawing.Point(130, 41);
 			this.textWSNPAApptTypes.MaxLength = 255;
 			this.textWSNPAApptTypes.Name = "textWSNPAApptTypes";
 			this.textWSNPAApptTypes.ReadOnly = true;
@@ -330,7 +330,7 @@ namespace OpenDental {
 			// 
 			// butWSNPAPickApptTypes
 			// 
-			this.butWSNPAPickApptTypes.Location = new System.Drawing.Point(386, 40);
+			this.butWSNPAPickApptTypes.Location = new System.Drawing.Point(382, 40);
 			this.butWSNPAPickApptTypes.Name = "butWSNPAPickApptTypes";
 			this.butWSNPAPickApptTypes.Size = new System.Drawing.Size(23, 22);
 			this.butWSNPAPickApptTypes.TabIndex = 129;
@@ -339,9 +339,9 @@ namespace OpenDental {
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(131, 65);
+			this.label10.Location = new System.Drawing.Point(127, 64);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(378, 29);
+			this.label10.Size = new System.Drawing.Size(411, 47);
 			this.label10.TabIndex = 128;
 			this.label10.Text = "Only the above Appointment Types will be allowed within this operatory.\r\nAppt Typ" +
     "e is required to be considered for Web Sched New Pat Appt.";
