@@ -701,6 +701,12 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEServicesMobileAppDeviceManage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEServicesMobileAppDeviceManage.Designer.cs">
+      <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormTaskSubscribers.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -959,11 +965,11 @@
     <Compile Include="Forms\FormWebBrowserPrefs.designer.cs">
       <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEClipboardSecurityEdit.cs">
+    <Compile Include="Forms\FormODTouchSecurityEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormEClipboardSecurityEdit.designer.cs">
-      <DependentUpon>FormEClipboardSecurityEdit.cs</DependentUpon>
+    <Compile Include="Forms\FormODTouchSecurityEdit.designer.cs">
+      <DependentUpon>FormODTouchSecurityEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormCommItemHistory.cs">
       <SubType>Form</SubType>
@@ -7652,6 +7658,9 @@
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEServicesMobileAppDeviceManage.resx">
+      <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTaskSubscribers.resx">
       <DependentUpon>FormTaskSubscribers.cs</DependentUpon>
     </EmbeddedResource>
@@ -7784,8 +7793,8 @@
     <EmbeddedResource Include="Forms\FormWebBrowserPrefs.resx">
       <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormEClipboardSecurityEdit.resx">
-      <DependentUpon>FormEClipboardSecurityEdit.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormODTouchSecurityEdit.resx">
+      <DependentUpon>FormODTouchSecurityEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCommItemHistory.resx">
       <DependentUpon>FormCommItemHistory.cs</DependentUpon>

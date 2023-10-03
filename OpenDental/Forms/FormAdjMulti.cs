@@ -473,9 +473,29 @@ namespace OpenDental {
 		#endregion
 
 		private void butOK_Click(object sender,EventArgs e) {
-			if(_listAdjustments.IsNullOrEmpty()) {//No adjustments have been added. Attempt to add adjustments with the current info.
-				if(!AddAdjustments()) {
-					return;//The UI is in an invalid state so no new adjustments can be created. This preserves old behavior.
+			EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
+			if(enumAdjustmentBlockOrWarn!=EnumAdjustmentBlockOrWarn.Allow){
+				int count=0;
+				List<ProcAdjs> listProcAdjs=GetProcAdjs().Where(x => x.AccountEntryProc!=null).ToList();
+				for(int i=0;i<listProcAdjs.Count;i++) {
+					decimal sum=0;
+					for(int k=0;k<listProcAdjs[i].ListAccountEntryAdjustments.Count;k++) {
+						sum+=listProcAdjs[i].ListAccountEntryAdjustments[k].AmountEnd;
+					}
+					if((listProcAdjs[i].AccountEntryProc.AmountEnd+sum) < 0) {
+						count++;
+					}
+				}
+				if(count>0) {
+					if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {
+						if(!MsgBox.Show(MsgBoxButtons.YesNo,Lan.g(this,"There are")+" "+count+" "+Lan.g(this,"procedure(s) with negative amounts.")+" "+Lan.g(this,"Proceed?"))) {
+							return;
+						}
+					}
+					if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block) {
+						MsgBox.Show(count+ " " +Lan.g(this,"procedure(s) cannot have their adjustments updated due to negative remaining values.")+" "+Lan.g(this,"Please fix to save"));
+						return;
+					}
 				}
 			}
 			//Now we should be guaranteed to have adjustments.

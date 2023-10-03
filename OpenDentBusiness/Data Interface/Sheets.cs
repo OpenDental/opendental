@@ -413,11 +413,15 @@ namespace OpenDentBusiness{
 			}
 			//If there are current medications in the DB, display them on the prefilled sheet. If there are not, use the previous sheet.
 			bool doUseMedicationsFromPreviousSheet=!MedicationPats.GetPatientData(sheet.PatNum).Any(x=>MedicationPats.IsMedActive(x));
+			bool doUseProblemFromPrevSheet=!Diseases.Refresh(sheet.PatNum,false).Any();
+			bool doUseAllergyFromPrevSheet=!Allergies.GetAll(sheet.PatNum,true).Any();
 			//Get the fields that we want to fill from previous sheet.
 			//Always skip insurance fields, skip medications if they have active medications in the DB.
 			//Always exclude static text. Allow combo or check boxes if the fieldName is misc
-			List<SheetField> listSheetNewFieldsEmpty=sheetNew.SheetFields.FindAll(x => x.FieldType!=(SheetFieldType.StaticText) 
-				&& (!x.FieldType.In(SheetFieldType.CheckBox,SheetFieldType.ComboBox) || x.FieldName=="misc")
+			List<SheetField> listSheetNewFieldsEmpty=sheetNew.SheetFields.FindAll(x => x.FieldType!=(SheetFieldType.StaticText)
+				&& (!x.FieldType.In(SheetFieldType.CheckBox,SheetFieldType.ComboBox) || x.FieldName=="misc"
+					|| (x.FieldName.StartsWith("problem") && doUseProblemFromPrevSheet) 
+					|| (x.FieldName.StartsWith("allergy") && doUseAllergyFromPrevSheet))
 				&& x.FieldValue.IsNullOrEmpty()
 				&& !x.FieldName.StartsWith("ins1")	
 				&& !x.FieldName.StartsWith("ins2")	

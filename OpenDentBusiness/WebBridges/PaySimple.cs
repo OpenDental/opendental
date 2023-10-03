@@ -147,6 +147,8 @@ namespace OpenDentBusiness {
 						LName="",
 					};
 				}
+				//If new card then remove old paysimple patientlink to prevent mistmach error. Old cards don't use patientlink they use their paysimpletoken.
+				PatientLinks.DeletePatNumFroms(patNum,PatientLinkType.PaySimple);
 				long psCustomerId=GetCustomerIdForPat(patCur.PatNum,patCur.FName,patCur.LName,clinicNum);
 				ApiResponse apiResponse;
 				try {
@@ -246,6 +248,8 @@ namespace OpenDentBusiness {
 				};
 			}
 			if(string.IsNullOrWhiteSpace(cc.PaySimpleToken)) {
+				//If new card then remove old paysimple patientlink to prevent mistmach error. Old cards don't use patientlink they use their paysimpletoken.
+				PatientLinks.DeletePatNumFroms(pat.PatNum,PatientLinkType.PaySimple);
 				long psCustomerId=GetCustomerIdForPat(pat.PatNum,pat.FName,pat.LName,clinicNum);
 				try {
 					ApiResponse apiResponse=AddACHAccount(psCustomerId,routingNumber,acctNumber,bankName,isCheckings,clinicNum);

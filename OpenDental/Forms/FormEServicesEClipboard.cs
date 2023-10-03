@@ -27,7 +27,6 @@ namespace OpenDental {
 			PrefName.EClipboardDoTwoFactorAuth,
 			PrefName.EClipboardImageCaptureDefs,
 			PrefName.EClipboardHasMultiPageCheckIn,
-			PrefName.EClipboardClinicalValidationFrequency,
 			PrefName.EClipClinicalAutoLogin);
 		private bool _doSetInvalidClinicPrefs=false;
 		private bool _canEditEClipboard;
@@ -74,7 +73,6 @@ namespace OpenDental {
 			//Subscribe to eclipboard events to fill grid if needed
 			EClipboardEvent.Fired+=eClipboardChangedEvent_Fired;
 			_canEditEClipboard=Security.IsAuthorized(Permissions.EServicesSetup,true);
-			FillGridMobileAppDevices();
 			FillGridEClipboardSheetInUse();
 			FillImageCaptureFrequencyUI();
 			SetUIEClipboardEnabled();
@@ -158,7 +156,6 @@ namespace OpenDental {
 
 		private void ClinicPickerEClipboard_SelectionChangeCommitted(object sender,EventArgs e) {
 			EClipboardSetControlsForClinicPrefs();
-			FillGridMobileAppDevices();
 			FillGridEClipboardSheetInUse();
 			FillImageCaptureFrequencyUI();
 			SetUIEClipboardEnabled();
@@ -168,40 +165,12 @@ namespace OpenDental {
 			if(e.EventType!=ODEventType.eClipboard || this.IsDisposed) {
 				return;
 			}
-			FillGridMobileAppDevices();
 		}
 
 		private void GridEClipboardSheetsInUse_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			FormEClipboardSheetRules formEClipboardSheetRules=new FormEClipboardSheetRules((EClipboardSheetDef)gridEClipboardSheetsInUse.ListGridRows[e.Row].Tag,gridEClipboardSheetsInUse.ListGridRows.Select(x=>(EClipboardSheetDef)x.Tag).ToList());
 			formEClipboardSheetRules.ShowDialog();
 			FillGridEClipboardSheetInUse();
-		}
-
-		private void gridMobileAppDevices_CellClick(object sender,ODGridClickEventArgs e) {
-			int idxEnabledColumn=gridMobileAppDevices.Columns.GetIndex(_enabledColumnText);
-			if(e.Col!=idxEnabledColumn) {//They did not select the right column.
-				return;
-			}
-			MobileAppDevice mobileAppDevice=gridMobileAppDevices.SelectedTag<MobileAppDevice>();
-			//There is not a tag somehow.
-			if(mobileAppDevice==null) {
-				return;
-			}
-			if(mobileAppDevice.IsAllowed){
-				if(mobileAppDevice.PatNum>0) {
-					MsgBox.Show("A patient is currently using this device. Please clear the patient from the device using the Kiosk Manager" +
-						" or wait until the patient is no longer using the device.");
-					return;
-				}
-				if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will immediately make the device unavailable to all other workstations. Continue?")) {
-					return;
-				}
-			}
-			mobileAppDevice.IsAllowed=!mobileAppDevice.IsAllowed;//Flip the bit.
-			//Update the device because the signal processing of this form isn't friendly to keeping an in-memory list that syncs when the form closes
-			MobileAppDevices.Update(mobileAppDevice);
-			OpenDentBusiness.WebTypes.PushNotificationUtils.CI_IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,mobileAppDevice.IsAllowed);
-			FillGridMobileAppDevices();	//Fill the grid to show the changes.
 		}
 
 		private void butImageOptions_Click(object sender,EventArgs e) {
@@ -215,16 +184,6 @@ namespace OpenDental {
 				_listEClipboardImageCaptureDefs=formEClipboardImageCaptureDefs.ListEClipboardImageCaptureDefs.Select(x => x.Copy()).ToList();
 				//Update the UI to reflect the new changes
 				FillImageCaptureFrequencyUI();
-			}
-		}
-
-		private void butSecurity_Click(object sender,EventArgs e) {
-			//Permissions check presumably. Discuss with Sam.
-			using FormEClipboardSecurityEdit formEClipSecEdit=new FormEClipboardSecurityEdit();
-			int.TryParse(_clinicPrefHelper.GetStringVal(PrefName.EClipboardClinicalValidationFrequency,clinicPickerEClipboard.SelectedClinicNum),out int securityFreq);
-			formEClipSecEdit.SecurityFrequency=securityFreq;
-			if(formEClipSecEdit.ShowDialog()==DialogResult.OK) {
-				_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardClinicalValidationFrequency,clinicPickerEClipboard.SelectedClinicNum,POut.Int(formEClipSecEdit.SecurityFrequency));
 			}
 		}
 		
@@ -307,12 +266,6 @@ namespace OpenDental {
 			string strChecked=POut.Bool(checkDisplayIndividually.Checked);
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardHasMultiPageCheckIn,clinicPickerEClipboard.SelectedClinicNum,strChecked);
 			UpdateEClipboardDefaultsIfNeeded(PrefName.EClipboardHasMultiPageCheckIn,strChecked);
-		}
-
-		private void checkClinicalAutoLogin_CheckedChanged(object sender,EventArgs e) {
-			string strChecked=POut.Bool(checkClinicalAutoLogin.Checked);
-			_clinicPrefHelper.ValChangedByUser(PrefName.EClipClinicalAutoLogin,clinicPickerEClipboard.SelectedClinicNum,strChecked);
-			UpdateEClipboardDefaultsIfNeeded(PrefName.EClipClinicalAutoLogin,strChecked);
 		}
 
 		private void TextByodSmsTemplate_TextChanged(object sender, EventArgs e){
@@ -399,7 +352,6 @@ namespace OpenDental {
 			checkEnableByodSms.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardEnableByodSms);
 			checkAppendByodToArrivalResponseSms.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardAppendByodToArrivalResponseSms);
 			checkDisplayIndividually.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardHasMultiPageCheckIn);
-			checkClinicalAutoLogin.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipClinicalAutoLogin);
 			checkRequire2FA.Checked=_clinicPrefHelper.GetDefaultBoolVal(PrefName.EClipboardDoTwoFactorAuth);
 			textByodSmsTemplate.Text=_clinicPrefHelper.GetDefaultStringVal(PrefName.EClipboardByodSmsTemplate);
 			textEClipboardMessage.Text=_clinicPrefHelper.GetDefaultStringVal(PrefName.EClipboardMessageComplete);
@@ -424,8 +376,6 @@ namespace OpenDental {
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardDoTwoFactorAuth,clinicPickerEClipboard.SelectedClinicNum,
 				POut.Bool(checkRequire2FA.Checked));
 			_clinicPrefHelper.ValChangedByUser(PrefName.EClipboardHasMultiPageCheckIn,clinicPickerEClipboard.SelectedClinicNum,POut.Bool(checkDisplayIndividually.Checked));
-			_clinicPrefHelper.ValChangedByUser(PrefName.EClipClinicalAutoLogin,clinicPickerEClipboard.SelectedClinicNum,
-				POut.Bool(checkClinicalAutoLogin.Checked));
 		}
 
 		///<summary>Sets the Defaults checkbox itself.  Then sets the 5 other checkboxes and the textbox that are involved in prefs.  Sets them based on the values in the local clinicpref list.  Does not change any of those values.  Called only on startup.</summary>
@@ -446,14 +396,8 @@ namespace OpenDental {
 					&& checkEnableByodSms.Checked;
 				checkRequire2FA.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardDoTwoFactorAuth,clinicNum);
 				checkDisplayIndividually.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipboardHasMultiPageCheckIn,clinicNum);
-				checkClinicalAutoLogin.Checked=_clinicPrefHelper.GetBoolVal(PrefName.EClipClinicalAutoLogin,clinicNum);
 				textByodSmsTemplate.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardByodSmsTemplate,clinicNum);
 				textEClipboardMessage.Text=_clinicPrefHelper.GetStringVal(PrefName.EClipboardMessageComplete,clinicNum);
-			}
-			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,clinicNum)) {
-				checkClinicalAutoLogin.Enabled=false;
-				checkClinicalAutoLogin.Visible=false;
-				return;
 			}
 		}
 
@@ -517,88 +461,6 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Fills the big main grid.</summary>
-		private void FillGridMobileAppDevices() {
-			gridMobileAppDevices.BeginUpdate();
-			//Columns
-			gridMobileAppDevices.Columns.Clear();
-			GridColumn col=new GridColumn("Device Name",100){IsWidthDynamic=true };
-			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("Last Attempt",100){IsWidthDynamic=true };
-			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("Last Login",100){IsWidthDynamic=true };
-			gridMobileAppDevices.Columns.Add(col);
-			if(PrefC.HasClinicsEnabled) {
-				col=new GridColumn("Clinic",100){IsWidthDynamic=true };
-				gridMobileAppDevices.Columns.Add(col);
-			}
-			col=new GridColumn("Device State",100) {IsWidthDynamic=true };
-			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn(_enabledColumnText,50,HorizontalAlignment.Center);
-			gridMobileAppDevices.Columns.Add(col);
-			if(_canEditEClipboard) {
-				col=new GridColumn("Delete",45,HorizontalAlignment.Center);
-				gridMobileAppDevices.Columns.Add(col);
-			}
-			//Rows
-			gridMobileAppDevices.ListGridRows.Clear();
-			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser);
-			if(GetClinicNumEClipboardTab()>0) {
-				listMobileAppDevices.RemoveAll(x => x.ClinicNum!=GetClinicNumEClipboardTab());
-			}
-			for(int i=0;i<listMobileAppDevices.Count;i++) {
-				GridRow row=new GridRow();
-				row.Cells.Add(listMobileAppDevices[i].DeviceName+"\r\n("+listMobileAppDevices[i].UniqueID+")");
-				string rowValue="";
-				if(listMobileAppDevices[i].LastAttempt.Year>1880) {
-					rowValue=listMobileAppDevices[i].LastAttempt.ToString();
-				}
-				row.Cells.Add(rowValue);
-				rowValue="";
-				if(listMobileAppDevices[i].LastLogin.Year>1880) {
-					rowValue=listMobileAppDevices[i].LastLogin.ToString();
-				}
-				row.Cells.Add(rowValue);
-				if(PrefC.HasClinicsEnabled) {
-					if(listMobileAppDevices[i].ClinicNum==0) {
-						rowValue=Clinics.GetPracticeAsClinicZero().Abbr;
-					}
-					else {
-						rowValue=Clinics.GetClinic(listMobileAppDevices[i].ClinicNum).Abbr;
-					}
-					row.Cells.Add(rowValue);
-				}
-				row.Cells.Add(listMobileAppDevices[i].DevicePage.GetDescription());
-				row.Cells.Add((listMobileAppDevices[i].IsAllowed ? "X" : ""));
-				if(_canEditEClipboard) {
-					#region Delete click handler
-					void DeleteClick(object sender,EventArgs e) {
-						//int i in the for loop doesn't actually get disposed once the loop ends, because it was being used here to access 
-						//listMobileAppDevicesToShow. i was always i+1, no matter which row you clicked, so use selected index instead.
-						if(listMobileAppDevices[gridMobileAppDevices.SelectedIndices[0]].PatNum>0) {
-							MsgBox.Show("A patient is currently using this device. Please clear the patient from the device using the Kiosk Manager" +
-								" or wait until the patient is no longer using the device.");
-							return;
-						}
-						if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will immediately remove the device from the database and all other workstations." +
-							" Continue?")) {
-							return;
-						}
-						MobileAppDevices.Delete(listMobileAppDevices[gridMobileAppDevices.SelectedIndices[0]].MobileAppDeviceNum);
-						FillGridMobileAppDevices();
-					}
-					#endregion Delete click handler
-					GridCell gridCell=new GridCell("Delete");
-					gridCell.ColorBackG=Color.LightGray;
-					gridCell.ClickEvent=DeleteClick;
-					row.Cells.Add(gridCell);
-				}
-				row.Tag=listMobileAppDevices[i];
-				gridMobileAppDevices.ListGridRows.Add(row);
-			}
-			gridMobileAppDevices.EndUpdate();
-		}
-
 		private void SetEClipboardSheetOrder() {
 			if(gridEClipboardSheetsInUse.ListGridRows.Count<1) {
 				return;
@@ -625,9 +487,7 @@ namespace OpenDental {
 			textByodSmsTemplate.Enabled=checkEnableByodSms.Checked;
 			groupEClipboardRules.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults;
 			groupEClipboardSheets.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults && enableSheets;
-			gridMobileAppDevices.Enabled=isClinicSignedUp;
 			labelEClipboardNotSignedUp.Visible=!isClinicSignedUp;
-			butSecurity.Visible=LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,GetClinicNumEClipboardTab());
 			//Enabled when allowed and either use defaults is unchecked or we are at default clinic.
 			if((isClinicSignedUp && _canEditEClipboard) && (!checkEClipboardUseDefaults.Checked || GetClinicNumEClipboardTab()==0)) {
 				butBrandingProfile.Enabled=true;

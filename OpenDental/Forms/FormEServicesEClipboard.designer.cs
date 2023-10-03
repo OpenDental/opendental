@@ -36,7 +36,6 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.checkEClipboardUseDefaults = new OpenDental.UI.CheckBox();
 			this.groupEClipboardRules = new OpenDental.UI.GroupBox();
-			this.checkClinicalAutoLogin = new OpenDental.UI.CheckBox();
 			this.checkEClipboardAllowPaymentCheckIn = new OpenDental.UI.CheckBox();
 			this.groupBoxImage = new OpenDental.UI.GroupBox();
 			this.butImageOptions = new OpenDental.UI.Button();
@@ -64,12 +63,9 @@ namespace OpenDental{
 			this.gridEClipboardSheetsInUse = new OpenDental.UI.GridOD();
 			this.listEClipboardSheetsAvailable = new OpenDental.UI.ListBox();
 			this.labelOps = new System.Windows.Forms.Label();
-			this.gridMobileAppDevices = new OpenDental.UI.GridOD();
-			this.label10 = new System.Windows.Forms.Label();
 			this.clinicPickerEClipboard = new OpenDental.UI.ComboBoxClinicPicker();
 			this.labelEClipboardNotSignedUp = new System.Windows.Forms.Label();
 			this.butCancel = new OpenDental.UI.Button();
-			this.butSecurity = new OpenDental.UI.Button();
 			this.butBrandingProfile = new OpenDental.UI.Button();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			this.groupEClipboardRules.SuspendLayout();
@@ -137,7 +133,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(1024, 783);
+			this.butOK.Location = new System.Drawing.Point(1024, 572);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 23);
 			this.butOK.TabIndex = 500;
@@ -156,7 +152,6 @@ namespace OpenDental{
 			// 
 			// groupEClipboardRules
 			// 
-			this.groupEClipboardRules.Controls.Add(this.checkClinicalAutoLogin);
 			this.groupEClipboardRules.Controls.Add(this.checkEClipboardAllowPaymentCheckIn);
 			this.groupEClipboardRules.Controls.Add(this.groupBoxImage);
 			this.groupEClipboardRules.Controls.Add(this.checkDisplayIndividually);
@@ -171,18 +166,9 @@ namespace OpenDental{
 			this.groupEClipboardRules.Controls.Add(this.checkEClipboardPopupKiosk);
 			this.groupEClipboardRules.Location = new System.Drawing.Point(11, 53);
 			this.groupEClipboardRules.Name = "groupEClipboardRules";
-			this.groupEClipboardRules.Size = new System.Drawing.Size(487, 443);
+			this.groupEClipboardRules.Size = new System.Drawing.Size(1169, 234);
 			this.groupEClipboardRules.TabIndex = 265;
 			this.groupEClipboardRules.Text = "Behavior Rules";
-			// 
-			// checkClinicalAutoLogin
-			// 
-			this.checkClinicalAutoLogin.Location = new System.Drawing.Point(19, 141);
-			this.checkClinicalAutoLogin.Name = "checkClinicalAutoLogin";
-			this.checkClinicalAutoLogin.Size = new System.Drawing.Size(458, 17);
-			this.checkClinicalAutoLogin.TabIndex = 505;
-			this.checkClinicalAutoLogin.Text = "Auto login users when scanning a QR code for Touch features";
-			this.checkClinicalAutoLogin.CheckedChanged += new System.EventHandler(this.checkClinicalAutoLogin_CheckedChanged);
 			// 
 			// checkEClipboardAllowPaymentCheckIn
 			// 
@@ -197,9 +183,9 @@ namespace OpenDental{
 			// 
 			this.groupBoxImage.Controls.Add(this.butImageOptions);
 			this.groupBoxImage.Controls.Add(this.textEclipboardImageDefs);
-			this.groupBoxImage.Location = new System.Drawing.Point(19, 348);
+			this.groupBoxImage.Location = new System.Drawing.Point(541, 111);
 			this.groupBoxImage.Name = "groupBoxImage";
-			this.groupBoxImage.Size = new System.Drawing.Size(458, 73);
+			this.groupBoxImage.Size = new System.Drawing.Size(461, 73);
 			this.groupBoxImage.TabIndex = 503;
 			this.groupBoxImage.Text = "Prompt for Image Capture";
 			// 
@@ -246,7 +232,7 @@ namespace OpenDental{
 			this.groupBox2.Controls.Add(this.textByodSmsTemplate);
 			this.groupBox2.Controls.Add(this.checkAppendByodToArrivalResponseSms);
 			this.groupBox2.Controls.Add(this.checkEnableByodSms);
-			this.groupBox2.Location = new System.Drawing.Point(19, 162);
+			this.groupBox2.Location = new System.Drawing.Point(541, 15);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(461, 90);
 			this.groupBox2.TabIndex = 272;
@@ -308,7 +294,7 @@ namespace OpenDental{
 			// 
 			// labelEClipboardMessage
 			// 
-			this.labelEClipboardMessage.Location = new System.Drawing.Point(16, 255);
+			this.labelEClipboardMessage.Location = new System.Drawing.Point(16, 142);
 			this.labelEClipboardMessage.Name = "labelEClipboardMessage";
 			this.labelEClipboardMessage.Size = new System.Drawing.Size(461, 18);
 			this.labelEClipboardMessage.TabIndex = 266;
@@ -317,7 +303,7 @@ namespace OpenDental{
 			// 
 			// textEClipboardMessage
 			// 
-			this.textEClipboardMessage.Location = new System.Drawing.Point(19, 276);
+			this.textEClipboardMessage.Location = new System.Drawing.Point(19, 163);
 			this.textEClipboardMessage.Multiline = true;
 			this.textEClipboardMessage.Name = "textEClipboardMessage";
 			this.textEClipboardMessage.Size = new System.Drawing.Size(458, 66);
@@ -363,7 +349,7 @@ namespace OpenDental{
 			this.groupEClipboardSheets.Controls.Add(this.gridEClipboardSheetsInUse);
 			this.groupEClipboardSheets.Controls.Add(this.listEClipboardSheetsAvailable);
 			this.groupEClipboardSheets.Controls.Add(this.labelOps);
-			this.groupEClipboardSheets.Location = new System.Drawing.Point(11, 504);
+			this.groupEClipboardSheets.Location = new System.Drawing.Point(11, 293);
 			this.groupEClipboardSheets.Name = "groupEClipboardSheets";
 			this.groupEClipboardSheets.Size = new System.Drawing.Size(1169, 273);
 			this.groupEClipboardSheets.TabIndex = 266;
@@ -385,7 +371,7 @@ namespace OpenDental{
 			this.butEClipboardUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butEClipboardUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butEClipboardUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butEClipboardUp.Location = new System.Drawing.Point(1130, 204);
+			this.butEClipboardUp.Location = new System.Drawing.Point(1130, 177);
 			this.butEClipboardUp.Name = "butEClipboardUp";
 			this.butEClipboardUp.Size = new System.Drawing.Size(33, 26);
 			this.butEClipboardUp.TabIndex = 267;
@@ -396,7 +382,7 @@ namespace OpenDental{
 			this.butEClipboardDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butEClipboardDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butEClipboardDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butEClipboardDown.Location = new System.Drawing.Point(1130, 236);
+			this.butEClipboardDown.Location = new System.Drawing.Point(1130, 209);
 			this.butEClipboardDown.Name = "butEClipboardDown";
 			this.butEClipboardDown.Size = new System.Drawing.Size(33, 26);
 			this.butEClipboardDown.TabIndex = 268;
@@ -430,7 +416,7 @@ namespace OpenDental{
 			this.gridEClipboardSheetsInUse.HasMultilineHeaders = true;
 			this.gridEClipboardSheetsInUse.Location = new System.Drawing.Point(540, 36);
 			this.gridEClipboardSheetsInUse.Name = "gridEClipboardSheetsInUse";
-			this.gridEClipboardSheetsInUse.Size = new System.Drawing.Size(582, 226);
+			this.gridEClipboardSheetsInUse.Size = new System.Drawing.Size(582, 199);
 			this.gridEClipboardSheetsInUse.TabIndex = 62;
 			this.gridEClipboardSheetsInUse.Title = "Sheets In Use";
 			this.gridEClipboardSheetsInUse.TranslationName = "TableAvailableRows";
@@ -452,27 +438,6 @@ namespace OpenDental{
 			this.labelOps.TabIndex = 41;
 			this.labelOps.Text = "Available Forms (Custom Sheets Only)";
 			this.labelOps.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// gridMobileAppDevices
-			// 
-			this.gridMobileAppDevices.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridMobileAppDevices.Location = new System.Drawing.Point(504, 58);
-			this.gridMobileAppDevices.Name = "gridMobileAppDevices";
-			this.gridMobileAppDevices.Size = new System.Drawing.Size(675, 438);
-			this.gridMobileAppDevices.TabIndex = 270;
-			this.gridMobileAppDevices.Title = "Mobile App Devices";
-			this.gridMobileAppDevices.TranslationName = "Checkin Devices";
-			this.gridMobileAppDevices.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMobileAppDevices_CellClick);
-			// 
-			// label10
-			// 
-			this.label10.Location = new System.Drawing.Point(823, 31);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(321, 19);
-			this.label10.TabIndex = 271;
-			this.label10.Text = "To add devices to this list, log in to the mobile app via the device. ";
 			// 
 			// clinicPickerEClipboard
 			// 
@@ -496,7 +461,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(1105, 782);
+			this.butCancel.Location = new System.Drawing.Point(1105, 571);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 501;
@@ -504,21 +469,10 @@ namespace OpenDental{
 			this.butCancel.UseVisualStyleBackColor = true;
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
-			// butSecurity
-			// 
-			this.butSecurity.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butSecurity.Location = new System.Drawing.Point(12, 783);
-			this.butSecurity.Name = "butSecurity";
-			this.butSecurity.Size = new System.Drawing.Size(73, 24);
-			this.butSecurity.TabIndex = 502;
-			this.butSecurity.Text = "Security";
-			this.butSecurity.UseVisualStyleBackColor = true;
-			this.butSecurity.Click += new System.EventHandler(this.butSecurity_Click);
-			// 
 			// butBrandingProfile
 			// 
 			this.butBrandingProfile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butBrandingProfile.Location = new System.Drawing.Point(91, 783);
+			this.butBrandingProfile.Location = new System.Drawing.Point(11, 572);
 			this.butBrandingProfile.Name = "butBrandingProfile";
 			this.butBrandingProfile.Size = new System.Drawing.Size(102, 24);
 			this.butBrandingProfile.TabIndex = 503;
@@ -528,15 +482,12 @@ namespace OpenDental{
 			// 
 			// FormEServicesEClipboard
 			// 
-			this.ClientSize = new System.Drawing.Size(1192, 818);
+			this.ClientSize = new System.Drawing.Size(1192, 607);
 			this.Controls.Add(this.butBrandingProfile);
-			this.Controls.Add(this.butSecurity);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelEClipboardNotSignedUp);
 			this.Controls.Add(this.clinicPickerEClipboard);
-			this.Controls.Add(this.label10);
 			this.Controls.Add(this.butOK);
-			this.Controls.Add(this.gridMobileAppDevices);
 			this.Controls.Add(this.groupEClipboardSheets);
 			this.Controls.Add(this.groupEClipboardRules);
 			this.Controls.Add(this.checkEClipboardUseDefaults);
@@ -583,8 +534,6 @@ namespace OpenDental{
 		private UI.GridOD gridEClipboardSheetsInUse;
 		private UI.ListBox listEClipboardSheetsAvailable;
 		private System.Windows.Forms.Label labelOps;
-		private UI.GridOD gridMobileAppDevices;
-		private System.Windows.Forms.Label label10;
 		private UI.ComboBoxClinicPicker clinicPickerEClipboard;
 		private System.Windows.Forms.Label labelEClipboardNotSignedUp;
 		private UI.Button butCancel;
@@ -600,8 +549,6 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textEclipboardImageDefs;
 		private OpenDental.UI.CheckBox checkDisplayIndividually;
 		private OpenDental.UI.CheckBox checkEClipboardAllowPaymentCheckIn;
-		private UI.Button butSecurity;
-		private OpenDental.UI.CheckBox checkClinicalAutoLogin;
 		private UI.Button butBrandingProfile;
 	}
 }

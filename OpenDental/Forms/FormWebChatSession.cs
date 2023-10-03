@@ -281,7 +281,7 @@ namespace OpenDental {
 			_formWebChatSessionNoteEdit.ShowDialog(this);
 			_formWebChatSessionNoteEdit.Dispose();
 			string strNoteNew=webChatNote.Note;
-			if(strNoteOld!=strNoteNew) {
+			if(strNoteOld!=strNoteNew || _formWebChatSessionNoteEdit.IsDeleted) {
 				string msg="Web Chat Session ("+webChatNote.WebChatSessionNum.ToString()+") Note has been edited";
 				SecurityLogs.MakeLogEntry(Permissions.WebChatEdit,_webChatSession.PatNum,msg);
 			}

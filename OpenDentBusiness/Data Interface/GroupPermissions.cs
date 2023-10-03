@@ -348,15 +348,23 @@ namespace OpenDentBusiness{
 		///<summary>Checks if user has permission to access the passed-in adjustment type. 
 		///Unlike other permissions, if this permission node isn't checked then a user is not barred from creating this specific adjustment type</summary>
 		public static bool HasPermissionForAdjType(Def adjTypeDef,bool suppressMessage=true) {
-			if(Security.IsAuthorized(Permissions.AdjustmentTypeDeny,adjTypeDef.DefNum,true)) {
-				if(!suppressMessage) {
-					string unauthorizedMessage=Lans.g("Security","Not authorized.")+"\r\n"
-						+Lans.g("Security","A user with the SecurityAdmin permission must grant you access for adjustment type")+":\r\n"+adjTypeDef.ItemName;
-					MessageBox.Show(unauthorizedMessage);
-				}
+			List<UserGroup> listUserGroupsAdjTypeDeny=UserGroups.GetForPermission(Permissions.AdjustmentTypeDeny);
+			List<UserGroup> listUserGroupsForUser=UserGroups.GetForUser(Security.CurUser.UserNum, (Security.CurUser.UserNumCEMT!=0))
+				.FindAll(x => listUserGroupsAdjTypeDeny.Any(y => y.UserGroupNum==x.UserGroupNum));
+			List<long> listUserGroupNums=listUserGroupsForUser.Select(x => x.UserGroupNum).ToList();
+			List<GroupPermission> listGroupPermissions=GetForUserGroups(listUserGroupNums, Permissions.AdjustmentTypeDeny)
+				.FindAll(x => x.FKey==adjTypeDef.DefNum);			
+			//Return true when not all the user's groups with AdjustmentTypeDeny have the adjTypeDef.DefNum checked so the adjustment is not blocked.
+			if(listGroupPermissions.IsNullOrEmpty() || listGroupPermissions.Count!=listUserGroupNums.Count) {
+        return true;
+			}
+			if(suppressMessage) {
 				return false;
 			}
-			return true;
+			string unauthorizedMessage=Lans.g("Security","Not authorized.")+"\r\n"
+				+Lans.g("Security","A user with the SecurityAdmin permission must grant you access for adjustment type")+":\r\n"+adjTypeDef.ItemName;
+      MessageBox.Show(unauthorizedMessage);
+			return false;
 		}
 
 		///<summary>Checks if user has permission to access the passed-in adjustment type then checks if the user has the passed-in permission as well.</summary>

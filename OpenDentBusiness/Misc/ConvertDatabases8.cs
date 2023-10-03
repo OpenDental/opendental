@@ -449,6 +449,14 @@ namespace OpenDentBusiness {
 				"AND PropertyValue='"+POut.String(@"C:\Scanora\Scanora.ini")+"'";
 			Db.NonQ(command);
 		}//End of To23_2_21 method
-
+		
+		private static void To23_2_22(){
+			string command="DELETE FROM clinicpref WHERE prefname='EClipboardClinicalValidationFrequency'";//This has been made into a global (non-clinic) pref, per Nathan/Sean/Sam.
+			Db.NonQ(command);
+			//I48122 ODXam - streamline App Store approval
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('DevAutoApproveDevice','0')";//False by default
+			Db.NonQ(command);
+			//End I48122
+		}//End of To23_2_22 method
 	}
 }

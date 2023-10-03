@@ -391,8 +391,9 @@ namespace CentralManager {
 			}
 			try {
 				Security.CurUser.IsPasswordResetRequired=false;
+				Security.CurUser.PasswordIsStrong=FormCPE.IsPassWordStrong;
 				Userods.Update(Security.CurUser);
-				Userods.UpdatePassword(Security.CurUser,FormCPE.LoginDetails,false,includeCEMT:true); ;
+				Userods.UpdatePassword(Security.CurUser,FormCPE.LoginDetails,FormCPE.IsPassWordStrong,includeCEMT:true); ;
 				Security.PasswordTyped=FormCPE.PasswordTyped;//Update the last typed in for middle tier refresh
 				Security.CurUser=Userods.GetUserNoCache(Security.CurUser.UserNum);//UpdatePassword() changes multiple fields.  Refresh from db.
 			}

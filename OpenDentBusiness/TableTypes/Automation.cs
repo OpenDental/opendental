@@ -67,6 +67,8 @@ namespace OpenDentBusiness{
 		CreateClaim,
 		///<summary>Opening an existing Claim</summary>
 		OpenClaim,
+		///<summary>10</summary>
+		ApptComplete,
 	}
 
 	///<summary></summary>

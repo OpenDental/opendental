@@ -1074,9 +1074,13 @@ namespace OpenDental {
 			}
 			#endregion Provider Term Date Check
 			bool removeCompletedProcs=ProcedureL.DoRemoveCompletedProcs(appointment,listProcedures.FindAll(x => x.ProcStatus==ProcStat.C));
+			ApptStatus apptStatusOld=appointment.AptStatus;
 			ODTuple<Appointment,List<Procedure>> result=Appointments.CompleteClick(appointment,listProcedures,removeCompletedProcs);
 			appointment=result.Item1;
 			listProcedures=result.Item2;
+			if(apptStatusOld!=ApptStatus.Complete && appointment.AptStatus==ApptStatus.Complete) {
+				AutomationL.Trigger(AutomationTrigger.ApptComplete,null,appointment.PatNum);
+			}
 			if(appointment.AptStatus!=ApptStatus.PtNote) {
 				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listProcedures.Select(x => ProcedureCodes.GetStringProcCode(x.CodeNum)).ToList(),appointment.PatNum);
 			}

@@ -1513,6 +1513,7 @@ namespace OpenDental {
 				InsSub insSub2=InsSubs.GetSub(PatPlans.GetInsSubNum(Pd.ListPatPlans,PatPlans.GetOrdinal(PriSecMed.Secondary,Pd.ListPatPlans,Pd.ListInsPlans,Pd.ListInsSubs)),Pd.ListInsSubs);
 				ApptStatus apptStatusOld=appointment.AptStatus;
 				Appointments.SetAptStatusComplete(appointment,insSub1.PlanNum,insSub2.PlanNum);
+				AutomationL.Trigger(AutomationTrigger.ApptComplete,null,appointment.PatNum);
 				Appointments.TryAddPerVisitProcCodesToAppt(appointment,apptStatusOld);
 				AppointmentEvent.Fire(ODEventType.AppointmentEdited,appointment);
 				List<Procedure> listProceduresForAppt=Procedures.GetProcsForSingle(appointment.AptNum,false);
