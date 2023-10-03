@@ -803,24 +803,29 @@ TabControl: Do not use System.Windows.Forms.TabControl. Instead, use OpenDental.
 				}
 				//FONT===================================================================================================================================================================================
 				float scaledFont;
-				if(control.Controls[i] is TextBox
-					|| control.Controls[i] is System.Windows.Forms.ComboBox
-					|| control.Controls[i] is System.Windows.Forms.RichTextBox
-					|| control.Controls[i] is System.Windows.Forms.TreeView)
-				{
-					//Some MS controls need to have their font scaled completely, both MS and zoom.
-					scaledFont=ScaleF(control96Info.FontSize96);
+				if(control.Controls[i] is System.Windows.Forms.RichTextBox) {
+					//Don't scale the RichTextBoxes or else they will register as a changed sheetField and clear the signature upon window resize.
+					//Not scaling here matches how it was done in previous versions.
 				}
-				else{
-					//But most controls only get zoomed by us, and then MS automatically does their own MS scaling.
-					scaledFont=ScaleFontODZoom(control96Info.FontSize96);
-					//Bad info: This group also includes RichTextBoxes, which adapt their own font to the current dpi, except OD zoom portion which we set.
-				}
-				if(control.Controls[i].Font.Bold){
-					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
-				}
-				else{
-					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont);
+				else {
+					if(control.Controls[i] is TextBox
+						|| control.Controls[i] is System.Windows.Forms.ComboBox
+						|| control.Controls[i] is System.Windows.Forms.TreeView)
+					{
+						//Some MS controls need to have their font scaled completely, both MS and zoom.
+						scaledFont=ScaleF(control96Info.FontSize96);
+					}
+					else{
+						//But most controls only get zoomed by us, and then MS automatically does their own MS scaling.
+						scaledFont=ScaleFontODZoom(control96Info.FontSize96);
+						//Bad info: This group also includes RichTextBoxes, which adapt their own font to the current dpi, except OD zoom portion which we set.
+					}
+					if(control.Controls[i].Font.Bold){
+						control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
+					}
+					else{
+						control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont);
+					}
 				}
 				if(control.Controls[i] is System.Windows.Forms.ListBox listbox2){
 					listbox2.ClearSelected();//jordan If it crashes on this line, then the top of this file regarding ListBoxes.

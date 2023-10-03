@@ -639,12 +639,14 @@ namespace OpenDentBusiness{
 			Rectangle boundsCur=sheetField.Bounds;
 			boundsCur.Height+=amountOfGrowth+1;//Add 1 to the height because Rectangle.IntersectsWith() does not include when the the boundaries touch but do not overlap.
 			List<SheetField> affectedFields=sheet.SheetFields.FindAll(field => field!=sheetField 
+				&& sheetField.YPos<field.YPos //only fields which are below the one with growth behavior should be effected
 				&& field.FieldType!=SheetFieldType.Drawing 
 				&& boundsCur.IntersectsWith(field.Bounds));
 			for(int i=0;i<affectedFields.Count;i++){
 				boundsCur=affectedFields[i].Bounds;
 				boundsCur.Height+=amountOfGrowth+1;//Add 1 to the height because Rectangle.IntersectsWith() does not include when the the boundaries touch but do not overlap.
 				affectedFields.AddRange(sheet.SheetFields.Where(field => field!=sheetField 
+					&& sheetField.YPos<field.YPos
 					&& field.FieldType!=SheetFieldType.Drawing 
 					&& field.Bounds.IntersectsWith(boundsCur) 
 					&& !affectedFields.Contains(field)));
