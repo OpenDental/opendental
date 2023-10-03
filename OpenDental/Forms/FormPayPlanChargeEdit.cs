@@ -129,8 +129,10 @@ namespace OpenDental{
 					MsgBox.Show(this,"This charge date is the same as a future charge date. This will prevent the future charge from being issued","Warning");
 				}
 				Procedure procedure=Procedures.GetOneProc(PayPlanChargeCur.FKey,false);
-				if(principal > procedure.ProcFee) {
-					MsgBox.Show(this,"Principal cannot be greater than the procedure fee.");
+				double adjustment=Adjustments.GetTotForProc(procedure.ProcNum);
+				double procFeeAdjusted=procedure.ProcFee+adjustment;
+				if(principal > procFeeAdjusted) {
+					MsgBox.Show(this,"Principal cannot be greater than the procedure fee plus adjustments.");
 					return;
 				}
 			}

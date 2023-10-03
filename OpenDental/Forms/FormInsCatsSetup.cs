@@ -239,8 +239,8 @@ namespace OpenDental {
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Reset orders and spans to default?")) {
 				return;
 			}
-			CovCats.SetOrdersToDefault();
 			CovCats.SetSpansToDefault();
+			CovCats.SetOrdersToDefault();
 			FillSpans();
 			MsgBox.Show(this,"Done.");
 		}

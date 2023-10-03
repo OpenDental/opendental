@@ -748,6 +748,8 @@ namespace OpenDentBusiness {
 		///<summary>Long. 0 by default. Used to assign a user group to a new user that is added by a user who does not have the SecurityAdmin user 
 		///permission.</summary>
 		DefaultUserGroup,
+		///<summary>Boolean. Set to false by default. When set to true, it will no longer be necessary to manually approve devices.</summary>
+		DevAutoApproveDevice,
 		///<summary>Bool.  Default true 1. Applies to all computers.</summary>
 		DirectX11ToothChartUseIfAvail,
 		///<summary>Comma delimited list of procedure codes that represent Exam codes. D Code. Defaults to empty string.</summary>
@@ -843,7 +845,7 @@ namespace OpenDentBusiness {
 		///<summary>String.  When EClipboardEnableByodSms is true, this template will be used for sending 'eClipboard Check-In Links'.</summary>
 		[PrefName(ValueType=PrefValueType.STRING)]
 		EClipboardByodSmsTemplate,
-		///<summary>Determines how often eClipboard will ask clinicians to reverify using a PIN or BioAuth. -1 Indicates security checks are disabled.</summary>
+		///<summary>Determines how often eClipboard will ask clinicians to reverify using a PIN or BioAuth. -1 Indicates security checks are disabled. This has been made into a global (non-clinic) pref, per Nathan/Sean/Sam.</summary>
 		[PrefName(ValueType=PrefValueType.INT)]
 		EClipboardClinicalValidationFrequency,
 		///<summary>Boolean, true by default. If this is true, when the patient status is changed to the waiting room status, we will check if there

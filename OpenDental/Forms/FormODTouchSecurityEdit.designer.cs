@@ -24,22 +24,34 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormODTouchSecurityEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelFrequency = new System.Windows.Forms.Label();
 			this.textFrequency = new OpenDental.ValidNum();
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkSecurityEnabled = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(193, 102);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(112, 102);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(193, 102);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelFrequency
 			// 
@@ -75,16 +87,18 @@ namespace OpenDental{
 			this.checkSecurityEnabled.Text = "Enable Clinical Security";
 			this.checkSecurityEnabled.CheckedChanged += new System.EventHandler(this.checkSecurityEnabled_CheckedChanged);
 			// 
-			// FormODTouchSecurityEdit
+			// FormEClipboardSecurityEdit
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(280, 138);
 			this.Controls.Add(this.checkSecurityEnabled);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textFrequency);
 			this.Controls.Add(this.labelFrequency);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "FormODTouchSecurityEdit";
+			this.Name = "FormEClipboardSecurityEdit";
 			this.Text = "ODTouch Security";
 			this.Load += new System.EventHandler(this.FormEClipboardSecurityEdit_Load);
 			this.ResumeLayout(false);
@@ -94,7 +108,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelFrequency;
 		private ValidNum textFrequency;
 		private System.Windows.Forms.Label label1;

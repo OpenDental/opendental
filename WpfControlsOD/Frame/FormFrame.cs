@@ -656,7 +656,9 @@ namespace OpenDental {
 			}
 			Rectangle rectangleIcon=new Rectangle(MaxInset()+5,MaxInset()+4,ScaleI(20),ScaleI(20));
 			if(ShowIcon){
-				g.DrawImage(Icon.ToBitmap(),rectangleIcon);
+				//for some reason, I couldn't get form.Icon to work.
+				Icon icon=WpfControls.Properties.Resources.Icon;
+				g.DrawImage(icon.ToBitmap(),rectangleIcon);
 			}
 			if(_fontTitle==null){
 				RectangleF rectangleText=new RectangleF(MaxInset()+ScaleF(30),MaxInset()+ScaleF(7),

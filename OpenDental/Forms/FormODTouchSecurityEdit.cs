@@ -30,7 +30,7 @@ namespace OpenDental {
 			textFrequency.Enabled=checkSecurityEnabled.Checked;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(checkSecurityEnabled.Checked) {
 				if(!int.TryParse(textFrequency.Text,out _securityFrequency)) {
 					MsgBox.Show("Frequency is not a valid number.");
@@ -44,5 +44,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

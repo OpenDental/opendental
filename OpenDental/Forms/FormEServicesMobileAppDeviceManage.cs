@@ -11,30 +11,19 @@ using OpenDentBusiness;
 
 namespace OpenDental {
 	public partial class FormEServicesMobileAppDeviceManage: FormODBase {
-		private ClinicPrefHelper _clinicPrefHelper;
-		///<summary>When true, shows the eClipboard column to enable and disable devices.</summary>
+		/// <summary>When true, shows the eClipboard column to enable and disable devices.</summary>
 		private bool _canEditEClipboard;
-		///<summary>When true, shows the ODTouch column to enable and disable devices.</summary>
+		/// <summary>When true, shows the ODTouch column to enable and disable devices.</summary>
 		private bool _canEditODTouch;
-		///<summary>List of the state of the old mobile app devices before entering this form</summary>
-		private List<MobileAppDevice> _listMobileAppDevicesOld;
-		///<summary>List of mobile app devices.</summary>
-		private List<MobileAppDevice> _listMobileAppDevicesAll;
-		///<summary>List of MobileAppDevices that will be deleted on save.</summary>
-		private List<MobileAppDevice> _listMobileAppDevicesDelete;
 
 		public FormEServicesMobileAppDeviceManage() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_clinicPrefHelper=new ClinicPrefHelper(PrefName.ODTouchDeviceLimit);
-			_listMobileAppDevicesDelete=new List<MobileAppDevice>();
 		}
 
 		private void FormEServicesMobileAppDeviceManage_Load(object sender,EventArgs e) {
 			//Needs to be called before FillGrid to determine which controls can be enabled and disabled.
-			_listMobileAppDevicesOld=MobileAppDevices.GetForUser(Security.CurUser);
-			_listMobileAppDevicesAll=MobileAppDevices.GetForUser(Security.CurUser);
 			SetUIEClipboardEnabled();
 		}
 
@@ -49,13 +38,9 @@ namespace OpenDental {
 			gridMobileAppDevices.Columns.Clear();
 			GridColumn col=new GridColumn("Device Name",100){IsWidthDynamic=true };
 			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("Last eClipboard Attempt",100){IsWidthDynamic=true };
+			col=new GridColumn("Last Attempt",100){IsWidthDynamic=true };
 			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("Last eClipboard Login",100){IsWidthDynamic=true };
-			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("Last ODTouch Attempt",100){IsWidthDynamic=true };
-			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("Last ODTouch Login",100){IsWidthDynamic=true };
+			col=new GridColumn("Last Login",100){IsWidthDynamic=true };
 			gridMobileAppDevices.Columns.Add(col);
 			if(PrefC.HasClinicsEnabled) {
 				col=new GridColumn("Clinic",100){IsWidthDynamic=true };
@@ -63,9 +48,7 @@ namespace OpenDental {
 			}
 			col=new GridColumn("Device State",100) {IsWidthDynamic=true };
 			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("eClipboard",70,HorizontalAlignment.Center);
-			gridMobileAppDevices.Columns.Add(col);
-			col=new GridColumn("ODTouch",70,HorizontalAlignment.Center);
+			col=new GridColumn("Enabled",60,HorizontalAlignment.Center);
 			gridMobileAppDevices.Columns.Add(col);
 			if(_canEditEClipboard || _canEditODTouch) {
 				col=new GridColumn("Delete",45,HorizontalAlignment.Center);
@@ -73,32 +56,22 @@ namespace OpenDental {
 			}
 			//Rows
 			gridMobileAppDevices.ListGridRows.Clear();
-			List<MobileAppDevice> listMobileAppDevices=_listMobileAppDevicesAll;
+			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser);
 			if(GetClinicNumEClipboardTab()>0) {
-				listMobileAppDevices=_listMobileAppDevicesAll.FindAll(x=>x.ClinicNum==GetClinicNumEClipboardTab());
+				listMobileAppDevices.RemoveAll(x => x.ClinicNum!=GetClinicNumEClipboardTab());
 			}
 			for(int i=0;i<listMobileAppDevices.Count;i++) {
 				GridRow row=new GridRow();
 				MobileAppDevice mobileAppDevice=listMobileAppDevices[i];
 				row.Cells.Add(mobileAppDevice.DeviceName+"\r\n("+mobileAppDevice.UniqueID+")");
 				string rowValue="";
-				if(mobileAppDevice.EclipboardLastAttempt.Year>1880) {
-					rowValue=mobileAppDevice.EclipboardLastAttempt.ToString();
+				if(mobileAppDevice.LastAttempt.Year>1880) {
+					rowValue=mobileAppDevice.LastAttempt.ToString();
 				}
 				row.Cells.Add(rowValue);
 				rowValue="";
-				if(mobileAppDevice.EclipboardLastLogin.Year>1880) {
-					rowValue=mobileAppDevice.EclipboardLastLogin.ToString();
-				}
-				row.Cells.Add(rowValue);
-				rowValue="";
-				if(mobileAppDevice.ODTouchLastAttempt.Year>1880) {
-					rowValue=mobileAppDevice.ODTouchLastAttempt.ToString();
-				}
-				row.Cells.Add(rowValue);
-				rowValue="";
-				if(mobileAppDevice.ODTouchLastLogin.Year>1880) {
-					rowValue=mobileAppDevice.ODTouchLastLogin.ToString();
+				if(mobileAppDevice.LastLogin.Year>1880) {
+					rowValue=mobileAppDevice.LastLogin.ToString();
 				}
 				row.Cells.Add(rowValue);
 				if(PrefC.HasClinicsEnabled) {
@@ -111,17 +84,20 @@ namespace OpenDental {
 					row.Cells.Add(rowValue);
 				}
 				row.Cells.Add(mobileAppDevice.DevicePage.GetDescription());
-				row.Cells.Add((mobileAppDevice.IsEclipboardEnabled ? "X" : ""));
-				row.Cells.Add((mobileAppDevice.IsODTouchEnabled ? "X" : ""));
+				row.Cells.Add((mobileAppDevice.IsAllowed ? "X" : ""));
 				if(_canEditEClipboard || _canEditODTouch) {
 					#region Delete click handler
 					void DeleteClick(object sender,EventArgs e) {
-						if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will remove the device from the database and all other workstations on Save." +
+						if(gridMobileAppDevices.SelectedTag<MobileAppDevice>().PatNum>0) {
+							MsgBox.Show("A patient is currently using this device. Please clear the patient from the device using the Kiosk Manager" +
+								" or wait until the patient is no longer using the device.");
+							return;
+						}
+						if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will immediately remove the device from the database and all other workstations." +
 							" Continue?")) {
 							return;
 						}
-						_listMobileAppDevicesDelete.Add(gridMobileAppDevices.SelectedTag<MobileAppDevice>());
-						_listMobileAppDevicesAll.RemoveAll(x => x.MobileAppDeviceNum==gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
+						MobileAppDevices.Delete(gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
 						FillGridMobileAppDevices();
 					}
 					#endregion Delete click handler
@@ -139,16 +115,14 @@ namespace OpenDental {
 		///<summary>Called when user clicks on use defaults for clinic, AuthorizeTab, clinicPicker.SelectedIndexChanged, and CheckEClipboardCreateMissingForms_Click.  It sets various areas enabled or disabled.  Doesn't change the checked values.</summary>
 		private void SetUIEClipboardEnabled() {
 			//Determine if the user has permissions to alter eService features.
-			bool hasSetupPermission=Security.IsAuthorized(EnumPermType.EServicesSetup,true);
-			long selectedClinicNum=GetClinicNumEClipboardTab();
+			bool hasSetupPermission=Security.IsAuthorized(Permissions.EServicesSetup,true);
 			//Determine if the selected clinic is signed up for eClipboard.
-			bool isClinicSignedUpEClipboard=MobileAppDevices.IsClinicSignedUpForEClipboard(selectedClinicNum);
-			//Determine if the selected clinic is signed up for ODTouch.
-			bool isClinicSignedUpODTouch=ClinicPrefs.IsODTouchAllowed(selectedClinicNum);
-			if(PrefC.HasClinicsEnabled && selectedClinicNum==0) {
+			bool isClinicSignedUpEClipboard=MobileAppDevices.IsClinicSignedUpForEClipboard(GetClinicNumEClipboardTab());
+			if(PrefC.HasClinicsEnabled && GetClinicNumEClipboardTab()==0) {
 				isClinicSignedUpEClipboard=Clinics.GetForUserod(Security.CurUser).Any(x => MobileAppDevices.IsClinicSignedUpForEClipboard(x.ClinicNum));
-				isClinicSignedUpODTouch=Clinics.GetForUserod(Security.CurUser).Any(x => ClinicPrefs.IsODTouchAllowed(x.ClinicNum));
 			}
+			//Determine if the selected clinic is signed up for ODTouch.
+			bool isClinicSignedUpODTouch=LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,clinicPickerEClipboard.SelectedClinicNum);
 			_canEditEClipboard=hasSetupPermission && isClinicSignedUpEClipboard;
 			_canEditODTouch=hasSetupPermission && isClinicSignedUpODTouch;
 			gridMobileAppDevices.Enabled=hasSetupPermission;
@@ -164,16 +138,19 @@ namespace OpenDental {
 			if(clinicPickerEClipboard==null) {
 				return 0; //combobox hasn't loaded yet
 			}
-			return clinicPickerEClipboard.ClinicNumSelected;
+			return clinicPickerEClipboard.SelectedClinicNum;
 		}
 
 		private void gridMobileAppDevices_CellClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup)) {
+			if(!Security.IsAuthorized(Permissions.EServicesSetup)) {
 				return;
 			}
-			int idxeClipboardColumn=gridMobileAppDevices.Columns.GetIndex("eClipboard");
-			int idxODTouchColumn=gridMobileAppDevices.Columns.GetIndex("ODTouch");
-			if(!e.Col.In(idxeClipboardColumn,idxODTouchColumn)) {//They did not select the right column.
+			int idxEnabledColumn=gridMobileAppDevices.Columns.GetIndex("Enabled");
+			if(!e.Col.In(idxEnabledColumn)) {//They did not select the right column.
+				return;
+			}
+			if(!_canEditEClipboard && !_canEditODTouch) {
+				MsgBox.Show("To manage devices go to the Signup Portal and enable eClipboard.");
 				return;
 			}
 			MobileAppDevice mobileAppDevice=gridMobileAppDevices.SelectedTag<MobileAppDevice>();
@@ -181,60 +158,24 @@ namespace OpenDental {
 			if(mobileAppDevice==null) {
 				return;
 			}
-			long selectedClinicNum=0;
-			if(PrefC.HasClinicsEnabled) {
-				selectedClinicNum=mobileAppDevice.ClinicNum;
-			}
-			if(e.Col.In(idxeClipboardColumn) && !MobileAppDevices.IsClinicSignedUpForEClipboard(selectedClinicNum)) {
-				MsgBox.Show("To manage devices go to the Signup Portal and enable eClipboard.");
-				return;
-			}
-			if(e.Col.In(idxODTouchColumn) && !ClinicPrefs.IsODTouchAllowed(selectedClinicNum)){
-				MsgBox.Show("To manage devices go to the Signup Portal and enable ODTouch.");
-				return;
-			}
-			if(e.Col==idxeClipboardColumn) {
-				if(mobileAppDevice.IsEclipboardEnabled){
+			if(e.Col==idxEnabledColumn) {
+				if(mobileAppDevice.IsAllowed){
 					if(mobileAppDevice.PatNum>0) {
 						MsgBox.Show("A patient is currently using this device. Please clear the patient from the device using the Kiosk Manager" +
 							" or wait until the patient is no longer using the device.");
 						return;
 					}
 				}
-				mobileAppDevice.IsEclipboardEnabled=!mobileAppDevice.IsEclipboardEnabled;//Flip the bit.
+				mobileAppDevice.IsAllowed=!mobileAppDevice.IsAllowed;//Flip the bit.
 			}
-			if(e.Col==idxODTouchColumn) {
-				mobileAppDevice.IsODTouchEnabled=!mobileAppDevice.IsODTouchEnabled;//Flip the bit.
-				long clinicNum=mobileAppDevice.ClinicNum;
-				int deviceLimitForClinic=_clinicPrefHelper.GetIntVal(PrefName.ODTouchDeviceLimit,clinicNum);
-				int deviceCountForClinic=_listMobileAppDevicesAll.Where(x=>x.ClinicNum==clinicNum && x.IsODTouchEnabled).Count();
-				int previousDeviceCountForClinic=_listMobileAppDevicesOld.Where(x=>x.ClinicNum==clinicNum && x.IsODTouchEnabled).Count();
-				//If the total enabled device count has changed for the clinic, and the user doesn't want to pay extra, return.
-				if(deviceLimitForClinic<deviceCountForClinic && previousDeviceCountForClinic<deviceCountForClinic && mobileAppDevice.IsODTouchEnabled 
-					&& !MsgBox.Show(MsgBoxButtons.YesNo,$"The ODTouch device count of {deviceCountForClinic} exceeds the device limit of {deviceLimitForClinic}. This will incur a surplus charge per device over that limit. Continue?"))
-				{
-					mobileAppDevice.IsODTouchEnabled=false;
-					return;//Don't activate device.
-				}
-			}
+			//Update the device because the signal processing of this form isn't friendly to keeping an in-memory list that syncs when the form closes
+			MobileAppDevices.Update(mobileAppDevice);
+			OpenDentBusiness.WebTypes.PushNotificationUtils.CI_IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,mobileAppDevice.IsAllowed);
 			FillGridMobileAppDevices();	//Fill the grid to show the changes.
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
-			MobileAppDevices.DeleteMany(_listMobileAppDevicesDelete);
-			for(int i=0;i<_listMobileAppDevicesAll.Count;i++) {
-				MobileAppDevice mobileAppDeviceOld=_listMobileAppDevicesOld.Find(x => x.MobileAppDeviceNum==_listMobileAppDevicesAll[i].MobileAppDeviceNum);
-				MobileAppDevices.Update(_listMobileAppDevicesAll[i],mobileAppDeviceOld);
-				if(_listMobileAppDevicesAll[i].IsEclipboardEnabled!=mobileAppDeviceOld.IsEclipboardEnabled) {
-					MobileNotifications.IsAllowedChanged(_listMobileAppDevicesAll[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,_listMobileAppDevicesAll[i].IsEclipboardEnabled);
-				}
-				if(_listMobileAppDevicesAll[i].IsODTouchEnabled!=mobileAppDeviceOld.IsODTouchEnabled) {
-					MobileNotifications.IsAllowedChanged(_listMobileAppDevicesAll[i].MobileAppDeviceNum,EnumAppTarget.ODTouch,_listMobileAppDevicesAll[i].IsODTouchEnabled);
-					SecurityLogs.MakeLogEntry(EnumPermType.EServicesSetup,0,$"ODTouch {(_listMobileAppDevicesAll[i].IsODTouchEnabled ? "enabled" : "disabled")} for device {_listMobileAppDevicesAll[i].UniqueID}",_listMobileAppDevicesAll[i].MobileAppDeviceNum,LogSources.None,DateTime.Now,Security.CurUser.UserNum);
-				}
-			}
+		private void butOK_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

@@ -2642,6 +2642,9 @@ namespace OpenDental{
 			}
 			if(_appointment.AptStatus==ApptStatus.Complete) {
 				Procedures.AfterProcsSetComplete(listProceduresGridSelected);
+				if(_appointmentOld.AptStatus!=ApptStatus.Complete) {
+					AutomationL.Trigger(AutomationTrigger.ApptComplete,null,_appointment.PatNum);
+				}
 			}
 			#endregion Automation
 			#region Broken Appt Logic

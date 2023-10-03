@@ -45,6 +45,7 @@ namespace OpenDental {
 				return;
 			}
 			butSecureEmail.Visible=EmailSecures.IsSecureEmailReleased();
+			butODTouch.Visible=LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum);
 		}
 
 		/// <summary>When the user is trying to send a text message, if sending the text would exceed the users spending limit, this handles that error.
@@ -112,6 +113,17 @@ namespace OpenDental {
 			//Signups may have changed so re-sync here before allowing other setups to occur.
 			_signupOut=GetSignupOut(_signupOut);
 			butSecureEmail.Visible=EmailSecures.IsSecureEmailReleased();
+		}
+
+		private void butMobileAppDevice_Click(object sender,EventArgs e) {
+			using FormEServicesMobileAppDeviceManage formMobileAppDeviceManage=new FormEServicesMobileAppDeviceManage();
+			formMobileAppDeviceManage.ShowDialog();
+		}
+
+		private void butODTouch_Click(object sender,EventArgs e) {
+			//Permissions check presumably. Discuss with Sam.
+			using FormODTouchSecurityEdit formODTouchSecEdit=new FormODTouchSecurityEdit();
+			formODTouchSecEdit.ShowDialog();
 		}
 
 		private void butEConnector_Click(object sender,EventArgs e) {

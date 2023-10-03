@@ -11,6 +11,7 @@ using OpenDentBusiness.Crud;
 namespace OpenDental {
 	public partial class FormWebChatSessionNoteEdit:FormODBase {
 		private WebChatNote _webChatNote;
+		public bool IsDeleted=false;
 
 		public FormWebChatSessionNoteEdit(WebChatNote webChatNote) {
 			_webChatNote=webChatNote;
@@ -60,6 +61,7 @@ namespace OpenDental {
 				return;
 			}
 			WebChatNotes.Delete(_webChatNote.WebChatNoteNum);
+			IsDeleted=true;
 			DialogResult=DialogResult.OK;
 			Close();
 		}
