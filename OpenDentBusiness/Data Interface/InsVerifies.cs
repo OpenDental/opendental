@@ -130,6 +130,15 @@ namespace OpenDentBusiness{
 			return Crud.InsVerifyCrud.SelectOne(command);
 		}
 
+		///<summary>Gets one InsVerify from the db by its InsVerifyNum for the API.</summary>
+		public static InsVerify GetOne(long insVerifyNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<InsVerify>(MethodBase.GetCurrentMethod(),insVerifyNum);
+			}
+			string command="SELECT * FROM insverify WHERE InsVerifyNum="+POut.Long(insVerifyNum)+"";
+			return Crud.InsVerifyCrud.SelectOne(command);
+		}
+
 		///<summary></summary>
 		public static void Update(InsVerify insVerify) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -178,6 +187,21 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<InsVerify>>(MethodBase.GetCurrentMethod());
 			}
 			string command="SELECT * FROM insverify";
+			return Crud.InsVerifyCrud.SelectMany(command);
+		}
+
+		///<summary>Gets all InsVerifies for a given verifyType and secDateTEdit. Used by the ODAPI, please notify the
+		///API team before making any modifications to this method.</summary>
+		public static List<InsVerify> GetInsVerifiesForApi(int limit,int offset,int verifyType,DateTime secDateTEdit) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<InsVerify>>(MethodBase.GetCurrentMethod(),limit,offset,verifyType,secDateTEdit);
+			}
+			string command="SELECT * FROM insverify WHERE SecDateTEdit>="+POut.DateT(secDateTEdit)+" ";
+			if(verifyType>-1) {
+				command+=" AND VerifyType="+POut.Int((int)verifyType)+" ";
+			}
+			command+=" ORDER BY insverifynum "//Ensure order for limit and offset.
+			+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.InsVerifyCrud.SelectMany(command);
 		}
 

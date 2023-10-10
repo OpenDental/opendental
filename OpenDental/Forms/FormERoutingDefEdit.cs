@@ -16,6 +16,7 @@ namespace OpenDental {
 
 		private ERoutingDef _eRoutingDef;
 		private List<ERoutingActionDef> _listERoutingActionDefs;
+		private List<ERoutingActionDef> _listERoutingActionDefsOld;
 		private List<ERoutingDefLink> _listERoutingDefLinks;
 		private bool _hasChanged=false;
 		private string _descriptionOrig;
@@ -28,6 +29,7 @@ namespace OpenDental {
 			_eRoutingDef=new ERoutingDef() { IsNew=true };
 			_eRoutingDef.ClinicNum=clinicNum;
 			_listERoutingActionDefs=new List<ERoutingActionDef>();
+			_listERoutingActionDefsOld=new List<ERoutingActionDef>();
 			_listERoutingDefLinks=new List<ERoutingDefLink>();
 		}
 
@@ -37,6 +39,7 @@ namespace OpenDental {
 			Lan.F(this);
 			_eRoutingDef=patientFlowDef;
 			_listERoutingActionDefs=ERoutingActionDefs.GetAllByERoutingDef(_eRoutingDef.ERoutingDefNum);
+			_listERoutingActionDefsOld=_listERoutingActionDefs.ToList();
 			_listERoutingDefLinks=ERoutingDefLinks.GetWhere(x => x.ERoutingDefNum==_eRoutingDef.ERoutingDefNum);
 			_descriptionOrig=patientFlowDef.Description;
 		}
@@ -116,6 +119,12 @@ namespace OpenDental {
 					x.ERoutingDefNum=_eRoutingDef.ERoutingDefNum;
 					ERoutingActionDefs.Upsert(x);
 				});
+				for(int i=0;i<_listERoutingActionDefsOld.Count;i++) {
+					ERoutingActionDef eRoutingActionDef=_listERoutingActionDefs.Find(x => x.ERoutingActionDefNum==_listERoutingActionDefsOld[i].ERoutingActionDefNum);
+					if(eRoutingActionDef==null) {
+						ERoutingActionDefs.Delete(_listERoutingActionDefsOld[i].ERoutingActionDefNum);
+					}
+				}
 			}
 			//We blindly delete here because we only want to have what is currently selected, and only then if they have the appropriate link type selected.
 			ERoutingDefLinks.DeleteAll(_eRoutingDef.ERoutingDefNum);

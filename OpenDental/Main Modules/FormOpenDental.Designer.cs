@@ -164,7 +164,7 @@ namespace OpenDental{
 			// 
 			// butNewMap
 			// 
-			this.butNewMap.Location = new System.Drawing.Point(61, 27);
+			this.butNewMap.Location = new System.Drawing.Point(0, 27);
 			this.butNewMap.Name = "butNewMap";
 			this.butNewMap.Size = new System.Drawing.Size(50, 24);
 			this.butNewMap.TabIndex = 93;
@@ -240,13 +240,14 @@ namespace OpenDental{
 			// 
 			// butMapPhones
 			// 
-			this.butMapPhones.Location = new System.Drawing.Point(-5, 21);
+			this.butMapPhones.Location = new System.Drawing.Point(52, 27);
 			this.butMapPhones.Name = "butMapPhones";
-			this.butMapPhones.Size = new System.Drawing.Size(74, 34);
+			this.butMapPhones.Size = new System.Drawing.Size(50, 24);
 			this.butMapPhones.TabIndex = 54;
-			this.butMapPhones.Text = "Old Map\r\n(do not use)";
+			this.butMapPhones.Text = "Old Map";
 			this.toolTipMap.SetToolTip(this.butMapPhones, "Do not normally use the old map.\r\nBut if the new map has a bug,\r\nyou can always s" +
         "witch to the old\r\nmap while waiting for the bug fix.\r\n");
+			this.butMapPhones.Visible = false;
 			this.butMapPhones.Click += new System.EventHandler(this.butMapPhones_Click);
 			// 
 			// butTriage

@@ -590,10 +590,10 @@ namespace OpenDentBusiness {
 			return Crud.ProcedureCrud.SelectOne(command);
 		}
 
-		///<summary>Gets a list of all the procedures attached to the specified appointments.  Then, use GetProcsOneApt to pull procedures for one appointment from this list or GetProductionOneApt.  This process requires only one call to the database.  "myAptNums" is the list of appointments to get procedures for.  isForNext gets procedures for a list of next appointments rather than regular appointments.</summary>
-		public static List<Procedure> GetProcsMultApts(List<long> myAptNums,bool isForPlanned=false) {
+		///<summary>Gets a list of all the procedures attached to the specified appointments.  Then, use GetProcsOneApt to pull procedures for one appointment from this list or GetProductionOneApt.  This process requires only one call to the database.  "myAptNums" is the list of appointments to get procedures for.</summary>
+		public static List<Procedure> GetProcsMultApts(List<long> myAptNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),myAptNums,isForPlanned);
+				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),myAptNums);
 			}
 			if(myAptNums.Count==0) {
 				return new List<Procedure>();
@@ -603,36 +603,26 @@ namespace OpenDentBusiness {
 				if(i>0) {
 					strAptNums+=" OR";
 				}
-				if(isForPlanned) {
-					strAptNums+=" PlannedAptNum='"+POut.Long(myAptNums[i])+"'";
-				}
-				else {
-					strAptNums+=" AptNum='"+POut.Long(myAptNums[i])+"'";
-				}
+				strAptNums+=" (AptNum='"+POut.Long(myAptNums[i])+"'";
+				strAptNums+=" OR PlannedAptNum='"+POut.Long(myAptNums[i])+"')";
 			}
 			string command = "SELECT * FROM procedurelog WHERE"+strAptNums;
 			return Crud.ProcedureCrud.SelectMany(command);
 		}
 
 		///<summary>Gets procedures for one appointment by looping through the procsMultApts which was filled previously from GetProcsMultApts.</summary>
-		public static Procedure[] GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts,bool isForPlanned=false) {
+		public static List<Procedure> GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts) {
 			//No need to check MiddleTierRole; no call to db.
-			ArrayList al=new ArrayList();
+			List<Procedure> listProcedures=new List<Procedure>();
 			for(int i=0;i<procsMultApts.Count;i++) {
-				if(isForPlanned){
-					if(procsMultApts[i].PlannedAptNum==myAptNum) {
-						al.Add(procsMultApts[i].Copy());
-					}
+				if(procsMultApts[i].AptNum==0 && procsMultApts[i].PlannedAptNum==myAptNum) {//If proc is attached to this planned appt only
+					listProcedures.Add(procsMultApts[i].Copy());
 				}
-				else{
-					if(procsMultApts[i].AptNum==myAptNum) {
-						al.Add(procsMultApts[i].Copy());
-					}
+				else if(procsMultApts[i].AptNum==myAptNum) {//If proc is attached to this appointment
+					listProcedures.Add(procsMultApts[i].Copy());
 				}
 			}
-			Procedure[] retVal=new Procedure[al.Count];
-			al.CopyTo(retVal);
-			return retVal;
+			return listProcedures;
 		}
 
 		///<summary>Gets procedures for one appointment for use in the API direct from the DB. If none are found, this returns null.</summary>

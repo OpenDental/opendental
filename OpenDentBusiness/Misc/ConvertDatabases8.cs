@@ -458,5 +458,17 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End I48122
 		}//End of To23_2_22 method
+
+		private static void To23_2_23() {
+			string command;
+			if(!LargeTableHelper.IndexExists("taskancestor","TaskListNum,TaskNum")) {
+				command="ALTER TABLE taskancestor ADD INDEX TaskListCov (TaskListNum,TaskNum)";
+				List<string> listIndexNames=LargeTableHelper.GetIndexNames("taskancestor","TaskListNum");
+				if(listIndexNames.Count>0) {
+					command+=","+string.Join(",",listIndexNames.Select(x => $"DROP INDEX {POut.String(x)}"));
+				}
+				Db.NonQ(command);
+			}
+		}//End of To23_2_23 method
 	}
 }

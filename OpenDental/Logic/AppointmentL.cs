@@ -69,7 +69,7 @@ namespace OpenDental{
 					continue;	
 				}
 				List<long> listProcNumsToDelete=listProceduresToDelete.FindAll(x => x.AptNum==listAppointments[a].AptNum).Select(y => y.ProcNum).ToList();
-				List<Procedure> listProceduresForAppt=Procedures.GetProcsOneApt(listAppointments[a].AptNum, listProceduresMultAppt).ToList();
+				List<Procedure> listProceduresForAppt=Procedures.GetProcsOneApt(listAppointments[a].AptNum, listProceduresMultAppt);
 				listProceduresForAppt.RemoveAll(x => listProcNumsToDelete.Contains(x.ProcNum));//Remove the procs we intend to delete from the Procedures on Appointment grid to simulate if the procs are successfully deleted.
 				List<long> listCodeNumsRemaining=listProceduresForAppt.Select(x => x.CodeNum).ToList();
 				List<string> listStrProcCodesRemaining = new List<string>();

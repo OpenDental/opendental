@@ -215,7 +215,7 @@ namespace OpenDental {
         "Tooth Range"};
 			this.listTreatArea.Location = new System.Drawing.Point(616, 17);
 			this.listTreatArea.Name = "listTreatArea";
-			this.listTreatArea.Size = new System.Drawing.Size(118, 108);
+			this.listTreatArea.Size = new System.Drawing.Size(118, 118);
 			this.listTreatArea.TabIndex = 24;
 			this.listTreatArea.SelectedIndexChanged += new System.EventHandler(this.listTreatArea_SelectedIndexChanged);
 			// 
@@ -349,7 +349,7 @@ namespace OpenDental {
 			// 
 			this.listPaintType.Location = new System.Drawing.Point(495, 17);
 			this.listPaintType.Name = "listPaintType";
-			this.listPaintType.Size = new System.Drawing.Size(118, 238);
+			this.listPaintType.Size = new System.Drawing.Size(118, 258);
 			this.listPaintType.TabIndex = 22;
 			this.listPaintType.SelectedIndexChanged += new System.EventHandler(this.listPaintType_SelectedIndexChanged);
 			// 
@@ -870,14 +870,14 @@ namespace OpenDental {
 			// 
 			// textPaintText
 			// 
-			this.textPaintText.Location = new System.Drawing.Point(495, 256);
+			this.textPaintText.Location = new System.Drawing.Point(495, 276);
 			this.textPaintText.Name = "textPaintText";
 			this.textPaintText.Size = new System.Drawing.Size(118, 20);
 			this.textPaintText.TabIndex = 46;
 			// 
 			// labelPaintText
 			// 
-			this.labelPaintText.Location = new System.Drawing.Point(407, 259);
+			this.labelPaintText.Location = new System.Drawing.Point(407, 279);
 			this.labelPaintText.Name = "labelPaintText";
 			this.labelPaintText.Size = new System.Drawing.Size(86, 13);
 			this.labelPaintText.TabIndex = 45;
@@ -895,7 +895,7 @@ namespace OpenDental {
 			// 
 			// checkToothRange
 			// 
-			this.checkToothRange.Location = new System.Drawing.Point(616, 127);
+			this.checkToothRange.Location = new System.Drawing.Point(616, 137);
 			this.checkToothRange.Name = "checkToothRange";
 			this.checkToothRange.Size = new System.Drawing.Size(118, 18);
 			this.checkToothRange.TabIndex = 49;

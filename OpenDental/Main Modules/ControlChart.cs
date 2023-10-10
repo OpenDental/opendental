@@ -8614,20 +8614,14 @@ namespace OpenDental {
 					return;
 				}
 				if(isDoseSpotAccessAllowed) {
-					if(ODBuild.IsWeb()) {
-						//If ODCloud, open a new browser tab instead of using FormErx because the WebView2 control does not work with VirtualUI.
-						Process.Start(Erx.GetRxDoseSpotUrl(queryString));
-					}
-					else {
-						//The user is either a provider with granted access, or a proxy clinician
-						FormErx formErxNew=new FormErx();
-						formErxNew.PatientCur=Pd.Patient;
-						formErxNew.ByteArray=byteArrayPostData;
-						formErxNew.StringSSOQuery=queryString;
-						formErxNew.ErxOptionCur=erxOption;
-						_listFormErxs.Add(formErxNew);//already checked that no forms for this pat.
-						formErxNew.Show();//Non-modal so user can browse OD while writing prescription.  When form is closed, ErxBrowserClosed() is called below.
-					}
+					//The user is either a provider with granted access, or a proxy clinician
+					FormErx formErxNew=new FormErx();
+					formErxNew.PatientCur=Pd.Patient;
+					formErxNew.ByteArray=byteArrayPostData;
+					formErxNew.StringSSOQuery=queryString;
+					formErxNew.ErxOptionCur=erxOption;
+					_listFormErxs.Add(formErxNew);//already checked that no forms for this pat.
+					formErxNew.Show();//Non-modal so user can browse OD while writing prescription.  When form is closed, ErxBrowserClosed() is called below.
 				}
 				ErxLog erxLogDoseSpot=new ErxLog();
 				erxLogDoseSpot.PatNum=Pd.PatNum;
@@ -9671,8 +9665,8 @@ namespace OpenDental {
 				return;
 			}
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				bool areApptsGoingToBeEmpty=Appointments.AreApptsGoingToBeEmpty(listProceduresSelected);
-				if(areApptsGoingToBeEmpty) {
+				List<Appointment> listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected);
+				if(listAppointmentsEmpty.Count>0) {
 					MsgBox.Show("At least one procedure must be attached to the appointment.");
 					return;
 				}

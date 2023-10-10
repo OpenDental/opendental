@@ -257,6 +257,7 @@
     <Compile Include="UI Testing\FormWpfConverter.Designer.cs">
       <DependentUpon>FormWpfConverter.cs</DependentUpon>
     </Compile>
+    <Compile Include="UnitTests\PayConnect2Tests.cs" />
     <Compile Include="UnitTests\SetupWizardTests.cs" />
     <Compile Include="UnitTests\RpOutstandInsTests.cs" />
     <Compile Include="UnitTests\PaymentsTests.cs" />

@@ -113,6 +113,9 @@ namespace OpenDentBusiness {
 			if(classType==null || text==null) {
 				return "";
 			}
+			if(classType.StartsWith("Frm")){
+				classType="Form"+classType.Substring(3);
+			}
 			if(CultureInfo.CurrentCulture.Name=="en-US") {
 				return text;
 			}

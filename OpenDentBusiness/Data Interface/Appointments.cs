@@ -2953,7 +2953,7 @@ namespace OpenDentBusiness{
 			}
 			//Now, loop through all the other appointments for the day, and see if any would overlap this one
 			bool overlaps;
-			Procedure[] procedureArray;
+			List<Procedure> listProcedures;
 			bool isDoubleBooked=false;//applies to all appts, not just one at a time.
 			DateTime dateTimeApt;
 			for(int i=0;i<tableDay.Rows.Count;i++){
@@ -2994,9 +2994,9 @@ namespace OpenDentBusiness{
 				}
 				if(overlaps){
 					//we need to add all codes for this appt to retVal
-					procedureArray=Procedures.GetProcsOneApt(PIn.Long(tableDay.Rows[i]["AptNum"].ToString()),listProceduresMultApts);
-					for(int j=0;j<procedureArray.Length;j++){
-						listProcCodes.Add(ProcedureCodes.GetStringProcCode(procedureArray[j].CodeNum));
+					listProcedures=Procedures.GetProcsOneApt(PIn.Long(tableDay.Rows[i]["AptNum"].ToString()),listProceduresMultApts);
+					for(int j=0;j<listProcedures.Count;j++){
+						listProcCodes.Add(ProcedureCodes.GetStringProcCode(listProcedures[j].CodeNum));
 					}
 				}
 			}
@@ -5411,31 +5411,24 @@ namespace OpenDentBusiness{
 			return false;
 		}
 
-		///<summary>Returns true if there is an appointment that would be empty if the associated procedures in listProcs were deleted. Otherwise false. Pass in a list of AptNums to avoid grabbing from DB.</summary>
-		public static bool AreApptsGoingToBeEmpty(List<Procedure> listProcedures, List<long> listApptNums=null, bool isForPlanned=false) {
+		///<summary>Returns list of appointments going to be empty if the associated procedures in listProcs were deleted. Pass in a list of AptNums to avoid grabbing from DB.</summary>
+		public static List<Appointment> GetApptsGoingToBeEmpty(List<Procedure> listProcedures, List<long> listApptNums=null) {
 			if(listApptNums.IsNullOrEmpty()) {
-				if(isForPlanned) {
-					return false; //Because there are no planned appointments that could be empty.
-				}
 				listApptNums=new List<long>();
-				for(int i = 0;i<listProcedures.Count;i++) {
-					if(listProcedures[i].AptNum>0) {
-						listApptNums.Add(listProcedures[i].AptNum);
-					}
-					if(listProcedures[i].PlannedAptNum>0) {
-						listApptNums.Add(listProcedures[i].PlannedAptNum);
-					}
-				}
+				listApptNums.AddRange(listProcedures.Select(x => x.PlannedAptNum).ToList().FindAll(x => x>0).Distinct());
+				listApptNums.AddRange(listProcedures.Select(x => x.AptNum).ToList().FindAll(x => x>0).Distinct());
 			}
-			List<Procedure> listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums, isForPlanned);
+			List<Appointment> listAppointments=new List<Appointment>();
+			List<Procedure> listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums);
 			for(int i=0;i < listApptNums.Count;i++) {
-				long countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures, isForPlanned).Length;
-				long countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts, isForPlanned).Length;
+				long countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures).Count();
+				long countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts).Count();
 				if(countProcsForAppt>=countProcsAllForAppt) {
-					return true;
+					Appointment appointment=Appointments.GetOneApt(listApptNums[i]);
+					listAppointments.Add(appointment);
 				}
 			}
-			return false;
+			return listAppointments;
 		}
 
 		///<summary>Verifies various appointment procedure states. Calls given funcs as validation from the user is needed.</summary>

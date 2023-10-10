@@ -1134,7 +1134,8 @@ namespace OpenDental{
 				gridPreAuth.EndUpdate();
 				return;
 			}
-			_arrayListPreAuth=new ArrayList();			
+			_arrayListPreAuth=new ArrayList();
+			_listClaims=_listClaims.OrderBy(x=>x.DateSent).ToList();
 			for(int i=0;i<_listClaims.Count;i++){
 				if(_listClaims[i].ClaimType=="PreAuth"){
 					_arrayListPreAuth.Add(_listClaims[i]);
