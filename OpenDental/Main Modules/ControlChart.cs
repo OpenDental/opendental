@@ -8625,20 +8625,14 @@ namespace OpenDental {
 					return;
 				}
 				if(isDoseSpotAccessAllowed) {
-					if(ODBuild.IsWeb()) {
-						//If ODCloud, open a new browser tab instead of using FormErx because the WebView2 control does not work with VirtualUI.
-						Process.Start(Erx.GetRxDoseSpotUrl(queryString));
-					}
-					else {
-						//The user is either a provider with granted access, or a proxy clinician
-						FormErx formErx=new FormErx();
-						formErx.PatientCur=Pd.Patient;
-						formErx.ByteArray=byteArrayPostData;
-						formErx.StringSSOQuery=queryString;
-						formErx.ErxOptionCur=erxOption;
-						_dictionaryFormErxSessions[Pd.PatNum]=formErx;
-						formErx.Show();//Non-modal so user can browse OD while writing prescription.  When form is closed, ErxBrowserClosed() is called below.
-					}
+					//The user is either a provider with granted access, or a proxy clinician
+					FormErx formErx=new FormErx();
+					formErx.PatientCur=Pd.Patient;
+					formErx.ByteArray=byteArrayPostData;
+					formErx.StringSSOQuery=queryString;
+					formErx.ErxOptionCur=erxOption;
+					_dictionaryFormErxSessions[Pd.PatNum]=formErx;
+					formErx.Show();//Non-modal so user can browse OD while writing prescription.  When form is closed, ErxBrowserClosed() is called below.
 				}
 				ErxLog erxLogDoseSpot=new ErxLog();
 				erxLogDoseSpot.PatNum=Pd.PatNum;

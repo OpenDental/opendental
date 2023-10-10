@@ -3515,6 +3515,9 @@ namespace OpenDental {
 				//User canceled or just didn't run a transaction - nothing to process.
 				if(payConnectResponse.RefNumber.IsNullOrEmpty()) {
 					textNote.Text=Lan.g(this,"Response from PayConnect:\r\nStatus: ")+(payConnectResponse.StatusCode??"")+Lan.g(this,"\r\nDescription: ")+payConnectResponse.Description??"";
+					if(formPayConnect2.WasPaymentAttempted){
+						_isCCDeclined=true;
+					}
 					return null;
 				}
 				//iFrame was opened and closed without attempting a transaction.
@@ -3526,6 +3529,9 @@ namespace OpenDental {
 					textNote.Text=Lan.g(this,"Response from PayConnect:\r\nStatus: Error ")+(payConnectResponse.StatusCode??"")
 						+Lan.g(this,"\r\nDescription: ")+(payConnectResponse.Description??"")
 						+Lan.g(this,"\r\nRef Number: ")+(payConnectResponse.RefNumber??"");
+					if(formPayConnect2.WasPaymentAttempted){
+						_isCCDeclined=true;
+					}
 					return null;
 				}
 				CardPaymentMethod cardPaymentMethod=statusResponse.GetStatusResponse.PaymentMethod.CardPaymentMethod;
@@ -3585,6 +3591,9 @@ namespace OpenDental {
 					if(payConnectResponse!=null && payConnectResponse.StatusCode=="0") { //The transaction succeeded.
 						_payment.IsCcCompleted=true;
 						return resultNote;
+					}
+					if(wasPaymentAttempted){
+						_isCCDeclined=true;
 					}
 					return null;
 				}

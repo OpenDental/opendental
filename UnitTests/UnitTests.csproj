@@ -245,6 +245,7 @@
     <Compile Include="UI Testing\FormUIManagerTests.Designer.cs">
       <DependentUpon>FormUIManagerTests.cs</DependentUpon>
     </Compile>
+    <Compile Include="UnitTests\PayConnect2Tests.cs" />
     <Compile Include="UnitTests\SetupWizardTests.cs" />
     <Compile Include="UnitTests\RpOutstandInsTests.cs" />
     <Compile Include="UnitTests\PaymentsTests.cs" />

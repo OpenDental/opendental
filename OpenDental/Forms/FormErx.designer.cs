@@ -31,6 +31,7 @@ namespace OpenDental {
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.ToolBarMain = new OpenDental.UI.ToolBarOD();
 			this.webViewMain = new ODWebView2();
+			this.cloudIframe = new OpenDental.UI.CloudIframe();
 			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -64,11 +65,23 @@ namespace OpenDental {
 			this.webViewMain.ZoomFactor = 1D;
 			this.webViewMain.NavigationCompleted += new System.EventHandler<Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs>(this.webViewMain_NavigationCompleted);
 			// 
+			// cloudIframe
+			// 
+			this.cloudIframe.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.cloudIframe.Location = new System.Drawing.Point(0, 0);
+			this.cloudIframe.Name = "cloudIframe";
+			this.cloudIframe.Size = new System.Drawing.Size(974, 695);
+			this.cloudIframe.TabIndex = 34;
+			this.cloudIframe.Visible = false;
+			// 
 			// FormErx
 			// 
 			this.ClientSize = new System.Drawing.Size(974, 696);
 			this.Controls.Add(this.webViewMain);
 			this.Controls.Add(this.ToolBarMain);
+			this.Controls.Add(this.cloudIframe);
 			this.Cursor = System.Windows.Forms.Cursors.Default;
 			this.Name = "FormErx";
 			this.Text = "Web Browser";
@@ -83,5 +96,6 @@ namespace OpenDental {
 		private UI.ToolBarOD ToolBarMain;
 		private System.Windows.Forms.ImageList imageList1;
 		public ODWebView2 webViewMain;
+		private UI.CloudIframe cloudIframe;
 	}
 }

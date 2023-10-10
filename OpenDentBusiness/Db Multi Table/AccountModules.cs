@@ -720,14 +720,17 @@ namespace OpenDentBusiness {
 				return Meth.GetDS(MethodBase.GetCurrentMethod(),statementCur,isComputeAging,doIncludePatLName,doShowHiddenPaySplits,doExcludeTxfrs,listPatients);
 			}
 			DataSet dataSetRetVal=new DataSet();
-			//The calling method did not provide an explicitly list of patients to get account information for.
+			bool includeApptsForFamily=false;
 			if(listPatients==null) {
+				//The calling method did not provide an explicit list of patients to get account information for.
 				listPatients=new List<Patient>();
 				//Limited custom statements have patients associated via the stmtlink table.
 				if(statementCur.StatementNum > 0 && statementCur.LimitedCustomFamily!=EnumLimitedCustomFamily.None) {
 					listPatients=Patients.GetMultPats(statementCur.ListPatNums).ToList();
 				}
 				else {//Not a limited custom statement so execute old behavior.
+					//Old behavior was to add super family guarantors to the list of patients and then get all appointments for family members.
+					includeApptsForFamily=true;
 					if(statementCur.IsInvoice) {
 						//Just add the super family head to the list of patients to include for the super statement.
 						listPatients.Add(Patients.GetPat(statementCur.SuperFamily));
@@ -765,7 +768,7 @@ namespace OpenDentBusiness {
 				}
 				//Setting the PatNum for all rows to the guarantor so that each family will be interminged in one grid. 
 				dataSetAccount.Tables["account"].Rows.Cast<DataRow>().ToList().ForEach(x => x["PatNum"]=patient.PatNum);
-				dataSetAccount.Tables.Add(GetApptTable(family,false,patient.PatNum));
+				dataSetAccount.Tables.Add(GetApptTable(family,!includeApptsForFamily,patient.PatNum));
 				dataSetAccount.Tables.Add(GetMisc(family,patient.PatNum,patientPayPlanDue,dynamicPayPlanDue,balanceForward,statementCur.StatementType,dataSetAccount));
 				listPayPlanNums=listPayPlanNums.Union(dataSetAccount.Tables["payplan"].Select().Select(x => PIn.Long(x["PayPlanNum"].ToString()))
 					.Where(x => x > 0)).ToList();

@@ -198,7 +198,11 @@ namespace OpenDentBusiness.Email {
 				}
 				catch(Exception ex) {
 					//This will bubble up to the UI level and be caught in a copypaste box.
-					throw new Exception($"Error sending email with OAuth authorization: {ex.Message}");
+					string errorMessage=ex.Message;
+					if(!ex.InnerException.Message.IsNullOrEmpty()) {
+						errorMessage=ex.InnerException.Message;
+					}
+					throw new Exception($"Error sending email with OAuth authorization: {errorMessage}");
 				}
 			}
 		}
