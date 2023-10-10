@@ -2820,7 +2820,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<aptList.Length;i++) {
 						Appointment newApt=aptList[i].Copy();
 						newApt.ProcDescript="";
-						Procedure[] procsForOne=Procedures.GetProcsOneApt(aptList[i].AptNum,procsMultApts);
+						Procedure[] procsForOne=Procedures.GetProcsOneApt(aptList[i].AptNum,procsMultApts).ToArray();
 						string procDescript="";
 						for(int j=0;j<procsForOne.Length;j++) {
 							ProcedureCode procCode=ProcedureCodes.GetProcCodeFromDb(procsForOne[j].CodeNum);

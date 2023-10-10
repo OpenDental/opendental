@@ -2195,8 +2195,8 @@ namespace OpenDental.UI{
 				listAptNums.Add(PIn.Long(TableAppointments.Rows[i]["AptNum"].ToString()));
 			}
 			List<Procedure> procsMultApts=Procedures.GetProcsMultApts(listAptNums);
-			Procedure[] procsForOne=Procedures.GetProcsOneApt(appt.AptNum,procsMultApts);
-			List<string> listProcCodesDoubleBooked=Appointments.GetDoubleBookedCodes(appt,TableAppointments.Copy(),procsMultApts,procsForOne);
+			List<Procedure> listProceduresForOne=Procedures.GetProcsOneApt(appt.AptNum,procsMultApts);
+			List<string> listProcCodesDoubleBooked=Appointments.GetDoubleBookedCodes(appt,TableAppointments.Copy(),procsMultApts,listProceduresForOne.ToArray());
 			if(listProcCodesDoubleBooked.Count==0) {
 				return false;
 			}

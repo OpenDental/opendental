@@ -400,15 +400,15 @@ namespace OpenDental {
 				listClinicNums3=new List<long> { comboClinic3.SelectedClinicNum };
 				if(PrefC.GetBool(PrefName.ShowFeeSchedGroups)) {
 					//First groupbox
-					if(checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
+					if(comboFeeSchedGroup1.Items.Count>0 && checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
 						listClinicNums1=comboFeeSchedGroup1.GetSelected<FeeSchedGroup>().ListClinicNumsAll;
 					}
 					//Second groupbox
-					if(checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
+					if(comboFeeSchedGroup2.Items.Count>0 && checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
 						listClinicNums2=comboFeeSchedGroup2.GetSelected<FeeSchedGroup>().ListClinicNumsAll;
 					}
 					//Third groupbox
-					if(checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
+					if(comboFeeSchedGroup3.Items.Count> 0 && checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
 						listClinicNums3=comboFeeSchedGroup3.GetSelected<FeeSchedGroup>().ListClinicNumsAll;
 					}
 				}
@@ -490,21 +490,21 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled) { //Clinics is on
 				if(PrefC.GetBool(PrefName.ShowFeeSchedGroups)) {
 					//First groupbox
-					if(checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
+					if(comboFeeSchedGroup1.Items.Count>0 && checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
 						clinic1Num=comboFeeSchedGroup1.GetSelected<FeeSchedGroup>().ListClinicNumsAll.FirstOrDefault();
 					}
 					else {
 						clinic1Num=comboClinic1.SelectedClinicNum;
 					}
 					//Second groupbox
-					if(checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
+					if(comboFeeSchedGroup2.Items.Count>0 && checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
 						clinic2Num=comboFeeSchedGroup2.GetSelected<FeeSchedGroup>().ListClinicNumsAll.FirstOrDefault();
 					}
 					else {
 						clinic2Num=comboClinic2.SelectedClinicNum;
 					}
 					//Third groupbox
-					if(checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
+					if(comboFeeSchedGroup3.Items.Count>0 && checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
 						clinic3Num=comboFeeSchedGroup3.GetSelected<FeeSchedGroup>().ListClinicNumsAll.FirstOrDefault();
 					}
 					else {

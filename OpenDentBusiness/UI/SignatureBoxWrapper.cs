@@ -45,35 +45,6 @@ namespace OpenDental.UI {
 			}
 		}
 
-		/*
-		///<summary>A new Width property with local scope to SignatureBoxWrapper.  
-		///Sets the width of this control as well as the width of the topaz signature control.
-		///This is necessary because resizing the SigBoxWrapper will cause the sigBox control (via anchors) to resize.
-		///sigBoxTopaz does not have high dpi support, so it must remain a fixed size.</summary>
-		public new int Width {
-			get {
-				return base.Width;
-			}
-			set {
-				base.Width=value;
-				sigBoxTopaz.Width=362;
-			}
-		}
-
-		///<summary>A new Height property with local scope to SignatureBoxWrapper.  
-		///Set the height of this control as well as the width of the topaz signature control.
-		///This is necessary because resizing the SigBoxWrapper will cause the sigBox control (via anchors) to resize.
-		///sigBoxTopaz does not have high dpi support, so it must remain a fixed size.</summary>
-		public new int Height {
-			get {
-				return base.Height;
-			}
-			set {
-				base.Height=value;
-				sigBoxTopaz.Height=79;
-			}
-		}*/
-
 		protected override void OnLayout(LayoutEventArgs e){
 			base.OnLayout(e);
 			butESign.Size=new Size(ScaleI(20),ScaleI(20));
@@ -84,8 +55,11 @@ namespace OpenDental.UI {
 			signatureBox.Width=Width-2;
 			signatureBox.Height=Height-2;
 			if(sigBoxTopaz!=null){
-				sigBoxTopaz.Location=new Point(1,1);
-				sigBoxTopaz.Size=new Size(362,79);//because it has no high dpi support.  No big deal if it's a little small.
+				//sigBoxTopaz just shows an image that user signed on the hardware. There is no pen input.
+				//In testing, the image just scales to fit the size of the control.
+				//Copy the size and location that were just set above for our sigbox.
+				sigBoxTopaz.Location=signatureBox.Location;
+				sigBoxTopaz.Size=signatureBox.Size;//sigBoxTopaz needs to be the same as or smaller than its container so the signature is not cut off.
 			}
 		}
 
@@ -129,7 +103,7 @@ namespace OpenDental.UI {
 			sigBoxTopaz=TopazWrapper.GetTopaz();
 			sigBoxTopaz.Location=signatureBox.Location;//this puts both boxes in the same spot.
 			sigBoxTopaz.Name="sigBoxTopaz";
-			sigBoxTopaz.Size=new Size(362,79);
+			sigBoxTopaz.Size=signatureBox.Size;//See comments in OnLayout() above.
 			signatureBox.Anchor=(AnchorStyles)(AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
 			sigBoxTopaz.TabIndex=92;
 			sigBoxTopaz.Text="sigPlusNET1";

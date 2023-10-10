@@ -741,7 +741,7 @@
 			// 
 			this.radioEntryCn.Location = new System.Drawing.Point(2, 91);
 			this.radioEntryCn.Name = "radioEntryCn";
-			this.radioEntryCn.Size = new System.Drawing.Size(75, 16);
+			this.radioEntryCn.Size = new System.Drawing.Size(80, 17);
 			this.radioEntryCn.TabIndex = 5;
 			this.radioEntryCn.Text = "Condition";
 			this.radioEntryCn.CheckedChanged += new System.EventHandler(this.radioEntryCn_CheckedChanged);
@@ -750,7 +750,7 @@
 			// 
 			this.radioEntryR.Location = new System.Drawing.Point(2, 76);
 			this.radioEntryR.Name = "radioEntryR";
-			this.radioEntryR.Size = new System.Drawing.Size(75, 16);
+			this.radioEntryR.Size = new System.Drawing.Size(80, 17);
 			this.radioEntryR.TabIndex = 4;
 			this.radioEntryR.Text = "Referred";
 			this.radioEntryR.CheckedChanged += new System.EventHandler(this.radioEntryR_CheckedChanged);
@@ -759,7 +759,7 @@
 			// 
 			this.radioEntryC.Location = new System.Drawing.Point(2, 31);
 			this.radioEntryC.Name = "radioEntryC";
-			this.radioEntryC.Size = new System.Drawing.Size(74, 16);
+			this.radioEntryC.Size = new System.Drawing.Size(80, 17);
 			this.radioEntryC.TabIndex = 3;
 			this.radioEntryC.Text = "Complete";
 			this.radioEntryC.CheckedChanged += new System.EventHandler(this.radioEntryC_CheckedChanged);
@@ -768,7 +768,7 @@
 			// 
 			this.radioEntryEO.Location = new System.Drawing.Point(2, 61);
 			this.radioEntryEO.Name = "radioEntryEO";
-			this.radioEntryEO.Size = new System.Drawing.Size(72, 16);
+			this.radioEntryEO.Size = new System.Drawing.Size(80, 17);
 			this.radioEntryEO.TabIndex = 2;
 			this.radioEntryEO.Text = "ExstOther";
 			this.radioEntryEO.CheckedChanged += new System.EventHandler(this.radioEntryEO_CheckedChanged);
@@ -777,7 +777,7 @@
 			// 
 			this.radioEntryEC.Location = new System.Drawing.Point(2, 46);
 			this.radioEntryEC.Name = "radioEntryEC";
-			this.radioEntryEC.Size = new System.Drawing.Size(84, 16);
+			this.radioEntryEC.Size = new System.Drawing.Size(84, 17);
 			this.radioEntryEC.TabIndex = 1;
 			this.radioEntryEC.Text = "ExstCurProv";
 			this.radioEntryEC.CheckedChanged += new System.EventHandler(this.radioEntryEC_CheckedChanged);
@@ -787,7 +787,7 @@
 			this.radioEntryTP.Checked = true;
 			this.radioEntryTP.Location = new System.Drawing.Point(2, 16);
 			this.radioEntryTP.Name = "radioEntryTP";
-			this.radioEntryTP.Size = new System.Drawing.Size(77, 16);
+			this.radioEntryTP.Size = new System.Drawing.Size(80, 17);
 			this.radioEntryTP.TabIndex = 0;
 			this.radioEntryTP.TabStop = true;
 			this.radioEntryTP.Text = "TreatPlan";

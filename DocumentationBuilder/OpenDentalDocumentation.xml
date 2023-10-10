@@ -1323,6 +1323,7 @@
         <EnumValue name="RxCreate">Creating a new Rx</EnumValue>
         <EnumValue name="CreateClaim">Creating a new Claim</EnumValue>
         <EnumValue name="OpenClaim">Opening an existing Claim</EnumValue>
+        <EnumValue name="ApptComplete">10</EnumValue>
       </Enumeration>
     </column>
     <column order="3" name="ProcCodes" type="text">

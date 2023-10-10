@@ -11,6 +11,7 @@ using Ionic.Zip;
 using OpenDental.UI;
 using OpenDentBusiness;
 using static OpenDentBusiness.PayConnect2;
+using Newtonsoft.Json.Linq;
 
 namespace OpenDental{
 	/// <summary>
@@ -432,6 +433,10 @@ namespace OpenDental{
 		}
 
 		private void butMerchantInfo_Click(object sender,EventArgs e) {
+			if(textAPISecret.Text.IsNullOrEmpty()) {
+				MsgBox.Show(this,"You must first enter the secret.");
+				return;
+			}
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled) {
 				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
@@ -443,8 +448,9 @@ namespace OpenDental{
 			catch(Exception ex) {
 				ex.DoNothing();
 			}
-			if(payConnect2Response==null) {
-				MsgBox.Show(this,"Error occurred when getting merchant information.");
+			if(payConnect2Response.ResponseType==PayConnect2.ResponseType.Error) {
+				JObject err=JObject.Parse(payConnect2Response.ErrorResponse.Error.ToString());
+				MsgBox.Show(err["message"].ToString());
 				return;
 			}
 			string data=Lan.g(this,"Merchant ID")+$": {payConnect2Response.GetMerchantInfoResponse.MerchantId}\n"+

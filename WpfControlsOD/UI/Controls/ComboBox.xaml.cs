@@ -570,10 +570,14 @@ Jordan is the only one allowed to edit this file.
 			if(IsAllSelected){//if all is selected, we ignore other selections
 				return;
 			}
-			_listSelectedIndices=new List<int>(_windowComboPicker.ListIndicesSelected);
-			//for(int i=0;i<_windowComboPicker.ListIndicesSelected.Count;i++){
-			//	_listSelectedIndices.Add(_windowComboPicker.ListIndicesSelected[i]);
-			//}
+			for(int i=0;i<_windowComboPicker.ListIndicesSelected.Count;i++){
+				if(IncludeAll){
+					_listSelectedIndices.Add(_windowComboPicker.ListIndicesSelected[i]-1);//All is in position 0
+				}
+				else{
+					_listSelectedIndices.Add(_windowComboPicker.ListIndicesSelected[i]);
+				}
+			}
 			SetText();
 		}
 

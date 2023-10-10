@@ -455,6 +455,16 @@ namespace OpenDentBusiness{
 				+(isAllPats?"":("AND a.PatNum IN ("+familyPatNums+") "))
 			#endregion Adjustments
 				+"UNION ALL "
+			#region Discounts
+				+"SELECT 'Discount' TranType,pp.PayPlanNum PriKey,pp.PatNum,p.ProcDate TranDate,p.Discount TranAmount,0 PayPlanAmount,0 InsWoEst,0 InsPayEst"
+				+(doIncludeProcNum?",p.ProcNum,0 PayNum":"")
+				+(isAgedByProc?",p.ProcNum AgedProcNum,p.ProcDate AgedProcDate":"")+" "
+				+"FROM payplan pp "
+				+"INNER JOIN procedurelog p ON p.PatNum=pp.PatNum AND p.ProcStatus=1 AND p.Discount!=0 "
+				+"WHERE IsDynamic=1 AND DynamicPayPlanTPOption=2 "
+				+(isAllPats?"":("AND pp.PatNum IN ("+familyPatNums+") "))
+			#endregion Discounts
+				+"UNION ALL "
 			#region Paysplits and PayPlan Paysplits
 				+"SELECT 'PatPay' TranType,ps.SplitNum PriKey,ps.PatNum,ps.DatePay TranDate,";
 			//v1 and v3: splits not attached to payment plans, v2 or doAgePatPayPlanPayments: all splits for pat/fam

@@ -391,7 +391,7 @@ namespace OpenDentBusiness {
 		/// <summary>Throws exceptions. The PayConnect2 API accepts an integer amount field in total cents i.e. $13.62 should be sent as 1362. This method takes in a double as that is what Open Dental generally uses to store dollar amounts and multiplies it by 100 to move the decimal 2 places and then casts to an int.</summary>
 		public static int FormatAmountForApi(double amount) {
 			try {
-				return (int)(amount*100);
+				return Convert.ToInt32(amount*100);
 			}
 			catch(Exception ex) {
 				throw new ODException("Unable to convert transaction amount for PayConnect.",ex);
@@ -1530,14 +1530,16 @@ namespace OpenDentBusiness {
 			Text2Pay,
 		}
 
-		[JsonConverter(typeof(StringEnumConverter))]
+		[JsonConverter(typeof(StringEnumConverterWithDefault<CardNetwork>),CardNetwork.Unrecognized)]
 		public enum CardNetwork {
+			Unrecognized,//Used when the json string value doesn't match any value in this enum.
 			Amex,
 			Discover,
 			Mastercard,
 			[Description("Non-co-branded debit card")]
 			NonCoBrandedDebitCard,
 			Visa,
+			Unknown
 		}
 
 		[JsonConverter(typeof(StringEnumConverter))]
@@ -1591,5 +1593,42 @@ namespace OpenDentBusiness {
 			return Mock.Response;
 		}
 		#endregion
+
+		///<summary>Custom string to enum json converter that uses a default enum value when the string doesn't match any values in enum type T.
+		///To use, apply a JsonConverter attribute to an enum type like this:
+		///[JsonConverter(typeof(StringEnumConverterWithDefault<CardNetwork>),CardNetwork.Unknown)]
+		///The type of this class with the enum type assigned to generic type T is the first argument, and the desired default value is the second argument. 
+		///We require type T to be a struct and Enum because using just Enum references the abstract Enum class. Including struct requires it to also be a value
+		///type which is what specific enum types are.</summary>
+		private class StringEnumConverterWithDefault<T> : StringEnumConverter where T : struct,Enum {
+			///<summary>The default enum value to use when the string value doesn't match any values in enum type T</summary>
+			private T _enumValueDefault;
+
+			///<summary>Parameterless constructor throws because failing to provide the T defaultValue argument
+			///when applying the attribute will not cause syntax or build errors and deserialization will fail silently.</summary>
+			public StringEnumConverterWithDefault() {
+				throw new InvalidOperationException("Default value must be provided for StringEnumConverterWithDefault.");
+			}
+
+			///<summary>NewtonSoft.Json.JsonConverter calls this constructor when we provide an array of arguments
+			///to the attribute.</summary>
+			public StringEnumConverterWithDefault(T defaultEnumValue) {
+				_enumValueDefault=defaultEnumValue;
+			}
+
+			///<summary>NewtonSoft.Json.JsonConverter calls this to convert string values to Enum type T.</summary>
+			public override object ReadJson(JsonReader jsonReader,Type type,object enumValueCurrent,JsonSerializer jsonSerializer) {
+				string jsonValue=null;
+				if(jsonReader.Value!=null) {
+					jsonValue=jsonReader.Value.ToString().Trim();
+				}
+				bool didFindMatch=Enum.TryParse(jsonValue,ignoreCase:true,out T enumValueMatch);
+				if(didFindMatch) {
+					return enumValueMatch;
+				}
+				return _enumValueDefault;
+			}
+		}
+
 	}
 }

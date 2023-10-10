@@ -19,7 +19,7 @@ namespace OpenDental {
 			//Lan.F(this);
 		}
 		
-		private void FrmDecimalSettings_Loaded(object sender,EventArgs e) {
+		private void FrmDecimalSettings_Loaded(object sender,RoutedEventArgs e) {
 			checkNoShow.Checked=ComputerPrefs.LocalComputer.NoShowDecimal;
 			textDecimal.Text=CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits.ToString();
 		}

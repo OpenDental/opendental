@@ -799,29 +799,23 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select one or more procedures first.");
 				return;
 			}
+			List<Procedure> listProceduresSelected=gridProc.SelectedTags<Procedure>();
+			List<Appointment> listAppointmentsEmpty=new List<Appointment>();
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<long> listApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.AptNum).ToList();
+				List<long> listApptNumsSelected=listProceduresSelected.Select(x => x.AptNum).ToList();
 				if(listApptNumsSelected.Any(x => x!=_appointment.AptNum && x!=0)) {
-					bool areApptsEmpty=Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(),listApptNumsSelected);
-					if(areApptsEmpty) {
+					listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected,listApptNumsSelected);
+					if(listAppointmentsEmpty.Count>0) {
 						MsgBox.Show("One or more selected procedures are attached to another appointment.");
 						return;
 					}
 				}
-			}
-			List<long> listPlannedApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.PlannedAptNum).Where(x=>x!=0).ToList();
-			if(PrefC.GetBool(PrefName.ApptsRequireProc)
-				&& Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(),listPlannedApptNumsSelected,isForPlanned: true))
-			{
-				MsgBox.Show("Deleting selected procedure(s) will result in an empty appointment.");
-				return;
 			}
 			//If this appointment is of a certain AppointmentType, check for required procedure codes that are going to be deleted.
 			if(comboApptType.SelectedIndex>0) {
 				AppointmentType appointmentType=_listAppointmentTypes[comboApptType.SelectedIndex-1];
 				if(appointmentType.RequiredProcCodesNeeded!=EnumRequiredProcCodesNeeded.None) {
 					List<string> listProcCodesRequiredForAppointmentType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();//Includes duplicates.
-					List<Procedure> listProceduresSelected=gridProc.SelectedTags<Procedure>();
 					List<Procedure> listProceduresGrid=gridProc.GetTags<Procedure>();
 					listProceduresGrid.RemoveAll(x => x.AptNum!=_appointment.AptNum && x.AptNum!=0);//Remove procs on other appts
 					List<Procedure> listProceduresForReqCheck=listProceduresSelected.FindAll(x => x.AptNum!=_appointment.AptNum && x.AptNum!=0);
@@ -832,8 +826,30 @@ namespace OpenDental{
 					}
 				}
 			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Permanently delete all selected procedure(s)?")) {//deleteMsg can only be of two strings, okay to use in MsgBox.Show()
-				return;
+			bool wasPrompted=false;
+			bool canDeletePlannedAppts=false;
+			List<long> listPlannedApptNumsSelected=listProceduresSelected.Select(x=>x.PlannedAptNum).Distinct().ToList().FindAll(x=>x!=0);
+			listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected);
+			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listAppointmentsEmpty.Count>0) {
+				for(int i=0;i<listAppointmentsEmpty.Count;i++){
+					if(listAppointmentsEmpty[i].AptStatus==ApptStatus.Planned && listAppointmentsEmpty[i].AptNum!=_appointment.AptNum){//Is planned and not the appointment being edited
+						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Deleting selected procedures will leave empty planned appointment(s), resulting in deletion.\r\n"
+							+ "Continue?")) {
+							return;
+						}
+						wasPrompted=true;
+						break;
+					}
+				}
+				if(!Security.IsAuthorized(Permissions.AppointmentDelete,suppressMessage:false)){
+					return;
+				}
+				canDeletePlannedAppts=true;
+			}
+			if(!wasPrompted){
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Permanently delete all selected procedure(s)?")) {//deleteMsg can only be of two strings, okay to use in MsgBox.Show()
+					return;
+				}
 			}
 			int skipped=0;
 			int skippedSecurity=0;
@@ -842,7 +858,7 @@ namespace OpenDental{
 			bool isProcDeleted=false;
 			List<OrthoProcLink> listOrthoProcLinks=OrthoProcLinks.GetManyForProcs(gridProc.ListGridRows.Select(x => ((Procedure)x.Tag).ProcNum).ToList());
 			List<long> listSelectedProcNums=gridProc.SelectedTags<Procedure>().Select(x => x.ProcNum).ToList();
-			List<ClaimProc> listClaimProcsForProc=ClaimProcs.GetForProcs(listSelectedProcNums,new List<ClaimProcStatus>(){ClaimProcStatus.Preauth}).Where(x => x.ClaimNum!=0).ToList();
+			List<ClaimProc> listClaimProcsForProc=ClaimProcs.GetForProcs(listSelectedProcNums,new List<ClaimProcStatus>(){ClaimProcStatus.Preauth}).FindAll(x => x.ClaimNum!=0);
 			listClaimProcsForProc.DistinctBy(x => x.ClaimNum);//Removes duplicate ClaimNums.
 			for(int i = 0;i<listClaimProcsForProc.Count;i++) {
 				List<long> listProcNumsForClaim=ClaimProcs.RefreshForClaim(listClaimProcsForProc[i].ClaimNum).Select(x => x.ProcNum).ToList();
@@ -854,25 +870,45 @@ namespace OpenDental{
 			for(int i = gridProc.SelectedIndices.Length-1;i>=0;i--) {
 				Procedure procedure=(Procedure)gridProc.ListGridRows[gridProc.SelectedIndices[i]].Tag;
 				if(!Procedures.IsProcComplDeleteAuthorized(procedure)) {
+					listProceduresSelected.Remove(procedure);
 					skipped++;
 					skippedSecurity++;
 					continue;
 				}
 				if(!procedure.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)
 					&& !Security.IsAuthorized(Permissions.ProcDelete,Procedures.GetDateForPermCheck(procedure),suppressMessage: true)) {
+					listProceduresSelected.Remove(procedure);
 					skippedSecurity++;
 					continue;
 				}
 				//If selected procedure.ProcNum is linked to an ortho case, you're not allowed to delete it.
 				OrthoProcLink orthoProcLink=listOrthoProcLinks.FirstOrDefault(x=>x.ProcNum==procedure.ProcNum);
 				if(orthoProcLink!=null) {
+					listProceduresSelected.Remove(procedure);
 					skippedLinkedToOrthoCase++;
 					continue;
 				}
 				if(!listSelectedProcNums.Contains(procedure.ProcNum)) {
+					listProceduresSelected.Remove(procedure);
 					skippedPreauth++;
 					continue;
 				}
+				#region Delete Planned Apts that will be empty
+				if(skipped>0 || skippedSecurity>0 || skippedLinkedToOrthoCase>0 || skippedPreauth>0) {//If any procs were not deleted. Check for empty again.
+					listPlannedApptNumsSelected=listProceduresSelected.Select(x=>x.PlannedAptNum).Distinct().ToList().FindAll(x=>x!=0);
+					listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected, listPlannedApptNumsSelected);
+					listPlannedApptNumsSelected.Remove(_appointment.AptNum);//Do not delete the appointment being edited.
+					if(PrefC.GetBool(PrefName.ApptsRequireProc)	&& listAppointmentsEmpty.Count>0) {
+						Appointments.DeleteEmptyAppts(listPlannedApptNumsSelected, _appointment.PatNum);
+					}
+				}
+				else{
+					if(canDeletePlannedAppts){
+						listPlannedApptNumsSelected.Remove(_appointment.AptNum); //Do not delete the appointment being edited.
+						Appointments.DeleteEmptyAppts(listPlannedApptNumsSelected, _appointment.PatNum);
+					}
+				}
+				#endregion
 				try {
 					Procedures.Delete(procedure.ProcNum);
 					isProcDeleted=true;

@@ -47,6 +47,11 @@ namespace OpenDental{
 		public UIManager(FormFrame formODBase,FrmODBase frmODBase){
 			//for FormMaker
 			FormFrame_=formODBase;
+			string classType=frmODBase.GetType().Name;
+			if(classType.StartsWith("Frm")){
+				classType="Form"+classType.Substring(3);
+			}
+			FormFrame_.Name=classType;
 			FormFrame_.Text=frmODBase.Text;
 			SizeClientOriginal=new System.Drawing.Size((int)frmODBase.Width,(int)frmODBase.Height);
 			FrmODBaseHosted=frmODBase;

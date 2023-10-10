@@ -21,6 +21,16 @@
       </Enumeration>
     </column>
   </table>
+  <table name="automation">
+    <summary></summary>
+    <column order="2" name="Autotrigger" type="tinyint(4)">
+      <summary>Enum:AutomationTrigger What triggers this automation</summary>
+      <Enumeration name="AutomationTrigger">
+        <summary></summary>
+        <EnumValue name="ApptComplete">10</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="benefit">
     <summary></summary>
     <column order="14" name="CodeGroupNum" type="bigint(20)" fk="codegroup">
