@@ -904,9 +904,6 @@ namespace OpenDental {
 					" At least one dbm method is not safe to run when replication is enabled. Unsafe methods will be skipped.");
 				return;
 			}
-			if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
-				return;
-			}
 			if(PrefC.IsCloudMode) {
 				string strMsg="Replication might be enabled. Running unsafe replication methods may cause database damage. Additional steps must be taken before running unsafe database methods.";
 				string strCheckBoxMsg="I have taken the special published process provided by the software support team.";

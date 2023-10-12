@@ -2409,6 +2409,7 @@ namespace OpenDental {
 			menuMain.Add(menuItemTools);
 			menuItemTools.Add("Backport",backportToolStripMenuItem_Click);
 			menuItemTools.Add("Bug Submissions",butBugSubs_Click);
+			menuItemTools.Add("Code Review Report",butCodeReview_Click);
 			//TODO: Add this back in later
 			//menuItemTools.Add("Job Time Helper",jobTimeHelperToolStripMenuItem_Click);
 			menuItemTools.Add("Wiki",butWiki_Click);
@@ -2638,6 +2639,11 @@ namespace OpenDental {
 		private void butBugSubs_Click(object sender,EventArgs e) {
 			FormBugSubmissions FormBugSubs=new FormBugSubmissions();
 			FormBugSubs.Show();//Non-modal
+		}
+
+		private void butCodeReview_Click(object sender,EventArgs e) {
+			FormCodeReviewReport formCodeReviewReport=new FormCodeReviewReport();
+			formCodeReviewReport.Show();//Non-modal
 		}
 		
 		private void butOverview_Click(object sender,EventArgs e) {

@@ -9339,6 +9339,7 @@ namespace OpenDental {
 			}
 			//float fontSize=gridProg.Font.Size;
 			if(checkShowOrtho.Checked){
+				//The panelGridProg will be visible only if it is in the SheetDef and checkTreatPlans.Checked==false and checkShowOrtho.Checked==false
 				panelGridProg.Visible=false;
 				tabControlOrthoCategories.Visible=true;
 				LayoutManager.MoveLocation(tabControlOrthoCategories,new Point(panelGridProg.Left,panelGridProg.Top));
@@ -9366,7 +9367,6 @@ namespace OpenDental {
 				LayoutManager.MoveSize(panelTPpriority,new Size(LayoutManager.Scale(77),panelGridProg.Bottom-gridTpProcs.Top));
 				return;
 			}
-			panelGridProg.Visible=true;
 			gridTreatPlans.Visible=false;
 			butNewTP.Visible=false;
 			gridTpProcs.Visible=false;

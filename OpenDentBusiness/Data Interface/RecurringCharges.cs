@@ -999,7 +999,12 @@ namespace OpenDentBusiness {
 					errorMessage="Validation error";
 				}
 				else {
-					errorMessage=((PayConnect2.ResponseError)response.ErrorResponse.Error).ToString();
+					try {
+						errorMessage=((PayConnect2.ResponseError)response.ErrorResponse.Error).ToString();
+					}
+					catch (Exception e) { 
+						errorMessage="Error returned from PayConnect: unable to parse error message";
+					}
 				}
 				MarkDeclined(chargeData,errorMessage);
 			}

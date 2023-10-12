@@ -76,9 +76,9 @@ namespace OpenDental {
 			// 
 			// labelApptType
 			// 
-			this.labelApptType.Location = new System.Drawing.Point(12, 42);
+			this.labelApptType.Location = new System.Drawing.Point(2, 42);
 			this.labelApptType.Name = "labelApptType";
-			this.labelApptType.Size = new System.Drawing.Size(117, 17);
+			this.labelApptType.Size = new System.Drawing.Size(143, 17);
 			this.labelApptType.TabIndex = 126;
 			this.labelApptType.Text = "New Pat Appt Types";
 			this.labelApptType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -103,7 +103,7 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(144, 20);
+			this.label4.Location = new System.Drawing.Point(160, 20);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(394, 16);
 			this.label4.TabIndex = 120;
@@ -112,7 +112,7 @@ namespace OpenDental {
 			// checkIsWebSched
 			// 
 			this.checkIsWebSched.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsWebSched.Location = new System.Drawing.Point(8, 19);
+			this.checkIsWebSched.Location = new System.Drawing.Point(24, 19);
 			this.checkIsWebSched.Name = "checkIsWebSched";
 			this.checkIsWebSched.Size = new System.Drawing.Size(135, 16);
 			this.checkIsWebSched.TabIndex = 119;
@@ -277,15 +277,15 @@ namespace OpenDental {
 			this.groupBoxApptType.Controls.Add(this.labelApptType);
 			this.groupBoxApptType.Controls.Add(this.label4);
 			this.groupBoxApptType.Controls.Add(this.checkIsWebSched);
-			this.groupBoxApptType.Location = new System.Drawing.Point(26, 191);
+			this.groupBoxApptType.Location = new System.Drawing.Point(18, 191);
 			this.groupBoxApptType.Name = "groupBoxApptType";
-			this.groupBoxApptType.Size = new System.Drawing.Size(540, 186);
+			this.groupBoxApptType.Size = new System.Drawing.Size(556, 186);
 			this.groupBoxApptType.TabIndex = 128;
 			this.groupBoxApptType.Text = "Web Sched Settings";
 			// 
 			// labelWSEPDesc
 			// 
-			this.labelWSEPDesc.Location = new System.Drawing.Point(127, 137);
+			this.labelWSEPDesc.Location = new System.Drawing.Point(143, 137);
 			this.labelWSEPDesc.Name = "labelWSEPDesc";
 			this.labelWSEPDesc.Size = new System.Drawing.Size(411, 47);
 			this.labelWSEPDesc.TabIndex = 133;
@@ -294,7 +294,7 @@ namespace OpenDental {
 			// 
 			// butWSEPPickApptTypes
 			// 
-			this.butWSEPPickApptTypes.Location = new System.Drawing.Point(382, 113);
+			this.butWSEPPickApptTypes.Location = new System.Drawing.Point(398, 113);
 			this.butWSEPPickApptTypes.Name = "butWSEPPickApptTypes";
 			this.butWSEPPickApptTypes.Size = new System.Drawing.Size(23, 22);
 			this.butWSEPPickApptTypes.TabIndex = 132;
@@ -304,7 +304,7 @@ namespace OpenDental {
 			// 
 			// textWSEPApptTypes
 			// 
-			this.textWSEPApptTypes.Location = new System.Drawing.Point(130, 114);
+			this.textWSEPApptTypes.Location = new System.Drawing.Point(146, 114);
 			this.textWSEPApptTypes.Name = "textWSEPApptTypes";
 			this.textWSEPApptTypes.ReadOnly = true;
 			this.textWSEPApptTypes.Size = new System.Drawing.Size(252, 20);
@@ -315,13 +315,13 @@ namespace OpenDental {
 			this.labelWSEPApptTypes.Location = new System.Drawing.Point(2, 117);
 			this.labelWSEPApptTypes.Name = "labelWSEPApptTypes";
 			this.labelWSEPApptTypes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.labelWSEPApptTypes.Size = new System.Drawing.Size(127, 18);
+			this.labelWSEPApptTypes.Size = new System.Drawing.Size(143, 18);
 			this.labelWSEPApptTypes.TabIndex = 130;
 			this.labelWSEPApptTypes.Text = "Existing Pat Appt Types";
 			// 
 			// textWSNPAApptTypes
 			// 
-			this.textWSNPAApptTypes.Location = new System.Drawing.Point(130, 41);
+			this.textWSNPAApptTypes.Location = new System.Drawing.Point(146, 41);
 			this.textWSNPAApptTypes.MaxLength = 255;
 			this.textWSNPAApptTypes.Name = "textWSNPAApptTypes";
 			this.textWSNPAApptTypes.ReadOnly = true;
@@ -330,7 +330,7 @@ namespace OpenDental {
 			// 
 			// butWSNPAPickApptTypes
 			// 
-			this.butWSNPAPickApptTypes.Location = new System.Drawing.Point(382, 40);
+			this.butWSNPAPickApptTypes.Location = new System.Drawing.Point(398, 40);
 			this.butWSNPAPickApptTypes.Name = "butWSNPAPickApptTypes";
 			this.butWSNPAPickApptTypes.Size = new System.Drawing.Size(23, 22);
 			this.butWSNPAPickApptTypes.TabIndex = 129;
@@ -339,7 +339,7 @@ namespace OpenDental {
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(127, 64);
+			this.label10.Location = new System.Drawing.Point(143, 64);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(411, 47);
 			this.label10.TabIndex = 128;

@@ -380,6 +380,25 @@ namespace OpenDentBusiness {
 			return Crud.JobCrud.SelectMany(command);
 		}
 
+		///<summary>Returns all jobs that were reviewed by the user(Num) in the date range.</summary>
+		public static List<Job> GetJobsWithReviewsByUser(long userNum,DateTime dateFrom,DateTime dateTo) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Job>>(MethodBase.GetCurrentMethod(),userNum,dateFrom,dateTo);
+			}
+			List<JobPhase> listPhases=new List<JobPhase>(){ JobPhase.Complete,JobPhase.Documentation };
+			List<JobReviewStatus> listStatuses=new List<JobReviewStatus>(){ JobReviewStatus.NeedsAdditionalWork,JobReviewStatus.NeedsAdditionalReview,JobReviewStatus.Done };
+			string command=$@"SELECT * FROM job
+				INNER JOIN jobreview ON jobreview.JobNum=job.JobNum
+				WHERE job.PhaseCur IN({string.Join(",",listPhases.Select(x => POut.Enum(x)))})
+				AND jobreview.ReviewStatus IN('{string.Join("','",listStatuses.Select(x => x.ToString()))}')
+				AND jobreview.ReviewerNum={POut.Long(userNum)}
+				AND jobreview.DateTStamp BETWEEN {POut.Date(dateFrom)} AND {POut.Date(dateTo)}
+				GROUP BY job.JobNum
+				ORDER BY jobreview.DateTStamp DESC;";
+
+			return Crud.JobCrud.SelectMany(command);
+		}
+
 		///<summary>Removes invalid jobs from the list of jobs passed in and then queries the DB to fill corresponding in-memory lists for remaining jobs.
 		///Set isForSearch true in order to only fill in-memory lists that are required for the Job Search window.</summary>
 		public static void FillInMemoryLists(List<Job> listJobsAll,bool isForSearch=false) {

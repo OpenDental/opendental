@@ -40,9 +40,9 @@ namespace OpenDental.Bridges {
 			writer.WriteElementString("LastName","[LName]");
 			writer.WriteElementString("Identifier","[PatNum]");
 			writer.WriteElementString("Gender","[PatientGenderMF]");
-			writer.WriteElementString("Address","[Address]");
+			writer.WriteElementString("Address1","[Address]");
 			writer.WriteElementString("Address2","[Address2]");
-			writer.WriteElementString("Ciy","[City]");
+			writer.WriteElementString("City","[City]");
 			writer.WriteElementString("State","[State]");
 			writer.WriteElementString("Zip","[Zip]");
 			writer.WriteElementString("SSN","[SSN]");
