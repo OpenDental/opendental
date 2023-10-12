@@ -31,13 +31,12 @@
 			this.dateTimeTo = new System.Windows.Forms.DateTimePicker();
 			this.dateTimeFrom = new System.Windows.Forms.DateTimePicker();
 			this.label3 = new System.Windows.Forms.Label();
-			this.checkIncludeInDev = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// butRunReport
 			// 
 			this.butRunReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRunReport.Location = new System.Drawing.Point(586, 12);
+			this.butRunReport.Location = new System.Drawing.Point(469, 12);
 			this.butRunReport.Name = "butRunReport";
 			this.butRunReport.Size = new System.Drawing.Size(105, 27);
 			this.butRunReport.TabIndex = 0;
@@ -53,7 +52,6 @@
 			this.comboUser.Name = "comboUser";
 			this.comboUser.Size = new System.Drawing.Size(84, 21);
 			this.comboUser.TabIndex = 237;
-			this.comboUser.SelectedIndexChanged += new System.EventHandler(this.comboUser_SelectedIndexChanged);
 			// 
 			// gridMain
 			// 
@@ -63,7 +61,7 @@
 			this.gridMain.Location = new System.Drawing.Point(12, 52);
 			this.gridMain.Margin = new System.Windows.Forms.Padding(10);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(679, 376);
+			this.gridMain.Size = new System.Drawing.Size(562, 376);
 			this.gridMain.TabIndex = 245;
 			this.gridMain.Title = "Jobs Reviewed by Engineer";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
@@ -113,21 +111,11 @@
 			this.label3.Text = "Engineer";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// checkIncludeInDev
-			// 
-			this.checkIncludeInDev.Location = new System.Drawing.Point(462, 8);
-			this.checkIncludeInDev.Name = "checkIncludeInDev";
-			this.checkIncludeInDev.Size = new System.Drawing.Size(122, 35);
-			this.checkIncludeInDev.TabIndex = 247;
-			this.checkIncludeInDev.Text = "Include jobs without final reviews";
-			this.checkIncludeInDev.UseVisualStyleBackColor = true;
-			// 
 			// FormCodeReviewReport
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(703, 441);
-			this.Controls.Add(this.checkIncludeInDev);
+			this.ClientSize = new System.Drawing.Size(586, 441);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.gridMain);
@@ -152,6 +140,5 @@
 		private System.Windows.Forms.DateTimePicker dateTimeTo;
 		private System.Windows.Forms.DateTimePicker dateTimeFrom;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.CheckBox checkIncludeInDev;
 	}
 }

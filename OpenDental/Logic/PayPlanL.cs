@@ -218,54 +218,58 @@ namespace OpenDental {
 			if(isPrinting) {// Don't make log entry if the print button was clicked.
 				return;
 			}
+			string planType="Patient";
+			if(payPlan.IsDynamic) {
+				planType="Dynamic";
+			}
 			//new
 			if(payPlanOld.IsNew) {
 				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-							(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan created.",payPlanOld.PayPlanNum,DateTime.MinValue);
+							(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan created.",payPlanOld.PayPlanNum,DateTime.MinValue);
 				return;
 			}
 			//closed
 			if(!payPlan.IsClosed && payPlanOld.IsClosed) {
 				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-							(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan reopened.",payPlanOld.PayPlanNum,DateTime.MinValue);
+							(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan reopened.",payPlanOld.PayPlanNum,DateTime.MinValue);
 			}
 			if(hasSignatureChanged) {
 				//signed
 				if(!isSigOldValid && !isSigBlank && isSigValid) {
 					SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-								(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan signed.",payPlanOld.PayPlanNum,DateTime.MinValue);
+								(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan signed.",payPlanOld.PayPlanNum,DateTime.MinValue);
 				}
 				//sig invalidated
 				if(isSigOldValid && (!isSigValid || isSigBlank)) {
 					SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-								(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan signature invalidated.",payPlanOld.PayPlanNum,DateTime.MinValue);
+								(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan signature invalidated.",payPlanOld.PayPlanNum,DateTime.MinValue);
 				}
 			}
 			//guarantor changed
 			if(payPlanOld.Guarantor != payPlan.Guarantor) {
 				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-							(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan guarantor changed from "
+							(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan guarantor changed from "
 							+Patients.GetNameLF(payPlanOld.Guarantor)+" to "+Patients.GetNameLF(payPlan.Guarantor)+".",payPlanOld.PayPlanNum,DateTime.MinValue);
 			}
 			//Completed Amt Changed
 			if(payPlanOld.CompletedAmt != payPlan.CompletedAmt) {
 				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-							(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan completed amount changed.",payPlanOld.PayPlanNum,DateTime.MinValue);
+							(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan completed amount changed.",payPlanOld.PayPlanNum,DateTime.MinValue);
 			}
 			//Ins Plan Changed
 			if(payPlanOld.PlanNum != payPlan.PlanNum) {
 				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-							(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan ins plan changed.",payPlanOld.PayPlanNum,DateTime.MinValue);
+							(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan ins plan changed.",payPlanOld.PayPlanNum,DateTime.MinValue);
 			}
 			//Note Changed
 			if(payPlanOld.Note != payPlan.Note) {
 				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-							(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan note changed.",payPlanOld.PayPlanNum,DateTime.MinValue);
+							(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan note changed.",payPlanOld.PayPlanNum,DateTime.MinValue);
 			}
 			//closed
 			if(payPlan.IsClosed && !payPlanOld.IsClosed) {
 				SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,payPlan.PatNum,
-							(payPlan.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan closed.",payPlanOld.PayPlanNum,DateTime.MinValue);
+							(payPlan.PlanNum == 0 ? planType : "Insurance") + " Payment Plan closed.",payPlanOld.PayPlanNum,DateTime.MinValue);
 			}
 		}
 

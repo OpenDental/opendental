@@ -2157,21 +2157,6 @@ namespace OpenDentBusiness{
 			}
 		}
 
-		///<summary>Called by Broadcaster service to determine if the OD DNS certificate service is up and running.  Checks for a specific email address
-		///which we have registered.  May not be able to find the reference using the Find All Refrences tool.  Assume the head version of this function
-		///is always the live version.</summary>
-		public static bool ExistsActiveCertInDns(string ipAddressDnsServer,string emailAddress) {
-			IPAddress ipAddressGlobalDnsServer=IPAddress.Parse(ipAddressDnsServer);
-			MailAddress mailAddressQuery=new MailAddress(emailAddress);
-			List<X509Certificate2> listCertsDiscoveredActive=new List<X509Certificate2>();
-			List<X509Certificate2> listCertsDiscoveredInactive=new List<X509Certificate2>();
-			DnsQueryForCert(ipAddressGlobalDnsServer,mailAddressQuery,listCertsDiscoveredActive,listCertsDiscoveredInactive);
-			if(listCertsDiscoveredActive.Count >= 1) {
-				return true;
-			}
-			return false;
-		}
-
 		///<summary>Gets all mime parts in the message which do not have child mime parts.  Returns null on error.</summary>
 		private static List<Health.Direct.Common.Mime.MimeEntity> GetMimeLeafNodes(Health.Direct.Common.Mail.Message message) {
 			//No need to check MiddleTierRole; no call to db.

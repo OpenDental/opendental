@@ -107,6 +107,13 @@ namespace OpenDentBusiness
 				Benefitt=null;
 				return;
 			}
+			//If quantity is larger than the largest quantity we support, then ignore.
+			//This is handled above for the EB section, but the HSD section needs it's own quantity validation too.
+			//Example 999 days
+			if(segHsd!=null && (PIn.Double(segHsd.Get(2)) > (double)byte.MaxValue)){
+				Benefitt=null;
+				return;
+			}
 			Benefitt=new Benefit();
 			//1
 			Benefitt.BenefitType=eb01val.BenefitType;

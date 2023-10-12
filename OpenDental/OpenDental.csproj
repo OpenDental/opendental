@@ -2679,6 +2679,12 @@
     <Compile Include="Forms\InputBox.designer.cs">
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Job Manager\FormCodeReviewReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Job Manager\FormCodeReviewReport.Designer.cs">
+      <DependentUpon>FormCodeReviewReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="InternalTools\Job Manager\FormJobTeamEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -8250,6 +8256,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCareCreditTransactions.resx">
       <DependentUpon>FormCareCreditTransactions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Job Manager\FormCodeReviewReport.resx">
+      <DependentUpon>FormCodeReviewReport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\FormJobTeamEdit.resx">
       <DependentUpon>FormJobTeamEdit.cs</DependentUpon>

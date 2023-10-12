@@ -326,7 +326,10 @@ namespace OpenDental {
 							label.BackColor=Color.White;
 							continue;
 						}
-						if(label.Text.ToLower().Contains(textSearch.Text.ToLower())){
+						PrefInf prefInf=GetPrefInf(label);
+						if(label.Text.ToLower().Contains(textSearch.Text.ToLower())
+							|| (prefInf!=null && !prefInf.Details.IsNullOrEmpty() && prefInf.Details.ToLower().Contains(textSearch.Text.ToLower())))
+						{
 							isCategoryYellow=true;
 							label.BackColor=Color.FromArgb(255, 255, 192);
 						}
@@ -345,7 +348,10 @@ namespace OpenDental {
 							checkBox.BackColor=Color.White;
 							continue;
 						}
-						if(checkBox.Text.ToLower().Contains(textSearch.Text.ToLower())){
+						PrefInf prefInf=GetPrefInf(checkBox);
+						if(checkBox.Text.ToLower().Contains(textSearch.Text.ToLower()) 
+							|| (prefInf!=null && !prefInf.Details.IsNullOrEmpty() && prefInf.Details.ToLower().Contains(textSearch.Text.ToLower())))
+						{
 							isCategoryYellow=true;
 							checkBox.BackColor=Color.FromArgb(255, 255, 192);
 						}
