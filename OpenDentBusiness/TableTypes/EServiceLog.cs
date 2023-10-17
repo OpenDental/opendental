@@ -495,6 +495,10 @@ namespace OpenDentBusiness {
 		[Description("QR scan window success")]
 		[EServiceLogType(eServiceType.EClipboard,eServiceType.ODTouch)]
 		ECQRScanOk,
+		/// <summary>95 - EClipboard - Error: Failed to submit sheet</summary>
+		[Description("Failed to submit sheet")]
+		[EServiceLogType(eServiceType.EClipboard)]
+		ECSubmitSheetFailed,
 	}
 
 	public class EServiceLogType:Attribute {

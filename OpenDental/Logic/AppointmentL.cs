@@ -57,6 +57,7 @@ namespace OpenDental{
 		public static string CheckRequiredProcForApptType(params Procedure[] procedureArrayToDelete){
 			List<Procedure> listProceduresToDelete=procedureArrayToDelete.ToList();
 			List<long> listApptNums=listProceduresToDelete.Select(x => x.AptNum).Distinct().ToList();
+			listApptNums.AddRange(listProceduresToDelete.Select(x => x.PlannedAptNum).Distinct().ToList());
 			List<Appointment> listAppointments=Appointments.GetMultApts(listApptNums);//Create a list of appointments to iterate through.
 			List<AppointmentType> listAppointmentTypes=AppointmentTypes.GetDeepCopy();
 			List<Procedure> listProceduresMultAppt=Procedures.GetProcsMultApts(listApptNums);//Will be needed for Procedures.GetProcsOneApt(...)
@@ -68,7 +69,7 @@ namespace OpenDental{
 				if(appointmentType==null || appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.None){//If the appt does not have an appttype, or appttype does not need any of the required proc codes to be attached.
 					continue;	
 				}
-				List<long> listProcNumsToDelete=listProceduresToDelete.FindAll(x => x.AptNum==listAppointments[a].AptNum).Select(y => y.ProcNum).ToList();
+				List<long> listProcNumsToDelete=listProceduresToDelete.FindAll(x => x.AptNum==listAppointments[a].AptNum || x.PlannedAptNum==listAppointments[a].AptNum).Select(y => y.ProcNum).ToList();
 				List<Procedure> listProceduresForAppt=Procedures.GetProcsOneApt(listAppointments[a].AptNum, listProceduresMultAppt);
 				listProceduresForAppt.RemoveAll(x => listProcNumsToDelete.Contains(x.ProcNum));//Remove the procs we intend to delete from the Procedures on Appointment grid to simulate if the procs are successfully deleted.
 				List<long> listCodeNumsRemaining=listProceduresForAppt.Select(x => x.CodeNum).ToList();

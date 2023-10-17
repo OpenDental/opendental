@@ -377,6 +377,9 @@ namespace OpenDental {
 					FriendlyException.Show("Unable to save card to database.",ex);
 				}
 			}
+			if(!ReceiptStr.IsNullOrEmpty()) {
+				PayConnectL.PrintReceipt(ReceiptStr,_patient);
+			}
 			DialogResult=DialogResult.OK;
 		}
 

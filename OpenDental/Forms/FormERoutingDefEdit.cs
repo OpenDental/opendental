@@ -48,7 +48,11 @@ namespace OpenDental {
 		public void FormPatientFlowEdit_Load(object sender,EventArgs e) {
 			textBoxDescription.Text=_eRoutingDef.Description;
 			labelGenAppts.Visible=false;
-			comboActionType.Items.AddEnums<EnumERoutingActionType>();
+			List<EnumERoutingActionType> listEnumERoutingActionType=typeof(EnumERoutingActionType).GetEnumValues()
+				.AsEnumerable<EnumERoutingActionType>()
+				.Where(x => x!=EnumERoutingActionType.None)
+				.ToList();
+			comboActionType.Items.AddListEnum(listEnumERoutingActionType);
 			comboLinkType.Items.AddListEnum<EnumERoutingType>(new List<EnumERoutingType>() { EnumERoutingType.General, EnumERoutingType.Appointment, EnumERoutingType.BillingType } );
 			FillActionsGrid();
 			FillLinkTypesGrid();
