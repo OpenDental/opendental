@@ -6453,7 +6453,7 @@ namespace OpenDental{
 				this.Size=new Size(LayoutManager.Scale(sizeF96Old.Width),LayoutManager.Scale(sizeF96Old.Height));
 				//This triggers FormODBase.OnResize event handler, which then calls LayoutManager.LayoutFormBoundsAndFonts();
 			}
-			if(controlImagesJ.Visible){
+			if(controlImagesJ!=null && controlImagesJ.Visible){
 				controlImagesJ.ModuleSelected(PatNumCur);//to reset the font for any floaters
 			}
 			Plugins.HookAddCode(this,"FormOpenDental.menuItemZoom_Click_end",this.Menu);

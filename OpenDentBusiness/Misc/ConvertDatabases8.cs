@@ -472,7 +472,7 @@ namespace OpenDentBusiness {
 		}//End of To23_2_23 method
 
 		private static void To23_2_24() {
-			string command=@"UPDATE programproperty SET PropertyValue='C:\ProgramData\Jazz Imaging LLC\Classic\OpenDentalPatientInfo.xml' WHERE ProgramNum IN(SELECT programnum FROM program WHERE ProgName LIKE 'JazzClassic%' AND PropertyValue='C:\Program Files\Jazz Imaging LLC\Jazz Classic\OpenDentalPatientInfo.xml')";
+			string command=@"UPDATE programproperty SET PropertyValue='C:\\ProgramData\\Jazz Imaging LLC\\Classic\\OpenDentalPatientInfo.xml' WHERE ProgramNum IN(SELECT programnum FROM program WHERE ProgName LIKE 'JazzClassic%')";
 			Db.NonQ(command);
 		}//End of To23_2_4 method
 	}
