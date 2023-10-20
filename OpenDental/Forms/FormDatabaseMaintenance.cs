@@ -48,6 +48,9 @@ namespace OpenDental {
 		private bool _isUsingReplication=false;
 		///<summary>True if the MySQL user has the privileges necessary to determine if the database is using replication (REPLICATION CLIENT and SUPER). Otherwise, false.</summary>
 		private bool _hasReplicationPermission=true;
+		/// <summary>True if there is a critical warning message to be shown via pop-up msgbox</summary>
+		private bool _isWarningMessageNeeded;
+		private List<string>_listWarningMessages=new List<string>();
 
 		///<summary></summary>
 		public FormDatabaseMaintenance() {
@@ -56,7 +59,7 @@ namespace OpenDental {
 			//
 			InitializeComponent();
 			InitializeLayoutManager();
-			Lan.C(this,new System.Windows.Forms.Control[]{
+			Lan.C(this,new Control[] {
 				this.textChecks,
 			});
 			Lan.F(this);
@@ -120,8 +123,8 @@ namespace OpenDental {
 			for(int i=0;i<_listMethodInfosHidden.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(_listMethodInfosHidden[i].Name);
-				bool hasExlpain=DatabaseMaintenances.MethodHasExplain(_listMethodInfosHidden[i]);
-				row.Cells.Add(hasExlpain ? "X" : "");
+				bool hasExplain=DatabaseMaintenances.MethodHasExplain(_listMethodInfosHidden[i]);
+				row.Cells.Add(hasExplain ? "X" : "");
 				row.Tag=_listMethodInfosHidden[i];
 				gridHidden.ListGridRows.Add(row);
 			}
@@ -827,6 +830,7 @@ namespace OpenDental {
 				}
 				ToggleUI(false);
 				grid.SetSelected(intArraySelectedIndices,true);//Reselect all rows that were originally selected.
+				ShowWarningPopupIfNeeded();
 			}));
 			_threadRunDBM.AddExitHandler((ex) => SaveLogToFile(stringBuilderLogText.ToString()));
 			_threadRunDBM.AddExceptionHandler(ex => this.InvokeIfRequired(() => {
@@ -865,10 +869,19 @@ namespace OpenDental {
 			string strResult="";
 			try {
 				strResult=(string)methodInfo.Invoke(null,listObjectsParameters.ToArray());
+				DbmMethodAttr dbmMethodAttr = (DbmMethodAttr)Attribute.GetCustomAttribute(methodInfo,typeof(DbmMethodAttr));
+				if(dbmMethodAttr?.HasWarningMessage==true && strResult.Contains("$#$")) {
+					_isWarningMessageNeeded=true;
+					// When setting up return strings, make sure to use the "$#$" delimiter, have the (translated) popup message follow the normal (translated) message. See DatabaseMaintenances.MySQLServerOptionsValidate() for example usage.
+					string warningMsgTemp=strResult.Split(new string[] { "$#$" },StringSplitOptions.RemoveEmptyEntries)[1];
+					strResult=strResult.Split("$#$",StringSplitOptions.RemoveEmptyEntries)[0];
+					if(!_listWarningMessages.Contains(warningMsgTemp)) {
+						_listWarningMessages.Add(warningMsgTemp);
+					}
+				}
 				if(dbmModeCur==DbmMode.Fix) {
-					DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute(methodInfo,typeof(DbmMethodAttr));
-					DatabaseMaintenance databaseMaintenance=_listDatabaseMaintenances.FirstOrDefault(x=>x.MethodName==methodInfo.Name);
-					if(dbmMethodAttr!=null && dbmMethodAttr.IsOneOff && databaseMaintenance!=null && !databaseMaintenance.IsOld) {
+					DatabaseMaintenance databaseMaintenance = _listDatabaseMaintenances.FirstOrDefault(x => x.MethodName==methodInfo.Name);
+					if(dbmMethodAttr?.IsOneOff==true && databaseMaintenance?.IsOld==true) {
 						DatabaseMaintenances.MoveToOld(methodInfo.Name);
 					}
 					DatabaseMaintenances.UpdateDateLastRun(methodInfo.Name);
@@ -881,6 +894,17 @@ namespace OpenDental {
 				throw;
 			}
 			return strResult;
+		}
+
+		private void ShowWarningPopupIfNeeded() {
+			if(_isWarningMessageNeeded) {
+				StringBuilder sb=new StringBuilder();
+				foreach(string msg in _listWarningMessages) {
+					sb.AppendLine(msg).AppendLine();
+				}
+				MsgBoxCopyPaste msgBox=new MsgBoxCopyPaste(sb.ToString());
+				msgBox.ShowDialog();
+			}
 		}
 
 		///<summary>Returns true if any of the selected gridrows have a method tag that is marked as IsReplicationUnsafe and the office is running replication. Otherwise false.</summary>
@@ -947,6 +971,7 @@ namespace OpenDental {
 				strResult=Lan.g("FormDatabaseMaintenance","Done.  No maintenance needed.");
 			}
 			SaveLogToFile(methodInfo.Name+":\r\n"+strResult);
+			ShowWarningPopupIfNeeded();
 			//Show the result of the dbm method in a simple copy paste msg box.
 			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strResult);
 			msgBoxCopyPaste.Show();//Let this window be non-modal so that they can keep it open while they fix their problems.

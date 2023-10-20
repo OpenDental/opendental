@@ -6809,6 +6809,7 @@
         <EnumValue name="ECQRScanAttempt">92 - EClipboard - QR scan window activated</EnumValue>
         <EnumValue name="ECQRScanCancel">93 - EClipboard - QR scan window cancelled</EnumValue>
         <EnumValue name="ECQRScanOk">94 - EClipboard - QR scan window success</EnumValue>
+        <EnumValue name="ECSubmitSheetFailed">95 - EClipboard - Error: Failed to submit sheet</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="KeyType" type="smallint(6)">

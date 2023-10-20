@@ -267,6 +267,10 @@ namespace OpenDental{
 				image=CDT.Class1.GetADA2019_J430();
 				extension=".gif";
 			}
+			else if(claimFormItem.ImageFileName=="ADA2024_J430.gif") {
+				image=CDT.Class1.GetADA2024_J430();
+				extension=".gif";
+			}
 			else if(claimFormItem.ImageFileName=="1500_02_12.gif") {
 				image=Properties.Resources._1500_02_12;
 				extension=".gif";
@@ -920,6 +924,9 @@ namespace OpenDental{
 							break;
 						case "ADA2019_J430.gif":
 							image=CDT.Class1.GetADA2019_J430();
+							break;
+						case "ADA2024_J430.gif":
+							image=CDT.Class1.GetADA2024_J430();
 							break;
 						case "1500_02_12.gif":
 							image=Properties.Resources._1500_02_12;

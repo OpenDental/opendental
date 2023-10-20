@@ -1671,11 +1671,10 @@ namespace OpenDental {
 				}
 			}
 			//Displays FormApptsOther if the user needs to select an appointment or procedures to show on this sheet.
-			if(SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,Pd.PatNum)) {
-				SheetFiller.FillFields(sheet);
-				SheetUtil.CalculateHeights(sheet);
-				FormSheetFillEdit.ShowForm(sheet,FormSheetFillEdit_FormClosing);
-			}
+			SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,Pd.PatNum);
+			SheetFiller.FillFields(sheet);
+			SheetUtil.CalculateHeights(sheet);
+			FormSheetFillEdit.ShowForm(sheet,FormSheetFillEdit_FormClosing);
 		}
 
 		private void menuConsent_Popup(object sender,EventArgs e) {

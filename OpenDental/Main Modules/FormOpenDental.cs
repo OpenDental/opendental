@@ -2525,9 +2525,7 @@ namespace OpenDental{
 					SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
 				}
 			}
-			if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur)) {
-				return;
-			}
+			SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur);
 			SheetFiller.FillFields(sheet);
 			SheetUtil.CalculateHeights(sheet);
 			FormSheetFillEdit.ShowForm(sheet,FormSheetFillEdit_FormClosing);
@@ -2629,9 +2627,7 @@ namespace OpenDental{
 						SheetParameter.SetParameter(sheet,"ListProcNums",formSheetProcSelect.ListProcNumsSelected);
 					}
 				}
-				if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur)) {
-					return;
-				}
+				SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNumCur);
 				SheetFiller.FillFields(sheet);
 				SheetUtil.CalculateHeights(sheet);
 				FormSheetFillEdit.ShowForm(sheet,FormSheetFillEdit_FormClosing);

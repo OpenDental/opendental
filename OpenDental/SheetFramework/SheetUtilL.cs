@@ -55,10 +55,10 @@ namespace OpenDental {
 			}	
 		}
 
-		///<summary>Helper method for setting AptNum and ListProcNums parameters. Checks for StaticTextFields: apptDateMonthSpelled, apptProcs, AppointmentProcsNoFee, AppointmentProcsWithFee, apptProvNameFormal. Returns true if the user selected at least an Appt from FormApptsOther.</summary>
-		public static bool SetApptProcParamsForSheet(Sheet sheet, SheetDef sheetDef, long patNum) {
+		///<summary>Helper method for setting AptNum and ListProcNums parameters. Checks for StaticTextFields: apptDateMonthSpelled, apptProcs, AppointmentProcsNoFee, AppointmentProcsWithFee, apptProvNameFormal. Sets the appt param if the user selected at least an Appt from FormApptsOther.</summary>
+		public static void SetApptProcParamsForSheet(Sheet sheet, SheetDef sheetDef, long patNum) {
 			if(!SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.apptDateMonthSpelled,StaticTextField.apptProcs,StaticTextField.apptProvNameFormal)) {
-				return true;
+				return;
 			}
 			Appointment[] appointmentArray=Appointments.GetForPat(patNum);
 			long aptNum;
@@ -76,14 +76,14 @@ namespace OpenDental {
 					aptNum=formApptsOther.ListAptNumsSelected[0];
 				}
 				else {
-					return false;
+					return;
 				}
 			}
 			//Fields that use AptNum
 			if(SheetDefs.ContainsStaticFields(sheetDef,StaticTextField.apptDateMonthSpelled,StaticTextField.apptProcs,StaticTextField.apptProvNameFormal)) {
 				SheetParameter.SetParameter(sheet,"AptNum",aptNum);
 			}
-			return true;
+			return;
 		}
 	}
 }

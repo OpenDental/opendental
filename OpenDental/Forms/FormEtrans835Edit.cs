@@ -308,7 +308,8 @@ namespace OpenDental {
 			}
 			//From this point on claim is not null.
 			Patient patient=Patients.GetPat(claim.PatNum);
-			if(hx835_Claim.IsPatientNameMisMatched(patient)) {
+			bool doesPatientNameMatch=hx835_Claim.DoesPatientNameMatch(patient);
+			if(!doesPatientNameMatch) {
 				MsgBox.Show(this,"A matching claim was found, but the patient name the carrier sent does not match the patient on the claim.");
 			}
 			bool isReadOnly=true;

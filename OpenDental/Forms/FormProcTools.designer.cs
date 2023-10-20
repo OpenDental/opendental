@@ -77,7 +77,7 @@ namespace OpenDental {
 			this.checkDcodes.Name = "checkDcodes";
 			this.checkDcodes.Size = new System.Drawing.Size(646, 36);
 			this.checkDcodes.TabIndex = 45;
-			this.checkDcodes.Text = "D Codes - Add any missing 2023 CDT Codes and fix descriptions and blank abbreviat" +
+			this.checkDcodes.Text = "D Codes - Add any missing 2024 CDT Codes and fix descriptions and blank abbreviat" +
     "ions of existing codes. This option does not work in the trial version, self-com" +
     "piled version, or outside the USA.";
 			// 

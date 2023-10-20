@@ -323,6 +323,29 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;ClaimForm xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///  &lt;ClaimFormNum&gt;8&lt;/ClaimFormNum&gt;
+        ///  &lt;Description&gt;ADA 2024&lt;/Description&gt;
+        ///  &lt;IsHidden&gt;false&lt;/IsHidden&gt;
+        ///  &lt;FontName&gt;Arial&lt;/FontName&gt;
+        ///  &lt;FontSize&gt;9&lt;/FontSize&gt;
+        ///  &lt;UniqueID&gt;OD11&lt;/UniqueID&gt;
+        ///  &lt;PrintImages&gt;true&lt;/PrintImages&gt;
+        ///  &lt;OffsetX&gt;0&lt;/OffsetX&gt;
+        ///  &lt;OffsetY&gt;0&lt;/OffsetY&gt;
+        ///  &lt;Width&gt;850&lt;/Width&gt;
+        ///  &lt;Height&gt;1100&lt;/Height&gt;
+        ///  &lt;IsInternal&gt;fals [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string ClaimFormADA_2024 {
+            get {
+                return ResourceManager.GetString("ClaimFormADA_2024", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;ClaimForm xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
         ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
         ///	&lt;ClaimFormNum&gt;7&lt;/ClaimFormNum&gt;
@@ -417,20 +440,20 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
-        ///  &lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
-        ///  &lt;Description&gt;Extraction Consent&lt;/Description&gt;
-        ///  &lt;SheetType&gt;Consent&lt;/SheetType&gt;
-        ///  &lt;FontSize&gt;11&lt;/FontSize&gt;
-        ///  &lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
-        ///  &lt;Width&gt;850&lt;/Width&gt;
-        ///  &lt;Height&gt;1100&lt;/Height&gt;
-        ///  &lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
-        ///  &lt;PageCount&gt;1&lt;/PageCount&gt;
-        ///  &lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
-        ///  &lt; [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///	&lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
+        ///	&lt;Description&gt;Extraction Consent&lt;/Description&gt;
+        ///	&lt;SheetType&gt;Consent&lt;/SheetType&gt;
+        ///	&lt;FontSize&gt;11&lt;/FontSize&gt;
+        ///	&lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
+        ///	&lt;Width&gt;850&lt;/Width&gt;
+        ///	&lt;Height&gt;1100&lt;/Height&gt;
+        ///	&lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
+        ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
+        ///	&lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
+        ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;
+        ///	&lt;H [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Consent {
             get {
@@ -439,20 +462,20 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
-        ///  &lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
-        ///  &lt;Description&gt;Dental Patient Screening Form&lt;/Description&gt;
-        ///  &lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
-        ///  &lt;FontSize&gt;11&lt;/FontSize&gt;
-        ///  &lt;FontName&gt;Arial&lt;/FontName&gt;
-        ///  &lt;Width&gt;850&lt;/Width&gt;
-        ///  &lt;Height&gt;950&lt;/Height&gt;
-        ///  &lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
-        ///  &lt;PageCount&gt;1&lt;/PageCount&gt;
-        ///  &lt;IsMultiPage&gt;true&lt;/IsMultiPage&gt;
-        ///  &lt;By [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///	&lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
+        ///	&lt;Description&gt;Dental Patient Screening Form&lt;/Description&gt;
+        ///	&lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
+        ///	&lt;FontSize&gt;11&lt;/FontSize&gt;
+        ///	&lt;FontName&gt;Arial&lt;/FontName&gt;
+        ///	&lt;Width&gt;850&lt;/Width&gt;
+        ///	&lt;Height&gt;950&lt;/Height&gt;
+        ///	&lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
+        ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
+        ///	&lt;IsMultiPage&gt;true&lt;/IsMultiPage&gt;
+        ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;
+        ///	&lt;Has [rest of string was truncated]&quot;;.
         /// </summary>
         public static string COVID19 {
             get {
@@ -461,20 +484,20 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
-        ///  &lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
-        ///  &lt;Description&gt;Dental Patient Screening Form&lt;/Description&gt;
-        ///  &lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
-        ///  &lt;FontSize&gt;11&lt;/FontSize&gt;
-        ///  &lt;FontName&gt;Arial&lt;/FontName&gt;
-        ///  &lt;Width&gt;850&lt;/Width&gt;
-        ///  &lt;Height&gt;950&lt;/Height&gt;
-        ///  &lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
-        ///  &lt;PageCount&gt;1&lt;/PageCount&gt;
-        ///  &lt;IsMultiPage&gt;true&lt;/IsMultiPage&gt;
-        ///  &lt;By [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///	&lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
+        ///	&lt;Description&gt;Dental Patient Screening Form&lt;/Description&gt;
+        ///	&lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
+        ///	&lt;FontSize&gt;11&lt;/FontSize&gt;
+        ///	&lt;FontName&gt;Arial&lt;/FontName&gt;
+        ///	&lt;Width&gt;850&lt;/Width&gt;
+        ///	&lt;Height&gt;950&lt;/Height&gt;
+        ///	&lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
+        ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
+        ///	&lt;IsMultiPage&gt;true&lt;/IsMultiPage&gt;
+        ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;
+        ///	&lt;Has [rest of string was truncated]&quot;;.
         /// </summary>
         public static string COVID191 {
             get {
@@ -618,19 +641,19 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
-        ///  &lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
-        ///  &lt;Description&gt;Financial Agreement&lt;/Description&gt;
-        ///  &lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
-        ///  &lt;FontSize&gt;10&lt;/FontSize&gt;
-        ///  &lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
-        ///  &lt;Width&gt;850&lt;/Width&gt;
-        ///  &lt;Height&gt;575&lt;/Height&gt;
-        ///  &lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
-        ///  &lt;PageCount&gt;1&lt;/PageCount&gt;
-        ///  &lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;        /// [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///	&lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
+        ///	&lt;Description&gt;Financial Agreement&lt;/Description&gt;
+        ///	&lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
+        ///	&lt;FontSize&gt;10&lt;/FontSize&gt;
+        ///	&lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
+        ///	&lt;Width&gt;850&lt;/Width&gt;
+        ///	&lt;Height&gt;575&lt;/Height&gt;
+        ///	&lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
+        ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
+        ///	&lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
+        ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         public static string FinancialAgreement {
             get {
@@ -664,20 +687,20 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
-        ///  &lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
-        ///  &lt;Description&gt;HIPAA&lt;/Description&gt;
-        ///  &lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
-        ///  &lt;FontSize&gt;10&lt;/FontSize&gt;
-        ///  &lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
-        ///  &lt;Width&gt;850&lt;/Width&gt;
-        ///  &lt;Height&gt;575&lt;/Height&gt;
-        ///  &lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
-        ///  &lt;PageCount&gt;1&lt;/PageCount&gt;
-        ///  &lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
-        ///  &lt;BypassGlob [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///	&lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
+        ///	&lt;Description&gt;HIPAA&lt;/Description&gt;
+        ///	&lt;SheetType&gt;PatientForm&lt;/SheetType&gt;
+        ///	&lt;FontSize&gt;10&lt;/FontSize&gt;
+        ///	&lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
+        ///	&lt;Width&gt;850&lt;/Width&gt;
+        ///	&lt;Height&gt;575&lt;/Height&gt;
+        ///	&lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
+        ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
+        ///	&lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
+        ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;
+        ///	&lt;HasMobileLa [rest of string was truncated]&quot;;.
         /// </summary>
         public static string HIPAA {
             get {
@@ -924,7 +947,7 @@ namespace OpenDentBusiness.Properties {
         ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
         ///	&lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
         ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;
-        ///	&lt;HasMobileLay [rest of string was truncated]&quot;;.
+        ///	&lt;HasMobileLayout&gt;true&lt;/Has [rest of string was truncated]&quot;;.
         /// </summary>
         public static string MedicalHist {
             get {
@@ -1257,19 +1280,19 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
-        ///  &lt;SheetDefNum&gt;4940&lt;/SheetDefNum&gt;
-        ///  &lt;Description&gt;Rx Instructions for a Patient&lt;/Description&gt;
-        ///  &lt;SheetType&gt;RxInstruction&lt;/SheetType&gt;
-        ///  &lt;FontSize&gt;11&lt;/FontSize&gt;
-        ///  &lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
-        ///  &lt;Width&gt;850&lt;/Width&gt;
-        ///  &lt;Height&gt;1100&lt;/Height&gt;
-        ///  &lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
-        ///  &lt;PageCount&gt;1&lt;/PageCount&gt;
-        ///  &lt;IsMultiPage&gt;fals [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///	&lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
+        ///	&lt;Description&gt;Rx Instructions for a Patient&lt;/Description&gt;
+        ///	&lt;SheetType&gt;RxInstruction&lt;/SheetType&gt;
+        ///	&lt;FontSize&gt;11&lt;/FontSize&gt;
+        ///	&lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
+        ///	&lt;Width&gt;850&lt;/Width&gt;
+        ///	&lt;Height&gt;1100&lt;/Height&gt;
+        ///	&lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
+        ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
+        ///	&lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
+        ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/Bypas [rest of string was truncated]&quot;;.
         /// </summary>
         public static string RxInstruction {
             get {
@@ -1300,20 +1323,20 @@ namespace OpenDentBusiness.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;IsNew&gt;false&lt;/IsNew&gt;
-        ///  &lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
-        ///  &lt;Description&gt;Screening&lt;/Description&gt;
-        ///  &lt;SheetType&gt;Screening&lt;/SheetType&gt;
-        ///  &lt;FontSize&gt;9&lt;/FontSize&gt;
-        ///  &lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
-        ///  &lt;Width&gt;850&lt;/Width&gt;
-        ///  &lt;Height&gt;1100&lt;/Height&gt;
-        ///  &lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
-        ///  &lt;PageCount&gt;1&lt;/PageCount&gt;
-        ///  &lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
-        ///  &lt;SheetFie [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;SheetDef xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///	&lt;IsNew&gt;false&lt;/IsNew&gt;
+        ///	&lt;SheetDefNum&gt;0&lt;/SheetDefNum&gt;
+        ///	&lt;Description&gt;Screening&lt;/Description&gt;
+        ///	&lt;SheetType&gt;Screening&lt;/SheetType&gt;
+        ///	&lt;FontSize&gt;9&lt;/FontSize&gt;
+        ///	&lt;FontName&gt;Microsoft Sans Serif&lt;/FontName&gt;
+        ///	&lt;Width&gt;850&lt;/Width&gt;
+        ///	&lt;Height&gt;1100&lt;/Height&gt;
+        ///	&lt;IsLandscape&gt;false&lt;/IsLandscape&gt;
+        ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
+        ///	&lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
+        ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;
+        ///	&lt;HasMobile [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Screening {
             get {

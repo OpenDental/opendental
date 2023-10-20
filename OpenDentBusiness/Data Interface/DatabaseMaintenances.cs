@@ -145,7 +145,7 @@ namespace OpenDentBusiness {
 		#region Methods That Affect All or Many Tables------------------------------------------------------------------------------------------------------
 
 		///<summary></summary>
-		[DbmMethodAttr]
+		[DbmMethodAttr(HasBreakDown=true,HasWarningMessage=true)]
 		public static string MySQLServerOptionsValidate(bool verbose,DbmMode modeCur) {
 			if(PrefC.IsCloudMode) {
 				return "";//Cloud hosted Open Dental databases don't have permission to call SET GLOBAL, also the MySQL variables can be assumed to be correct, since we host it.
@@ -156,32 +156,44 @@ namespace OpenDentBusiness {
 			if(DataConnection.DBtype==DatabaseType.Oracle) {
 				return Lans.g("FormDatabaseMaintenance","Currently not Oracle compatible.  Please call support.");
 			}
-			string command="SHOW GLOBAL VARIABLES LIKE 'sql_mode'";
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count<1||table.Columns.Count<2) {//user may not have permission to access global variables?
-				return Lans.g("FormDatabaseMaintenance","Unable to access the MySQL server variable 'sql_mode', probably due to permissions")+".  "
-					+Lans.g("FormDatabaseMaintenance","The sql_mode must be blank or NO_AUTO_CREATE_USER")+".\r\n";
+			List<GlobalVariableH> listGlobalVars=new List<GlobalVariableH>();
+			listGlobalVars.Add(new GlobalVariableH("sql_mode","no_auto_create_user"));
+			listGlobalVars.Add(new GlobalVariableH("myisam_recover_options","off"));
+			listGlobalVars.Add(new GlobalVariableH("slave_skip_errors","off"));
+			listGlobalVars.Add(new GlobalVariableH("optimizer_switch", "split_materialized=off", requiresVersionCheck:true, "version", "10.5.9"));
+			// Check to see if user may not have permission to access global variables.
+			if(listGlobalVars.Exists(x=>x.MayLackPermissions)) {
+				return Lans.g("FormDatabaseMaintenance","Unable to access MySQL server global variables to validate server options, probably due to permissions")+".\r\n";
 			}
-			string sqlmode=table.Rows[0][1].ToString();
-			string sqlmodeDisplay=(string.IsNullOrWhiteSpace(sqlmode) ? Lans.g("FormDatabaseMaintenance","blank") : sqlmode);//translated 'blank' for display
-			if(string.IsNullOrWhiteSpace(sqlmode)||sqlmode.ToUpper()=="NO_AUTO_CREATE_USER") {
-				if(!verbose) {
-					//Nothing broken, not verbose, show ""
-					return "";
+			if(listGlobalVars.TrueForAll(x=>x.IsValid)) { // Check to see if we have issues or if we can simply return here.
+				string successLog="";
+				if(verbose) {
+					successLog+="Done.  No maintenance needed.\r\n\r\n";
+					for(int i = 0;i<listGlobalVars.Count;i++) {
+						successLog+=listGlobalVars[i].GetMessage();
+					}
 				}
-				else {
-					//Nothing is broken, verbose on, show current sql_mode.
-					return Lans.g("FormDatabaseMaintenance","The MySQL server variable 'sql_mode' is currently set to")+" "+sqlmodeDisplay+".\r\n";
-				}
+				return successLog;
 			}
-			string log="";
+			// If we have any issues, we reset the log (which would only have messages relating to non-error states at this point), and add the approriate errors/issues to the log. We set hasCritcalWarning=true to indicate that we have possible data-loss due to the incorrect settings.
+			string warningMessage=Lans.g("FormDatabaseMaintenance","There are some global MySQL variables that are not set correctly. A manual fix is required to prevent data loss. For more information please check the web manual at")+" https://opendental.com/manual/my.ini ";
+			string issueLog="";
 			switch(modeCur) {
+				case DbmMode.Breakdown:
+					for(int i = 0;i<listGlobalVars.Count;i++) {
+						// Grab only the invalid/error messages.
+						if(!listGlobalVars[i].IsValid) {
+							issueLog+=listGlobalVars[i].GetMessage();
+						}
+					}
+					break;
 				case DbmMode.Check:
-					log+=Lans.g("FormDatabaseMaintenance","The MySQL server variable 'sql_mode' must be blank or NO_AUTO_CREATE_USER and is currently set to")
-						+" "+sqlmodeDisplay+".\r\n";
+					if(!listGlobalVars.TrueForAll(x=>x.IsValid)) {
+						issueLog+=warningMessage+Lans.g("FormDatabaseMaintenance","Double click to see a break down.")+"\r\n";
+					}
 					break;
 				case DbmMode.Fix:
-					try {
+					/*try {
 						command="SET GLOBAL sql_mode=''";
 						Db.NonQ(command);
 						command="SET SESSION sql_mode=''";
@@ -194,10 +206,10 @@ namespace OpenDentBusiness {
 						log+=Lans.g("FormDatabaseMaintenance","Unable to set the MySQL server variable 'sql_mode', probably due to permissions")+".  "
 							+Lans.g("FormDatabaseMaintenance","The sql_mode must be blank or NO_AUTO_CREATE_USER and is currently set to")
 							+" "+sqlmodeDisplay+".\r\n";
-					}
+					}*/
 					break;
 			}//end switch
-			return log;
+			return issueLog+"$#$"+warningMessage;
 		}
 
 		///<summary>Returns a Tuple with Item1=log string and Item2=whether the table checks were successful.</summary>
@@ -744,7 +756,7 @@ namespace OpenDentBusiness {
 		}
 
 		[DbmMethodAttr(HasBreakDown=true)]
-		public static string TransactionsWithFutureDates(bool verbose,DbmMode modeCur) {
+		public static string TransactionsWithFutureDates(bool verbose,DbmMode modeCur) { 
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
@@ -11625,6 +11637,84 @@ HAVING cnt>1";
 			public ProcedureCodeGroup(string procCode,List<ProcedureCode> listProcedureCodes) {
 				ProcCode=procCode;
 				ListProcedureCodes=listProcedureCodes;
+			}
+		}
+
+		/// <summary>SQL Global Variable Helper Class for DBM method 'MySQLServerOptionsValidate' to check if that variable is set to that value. You can also pass in a list of requirements and it will check to see if the variable value matches any of the supplied list of strings. You may also pass in a version by specifying 'requiresVersionCheck=true' and supplying a sql global version variable name and a minimum required version number. This should be in a standard dot-based format such as "10.5.21.0". When supplying a version minimum, IsValid will return true if the main variable is valid - the version is only checked if the main variable is not valid.<br></br><b>Example:</b> If the dbms needs to have the sql variable "myisam_recover_options" set to "off" if the dbms variable 'version' is greater than or equal to "10.5.9" => "new GlobalVariableH("myisam_recover_options", "off", requiresVersionCheck:true, "version", "10.5.9"));"</summary>
+		private class GlobalVariableH {
+			/// <summary>Literal string of the db variable name. Like: "sql_mode"</summary>
+			public readonly string Name;
+			/// <summary>Value retrieved from the DB when instantiated.</summary>
+			public readonly string Value;
+			/// <summary>Returns true if the value is blank or if it contains one of the passed-in desired values. If a version is supplied and it fails the primary validity check, it will perform a secondary validity check. In that case IsValid will return true only if the current version is less than the supplied version.</summary>
+			public readonly bool IsValid;
+			public readonly bool MayLackPermissions;
+			public readonly bool RequiresVersionCheck;
+			private readonly string _versionCur;
+			private readonly List<string> _listDesiredValues;
+
+			public GlobalVariableH(string varName, string desiredValue, bool requiresVersionCheck=false, string versionVarName="", string versionMin="") : this(varName, new List<string>(){ desiredValue }, requiresVersionCheck, versionVarName, versionMin) { }
+
+			public GlobalVariableH(string varName, List<string> listDesiredValues, bool requiresVersionCheck=false, string versionVarName=null, string versionMin=null) {
+				Name=varName;
+				_listDesiredValues=listDesiredValues;
+				DataTable table=Db.GetTable($"SHOW GLOBAL VARIABLES LIKE '{Name}'");
+				if(table.Rows.Count<1 || table.Columns.Count<2) { // User may not have permission to access global variables?
+					MayLackPermissions=true;
+					return;
+				}
+				Value=table.Rows[0][1].ToString().ToLower().Trim();
+				IsValid=_listDesiredValues.Exists(x=> Value.Contains(x)) && string.IsNullOrWhiteSpace(Value);
+				if(!requiresVersionCheck || versionVarName==null || versionMin==null) {
+					return;
+				}
+				table=Db.GetTable($"SHOW GLOBAL VARIABLES LIKE '{versionVarName}'");
+				if(table.Rows.Count<1 || table.Columns.Count<2) { // User may not have permission to access global variables?
+					MayLackPermissions=true;
+					return;
+				}
+				_versionCur=table.Rows[0][1].ToString().Trim();
+				IsValid=IsValid || !CurVerMeetsMinReq(_versionCur,versionMin);
+				RequiresVersionCheck=true;
+			}
+
+			private bool CurVerMeetsMinReq(string versionCur, string versionMin) {
+				List<string> valuesCur=versionCur.Split('.').ToList();
+				List<string> valuesMin=versionMin.Split('.').ToList();
+				int versionSegments=Math.Min(valuesCur.Count,valuesMin.Count);
+				for(int i=0;i<versionSegments;i++) {
+					string digitsOnly=new string(valuesCur[i].Where(x=>char.IsDigit(x)).ToArray());
+					if (PIn.Int(digitsOnly)>PIn.Int(valuesMin[i])) {
+						return true;
+					}
+					else if(PIn.Int(digitsOnly)<PIn.Int(valuesMin[i])) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			///<summary>Returns a string in the following format: "The MySQL server variable [variableName] is currently set to [variableValue].\r\n". If the object passed in isn't Valid it will automatically add the clause "should be blank or [ReqVal], but " to the middle of the string as appropriate. All (static parts) of the string are translated using Lan.g().</summary>
+			public string GetMessage() {
+				string message="";
+				if(RequiresVersionCheck && !IsValid) {
+					message+=Lans.g("FormDatabaseMaintenance","For your DBMS version")+$" ({_versionCur}), ";
+				}
+				message+=Lans.g("FormDatabaseMaintenance","The MySQL server variable")+$" '{Name}' ";
+				if(!IsValid) {
+					if(_listDesiredValues.Count==1) {
+						message+=Lans.g("FormDatabaseMaintenance","should be blank or")+$" '{_listDesiredValues[0]}', ";
+					}
+					else if(_listDesiredValues.Count>1) {
+						string tempS=string.Join("', '",_listDesiredValues);
+						tempS=tempS.Insert(tempS.LastIndexOf(',')+1," or ");
+						message+=Lans.g("FormDatabaseMaintenance","should be blank")+$", '{tempS}', ";
+					}
+					message+=Lans.g("FormDatabaseMaintenance","but")+" ";
+				}
+				string myVal=string.IsNullOrWhiteSpace(Value)?Lans.g("FormDatabaseMaintenance","blank"):Value;
+				message+=Lans.g("FormDatabaseMaintenance","is currently set to")+$" '{myVal}'.\r\n";
+				return message;
 			}
 		}
 

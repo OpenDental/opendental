@@ -644,4 +644,7 @@
     &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
+  <data name="ClaimFormADA_2024" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ClaimForms\ClaimFormADA 2024.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>
