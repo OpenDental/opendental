@@ -633,6 +633,7 @@ namespace OpenDentBusiness{
 			table.Columns.Add("date");
 			table.Columns.Add("dateOnly",typeof(DateTime));//to help with sorting
 			table.Columns.Add("dateTime",typeof(DateTime));
+			table.Columns.Add("DateTSheetEdited",typeof(DateTime));
 			table.Columns.Add("description");
 			table.Columns.Add("DocNum");
 			table.Columns.Add("imageCat");
@@ -643,7 +644,7 @@ namespace OpenDentBusiness{
 			//but we won't actually fill this table with rows until the very end.  It's more useful to use a List<> for now.
 			List<DataRow> rows=new List<DataRow>();
 			//sheet---------------------------------------------------------------------------------------
-			string command="SELECT DateTimeSheet,SheetNum,Description,ShowInTerminal "
+			string command="SELECT DateTimeSheet,SheetNum,Description,ShowInTerminal,DateTSheetEdited "
 				+"FROM sheet WHERE IsDeleted=0 "
 				+"AND PatNum ="+POut.Long(patNum)+" "
 				+"AND (SheetType="+POut.Long((int)SheetTypeEnum.PatientForm)+" OR SheetType="+POut.Long((int)SheetTypeEnum.MedicalHistory);
@@ -660,6 +661,7 @@ namespace OpenDentBusiness{
 				row["date"]=dateT.ToShortDateString();
 				row["dateOnly"]=dateT.Date;
 				row["dateTime"]=dateT;
+				row["DateTSheetEdited"]=PIn.DateT(rawSheet.Rows[i]["DateTSheetEdited"].ToString());
 				row["description"]=rawSheet.Rows[i]["Description"].ToString();
 				row["DocNum"]="0";
 				row["imageCat"]="";
@@ -691,6 +693,7 @@ namespace OpenDentBusiness{
 				row["date"]=dateT.ToShortDateString();
 				row["dateOnly"]=dateT.Date;
 				row["dateTime"]=dateT;
+				row["DateTSheetEdited"]="";
 				row["description"]=rawDoc.Rows[i]["Description"].ToString();
 				row["DocNum"]=rawDoc.Rows[i]["DocNum"].ToString();
 				docCat=PIn.Long(rawDoc.Rows[i]["DocCategory"].ToString());

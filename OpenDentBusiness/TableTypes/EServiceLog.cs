@@ -480,6 +480,10 @@ namespace OpenDentBusiness {
 		[Description("eClipboard - Error: Invalid amount to make payment")]
 		[EServiceLogType(eServiceType.EClipboard)]
 		ECCreditCardErrorMakingPaymentInvalidAmount,
+		/// <summary>82 - EClipboard - Error: Failed to submit sheet</summary>
+		[Description("Failed to submit sheet")]
+		[EServiceLogType(eServiceType.EClipboard)]
+		ECSubmitSheetFailed,
 	}
 
 	public class EServiceLogType:Attribute {

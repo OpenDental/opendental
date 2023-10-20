@@ -1421,7 +1421,8 @@ namespace OpenDental{
 						}
 						break;
 					case "IsEnclosuresAttached":
-						if(_claim.Radiographs>0 || _claim.AttachedImages>0 || _claim.AttachedModels>0) {
+						if(_claim.Radiographs>0 || _claim.AttachedImages>0 || _claim.AttachedModels>0 || _claim.AttachedFlags.Contains("EoB") 
+							|| _claim.AttachedFlags.Contains("Note") || _claim.AttachedFlags.Contains("Perio") || _claim.AttachedFlags.Contains("Misc")) {
 							_stringArrayDisplay[i]="X";
 						}
 						break;

@@ -51,6 +51,7 @@ namespace OpenDentBusiness {
 		private bool _isOneOff;
 		private bool _isReplicationUnsafe;
 		private bool _hasExplain;
+		private bool _hasWarningMessage;
 
 		///<summary>Set to true if this dbm method needs to be able to show the user a list or break down of items that need manual attention.</summary>
 		public bool HasBreakDown {
@@ -61,12 +62,6 @@ namespace OpenDentBusiness {
 				_hasBreakDown=value;
 			}
 		}
-
-		/////<summary>Not needed anymore. The usernum can be set from Security.CurUser.UserNum on both Middle Tier client and server (and direct connection).</summary>
-		//public bool HasUserNum {
-		//	get { return _hasUserNum; }
-		//	set { _hasUserNum=value; }
-		//}
 
 		///<summary>Set to true if this dbm method needs to be able to run for a specific patient.</summary>
 		public bool HasPatNum {
@@ -128,12 +123,23 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		///<summary>Set to true if this dbm method needs to be able to show the user a message to go to the web manual to see an explanation of what needs to be done to fix this issue.</summary>
+		public bool HasWarningMessage {
+			get {
+				return _hasWarningMessage;
+			}
+			set {
+				_hasWarningMessage=value;
+			}
+		}
+
 		public DbmMethodAttr() {
 			this._hasBreakDown=false;
 			this._hasPatNum=false;
 			this._isCanada=false;
 			this._isOneOff=false;
 			this._isReplicationUnsafe=false;
+			this._hasWarningMessage=false;
 		}
 
 	}

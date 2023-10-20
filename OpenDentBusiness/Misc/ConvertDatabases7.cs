@@ -5079,6 +5079,13 @@ namespace OpenDentBusiness {
 			string command="INSERT INTO preference (PrefName,ValueString) VALUES ('ToothChartExternalProcess','2')";
 			Db.NonQ(command);
 		}//End of 23_1_23() method
+
+		private static void To23_1_56() {
+			string command="INSERT INTO preference(PrefName,ValueString) VALUES('ProgramLinksDisabledForWeb','Apixia,AudaxCeph,CADI,DBSWin,DemandForce,DentalEye,"
+				+"DentalTekSmartOfficePhone,DentX,Dolphin,EvaSoft,iCat,IAP,Guru,HouseCalls,MediaDent,Owandy,PandaPerioAdvanced,Patterson,PT,PTupdate,Schick,Trojan,TigerView,"
+				+"TrophyEnhanced,UAppoint,Vipersoft,VixWinOld,Xcharge')";
+			Db.NonQ(command);
+		}//End of 23_1_56
 	}
 }
 

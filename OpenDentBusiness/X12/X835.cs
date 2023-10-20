@@ -3732,12 +3732,17 @@ namespace OpenDentBusiness {
 			return sb.ToString();
 		}
 
-		///<summary>Returns true if the first AND preferred name OR last name of the passed in patient don't match the name on this 835 claim.
+		///<summary>Returns true if the last name AND (first name OR partial first name) of the passed in patient don't match the name on this 835 claim.
 		///All names are converted to lower case and spaces are removed to improve matching.</summary>
-		public bool IsPatientNameMisMatched(Patient pat) {
-			return (this.PatientName.Fname.ToLower().Replace(" ","")!=pat.FName.ToLower().Replace(" ","")
-				&& this.PatientName.Fname.ToLower().Replace(" ","")!=pat.Preferred.ToLower().Replace(" ",""))
-				|| this.PatientName.Lname.ToLower().Replace(" ","")!=pat.LName.ToLower().Replace(" ","");
+		public bool DoesPatientNameMatch(Patient pat) {
+			string patFName=pat.FName.Trim().ToLower();
+			string patLName=pat.LName.Trim().ToLower();
+			string patFNameOnClaim=this.PatientName.Fname.Trim().ToLower();
+			string patLNameOnClaim=this.PatientName.Lname.Trim().ToLower();
+			bool doesLNameMatch=patLName==patLNameOnClaim;
+			bool doesFNameMatch=patFName==patFNameOnClaim;
+			bool doesFNamePartiallyMatch=patFName.Length>1 && patFNameOnClaim.StartsWith(patFName);
+			return doesLNameMatch && (doesFNameMatch || doesFNamePartiallyMatch);
 		}
 
 		public Hx835_Claim Copy(){
@@ -4255,9 +4260,9 @@ namespace OpenDentBusiness {
 				stringBuilderErrorMessage.AppendLine(Lans.g("X835","There are multiple insurance payment plans that this payment could be associated to. " +
 					"The claim must be processed manually so that an insurance payment plan can be chosen."));
 			}
-			//Check if a name mismatch exists
-			bool isPatientNameMisMatched=claimPaid.IsPatientNameMisMatched(patient);
-			if(isPatientNameMisMatched) {
+			//Check if a name matches exists
+			bool doesPatientNameMatch=claimPaid.DoesPatientNameMatch(patient);
+			if(!doesPatientNameMatch) {
 				stringBuilderErrorMessage.AppendLine(Lans.g("X835","The patient name on the ERA does not match the patient on this claim."));
 			}
 			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);

@@ -225,38 +225,14 @@ namespace OpenDentBusiness {
 
 		///<summary>These programs do not work in WEB mode for various reasons. We will restore them as our WEB customers request them.</summary>
 		public static List<ProgramName> GetListDisabledForWeb() {
-			return new List<ProgramName> {
-				ProgramName.Apixia,
-				ProgramName.AudaxCeph,
-				ProgramName.CADI,
-				ProgramName.DBSWin,
-				ProgramName.DemandForce,
-				ProgramName.DentalEye,
-				ProgramName.DentalTekSmartOfficePhone,
-				ProgramName.DentX,
-				ProgramName.Dolphin,
-				ProgramName.EvaSoft,
-				ProgramName.iCat,
-				ProgramName.IAP,
-				ProgramName.Guru,
-				ProgramName.HouseCalls,
-				ProgramName.MediaDent,
-				ProgramName.Owandy,
-				ProgramName.PandaPerioAdvanced,
-				ProgramName.Patterson,
-				ProgramName.PT,
-				ProgramName.PTupdate,
-				ProgramName.Schick,
-				ProgramName.Trojan,
-				ProgramName.TigerView,
-				ProgramName.TrophyEnhanced,
-				ProgramName.UAppoint,
-				ProgramName.Vipersoft,
-				ProgramName.VixWinOld,
-				ProgramName.Xcharge,
-				ProgramName.PreXionAcquire,
-				ProgramName.PreXionViewer,
-			};
+			string[] arrayProgNames=PrefC.GetString(PrefName.ProgramLinksDisabledForWeb).Split(new[] { "," },StringSplitOptions.RemoveEmptyEntries);
+			List<ProgramName> retval=new List<ProgramName>();
+			for(int i=0;i<arrayProgNames.Length;i++) {
+				if(Enum.TryParse(arrayProgNames[i],out ProgramName progName)) {
+					retval.Add(progName);
+				}
+			}
+			return retval;
 		}
 
 		/// <summary>Using eClinicalWorks tight integration.</summary>
