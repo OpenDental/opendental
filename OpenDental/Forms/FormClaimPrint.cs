@@ -525,6 +525,9 @@ namespace OpenDental{
 					case "PriInsCity":
 						_stringArrayDisplay[i]=_carrier.City;
 						break;
+					case "PriInsElectID":
+						_stringArrayDisplay[i]=_carrier.ElectID;
+						break;
 					case "PriInsST":
 						_stringArrayDisplay[i]=_carrier.State;
 						break;
@@ -655,6 +658,11 @@ namespace OpenDental{
 					case "OtherInsCity":
 						if(insPlan2.PlanNum!=0) {
 							_stringArrayDisplay[i]=carrier2.City;
+						}
+						break;
+					case "OtherInsElectID":
+						if(insPlan2.PlanNum!=0) {
+							_stringArrayDisplay[i]=carrier2.ElectID;
 						}
 						break;
 					case "OtherInsST":
@@ -1421,8 +1429,12 @@ namespace OpenDental{
 						}
 						break;
 					case "IsEnclosuresAttached":
-						if(_claim.Radiographs>0 || _claim.AttachedImages>0 || _claim.AttachedModels>0) {
-							_stringArrayDisplay[i]="X";
+						if(_claim.Radiographs>0 || _claim.AttachedImages>0 || _claim.AttachedModels>0 || _claim.AttachedFlags.Contains("EoB") 
+							|| _claim.AttachedFlags.Contains("Note") || _claim.AttachedFlags.Contains("Perio") || _claim.AttachedFlags.Contains("Misc")) {
+							_stringArrayDisplay[i]="Y";
+						}
+						else {
+							_stringArrayDisplay[i]="N";
 						}
 						break;
 					case "AttachedImagesNum":
@@ -2120,6 +2132,12 @@ namespace OpenDental{
 						break;
 					case "DateIllnessInjuryPregQualifier":
 						_stringArrayDisplay[i]=_claim.DateIllnessInjuryPregQualifier==DateIllnessInjuryPregQualifier.None?"":((int)_claim.DateIllnessInjuryPregQualifier).ToString("000");
+						break;
+					case "DateLastSRP":
+						procedure=Procedures.GetMostRecentSRP(_listProcedures);
+						if(procedure!=null) {
+							_stringArrayDisplay[i]=procedure.ProcDate.ToShortDateString();
+						}
 						break;
 					case "DateOther":
 						if(_claim.DateOther.Year>1880){

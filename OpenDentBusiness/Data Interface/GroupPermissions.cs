@@ -353,8 +353,8 @@ namespace OpenDentBusiness{
 				.FindAll(x => listUserGroupsAdjTypeDeny.Any(y => y.UserGroupNum==x.UserGroupNum));
 			List<long> listUserGroupNums=listUserGroupsForUser.Select(x => x.UserGroupNum).ToList();
 			List<GroupPermission> listGroupPermissions=GetForUserGroups(listUserGroupNums, Permissions.AdjustmentTypeDeny)
-				.FindAll(x => x.FKey==adjTypeDef.DefNum);			
-			//Return true when not all the user's groups with AdjustmentTypeDeny have the adjTypeDef.DefNum checked so the adjustment is not blocked.
+				.FindAll(x => x.FKey==adjTypeDef.DefNum || x.FKey==0);// Fkey of 0 means all adjTypeDefs were selected
+			//Return true when not all the user's groups with AdjustmentTypeDeny have the adjTypeDef.DefNum checked or have the Fkey value of 0 so the adjustment is not blocked.
 			if(listGroupPermissions.IsNullOrEmpty() || listGroupPermissions.Count!=listUserGroupNums.Count) {
         return true;
 			}

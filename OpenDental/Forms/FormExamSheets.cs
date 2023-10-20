@@ -16,10 +16,7 @@ namespace OpenDental {
 
 		public FormExamSheets() {
 			InitializeComponent();
-			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
-				//When this is no longer in limited beta, remove this code and if statement
-				gridMain.Size=new Size(gridMain.Width,gridMain.Height+groupEClipboard.Height);
-			}
+			gridMain.Size=new Size(gridMain.Width,gridMain.Height+groupEClipboard.Height);
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
@@ -31,16 +28,8 @@ namespace OpenDental {
 			FillListExamTypes();
 			FillGrid();
 			//Push notifications don't currently work with ODTouch, so hide these for now
-			butSendToDevice.Visible=false;
-			label1.Visible=false;
-			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
-				//When this is no longer in limited beta, remove this code and if statement
-				groupEClipboard.Visible=false;
-				groupEClipboard.Enabled=false;
-			}
-			if(gridMain.GetSelectedIndex()==-1) {
-				butSendToDevice.Enabled=false;
-			}
+			groupEClipboard.Visible=false;
+			groupEClipboard.Enabled=false;
 		}
 
 		private void LayoutMenu() {

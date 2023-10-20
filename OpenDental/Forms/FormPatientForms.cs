@@ -161,9 +161,7 @@ namespace OpenDental {
 					}
 				}
 				//Will display FormApptsOther for the user to select an appointment or procedures to display on the sheet.
-				if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNum)) {
-					return;
-				}
+				SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNum);
 				SheetParameter.SetParameter(sheet,"PatNum",PatNum);
 				SheetFiller.FillFields(sheet);
 				SheetUtil.CalculateHeights(sheet);

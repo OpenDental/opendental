@@ -124,7 +124,7 @@ namespace OpenDental{
 			//The updating of CDT codes takes place towards the end of the year, while we typically do it in December, we have 
 			//done it as early as Novemeber before. This warning will inform users that using the new codes will cause rejection
 			//on their claims if they try to use them before the first of the new year.
-			DateTime datePromptStart=new DateTime(2022,10,11);
+			DateTime datePromptStart=new DateTime(2023,10,20);
 			DateTime datePromptEnd=new DateTime(datePromptStart.Year,12,31);
 			if(DateTime.Now.Between(datePromptStart,datePromptEnd) && checkDcodes.Checked) {//Only validate if attempting to update D Codes
 				if(MessageBox.Show(//Still between datePromptStart and the first of the next year, prompt that these codes may cause problems.

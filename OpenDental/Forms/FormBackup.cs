@@ -220,10 +220,11 @@ namespace OpenDental {
 				MsgBox.Show(this,Lan.g(this,"Not enough free disk space available on the destination drive to backup the database."));
 				return;
 			}
+			string msg="";
 			//there is enough drive space, show progress bar and make backup
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ProgStyle=ProgressBarStyle.Blocks;
-			progressOD.ActionMain=() => InstanceMethodDatabaseBackup(dbName,textBackupFromPath.Text,textBackupToPath.Text,dbSize,isInnoDb);
+			progressOD.ActionMain=() => InstanceMethodDatabaseBackup(dbName,textBackupFromPath.Text,textBackupToPath.Text,dbSize,isInnoDb,out msg);
 			progressOD.StartingMessage=Lan.g(this,"Preparing backup");
 			try {
 				progressOD.ShowDialogProgress();
@@ -239,6 +240,7 @@ namespace OpenDental {
 			SecurityLogs.MakeLogEntry(Permissions.Backup,0,Lan.g(this,"Database backup created at ")+textBackupToPath.Text);
 			//AtoZ folder if selected for backup.=================================================================================================================
 			if(!ShouldUseAtoZFolder()) {
+				MessageBox.Show(msg);
 				Close();
 				return;
 			}
@@ -267,7 +269,7 @@ namespace OpenDental {
 				return;
 			}
 			SecurityLogs.MakeLogEntry(Permissions.Backup,0,Lan.g(this,"A to Z folder backup created at ")+textBackupToPath.Text);
-			MessageBox.Show(Lan.g(this,"Backup complete."));
+			MessageBox.Show(Lan.g(this,msg));
 			Close();
 		}
 
@@ -287,7 +289,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void InstanceMethodDatabaseBackup(string databaseName,string backupFromPath,string backupToPath,double databaseSize,bool isInnoDb) {
+		private void InstanceMethodDatabaseBackup(string databaseName,string backupFromPath,string backupToPath,double databaseSize,bool isInnoDb,out string msg) {
 			double currentValue=0;
 			string fromPath=ODFileUtils.CombinePaths(backupFromPath,databaseName);
 			if(InnoDb.HasInnoDbTables(databaseName)) {
@@ -343,7 +345,7 @@ namespace OpenDental {
 				ProgressBarHelper progressBarHelper=new ProgressBarHelper(progressBarMessage,blockValue:(int)(currentValue/databaseSize*100),blockMax:100);
 				ProgressBarEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
 			}
-			string msg=Lan.g(this,"Database backup complete.");
+			msg=Lan.g(this,"Database backup complete.");
 			if(InnoDb.HasInnoDbTables(databaseName)) {
 				msg+=" "+Lan.g(this,"A copy has been backed up to your target directory");
 				try {
@@ -354,7 +356,6 @@ namespace OpenDental {
 				}
 				msg+=".";
 			}
-			MessageBox.Show(msg);
 		}
 
 		private void InstanceMethodAtoZBackup(string backupToPath, string aToZDirectory,string aToZFullPath, double aToZSize) {

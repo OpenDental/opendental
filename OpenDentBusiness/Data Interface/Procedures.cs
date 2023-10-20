@@ -1030,6 +1030,17 @@ namespace OpenDentBusiness {
 			return PIn.Long(Db.GetScalar(command));
 		}
 
+		///<summary>Returns the most recent SRP for the passed in procedures.</summary>
+		public static Procedure GetMostRecentSRP(List<Procedure> listProcedures) {
+			//No need to check MiddleTierRole; no call to db.
+			List<long> listSRPCodeNums=ProcedureCodes.GetCodeNumsForCodeGroupFixed(EnumCodeGroupFixed.SRP);
+			List<Procedure> listSRPProceduresOrdered=listProcedures
+				.FindAll(x => x.ProcStatus.In(ProcStat.EO,ProcStat.C) && x.CodeNum.In(listSRPCodeNums.ToArray()))
+				.OrderBy(x => x.ProcDate).ToList();
+			//Most recent will be at the end of the list
+			return listSRPProceduresOrdered.LastOrDefault();
+		}
+
 		///<summary>Returns all the unique diagnostic codes in the list.  If there is less than 12 unique codes then it will pad the list with empty
 		///entries if isPadded is true.  Will always place the principal diagnosis as the first item in the list.</summary>
 		public static List<string> GetUniqueDiagnosticCodes(List<Procedure> listProcs,bool isPadded) {

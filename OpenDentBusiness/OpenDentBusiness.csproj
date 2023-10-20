@@ -2878,6 +2878,7 @@
   <ItemGroup>
     <None Include="Web References\NewCropWebService\Update1.disco" />
     <None Include="Resources\COVID19.xml" />
+    <None Include="Resources\ClaimForms\ClaimFormADA 2024.xml" />
     <Content Include="Shared\README.txt" />
     <Resource Include="Resources\topazPen10.gif" />
     <None Include="Resources\RecallPastDue_R.png" />
