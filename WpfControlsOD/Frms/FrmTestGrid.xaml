@@ -1,0 +1,16 @@
+<local:FrmODBase x:Class="OpenDental.FrmTestGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="784" Height="411" Loaded="FrmODBase_Loaded">
+	<Grid Background="#FFFCFDFE" >
+		<ui:Grid x:Name="gridMain" Margin="51,26,348,41" HorizontalAlignment="Stretch" CellDoubleClick="gridMain_CellDoubleClick" VerticalAlignment="Stretch" CellClick="gridMain_CellClick" SortingAllowByColumn="True" HScrollVisible="True" SelectionMode="OneCell" EditableEnterMovesDown="True"  />
+		<ui:Button x:Name="butFill" Margin="0,155,23,0" Height="24" Text="Fill" Click="Button_Click" HorizontalAlignment="Right" Width="65"/>
+		<Grid Width="50" Height="50" Background="	#cddceb" HorizontalAlignment="Right" Margin="0,322,30,0" VerticalAlignment="Top" />
+		<ui:Button x:Name="butClear" Margin="0,120,23,0" Height="24" Text="Clear" Click="butClear_Click" HorizontalAlignment="Right" Width="65"/>
+	</Grid>
+</local:FrmODBase>

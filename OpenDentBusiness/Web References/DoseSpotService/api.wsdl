@@ -1,0 +1,2637 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.dosespot.com/API/12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://www.dosespot.com/API/12/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.dosespot.com/API/12/">
+      <s:element name="ClinicianAddMessage" type="tns:ClinicianAddMessage" />
+      <s:complexType name="ClinicianAddMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinician" type="tns:Clinician" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SingleSignOn">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="SingleSignOnClinicId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOnCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="SingleSignOnUserId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOnUserIdVerify" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="SingleSignOnPhraseLength" nillable="true" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Clinician">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MiddleName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Suffix" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateOfBirth" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Gender" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhoneType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryFax" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DEANumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NPINumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsProxyClinician" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsReportingClinician" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ClinicianAddMessageResult" type="tns:ClinicianAddResultsMessage" />
+      <s:complexType name="ClinicianAddResultsMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinician" type="tns:Clinician" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Result">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ResultCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultDescription" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ClinicianAddMultipleClinicsMessage" type="tns:ClinicianAddMultipleClinicsMessage" />
+      <s:complexType name="ClinicianAddMultipleClinicsMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinician" type="tns:Clinician" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicIds" type="tns:ArrayOfInt" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfInt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ClinicianAddMultipleClinicsMessageResult" type="tns:ClinicianAddMultipleClinicsResultsMessage" />
+      <s:complexType name="ClinicianAddMultipleClinicsResultsMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOnResults" type="tns:SingleSignOnResult" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinician" type="tns:Clinician" />
+          <s:element minOccurs="0" maxOccurs="1" name="Results" type="tns:ArrayOfResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SingleSignOnResult">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:SingleSignOn">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Result" nillable="true" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ClinicClinicianRemoveMessage" type="tns:ClinicClinicianRemoveMessage" />
+      <s:complexType name="ClinicClinicianRemoveMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianIDs" type="tns:ArrayOfInt" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ClinicClinicianRemoveMessageResult" type="tns:ClinicClinicianRemoveResultsMessage" />
+      <s:complexType name="ClinicClinicianRemoveResultsMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOnResult" type="tns:SingleSignOnResult" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianResults" type="tns:ArrayOfClinicianResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfClinicianResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ClinicianResult" nillable="true" type="tns:ClinicianResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ClinicianResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ClinicAddMessage" type="tns:ClinicAddMessage" />
+      <s:complexType name="ClinicAddMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinic" type="tns:Clinic" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Clinic">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicNameLongForm" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhoneType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryFax" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType3" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ClinicAddMessageResult" type="tns:ClinicAddResultMessage" />
+      <s:complexType name="ClinicAddResultMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinic" type="tns:Clinic" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicKey" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PharmacySearchMessageDetailed" type="tns:PharmacySearchMessageDetailed" />
+      <s:complexType name="PharmacySearchMessageDetailed">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyNameSearch" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyCity" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyStateTwoLetters" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacySpecialties" type="tns:ArrayOfPharmacySpecialtyTypes" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneOrFax" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPharmacySpecialtyTypes">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PharmacySpecialtyTypes" type="tns:PharmacySpecialtyTypes" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="PharmacySpecialtyTypes">
+        <s:restriction base="s:string">
+          <s:enumeration value="TwentyFourHourPharmacy" />
+          <s:enumeration value="LongTermCarePharmacy" />
+          <s:enumeration value="MailOrder" />
+          <s:enumeration value="Retail" />
+          <s:enumeration value="SpecialtyPharmacy" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="PharmacySearchMessageDetailedResult" type="tns:PharmacySearchMessageDetailedResult" />
+      <s:complexType name="PharmacySearchMessageDetailedResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pharmacies" type="tns:ArrayOfPharmacyDetailed" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPharmacyDetailed">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PharmacyDetailed" nillable="true" type="tns:PharmacyDetailed" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PharmacyDetailed">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="StoreName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhoneType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryFax" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacySpecialties" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PharmacySearchMessage" type="tns:PharmacySearchMessage" />
+      <s:complexType name="PharmacySearchMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyNameSearch" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyCity" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyStateTwoLetters" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyZipCode" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PharmacySearchMessageResult" type="tns:PharmacySearchMessageResult" />
+      <s:complexType name="PharmacySearchMessageResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pharmacies" type="tns:ArrayOfPharmacy" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPharmacy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Pharmacy" nillable="true" type="tns:Pharmacy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Pharmacy">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="StoreName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhoneType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryFax" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType3" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationQuickSearchMessage" type="tns:MedicationQuickSearchMessage" />
+      <s:complexType name="MedicationQuickSearchMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="SearchString" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationQuickSearchMessageResult" type="tns:MedicationQuickSearchResultsMessage" />
+      <s:complexType name="MedicationQuickSearchResultsMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayNames" type="tns:ArrayOfString" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationStrengthSearchMessage" type="tns:MedicationStrengthSearchMessage" />
+      <s:complexType name="MedicationStrengthSearchMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="SearchString" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationStrengthSearchMessageResult" type="tns:MedicationStrengthSearchResultsMessage" />
+      <s:complexType name="MedicationStrengthSearchResultsMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayStrength" type="tns:ArrayOfString" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationStrengthSearchWithNDCMessage" type="tns:MedicationStrengthSearchWithNDCMessage" />
+      <s:complexType name="MedicationStrengthSearchWithNDCMessage">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:MedicationStrengthSearchMessage" />
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="MedicationStrengthSearchWithNDCMessageResult" type="tns:MedicationStrengthSearchResultsWithNDCMessage" />
+      <s:complexType name="MedicationStrengthSearchResultsWithNDCMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayStrengthWithNDC" type="tns:ArrayOfMedicationStrengthWithNDCSearchResult" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMedicationStrengthWithNDCSearchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationStrengthWithNDCSearchResult" nillable="true" type="tns:MedicationStrengthWithNDCSearchResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MedicationStrengthWithNDCSearchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayStrength" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RepresentativeNDC" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationSelectMessage" type="tns:MedicationSelectMessage" />
+      <s:complexType name="MedicationSelectMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="MedicationWithDoseFormRoute" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MedicationStrength" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationSelectMessageResult" type="tns:MedicationSelectResultMessage" />
+      <s:complexType name="MedicationSelectResultMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="DoseFormDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RouteDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StrengthDescription" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DispenseUnitId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DispenseUnitDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="GenericProductName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiGenProductId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiDrugSynId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiSynonymTypeId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="MatchedDrugName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RXCUI" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TermType" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="OTC" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="RepresentativeNDC" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Schedule" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="rxCuiRequest" type="tns:MedicationSearchByRxCuiMessage" />
+      <s:complexType name="MedicationSearchByRxCuiMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCui" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MedicationSearchByRxCuiMessageResult" type="tns:MedicationSelectResultMessage" />
+      <s:element name="PharmacyValidateMessage" type="tns:PharmacyValidateMessage" />
+      <s:complexType name="PharmacyValidateMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PharmacyValidateMessageResult" type="tns:PharmacyValidateMessageResult" />
+      <s:complexType name="PharmacyValidateMessageResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pharmacy" type="tns:Pharmacy" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UpdatePrescriptionStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:MedicationStatusUpdateRequest" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="MedicationStatusUpdateRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionStatus" type="tns:PatientMedicationStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="PatientMedicationStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="Active" />
+          <s:enumeration value="Inactive" />
+          <s:enumeration value="Discontinued" />
+          <s:enumeration value="Deleted" />
+          <s:enumeration value="Completed" />
+          <s:enumeration value="CancelRequested" />
+          <s:enumeration value="CancelPending" />
+          <s:enumeration value="Cancelled" />
+          <s:enumeration value="CancelDenied" />
+          <s:enumeration value="Changed" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="UpdatePrescriptionStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdatePrescriptionStatusResult" type="tns:MedicationStatusUpdateResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="MedicationStatusUpdateResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionStatus" type="tns:PatientMedicationStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AllergySearchRequest" type="tns:AllergySearchRequest" />
+      <s:complexType name="AllergySearchRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="SearchTerm" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AllergySearchResult" type="tns:AllergySearchResponse" />
+      <s:complexType name="AllergySearchResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="SearchResults" type="tns:ArrayOfAllergySearchResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfAllergySearchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AllergySearchResult" nillable="true" type="tns:AllergySearchResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AllergySearchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CodeType" type="tns:AllergyCodeType" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="AllergyCodeType">
+        <s:restriction base="s:string">
+          <s:enumeration value="AllergyClass" />
+          <s:enumeration value="GenericDrug" />
+          <s:enumeration value="SNOMED" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="AllergyListRequest" type="tns:AllergyListRequest" />
+      <s:complexType name="AllergyListRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AllergyListResult" type="tns:AllergyListResponse" />
+      <s:complexType name="AllergyListResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Allergies" type="tns:ArrayOfAllergy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfAllergy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Allergy" nillable="true" type="tns:Allergy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Allergy">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PatientAllergyId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="CodeType" type="tns:AllergyCodeType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Reaction" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReactionType" type="tns:AllergyReactionType" />
+          <s:element minOccurs="1" maxOccurs="1" name="StatusType" type="tns:AllergyStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="OnsetDate" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="AllergyReactionType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Allergy" />
+          <s:enumeration value="AdverseReaction" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="AllergyStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Active" />
+          <s:enumeration value="Inactive" />
+          <s:enumeration value="Deleted" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="AddAllergyRequest" type="tns:AddAllergyRequest" />
+      <s:complexType name="AddAllergyRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Allergy" type="tns:AddAllergy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AddAllergy">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CodeType" type="tns:AllergyCodeType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Reaction" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReactionType" type="tns:AllergyReactionType" />
+          <s:element minOccurs="1" maxOccurs="1" name="StatusType" type="tns:AllergyStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="OnsetDate" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AddAllergyResult" type="tns:AddAllergyResponse" />
+      <s:complexType name="AddAllergyResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientAllergyID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="EditAllergyRequest" type="tns:EditAllergyRequest" />
+      <s:complexType name="EditAllergyRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Allergy" type="tns:EditAllergy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="EditAllergy">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PatientAllergyId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Reaction" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReactionType" type="tns:AllergyReactionType" />
+          <s:element minOccurs="1" maxOccurs="1" name="StatusType" type="tns:AllergyStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="OnsetDate" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="EditAllergyResult" type="tns:EditAllergyResponse" />
+      <s:complexType name="EditAllergyResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CheckAllergyInteractionsRequest" type="tns:CheckAllergyInteractionsRequest" />
+      <s:complexType name="CheckAllergyInteractionsRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CheckAllergyInteractionsResult" type="tns:CheckAllergyInteractionsResponse" />
+      <s:complexType name="CheckAllergyInteractionsResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Interactions" type="tns:ArrayOfAllergyInteraction" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfAllergyInteraction">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AllergyInteraction" nillable="true" type="tns:AllergyInteraction" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AllergyInteraction">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Reaction" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReactionType" type="tns:AllergyReactionType" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SelfReportedMedicationSearchRequest" type="tns:SelfReportedMedicationSearchRequest" />
+      <s:complexType name="SelfReportedMedicationSearchRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SearchTerm" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SelfReportedMedicationSearchResult" type="tns:SelfReportedMedicationSearchResponse" />
+      <s:complexType name="SelfReportedMedicationSearchResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="SearchResults" type="tns:ArrayOfSelfReportedMedicationSearchResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSelfReportedMedicationSearchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SelfReportedMedicationSearchResult" nillable="true" type="tns:SelfReportedMedicationSearchResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SelfReportedMedicationSearchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LexiCompDrugId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiCompSynonymId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AddSelfReportedMedicationsRequest" type="tns:AddSelfReportedMedicationsRequest" />
+      <s:complexType name="AddSelfReportedMedicationsRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReportingUserId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfSelfReportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSelfReportedMedication">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SelfReportedMedication" nillable="true" type="tns:SelfReportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SelfReportedMedication">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="SelfReportedMedicationId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LexiCompDrugId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiCompSynonymId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" nillable="true" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="DiscontinuedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AddSelfReportedMedicationsResult" type="tns:AddSelfReportedMedicationsResponse" />
+      <s:complexType name="AddSelfReportedMedicationsResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="SelfReportedMedications" type="tns:ArrayOfSelfReportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AddUpdateSelfReportedMedicationsRequest" type="tns:AddSelfReportedMedicationsRequest" />
+      <s:element name="AddUpdateSelfReportedMedicationsResult" type="tns:AddSelfReportedMedicationsResponse" />
+      <s:element name="AddUpdateDetailedSelfReportedMedications">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AddUpdateDetailedSelfReportedMedicationsRequest" type="tns:AddDetailedSelfReportedMedicationsRequest" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AddDetailedSelfReportedMedicationsRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReportingUserId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfDetailedSelfReportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDetailedSelfReportedMedication">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DetailedSelfReportedMedication" nillable="true" type="tns:DetailedSelfReportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DetailedSelfReportedMedication">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="SelfReportedMedicationId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LexiCompDrugId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiCompSynonymId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiGenProductId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiSynonymTypeId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" nillable="true" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="DiscontinuedDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Refills" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DaysSupply" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DispenseUnitTypeId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Dispense" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DosageText" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DatePrescribed" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateReported" nillable="true" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AddUpdateDetailedSelfReportedMedicationsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AddUpdateDetailedSelfReportedMedicationsResult" type="tns:AddDetailedSelfReportedMedicationsResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AddDetailedSelfReportedMedicationsResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="SelfReportedMedications" type="tns:ArrayOfDetailedSelfReportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ImportMedicationsRequest" type="tns:ImportMedicationsRequest" />
+      <s:complexType name="ImportMedicationsRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfImportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfImportedMedication">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ImportedMedication" nillable="true" type="tns:ImportedMedication" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ImportedMedication">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="LexiCompGenericProductId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiCompSynonymId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiCompSynonymTypeId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ndc" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FreeText" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriberUserId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="InitialStatus" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Quantity" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DispenseUnitId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Refills" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DaysSupply" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="NoSubstitution" nillable="true" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Notes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateLastFilled" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateWritten" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateDiscontinued" nillable="true" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ImportMedicationsResult" type="tns:ImportMedicationsResponse" />
+      <s:complexType name="ImportMedicationsResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LogPatientMedicationHistoryConsentRequest" type="tns:MedHistoryConsentRequest" />
+      <s:complexType name="MedHistoryConsentRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LogPatientMedicationHistoryConsentResult" type="tns:MedHistoryConsentResponse" />
+      <s:complexType name="MedHistoryConsentResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="1" maxOccurs="1" name="ConsentLogged" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="SystemErrorDetail" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetMedicationListRequest" type="tns:GetMedicationListRequest" />
+      <s:complexType name="GetMedicationListRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sources" type="tns:ArrayOfMedicationSourceType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:ArrayOfMedicationStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMedicationSourceType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationSourceType" type="tns:MedicationSourceType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="MedicationSourceType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="SurescriptsHistory" />
+          <s:enumeration value="Prescription" />
+          <s:enumeration value="SelfReported" />
+          <s:enumeration value="Imported" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfMedicationStatusType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationStatusType" type="tns:MedicationStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="MedicationStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Unknown" />
+          <s:enumeration value="Active" />
+          <s:enumeration value="Inactive" />
+          <s:enumeration value="Completed" />
+          <s:enumeration value="Discontinued" />
+          <s:enumeration value="CancelRequested" />
+          <s:enumeration value="CancelPending" />
+          <s:enumeration value="Cancelled" />
+          <s:enumeration value="CancelDenied" />
+          <s:enumeration value="Changed" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetMedicationListResult" type="tns:GetMedicationListResponse" />
+      <s:complexType name="GetMedicationListResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfMedicationListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMedicationListItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationListItem" nillable="true" type="tns:MedicationListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MedicationListItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Source" type="tns:MedicationSourceType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Payer" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationStatus" nillable="true" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionStatus" nillable="true" type="tns:PrescriptionStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Quantity" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DispenseUnits" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Refills" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DaysSupply" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Schedule" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NoSubstitution" nillable="true" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Notes" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyNotes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateLastFilled" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateWritten" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateReported" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="MonographPath" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DrugClassification" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NDC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Strength" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Route" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriberUserId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateInactive" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusNotes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiGenProductId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiDrugSynId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiSynonymTypeId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="GenericDrugName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LexiCompDrugId" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="PrescriptionStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Entered" />
+          <s:enumeration value="Printed" />
+          <s:enumeration value="Sending" />
+          <s:enumeration value="eRxSent" />
+          <s:enumeration value="FaxSent" />
+          <s:enumeration value="Error" />
+          <s:enumeration value="Deleted" />
+          <s:enumeration value="Requested" />
+          <s:enumeration value="Edited" />
+          <s:enumeration value="EpcsError" />
+          <s:enumeration value="EpcsSigned" />
+          <s:enumeration value="ReadyToSign" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetMedicationListByDateRangeRequest" type="tns:GetMedicationListByDateRangeRequest" />
+      <s:complexType name="GetMedicationListByDateRangeRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sources" type="tns:ArrayOfMedicationSourceType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:ArrayOfMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="StartDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="EndDate" nillable="true" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetMedicationListByDateRangeResult" type="tns:GetMedicationListByDateRangeResponse" />
+      <s:complexType name="GetMedicationListByDateRangeResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfMedicationDetailedListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMedicationDetailedListItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationDetailedListItem" nillable="true" type="tns:MedicationDetailedListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MedicationDetailedListItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Source" type="tns:MedicationSourceType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Payer" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationStatus" nillable="true" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionStatus" nillable="true" type="tns:PrescriptionStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Quantity" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DispenseUnits" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Refills" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DaysSupply" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Schedule" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NoSubstitution" nillable="true" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Notes" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyNotes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateLastFilled" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateWritten" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateReported" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="MonographPath" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DrugClassification" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NDC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Strength" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Route" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriberUserId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateInactive" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusNotes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiGenProductId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiDrugSynId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiSynonymTypeId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="GenericDrugName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LexiCompDrugId" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Encounter" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetMedicationListMURequest" type="tns:GetMedicationListMURequest" />
+      <s:complexType name="GetMedicationListMURequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sources" type="tns:ArrayOfMedicationSourceType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:ArrayOfMedicationStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetMedicationListMUResult" type="tns:GetMedicationListMUResponse" />
+      <s:complexType name="GetMedicationListMUResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfMedicationMUListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMedicationMUListItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationMUListItem" nillable="true" type="tns:MedicationMUListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MedicationMUListItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Source" type="tns:MedicationSourceType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Payer" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationStatus" nillable="true" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionStatus" nillable="true" type="tns:PrescriptionStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="DisplayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Quantity" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DispenseUnits" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Refills" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DaysSupply" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Schedule" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NoSubstitution" nillable="true" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Notes" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyNotes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateLastFilled" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateWritten" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateReported" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="MonographPath" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DrugClassification" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NDC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Strength" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Route" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriberUserId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateInactive" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusNotes" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiGenProductId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiDrugSynId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiSynonymTypeId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="GenericDrugName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LexiCompDrugId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Formulary" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="request" type="tns:GetPrescriberNotificationCountsRequest" />
+      <s:complexType name="GetPrescriberNotificationCountsRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPrescriberNotificationCountsResult" type="tns:GetPrescriberNotificationCountsResponse" />
+      <s:complexType name="GetPrescriberNotificationCountsResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="RefillRequestsCount" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="TransactionErrorsCount" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PendingPrescriptionsCount" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPrescriberNotificationCountsMURequest" type="tns:GetPrescriberNotificationCountsRequest" />
+      <s:element name="GetPrescriberNotificationCountsMUResult" type="tns:GetPrescriberNotificationCountsMUResponse" />
+      <s:complexType name="GetPrescriberNotificationCountsMUResponse">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:GetPrescriberNotificationCountsResponse">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="PendingRxChangeRequestCount" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="CheckClinicianRegistrationRequest" type="tns:CheckClinicianRegistrationRequest" />
+      <s:complexType name="CheckClinicianRegistrationRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianIds" type="tns:ArrayOfInt" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CheckClinicianRegistrationResult" type="tns:CheckClinicianRegistrationResponse" />
+      <s:complexType name="CheckClinicianRegistrationResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOnResult" type="tns:SingleSignOnResult" />
+          <s:element minOccurs="0" maxOccurs="1" name="RegistrationResults" type="tns:ArrayOfClinicianRegistrationResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfClinicianRegistrationResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ClinicianRegistrationResult" nillable="true" type="tns:ClinicianRegistrationResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ClinicianRegistrationResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="1" maxOccurs="1" name="RegistrationStatus" nillable="true" type="tns:RxRegistrationStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="RxRegistrationStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Pending" />
+          <s:enumeration value="RegistrationSuccess" />
+          <s:enumeration value="RegistrationError" />
+          <s:enumeration value="IDPSuccess" />
+          <s:enumeration value="IDPError" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="CheckClinicianRegistrationDetailedRequest" type="tns:CheckClinicianRegistrationRequest" />
+      <s:element name="CheckClinicianRegistrationStatusDetailedResult" type="tns:CheckClinicianRegistrationStatusDetailedResponse" />
+      <s:complexType name="CheckClinicianRegistrationStatusDetailedResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOnResult" type="tns:SingleSignOnResult" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianRegistrationStatusResults" type="tns:ArrayOfClinicianRegistrationStatusResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfClinicianRegistrationStatusResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ClinicianRegistrationStatusResult" nillable="true" type="tns:ClinicianRegistrationStatusResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ClinicianRegistrationStatusResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OverallRegistrationStatus" nillable="true" type="tns:OverallRegistrationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="OverallRegistrationType" nillable="true" type="tns:OverallRegistrationType" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicRegistrations" type="tns:ArrayOfClinicRegistration" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="OverallRegistrationStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Registered" />
+          <s:enumeration value="Deactivated" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="OverallRegistrationType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Prescriber" />
+          <s:enumeration value="Proxy" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfClinicRegistration">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ClinicRegistration" nillable="true" type="tns:ClinicRegistration" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ClinicRegistration">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicRegistrationStatus" type="tns:ClinicRegistrationStatusType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ClinicRegistrationStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Active" />
+          <s:enumeration value="Inactive" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="RefillRequestsTransmissionErrorsMessage" type="tns:TESTNOTPRODUCTIONREQUESTRefillRequestsTransmissionErrorsMessage" />
+      <s:complexType name="TESTNOTPRODUCTIONREQUESTRefillRequestsTransmissionErrorsMessage">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:RefillRequestsTransmissionErrorsMessageRequest" />
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="RefillRequestsTransmissionErrorsMessageRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="RefillRequestsTransmissionErrorsMessageResult" type="tns:RefillRequestsTransmissionErrorsMessageResult" />
+      <s:complexType name="RefillRequestsTransmissionErrorsMessageResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="RefillRequestsTransmissionErrors" type="tns:ArrayOfRefillRequestsTransmissionError" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfRefillRequestsTransmissionError">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RefillRequestsTransmissionError" nillable="true" type="tns:RefillRequestsTransmissionError" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RefillRequestsTransmissionError">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="RefillRequestsCount" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="TransactionErrorsCount" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PatientUpdateMessage" type="tns:TESTNOTPRODUCTIONREQUESTPatientUpdateMessage" />
+      <s:complexType name="TESTNOTPRODUCTIONREQUESTPatientUpdateMessage">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:PatientUpdateMessageRequest" />
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="PatientUpdateMessageRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PatientUpdateMessageResult" type="tns:PatientUpdateMessageResult" />
+      <s:complexType name="PatientUpdateMessageResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="PatientUpdates" type="tns:ArrayOfPatientUpdate" />
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPatientUpdate">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PatientUpdate" nillable="true" type="tns:PatientUpdate" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PatientUpdate">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Patient" type="tns:Patient" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfMedication" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pharmacies" type="tns:ArrayOfPharmacy" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinicians" type="tns:ArrayOfClinician" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinics" type="tns:ArrayOfClinic" />
+          <s:element minOccurs="0" maxOccurs="1" name="Allergies" type="tns:ArrayOfAllergy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Patient">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MiddleName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Suffix" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateOfBirth" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Gender" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhoneType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditional2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PhoneAdditionalType2" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Height" nillable="true" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="Weight" nillable="true" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="HeightMetric" nillable="true" type="s:float" />
+          <s:element minOccurs="0" maxOccurs="1" name="WeightMetric" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NonDoseSpotMedicalRecordNumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Active" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMedication">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Medication" nillable="true" type="tns:Medication" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Medication">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="NDC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiGenProductId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiDrugSynId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiSynonymTypeId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DrugName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DatePrescribed" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Schedule" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Refills" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DaysSupply" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Dispense" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DispenseUnit" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Instructions" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NoSubstitutions" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyNotes" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LastDateFilled" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="NonDoseSpotPrescriptionId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Source" type="tns:MedicationSourceType" />
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationStatus" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateInactive" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusNotes" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Route" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Strength" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfClinician">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Clinician" nillable="true" type="tns:Clinician" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfClinic">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Clinic" nillable="true" type="tns:Clinic" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetRefillRequestsDetailsRequest" type="tns:GetRefillRequestsDetailsRequest" />
+      <s:complexType name="GetRefillRequestsDetailsRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="StartDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="EndDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:RefillRequestStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdditionalDetails" type="tns:ArrayOfRefillRequestAdditionalDetailsType" />
+          <s:element minOccurs="1" maxOccurs="1" name="ModifiedStartDate" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="ModifiedEndDate" nillable="true" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="RefillRequestStatusType">
+        <s:restriction base="s:string">
+          <s:enumeration value="All" />
+          <s:enumeration value="Queued" />
+          <s:enumeration value="Approved" />
+          <s:enumeration value="Denied" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfRefillRequestAdditionalDetailsType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RefillRequestAdditionalDetailsType" type="tns:RefillRequestAdditionalDetailsType" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="RefillRequestAdditionalDetailsType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Pharmacy" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetRefillRequestsDetailsResult" type="tns:GetRefillRequestsDetailsResponse" />
+      <s:complexType name="GetRefillRequestsDetailsResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="RefillRequestsDetails" type="tns:ArrayOfRefillRequestDetails" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfRefillRequestDetails">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RefillRequestDetails" nillable="true" type="tns:RefillRequestDetails" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RefillRequestDetails">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="NonDoseSpotMedicalRecordNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MiddleName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="LastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Suffix" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateOfBirth" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Gender" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AddressLine1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AddressLine2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PrimaryPhoneType" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NewPatient" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianPrefix" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianFirstName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianMiddleName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianLastName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClinicianSuffix" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medication" type="tns:MedicationListItem" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyInfo" type="tns:Pharmacy" />
+          <s:element minOccurs="1" maxOccurs="1" name="RequestStatus" type="tns:RefillRequestStatusType" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseReason" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseComment" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateRequested" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetStandardDispenseUnitRequest" type="tns:GetStandardDispenseUnitRequest" />
+      <s:complexType name="GetStandardDispenseUnitRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="StandardDispenseUnitTypeID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetStandardDispenseUnitResult" type="tns:GetStandardDispenseUnitResponse" />
+      <s:complexType name="GetStandardDispenseUnitResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+          <s:element minOccurs="0" maxOccurs="1" name="StandardDispenseUnitType" type="tns:StandardDispenseUnitType" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="StandardDispenseUnitType">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="StandardDispenseUnitTypeID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Abbreviation" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Singular" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Plural" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SingularOrPlural" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PotencyUnitCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsActive" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MergePatientRequest" type="tns:MergePatientsRequest" />
+      <s:complexType name="MergePatientsRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientIdToMergeFrom" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientIdToMergeInto" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="MergePatientsResult" type="tns:MergePatientsResponse" />
+      <s:complexType name="MergePatientsResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetRefillRequestsTransmissionErrorsMessageRequest" type="tns:RefillRequestsTransmissionErrorsMessageRequest" />
+      <s:element name="GetRefillRequestsTransmissionErrorsResult" type="tns:RefillRequestsTransmissionErrorsMessageResult" />
+      <s:element name="GetPatientDetailRequest" type="tns:PatientUpdateMessageRequest" />
+      <s:element name="GetPatientDetailResult" type="tns:PatientUpdateMessageResult" />
+      <s:element name="GetPatientDetailFullRequest" type="tns:PatientUpdateMessageRequest" />
+      <s:element name="GetPatientDetailFullResult" type="tns:PatientUpdateFullMessageResult" />
+      <s:complexType name="PatientUpdateFullMessageResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="PatientUpdates" type="tns:ArrayOfPatientUpdateFull" />
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPatientUpdateFull">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PatientUpdateFull" nillable="true" type="tns:PatientUpdateFull" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PatientUpdateFull">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Patient" type="tns:Patient" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfMedicationDetailedListItem" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pharmacies" type="tns:ArrayOfPharmacyFull" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinicians" type="tns:ArrayOfClinician" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinics" type="tns:ArrayOfClinic" />
+          <s:element minOccurs="0" maxOccurs="1" name="Allergies" type="tns:ArrayOfAllergyFull" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPharmacyFull">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PharmacyFull" nillable="true" type="tns:PharmacyFull" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PharmacyFull">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:Pharmacy">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="IsPreferred" type="s:boolean" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfAllergyFull">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AllergyFull" nillable="true" type="tns:AllergyFull" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AllergyFull">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:Allergy">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="LastUpdatedUserId" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="GetPatientDetailMURequest" type="tns:PatientUpdateMessageMURequest" />
+      <s:complexType name="PatientUpdateMessageMURequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="1" maxOccurs="1" name="PatientId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPatientDetailMUResult" type="tns:PatientUpdateMessageMUResult" />
+      <s:complexType name="PatientUpdateMessageMUResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="PatientUpdates" type="tns:ArrayOfPatientUpdateMU" />
+          <s:element minOccurs="0" maxOccurs="1" name="SingleSignOn" type="tns:SingleSignOn" />
+          <s:element minOccurs="0" maxOccurs="1" name="Result" type="tns:Result" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPatientUpdateMU">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PatientUpdateMU" nillable="true" type="tns:PatientUpdateMU" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PatientUpdateMU">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Patient" type="tns:Patient" />
+          <s:element minOccurs="0" maxOccurs="1" name="Medications" type="tns:ArrayOfMedicationMU" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pharmacies" type="tns:ArrayOfPharmacy" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinicians" type="tns:ArrayOfClinician" />
+          <s:element minOccurs="0" maxOccurs="1" name="Clinics" type="tns:ArrayOfClinic" />
+          <s:element minOccurs="0" maxOccurs="1" name="Allergies" type="tns:ArrayOfAllergy" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMedicationMU">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationMU" nillable="true" type="tns:MedicationMU" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MedicationMU">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PrescriptionId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="NDC" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RxCUI" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiGenProductId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiDrugSynId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LexiSynonymTypeId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="DrugName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DatePrescribed" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Schedule" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Refills" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="DaysSupply" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Dispense" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DispenseUnit" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Instructions" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="NoSubstitutions" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="PharmacyId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="PharmacyNotes" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LastDateFilled" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicianId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClinicId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="NonDoseSpotPrescriptionId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Source" type="tns:MedicationSourceType" />
+          <s:element minOccurs="1" maxOccurs="1" name="MedicationStatus" type="tns:PatientMedicationStatusType" />
+          <s:element minOccurs="1" maxOccurs="1" name="DateInactive" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="StatusNotes" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Route" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Strength" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Formulary" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ClinicianAddMessageSoapIn">
+    <wsdl:part name="ClinicianAddMessage" element="tns:ClinicianAddMessage" />
+  </wsdl:message>
+  <wsdl:message name="ClinicianAddMessageSoapOut">
+    <wsdl:part name="ClinicianAddMessageResult" element="tns:ClinicianAddMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="ClinicianAddMultipleClinicsMessageSoapIn">
+    <wsdl:part name="ClinicianAddMultipleClinicsMessage" element="tns:ClinicianAddMultipleClinicsMessage" />
+  </wsdl:message>
+  <wsdl:message name="ClinicianAddMultipleClinicsMessageSoapOut">
+    <wsdl:part name="ClinicianAddMultipleClinicsMessageResult" element="tns:ClinicianAddMultipleClinicsMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="ClinicClinicianRemoveMessageSoapIn">
+    <wsdl:part name="ClinicClinicianRemoveMessage" element="tns:ClinicClinicianRemoveMessage" />
+  </wsdl:message>
+  <wsdl:message name="ClinicClinicianRemoveMessageSoapOut">
+    <wsdl:part name="ClinicClinicianRemoveMessageResult" element="tns:ClinicClinicianRemoveMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="ClinicAddMessageSoapIn">
+    <wsdl:part name="ClinicAddMessage" element="tns:ClinicAddMessage" />
+  </wsdl:message>
+  <wsdl:message name="ClinicAddMessageSoapOut">
+    <wsdl:part name="ClinicAddMessageResult" element="tns:ClinicAddMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="PharmacySearchMessageDetailedSoapIn">
+    <wsdl:part name="PharmacySearchMessageDetailed" element="tns:PharmacySearchMessageDetailed" />
+  </wsdl:message>
+  <wsdl:message name="PharmacySearchMessageDetailedSoapOut">
+    <wsdl:part name="PharmacySearchMessageDetailedResult" element="tns:PharmacySearchMessageDetailedResult" />
+  </wsdl:message>
+  <wsdl:message name="PharmacySearchMessageSoapIn">
+    <wsdl:part name="PharmacySearchMessage" element="tns:PharmacySearchMessage" />
+  </wsdl:message>
+  <wsdl:message name="PharmacySearchMessageSoapOut">
+    <wsdl:part name="PharmacySearchMessageResult" element="tns:PharmacySearchMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="MedicationQuickSearchMessageSoapIn">
+    <wsdl:part name="MedicationQuickSearchMessage" element="tns:MedicationQuickSearchMessage" />
+  </wsdl:message>
+  <wsdl:message name="MedicationQuickSearchMessageSoapOut">
+    <wsdl:part name="MedicationQuickSearchMessageResult" element="tns:MedicationQuickSearchMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="MedicationStrengthSearchMessageSoapIn">
+    <wsdl:part name="MedicationStrengthSearchMessage" element="tns:MedicationStrengthSearchMessage" />
+  </wsdl:message>
+  <wsdl:message name="MedicationStrengthSearchMessageSoapOut">
+    <wsdl:part name="MedicationStrengthSearchMessageResult" element="tns:MedicationStrengthSearchMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="MedicationStrengthSearchWithNDCMessageSoapIn">
+    <wsdl:part name="MedicationStrengthSearchWithNDCMessage" element="tns:MedicationStrengthSearchWithNDCMessage" />
+  </wsdl:message>
+  <wsdl:message name="MedicationStrengthSearchWithNDCMessageSoapOut">
+    <wsdl:part name="MedicationStrengthSearchWithNDCMessageResult" element="tns:MedicationStrengthSearchWithNDCMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="MedicationSelectMessageSoapIn">
+    <wsdl:part name="MedicationSelectMessage" element="tns:MedicationSelectMessage" />
+  </wsdl:message>
+  <wsdl:message name="MedicationSelectMessageSoapOut">
+    <wsdl:part name="MedicationSelectMessageResult" element="tns:MedicationSelectMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="MedicationSearchByRxCuiMessageSoapIn">
+    <wsdl:part name="rxCuiRequest" element="tns:rxCuiRequest" />
+  </wsdl:message>
+  <wsdl:message name="MedicationSearchByRxCuiMessageSoapOut">
+    <wsdl:part name="MedicationSearchByRxCuiMessageResult" element="tns:MedicationSearchByRxCuiMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="PharmacyValidateMessageSoapIn">
+    <wsdl:part name="PharmacyValidateMessage" element="tns:PharmacyValidateMessage" />
+  </wsdl:message>
+  <wsdl:message name="PharmacyValidateMessageSoapOut">
+    <wsdl:part name="PharmacyValidateMessageResult" element="tns:PharmacyValidateMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePrescriptionStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdatePrescriptionStatus" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePrescriptionStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdatePrescriptionStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="AllergySearchSoapIn">
+    <wsdl:part name="AllergySearchRequest" element="tns:AllergySearchRequest" />
+  </wsdl:message>
+  <wsdl:message name="AllergySearchSoapOut">
+    <wsdl:part name="AllergySearchResult" element="tns:AllergySearchResult" />
+  </wsdl:message>
+  <wsdl:message name="AllergyListSoapIn">
+    <wsdl:part name="AllergyListRequest" element="tns:AllergyListRequest" />
+  </wsdl:message>
+  <wsdl:message name="AllergyListSoapOut">
+    <wsdl:part name="AllergyListResult" element="tns:AllergyListResult" />
+  </wsdl:message>
+  <wsdl:message name="AddAllergySoapIn">
+    <wsdl:part name="AddAllergyRequest" element="tns:AddAllergyRequest" />
+  </wsdl:message>
+  <wsdl:message name="AddAllergySoapOut">
+    <wsdl:part name="AddAllergyResult" element="tns:AddAllergyResult" />
+  </wsdl:message>
+  <wsdl:message name="EditAllergySoapIn">
+    <wsdl:part name="EditAllergyRequest" element="tns:EditAllergyRequest" />
+  </wsdl:message>
+  <wsdl:message name="EditAllergySoapOut">
+    <wsdl:part name="EditAllergyResult" element="tns:EditAllergyResult" />
+  </wsdl:message>
+  <wsdl:message name="CheckAllergyInteractionsSoapIn">
+    <wsdl:part name="CheckAllergyInteractionsRequest" element="tns:CheckAllergyInteractionsRequest" />
+  </wsdl:message>
+  <wsdl:message name="CheckAllergyInteractionsSoapOut">
+    <wsdl:part name="CheckAllergyInteractionsResult" element="tns:CheckAllergyInteractionsResult" />
+  </wsdl:message>
+  <wsdl:message name="SelfReportedMedicationSearchSoapIn">
+    <wsdl:part name="SelfReportedMedicationSearchRequest" element="tns:SelfReportedMedicationSearchRequest" />
+  </wsdl:message>
+  <wsdl:message name="SelfReportedMedicationSearchSoapOut">
+    <wsdl:part name="SelfReportedMedicationSearchResult" element="tns:SelfReportedMedicationSearchResult" />
+  </wsdl:message>
+  <wsdl:message name="AddSelfReportedMedicationsSoapIn">
+    <wsdl:part name="AddSelfReportedMedicationsRequest" element="tns:AddSelfReportedMedicationsRequest" />
+  </wsdl:message>
+  <wsdl:message name="AddSelfReportedMedicationsSoapOut">
+    <wsdl:part name="AddSelfReportedMedicationsResult" element="tns:AddSelfReportedMedicationsResult" />
+  </wsdl:message>
+  <wsdl:message name="AddUpdateSelfReportedMedicationsSoapIn">
+    <wsdl:part name="AddUpdateSelfReportedMedicationsRequest" element="tns:AddUpdateSelfReportedMedicationsRequest" />
+  </wsdl:message>
+  <wsdl:message name="AddUpdateSelfReportedMedicationsSoapOut">
+    <wsdl:part name="AddUpdateSelfReportedMedicationsResult" element="tns:AddUpdateSelfReportedMedicationsResult" />
+  </wsdl:message>
+  <wsdl:message name="AddUpdateDetailedSelfReportedMedicationsSoapIn">
+    <wsdl:part name="parameters" element="tns:AddUpdateDetailedSelfReportedMedications" />
+  </wsdl:message>
+  <wsdl:message name="AddUpdateDetailedSelfReportedMedicationsSoapOut">
+    <wsdl:part name="parameters" element="tns:AddUpdateDetailedSelfReportedMedicationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ImportMedicationsSoapIn">
+    <wsdl:part name="ImportMedicationsRequest" element="tns:ImportMedicationsRequest" />
+  </wsdl:message>
+  <wsdl:message name="ImportMedicationsSoapOut">
+    <wsdl:part name="ImportMedicationsResult" element="tns:ImportMedicationsResult" />
+  </wsdl:message>
+  <wsdl:message name="LogPatientMedicationHistoryConsentSoapIn">
+    <wsdl:part name="LogPatientMedicationHistoryConsentRequest" element="tns:LogPatientMedicationHistoryConsentRequest" />
+  </wsdl:message>
+  <wsdl:message name="LogPatientMedicationHistoryConsentSoapOut">
+    <wsdl:part name="LogPatientMedicationHistoryConsentResult" element="tns:LogPatientMedicationHistoryConsentResult" />
+  </wsdl:message>
+  <wsdl:message name="GetMedicationListSoapIn">
+    <wsdl:part name="GetMedicationListRequest" element="tns:GetMedicationListRequest" />
+  </wsdl:message>
+  <wsdl:message name="GetMedicationListSoapOut">
+    <wsdl:part name="GetMedicationListResult" element="tns:GetMedicationListResult" />
+  </wsdl:message>
+  <wsdl:message name="GetMedicationListByDateRangeSoapIn">
+    <wsdl:part name="GetMedicationListByDateRangeRequest" element="tns:GetMedicationListByDateRangeRequest" />
+  </wsdl:message>
+  <wsdl:message name="GetMedicationListByDateRangeSoapOut">
+    <wsdl:part name="GetMedicationListByDateRangeResult" element="tns:GetMedicationListByDateRangeResult" />
+  </wsdl:message>
+  <wsdl:message name="GetMedicationListMUSoapIn">
+    <wsdl:part name="GetMedicationListMURequest" element="tns:GetMedicationListMURequest" />
+  </wsdl:message>
+  <wsdl:message name="GetMedicationListMUSoapOut">
+    <wsdl:part name="GetMedicationListMUResult" element="tns:GetMedicationListMUResult" />
+  </wsdl:message>
+  <wsdl:message name="GetPrescriberNotificationCountsSoapIn">
+    <wsdl:part name="request" element="tns:request" />
+  </wsdl:message>
+  <wsdl:message name="GetPrescriberNotificationCountsSoapOut">
+    <wsdl:part name="GetPrescriberNotificationCountsResult" element="tns:GetPrescriberNotificationCountsResult" />
+  </wsdl:message>
+  <wsdl:message name="GetPrescriberNotificationCountsMUSoapIn">
+    <wsdl:part name="GetPrescriberNotificationCountsMURequest" element="tns:GetPrescriberNotificationCountsMURequest" />
+  </wsdl:message>
+  <wsdl:message name="GetPrescriberNotificationCountsMUSoapOut">
+    <wsdl:part name="GetPrescriberNotificationCountsMUResult" element="tns:GetPrescriberNotificationCountsMUResult" />
+  </wsdl:message>
+  <wsdl:message name="CheckClinicianRegistrationSoapIn">
+    <wsdl:part name="CheckClinicianRegistrationRequest" element="tns:CheckClinicianRegistrationRequest" />
+  </wsdl:message>
+  <wsdl:message name="CheckClinicianRegistrationSoapOut">
+    <wsdl:part name="CheckClinicianRegistrationResult" element="tns:CheckClinicianRegistrationResult" />
+  </wsdl:message>
+  <wsdl:message name="CheckClinicianRegistrationStatusDetailedSoapIn">
+    <wsdl:part name="CheckClinicianRegistrationDetailedRequest" element="tns:CheckClinicianRegistrationDetailedRequest" />
+  </wsdl:message>
+  <wsdl:message name="CheckClinicianRegistrationStatusDetailedSoapOut">
+    <wsdl:part name="CheckClinicianRegistrationStatusDetailedResult" element="tns:CheckClinicianRegistrationStatusDetailedResult" />
+  </wsdl:message>
+  <wsdl:message name="RefillRequestsTransmissionErrorsMessageSoapIn">
+    <wsdl:part name="RefillRequestsTransmissionErrorsMessage" element="tns:RefillRequestsTransmissionErrorsMessage" />
+  </wsdl:message>
+  <wsdl:message name="RefillRequestsTransmissionErrorsMessageSoapOut">
+    <wsdl:part name="RefillRequestsTransmissionErrorsMessageResult" element="tns:RefillRequestsTransmissionErrorsMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="PatientUpdateMessageSoapIn">
+    <wsdl:part name="PatientUpdateMessage" element="tns:PatientUpdateMessage" />
+  </wsdl:message>
+  <wsdl:message name="PatientUpdateMessageSoapOut">
+    <wsdl:part name="PatientUpdateMessageResult" element="tns:PatientUpdateMessageResult" />
+  </wsdl:message>
+  <wsdl:message name="GetRefillRequestsDetailsSoapIn">
+    <wsdl:part name="GetRefillRequestsDetailsRequest" element="tns:GetRefillRequestsDetailsRequest" />
+  </wsdl:message>
+  <wsdl:message name="GetRefillRequestsDetailsSoapOut">
+    <wsdl:part name="GetRefillRequestsDetailsResult" element="tns:GetRefillRequestsDetailsResult" />
+  </wsdl:message>
+  <wsdl:message name="GetStandardDispenseUnitSoapIn">
+    <wsdl:part name="GetStandardDispenseUnitRequest" element="tns:GetStandardDispenseUnitRequest" />
+  </wsdl:message>
+  <wsdl:message name="GetStandardDispenseUnitSoapOut">
+    <wsdl:part name="GetStandardDispenseUnitResult" element="tns:GetStandardDispenseUnitResult" />
+  </wsdl:message>
+  <wsdl:message name="MergePatientsSoapIn">
+    <wsdl:part name="MergePatientRequest" element="tns:MergePatientRequest" />
+  </wsdl:message>
+  <wsdl:message name="MergePatientsSoapOut">
+    <wsdl:part name="MergePatientsResult" element="tns:MergePatientsResult" />
+  </wsdl:message>
+  <wsdl:message name="GetRefillRequestsTransmissionErrorsSoapIn">
+    <wsdl:part name="GetRefillRequestsTransmissionErrorsMessageRequest" element="tns:GetRefillRequestsTransmissionErrorsMessageRequest" />
+  </wsdl:message>
+  <wsdl:message name="GetRefillRequestsTransmissionErrorsSoapOut">
+    <wsdl:part name="GetRefillRequestsTransmissionErrorsResult" element="tns:GetRefillRequestsTransmissionErrorsResult" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientDetailSoapIn">
+    <wsdl:part name="GetPatientDetailRequest" element="tns:GetPatientDetailRequest" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientDetailSoapOut">
+    <wsdl:part name="GetPatientDetailResult" element="tns:GetPatientDetailResult" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientDetailFullSoapIn">
+    <wsdl:part name="GetPatientDetailFullRequest" element="tns:GetPatientDetailFullRequest" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientDetailFullSoapOut">
+    <wsdl:part name="GetPatientDetailFullResult" element="tns:GetPatientDetailFullResult" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientDetailMUSoapIn">
+    <wsdl:part name="GetPatientDetailMURequest" element="tns:GetPatientDetailMURequest" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientDetailMUSoapOut">
+    <wsdl:part name="GetPatientDetailMUResult" element="tns:GetPatientDetailMUResult" />
+  </wsdl:message>
+  <wsdl:portType name="APISoap">
+    <wsdl:operation name="ClinicianAdd">
+      <wsdl:input name="ClinicianAddMessage" message="tns:ClinicianAddMessageSoapIn" />
+      <wsdl:output name="ClinicianAddMessage" message="tns:ClinicianAddMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ClinicianAddMultipleClinics">
+      <wsdl:input name="ClinicianAddMultipleClinicsMessage" message="tns:ClinicianAddMultipleClinicsMessageSoapIn" />
+      <wsdl:output name="ClinicianAddMultipleClinicsMessage" message="tns:ClinicianAddMultipleClinicsMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ClinicClinicianRemove">
+      <wsdl:input name="ClinicClinicianRemoveMessage" message="tns:ClinicClinicianRemoveMessageSoapIn" />
+      <wsdl:output name="ClinicClinicianRemoveMessage" message="tns:ClinicClinicianRemoveMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ClinicAdd">
+      <wsdl:input name="ClinicAddMessage" message="tns:ClinicAddMessageSoapIn" />
+      <wsdl:output name="ClinicAddMessage" message="tns:ClinicAddMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearchDetailed">
+      <wsdl:input name="PharmacySearchMessageDetailed" message="tns:PharmacySearchMessageDetailedSoapIn" />
+      <wsdl:output name="PharmacySearchMessageDetailed" message="tns:PharmacySearchMessageDetailedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearch">
+      <wsdl:input name="PharmacySearchMessage" message="tns:PharmacySearchMessageSoapIn" />
+      <wsdl:output name="PharmacySearchMessage" message="tns:PharmacySearchMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MedicationQuickSearch">
+      <wsdl:input name="MedicationQuickSearchMessage" message="tns:MedicationQuickSearchMessageSoapIn" />
+      <wsdl:output name="MedicationQuickSearchMessage" message="tns:MedicationQuickSearchMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MedicationStrengthSearch">
+      <wsdl:input name="MedicationStrengthSearchMessage" message="tns:MedicationStrengthSearchMessageSoapIn" />
+      <wsdl:output name="MedicationStrengthSearchMessage" message="tns:MedicationStrengthSearchMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MedicationStrengthSearchWithNDC">
+      <wsdl:input name="MedicationStrengthSearchWithNDCMessage" message="tns:MedicationStrengthSearchWithNDCMessageSoapIn" />
+      <wsdl:output name="MedicationStrengthSearchWithNDCMessage" message="tns:MedicationStrengthSearchWithNDCMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MedicationSelect">
+      <wsdl:input name="MedicationSelectMessage" message="tns:MedicationSelectMessageSoapIn" />
+      <wsdl:output name="MedicationSelectMessage" message="tns:MedicationSelectMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MedicationSearchByRxCui">
+      <wsdl:input name="MedicationSearchByRxCuiMessage" message="tns:MedicationSearchByRxCuiMessageSoapIn" />
+      <wsdl:output name="MedicationSearchByRxCuiMessage" message="tns:MedicationSearchByRxCuiMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PharmacyValidate">
+      <wsdl:input name="PharmacyValidateMessage" message="tns:PharmacyValidateMessageSoapIn" />
+      <wsdl:output name="PharmacyValidateMessage" message="tns:PharmacyValidateMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMedicationStatus">
+      <wsdl:input name="UpdatePrescriptionStatus" message="tns:UpdatePrescriptionStatusSoapIn" />
+      <wsdl:output name="UpdatePrescriptionStatus" message="tns:UpdatePrescriptionStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllergySearch">
+      <wsdl:input message="tns:AllergySearchSoapIn" />
+      <wsdl:output message="tns:AllergySearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AllergyList">
+      <wsdl:input message="tns:AllergyListSoapIn" />
+      <wsdl:output message="tns:AllergyListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddAllergy">
+      <wsdl:input message="tns:AddAllergySoapIn" />
+      <wsdl:output message="tns:AddAllergySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EditAllergy">
+      <wsdl:input message="tns:EditAllergySoapIn" />
+      <wsdl:output message="tns:EditAllergySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckAllergyInteractions">
+      <wsdl:input message="tns:CheckAllergyInteractionsSoapIn" />
+      <wsdl:output message="tns:CheckAllergyInteractionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SelfReportedMedicationSearch">
+      <wsdl:input message="tns:SelfReportedMedicationSearchSoapIn" />
+      <wsdl:output message="tns:SelfReportedMedicationSearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddSelfReportedMedications">
+      <wsdl:input message="tns:AddSelfReportedMedicationsSoapIn" />
+      <wsdl:output message="tns:AddSelfReportedMedicationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddUpdateSelfReportedMedications">
+      <wsdl:input message="tns:AddUpdateSelfReportedMedicationsSoapIn" />
+      <wsdl:output message="tns:AddUpdateSelfReportedMedicationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddUpdateDetailedSelfReportedMedications">
+      <wsdl:input message="tns:AddUpdateDetailedSelfReportedMedicationsSoapIn" />
+      <wsdl:output message="tns:AddUpdateDetailedSelfReportedMedicationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ImportMedications">
+      <wsdl:input message="tns:ImportMedicationsSoapIn" />
+      <wsdl:output message="tns:ImportMedicationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LogPatientMedicationHistoryConsent">
+      <wsdl:input message="tns:LogPatientMedicationHistoryConsentSoapIn" />
+      <wsdl:output message="tns:LogPatientMedicationHistoryConsentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationList">
+      <wsdl:input message="tns:GetMedicationListSoapIn" />
+      <wsdl:output message="tns:GetMedicationListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationListByDateRange">
+      <wsdl:input message="tns:GetMedicationListByDateRangeSoapIn" />
+      <wsdl:output message="tns:GetMedicationListByDateRangeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationListMU">
+      <wsdl:input message="tns:GetMedicationListMUSoapIn" />
+      <wsdl:output message="tns:GetMedicationListMUSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPrescriberNotificationCounts">
+      <wsdl:input message="tns:GetPrescriberNotificationCountsSoapIn" />
+      <wsdl:output message="tns:GetPrescriberNotificationCountsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPrescriberNotificationCountsMU">
+      <wsdl:input message="tns:GetPrescriberNotificationCountsMUSoapIn" />
+      <wsdl:output message="tns:GetPrescriberNotificationCountsMUSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckClinicianRegistration">
+      <wsdl:input message="tns:CheckClinicianRegistrationSoapIn" />
+      <wsdl:output message="tns:CheckClinicianRegistrationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckClinicianRegistrationStatusDetailed">
+      <wsdl:input message="tns:CheckClinicianRegistrationStatusDetailedSoapIn" />
+      <wsdl:output message="tns:CheckClinicianRegistrationStatusDetailedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TESTNOTPRODUCTIONFORFORMATONLYRefillRequestsTransmissionErrors">
+      <wsdl:input name="RefillRequestsTransmissionErrorsMessage" message="tns:RefillRequestsTransmissionErrorsMessageSoapIn" />
+      <wsdl:output name="RefillRequestsTransmissionErrorsMessage" message="tns:RefillRequestsTransmissionErrorsMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TESTNOTPRODUCTIONFORFORMATONLYPatientDetail">
+      <wsdl:input name="PatientUpdateMessage" message="tns:PatientUpdateMessageSoapIn" />
+      <wsdl:output name="PatientUpdateMessage" message="tns:PatientUpdateMessageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRefillRequestsDetails">
+      <wsdl:input message="tns:GetRefillRequestsDetailsSoapIn" />
+      <wsdl:output message="tns:GetRefillRequestsDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStandardDispenseUnit">
+      <wsdl:input message="tns:GetStandardDispenseUnitSoapIn" />
+      <wsdl:output message="tns:GetStandardDispenseUnitSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MergePatients">
+      <wsdl:input message="tns:MergePatientsSoapIn" />
+      <wsdl:output message="tns:MergePatientsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRefillRequestsTransmissionErrors">
+      <wsdl:input message="tns:GetRefillRequestsTransmissionErrorsSoapIn" />
+      <wsdl:output message="tns:GetRefillRequestsTransmissionErrorsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailMessage">
+      <wsdl:input name="GetPatientDetail" message="tns:GetPatientDetailSoapIn" />
+      <wsdl:output name="GetPatientDetail" message="tns:GetPatientDetailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailFullMessage">
+      <wsdl:input name="GetPatientDetailFull" message="tns:GetPatientDetailFullSoapIn" />
+      <wsdl:output name="GetPatientDetailFull" message="tns:GetPatientDetailFullSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailMUMessage">
+      <wsdl:input name="GetPatientDetailMU" message="tns:GetPatientDetailMUSoapIn" />
+      <wsdl:output name="GetPatientDetailMU" message="tns:GetPatientDetailMUSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="APIHttpGet" />
+  <wsdl:portType name="APIHttpPost" />
+  <wsdl:binding name="APISoap" type="tns:APISoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ClinicianAdd">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/ClinicianAddMessage" style="document" />
+      <wsdl:input name="ClinicianAddMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicianAddMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClinicianAddMultipleClinics">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/ClinicianAddMultipleClinicsMessage" style="document" />
+      <wsdl:input name="ClinicianAddMultipleClinicsMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicianAddMultipleClinicsMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClinicClinicianRemove">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/ClinicClinicianRemoveMessage" style="document" />
+      <wsdl:input name="ClinicClinicianRemoveMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicClinicianRemoveMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClinicAdd">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/ClinicAddMessage" style="document" />
+      <wsdl:input name="ClinicAddMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicAddMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearchDetailed">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/PharmacySearchMessageDetailed" style="document" />
+      <wsdl:input name="PharmacySearchMessageDetailed">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PharmacySearchMessageDetailed">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearch">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/PharmacySearchMessage" style="document" />
+      <wsdl:input name="PharmacySearchMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PharmacySearchMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationQuickSearch">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/MedicationQuickSearchMessage" style="document" />
+      <wsdl:input name="MedicationQuickSearchMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationQuickSearchMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationStrengthSearch">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/MedicationStrengthSearchMessage" style="document" />
+      <wsdl:input name="MedicationStrengthSearchMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationStrengthSearchMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationStrengthSearchWithNDC">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/MedicationStrengthSearchWithNDCMessage" style="document" />
+      <wsdl:input name="MedicationStrengthSearchWithNDCMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationStrengthSearchWithNDCMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationSelect">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/MedicationSelectMessage" style="document" />
+      <wsdl:input name="MedicationSelectMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationSelectMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationSearchByRxCui">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/MedicationSearchByRxCuiMessage" style="document" />
+      <wsdl:input name="MedicationSearchByRxCuiMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationSearchByRxCuiMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacyValidate">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/PharmacyValidateMessage" style="document" />
+      <wsdl:input name="PharmacyValidateMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PharmacyValidateMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMedicationStatus">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/UpdatePrescriptionStatus" style="document" />
+      <wsdl:input name="UpdatePrescriptionStatus">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="UpdatePrescriptionStatus">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllergySearch">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/AllergySearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllergyList">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/AllergyList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddAllergy">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/AddAllergy" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EditAllergy">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/EditAllergy" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckAllergyInteractions">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/CheckAllergyInteractions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SelfReportedMedicationSearch">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/SelfReportedMedicationSearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddSelfReportedMedications">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/AddSelfReportedMedications" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddUpdateSelfReportedMedications">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/AddUpdateSelfReportedMedications" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddUpdateDetailedSelfReportedMedications">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/AddUpdateDetailedSelfReportedMedications" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ImportMedications">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/ImportMedications" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogPatientMedicationHistoryConsent">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/LogPatientMedicationHistoryConsent" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationList">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetMedicationList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationListByDateRange">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetMedicationListByDateRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationListMU">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetMedicationListMU" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrescriberNotificationCounts">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetPrescriberNotificationCounts" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrescriberNotificationCountsMU">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetPrescriberNotificationCountsMU" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckClinicianRegistration">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/CheckClinicianRegistration" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckClinicianRegistrationStatusDetailed">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/CheckClinicianRegistrationStatusDetailed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TESTNOTPRODUCTIONFORFORMATONLYRefillRequestsTransmissionErrors">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/RefillRequestsTransmissionErrorsMessage" style="document" />
+      <wsdl:input name="RefillRequestsTransmissionErrorsMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="RefillRequestsTransmissionErrorsMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TESTNOTPRODUCTIONFORFORMATONLYPatientDetail">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/PatientUpdateMessage" style="document" />
+      <wsdl:input name="PatientUpdateMessage">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PatientUpdateMessage">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRefillRequestsDetails">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetRefillRequestsDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStandardDispenseUnit">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetStandardDispenseUnit" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MergePatients">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/MergePatients" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRefillRequestsTransmissionErrors">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetRefillRequestsTransmissionErrors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailMessage">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetPatientDetail" style="document" />
+      <wsdl:input name="GetPatientDetail">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetPatientDetail">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailFullMessage">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetPatientDetailFull" style="document" />
+      <wsdl:input name="GetPatientDetailFull">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetPatientDetailFull">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailMUMessage">
+      <soap:operation soapAction="http://www.dosespot.com/API/12/GetPatientDetailMU" style="document" />
+      <wsdl:input name="GetPatientDetailMU">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetPatientDetailMU">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="APISoap12" type="tns:APISoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ClinicianAdd">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/ClinicianAddMessage" style="document" />
+      <wsdl:input name="ClinicianAddMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicianAddMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClinicianAddMultipleClinics">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/ClinicianAddMultipleClinicsMessage" style="document" />
+      <wsdl:input name="ClinicianAddMultipleClinicsMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicianAddMultipleClinicsMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClinicClinicianRemove">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/ClinicClinicianRemoveMessage" style="document" />
+      <wsdl:input name="ClinicClinicianRemoveMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicClinicianRemoveMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClinicAdd">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/ClinicAddMessage" style="document" />
+      <wsdl:input name="ClinicAddMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="ClinicAddMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearchDetailed">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/PharmacySearchMessageDetailed" style="document" />
+      <wsdl:input name="PharmacySearchMessageDetailed">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PharmacySearchMessageDetailed">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacySearch">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/PharmacySearchMessage" style="document" />
+      <wsdl:input name="PharmacySearchMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PharmacySearchMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationQuickSearch">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/MedicationQuickSearchMessage" style="document" />
+      <wsdl:input name="MedicationQuickSearchMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationQuickSearchMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationStrengthSearch">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/MedicationStrengthSearchMessage" style="document" />
+      <wsdl:input name="MedicationStrengthSearchMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationStrengthSearchMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationStrengthSearchWithNDC">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/MedicationStrengthSearchWithNDCMessage" style="document" />
+      <wsdl:input name="MedicationStrengthSearchWithNDCMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationStrengthSearchWithNDCMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationSelect">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/MedicationSelectMessage" style="document" />
+      <wsdl:input name="MedicationSelectMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationSelectMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MedicationSearchByRxCui">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/MedicationSearchByRxCuiMessage" style="document" />
+      <wsdl:input name="MedicationSearchByRxCuiMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="MedicationSearchByRxCuiMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PharmacyValidate">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/PharmacyValidateMessage" style="document" />
+      <wsdl:input name="PharmacyValidateMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PharmacyValidateMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateMedicationStatus">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/UpdatePrescriptionStatus" style="document" />
+      <wsdl:input name="UpdatePrescriptionStatus">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="UpdatePrescriptionStatus">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllergySearch">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/AllergySearch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AllergyList">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/AllergyList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddAllergy">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/AddAllergy" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EditAllergy">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/EditAllergy" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckAllergyInteractions">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/CheckAllergyInteractions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SelfReportedMedicationSearch">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/SelfReportedMedicationSearch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddSelfReportedMedications">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/AddSelfReportedMedications" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddUpdateSelfReportedMedications">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/AddUpdateSelfReportedMedications" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddUpdateDetailedSelfReportedMedications">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/AddUpdateDetailedSelfReportedMedications" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ImportMedications">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/ImportMedications" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LogPatientMedicationHistoryConsent">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/LogPatientMedicationHistoryConsent" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationList">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetMedicationList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationListByDateRange">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetMedicationListByDateRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMedicationListMU">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetMedicationListMU" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrescriberNotificationCounts">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetPrescriberNotificationCounts" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrescriberNotificationCountsMU">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetPrescriberNotificationCountsMU" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckClinicianRegistration">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/CheckClinicianRegistration" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckClinicianRegistrationStatusDetailed">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/CheckClinicianRegistrationStatusDetailed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TESTNOTPRODUCTIONFORFORMATONLYRefillRequestsTransmissionErrors">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/RefillRequestsTransmissionErrorsMessage" style="document" />
+      <wsdl:input name="RefillRequestsTransmissionErrorsMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="RefillRequestsTransmissionErrorsMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TESTNOTPRODUCTIONFORFORMATONLYPatientDetail">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/PatientUpdateMessage" style="document" />
+      <wsdl:input name="PatientUpdateMessage">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="PatientUpdateMessage">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRefillRequestsDetails">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetRefillRequestsDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStandardDispenseUnit">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetStandardDispenseUnit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MergePatients">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/MergePatients" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRefillRequestsTransmissionErrors">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetRefillRequestsTransmissionErrors" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailMessage">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetPatientDetail" style="document" />
+      <wsdl:input name="GetPatientDetail">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetPatientDetail">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailFullMessage">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetPatientDetailFull" style="document" />
+      <wsdl:input name="GetPatientDetailFull">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetPatientDetailFull">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientDetailMUMessage">
+      <soap12:operation soapAction="http://www.dosespot.com/API/12/GetPatientDetailMU" style="document" />
+      <wsdl:input name="GetPatientDetailMU">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="GetPatientDetailMU">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="APIHttpGet" type="tns:APIHttpGet">
+    <http:binding verb="GET" />
+  </wsdl:binding>
+  <wsdl:binding name="APIHttpPost" type="tns:APIHttpPost">
+    <http:binding verb="POST" />
+  </wsdl:binding>
+  <wsdl:service name="API">
+    <wsdl:port name="APISoap" binding="tns:APISoap">
+      <soap:address location="https://my.dosespot.com/api/12/api.asmx" />
+    </wsdl:port>
+    <wsdl:port name="APISoap12" binding="tns:APISoap12">
+      <soap12:address location="https://my.dosespot.com/api/12/api.asmx" />
+    </wsdl:port>
+    <wsdl:port name="APIHttpGet" binding="tns:APIHttpGet">
+      <http:address location="https://my.dosespot.com/api/12/api.asmx" />
+    </wsdl:port>
+    <wsdl:port name="APIHttpPost" binding="tns:APIHttpPost">
+      <http:address location="https://my.dosespot.com/api/12/api.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="WpfControls.UI.DatePicker"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		d:DesignWidth="90" d:DesignHeight="21">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:DatePicker.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:DatePicker.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<Grid x:Name="gridMain" x:FieldModifier="internal" Background="White">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/><!--Text-->
+			<ColumnDefinition Width="14"/><!--Dropdown-->
+		</Grid.ColumnDefinitions>
+		<TextBox x:Name="textBox" x:FieldModifier="internal" Text="00/00/0000" VerticalContentAlignment="Center"/>
+		<Canvas Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" >
+			<Polyline StrokeThickness="1.2" Stroke="	#141414" Points="-3.5,-1.5 0,1.5 3.5,-1.5"/>
+		</Canvas>
+		<Canvas x:Name="canvasError" x:FieldModifier="internal" Grid.Column="1">
+			<Ellipse Width="11" Height="11" Fill="Red" Canvas.Right="-12.5" Canvas.Top="4" Canvas.ZIndex="1"></Ellipse>
+			<Label Padding="0" Canvas.Right="-9" Canvas.Top="1" FontWeight="Bold" FontFamily="Segoe UI" Foreground="White" Canvas.ZIndex="2" VerticalAlignment="Top" HorizontalAlignment="Left" >!</Label>
+		</Canvas>
+		<Border Name="border" x:FieldModifier="internal" Grid.ColumnSpan="2" Background="Transparent" BorderBrush="	#adadad" BorderThickness="1" IsHitTestVisible="False"/>
+	</Grid>
+</UserControl>

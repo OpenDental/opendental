@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="dxci.dws" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" name="DwsService" targetNamespace="dxci.dws" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://webservices.dentalxchange.com:443/dws/DwsService?xsd=1" namespace="dxci.dws" />
+    </xsd:schema>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://webservices.dentalxchange.com:443/dws/DwsService?xsd=2" namespace="dxci.common" />
+    </xsd:schema>
+  </types>
+  <message name="validateClaim">
+    <part name="parameters" element="tns:validateClaim" />
+  </message>
+  <message name="validateClaimResponse">
+    <part name="parameters" element="tns:validateClaimResponse" />
+  </message>
+  <message name="getPayerList">
+    <part name="parameters" element="tns:getPayerList" />
+  </message>
+  <message name="getPayerListResponse">
+    <part name="parameters" element="tns:getPayerListResponse" />
+  </message>
+  <message name="submitClaim">
+    <part name="parameters" element="tns:submitClaim" />
+  </message>
+  <message name="submitClaimResponse">
+    <part name="parameters" element="tns:submitClaimResponse" />
+  </message>
+  <message name="lookupFamilyEligibility">
+    <part name="parameters" element="tns:lookupFamilyEligibility" />
+  </message>
+  <message name="lookupFamilyEligibilityResponse">
+    <part name="parameters" element="tns:lookupFamilyEligibilityResponse" />
+  </message>
+  <message name="getClaimPaymentList">
+    <part name="parameters" element="tns:getClaimPaymentList" />
+  </message>
+  <message name="getClaimPaymentListResponse">
+    <part name="parameters" element="tns:getClaimPaymentListResponse" />
+  </message>
+  <message name="lookupEligibility">
+    <part name="parameters" element="tns:lookupEligibility" />
+  </message>
+  <message name="lookupEligibilityResponse">
+    <part name="parameters" element="tns:lookupEligibilityResponse" />
+  </message>
+  <message name="lookupTerminalClaimStatus">
+    <part name="parameters" element="tns:lookupTerminalClaimStatus" />
+  </message>
+  <message name="lookupTerminalClaimStatusResponse">
+    <part name="parameters" element="tns:lookupTerminalClaimStatusResponse" />
+  </message>
+  <message name="lookupTerminalEligibility">
+    <part name="parameters" element="tns:lookupTerminalEligibility" />
+  </message>
+  <message name="lookupTerminalEligibilityResponse">
+    <part name="parameters" element="tns:lookupTerminalEligibilityResponse" />
+  </message>
+  <message name="lookupClaimStatus">
+    <part name="parameters" element="tns:lookupClaimStatus" />
+  </message>
+  <message name="lookupClaimStatusResponse">
+    <part name="parameters" element="tns:lookupClaimStatusResponse" />
+  </message>
+  <message name="getClaimStatus">
+    <part name="parameters" element="tns:getClaimStatus" />
+  </message>
+  <message name="getClaimStatusResponse">
+    <part name="parameters" element="tns:getClaimStatusResponse" />
+  </message>
+  <message name="updateTerminal">
+    <part name="parameters" element="tns:updateTerminal" />
+  </message>
+  <message name="updateTerminalResponse">
+    <part name="parameters" element="tns:updateTerminalResponse" />
+  </message>
+  <message name="getEligibility">
+    <part name="parameters" element="tns:getEligibility" />
+  </message>
+  <message name="getEligibilityResponse">
+    <part name="parameters" element="tns:getEligibilityResponse" />
+  </message>
+  <message name="getUnProcessedEra">
+    <part name="parameters" element="tns:getUnProcessedEra" />
+  </message>
+  <message name="getUnProcessedEraResponse">
+    <part name="parameters" element="tns:getUnProcessedEraResponse" />
+  </message>
+  <message name="getPayerListService">
+    <part name="parameters" element="tns:getPayerListService" />
+  </message>
+  <message name="getPayerListServiceResponse">
+    <part name="parameters" element="tns:getPayerListServiceResponse" />
+  </message>
+  <portType name="Dws">
+    <operation name="validateClaim">
+      <input message="tns:validateClaim" />
+      <output message="tns:validateClaimResponse" />
+    </operation>
+    <operation name="getPayerList">
+      <input message="tns:getPayerList" />
+      <output message="tns:getPayerListResponse" />
+    </operation>
+    <operation name="submitClaim">
+      <input message="tns:submitClaim" />
+      <output message="tns:submitClaimResponse" />
+    </operation>
+    <operation name="lookupFamilyEligibility">
+      <input message="tns:lookupFamilyEligibility" />
+      <output message="tns:lookupFamilyEligibilityResponse" />
+    </operation>
+    <operation name="getClaimPaymentList">
+      <input message="tns:getClaimPaymentList" />
+      <output message="tns:getClaimPaymentListResponse" />
+    </operation>
+    <operation name="lookupEligibility">
+      <input message="tns:lookupEligibility" />
+      <output message="tns:lookupEligibilityResponse" />
+    </operation>
+    <operation name="lookupTerminalClaimStatus">
+      <input message="tns:lookupTerminalClaimStatus" />
+      <output message="tns:lookupTerminalClaimStatusResponse" />
+    </operation>
+    <operation name="lookupTerminalEligibility">
+      <input message="tns:lookupTerminalEligibility" />
+      <output message="tns:lookupTerminalEligibilityResponse" />
+    </operation>
+    <operation name="lookupClaimStatus">
+      <input message="tns:lookupClaimStatus" />
+      <output message="tns:lookupClaimStatusResponse" />
+    </operation>
+    <operation name="getClaimStatus">
+      <input message="tns:getClaimStatus" />
+      <output message="tns:getClaimStatusResponse" />
+    </operation>
+    <operation name="updateTerminal">
+      <input message="tns:updateTerminal" />
+      <output message="tns:updateTerminalResponse" />
+    </operation>
+    <operation name="getEligibility">
+      <input message="tns:getEligibility" />
+      <output message="tns:getEligibilityResponse" />
+    </operation>
+    <operation name="getUnProcessedEra">
+      <input message="tns:getUnProcessedEra" />
+      <output message="tns:getUnProcessedEraResponse" />
+    </operation>
+    <operation name="getPayerListService">
+      <input message="tns:getPayerListService" />
+      <output message="tns:getPayerListServiceResponse" />
+    </operation>
+  </portType>
+  <binding name="DwsServicePortBinding" type="tns:Dws">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="validateClaim">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getPayerList">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="submitClaim">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="lookupFamilyEligibility">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getClaimPaymentList">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="lookupEligibility">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="lookupTerminalClaimStatus">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="lookupTerminalEligibility">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="lookupClaimStatus">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getClaimStatus">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="updateTerminal">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getEligibility">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getUnProcessedEra">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getPayerListService">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="DwsService">
+    <port name="DwsServicePort" binding="tns:DwsServicePortBinding">
+      <soap:address location="https://webservices.dentalxchange.com:443/dws/DwsService" />
+    </port>
+  </service>
+</definitions>

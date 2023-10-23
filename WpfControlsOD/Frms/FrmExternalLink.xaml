@@ -1,0 +1,19 @@
+<local:FrmODBase x:Class="OpenDental.FrmExternalLink"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="724" Height="132" 
+             Text="Insert Link to External Resource" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="labelUrl" Width="122" Height="18" Margin="12,30,0,0" Text="URL" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textURL" HorizontalAlignment="Stretch" Height="20" Margin="136,29,74,0" />
+		<ui:Label x:Name="labelDisplayText" Width="122" Height="18" Margin="12,56,0,0" Text="Display Text" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textDisplay" HorizontalAlignment="Stretch" Height="20" Margin="136,55,74,0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
+		<ui:Button x:Name="butEmptyLink" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,93,12" Text="&lt;a href=&quot;&quot;&gt;" Click="butEmptyLink_Click" />
+	</Grid>
+</local:FrmODBase>

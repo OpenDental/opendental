@@ -1,0 +1,80 @@
+CREATE TABLE user(
+  UserNum mediumint unsigned NOT NULL auto_increment,
+  UserName varchar(255) NOT NULL,
+  Password varchar(255) NOT NULL,
+  UserGroupNum mediumint unsigned NOT NULL,
+  PRIMARY KEY (UserNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE usergroup(
+  UserGroupNum mediumint unsigned NOT NULL auto_increment,
+  Description varchar(255) NOT NULL,
+  PRIMARY KEY (UserGroupNum)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE grouppermission(
+  GroupPermNum mediumint unsigned NOT NULL auto_increment,
+  NewerDate date NOT NULL default '0001-01-01',  
+  NewerDays mediumint unsigned NOT NULL,
+  UserGroupNum mediumint unsigned NOT NULL,
+  PermType tinyint unsigned NOT NULL,
+  PRIMARY KEY (GroupPermNum)
+) DEFAULT CHARSET=utf8;
+
+ALTER TABLE provider DROP Password;
+ALTER TABLE provider DROP UserName;
+ALTER TABLE employee DROP Password;
+ALTER TABLE employee DROP UserName;
+DROP TABLE permission;
+DROP TABLE userpermission;
+TRUNCATE TABLE securitylog;
+ALTER TABLE securitylog CHANGE Permission PermType tinyint unsigned NOT NULL;
+ALTER TABLE securitylog CHANGE UserName UserNum mediumint unsigned NOT NULL;
+ALTER TABLE adjustment ADD DateEntry date NOT NULL default '0001-01-01';
+UPDATE adjustment SET DateEntry=AdjDate;
+ALTER TABLE paysplit ADD DateEntry date NOT NULL default '0001-01-01';
+UPDATE paysplit SET DateEntry=DatePay;
+ALTER TABLE payment ADD DateEntry date NOT NULL default '0001-01-01';
+UPDATE payment SET DateEntry=PayDate;
+ALTER TABLE procedurelog ADD DateEntryC date NOT NULL default '0001-01-01';
+UPDATE procedurelog SET DateEntryC=ProcDate WHERE ProcStatus=2;
+ALTER TABLE claimproc ADD DateEntry date NOT NULL default '0001-01-01';
+UPDATE claimproc SET DateEntry=DateCP;
+ALTER TABLE clinic ADD Address varchar(255) NOT NULL;
+ALTER TABLE clinic ADD Address2 varchar(255) NOT NULL;
+ALTER TABLE clinic ADD City varchar(255) NOT NULL;
+ALTER TABLE clinic ADD State varchar(255) NOT NULL;
+ALTER TABLE clinic ADD Zip varchar(255) NOT NULL;
+ALTER TABLE clinic ADD Phone varchar(255) NOT NULL;
+INSERT INTO preference VALUES ('RandomPrimaryKeys','0');
+ALTER TABLE quickpastecat CHANGE QuickPasteCatNum QuickPasteCatNum mediumint unsigned NOT NULL auto_increment;
+ALTER TABLE securitylog CHANGE SecurityLogNum SecurityLogNum mediumint unsigned NOT NULL auto_increment;
+ALTER TABLE letter CHANGE LetterNum LetterNum mediumint unsigned NOT NULL auto_increment;
+
+INSERT INTO usergroup(Description) VALUES('Admin Group');
+INSERT INTO usergroup(Description) VALUES('Regular Users');
+INSERT INTO user(UserName,UserGroupNum) VALUES('Admin',1);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,1);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,2);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,3);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,4);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,5);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,6);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,7);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,8);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,9);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,10);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,11);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,12);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,13);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,14);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,15);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,16);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,17);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,18);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,19);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,20);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,21);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,22);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,23);
+INSERT INTO grouppermission(UserGroupNum,PermType) VALUES(1,24);

@@ -1,0 +1,21 @@
+<Style TargetType="DataGridColumnHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+			<!--Setter Property="SeparatorBrush" Value="Red" /-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Grid>
+                            <Border x:Name="columnHeaderBorder"
+		                        BorderThickness="0,0,1,1"
+		                        
+                                BorderBrush="DarkGray"
+                                Background="#DFEAF5">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+				                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>

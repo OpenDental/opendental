@@ -1,0 +1,650 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7069E361-5105-4A13-8D66-5D528B582BA6}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UnitTests</RootNamespace>
+    <AssemblyName>Unit Tests</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ResGenToolArchitecture>Managed32Bit</ResGenToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LinuxRelease|AnyCPU' ">
+    <OutputPath>bin\LinuxRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LinuxRelease|x86'">
+    <OutputPath>bin\x86\LinuxRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Bridges">
+      <HintPath>..\Required dlls\Bridges.dll</HintPath>
+    </Reference>
+    <Reference Include="CDT">
+      <HintPath>..\Required dlls\CDT.dll</HintPath>
+    </Reference>
+    <Reference Include="DpsPos, Version=1.0.6191.28914, Culture=neutral, PublicKeyToken=fed6c2461985275f" />
+    <Reference Include="Health.Direct.Common, Version=1.2.0.8, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Health.Direct.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Word, Version=8.2.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\Required dlls\Interop.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.1.4, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="MigraDoc.DocumentObjectModel, Version=1.2.2546.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb" />
+    <Reference Include="MigraDoc.Rendering, Version=1.2.2546.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb" />
+    <Reference Include="Mono.Cecil, Version=0.10.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.3\lib\net40\Mono.Cecil.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.10.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.3\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.10.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.3\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.10.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.3\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="NDde, Version=1.3.171.0, Culture=neutral, PublicKeyToken=6949dadb6e675e5a" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHunspell, Version=0.9.6.0, Culture=neutral, PublicKeyToken=1ac793ea843b4366" />
+    <Reference Include="ODCrypt">
+      <HintPath>..\Required dlls\ODCrypt.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenDentalCloud, Version=16.4.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\OpenDentalCloud\bin\Debug\OpenDentalCloud.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenDentalGraph, Version=16.1.1.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="PdfSharp, Version=1.2.1269.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="ServiceManager, Version=15.4.1.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1" />
+    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="SigPlusNET, Version=1.1.4050.24928, Culture=neutral, PublicKeyToken=6aef07010bb0624f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\SigPlusNET.dll</HintPath>
+    </Reference>
+    <Reference Include="Sparks3D, Version=20.3.1.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Sparks3D\Sparks3D.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Tao.Platform.Windows, Version=1.0.0.4, Culture=neutral, PublicKeyToken=701104b2da67a104, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Tao.Platform.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="xImageDeviceManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PdmpPropertyTest.cs" />
+    <Compile Include="UI Testing\FormEscalationViewTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormEscalationViewTests.Designer.cs">
+      <DependentUpon>FormEscalationViewTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormSplitContainerTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormSplitContainerTests.Designer.cs">
+      <DependentUpon>FormSplitContainerTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormTabControlTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormTabControlTests.Designer.cs">
+      <DependentUpon>FormTabControlTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormCheckBoxTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormCheckBoxTests.Designer.cs">
+      <DependentUpon>FormCheckBoxTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormToothChartTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormToothChartTests.Designer.cs">
+      <DependentUpon>FormToothChartTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormLayoutManagerTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormLayoutManagerTests.Designer.cs">
+      <DependentUpon>FormLayoutManagerTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormTestAllControls.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormTestAllControls.Designer.cs">
+      <DependentUpon>FormTestAllControls.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormWpfConverter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormWpfConverter.Designer.cs">
+      <DependentUpon>FormWpfConverter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UnitTests\PayConnect2Tests.cs" />
+    <Compile Include="UnitTests\RpDppOverchargedTests.cs" />
+    <Compile Include="UnitTests\SetupWizardTests.cs" />
+    <Compile Include="UnitTests\RpOutstandInsTests.cs" />
+    <Compile Include="UnitTests\PaymentsTests.cs" />
+    <Compile Include="UnitTests\PeerInfosTests.cs" />
+    <Compile Include="UnitTests\CentralManagerTests.cs" />
+    <Compile Include="UnitTests\LimitedBetaFeatureTests.cs" />
+    <Compile Include="UnitTests\POutTests.cs" />
+    <Compile Include="UI Testing\FormTextBoxTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormTextBoxTests.Designer.cs">
+      <DependentUpon>FormTextBoxTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormMonthCalendarTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormMonthCalendarTests.Designer.cs">
+      <DependentUpon>FormMonthCalendarTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormImageSelectorTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormImageSelectorTests.Designer.cs">
+      <DependentUpon>FormImageSelectorTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\Form2dDrawingTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\Form2dDrawingTests.Designer.cs">
+      <DependentUpon>Form2dDrawingTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormDatePickerTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormDatePickerTests.Designer.cs">
+      <DependentUpon>FormDatePickerTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormGroupBoxTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormGroupBoxTests.Designer.cs">
+      <DependentUpon>FormGroupBoxTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormProgressTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormProgressTests.Designer.cs">
+      <DependentUpon>FormProgressTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormSandboxJordan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormSandboxJordan.Designer.cs">
+      <DependentUpon>FormSandboxJordan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormApptLayoutTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormApptLayoutTests.Designer.cs">
+      <DependentUpon>FormApptLayoutTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormButtonTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormButtonTest.Designer.cs">
+      <DependentUpon>FormButtonTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormApptProvSliderTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormApptProvSliderTest.Designer.cs">
+      <DependentUpon>FormApptProvSliderTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormComboTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormComboTests.Designer.cs">
+      <DependentUpon>FormComboTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\Form4kTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\Form4kTests.Designer.cs">
+      <DependentUpon>Form4kTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI Testing\FormGridTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormGridTest.Designer.cs">
+      <DependentUpon>FormGridTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IntegrationTests\InsVerifiesIntegrationTests.cs" />
+    <Compile Include="UnitTests\AccountEntryTests.cs" />
+    <Compile Include="UnitTests\PayPlanChargeTests.cs" />
+    <Compile Include="UnitTests\PromotionTests.cs" />
+    <Compile Include="UnitTests\TsiTransLogsTests.cs" />
+    <Compile Include="UnitTests\HieQueuesTests.cs" />
+    <Compile Include="UnitTests\AdjustmentsTests.cs" />
+    <Compile Include="UnitTests\DiscountPlanSubsTests.cs" />
+    <Compile Include="UnitTests\DiscountPlanTests.cs" />
+    <Compile Include="UnitTests\MedicationsTests.cs" />
+    <Compile Include="UnitTests\PatPlansTests.cs" />
+    <Compile Include="UnitTests\ApptViewItemTests.cs" />
+    <Compile Include="UnitTests\BridgesTests.cs" />
+    <Compile Include="UnitTests\CarrierTests.cs" />
+    <Compile Include="UnitTests\InsPlanSubstitutionTests.cs" />
+    <Compile Include="UnitTests\MarkupEditTests.cs" />
+    <Compile Include="UnitTests\OperatoriesTests.cs" />
+    <Compile Include="UnitTests\DatabaseMaintenanceTests.cs" />
+    <Compile Include="UnitTests\DateSpanTests.cs" />
+    <Compile Include="UnitTests\ODPrimitiveExtensionsTests.cs" />
+    <Compile Include="UnitTests\AccountModulesTests.cs" />
+    <Compile Include="UnitTests\MassEmailTests.cs" />
+    <Compile Include="UnitTests\PaySplitsTests.cs" />
+    <Compile Include="UnitTests\PayPlanEditTests.cs" />
+    <Compile Include="UnitTests\CovCatsTests.cs" />
+    <Compile Include="UnitTests\PermissionsTests.cs" />
+    <Compile Include="UnitTests\ProgramsTests.cs" />
+    <Compile Include="UnitTests\ProviderClinicTests.cs" />
+    <Compile Include="UnitTests\RecallsTests.cs" />
+    <Compile Include="UnitTests\ShortCodeTests.cs" />
+    <Compile Include="UnitTests\PayPlansTests.cs" />
+    <Compile Include="UnitTests\EmailAttachTests.cs" />
+    <Compile Include="UnitTests\OrthoCasesTests.cs" />
+    <Compile Include="UnitTests\RpProcNotBilledInsTests.cs" />
+    <Compile Include="UnitTests\ClinicPrefHelperTests.cs" />
+    <Compile Include="UnitTests\DataActionTests.cs" />
+    <Compile Include="UnitTests\ODFileUtilsTests.cs" />
+    <Compile Include="UnitTests\ProcedureLogicTests.cs" />
+    <Compile Include="UnitTests\ProgramPropertiesTests.cs" />
+    <Compile Include="UnitTests\SecurityLogsTests.cs" />
+    <Compile Include="UnitTests\SheetsTests.cs" />
+    <Compile Include="UnitTests\SignatureBoxWrapperTests.cs" />
+    <Compile Include="UnitTests\AgingDataTests.cs" />
+    <Compile Include="UnitTests\PrefsTests.cs" />
+    <Compile Include="UnitTests\MiscUtilsTests.cs" />
+    <Compile Include="UnitTests\SmsPhoneTests.cs" />
+    <Compile Include="UnitTests\SubstitutionLinksTests.cs" />
+    <Compile Include="UnitTests\TasksTests.cs" />
+    <Compile Include="UnitTests\TaskListsTests.cs" />
+    <Compile Include="UnitTests\ReactivationsTests.cs" />
+    <Compile Include="UnitTests\TelephoneNumbersTests.cs" />
+    <Compile Include="UnitTests\PDMPTests.cs" />
+    <Compile Include="UnitTests\ReportsTests.cs" />
+    <Compile Include="UnitTests\AlertItemsTests.cs" />
+    <Compile Include="UnitTests\ClearinghouseTests.cs" />
+    <Compile Include="UnitTests\LedgersTests.cs" />
+    <Compile Include="UnitTests\SInTests.cs" />
+    <Compile Include="UnitTests\EtransTests.cs" />
+    <Compile Include="IntegrationTests\UserControlTasksTests.cs" />
+    <Compile Include="MiddleTier\MiddleTierTests.cs" />
+    <Compile Include="Misc\FeeTestBase.cs" />
+    <Compile Include="Misc\SchemaT.cs" />
+    <Compile Include="UnitTests\ODInstallerTests.cs" />
+    <Compile Include="UnitTests\FriendlyExceptionTests.cs" />
+    <Compile Include="UnitTests\DataConnectionTests.cs" />
+    <Compile Include="UnitTests\ErxTests.cs" />
+    <Compile Include="UnitTests\PopupHelperTests.cs" />
+    <Compile Include="IntegrationTests\FeeSchedToolsTests.cs" />
+    <Compile Include="UnitTests\ODThreadTests.cs" />
+    <Compile Include="UnitTests\ODProgressTests.cs" />
+    <Compile Include="UnitTests\DateTimeODTests.cs" />
+    <Compile Include="UnitTests\ProcMultiVisitTests.cs" />
+    <Compile Include="UnitTests\ToothTests.cs" />
+    <Compile Include="UnitTests\UserodsTests.cs" />
+    <Compile Include="UnitTests\UserQueriesTests.cs" />
+    <Compile Include="UnitTests\WebForms_SheetsTests.cs" />
+    <Compile Include="UnitTests\WebSchedRecallTests.cs" />
+    <Compile Include="UnitTests\XmlConverterTests.cs" />
+    <Compile Include="UnitTests\ProvidersTests.cs" />
+    <Compile Include="UnitTests\ClaimProcsTests.cs" />
+    <Compile Include="UnitTests\ODtextBoxTests.cs" />
+    <Compile Include="UnitTests\TaskSubscriptionsTests.cs" />
+    <Compile Include="UnitTests\AuthenticationTests.cs" />
+    <Compile Include="UnitTests\EmailTests.cs" />
+    <Compile Include="UnitTests\IntrospectionTests.cs" />
+    <Compile Include="UnitTests\TimeCardRulesTests.cs" />
+    <Compile Include="UnitTests\RecurringChargesTests.cs" />
+    <Compile Include="UnitTests\aaTemplateTests.cs" />
+    <Compile Include="UnitTests\AppointmentsTests.cs" />
+    <Compile Include="UnitTests\CacheAbsTests.cs" />
+    <Compile Include="UnitTests\InsPlansTests.cs" />
+    <Compile Include="UnitTests\BenefitsTest.cs" />
+    <Compile Include="UnitTests\ClaimsTests.cs" />
+    <Compile Include="UnitTests\FeesTests.cs" />
+    <Compile Include="UnitTests\InsVerifyTests.cs" />
+    <Compile Include="UnitTests\LegacyTests.cs" />
+    <Compile Include="UnitTests\PatientsTests.cs" />
+    <Compile Include="UnitTests\PaymentEditTest.cs" />
+    <Compile Include="UnitTests\ProceduresTests.cs" />
+    <Compile Include="MiddleTier\ParamCheckTests.cs" />
+    <Compile Include="Misc\TestBase.cs" />
+    <Compile Include="HL7Tests.cs" />
+    <Compile Include="CoreTypesT.cs" />
+    <Compile Include="DatabaseTools.cs" />
+    <Compile Include="FormUnitTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormUnitTests.Designer.cs">
+      <DependentUpon>FormUnitTests.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTests\RepeatChargesTests.cs" />
+    <Compile Include="UnitTests\SchedulesTests.cs" />
+    <Compile Include="UnitTests\ProcedureCodesTests.cs" />
+    <Compile Include="UnitTests\TimeSlotsTests.cs" />
+    <Compile Include="UnitTests\ContrApptSingleTests.cs" />
+    <Compile Include="UnitTests\WikiPagesTests.cs" />
+    <EmbeddedResource Include="UI Testing\FormEscalationViewTests.resx">
+      <DependentUpon>FormEscalationViewTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormSplitContainerTests.resx">
+      <DependentUpon>FormSplitContainerTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormTabControlTests.resx">
+      <DependentUpon>FormTabControlTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormCheckBoxTests.resx">
+      <DependentUpon>FormCheckBoxTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormToothChartTests.resx">
+      <DependentUpon>FormToothChartTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormTextBoxTests.resx">
+      <DependentUpon>FormTextBoxTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormMonthCalendarTests.resx">
+      <DependentUpon>FormMonthCalendarTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormImageSelectorTests.resx">
+      <DependentUpon>FormImageSelectorTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormApptLayoutTests.resx">
+      <DependentUpon>FormApptLayoutTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\Form2dDrawingTests.resx">
+      <DependentUpon>Form2dDrawingTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormButtonTest.resx">
+      <DependentUpon>FormButtonTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormApptProvSliderTest.resx">
+      <DependentUpon>FormApptProvSliderTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormComboTests.resx">
+      <DependentUpon>FormComboTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\Form4kTests.resx">
+      <DependentUpon>Form4kTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormDatePickerTests.resx">
+      <DependentUpon>FormDatePickerTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormGridTest.resx">
+      <DependentUpon>FormGridTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormUnitTests.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FormUnitTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UI Testing\FormGroupBoxTests.resx">
+      <DependentUpon>FormGroupBoxTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormProgressTests.resx">
+      <DependentUpon>FormProgressTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormSandboxJordan.resx">
+      <DependentUpon>FormSandboxJordan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormLayoutManagerTests.resx">
+      <DependentUpon>FormLayoutManagerTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormTestAllControls.resx">
+      <DependentUpon>FormTestAllControls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormWpfConverter.resx">
+      <DependentUpon>FormWpfConverter.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="MiddleTier\WebServiceT.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenDentalHelp\OpenDentalHelp\OpenDentalHelp.csproj">
+      <Project>{98b2999c-8a9f-4795-b452-7f6231ed56b4}</Project>
+      <Name>OpenDentalHelp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CentralManager\xCentralManager.csproj">
+      <Project>{10BFA78E-E5FE-4209-8347-AD0EC8B3F064}</Project>
+      <Name>xCentralManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
+      <Project>{18F7BC78-4B99-48D3-A1F1-0D13A63E3CF9}</Project>
+      <Name>xCodeBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
+      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
+      <Name>xDataConnectionBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDental\OpenDental.csproj">
+      <Project>{8136317D-C936-49B6-9E31-D90F02D2F207}</Project>
+      <Name>OpenDental</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
+      <Project>{3d0fc76e-803c-4de2-bdb1-47d63a4e2357}</Project>
+      <Name>OpenDentBusiness</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SparksToothChart\SparksToothChart.csproj">
+      <Project>{033b77f4-2e98-49a7-901f-5f388dedf83e}</Project>
+      <Name>SparksToothChart</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnitTestsCore\UnitTestsCore.csproj">
+      <Project>{7bbddedf-c015-43c0-a532-fed224993281}</Project>
+      <Name>UnitTestsCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfControlsOD\WpfControlsOD.csproj">
+      <Project>{118540cc-3536-4e8b-94d4-402ca48a4cb0}</Project>
+      <Name>WpfControlsOD</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\xCrudGenerator\xCrudGenerator.csproj">
+      <Project>{76227E95-B261-4B6A-A97C-3764E7EDDF97}</Project>
+      <Name>xCrudGenerator</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dump.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\x835MassHealth.txt" />
+    <None Include="Resources\x835PayerControlNumber.txt" />
+    <None Include="Resources\ApptFind.gif" />
+    <Content Include="Resources\BC_BCDA_2018_GPOOC.txt" />
+    <Content Include="Resources\canadianprocedurecodes.txt" />
+    <None Include="Resources\deleteX.gif" />
+    <Content Include="Resources\JustinSmithERA.txt" />
+    <None Include="Resources\x271Test.txt" />
+    <None Include="Resources\test-n-cpl.txt" />
+    <Content Include="Resources\x834Test.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

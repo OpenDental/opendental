@@ -1,0 +1,20 @@
+<local:FrmODBase x:Class="OpenDental.FrmFeeSchedEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="501" Height="214" 
+             Text="Edit Fee Schedule" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:CheckBox x:Name="checkIsGlobal" Width="168" Height="19" Margin="112,140,0,0" Text="Use Global Fees" CheckAlign="MiddleRight" IsEnabled="False" Click="checkIsGlobal_Click" />
+		<ui:CheckBox x:Name="checkIsHidden" Width="104" Height="19" Margin="176,120,0,0" Text="Hidden" CheckAlign="MiddleRight" Click="checkIsHidden_Click" />
+		<ui:ListBox x:Name="listType" Width="120" Height="69" Margin="160,46,0,0" />
+		<ui:Label x:Name="label2" Width="148" Height="17" Margin="9,46,0,0" Text="Type" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textDescription" Width="291" Height="20" Margin="160,20,0,0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
+		<ui:Label x:Name="label1" Width="148" Height="17" Margin="9,21,0,0" Text="Description" HAlign="Right" VAlign="Center" />
+	</Grid>
+</local:FrmODBase>

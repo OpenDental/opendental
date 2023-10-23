@@ -1,0 +1,18 @@
+<local:FrmODBase x:Class="OpenDental.FrmCountyEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="486" Height="205" 
+             Text="County Edit" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+		<ui:TextBox x:Name="textCountyCode" Width="297" Height="20" Margin="144,83,0,0" />
+		<ui:TextBox x:Name="textCountyName" Width="297" Height="20" Margin="144,47,0,0" />
+		<ui:Label x:Name="label2" Width="78" Height="52" Margin="64,86,0,0" Text="County Code (use varies)" HAlign="Right" />
+		<ui:Label x:Name="label1" Width="130" Height="20" Margin="13,45,0,0" Text="County Name" HAlign="Right" VAlign="Center" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="79" VerticalAlignment="Bottom" Height="26" Margin="0,0,45,30" Text="Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,32 @@
+<local:FrmODBase x:Class="OpenDental.FrmPopupEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="492" Height="354" 
+             Text="Edit Popup" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butNow" Width="62" Height="24" Margin="314,135,0,0" Text="Now" Click="butNow_Click" />
+		<ui:Label x:Name="labelDateTimeDisabled" Width="134" Height="15" Margin="15,139,0,0" Text="Date Time Disabled" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textDateTimeDisabled" Width="159" Height="20" Margin="149,137,0,0" />
+		<ui:Label x:Name="labelNoPerms" HorizontalAlignment="Right" Width="338" VerticalAlignment="Bottom" Height="16" Margin="0,0,10,43" Text="Some fields disabled due to lack of Edit Popup permission." />
+		<ui:Label x:Name="label6" Width="134" Height="15" Margin="15,61,0,0" Text="Date Edited" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textEditDate" Width="159" Height="20" Margin="149,59,0,0" ColorBack="#FFF0F0F0" IsEnabled="False" ReadOnly="True" />
+		<ui:Button x:Name="butAudit" HorizontalAlignment="Right" Width="77" VerticalAlignment="Bottom" Height="24" Margin="0,0,266,14" Text="Audit Trail" Click="butAudit_Click" />
+		<ui:TextBox x:Name="textCreateDate" Width="159" Height="20" Margin="149,33,0,0" ColorBack="#FFF0F0F0" IsEnabled="False" ReadOnly="True" />
+		<ui:Label x:Name="label5" Width="134" Height="15" Margin="15,35,0,0" Text="Date Created" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textUser" Width="159" Height="20" Margin="149,7,0,0" ColorBack="#FFF0F0F0" IsEnabled="False" ReadOnly="True" />
+		<ui:Label x:Name="label4" Width="131" Height="15" Margin="18,9,0,0" Text="User" HAlign="Right" VAlign="Center" />
+		<ui:TextRich x:Name="textDescription" Width="271" Height="91" Margin="149,163,0,0" TabIndexOD="1" QuickPasteType="Popup" />
+		<ui:TextBox x:Name="textPatient" Width="271" Height="20" Margin="149,84,0,0" IsEnabled="False" />
+		<ui:Label x:Name="label3" Width="142" Height="15" Margin="7,86,0,0" Text="Patient" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label2" Width="121" Height="18" Margin="28,110,0,0" Text="Level" HAlign="Right" VAlign="Center" />
+		<ui:ComboBox x:Name="comboPopupLevel" Width="159" Height="21" Margin="149,110,0,0" />
+		<ui:Button x:Name="butDelete" Width="81" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,14" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:Label x:Name="label1" Width="101" Height="19" Margin="48,163,0,0" Text="Popup Message" HAlign="Right" />
+		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="77" VerticalAlignment="Bottom" Height="24" Margin="0,0,23,14" Text="OK" Click="butOK_Click" />
+	</Grid>
+</local:FrmODBase>

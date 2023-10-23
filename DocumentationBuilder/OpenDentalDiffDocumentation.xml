@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type='text/xsl' href='OpenDentalDiffDocumentation.xsl'?>
+<database version="23.3.0.0">
+  <table name="alertcategorylink">
+    <summary></summary>
+    <column order="2" name="AlertType" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what types of alert this row is associated to.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+        <EnumValue name="SignatureCleared">39 - Alert that is created when a procedure or group note's signature is cleared by another user editing that note.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="alertitem">
+    <summary></summary>
+    <column order="3" name="Type" type="tinyint(4)">
+      <summary>Enum:AlertType Identifies what type of alert this row is.</summary>
+      <Enumeration name="AlertType">
+        <summary>Enum representing different alert types.</summary>
+        <EnumValue name="SignatureCleared">39 - Alert that is created when a procedure or group note's signature is cleared by another user editing that note.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="automation">
+    <summary></summary>
+    <column order="2" name="Autotrigger" type="tinyint(4)">
+      <summary>Enum:EnumAutomationTrigger What triggers this automation</summary>
+      <Enumeration name="EnumAutomationTrigger">
+        <summary></summary>
+        <EnumValue name="ProcedureComplete">0</EnumValue>
+        <EnumValue name="ApptBreak">1</EnumValue>
+        <EnumValue name="ApptNewPatCreate">2</EnumValue>
+        <EnumValue name="PatientOpen">3. Regardless of module.  Usually only used with conditions.</EnumValue>
+        <EnumValue name="ApptCreate">4</EnumValue>
+        <EnumValue name="ProcSchedule">5. Attaching a procedure to a scheduled appointment.</EnumValue>
+        <EnumValue name="BillingTypeSet">6</EnumValue>
+        <EnumValue name="ClaimCreate">8</EnumValue>
+        <EnumValue name="ClaimOpen">9</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="benefit">
+    <summary></summary>
+    <column order="15" name="TreatArea" type="tinyint(4)">
+      <summary>Enum:TreatmentArea . Only for frequency limitations, ignored for all other benefits. Enforced by the UI. Example 3 fillings per year [mouth].</summary>
+      <Enumeration name="TreatmentArea">
+        <summary>Used in procedurecode setup to specify the treatment area for a procedure.  This determines what fields are available when editing an appointment.</summary>
+        <EnumValue name="None">0-goes on claims as blank.</EnumValue>
+        <EnumValue name="Surf">1</EnumValue>
+        <EnumValue name="Tooth">2</EnumValue>
+        <EnumValue name="Mouth">3-goes on claims as 00.</EnumValue>
+        <EnumValue name="Quad">4</EnumValue>
+        <EnumValue name="Sextant">5</EnumValue>
+        <EnumValue name="Arch">6</EnumValue>
+        <EnumValue name="ToothRange">7</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="eserviceshortguid">
+    <summary></summary>
+    <column order="1" name="EServiceCode" type="varchar(255)">
+      <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+      <Enumeration name="eServiceCode">
+        <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+        <EnumValue name="ODTSurplus">47 - ODTouch Mobile application surcharge for additional devices that exceed the ODTouchDeviceLimitDefault pref.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="imagedraw">
+    <summary></summary>
+    <column order="8" name="DrawType" type="tinyint(4)">
+      <summary>Enum:ImageDrawType</summary>
+      <Enumeration name="ImageDrawType">
+        <summary></summary>
+        <EnumValue name="Polygon">4 - A series of connected points forming the outline of a closed polygon. Stored same as pen drawing. Polygons only have a fill color, not any outline color.</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="9" name="ImageAnnotVendor" type="tinyint(4)">
+      <summary>Enum:EnumImageAnnotVendor 0: Open Dental drawings and text, 1:Pearl AI annotations.</summary>
+      <Enumeration name="EnumImageAnnotVendor">
+        <summary></summary>
+        <EnumValue name="OpenDental">0 - Open Dental drawings and text.</EnumValue>
+        <EnumValue name="Pearl">1 - Pearl AI annotations.</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="10" name="Details" type="text">
+      <summary>Extra space for any text. Currently only used for Pearl annotation categories, relationship properties, and relationship values, which are all stored as a single chunk of user readable text drawn straight to screen when hovering.</summary>
+    </column>
+  </table>
+  <table name="mobileappdevice">
+    <summary></summary>
+    <column order="4" name="IsEclipboardEnabled" type="tinyint(4)">
+      <summary>Indicates whether the device is allowed to operate the checkin app. 
+            For BYOD sessions will always be true because BYOD is authenticated by a unique URL link in a text message.</summary>
+    </column>
+    <column order="5" name="EclipboardLastAttempt" type="datetime">
+      <summary>The date and time of the last attempted login for Eclipboard.</summary>
+    </column>
+    <column order="6" name="EclipboardLastLogin" type="datetime">
+      <summary>The date and time of the last successful login for Eclipboard.</summary>
+    </column>
+    <column order="12" name="IsODTouchEnabled" type="tinyint(4)">
+      <summary>Indicates whether this device is being used for ODTouch or not.</summary>
+    </column>
+    <column order="13" name="ODTouchLastLogin" type="datetime">
+      <summary>The date and time of the last successful login for ODTouch.</summary>
+    </column>
+    <column order="14" name="ODTouchLastAttempt" type="datetime">
+      <summary>The date and time of the last attempted login for ODTouch.</summary>
+    </column>
+  </table>
+  <table name="procedurecode">
+    <summary></summary>
+    <column order="36" name="DiagnosticCodes" type="varchar(255)">
+      <summary>Text to store up to 4 ICD-10 codes. Codes are comma-separated with no whitespace. Used to set the default DiagnosticCode, DiagnosticCode2, DiagnosticCode3, and DiagnosticCode4 fields for new procedures linked to the procedure code. When this field is not empty or null, it will override the ICD9DefaultForNewProcs preference. Example: M26.31,K08.401,K02.51</summary>
+    </column>
+  </table>
+  <table name="quickpastecat">
+    <summary></summary>
+    <column order="3" name="DefaultForTypes" type="text">
+      <summary>Enum:EnumQuickPasteType  Each Category can be set to be the default category for multiple types of notes. Stored as integers separated by commas.</summary>
+      <Enumeration name="EnumQuickPasteType">
+        <summary>Each item in the enum should uniquely describe the location of a single TextBoxOD.  No sharing.  In many cases, this is tied to QuickPasteCat to determine which category to default to when opening.</summary>
+        <EnumValue name="AutoNotePrompt">31</EnumValue>
+        <EnumValue name="Etrans834Import">36</EnumValue>
+        <EnumValue name="InCaseOfEmergency">37</EnumValue>
+        <EnumValue name="ProviderSearchFilter">38</EnumValue>
+        <EnumValue name="PhoneEmpDefaultStatus">40</EnumValue>
+        <EnumValue name="Sheets">43-Just autonotes, not quickpaste.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="toolbutitem">
+    <summary></summary>
+    <column order="2" name="ToolBar" type="smallint">
+      <summary>Enum:EnumToolBar The toolbar to show the button on.</summary>
+      <Enumeration name="EnumToolBar">
+        <summary></summary>
+        <EnumValue name="ImagingModule">3</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="userodpref">
+    <summary></summary>
+    <column order="3" name="FkeyType" type="tinyint(4)">
+      <summary>Enum:UserOdFkeyType Specifies which flag is overridden for the specified definition, since an individual definition can have multiple flags.</summary>
+      <Enumeration name="UserOdFkeyType">
+        <summary>These FKey Types are to be used as an identifier for what table the Fkey column is associated to, or what type of override it is.
+            Not always associated to a database table.  Example:  TaskCollapse,SuppressLogOffMessage,AcctProcBreakdown.
+            Do not reorder items, since they are numbers in the db.</summary>
+        <EnumValue name="PerioAutoAdvanceFacialsFirst">19 - Whether or not to set the perio auto advance to custom.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="automation">
+    <summary></summary>
+    <column order="2" name="Autotrigger" type="tinyint(4)">
+      <summary>Enum:EnumAutomationTrigger What triggers this automation</summary>
+      <Enumeration name="EnumAutomationTrigger">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="grouppermission">
+    <summary></summary>
+    <column order="4" name="PermType" type="tinyint">
+      <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+      <Enumeration name="Permissions">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="mobileappdevice">
+    <summary></summary>
+    <column order="4" name="IsAllowed" type="tinyint(4)" deleted="true">
+      <summary></summary>
+    </column>
+    <column order="5" name="LastAttempt" type="datetime" deleted="true">
+      <summary></summary>
+    </column>
+    <column order="6" name="LastLogin" type="datetime" deleted="true">
+      <summary></summary>
+    </column>
+  </table>
+  <table name="quickpastecat">
+    <summary></summary>
+    <column order="3" name="DefaultForTypes" type="text">
+      <summary>Enum:EnumQuickPasteType  Each Category can be set to be the default category for multiple types of notes. Stored as integers separated by commas.</summary>
+      <Enumeration name="EnumQuickPasteType">
+        <summary>Each item in the enum should uniquely describe the location of a single TextBoxOD.  No sharing.  In many cases, this is tied to QuickPasteCat to determine which category to default to when opening.</summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="securitylog">
+    <summary></summary>
+    <column order="1" name="PermType" type="tinyint">
+      <summary>Enum:Permissions</summary>
+      <Enumeration name="Permissions">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="tasklist">
+    <summary></summary>
+    <column order="9" name="GlobalTaskFilterType" type="tinyint(4)">
+      <summary>Enum:GlobalTaskFilterType 0=Disabled, 1=Default, 2=None, 3=Clinic, 4=Region.  If a type is selected, then tasks in this tasklist will be filtered by default 
+            such that only tasks that match the tasklist's GlobalFilterType will show in the view.</summary>
+      <Enumeration name="GlobalTaskFilterType">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="toolbutitem">
+    <summary></summary>
+    <column order="2" name="ToolBar" type="smallint">
+      <summary>Enum:EnumToolBar The toolbar to show the button on.</summary>
+      <Enumeration name="EnumToolBar">
+        <summary></summary>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="userodpref">
+    <summary></summary>
+    <column order="3" name="FkeyType" type="tinyint(4)">
+      <summary>Enum:UserOdFkeyType Specifies which flag is overridden for the specified definition, since an individual definition can have multiple flags.</summary>
+      <Enumeration name="UserOdFkeyType">
+        <summary>These FKey Types are to be used as an identifier for what table the Fkey column is associated to, or what type of override it is.
+            Not always associated to a database table.  Example:  TaskCollapse,SuppressLogOffMessage,AcctProcBreakdown.
+            Do not reorder items, since they are numbers in the db.</summary>
+      </Enumeration>
+    </column>
+  </table>
+</database>

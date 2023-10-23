@@ -1,0 +1,35 @@
+<local:FrmODBase x:Class="OpenDental.FrmBackupReminder"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="612" Height="487" 
+             Text="Backup Reminder">
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="labelSupplementalBackupPath" Width="463" Height="32" Margin="42,429,0,0" ColorText="#FFFF0000" Text="Warning:  your Supplemental Backup Network Path is not set. It must be set in order to store Supplemental Backups locally." />
+		<ui:Label x:Name="labelSupplementalBackupDisabled" Width="463" Height="32" Margin="42,392,0,0" ColorText="#FFFF0000" Text="Warning:  your Supplemental Backups are disabled, using Supplemental Backups in addition to your own backups is strongly recommended." />
+		<ui:CheckBox x:Name="checkNoStrategy" Width="250" Height="21" Margin="45,369,0,0" Text="No strategy" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkSecondaryMethodHardCopy" Width="312" Height="21" Margin="45,349,0,0" Text="Saved hardcopy paper reports" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkSecondaryMethodArchive" Width="352" Height="21" Margin="45,329,0,0" Text="Completely separate archives stored offsite (DVD, HD, etc)" CheckAlign="MiddleLeft" />
+		<ui:Label x:Name="labelStrategy" Width="523" Height="18" Margin="42,313,0,0" Text="What secondary long-term mechanism do you use to ensure minimal data loss?" />
+		<ui:CheckBox x:Name="checkNoProof" Width="250" Height="21" Margin="45,281,0,0" Text="No proof" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkRestoreServer" Width="250" Height="21" Margin="45,261,0,0" Text="Run backup from a second server" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkRestoreHome" Width="352" Height="21" Margin="45,241,0,0" Text="Restore to home computer at least once a week" CheckAlign="MiddleLeft" />
+		<ui:Label x:Name="labelProof" Width="523" Height="18" Margin="42,225,0,0" Text="What proof do you have that your recent backups are good?" />
+		<ui:CheckBox x:Name="checkBackupMethodOther" Width="151" Height="21" Margin="45,171,0,0" Text="Other backup method" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkBackupMethodNetwork" Width="302" Height="21" Margin="45,151,0,0" Text="Network (to another computer in your office)" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkBackupMethodRemovable" Width="530" Height="21" Margin="45,131,0,0" Text="Removable (external HD, USB drive, etc)" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkBackupMethodOnline" Width="200" Height="21" Margin="45,111,0,0" Text="Online" CheckAlign="MiddleLeft" />
+		<ui:Label x:Name="labelBackupMethod" Width="523" Height="18" Margin="42,95,0,0" Text="Do you make backups every single day?  Backup method:" />
+		<ui:CheckBox x:Name="checkNoBackups" Width="151" Height="21" Margin="45,191,0,0" Text="No backups" CheckAlign="MiddleLeft" />
+		<ui:Label x:Name="labelDescription" Width="552" Height="74" Margin="12,9,0,0" Text="You must answer these questions in order to continue.
+You will be seeing this window once every month as a reminder of the importance of good backups.
+If someone else is in charge of backups, ask them for the answers.
+If your supervisor is not available, and you need to get through this window, it's OK to guess.
+But in that case, you must followup with your supervisor to ensure they are making good backups." />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

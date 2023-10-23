@@ -1,0 +1,16 @@
+<local:FrmODBase x:Class="OpenDental.FrmApptBreakRequired"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="323" Height="150" 
+             Text="Break Appointment" HasHelpButton="False" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="labelBreakAppt" Margin="12,9,0,0" Text="Before an appointment can be moved or deleted it must first be broken. Please specify whether it was missed or cancelled." />
+		<ui:Button x:Name="butMissed" Width="70" Height="20" Margin="24,0,0,0" Text="_Missed" Click="butMissed_Click" VerticalAlignment="Center" />
+		<ui:Button x:Name="butCancelled" Width="70" Height="20" Margin="24,99,0,0" Text="_Cancelled" Click="butCancelled_Click" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="WpfControls.UI.TextBox"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		x:Name="userControl" Background="White"
+		d:DesignWidth="75" d:DesignHeight="20">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:TextBox.HorizontalAlignment" Value="Left"/><!--This is for anchoring, not for aligning the text within the box.-->
+			<Setter Property="local:TextBox.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<UserControl.Template>
+		<ControlTemplate TargetType="UserControl">
+			<ContentPresenter/>
+		</ControlTemplate>
+	</UserControl.Template>
+	<Grid>
+		<TextBox x:Name="textBox" x:FieldModifier="internal" VerticalContentAlignment="Top" HorizontalContentAlignment="Left">
+			
+		</TextBox>
+	</Grid>
+</UserControl>
