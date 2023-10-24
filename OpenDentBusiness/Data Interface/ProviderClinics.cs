@@ -218,6 +218,18 @@ namespace OpenDentBusiness{
 			return Db.GetListString(command);
 		}
 
+		///<summary>Gets all providerclinic rows that have a carecreditmerchantid set. The query filters for the passed in clinicnum unless it's < 0</summary>
+		public static List<ProviderClinic> GetCareCreditRows(long clinicNum=-1) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ProviderClinic>>(MethodBase.GetCurrentMethod(),clinicNum);
+			}
+			string command=$"SELECT * FROM providerclinic WHERE CareCreditMerchantId!=''";
+			if(clinicNum>-1) {
+				command+=$" AND ClinicNum={POut.Long(clinicNum)}";
+			}
+			return Crud.ProviderClinicCrud.TableToList(Db.GetTable(command));
+		}
+
 		public static string GetStateLicenseForProv(long provNum,string stateLicensed,long clinicNum=0,bool useRxId=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),provNum,stateLicensed,clinicNum,useRxId);

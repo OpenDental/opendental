@@ -2,20 +2,6 @@ using System;
 using System.ComponentModel;
 
 namespace OpenDentBusiness {
-	//
-	//Job F42790
-	//Also need to add benefit.CodeGroupNum
-	//A very complex converion script will need to replace benefit CodeNums with CodeGroupNums for all the benefits that are "frequencies".
-	//No conversion script needed for InsHist because we are not touching those prefs.
-	//This is just for benefit Frequency limitations.
-	//Proposed conversion script:
-	//If any prefs are empty, fill them with codes. This covers the "default fallback" hard coded codes that are seen in many places.
-	//Use a query to get a table of all benefits that meet the specific criteria for frequency limitation.
-	//  Loop:
-	//     Match up the procCode that's acting as a "group" and match it to an actual group.
-	//     Convert the CodeNum to a CodeGroupNum
-	//
-	//
 	/// <summary>These groups of procedure codes are used in Benefit Frequencies and Insurance History. We can't use CovCats because those spans are frequently far too broad.  We often need specific codes. Cached.</summary>
 	[Serializable()]
 	[CrudTable(IsSynchable=true)]

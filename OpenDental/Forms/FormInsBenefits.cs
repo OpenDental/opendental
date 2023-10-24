@@ -226,6 +226,9 @@ namespace OpenDental {
 					textExams.Text=benefit.Quantity.ToString();
 					comboExams.SetSelectedEnum(frequencyOption);
 				}
+				else if(checkSimplified.Checked && Benefits.IsFrequencyLimitation(benefit) && benefit.CodeGroupNum!=0) {
+					// Will be shown in Form opened by 'More' button (butFrequencies)
+				}
 				#endregion
 				#region Ortho
 				//Ortho Age
@@ -666,6 +669,25 @@ namespace OpenDental {
 			}
 		}
 
+		private void butFrequencies_Click(object sender,EventArgs e) {
+			using FormBenefitFrequencies formBenefitFrequencies = new FormBenefitFrequencies();
+			if(!ConvertFormToBenefits()) {
+				return;
+			}
+			formBenefitFrequencies.ListBenefitsAll=_listBenefitsAll.Select(x=>x.Copy()).ToList();
+			formBenefitFrequencies.PlanNum=_planNum;
+			formBenefitFrequencies.PatPlanNum=_patPlanNum;
+			bool isCalendar=(MonthRenew==0);
+			formBenefitFrequencies.IsCalendar=isCalendar;
+			formBenefitFrequencies.ShowDialog();
+			if(formBenefitFrequencies.DialogResult!=DialogResult.OK){
+				return;
+			}
+			_listBenefitsAll=formBenefitFrequencies.ListBenefitsAll;
+			FillSimple();
+			FillGrid();
+		}
+
 		///<summary>This only fills the grid on the screen.  It does not get any data from the database.</summary>
 		private void FillGrid() {
 			_listBenefitsGrid.Sort();
@@ -920,8 +942,19 @@ namespace OpenDental {
 				return false;
 			}
 			#endregion Validation
+			//We need to pull from the grid, from textboxes, and from frequency limitations.
+			//Pull from frequency limitations========================================================================
+			List<Benefit> listBenefitsFreqLimits=_listBenefitsAll.FindAll(x=>Benefits.IsFrequencyLimitation(x) && x.CodeGroupNum!=0);
+			//these three are already present as textboxes, so they can be excluded:
+			long codeGroupNumBW=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.BW);
+			long codeGroupNumPano=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.PanoFMX);
+			long codeGroupNumExams=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.Exam);
+			listBenefitsFreqLimits=listBenefitsFreqLimits.FindAll(x=>!x.CodeGroupNum.In(codeGroupNumBW,codeGroupNumPano,codeGroupNumExams));
+			//Pull from grid==========================================================================================
 			_listBenefitsAll=new List<Benefit>(_listBenefitsGrid);
-			Benefit benefit;
+			_listBenefitsAll.AddRange(listBenefitsFreqLimits);
+			//Pull from textboxes=======================================================================================
+			Benefit benefit; 
 			#region Annual Max
 			//annual max individual
 			if(textAnnualMax.Text !="") {

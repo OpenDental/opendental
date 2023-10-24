@@ -129,7 +129,7 @@ namespace OpenDental{
 			if(DateTime.Now.Between(datePromptStart,datePromptEnd) && checkDcodes.Checked) {//Only validate if attempting to update D Codes
 				if(MessageBox.Show(//Still between datePromptStart and the first of the next year, prompt that these codes may cause problems.
 						Lan.g(this,"Updating procedure codes at this time could result in acquiring codes which are not valid until ")
-						+datePromptEnd.AddDays(1).ToShortDateString()+Lan.g(this,". Using these codes could cause claims to be rejected, continue?")
+						+datePromptEnd.AddDays(1).ToShortDateString()+Lan.g(this,". Using these codes and new claim form could cause claims to be rejected, continue?")
 						,Lan.g(this,"Procedure Codes"),MessageBoxButtons.YesNo)==DialogResult.No) 
 				{
 					return;//Early return if the user is between datePromptStart and the first of the next year and they've said no to updating D Codes.
@@ -166,6 +166,7 @@ namespace OpenDental{
 					rowsInserted+=FormProcCodes.ImportProcCodes("",_listProcedureCodes,"");
 					Changed=true;
 					int procCodesFixed=ProcedureCodes.ResetADAdescriptionsAndAbbrs();
+					ClaimForms.SetDefaultClaimForm("ADA 2019","ADA 2024");
 					MessageBox.Show(Lan.g(this,"Procedure codes with descriptions or abbreviations updated:")+" "+procCodesFixed.ToString());
 				}
 				catch(ApplicationException ex) {

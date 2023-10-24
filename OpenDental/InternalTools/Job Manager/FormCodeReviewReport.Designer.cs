@@ -52,6 +52,7 @@
 			this.comboUser.Name = "comboUser";
 			this.comboUser.Size = new System.Drawing.Size(84, 21);
 			this.comboUser.TabIndex = 237;
+			this.comboUser.SelectedIndexChanged += new System.EventHandler(this.comboUser_SelectedIndexChanged);
 			// 
 			// gridMain
 			// 

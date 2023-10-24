@@ -169,7 +169,6 @@ namespace OpenDentBusiness {
 		}
 
 		public static PayConnect2Response PostEmbedSession(EmbedSessionRequest requestBody,long clinicNum) {
-			requestBody.ClientType="Patient";//This forces Surcharge fees to always show in the iFrame.
 			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.EmbedSession,HttpMethod.Post,listHeaders,body);
@@ -717,9 +716,9 @@ namespace OpenDentBusiness {
 			///<summary>Base64 string representation of the signature image. Default is Tokenizer. Required.</summary>
 			[DataMember(Name = "type")]
 			public IframeType Type;
-			///<summary>The consumer of the iFrame. Set to "Patient" to display surcharge info in iFrame.</summary>
-			[DataMember(Name = "clientType")]
-			public string ClientType;
+			///<summary>Show swiper button. False by default.</summary>
+			[DataMember(Name = "swiper")]
+			public bool Swiper;
 			///<summary>Amount in cents. If the amount is provided, Payment iFrame will disable the amount field.</summary>
 			[DataMember(Name = "amount",IsRequired=false)]
 			public int Amount;

@@ -81,6 +81,7 @@ namespace OpenDental {
 		///<summary>Throws exceptions.</summary>
 		private string GetiFrameUrl() {
 			EmbedSessionRequest embedSessionRequest=new EmbedSessionRequest();
+			embedSessionRequest.Swiper=true;
 			if(_isAddingCard) { 
 				embedSessionRequest.Type=PayConnect2.IframeType.Tokenizer;
 			}

@@ -40,37 +40,6 @@ namespace OpenDental {
 			this.textMonth = new OpenDental.ValidNum();
 			this.label30 = new System.Windows.Forms.Label();
 			this.checkSimplified = new OpenDental.UI.CheckBox();
-			this.panelSimple = new System.Windows.Forms.Panel();
-			this.textSealantAge = new OpenDental.ValidNum();
-			this.label24 = new System.Windows.Forms.Label();
-			this.label14 = new System.Windows.Forms.Label();
-			this.textAnnualMaxFam = new OpenDental.ValidDouble();
-			this.textDeductibleFam = new OpenDental.ValidDouble();
-			this.label13 = new System.Windows.Forms.Label();
-			this.textAnnualMax = new OpenDental.ValidDouble();
-			this.label1 = new System.Windows.Forms.Label();
-			this.textFlo = new OpenDental.ValidNum();
-			this.label2 = new System.Windows.Forms.Label();
-			this.textDeductible = new OpenDental.ValidDouble();
-			this.groupBox3 = new OpenDental.UI.GroupBox();
-			this.textOrthoAge = new OpenDental.ValidNum();
-			this.labelOrthoThroughAge = new System.Windows.Forms.Label();
-			this.textOrthoPercent = new OpenDental.ValidNum();
-			this.label11 = new System.Windows.Forms.Label();
-			this.textOrthoMax = new OpenDental.ValidDouble();
-			this.label10 = new System.Windows.Forms.Label();
-			this.groupBox1 = new OpenDental.UI.GroupBox();
-			this.comboExams = new OpenDental.UI.ComboBox();
-			this.textExams = new OpenDental.ValidNum();
-			this.label8 = new System.Windows.Forms.Label();
-			this.comboPano = new OpenDental.UI.ComboBox();
-			this.textPano = new OpenDental.ValidNum();
-			this.label7 = new System.Windows.Forms.Label();
-			this.comboBW = new OpenDental.UI.ComboBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.textBW = new OpenDental.ValidNum();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
 			this.groupCategories = new OpenDental.UI.GroupBox();
 			this.labelWaitingPeriod = new System.Windows.Forms.Label();
 			this.textWaitProsth = new OpenDental.ValidNum();
@@ -126,11 +95,43 @@ namespace OpenDental {
 			this.butAdd = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.butCancel = new OpenDental.UI.Button();
+			this.panelSimple = new System.Windows.Forms.Panel();
+			this.textSealantAge = new OpenDental.ValidNum();
+			this.label24 = new System.Windows.Forms.Label();
+			this.label14 = new System.Windows.Forms.Label();
+			this.textAnnualMaxFam = new OpenDental.ValidDouble();
+			this.textDeductibleFam = new OpenDental.ValidDouble();
+			this.label13 = new System.Windows.Forms.Label();
+			this.textAnnualMax = new OpenDental.ValidDouble();
+			this.label1 = new System.Windows.Forms.Label();
+			this.textFlo = new OpenDental.ValidNum();
+			this.label2 = new System.Windows.Forms.Label();
+			this.textDeductible = new OpenDental.ValidDouble();
+			this.groupBox3 = new OpenDental.UI.GroupBox();
+			this.textOrthoAge = new OpenDental.ValidNum();
+			this.labelOrthoThroughAge = new System.Windows.Forms.Label();
+			this.textOrthoPercent = new OpenDental.ValidNum();
+			this.label11 = new System.Windows.Forms.Label();
+			this.textOrthoMax = new OpenDental.ValidDouble();
+			this.label10 = new System.Windows.Forms.Label();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.butFrequencies = new OpenDental.UI.Button();
+			this.comboExams = new OpenDental.UI.ComboBox();
+			this.textExams = new OpenDental.ValidNum();
+			this.label8 = new System.Windows.Forms.Label();
+			this.comboPano = new OpenDental.UI.ComboBox();
+			this.textPano = new OpenDental.ValidNum();
+			this.label7 = new System.Windows.Forms.Label();
+			this.comboBW = new OpenDental.UI.ComboBox();
+			this.label6 = new System.Windows.Forms.Label();
+			this.textBW = new OpenDental.ValidNum();
+			this.label5 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
 			this.groupYear.SuspendLayout();
+			this.groupCategories.SuspendLayout();
 			this.panelSimple.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox1.SuspendLayout();
-			this.groupCategories.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupYear
@@ -183,302 +184,6 @@ namespace OpenDental {
 			this.checkSimplified.Text = "Simplified View";
 			this.checkSimplified.Click += new System.EventHandler(this.checkSimplified_Click);
 			// 
-			// panelSimple
-			// 
-			this.panelSimple.Controls.Add(this.textSealantAge);
-			this.panelSimple.Controls.Add(this.label24);
-			this.panelSimple.Controls.Add(this.label14);
-			this.panelSimple.Controls.Add(this.textAnnualMaxFam);
-			this.panelSimple.Controls.Add(this.textDeductibleFam);
-			this.panelSimple.Controls.Add(this.label13);
-			this.panelSimple.Controls.Add(this.textAnnualMax);
-			this.panelSimple.Controls.Add(this.label1);
-			this.panelSimple.Controls.Add(this.textFlo);
-			this.panelSimple.Controls.Add(this.label2);
-			this.panelSimple.Controls.Add(this.textDeductible);
-			this.panelSimple.Controls.Add(this.groupBox3);
-			this.panelSimple.Controls.Add(this.groupBox1);
-			this.panelSimple.Controls.Add(this.label4);
-			this.panelSimple.Location = new System.Drawing.Point(-2, 43);
-			this.panelSimple.Name = "panelSimple";
-			this.panelSimple.Size = new System.Drawing.Size(367, 285);
-			this.panelSimple.TabIndex = 2;
-			// 
-			// textSealantAge
-			// 
-			this.textSealantAge.Location = new System.Drawing.Point(166, 83);
-			this.textSealantAge.MinVal = 1;
-			this.textSealantAge.Name = "textSealantAge";
-			this.textSealantAge.ShowZero = false;
-			this.textSealantAge.Size = new System.Drawing.Size(39, 20);
-			this.textSealantAge.TabIndex = 5;
-			// 
-			// label24
-			// 
-			this.label24.Location = new System.Drawing.Point(18, 83);
-			this.label24.Name = "label24";
-			this.label24.Size = new System.Drawing.Size(144, 21);
-			this.label24.TabIndex = 185;
-			this.label24.Text = "Sealants Through Age";
-			this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label14
-			// 
-			this.label14.Location = new System.Drawing.Point(242, 6);
-			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(76, 15);
-			this.label14.TabIndex = 183;
-			this.label14.Text = "Family";
-			this.label14.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			// 
-			// textAnnualMaxFam
-			// 
-			this.textAnnualMaxFam.Location = new System.Drawing.Point(243, 22);
-			this.textAnnualMaxFam.MaxVal = 100000000D;
-			this.textAnnualMaxFam.MinVal = -100000000D;
-			this.textAnnualMaxFam.Name = "textAnnualMaxFam";
-			this.textAnnualMaxFam.Size = new System.Drawing.Size(73, 20);
-			this.textAnnualMaxFam.TabIndex = 1;
-			// 
-			// textDeductibleFam
-			// 
-			this.textDeductibleFam.Location = new System.Drawing.Point(243, 42);
-			this.textDeductibleFam.MaxVal = 100000000D;
-			this.textDeductibleFam.MinVal = -100000000D;
-			this.textDeductibleFam.Name = "textDeductibleFam";
-			this.textDeductibleFam.Size = new System.Drawing.Size(73, 20);
-			this.textDeductibleFam.TabIndex = 3;
-			// 
-			// label13
-			// 
-			this.label13.Location = new System.Drawing.Point(165, 6);
-			this.label13.Name = "label13";
-			this.label13.Size = new System.Drawing.Size(78, 15);
-			this.label13.TabIndex = 179;
-			this.label13.Text = "Individual";
-			this.label13.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			// 
-			// textAnnualMax
-			// 
-			this.textAnnualMax.Location = new System.Drawing.Point(166, 22);
-			this.textAnnualMax.MaxVal = 100000000D;
-			this.textAnnualMax.MinVal = -100000000D;
-			this.textAnnualMax.Name = "textAnnualMax";
-			this.textAnnualMax.Size = new System.Drawing.Size(73, 20);
-			this.textAnnualMax.TabIndex = 0;
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(62, 22);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(100, 21);
-			this.label1.TabIndex = 159;
-			this.label1.Text = "Annual Max";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textFlo
-			// 
-			this.textFlo.Location = new System.Drawing.Point(166, 63);
-			this.textFlo.MinVal = 1;
-			this.textFlo.Name = "textFlo";
-			this.textFlo.ShowZero = false;
-			this.textFlo.Size = new System.Drawing.Size(39, 20);
-			this.textFlo.TabIndex = 4;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(15, 42);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(147, 21);
-			this.label2.TabIndex = 163;
-			this.label2.Text = "General Deductible";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textDeductible
-			// 
-			this.textDeductible.Location = new System.Drawing.Point(166, 42);
-			this.textDeductible.MaxVal = 100000000D;
-			this.textDeductible.MinVal = -100000000D;
-			this.textDeductible.Name = "textDeductible";
-			this.textDeductible.Size = new System.Drawing.Size(73, 20);
-			this.textDeductible.TabIndex = 2;
-			// 
-			// groupBox3
-			// 
-			this.groupBox3.Controls.Add(this.textOrthoAge);
-			this.groupBox3.Controls.Add(this.labelOrthoThroughAge);
-			this.groupBox3.Controls.Add(this.textOrthoPercent);
-			this.groupBox3.Controls.Add(this.label11);
-			this.groupBox3.Controls.Add(this.textOrthoMax);
-			this.groupBox3.Controls.Add(this.label10);
-			this.groupBox3.Location = new System.Drawing.Point(67, 205);
-			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(282, 77);
-			this.groupBox3.TabIndex = 7;
-			this.groupBox3.Text = "Ortho";
-			// 
-			// textOrthoAge
-			// 
-			this.textOrthoAge.Location = new System.Drawing.Point(142, 49);
-			this.textOrthoAge.MinVal = 1;
-			this.textOrthoAge.Name = "textOrthoAge";
-			this.textOrthoAge.ShowZero = false;
-			this.textOrthoAge.Size = new System.Drawing.Size(39, 20);
-			this.textOrthoAge.TabIndex = 2;
-			// 
-			// labelOrthoThroughAge
-			// 
-			this.labelOrthoThroughAge.Location = new System.Drawing.Point(43, 48);
-			this.labelOrthoThroughAge.Name = "labelOrthoThroughAge";
-			this.labelOrthoThroughAge.Size = new System.Drawing.Size(99, 18);
-			this.labelOrthoThroughAge.TabIndex = 176;
-			this.labelOrthoThroughAge.Text = "Ortho Through Age";
-			this.labelOrthoThroughAge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// textOrthoPercent
-			// 
-			this.textOrthoPercent.Location = new System.Drawing.Point(142, 29);
-			this.textOrthoPercent.MaxVal = 100;
-			this.textOrthoPercent.Name = "textOrthoPercent";
-			this.textOrthoPercent.ShowZero = false;
-			this.textOrthoPercent.Size = new System.Drawing.Size(60, 20);
-			this.textOrthoPercent.TabIndex = 1;
-			// 
-			// label11
-			// 
-			this.label11.Location = new System.Drawing.Point(72, 29);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(70, 20);
-			this.label11.TabIndex = 174;
-			this.label11.Text = "Percentage";
-			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textOrthoMax
-			// 
-			this.textOrthoMax.Location = new System.Drawing.Point(142, 9);
-			this.textOrthoMax.MaxVal = 100000000D;
-			this.textOrthoMax.MinVal = -100000000D;
-			this.textOrthoMax.Name = "textOrthoMax";
-			this.textOrthoMax.Size = new System.Drawing.Size(73, 20);
-			this.textOrthoMax.TabIndex = 0;
-			// 
-			// label10
-			// 
-			this.label10.Location = new System.Drawing.Point(47, 13);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(94, 14);
-			this.label10.TabIndex = 163;
-			this.label10.Text = "Lifetime Max";
-			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.comboExams);
-			this.groupBox1.Controls.Add(this.textExams);
-			this.groupBox1.Controls.Add(this.label8);
-			this.groupBox1.Controls.Add(this.comboPano);
-			this.groupBox1.Controls.Add(this.textPano);
-			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Controls.Add(this.comboBW);
-			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Controls.Add(this.textBW);
-			this.groupBox1.Controls.Add(this.label5);
-			this.groupBox1.Location = new System.Drawing.Point(67, 112);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(282, 88);
-			this.groupBox1.TabIndex = 6;
-			this.groupBox1.Text = "Frequencies";
-			// 
-			// comboExams
-			// 
-			this.comboExams.Location = new System.Drawing.Point(142, 62);
-			this.comboExams.Name = "comboExams";
-			this.comboExams.Size = new System.Drawing.Size(136, 21);
-			this.comboExams.TabIndex = 5;
-			// 
-			// textExams
-			// 
-			this.textExams.Location = new System.Drawing.Point(99, 62);
-			this.textExams.Name = "textExams";
-			this.textExams.ShowZero = false;
-			this.textExams.Size = new System.Drawing.Size(39, 20);
-			this.textExams.TabIndex = 4;
-			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(27, 61);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(70, 21);
-			this.label8.TabIndex = 176;
-			this.label8.Text = "Exams";
-			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboPano
-			// 
-			this.comboPano.Location = new System.Drawing.Point(142, 41);
-			this.comboPano.Name = "comboPano";
-			this.comboPano.Size = new System.Drawing.Size(136, 21);
-			this.comboPano.TabIndex = 3;
-			// 
-			// textPano
-			// 
-			this.textPano.Location = new System.Drawing.Point(99, 41);
-			this.textPano.Name = "textPano";
-			this.textPano.ShowZero = false;
-			this.textPano.Size = new System.Drawing.Size(39, 20);
-			this.textPano.TabIndex = 2;
-			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(27, 40);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(70, 21);
-			this.label7.TabIndex = 173;
-			this.label7.Text = "Pano/FMX";
-			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboBW
-			// 
-			this.comboBW.Location = new System.Drawing.Point(142, 20);
-			this.comboBW.Name = "comboBW";
-			this.comboBW.Size = new System.Drawing.Size(136, 21);
-			this.comboBW.TabIndex = 1;
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(99, 6);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(39, 12);
-			this.label6.TabIndex = 170;
-			this.label6.Text = "#";
-			this.label6.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-			// 
-			// textBW
-			// 
-			this.textBW.Location = new System.Drawing.Point(99, 20);
-			this.textBW.Name = "textBW";
-			this.textBW.ShowZero = false;
-			this.textBW.Size = new System.Drawing.Size(39, 20);
-			this.textBW.TabIndex = 0;
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(27, 19);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(70, 21);
-			this.label5.TabIndex = 168;
-			this.label5.Text = "BWs";
-			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(18, 63);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(144, 21);
-			this.label4.TabIndex = 167;
-			this.label4.Text = "Fluoride Through Age";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// groupCategories
 			// 
 			this.groupCategories.Controls.Add(this.labelWaitingPeriod);
@@ -530,7 +235,7 @@ namespace OpenDental {
 			this.groupCategories.Controls.Add(this.label17);
 			this.groupCategories.Location = new System.Drawing.Point(371, 3);
 			this.groupCategories.Name = "groupCategories";
-			this.groupCategories.Size = new System.Drawing.Size(439, 323);
+			this.groupCategories.Size = new System.Drawing.Size(439, 362);
 			this.groupCategories.TabIndex = 8;
 			this.groupCategories.Text = "Categories";
 			// 
@@ -993,10 +698,10 @@ namespace OpenDental {
 			// 
 			// gridBenefits
 			// 
-			this.gridBenefits.Location = new System.Drawing.Point(6, 331);
+			this.gridBenefits.Location = new System.Drawing.Point(6, 371);
 			this.gridBenefits.Name = "gridBenefits";
 			this.gridBenefits.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridBenefits.Size = new System.Drawing.Size(574, 253);
+			this.gridBenefits.Size = new System.Drawing.Size(574, 213);
 			this.gridBenefits.TabIndex = 3;
 			this.gridBenefits.Title = "Other Benefits";
 			this.gridBenefits.TranslationName = "TableInsBenefits";
@@ -1006,7 +711,7 @@ namespace OpenDental {
 			// 
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(585, 361);
+			this.butDelete.Location = new System.Drawing.Point(586, 401);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(78, 24);
 			this.butDelete.TabIndex = 5;
@@ -1017,7 +722,7 @@ namespace OpenDental {
 			// 
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(585, 331);
+			this.butAdd.Location = new System.Drawing.Point(586, 371);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(78, 24);
 			this.butAdd.TabIndex = 4;
@@ -1044,12 +749,319 @@ namespace OpenDental {
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
+			// panelSimple
+			// 
+			this.panelSimple.Controls.Add(this.textSealantAge);
+			this.panelSimple.Controls.Add(this.label24);
+			this.panelSimple.Controls.Add(this.label14);
+			this.panelSimple.Controls.Add(this.textAnnualMaxFam);
+			this.panelSimple.Controls.Add(this.textDeductibleFam);
+			this.panelSimple.Controls.Add(this.label13);
+			this.panelSimple.Controls.Add(this.textAnnualMax);
+			this.panelSimple.Controls.Add(this.label1);
+			this.panelSimple.Controls.Add(this.textFlo);
+			this.panelSimple.Controls.Add(this.label2);
+			this.panelSimple.Controls.Add(this.textDeductible);
+			this.panelSimple.Controls.Add(this.groupBox3);
+			this.panelSimple.Controls.Add(this.groupBox1);
+			this.panelSimple.Controls.Add(this.label4);
+			this.panelSimple.Location = new System.Drawing.Point(1, 45);
+			this.panelSimple.Name = "panelSimple";
+			this.panelSimple.Size = new System.Drawing.Size(367, 320);
+			this.panelSimple.TabIndex = 161;
+			// 
+			// textSealantAge
+			// 
+			this.textSealantAge.Location = new System.Drawing.Point(166, 83);
+			this.textSealantAge.MinVal = 1;
+			this.textSealantAge.Name = "textSealantAge";
+			this.textSealantAge.ShowZero = false;
+			this.textSealantAge.Size = new System.Drawing.Size(39, 20);
+			this.textSealantAge.TabIndex = 5;
+			// 
+			// label24
+			// 
+			this.label24.Location = new System.Drawing.Point(18, 83);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(144, 21);
+			this.label24.TabIndex = 185;
+			this.label24.Text = "Sealants Through Age";
+			this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label14
+			// 
+			this.label14.Location = new System.Drawing.Point(242, 6);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(76, 15);
+			this.label14.TabIndex = 183;
+			this.label14.Text = "Family";
+			this.label14.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+			// 
+			// textAnnualMaxFam
+			// 
+			this.textAnnualMaxFam.Location = new System.Drawing.Point(243, 22);
+			this.textAnnualMaxFam.MaxVal = 100000000D;
+			this.textAnnualMaxFam.MinVal = -100000000D;
+			this.textAnnualMaxFam.Name = "textAnnualMaxFam";
+			this.textAnnualMaxFam.Size = new System.Drawing.Size(73, 20);
+			this.textAnnualMaxFam.TabIndex = 1;
+			// 
+			// textDeductibleFam
+			// 
+			this.textDeductibleFam.Location = new System.Drawing.Point(243, 42);
+			this.textDeductibleFam.MaxVal = 100000000D;
+			this.textDeductibleFam.MinVal = -100000000D;
+			this.textDeductibleFam.Name = "textDeductibleFam";
+			this.textDeductibleFam.Size = new System.Drawing.Size(73, 20);
+			this.textDeductibleFam.TabIndex = 3;
+			// 
+			// label13
+			// 
+			this.label13.Location = new System.Drawing.Point(165, 6);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(78, 15);
+			this.label13.TabIndex = 179;
+			this.label13.Text = "Individual";
+			this.label13.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+			// 
+			// textAnnualMax
+			// 
+			this.textAnnualMax.Location = new System.Drawing.Point(166, 22);
+			this.textAnnualMax.MaxVal = 100000000D;
+			this.textAnnualMax.MinVal = -100000000D;
+			this.textAnnualMax.Name = "textAnnualMax";
+			this.textAnnualMax.Size = new System.Drawing.Size(73, 20);
+			this.textAnnualMax.TabIndex = 0;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(62, 22);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(100, 21);
+			this.label1.TabIndex = 159;
+			this.label1.Text = "Annual Max";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textFlo
+			// 
+			this.textFlo.Location = new System.Drawing.Point(166, 63);
+			this.textFlo.MinVal = 1;
+			this.textFlo.Name = "textFlo";
+			this.textFlo.ShowZero = false;
+			this.textFlo.Size = new System.Drawing.Size(39, 20);
+			this.textFlo.TabIndex = 4;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(15, 42);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(147, 21);
+			this.label2.TabIndex = 163;
+			this.label2.Text = "General Deductible";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textDeductible
+			// 
+			this.textDeductible.Location = new System.Drawing.Point(166, 42);
+			this.textDeductible.MaxVal = 100000000D;
+			this.textDeductible.MinVal = -100000000D;
+			this.textDeductible.Name = "textDeductible";
+			this.textDeductible.Size = new System.Drawing.Size(73, 20);
+			this.textDeductible.TabIndex = 2;
+			// 
+			// groupBox3
+			// 
+			this.groupBox3.Controls.Add(this.textOrthoAge);
+			this.groupBox3.Controls.Add(this.labelOrthoThroughAge);
+			this.groupBox3.Controls.Add(this.textOrthoPercent);
+			this.groupBox3.Controls.Add(this.label11);
+			this.groupBox3.Controls.Add(this.textOrthoMax);
+			this.groupBox3.Controls.Add(this.label10);
+			this.groupBox3.Location = new System.Drawing.Point(67, 238);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(282, 77);
+			this.groupBox3.TabIndex = 7;
+			this.groupBox3.Text = "Ortho";
+			// 
+			// textOrthoAge
+			// 
+			this.textOrthoAge.Location = new System.Drawing.Point(142, 49);
+			this.textOrthoAge.MinVal = 1;
+			this.textOrthoAge.Name = "textOrthoAge";
+			this.textOrthoAge.ShowZero = false;
+			this.textOrthoAge.Size = new System.Drawing.Size(39, 20);
+			this.textOrthoAge.TabIndex = 2;
+			// 
+			// labelOrthoThroughAge
+			// 
+			this.labelOrthoThroughAge.Location = new System.Drawing.Point(43, 48);
+			this.labelOrthoThroughAge.Name = "labelOrthoThroughAge";
+			this.labelOrthoThroughAge.Size = new System.Drawing.Size(99, 18);
+			this.labelOrthoThroughAge.TabIndex = 176;
+			this.labelOrthoThroughAge.Text = "Ortho Through Age";
+			this.labelOrthoThroughAge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// textOrthoPercent
+			// 
+			this.textOrthoPercent.Location = new System.Drawing.Point(142, 29);
+			this.textOrthoPercent.MaxVal = 100;
+			this.textOrthoPercent.Name = "textOrthoPercent";
+			this.textOrthoPercent.ShowZero = false;
+			this.textOrthoPercent.Size = new System.Drawing.Size(60, 20);
+			this.textOrthoPercent.TabIndex = 1;
+			// 
+			// label11
+			// 
+			this.label11.Location = new System.Drawing.Point(72, 29);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(70, 20);
+			this.label11.TabIndex = 174;
+			this.label11.Text = "Percentage";
+			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textOrthoMax
+			// 
+			this.textOrthoMax.Location = new System.Drawing.Point(142, 9);
+			this.textOrthoMax.MaxVal = 100000000D;
+			this.textOrthoMax.MinVal = -100000000D;
+			this.textOrthoMax.Name = "textOrthoMax";
+			this.textOrthoMax.Size = new System.Drawing.Size(73, 20);
+			this.textOrthoMax.TabIndex = 0;
+			// 
+			// label10
+			// 
+			this.label10.Location = new System.Drawing.Point(47, 13);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(94, 14);
+			this.label10.TabIndex = 163;
+			this.label10.Text = "Lifetime Max";
+			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.butFrequencies);
+			this.groupBox1.Controls.Add(this.comboExams);
+			this.groupBox1.Controls.Add(this.textExams);
+			this.groupBox1.Controls.Add(this.label8);
+			this.groupBox1.Controls.Add(this.comboPano);
+			this.groupBox1.Controls.Add(this.textPano);
+			this.groupBox1.Controls.Add(this.label7);
+			this.groupBox1.Controls.Add(this.comboBW);
+			this.groupBox1.Controls.Add(this.label6);
+			this.groupBox1.Controls.Add(this.textBW);
+			this.groupBox1.Controls.Add(this.label5);
+			this.groupBox1.Location = new System.Drawing.Point(67, 112);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(282, 120);
+			this.groupBox1.TabIndex = 6;
+			this.groupBox1.Text = "Frequencies";
+			// 
+			// butFrequencies
+			// 
+			this.butFrequencies.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.butFrequencies.Location = new System.Drawing.Point(142, 89);
+			this.butFrequencies.Name = "butFrequencies";
+			this.butFrequencies.Size = new System.Drawing.Size(75, 24);
+			this.butFrequencies.TabIndex = 161;
+			this.butFrequencies.Text = "&More";
+			this.butFrequencies.Click += new System.EventHandler(this.butFrequencies_Click);
+			// 
+			// comboExams
+			// 
+			this.comboExams.Location = new System.Drawing.Point(142, 62);
+			this.comboExams.Name = "comboExams";
+			this.comboExams.Size = new System.Drawing.Size(136, 21);
+			this.comboExams.TabIndex = 5;
+			// 
+			// textExams
+			// 
+			this.textExams.Location = new System.Drawing.Point(99, 62);
+			this.textExams.Name = "textExams";
+			this.textExams.ShowZero = false;
+			this.textExams.Size = new System.Drawing.Size(39, 20);
+			this.textExams.TabIndex = 4;
+			// 
+			// label8
+			// 
+			this.label8.Location = new System.Drawing.Point(27, 61);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(70, 21);
+			this.label8.TabIndex = 176;
+			this.label8.Text = "Exams";
+			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboPano
+			// 
+			this.comboPano.Location = new System.Drawing.Point(142, 41);
+			this.comboPano.Name = "comboPano";
+			this.comboPano.Size = new System.Drawing.Size(136, 21);
+			this.comboPano.TabIndex = 3;
+			// 
+			// textPano
+			// 
+			this.textPano.Location = new System.Drawing.Point(99, 41);
+			this.textPano.Name = "textPano";
+			this.textPano.ShowZero = false;
+			this.textPano.Size = new System.Drawing.Size(39, 20);
+			this.textPano.TabIndex = 2;
+			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(27, 40);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(70, 21);
+			this.label7.TabIndex = 173;
+			this.label7.Text = "Pano/FMX";
+			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboBW
+			// 
+			this.comboBW.Location = new System.Drawing.Point(142, 20);
+			this.comboBW.Name = "comboBW";
+			this.comboBW.Size = new System.Drawing.Size(136, 21);
+			this.comboBW.TabIndex = 1;
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(99, 6);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(39, 12);
+			this.label6.TabIndex = 170;
+			this.label6.Text = "#";
+			this.label6.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+			// 
+			// textBW
+			// 
+			this.textBW.Location = new System.Drawing.Point(99, 20);
+			this.textBW.Name = "textBW";
+			this.textBW.ShowZero = false;
+			this.textBW.Size = new System.Drawing.Size(39, 20);
+			this.textBW.TabIndex = 0;
+			// 
+			// label5
+			// 
+			this.label5.Location = new System.Drawing.Point(27, 19);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(70, 21);
+			this.label5.TabIndex = 168;
+			this.label5.Text = "BWs";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(18, 63);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(144, 21);
+			this.label4.TabIndex = 167;
+			this.label4.Text = "Fluoride Through Age";
+			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// FormInsBenefits
 			// 
 			this.ClientSize = new System.Drawing.Size(836, 696);
+			this.Controls.Add(this.panelSimple);
 			this.Controls.Add(this.groupYear);
 			this.Controls.Add(this.checkSimplified);
-			this.Controls.Add(this.panelSimple);
 			this.Controls.Add(this.textSubscNote);
 			this.Controls.Add(this.labelSubscNote);
 			this.Controls.Add(this.gridBenefits);
@@ -1067,14 +1079,14 @@ namespace OpenDental {
 			this.Load += new System.EventHandler(this.FormInsBenefits_Load);
 			this.groupYear.ResumeLayout(false);
 			this.groupYear.PerformLayout();
+			this.groupCategories.ResumeLayout(false);
+			this.groupCategories.PerformLayout();
 			this.panelSimple.ResumeLayout(false);
 			this.panelSimple.PerformLayout();
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox3.PerformLayout();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
-			this.groupCategories.ResumeLayout(false);
-			this.groupCategories.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -1086,30 +1098,9 @@ namespace OpenDental {
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GridOD gridBenefits;
 		private OpenDental.UI.CheckBox checkSimplified;
-		private Label label1;
 		private ODtextBox textSubscNote;
 		private Label labelSubscNote;
-		private ValidDouble textAnnualMax;
-		private ValidDouble textDeductible;
-		private Label label2;
 		private ValidDouble textDeductPrevent;
-		private Label label4;
-		private Label label5;
-		private ValidNum textBW;
-		private Label label6;
-		private OpenDental.UI.GroupBox groupBox1;
-		private OpenDental.UI.ComboBox comboExams;
-		private ValidNum textExams;
-		private Label label8;
-		private OpenDental.UI.ComboBox comboPano;
-		private ValidNum textPano;
-		private Label label7;
-		private OpenDental.UI.ComboBox comboBW;
-		private OpenDental.UI.GroupBox groupBox3;
-		private ValidNum textOrthoPercent;
-		private Label label11;
-		private ValidDouble textOrthoMax;
-		private Label label10;
 		private ValidNum textStand1;
 		private ValidNum textStand2;
 		private OpenDental.UI.GroupBox groupCategories;
@@ -1133,17 +1124,11 @@ namespace OpenDental {
 		private Label label22;
 		private ValidNum textAccident;
 		private Label label23;
-		private ValidNum textFlo;
-		private Panel panelSimple;
 		private ValidNum textStand4;
 		private Label label12;
 		private Panel panel3;
 		private Panel panel2;
 		private Panel panel1;
-		private Label label13;
-		private Label label14;
-		private ValidDouble textAnnualMaxFam;
-		private ValidDouble textDeductibleFam;
 		private ValidDouble textDeductPreventFam;
 		private ValidNum textXray;
 		private Label label25;
@@ -1159,8 +1144,6 @@ namespace OpenDental {
 		private Label label30;
 		private OpenDental.UI.GroupBox groupYear;
 		private OpenDental.UI.CheckBox checkCalendarYear;
-		private Label labelOrthoThroughAge;
-		private ValidNum textOrthoAge;
 		private Label labelMonths;
 		private ValidNum textWaitOralSurg;
 		private ValidNum textWaitPerio;
@@ -1169,7 +1152,37 @@ namespace OpenDental {
 		private Label labelWaitingPeriod;
 		private ValidNum textWaitProsth;
 		private ValidNum textWaitCrowns;
+		private Panel panelSimple;
 		private ValidNum textSealantAge;
 		private Label label24;
+		private Label label14;
+		private ValidDouble textAnnualMaxFam;
+		private ValidDouble textDeductibleFam;
+		private Label label13;
+		private ValidDouble textAnnualMax;
+		private Label label1;
+		private ValidNum textFlo;
+		private Label label2;
+		private ValidDouble textDeductible;
+		private UI.GroupBox groupBox3;
+		private ValidNum textOrthoAge;
+		private Label labelOrthoThroughAge;
+		private ValidNum textOrthoPercent;
+		private Label label11;
+		private ValidDouble textOrthoMax;
+		private Label label10;
+		private UI.GroupBox groupBox1;
+		private UI.Button butFrequencies;
+		private UI.ComboBox comboExams;
+		private ValidNum textExams;
+		private Label label8;
+		private UI.ComboBox comboPano;
+		private ValidNum textPano;
+		private Label label7;
+		private UI.ComboBox comboBW;
+		private Label label6;
+		private ValidNum textBW;
+		private Label label5;
+		private Label label4;
 	}
 }

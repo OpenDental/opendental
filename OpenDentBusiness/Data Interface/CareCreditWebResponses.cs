@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class CareCreditWebResponses {
+		public const string MERCHANT_ID_PROG_PROPERTY="MerchantIds";
 		#region Get Methods
 		///<summary></summary>
 		public static CareCreditWebResponse GetOne(long ccWebResponse) {
@@ -292,6 +293,13 @@ namespace OpenDentBusiness{
 			Crud.CareCreditWebResponseCrud.Update(ccWebResponse);
 		}
 
+		public static bool Update(CareCreditWebResponse careCreditWebResponse,CareCreditWebResponse careCreditWebResponseOld) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),careCreditWebResponse,careCreditWebResponseOld);
+			}
+			return Crud.CareCreditWebResponseCrud.Update(careCreditWebResponse,careCreditWebResponseOld);
+		}
+
 		///<summary>Updates the HasLogged column to true for all CareCreditWebResponseNums passed in.</summary>
 		public static void UpdateHasLoggedToTrue(List<long> listCareCreditWebResponseNums) {
 			if(listCareCreditWebResponseNums.IsNullOrEmpty()) {
@@ -400,6 +408,55 @@ namespace OpenDentBusiness{
 			}
 			ccWebResponse.DateTimeLastError=MiscData.GetNowDateTime();
 		}
+
+		public static void AddPatFieldsForMinors(long patNum) {
+			PatFieldDef patFieldCC=PatFieldDefs.GetPatFieldCareCredit();
+			if(patFieldCC==null) {
+				return;
+			}
+			PatField patField=PatFields.GetByName(patFieldCC.FieldName,PatFields.Refresh(patNum));
+			UpsertPatFieldForMinors(patNum,patField);
+		}
+
+		///<summary></summary>
+		public static void UpdateCareCreditPatField(string status,long patNum,bool isBatch) {
+			PatFieldDef patFieldCC=PatFieldDefs.GetPatFieldCareCredit();
+			if(patFieldCC==null) {
+				return;
+			}
+			PatField patField=PatFields.GetByName(patFieldCC.FieldName,PatFields.Refresh(patNum));
+			if(patField==null) {
+				patField=new PatField();
+				patField.PatNum=patNum;
+			}
+			patField.FieldName=patFieldCC.FieldName;
+			patField.FieldValue=status;
+			PatFields.Upsert(patField);
+			if(isBatch) {
+				UpsertPatFieldForMinors(patNum,patField);
+			}
+		}
+
+		private static void UpsertPatFieldForMinors(long patNum,PatField patField) {
+			if(patField==null) {
+				return;
+			}
+			List<long> listMinorPatNums=Patients.GetAllPatientsForGuarantor(patNum).FindAll(x => x.Birthdate.Year>1880 && x.Age<18).Select(x => x.PatNum).ToList();
+			if(listMinorPatNums.IsNullOrEmpty()) {
+				return;
+			}
+			foreach(long patNumMinor in listMinorPatNums) {
+				PatField patFieldMinor=PatFields.GetByName(patField.FieldName,PatFields.Refresh(patNumMinor));
+				if(patFieldMinor==null) {
+					patFieldMinor=new PatField();
+					patFieldMinor.PatNum=patNumMinor;
+				}
+				patFieldMinor.FieldName=patField.FieldName;
+				patFieldMinor.FieldValue=patField.FieldValue;
+				PatFields.Upsert(patFieldMinor);
+			}
+		}
+
 
 		#endregion Misc Methods
 	}

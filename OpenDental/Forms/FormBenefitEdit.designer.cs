@@ -46,7 +46,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.textPercent = new OpenDental.ValidNum();
 			this.comboCodeGroup = new OpenDental.UI.ComboBox();
-			this.label3 = new System.Windows.Forms.Label();
+			this.labelCodeGroup = new System.Windows.Forms.Label();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupQuantity.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -252,19 +252,19 @@ namespace OpenDental {
 			this.comboCodeGroup.TabIndex = 34;
 			this.comboCodeGroup.Text = "comboBox1";
 			// 
-			// label3
+			// labelCodeGroup
 			// 
-			this.label3.Location = new System.Drawing.Point(5, 272);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(94, 16);
-			this.label3.TabIndex = 35;
-			this.label3.Text = "or Code Group";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.labelCodeGroup.Location = new System.Drawing.Point(5, 272);
+			this.labelCodeGroup.Name = "labelCodeGroup";
+			this.labelCodeGroup.Size = new System.Drawing.Size(94, 16);
+			this.labelCodeGroup.TabIndex = 35;
+			this.labelCodeGroup.Text = "or Code Group";
+			this.labelCodeGroup.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.listCategory);
-			this.groupBox1.Controls.Add(this.label3);
+			this.groupBox1.Controls.Add(this.labelCodeGroup);
 			this.groupBox1.Controls.Add(this.labelCode);
 			this.groupBox1.Controls.Add(this.comboCodeGroup);
 			this.groupBox1.Controls.Add(this.label2);
@@ -334,7 +334,7 @@ namespace OpenDental {
 		private Label label1;
 		private ValidNum textPercent;
 		private UI.ComboBox comboCodeGroup;
-		private Label label3;
+		private Label labelCodeGroup;
 		private UI.GroupBox groupBox1;
 	}
 }

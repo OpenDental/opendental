@@ -75,11 +75,9 @@ namespace OpenDental {
 			this.checkDcodes.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkDcodes.Location = new System.Drawing.Point(15, 141);
 			this.checkDcodes.Name = "checkDcodes";
-			this.checkDcodes.Size = new System.Drawing.Size(646, 36);
+			this.checkDcodes.Size = new System.Drawing.Size(646, 46);
 			this.checkDcodes.TabIndex = 45;
-			this.checkDcodes.Text = "D Codes - Add any missing 2024 CDT Codes and fix descriptions and blank abbreviat" +
-    "ions of existing codes. This option does not work in the trial version, self-com" +
-    "piled version, or outside the USA.";
+			this.checkDcodes.Text = resources.GetString("checkDcodes.Text");
 			// 
 			// checkNcodes
 			// 
@@ -146,7 +144,7 @@ namespace OpenDental {
 			// labelLineOne
 			// 
 			this.labelLineOne.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.labelLineOne.Location = new System.Drawing.Point(15, 185);
+			this.labelLineOne.Location = new System.Drawing.Point(15, 188);
 			this.labelLineOne.Name = "labelLineOne";
 			this.labelLineOne.Size = new System.Drawing.Size(670, 2);
 			this.labelLineOne.TabIndex = 53;
@@ -154,7 +152,7 @@ namespace OpenDental {
 			// labelLineTwo
 			// 
 			this.labelLineTwo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.labelLineTwo.Location = new System.Drawing.Point(15, 200);
+			this.labelLineTwo.Location = new System.Drawing.Point(15, 203);
 			this.labelLineTwo.Name = "labelLineTwo";
 			this.labelLineTwo.Size = new System.Drawing.Size(670, 2);
 			this.labelLineTwo.TabIndex = 54;

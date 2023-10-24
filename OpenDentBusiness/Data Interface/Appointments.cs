@@ -155,9 +155,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static List<AppointmentWithServerDT> GetAppointmentsForApi(int limit,int offset,DateTime dateTStart,DateTime dateTEnd,DateTime dateTStamp,long clinicNum,long patNum,int aptStatus){
+		public static List<AppointmentWithServerDT> GetAppointmentsForApi(int limit,int offset,DateTime dateTStart,DateTime dateTEnd,DateTime dateTStamp,long clinicNum,long patNum,int aptStatus,long operatoryNum){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStart,dateTEnd,dateTStamp,clinicNum,patNum,aptStatus);
+				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStart,dateTEnd,dateTStamp,clinicNum,patNum,aptStatus,operatoryNum);
 			}
 			string command="SELECT * FROM appointment "
 				+"WHERE AptDateTime >= "+POut.DateT(dateTStart)+" "
@@ -171,6 +171,9 @@ namespace OpenDentBusiness{
 			}
 			if(aptStatus>-1) {
 				command+="AND AptStatus="+POut.Int(aptStatus)+" ";
+			}
+			if(operatoryNum>-1) {
+				command+="AND Op="+POut.Long(operatoryNum)+" ";
 			}
 			command+="ORDER BY AptDateTime,AptNum "//same fixed order each time
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
