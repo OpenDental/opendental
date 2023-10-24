@@ -182,8 +182,8 @@ namespace OpenDental {
 				MsgBox.Show("Zoom cannot be negative.");
 				return;
 			}
-			else if(zoom<50){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
-				string msg=Lans.g(this,"Zoom number should be greater than or equal to 50. Maybe you meant")
+			else if(zoom<60){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
+				string msg=Lans.g(this,"Zoom number should be greater than or equal to 60. Maybe you meant")
 					+" "+(100+zoom).ToString()+".";//untranslated
 				MsgBox.Show(msg);
 				return;

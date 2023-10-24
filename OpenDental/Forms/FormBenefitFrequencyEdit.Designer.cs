@@ -24,128 +24,98 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBenefitFrequencyEdit));
-			this.label1 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.label24 = new System.Windows.Forms.Label();
-			this.listBoxCodeGroup = new OpenDental.UI.ListBox();
-			this.textNumber = new OpenDental.ValidNum();
 			this.butSave = new OpenDental.UI.Button();
-			this.label2 = new System.Windows.Forms.Label();
-			this.listBoxTimePeriod = new OpenDental.UI.ListBox();
-			this.listBoxTreatArea = new OpenDental.UI.ListBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.checkPat = new OpenDental.UI.CheckBox();
+			this.butDelete = new OpenDental.UI.Button();
+			this.comboFrequencyOptions = new OpenDental.UI.ComboBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.textNumber = new OpenDental.ValidNum();
+			this.label24 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.listBoxCodeGroup = new OpenDental.UI.ListBox();
 			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(314, 79);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(104, 21);
-			this.label1.TabIndex = 198;
-			this.label1.Text = "Frequency";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(3, 56);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(104, 21);
-			this.label3.TabIndex = 196;
-			this.label3.Text = "Code Group";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label24
-			// 
-			this.label24.Location = new System.Drawing.Point(342, 52);
-			this.label24.Name = "label24";
-			this.label24.Size = new System.Drawing.Size(76, 20);
-			this.label24.TabIndex = 197;
-			this.label24.Text = "Quantity";
-			this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// listBoxCodeGroup
-			// 
-			this.listBoxCodeGroup.Location = new System.Drawing.Point(113, 56);
-			this.listBoxCodeGroup.Name = "listBoxCodeGroup";
-			this.listBoxCodeGroup.Size = new System.Drawing.Size(173, 277);
-			this.listBoxCodeGroup.TabIndex = 199;
-			this.listBoxCodeGroup.TabStop = false;
-			// 
-			// textNumber
-			// 
-			this.textNumber.Location = new System.Drawing.Point(420, 52);
-			this.textNumber.MinVal = 1;
-			this.textNumber.Name = "textNumber";
-			this.textNumber.Size = new System.Drawing.Size(39, 20);
-			this.textNumber.TabIndex = 194;
 			// 
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(606, 374);
+			this.butSave.Location = new System.Drawing.Point(333, 526);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
 			this.butSave.Text = "&Save";
 			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
-			// label2
+			// butDelete
 			// 
-			this.label2.Location = new System.Drawing.Point(12, 9);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(425, 38);
-			this.label2.TabIndex = 200;
-			this.label2.Text = "This is not normally used. Instead, edit frequencies directly in the grid. But th" +
-    "is can be used if you need to add a second frequency for the same Code Group.";
+			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
+			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butDelete.Location = new System.Drawing.Point(12, 526);
+			this.butDelete.Name = "butDelete";
+			this.butDelete.Size = new System.Drawing.Size(78, 24);
+			this.butDelete.TabIndex = 76;
+			this.butDelete.Text = "Delete";
+			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// listBoxTimePeriod
+			// comboFrequencyOptions
 			// 
-			this.listBoxTimePeriod.Location = new System.Drawing.Point(420, 79);
-			this.listBoxTimePeriod.Name = "listBoxTimePeriod";
-			this.listBoxTimePeriod.Size = new System.Drawing.Size(173, 61);
-			this.listBoxTimePeriod.TabIndex = 201;
-			this.listBoxTimePeriod.TabStop = false;
+			this.comboFrequencyOptions.Location = new System.Drawing.Point(148, 489);
+			this.comboFrequencyOptions.Name = "comboFrequencyOptions";
+			this.comboFrequencyOptions.Size = new System.Drawing.Size(120, 21);
+			this.comboFrequencyOptions.TabIndex = 195;
 			// 
-			// listBoxTreatArea
+			// label3
 			// 
-			this.listBoxTreatArea.Location = new System.Drawing.Point(420, 152);
-			this.listBoxTreatArea.Name = "listBoxTreatArea";
-			this.listBoxTreatArea.Size = new System.Drawing.Size(173, 173);
-			this.listBoxTreatArea.TabIndex = 202;
-			this.listBoxTreatArea.TabStop = false;
+			this.label3.Location = new System.Drawing.Point(41, 16);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(104, 21);
+			this.label3.TabIndex = 196;
+			this.label3.Text = "Code Group";
+			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// label4
+			// textNumber
 			// 
-			this.label4.Location = new System.Drawing.Point(310, 152);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(104, 21);
-			this.label4.TabIndex = 203;
-			this.label4.Text = "Treatment Area";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.textNumber.Location = new System.Drawing.Point(148, 463);
+			this.textNumber.MinVal = 1;
+			this.textNumber.Name = "textNumber";
+			this.textNumber.Size = new System.Drawing.Size(39, 20);
+			this.textNumber.TabIndex = 194;
 			// 
-			// checkPat
+			// label24
 			// 
-			this.checkPat.Location = new System.Drawing.Point(76, 339);
-			this.checkPat.Name = "checkPat";
-			this.checkPat.Size = new System.Drawing.Size(475, 23);
-			this.checkPat.TabIndex = 204;
-			this.checkPat.Text = "Patient Override  (Rare. Usually if percentages are different for family members)" +
-    "";
+			this.label24.Location = new System.Drawing.Point(70, 463);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(76, 20);
+			this.label24.TabIndex = 197;
+			this.label24.Text = "#";
+			this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(42, 490);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(104, 21);
+			this.label1.TabIndex = 198;
+			this.label1.Text = "Time Period";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// listBoxCodeGroup
+			// 
+			this.listBoxCodeGroup.Location = new System.Drawing.Point(148, 17);
+			this.listBoxCodeGroup.Name = "listBoxCodeGroup";
+			this.listBoxCodeGroup.Size = new System.Drawing.Size(173, 439);
+			this.listBoxCodeGroup.TabIndex = 199;
+			this.listBoxCodeGroup.TabStop = false;
 			// 
 			// FormBenefitFrequencyEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(693, 410);
-			this.Controls.Add(this.checkPat);
-			this.Controls.Add(this.label4);
-			this.Controls.Add(this.listBoxTreatArea);
-			this.Controls.Add(this.listBoxTimePeriod);
-			this.Controls.Add(this.label2);
+			this.ClientSize = new System.Drawing.Size(420, 562);
 			this.Controls.Add(this.listBoxCodeGroup);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.comboFrequencyOptions);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textNumber);
 			this.Controls.Add(this.label24);
+			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butSave);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormBenefitFrequencyEdit";
@@ -159,15 +129,12 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butSave;
+		private UI.Button butDelete;
+		private UI.ComboBox comboFrequencyOptions;
 		private System.Windows.Forms.Label label3;
 		private ValidNum textNumber;
 		private System.Windows.Forms.Label label24;
 		private System.Windows.Forms.Label label1;
 		private UI.ListBox listBoxCodeGroup;
-		private System.Windows.Forms.Label label2;
-		private UI.ListBox listBoxTimePeriod;
-		private UI.ListBox listBoxTreatArea;
-		private System.Windows.Forms.Label label4;
-		private UI.CheckBox checkPat;
 	}
 }

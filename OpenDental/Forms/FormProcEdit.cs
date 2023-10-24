@@ -2320,7 +2320,7 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(_procedure.AptNum!=0){//If the procedure is attached to an appointment
+			if(_procedure.AptNum!=0 || _procedure.PlannedAptNum!=0){//If the procedure is attached to an appointment
 				string res=AppointmentL.CheckRequiredProcForApptType(procedureArrayToDelete:_procedure);
 				if(res!=""){
 					MsgBox.Show(res);

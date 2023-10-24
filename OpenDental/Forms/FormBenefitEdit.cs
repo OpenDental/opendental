@@ -34,6 +34,10 @@ namespace OpenDental {
 			else{
 				checkPat.Checked=true;
 			}
+			if(!Benefits.IsFrequencyLimitation(BenefitCur) || BenefitCur.CodeGroupNum==0) {
+				labelCodeGroup.Visible=false;
+				comboCodeGroup.Visible=false;
+			}
 			List<CovCat> listCovCats=CovCats.GetDeepCopy(true);
 			listCategory.Items.Clear();
 			listCategory.Items.AddNone<CovCat>();

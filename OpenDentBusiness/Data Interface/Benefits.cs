@@ -1731,6 +1731,12 @@ namespace OpenDentBusiness {
 			//   QuantityQualifier is NumberOfServices while TimePeriod is ServiceYear, or CalendarYear, or NumberInLast12Months
 			//5. CoverageLevel is None
 			//6. (optional) Require that Quantity is not 0
+			//Note that we do not test whether it's using a CodeGroup rather than a CodeNum or CovCatNum.
+			//This is because frequency limitations will allow those other two.
+			//We strongly discourage this in the UI by hiding those, but users could manually add them, or there could be old clutter.
+			//Also, we're not really sure if they would even work and function properly as frequency limitations.
+			//But they will show in FormBenefitFrequencies instead of FormInsBenefits.
+			//If they show in FormBenefitFrequencies, we will do additional testing to treat CodeNum and CovCatNum differently.
 			if(benefit==null) {
 				return false;
 			}

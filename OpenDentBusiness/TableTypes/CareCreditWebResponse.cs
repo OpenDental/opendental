@@ -59,6 +59,10 @@ namespace OpenDentBusiness {
 		///<summary>True if row has been logged at HQ, otherwise false.</summary>
 		public bool HasLogged;
 
+		public CareCreditWebResponse Copy() {
+			return (CareCreditWebResponse)this.MemberwiseClone();
+		}
+
 		///<summary>Returns the DateTime of the greatest value between DateTimeEntry, DateTimePending, and DateTimeLastError.
 		///This does not consider DateTimeCompleted or DateTimeExpired, as those are DateTimes that make the CareCreditWebResponse done.</summary>
 		public DateTime GetLastPendingUpdateDateTime() {

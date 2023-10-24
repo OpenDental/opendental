@@ -743,5 +743,20 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}//End of To23_2_26 method
+
+		private static void To23_2_27() {
+			//Switch all of the insplan using the 2024 back to 2019 claim form.
+			string command="SELECT ClaimFormNum FROM claimform WHERE Description='ADA 2019'";
+			long claimFormNum2019=Db.GetLong(command);
+			command="SELECT ClaimFormNum FROM claimform WHERE Description='ADA 2024'";
+			long claimFormNum2024=Db.GetLong(command);
+			if(claimFormNum2019>0 && claimFormNum2024>0) {
+				command=$"UPDATE insplan SET ClaimFormNum={POut.Long(claimFormNum2019)} WHERE ClaimFormNum>0 AND ClaimFormNum={POut.Long(claimFormNum2024)}";
+				Db.NonQ(command);
+				//Set the default claimform back to the 2019 claimform
+				command=$"UPDATE preference SET ValueString='{POut.Long(claimFormNum2019)}' WHERE PrefName='DefaultClaimForm' AND ValueString='{POut.Long(claimFormNum2024)}'";
+				Db.NonQ(command);
+			}
+		}
 	}
 }

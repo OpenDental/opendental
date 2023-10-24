@@ -270,7 +270,21 @@ namespace OpenDentBusiness{
 
 	}
 
-		
+	///<summary>Used in Benefit frequency limitation because using QuantityQualifier and TimePeriod is too hard for user to understand. so this just combines those two fields.</summary>
+	public enum FrequencyOptions {
+		///<summary>0 - Every # Years</summary>
+		[Description("Every # Years")]
+		Every_Years,
+		///<summary>1 - # Per Benefit Year</summary>
+		[Description("# Per Benefit Year")]
+		_PerBenefitYear,
+		///<summary>2 - Every # Months</summary>
+		[Description("Every # Months")]
+		Every_Months,
+		///<summary>3 - # in Last 12 Months</summary>
+		[Description("# in Last 12 Months")]
+		_InLast12Months,
+	}
 
 
 

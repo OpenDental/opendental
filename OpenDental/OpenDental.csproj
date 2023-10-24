@@ -701,6 +701,18 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormBenefitFrequencies.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormBenefitFrequencies.Designer.cs">
+      <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormBenefitFrequencyEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormBenefitFrequencyEdit.Designer.cs">
+      <DependentUpon>FormBenefitFrequencyEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEServicesMobileAppDeviceManage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7663,6 +7675,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormBenefitFrequencies.resx">
+      <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormBenefitFrequencyEdit.resx">
+      <DependentUpon>FormBenefitFrequencyEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEServicesMobileAppDeviceManage.resx">
       <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>

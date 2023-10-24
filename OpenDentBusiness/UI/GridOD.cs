@@ -388,9 +388,9 @@ using OpenDental.UI;
 		[DefaultValue(false)]
 		public bool EditableAcceptsCR { get; set; } =false;
 
-		///<summary>If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down.</summary>
+		///<summary>If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down. Only intended for columns of numbers where you would never go sideways.</summary>
 		[Category("OD")]
-		[Description("If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down.")]
+		[Description("If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down. Only intended for columns of numbers where you would never go sideways.")]
 		[DefaultValue(false)]
 		public bool EditableEnterMovesDown { get; set; }
 
@@ -2321,25 +2321,21 @@ using OpenDental.UI;
 		}
 
 		void comboBox_KeyDown(object sender,KeyEventArgs e) {
-			if(e.KeyCode==Keys.Tab) {
-				//supports moving to the right with tab, but not down
-				//Used primarily in ortho chart
-				for(int i=_selectedCellOld.X+1;i<Columns.Count;i++) {
-					if(Columns[i].IsEditable){//textbox
-						_selectedCell=new Point(i,_selectedCellOld.Y);
-						Focus();//moves focus from combobox to trigger dropDownBox_LostFocus, because the next line will change focus and change _selectedCellOld
-						CreateEditBox();
-						//If user was using arrow keys to select item, dropDownBox_SelectionChangeCommitted fired with each arrow click
-						//Then, when they tab, only this gets hit.
-						return;
+			if(e.KeyCode==Keys.Enter) {//usually move to the next cell
+				// No Consideration for EditableAllowsCR because this is a ComboBox.
+				if(EditableEnterMovesDown){
+					// No need for Dispose() or null assignment because the ComboBox is happy to give focus to the next cell.
+					if(_selectedCellOld.Y==ListGridRows.Count-1) {
+						return;//can't move down
 					}
-					if(Columns[i].ListDisplayStrings!=null) {//dropdown
-						_selectedCell=new Point(i,_selectedCellOld.Y);
-						Focus();
-						CreateComboBox();
-						return;
-					}
+					_selectedCell=new Point(_selectedCellOld.X,_selectedCellOld.Y+1);
+					CreateComboBox();
+					return;
 				}
+				editBox_NextCellRight();
+			}
+			if(e.KeyCode==Keys.Tab) {
+				editBox_NextCellRight();
 			}
 		}
 
@@ -2522,6 +2518,7 @@ using OpenDental.UI;
 		private void editBox_NextCellRight() {
 			textEdit?.Dispose();//This fires editBox_LostFocus, which is where we call CellLeave.
 			textEdit=null;
+			Focus();//Fires comboBox_LostFocus, which is where we call CellLeave.
 			//find the next editable cell to the right.
 			for(int i= _selectedCellOld.X+1; i < Columns.Count; i++) {
 				if(Columns[i].IsEditable){//textbox
@@ -2539,16 +2536,19 @@ using OpenDental.UI;
 			if(_selectedCellOld.Y==ListGridRows.Count-1) {
 				return;//can't move down
 			}
-			int nextCellToRight=-1;
+			//At this point, we know that we can move either down or down and left.
 			for(int i=0; i < Columns.Count; i++) {
 				if(Columns[i].IsEditable) {
-					nextCellToRight= i;
-					break;
+					_selectedCell=new Point(i,_selectedCellOld.Y+1);
+					CreateEditBox();
+					return;
+				}
+				if(Columns[i].ListDisplayStrings!=null){
+					_selectedCell=new Point(i,_selectedCellOld.Y+1);
+					CreateComboBox();
+					return;
 				}
 			}
-			//guaranteed to have a value. Either the cell below, or possibly below and left.
-			_selectedCell=new Point(nextCellToRight,_selectedCellOld.Y+1);
-			CreateEditBox();
 		}
 		
 		void textEdit_KeyUp(object sender,KeyEventArgs e) {

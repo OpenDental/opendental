@@ -33,12 +33,12 @@ namespace OpenDental {
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn gridColumn;
-			gridColumn=new GridColumn("Code Group",110);
+			gridColumn=new GridColumn("Code Group",120);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("#",25,HorizontalAlignment.Center);
+			gridColumn=new GridColumn("#",35);
 			gridColumn.IsEditable=true;
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Frequency",100);
+			gridColumn=new GridColumn("Frequency",70);
 			List<string> listStringsFrequencyOptions = new List<string>() {
 				FrequencyOptions.Every_Years.GetDescription(),
 				FrequencyOptions._PerBenefitYear.GetDescription(),

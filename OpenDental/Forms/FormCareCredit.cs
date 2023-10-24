@@ -80,7 +80,7 @@ namespace OpenDental {
 			}
 			CareCredit.UpdateWebResponse(careCreditWebResponse);
 			if(careCreditWebResponse.ProcessingStatus!=CareCreditWebStatus.Pending) {
-				CareCredit.UpdateCareCreditPatField(careCreditWebResponse.ProcessingStatus.GetDescription(),careCreditWebResponse.PatNum,isBatch:false);
+				CareCreditWebResponses.UpdateCareCreditPatField(careCreditWebResponse.ProcessingStatus.GetDescription(),careCreditWebResponse.PatNum,isBatch:false);
 			}
 		}
 

@@ -112,6 +112,45 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		///<summary>Returns a serialized list of ClinicProgramPropertyContainer objects to pass from the office to HQ.  Public for unit testing</summary>
+		public static string GetSerializedProgramProperties(List<Clinic> listClinics) {
+			List<Provider> listProviders=new List<Provider>();
+			List<EServiceSetup.SignupIn.ClinicProgramPropertyContainer> listToSerialize=new List<EServiceSetup.SignupIn.ClinicProgramPropertyContainer>();
+			if(Programs.IsEnabled(ProgramName.CareCredit)) {
+				//small helper method to check for blanks, remove any unwanted chars, and make sure we're not adding duplicates
+				bool tryAdd(string merchID,List<string> curMerchIds) {
+					if(!string.IsNullOrWhiteSpace(merchID) && !curMerchIds.Contains(merchID)) {
+						//This means that the merchant number is technically inactive but that doesn't mean that web responses might not come in for older merch numbers
+						//Offices can also remove the x themselves at any point so we might as well update our records with it
+						if(merchID.StartsWith("x")) {
+							merchID=(string)merchID.Skip(1);
+						}
+						curMerchIds.Add(merchID);
+						return true;
+					}
+					return false;
+				}
+				List<ProviderClinic> listMerchantIdProviderClinics=ProviderClinics.GetCareCreditRows();
+				//Loop through this list and add any clinic and provider merch numbers. Whether or not they're in use doesn't feel that important but we should strip any leading x's so that we only have clean data
+				for(int i=0;i<listClinics.Count();i++) {
+					List<string> clinicMerchIds=new List<string>();
+					Clinic clinic = listClinics[i];
+					string merchIdForClinic=CareCredit.GetMerchantNumberByClinic(clinic.ClinicNum);
+					string merchIdForProvider=listMerchantIdProviderClinics.FirstOrDefault(x=>x.ClinicNum==clinic.ClinicNum)?.CareCreditMerchantId??"";
+					if(!tryAdd(merchIdForClinic,clinicMerchIds) && !tryAdd(merchIdForProvider,clinicMerchIds)) {
+						continue;
+					}
+					listToSerialize.Add(new EServiceSetup.SignupIn.ClinicProgramPropertyContainer() {
+						ClinicNum=clinic.ClinicNum,
+						ProgramName=ProgramName.CareCredit.ToString(),
+						ProgramProperty=CareCreditWebResponses.MERCHANT_ID_PROG_PROPERTY,
+						ProgramValue=JsonConvert.SerializeObject(clinicMerchIds)
+					});
+				}
+			}
+			return JsonConvert.SerializeObject(listToSerialize);
+		}
+
 		#region EService setup
 		///<summary>Called by local practice db to query HQ for EService setup info. Must remain very lite and versionless. Will be used by signup portal.
 		///If HasClinics==true then any SignupOut.EServices entries where ClinicNum==0 are invalid and should be ignored.
@@ -126,7 +165,9 @@ namespace OpenDentBusiness {
 				clinics=clinics.OrderBy(x => x.Abbr).ToList();
 			}
 			string shortCodePracticeTitle=string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ShortCodeOptInClinicTitle))
-				? PrefC.GetString(PrefName.PracticeTitle) : PrefC.GetString(PrefName.ShortCodeOptInClinicTitle);			
+				? PrefC.GetString(PrefName.PracticeTitle) : PrefC.GetString(PrefName.ShortCodeOptInClinicTitle);	
+			//Get all program property info we might want for HQ
+			string serializedProperties=GetSerializedProgramProperties(clinics);
 			IWebServiceMainHQ webServiceMainHq=GetWebServiceMainHQInstance();
 			EServiceSetup.SignupOut signupOut=WebSerializer.ReadXml<EServiceSetup.SignupOut>
 				(
@@ -160,6 +201,7 @@ namespace OpenDentBusiness {
 										AutomaticCommunicationTimeEnd=PrefC.GetDateT(PrefName.AutomaticCommunicationTimeEnd),
 										AutomaticCommunicationTimeStart=PrefC.GetDateT(PrefName.AutomaticCommunicationTimeStart)
 									},
+								SerializedProperties=serializedProperties
 								}),eServiceCode.Undefined
 							)
 						)
@@ -752,6 +794,8 @@ namespace OpenDentBusiness {
 				public DateTime DateTimeDentalOfficeDb;
 				///<summary>Settings used at HQ for texting purposes</summary>
 				public SmsSettings SmsSettings;
+				///<summary>Serialized list of program properties we might need on a clinic level</summary>
+				public string SerializedProperties;
 
 				[XmlIgnore]
 				public SetupMethod MethodName {
@@ -790,6 +834,13 @@ namespace OpenDentBusiness {
 					public string ClinicTitle;
 					public bool IsHidden;
 					public string ShortCodeOptInYourDentist;
+				}
+
+				public class ClinicProgramPropertyContainer {
+					public long ClinicNum;
+					public string ProgramName;
+					public string ProgramProperty;
+					public string ProgramValue;
 				}
 			}
 
