@@ -789,10 +789,12 @@ namespace OpenDentBusiness{
 				List<string> listTranSetIds=x12.GetTranSetIds();
 				X835 x835=new X835(listEtrans[i],messageText835,listEtrans[i].TranSetId835,listAttaches);
 				X835Status overallStatus=X835Status.Finalized;
+				int countProcessedClaimsWithNameMismatches=0;
 				//If TranSetId835 is blank and we have multiple TranSetIds in the list, we know we are dealing with an Etrans from 14.2 or an older version
 				//that represents multiple transactions from a single 835. We loop through the transactions and process each of them separately.
 				if(listTranSetIds.Count>=2 && listEtrans[i].TranSetId835=="") {
 					List<EraAutomationResult> listAutomationResults=AutoProcessMultiTransactionEtrans(listEtrans[i],messageText835,listTranSetIds,listAttaches,isFullyAutomatic);
+					countProcessedClaimsWithNameMismatches=listAutomationResults.Sum(x=>x.CountProcessedClaimsWithNameMismatch);
 					listAllAutomationResults.AddRange(listAutomationResults);
 					if(listAutomationResults.Any(x => x.Status!=X835Status.Finalized)) {
 						overallStatus=X835Status.Partial;
@@ -802,6 +804,7 @@ namespace OpenDentBusiness{
 					EraAutomationResult automationResult=TryAutoProcessEraEob(x835,listAttaches,isFullyAutomatic);
 					listAllAutomationResults.Add(automationResult);
 					overallStatus=automationResult.Status;
+					countProcessedClaimsWithNameMismatches=automationResult.CountProcessedClaimsWithNameMismatch;
 				}
 				X835AutoProcessed autoProcessedStatus;
 				if(overallStatus!=X835Status.Finalized) {
@@ -824,7 +827,7 @@ namespace OpenDentBusiness{
 				//We make a single Etrans835 for etrans with multiple transactions, using the X835 for the first transaction.
 				Etrans835s.Upsert(etrans835,x835,newAutoProcessedStatus:autoProcessedStatus);
 				Etrans etransOld=listEtrans[i].Copy();
-				listEtrans[i].Note=EraAutomationResult.CreateEtransNote(overallStatus,listEtrans[i].Note);
+				listEtrans[i].Note=EraAutomationResult.CreateEtransNote(overallStatus,listEtrans[i].Note,countProcessedClaimsWithNameMismatches);
 				if(overallStatus==X835Status.Finalized) {
 					listEtrans[i].AckCode="Recd";
 				}
@@ -944,6 +947,9 @@ namespace OpenDentBusiness{
 					listClaimProcsAll.RemoveAll(x => x.ClaimNum==listClaimsToProcess[i].ClaimNum);
 					listClaimProcsAll.AddRange(listClaimProcsForClaimCopy);
 					listReceivedClaimProcs.AddRange(listClaimProcsForClaimCopy);
+					if(!listClaimsPaidToProcess[i].DoesPatientNameMatch(patient)) {
+						automationResult.CountProcessedClaimsWithNameMismatch++;
+					}
 				}
 			}
 			if(listReceivedClaimProcs.Count > 0) {

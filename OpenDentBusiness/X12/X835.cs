@@ -4226,6 +4226,8 @@ namespace OpenDentBusiness {
 		public string PaymentFinalizationError="";
 		///<summary>Will be set true if the ERA was not in a Partial, Unprocessed, or NotFinalized state when automatic processing starts.</summary>
 		public bool DidEraStartAsFinalized=false;
+		/// <summary>The number of processed claims that have name mismatches</summary>
+		public int CountProcessedClaimsWithNameMismatch=0;
 
 		public X835Status Status {
 			get {
@@ -4247,8 +4249,8 @@ namespace OpenDentBusiness {
 			return ListPatNamesWithoutClaimMatch.Count==0 && ListClaimErrors.Count==0;
 		}
 
-		///<summary>Returns false if the user must choose an insurance payment plan, the name on the ERA claim does not match the name on the claim from DB, 
-		///the carrier does not allow ERA automation, the claim is processed already, the claimprocs are recieved but the ERA should be providing initial payment,
+		///<summary>Returns false if the user must choose an insurance payment plan, the carrier does not allow ERA automation, 
+		///the claim is processed already, the claimprocs are recieved but the ERA should be providing initial payment,
 		///or the claimprocs aren't received and the ERA should be providing a supplemental payment or reversal. 
 		///If any of these errors are present, an error message will be added to the list for this EraAutomationResult.</summary>
 		public bool CanClaimBeAutoProcessed(bool isFullyAutomatic,Patient patient,InsPlan insPlan,Hx835_Claim claimPaid,List<PayPlan> listPayPlans,
@@ -4259,11 +4261,6 @@ namespace OpenDentBusiness {
 			if(listPayPlans.Count>1) {
 				stringBuilderErrorMessage.AppendLine(Lans.g("X835","There are multiple insurance payment plans that this payment could be associated to. " +
 					"The claim must be processed manually so that an insurance payment plan can be chosen."));
-			}
-			//Check if a name matches exists
-			bool doesPatientNameMatch=claimPaid.DoesPatientNameMatch(patient);
-			if(!doesPatientNameMatch) {
-				stringBuilderErrorMessage.AppendLine(Lans.g("X835","The patient name on the ERA does not match the patient on this claim."));
 			}
 			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
 			//Check if Carrier allows autoprocessing
@@ -4399,7 +4396,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Adds to the existing note passed in for an etrans. Indicates that automatic processing was completed or attempted on today's date.</summary>
-		public static string CreateEtransNote(X835Status status,string note) {
+		public static string CreateEtransNote(X835Status status,string note,int countProcessedClaimsWithNameMismatches) {
 			if(note.Trim().IsNullOrEmpty()) {
 				note="";//Clear the existing note if it is only white space.
 			}
@@ -4413,7 +4410,15 @@ namespace OpenDentBusiness {
 			else {
 				automationNote=Lans.g("X835","Automatic processing attempted on");
 			}
-			return automationNote+" "+DateTime.Today.ToShortDateString()+note;
+			automationNote+=" "+DateTime.Today.ToShortDateString();
+			string nameMismatchNote="";
+			if(countProcessedClaimsWithNameMismatches==1) {
+				nameMismatchNote="\r\n"+Lans.g("X835","1 claim was processed with a mismatched name.");
+			}
+			else if(countProcessedClaimsWithNameMismatches>1) {
+				nameMismatchNote="\r\n"+countProcessedClaimsWithNameMismatches+" "+Lans.g("X835","claims were processed with mismatched names.");
+			}
+			return automationNote+nameMismatchNote+note;
 		}
 	}
 
