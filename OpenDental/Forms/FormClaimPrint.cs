@@ -206,6 +206,10 @@ namespace OpenDental{
 							image=CDT.Class1.GetADA2019_J430();
 							extension=".gif";
 							break;
+						case "ADA2024_J430.gif":
+							image=CDT.Class1.GetADA2024_J430();
+							extension=".gif";
+							break;
 						case "1500_02_12.gif":
 							image=Properties.Resources._1500_02_12;
 							extension=".gif";
