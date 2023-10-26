@@ -88,9 +88,9 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(11, 46);
+			this.label1.Location = new System.Drawing.Point(1, 45);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(120, 14);
+			this.label1.Size = new System.Drawing.Size(130, 16);
 			this.label1.TabIndex = 20;
 			this.label1.Text = "Date of new charges";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -102,7 +102,7 @@ namespace OpenDental {
 			this.groupBox1.Controls.Add(this.radio60);
 			this.groupBox1.Location = new System.Drawing.Point(20, 235);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(161, 82);
+			this.groupBox1.Size = new System.Drawing.Size(174, 82);
 			this.groupBox1.TabIndex = 16;
 			this.groupBox1.Text = "Calculate on balances aged";
 			// 
@@ -110,25 +110,25 @@ namespace OpenDental {
 			// 
 			this.radio30.Location = new System.Drawing.Point(13, 17);
 			this.radio30.Name = "radio30";
-			this.radio30.Size = new System.Drawing.Size(104, 17);
+			this.radio30.Size = new System.Drawing.Size(146, 21);
 			this.radio30.TabIndex = 1;
 			this.radio30.Text = "Over 30 Days";
 			// 
 			// radio90
 			// 
 			this.radio90.Checked = true;
-			this.radio90.Location = new System.Drawing.Point(13, 56);
+			this.radio90.Location = new System.Drawing.Point(13, 57);
 			this.radio90.Name = "radio90";
-			this.radio90.Size = new System.Drawing.Size(104, 17);
+			this.radio90.Size = new System.Drawing.Size(146, 21);
 			this.radio90.TabIndex = 3;
 			this.radio90.TabStop = true;
 			this.radio90.Text = "Over 90 Days";
 			// 
 			// radio60
 			// 
-			this.radio60.Location = new System.Drawing.Point(13, 36);
+			this.radio60.Location = new System.Drawing.Point(13, 37);
 			this.radio60.Name = "radio60";
-			this.radio60.Size = new System.Drawing.Size(104, 17);
+			this.radio60.Size = new System.Drawing.Size(146, 21);
 			this.radio60.TabIndex = 2;
 			this.radio60.Text = "Over 60 Days";
 			// 
@@ -164,18 +164,18 @@ namespace OpenDental {
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(194, 46);
+			this.label3.Location = new System.Drawing.Point(189, 46);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(12, 14);
+			this.label3.Size = new System.Drawing.Size(17, 14);
 			this.label3.TabIndex = 23;
 			this.label3.Text = "%";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(212, 46);
+			this.label4.Location = new System.Drawing.Point(207, 46);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(102, 14);
+			this.label4.Size = new System.Drawing.Size(110, 15);
 			this.label4.TabIndex = 24;
 			this.label4.Text = "(For Example: 18)";
 			// 
@@ -205,7 +205,7 @@ namespace OpenDental {
 			// 
 			// butUndo
 			// 
-			this.butUndo.Location = new System.Drawing.Point(75, 45);
+			this.butUndo.Location = new System.Drawing.Point(88, 45);
 			this.butUndo.Name = "butUndo";
 			this.butUndo.Size = new System.Drawing.Size(78, 25);
 			this.butUndo.TabIndex = 30;
@@ -219,13 +219,13 @@ namespace OpenDental {
 			this.groupBox2.Controls.Add(this.butUndo);
 			this.groupBox2.Location = new System.Drawing.Point(20, 323);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(161, 79);
+			this.groupBox2.Size = new System.Drawing.Size(174, 79);
 			this.groupBox2.TabIndex = 31;
 			this.groupBox2.Text = "Undo billing/finance charges";
 			// 
 			// textDateUndo
 			// 
-			this.textDateUndo.Location = new System.Drawing.Point(75, 19);
+			this.textDateUndo.Location = new System.Drawing.Point(88, 19);
 			this.textDateUndo.Name = "textDateUndo";
 			this.textDateUndo.ReadOnly = true;
 			this.textDateUndo.Size = new System.Drawing.Size(78, 20);
@@ -233,9 +233,9 @@ namespace OpenDental {
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(4, 22);
+			this.label6.Location = new System.Drawing.Point(2, 22);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(69, 14);
+			this.label6.Size = new System.Drawing.Size(84, 14);
 			this.label6.TabIndex = 32;
 			this.label6.Text = "Date to undo";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -282,9 +282,9 @@ namespace OpenDental {
 			// 
 			// labelCompound
 			// 
-			this.labelCompound.Location = new System.Drawing.Point(28, 124);
+			this.labelCompound.Location = new System.Drawing.Point(28, 123);
 			this.labelCompound.Name = "labelCompound";
-			this.labelCompound.Size = new System.Drawing.Size(105, 14);
+			this.labelCompound.Size = new System.Drawing.Size(105, 16);
 			this.labelCompound.TabIndex = 39;
 			this.labelCompound.Text = "Compound interest";
 			this.labelCompound.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -340,18 +340,18 @@ namespace OpenDental {
 			// 
 			// labelOver
 			// 
-			this.labelOver.Location = new System.Drawing.Point(28, 99);
+			this.labelOver.Location = new System.Drawing.Point(28, 98);
 			this.labelOver.Name = "labelOver";
-			this.labelOver.Size = new System.Drawing.Size(95, 14);
+			this.labelOver.Size = new System.Drawing.Size(95, 16);
 			this.labelOver.TabIndex = 33;
 			this.labelOver.Text = "Only if over";
 			this.labelOver.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelAtLeast
 			// 
-			this.labelAtLeast.Location = new System.Drawing.Point(28, 73);
+			this.labelAtLeast.Location = new System.Drawing.Point(28, 72);
 			this.labelAtLeast.Name = "labelAtLeast";
-			this.labelAtLeast.Size = new System.Drawing.Size(95, 14);
+			this.labelAtLeast.Size = new System.Drawing.Size(95, 16);
 			this.labelAtLeast.TabIndex = 34;
 			this.labelAtLeast.Text = "Charge at least";
 			this.labelAtLeast.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -367,11 +367,10 @@ namespace OpenDental {
 			// 
 			// radioFinanceCharge
 			// 
-			this.radioFinanceCharge.AutoSize = true;
 			this.radioFinanceCharge.Checked = true;
 			this.radioFinanceCharge.Location = new System.Drawing.Point(11, 44);
 			this.radioFinanceCharge.Name = "radioFinanceCharge";
-			this.radioFinanceCharge.Size = new System.Drawing.Size(100, 17);
+			this.radioFinanceCharge.Size = new System.Drawing.Size(100, 18);
 			this.radioFinanceCharge.TabIndex = 0;
 			this.radioFinanceCharge.TabStop = true;
 			this.radioFinanceCharge.Text = "Finance Charge";
@@ -391,9 +390,9 @@ namespace OpenDental {
 			// 
 			// radioBillingCharge
 			// 
-			this.radioBillingCharge.Location = new System.Drawing.Point(11, 12);
+			this.radioBillingCharge.Location = new System.Drawing.Point(11, 10);
 			this.radioBillingCharge.Name = "radioBillingCharge";
-			this.radioBillingCharge.Size = new System.Drawing.Size(95, 17);
+			this.radioBillingCharge.Size = new System.Drawing.Size(95, 21);
 			this.radioBillingCharge.TabIndex = 1;
 			this.radioBillingCharge.TabStop = true;
 			this.radioBillingCharge.Text = "Billing Charge";
@@ -422,10 +421,10 @@ namespace OpenDental {
 			this.groupBoxFilters.Controls.Add(this.checkExcludeInsPending);
 			this.groupBoxFilters.Controls.Add(this.checkExcludeInactive);
 			this.groupBoxFilters.Controls.Add(this.checkBadAddress);
-			this.groupBoxFilters.Location = new System.Drawing.Point(187, 226);
+			this.groupBoxFilters.Location = new System.Drawing.Point(200, 226);
 			this.groupBoxFilters.Name = "groupBoxFilters";
 			this.groupBoxFilters.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.groupBoxFilters.Size = new System.Drawing.Size(375, 189);
+			this.groupBoxFilters.Size = new System.Drawing.Size(362, 189);
 			this.groupBoxFilters.TabIndex = 40;
 			this.groupBoxFilters.Text = "Billing/Finance Filters";
 			// 
@@ -509,31 +508,31 @@ namespace OpenDental {
 			this.groupBoxAssignCharge.Controls.Add(this.radioPatPriProv);
 			this.groupBoxAssignCharge.Location = new System.Drawing.Point(20, 421);
 			this.groupBoxAssignCharge.Name = "groupBoxAssignCharge";
-			this.groupBoxAssignCharge.Size = new System.Drawing.Size(301, 76);
+			this.groupBoxAssignCharge.Size = new System.Drawing.Size(320, 76);
 			this.groupBoxAssignCharge.TabIndex = 49;
 			this.groupBoxAssignCharge.Text = "Assign charges to:";
 			// 
 			// comboSpecificProv
 			// 
-			this.comboSpecificProv.Location = new System.Drawing.Point(121, 45);
+			this.comboSpecificProv.Location = new System.Drawing.Point(140, 45);
 			this.comboSpecificProv.Name = "comboSpecificProv";
 			this.comboSpecificProv.Size = new System.Drawing.Size(174, 21);
 			this.comboSpecificProv.TabIndex = 4;
 			// 
 			// radioSpecificProv
 			// 
-			this.radioSpecificProv.Location = new System.Drawing.Point(13, 47);
+			this.radioSpecificProv.Location = new System.Drawing.Point(13, 45);
 			this.radioSpecificProv.Name = "radioSpecificProv";
-			this.radioSpecificProv.Size = new System.Drawing.Size(105, 17);
+			this.radioSpecificProv.Size = new System.Drawing.Size(126, 21);
 			this.radioSpecificProv.TabIndex = 1;
 			this.radioSpecificProv.Text = "Specific Provider";
 			this.radioSpecificProv.UseVisualStyleBackColor = true;
 			// 
 			// radioPatPriProv
 			// 
-			this.radioPatPriProv.Location = new System.Drawing.Point(13, 24);
+			this.radioPatPriProv.Location = new System.Drawing.Point(13, 23);
 			this.radioPatPriProv.Name = "radioPatPriProv";
-			this.radioPatPriProv.Size = new System.Drawing.Size(144, 17);
+			this.radioPatPriProv.Size = new System.Drawing.Size(200, 21);
 			this.radioPatPriProv.TabIndex = 0;
 			this.radioPatPriProv.Text = "Patient\'s Primary Provider";
 			this.radioPatPriProv.UseVisualStyleBackColor = true;

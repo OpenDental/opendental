@@ -5334,7 +5334,7 @@ namespace OpenDentBusiness{
 				Appointments.SetAptStatusComplete(apt,sub1.PlanNum,sub2.PlanNum);//Sets the invalid signal
 				TryAddPerVisitProcCodesToAppt(apt,apptStatusOld);
 				Procedures.SetCompleteInAppt(apt,PlanList,PatPlanList,pat,SubList,removeCompletedProcs);//loops through each proc
-				if(apt.AptStatus==ApptStatus.Complete) { // seperate log entry for editing completed appointments.
+				if(apptStatusOld==ApptStatus.Complete) { // seperate log entry for editing completed appointments.
 					SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteEdit,apt.PatNum,
 						apt.ProcDescript+", "+ apt.AptDateTime.ToString()+", Set Complete",
 						apt.AptNum,datePrevious);//Log showing the appt. is set complete
