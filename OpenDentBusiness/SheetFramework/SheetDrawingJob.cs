@@ -773,7 +773,14 @@ namespace OpenDentBusiness {
 					//FormP.NumberMultiplication=1;
 					//FormP.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
 					//FormP.TickMS=1000;
-					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(SheetUtil.GetImagePath(),field.FieldName);
+					string folder=SheetUtil.GetImagePath();
+					string fileName=field.FieldName;
+					if(!string.IsNullOrWhiteSpace(filePathAndName) && field.FieldType==SheetFieldType.PatImage) {
+						//Extract the file name and path out of the filePathAndName variable that was set above.
+						fileName=Path.GetFileName(filePathAndName);
+						folder=Path.GetDirectoryName(filePathAndName);
+					}
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(folder,fileName);
 					//if(FormP.ShowDialog()==DialogResult.Cancel) {
 					//	state.DoCancel=true;
 					//	return;

@@ -758,5 +758,21 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}
+		private static void To23_2_28() {
+			string command="SELECT ProgramNum FROM program WHERE ProgName='CareCredit'";
+			long programNum=Db.GetLong(command);
+			if(programNum>0) {
+				string propertyDesc="CareCreditPartnerCode";
+				command=$"SELECT * FROM programproperty where ProgramNum={POut.Long(programNum)} AND PropertyDesc='{POut.String(propertyDesc)}'";
+				DataTable table=Db.GetTable(command);
+				if(table.Rows.Count==0) {
+					command=$"INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue) VALUES(" +
+						$"{POut.Long(programNum)}, " +
+						$"'{POut.String(propertyDesc)}', " +
+						$"'{POut.Long(1065)}')"; //1065 is the hard coded value we're replacing in the CareCredit bridges solution
+					Db.NonQ(command);
+				}
+			}
+		}
 	}
 }

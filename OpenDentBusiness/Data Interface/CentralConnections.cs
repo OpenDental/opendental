@@ -95,6 +95,8 @@ namespace OpenDentBusiness{
 			}
 			string command= "DELETE FROM centralconnection WHERE CentralConnectionNum = "+POut.Long(centralConnectionNum);
 			Db.NonQ(command);
+			command= "DELETE FROM conngroupattach WHERE CentralConnectionNum = "+POut.Long(centralConnectionNum);
+			Db.NonQ(command);
 		}
 		#endregion
 
