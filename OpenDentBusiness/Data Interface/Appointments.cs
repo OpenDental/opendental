@@ -155,9 +155,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static List<AppointmentWithServerDT> GetAppointmentsForApi(int limit,int offset,DateTime dateTStart,DateTime dateTEnd,DateTime dateTStamp,long clinicNum,long patNum,int aptStatus){
+		public static List<AppointmentWithServerDT> GetAppointmentsForApi(int limit,int offset,DateTime dateTStart,DateTime dateTEnd,DateTime dateTStamp,long clinicNum,long patNum,int aptStatus,long operatoryNum){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStart,dateTEnd,dateTStamp,clinicNum,patNum,aptStatus);
+				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStart,dateTEnd,dateTStamp,clinicNum,patNum,aptStatus,operatoryNum);
 			}
 			string command="SELECT * FROM appointment "
 				+"WHERE AptDateTime >= "+POut.DateT(dateTStart)+" "
@@ -171,6 +171,9 @@ namespace OpenDentBusiness{
 			}
 			if(aptStatus>-1) {
 				command+="AND AptStatus="+POut.Int(aptStatus)+" ";
+			}
+			if(operatoryNum>-1) {
+				command+="AND Op="+POut.Long(operatoryNum)+" ";
 			}
 			command+="ORDER BY AptDateTime,AptNum "//same fixed order each time
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
@@ -5343,7 +5346,7 @@ namespace OpenDentBusiness{
 				Appointments.SetAptStatusComplete(appointment,insSub1.PlanNum,insSub2.PlanNum);//Sets the invalid signal
 				TryAddPerVisitProcCodesToAppt(appointment,apptStatusOld);
 				Procedures.SetCompleteInAppt(appointment,listInsPlans,listPatPlans,patient,listInsSubs,removeCompletedProcs);//loops through each proc
-				if(appointment.AptStatus==ApptStatus.Complete) { // seperate log entry for editing completed appointments.
+				if(apptStatusOld==ApptStatus.Complete) { // seperate log entry for editing completed appointments.
 					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCompleteEdit,appointment.PatNum,
 						appointment.ProcDescript+", "+ appointment.AptDateTime.ToString()+", Set Complete",
 						appointment.AptNum,datePrevious);//Log showing the appt. is set complete

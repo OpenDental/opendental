@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using OpenDentBusiness;
 using WpfControls.UI;
 
@@ -53,34 +54,17 @@ End of Checklist================================================================
 */
 
 	public partial class FrmHelpBrowser:FrmODBase {
-		private static FrmHelpBrowser _frmHelpBrowser;
 		private static string _stableVersion;
-		private FrmFaqPicker _frmFaqPicker;
-		private FrmFaqEdit _frmFaqEdit;
 
-		///<summary>Singleton pattern. If enableUI is set to false, then it just shows them the Help Feature page and doesn't let them click.</summary>
-		public static FrmHelpBrowser GetFormHelpBrowser(bool enableUI){
-			if(_frmHelpBrowser==null) {// || _frmHelpBrowser.IsDisposed){
-				_frmHelpBrowser=new FrmHelpBrowser();
-			}
+		///<summary>If enableUI is set to false, then it just shows them the Help Feature page and doesn't let them click.</summary>
+		public void EnableUI(bool enableUI) {
+			//only intended to run once.
 			if(!enableUI) {
 				//Locks web browser UI on the form.
-				_frmHelpBrowser.webBrowserManual.IsEnabled=false;
-				_frmHelpBrowser.webBrowserFAQ.IsEnabled=false;
-				_frmHelpBrowser.toolBarMain.IsEnabled=false;
+				webBrowserManual.IsEnabled=false;
+				webBrowserFAQ.IsEnabled=false;
+				toolBarMain.IsEnabled=false;
 			}
-			return _frmHelpBrowser;
-		}
-
-		///<summary>Temp workaround for dpi issue. See FormHelpBrowser_CloseXClicked().</summary>
-		public static void InitializeIfNull(){
-			if(_frmHelpBrowser!=null) {// && !_frmHelpBrowser.IsDisposed){
-				return;
-			}
-			//Since this is a temporary workaround for dpi issues, we don't care about locking the web browser UI. The form gets closed immediately.
-			FrmHelpBrowser frmHelpBrowser=GetFormHelpBrowser(enableUI:true);
-			frmHelpBrowser.Show();//Needed for the Load() event only.
-			//frmHelpBrowser.Hide();//Immediately hide the form from user.
 		}
 
 		///<summary>Gets the latest stable version in the format of "XXX" (205,194,etc).</summary>
@@ -93,10 +77,9 @@ End of Checklist================================================================
 
 		public FrmHelpBrowser() {
 			InitializeComponent();
-			//webBrowserManual.ScriptErrorsSuppressed=true;
-			//webBrowserFAQ.ScriptErrorsSuppressed=true;
+			webBrowserManual.Navigated+=WebBrowserManual_Navigated;
+			webBrowserFAQ.Navigated+=WebBrowserFAQ_Navigated;
 			Load+=FrmHelpBrowser_Load;
-			FormClosing+=FrmHelpBrowser_CloseXClicked;
 		}
 
 		private void FrmHelpBrowser_Load(object sender,EventArgs e) {
@@ -128,26 +111,26 @@ End of Checklist================================================================
 		}
 
 		public void GoToPage(string manualPageUrl) {
-			//webBrowserManual.Navigate(manualPageUrl);
+			webBrowserManual.Navigate(manualPageUrl);
 		}
 
 		///<summary>When the web browser navigates we attempt to determine if it has navigated to a manual page. If it has,
 		///we parse it and send a new request for the associated faqs. If it navigates to a page not recognized, we hide
 		///the faq browser pannel.</summary>
-		//private void WebBrowserManual_Navigated(object sender,WebBrowserNavigatedEventArgs e) {
-		//	ShowAndLoadFaq(e.Url.ToString());
-		//}
+		private void WebBrowserManual_Navigated(object sender,NavigationEventArgs e) {
+			ShowAndLoadFaq(e.Uri.ToString());
+		}
 
-		//private void WebBrowserFAQ_Navigated(object sender,WebBrowserNavigatedEventArgs e) {
-		//	//This event gets fired for every iframe in a page to load.  
-		//	//We only care about the webBrowserFAQ.Url because e.Url will be iframe urls in addition to the original one.
-		//	if(webBrowserFAQ.Url.Query.Contains("results=empty")) {
-		//		ToggleFaqPanel(true);
-		//	}
-		//	else {
-		//		ToggleFaqPanel(false);
-		//	}
-		//}
+		private void WebBrowserFAQ_Navigated(object sender,NavigationEventArgs e) {
+			//This event gets fired for every iframe in a page to load.  
+			//We only care about the webBrowserFAQ.Url because e.Url will be iframe urls in addition to the original one.
+			if(webBrowserFAQ.GetUri().Query.Contains("results=empty")) {
+				ToggleFaqPanel(true);
+			}
+			else {
+				ToggleFaqPanel(false);
+			}
+		}
 
 		///<summary>Either shows or hides the FAQ panel depending on the URL passed in.
 		///If the URL is a manual page, then the panel will navigate (load) the corresponding FAQ page.</summary>
@@ -157,16 +140,11 @@ End of Checklist================================================================
 				return;
 			}
 			ToggleFaqPanel(false);
-			//webBrowserFAQ.Navigate(ManualUrlToFaqUrl(url));
+			webBrowserFAQ.Navigate(ManualUrlToFaqUrl(url));
 		}
 
 		private void ToggleFaqPanel(bool hideFaqPanel) {
-			if(hideFaqPanel) {
-				//splitContainer.Panel2Collapsed=hideFaqPanel;
-			}
-			else {
-				//splitContainer.Panel2Collapsed=hideFaqPanel;
-			}
+			splitContainer.SetCollapsed(splitterPanel2,doCollapse:hideFaqPanel);
 		}
 
 		///<summary>A helper method that parses the manual page url into the associated faq page url. Should Jordan ever change
@@ -199,40 +177,17 @@ End of Checklist================================================================
 			return true;
 		}
 
-		private void ShowFormFaqEdit() {
-			_frmFaqEdit.Show();
-			//if(_frmFaqEdit.windowState==FormWindowState.Minimized) {
-			//	_frmFaqEdit.WindowState=FormWindowState.Normal;
-			//}
-			//_frmFaqEdit.BringToFront();
-		}
-
-		private void ShowFormFaqPicker() {
-			_frmFaqPicker.Show();
-			//if(_frmFaqPicker.WindowState==FormWindowState.Minimized) {
-			//	_frmFaqPicker.WindowState=FormWindowState.Normal;
-			//}
-			//_frmFaqPicker.BringToFront();
-		}
-
 		private void ManageFAQs_Click(object sender,EventArgs e) {
-			//if(_frmFaqEdit!=null && !_frmFaqEdit.IsDisposed) {//FormFaqEdit currently opened.
-			//	MsgBox.Show(this,"Cannot open FAQ Picker window when editing a FAQ.");
-			//	ShowFormFaqEdit();
-			//	return;
-			//}
 			string url="";
 			string programVersion="";
 			if(webBrowserManual!=null) {
-				//url=GetPageTopicFromUrl(webBrowserManual.Url.ToString());
+				url=GetPageTopicFromUrl(webBrowserManual.GetUri().ToString());
 			}
 			if(!string.IsNullOrWhiteSpace(url)) {
-				//programVersion=FormatVersionNumber(webBrowserManual.Url.ToString());
+				programVersion=FormatVersionNumber(webBrowserManual.GetUri().ToString());
 			}
-			if(_frmFaqPicker==null) {// || _frmFaqPicker.IsDisposed) {
-				_frmFaqPicker=new FrmFaqPicker(url,programVersion);
-			}
-			ShowFormFaqPicker();
+			FrmFaqPicker frmFaqPicker=new FrmFaqPicker(url,programVersion);
+			frmFaqPicker.ShowDialog();
 		}
 
 		///<summary>
@@ -267,55 +222,36 @@ End of Checklist================================================================
 
 		///<summary>Allows the user to go back in navigation of web pages if possible.</summary>
 		private void Back_Click(object sender,EventArgs e) {
-			//if(!webBrowserManual.CanGoBack) {//If nothing to navigate back to in history, do nothing
-				//return;
-			//}
+			if(!webBrowserManual.CanGoBack()) {//If nothing to navigate back to in history, do nothing
+				return;
+			}
 			Cursor=Cursors.Wait;//Is set back to default cursor after the document loads inside the browser.
 			//Application.DoEvents();//To show cursor change.
-			//webBrowserManual.GoBack();
-			//ShowAndLoadFaq(webBrowserManual.Url.ToString());
+			webBrowserManual.GoBack();
+			ShowAndLoadFaq(webBrowserManual.GetUri().ToString());
 			Cursor=Cursors.Arrow;//Default didn't exist
 		}
 
 		///<summary>Allows the user to go forward in navigation of web pages if possible.</summary>
 		private void Forward_Click(object sender,EventArgs e) {
-			//if(!webBrowserManual.CanGoForward) {//If nothing to navigate forward to in history, do nothing
-				//return;
-			//}
+			if(!webBrowserManual.CanGoForward()) {//If nothing to navigate forward to in history, do nothing
+				return;
+			}
 			Cursor=Cursors.Wait;//Is set back to default cursor after the document loads inside the browser.
 			//Application.DoEvents();//To show cursor change.
-			//webBrowserManual.GoForward();
-		//	ShowAndLoadFaq(webBrowserManual.Url.ToString());
+			webBrowserManual.GoForward();
+			ShowAndLoadFaq(webBrowserManual.GetUri().ToString());
 			Cursor=Cursors.Arrow;//Default didn't exist
 		}
 
-		public void FrmHelpBrowser_CloseXClicked(object sender,CancelEventArgs e) {
-			//Hide();
-			e.Cancel=true;
-			//Form stays open and not visible.  
-			//FormSheetDefEdit does not support high dpi, including all child forms.
-			//This causes FormHelpBrowser to malfunction if initialized from within FormSheetDefEdit or any child.
-			//So, once they get into FormSheetDefEdit, they MUST reuse the existing FormHelpBrowser.
-		}
-
 		private void AddFAQ_Click(object sender,EventArgs e) {
-			if(_frmFaqPicker!=null) {// && !_frmFaqPicker.IsDisposed) {//FormFaqPicker currently opened.
-				MsgBox.Show(this,"Cannot add FAQ from this window when FAQ Picker window is opened.");
-				ShowFormFaqPicker();
-				return;
-			}
-			if(_frmFaqEdit==null) {// || _frmFaqEdit.IsDisposed) {
-				_frmFaqEdit=new FrmFaqEdit();
-				_frmFaqEdit.FaqCur=new Faq();
-				_frmFaqEdit.FaqCur.IsNew=true;
-				_frmFaqEdit.IsQuickAdd=true;
-				//_frmFaqEdit.ManualPage=GetPageTopicFromUrl(webBrowserManual.Url.ToString());
-				//_frmFaqEdit.Version=FormatVersionNumber(webBrowserManual.Url.ToString());
-			}
-			else {
-				MsgBox.Show(this,"Another FAQ is currently being edited.");
-			}
-			ShowFormFaqEdit();
+			FrmFaqEdit frmFaqEdit=new FrmFaqEdit();
+			frmFaqEdit.FaqCur=new Faq();
+			frmFaqEdit.FaqCur.IsNew=true;
+			frmFaqEdit.IsQuickAdd=true;
+			frmFaqEdit.ManualPage=GetPageTopicFromUrl(webBrowserManual.GetUri().ToString());
+			frmFaqEdit.Version=FormatVersionNumber(webBrowserManual.GetUri().ToString());
+			frmFaqEdit.ShowDialog();
 		}
 	}
 }

@@ -409,6 +409,7 @@
     <Compile Include="Bridges\FormIap.designer.cs">
       <DependentUpon>FormIap.cs</DependentUpon>
     </Compile>
+    <Compile Include="Bridges\SOTACloud.cs" />
     <Compile Include="Bridges\SteriSimple.cs" />
     <Compile Include="Bridges\ThreeShape.cs" />
     <Compile Include="Bridges\Benco.cs" />

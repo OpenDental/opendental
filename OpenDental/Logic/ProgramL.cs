@@ -432,6 +432,10 @@ namespace OpenDental{
 				Sopro.SendData(program,patient);
 				return;
 			}
+			else if(program.ProgName==ProgramName.SOTACloud.ToString()) {
+				SOTACloud.SendData(program,patient);
+				return;
+			}
 			else if(program.ProgName==ProgramName.SteriSimple.ToString()) {
 				SteriSimple.SendData(program,patient);
 				return;

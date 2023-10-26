@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +27,11 @@ namespace OpenDentBusiness {
 		///Set serverMapPath to the root directory of the OpenDentalServerConfig.xml.  Typically Server.MapPath(".") from a web service.
 		///Optional parameter because it is not necessary for Unit Tests (mock server).</summary>
 		public static string ProcessDto(string dtoString,string serverMapPath="") {
+			DateTime dateTimeReceived = DateTime.Now;
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			string responseString="";
+			DataTransferObject dto=null;
 			try {
 				#region Initialize
 				if(!_isMiddleTierInitialized) {
@@ -113,10 +119,11 @@ namespace OpenDentBusiness {
 					throw new ODException($"Version mismatch.  Middle Tier Server: '{_strOpenDentBusinessVersion}'  Database: '{_strProgramVersion}'");
 				}
 				#endregion
-				DataTransferObject dto=DataTransferObject.Deserialize(dtoString);
+				dto=DataTransferObject.Deserialize(dtoString);
 				DtoInformation dtoInformation=new DtoInformation(dto);
 				if(dtoInformation.FullNameComponents.Length==3 && dtoInformation.FullNameComponents[2].ToLower()=="hashpassword") {
-					return dtoInformation.GetHashPassword();
+					responseString=dtoInformation.GetHashPassword();
+					return responseString;
 				}
 				//Set Security.CurUser so that queries can be run against the db as if it were this user.
 				Security.CurUser=Userods.CheckUserAndPassword(dto.Credentials.Username,dto.Credentials.Password
@@ -129,49 +136,57 @@ namespace OpenDentBusiness {
 				#region DtoGetTable
 				if(type == typeof(DtoGetTable)) {
 					DataTable dt=(DataTable)dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
-					return XmlConverter.TableToXml(dt);
+					responseString=XmlConverter.TableToXml(dt);
+					return responseString;
 				}
 				#endregion
 				#region DtoGetTableLow
 				else if(type == typeof(DtoGetTableLow)) {
 					DataTable dt=Reports.GetTable((string)dtoInformation.ParamObjs[0]);
-					return XmlConverter.TableToXml(dt);
+					responseString=XmlConverter.TableToXml(dt);
+					return responseString;
 				}
 				#endregion
 				#region DtoGetDS
 				else if(type == typeof(DtoGetDS)) {
 					DataSet ds=(DataSet)dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
-					return XmlConverter.DsToXml(ds);
+					responseString=XmlConverter.DsToXml(ds);
+					return responseString;
 				}
 				#endregion
 				#region DtoGetSerializableDictionary
 				else if(type == typeof(DtoGetSerializableDictionary)) {
 					Object objResult=dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
 					Type returnType=dtoInformation.MethodInfo.ReturnType;
-					return XmlConverterSerializer.Serialize(returnType,objResult);
+					responseString=XmlConverterSerializer.Serialize(returnType,objResult);
+					return responseString;
 				}
 				#endregion
 				#region DtoGetLong
 				else if(type == typeof(DtoGetLong)) {
 					long longResult=(long)dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
-					return longResult.ToString();
+					responseString=longResult.ToString();
+					return responseString;
 				}
 				#endregion
 				#region DtoGetInt
 				else if(type == typeof(DtoGetInt)) {
 					int intResult=(int)dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
-					return intResult.ToString();
+					responseString=intResult.ToString();
+					return responseString;
 				}
 				#endregion
 				#region DtoGetDouble
 				else if(type == typeof(DtoGetDouble)) {
 					double doubleResult=(double)dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
-					return doubleResult.ToString();
+					responseString=doubleResult.ToString();
+					return responseString;
 				}
 				#endregion
 				#region DtoGetVoid
 				else if(type == typeof(DtoGetVoid)) {
 					dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
+					responseString="0";
 					return "0";
 				}
 				#endregion
@@ -189,19 +204,22 @@ namespace OpenDentBusiness {
 						objResult=new DtoObject(objResult,objResult?.GetType()??returnType);
 						returnType=typeof(DtoObject);
 					}
-					return XmlConverterSerializer.Serialize(returnType,objResult);
+					responseString=XmlConverterSerializer.Serialize(returnType,objResult);
+					return responseString;
 				}
 				#endregion
 				#region DtoGetString
 				else if(type == typeof(DtoGetString)) {
 					string strResult=(string)dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
-					return XmlConverter.XmlEscape(strResult);
+					responseString=XmlConverter.XmlEscape(strResult);
+					return responseString;
 				}
 				#endregion
 				#region DtoGetBool
 				else if(type == typeof(DtoGetBool)) {
 					bool boolResult=(bool)dtoInformation.MethodInfo.Invoke(null,dtoInformation.ParamObjs);
-					return boolResult.ToString();
+					responseString=boolResult.ToString();
+					return responseString;
 				}
 				#endregion
 				else {
@@ -218,6 +236,12 @@ namespace OpenDentBusiness {
 				}
 				return exception.Serialize();
 			}
+			finally {
+				stopwatch.Stop();
+				if( Logger.DoVerboseLogging() ) {
+					VerboseLog( stopwatch, dtoString, dto, responseString, dateTimeReceived );
+				}
+			}
 		}
 
 		private static DtoException GetDtoException(Exception e) {
@@ -231,6 +255,46 @@ namespace OpenDentBusiness {
 			}
 			dtoException.Message=e.Message;
 			return dtoException;
+		}
+
+		private static void VerboseLog(Stopwatch stopwatch, string dtoString, DataTransferObject dto, string responseString, DateTime dateTimeReceived ) {
+			long bytesReceived=-1;
+			long bytesSent=-1;
+			string clientIP="[INVALID]";
+			try {
+				bytesReceived=Encoding.UTF8.GetByteCount(dtoString);
+			}
+			catch(Exception e) {
+				e.DoNothing();
+			}
+			try {
+				bytesSent=Encoding.UTF8.GetByteCount(responseString);
+			}
+			catch(Exception e) {
+				e.DoNothing();
+			}
+			try {
+				clientIP=System.Web.HttpContext.Current.Request.UserHostAddress;
+			}
+			catch(Exception e) {
+				e.DoNothing();
+			}
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.AppendFormat("Time Received:{0,15:N0},", dateTimeReceived.ToLongTimeString());
+			stringBuilder.AppendFormat("\tMS to process:{0,10:N0},", stopwatch.ElapsedMilliseconds);
+			stringBuilder.AppendFormat("\tBytes Received:{0,10:N0} {1,-10}",bytesReceived, $"({MiscUtils.DisplayBytes(bytesReceived)})");
+			//stringBuilder.AppendFormat(" {0,10},", $"({MiscUtils.DisplayBytes(bytesReceived)})");
+			stringBuilder.AppendFormat("\tBytes Sent:{0,10:N0} {1,-10}", bytesSent, $"({MiscUtils.DisplayBytes(bytesSent)})");
+			//stringBuilder.AppendFormat("\tSize Sent:{0,10},", MiscUtils.DisplayBytes(bytesSent), );
+			stringBuilder.AppendFormat("\tClient IP:{0,40},", clientIP);
+			if(dto!=null) {
+				stringBuilder.AppendFormat("\tUser:{0,10},", dto.Credentials.Username);
+				stringBuilder.AppendFormat("\tComputer Name:{0,10},", dto.ComputerName);
+				stringBuilder.AppendFormat("\tMethod:{0},", dto.MethodName);
+			}
+			if(Logger.HasRoomToWrite()) {
+				Logger.LogVerbose(stringBuilder.ToString(), "Verbose");
+			}
 		}
 
 		///<summary>Contains all information about a recieved DTO.</summary>

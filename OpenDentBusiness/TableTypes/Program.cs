@@ -162,6 +162,7 @@ namespace OpenDentBusiness{
 		Sirona,
 		SMARTDent,
 		Sopro,
+		SOTACloud,
 		SteriSimple,
 		ThreeShape,
 		TigerView,

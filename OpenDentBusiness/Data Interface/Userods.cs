@@ -515,7 +515,7 @@ namespace OpenDentBusiness {
 			return null;
 		}
 
-		///<summary>Will throw an exception if it fails for any reason.  This will directly access the config file on the disk, read the values, and set 
+		///<summary>Only used from Middle Tier. Will throw an exception if it fails for any reason.  This will directly access the config file on the disk, read the values, and set 
 		///the DataConnection to the new database.  If the web service attmepts to access the config file, and the config file xml node 
 		///'ApplicationName' is missing or blank, it will be appended to the xml file.  If the 'ApplicationName' node
 		///is set and the Application Virtual Path for the web service is not the same as the node value, throws an exception, which keeps the IIS service
@@ -537,6 +537,29 @@ namespace OpenDentBusiness {
 			XPathNavigator xPathNavigatorConn=xPathNavigator.SelectSingleNode("//DatabaseConnection");//[Database='"+database+"']");
 			if(xPathNavigatorConn==null) {
 				throw new Exception(configFilePath+" does not contain a valid database entry.");//database+" is not an allowed database.");
+			}
+			XPathNavigator xPathNavigatorLogging=xPathNavigatorConn.SelectSingleNode("VerboseLogging");
+			bool doLogVerbosely=false;
+			try {
+				doLogVerbosely = xPathNavigatorLogging.ValueAsBoolean;
+			}
+			catch { } // Do nothing, Verbose Logging just won't activate.
+			Logger.DoVerboseLogging = () => doLogVerbosely;
+			if( doLogVerbosely ) {
+				XPathNavigator xPathNavigatorLogDirPath=xPathNavigatorConn.SelectSingleNode("LogDirectory");
+				string pathLogDir="";
+				if(xPathNavigatorLogDirPath!=null) {
+					pathLogDir=xPathNavigatorLogDirPath.Value.Trim();
+				}
+				bool isValidPath=false;
+				try {
+					isValidPath=Path.IsPathRooted(pathLogDir); // Check for drive letter and for invalid path characters
+				}
+				catch { } // Do nothing, will default to server's virtual directory.
+				Logger.LoggerDirOverride=ODFileUtils.CombinePaths(HostingEnvironment.ApplicationPhysicalPath, "Logging");
+				if( isValidPath ) {
+					Logger.LoggerDirOverride=pathLogDir;
+				}
 			}
 			#region Verify ApplicationName Config File Value
 			XPathNavigator xPathNavigatorConfigFileNode=xPathNavigatorConn.SelectSingleNode("ApplicationName");//usually /OpenDentalServer

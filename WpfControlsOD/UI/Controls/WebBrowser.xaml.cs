@@ -39,23 +39,53 @@ How to use the WebBrowser control:
 		#region Constructor
 		public WebBrowser(){
 			InitializeComponent();
+			webBrowser.Navigated+=WebBrowser_Navigated;
 		}
 		#endregion Constructor
 
 		#region Events
-		
+		[Category("OD")]
+		public event NavigatedEventHandler Navigated;
 		#endregion Events
 
 		#region Properties
-		
+
 		#endregion Properties
 
 		#region Methods - public
-		
+		public bool CanGoBack(){
+			return webBrowser.CanGoBack;
+		}
+
+		public bool CanGoForward(){
+			return webBrowser.CanGoForward;
+		}
+
+		public Uri GetUri(){
+			return webBrowser.Source;
+		}
+
+		public void GoBack(){
+			webBrowser.GoBack();
+		}
+
+		public void GoForward(){
+			webBrowser.GoForward();
+		}
+
+		public void Navigate(string url){
+			webBrowser.Navigate(url);
+		}
+
+		public void NavigateToString(string text){
+			webBrowser.NavigateToString(text);
+		}
 		#endregion Methods - public
 
 		#region Methods - private event handlers
-		
+		private void WebBrowser_Navigated(object sender,NavigationEventArgs e) {
+			Navigated?.Invoke(sender,e);
+		}
 		#endregion Methods - private event handlers
 
 		#region Methods - private

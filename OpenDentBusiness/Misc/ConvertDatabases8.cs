@@ -759,6 +759,23 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To23_2_28() {
+			string command="SELECT ProgramNum FROM program WHERE ProgName='CareCredit'";
+			long programNum=Db.GetLong(command);
+			if(programNum>0) {
+				string propertyDesc="CareCreditPartnerCode";
+				command=$"SELECT * FROM programproperty where ProgramNum={POut.Long(programNum)} AND PropertyDesc='{POut.String(propertyDesc)}'";
+				DataTable table=Db.GetTable(command);
+				if(table.Rows.Count==0) {
+					command=$"INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue) VALUES(" +
+						$"{POut.Long(programNum)}, " +
+						$"'{POut.String(propertyDesc)}', " +
+						$"'{POut.Long(1065)}')"; //1065 is the hard coded value we're replacing in the CareCredit bridges solution
+					Db.NonQ(command);
+				}
+			}
+		}
+
 		private static void To23_3_1() {
 			string command;
 			//F44596 - Frequency Limitations by Treatment Area
@@ -896,5 +913,51 @@ namespace OpenDentBusiness {
 			//End S47726-Pearl bridge
 			*/
 		}//End of 23_3_1() method
+
+		private static void To23_3_2() {
+			string command="SELECT ProgramNum FROM program WHERE ProgName='CareCredit'";
+			long programNum=Db.GetLong(command);
+			if(programNum>0) {
+				string propertyDesc="CareCreditPartnerCode";
+				command=$"SELECT * FROM programproperty where ProgramNum={POut.Long(programNum)} AND PropertyDesc='{POut.String(propertyDesc)}'";
+				DataTable table=Db.GetTable(command);
+				if(table.Rows.Count==0) {
+					command=$"INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue) VALUES(" +
+						$"{POut.Long(programNum)}, " +
+						$"'{POut.String(propertyDesc)}', " +
+						$"'{POut.Long(1065)}')"; //1065 is the hard coded value we're replacing in the CareCredit bridges solution
+					Db.NonQ(command);
+				}
+			}
+			//Insert SOTACloud bridge----------------------------------------------------------------- 
+			command="INSERT INTO program (ProgName,ProgDesc,Enabled,Path,CommandLine,Note"
+				 +") VALUES("
+				 +"'SOTACloud', "
+				 +"'SOTA Cloud from sotacloud.com', "
+				 +"'0', " 
+				 +"'', "//This is a API based bridge, so there is no local .exe.
+				 +"'', "//No cmd line args.
+				 +"'')";
+			programNum=Db.NonQ(command,true);
+			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue"
+				+") VALUES("
+				+"'"+POut.Long(programNum)+"', "
+				+"'"+POut.String("Enter 0 to use PatientNum, or 1 to use ChartNum")+"', "
+				+"'0')";
+			Db.NonQ(command); 
+			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue"
+				 +") VALUES("
+				 +"'"+POut.Long(programNum)+"', "
+				 +"'"+POut.String("Practice Instance Name")+"', "
+				 +"'')";
+			Db.NonQ(command);
+			command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
+				 +"VALUES ("
+				 +"'"+POut.Long(programNum)+"', "
+				 +"'2', "//ToolBarsAvail.ChartModule
+				 +"'SOTA Cloud')";
+			Db.NonQ(command);
+			//end SOTACloud bridge 
+		}//End of 23_3_2 method
 	}
 }

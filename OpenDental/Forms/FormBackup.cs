@@ -415,7 +415,7 @@ namespace OpenDental {
 		}
 
 		///<summary>A recursive fuction that copies any new or changed files or folders from one directory to another.  An exception will be thrown if either directory does not already exist.  fromPath is the fully qualified path of the directory to copy.  toPath is the fully qualified path of the destination directory.  Both paths must include a trailing \.  The max size should be calculated ahead of time.  It's passed in for use in progress bar.</summary>
-		private void CopyDirectoryIncremental(string fromPath,string toPath, double maxSize){
+		private void CopyDirectoryIncremental(string fromPath,string toPath, double maxSize,bool supress=false){
 			if(!Directory.Exists(fromPath)){
 				throw new Exception(fromPath+" does not exist.");
 			}
@@ -424,13 +424,31 @@ namespace OpenDental {
 			}
 			DirectoryInfo directoryInfo=new DirectoryInfo(fromPath);
 			DirectoryInfo[] directoryInfoArray=directoryInfo.GetDirectories();
+			bool containsMaxPathLimit=false;
+			if(!supress) {
+				for(int i=0;i<directoryInfoArray.Length;i++) {
+					if(directoryInfoArray[i].FullName.Length>100) {
+						containsMaxPathLimit=true;
+						break;
+					}
+				}
+				if(containsMaxPathLimit) {
+					if(!MsgBox.Show(MsgBoxButtons.YesNo, "Your AtoZ images folder contains file paths that exceed the length limit, this could result in data loss."
+							+" These will likely be skipped. Continue anyways?")) {
+						throw new ODException("User manually cancelled out of the Backup or Restore.");
+					}
+					else {
+						supress=true;
+					}
+				}
+			}
 			for(int i=0;i<directoryInfoArray.Length;i++){
 				string destinationPath=ODFileUtils.CombinePaths(toPath,directoryInfoArray[i].Name);
 				if(!Directory.Exists(destinationPath)){
 					Directory.CreateDirectory(destinationPath);
 				}
 				CopyDirectoryIncremental(ODFileUtils.CombinePaths(directoryInfoArray[i].FullName,""),
-					ODFileUtils.CombinePaths(destinationPath,""),maxSize);
+					ODFileUtils.CombinePaths(destinationPath,""),maxSize,supress);
 			}
 			FileInfo[] fileInfoArray=directoryInfo.GetFiles();//of fromPath
 			for(int i=0;i<fileInfoArray.Length;i++){
@@ -445,11 +463,21 @@ namespace OpenDental {
 							//normal read/write file before it may be overwritten.
 							File.SetAttributes(toFile,FileAttributes.Normal);//Remove read only from the destination file.
 						}
-						File.Copy(fromFile,toFile,true);
+						try {//Certain characters or filename lengths cause an error
+							File.Copy(fromFile,toFile,true);
+						}
+						catch {
+							continue;
+						}
 					}
 				}
 				else{//file doesn't exist, so just copy
-					File.Copy(fromFile,toFile);
+					try {
+						File.Copy(fromFile,toFile);
+					}
+					catch {
+						continue;
+					}
 				}
 				_amtCopied+=(double)fileInfoArray[i].Length/1048576.0; //Number of megabytes.
 				string progressBarMessage=Lan.g(this,"Copied ")+Math.Round(_amtCopied,2).ToString()+"MB "+Lan.g(this,"of ")+maxSize.ToString()+"MB";

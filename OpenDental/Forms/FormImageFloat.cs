@@ -74,8 +74,6 @@ namespace OpenDental {
 		///<summary>True when the menu is showing.</summary>
 		private bool _isButWindowPressed;
 		private bool _isDraggingMount=false;
-		///<summary></summary>
-		private bool _isExportable;
 		///<summary>True if the mouse is currently over the "Windows" button at the top.</summary>
 		private bool _isHotButWindow;
 		private bool _isLineExtending;
@@ -381,7 +379,7 @@ namespace OpenDental {
 			if(IsDocumentShowing()){
 				//In Web mode, the buttons do not appear when hovering over the PDF, so we need to enable the print toolbar button.
 				bool doShowPrint=panelMain.Visible;
-				toolBarButtonState=new ToolBarButtonState(print:doShowPrint, delete:true, info:true, sign:true, export:_isExportable, copy:panelMain.Visible, brightAndContrast:panelMain.Visible, zoom:panelMain.Visible, zoomOne:false, crop:panelMain.Visible, pan:panelMain.Visible, adj:false, size:panelMain.Visible, flip:panelMain.Visible, rotateL:panelMain.Visible, rotateR:panelMain.Visible, rotate180:panelMain.Visible,draw:panelMain.Visible, unmount:false);
+				toolBarButtonState=new ToolBarButtonState(print:doShowPrint, delete:true, info:true, sign:true, export:panelMain.Visible, copy:panelMain.Visible, brightAndContrast:panelMain.Visible, zoom:panelMain.Visible, zoomOne:false, crop:panelMain.Visible, pan:panelMain.Visible, adj:false, size:panelMain.Visible, flip:panelMain.Visible, rotateL:panelMain.Visible, rotateR:panelMain.Visible, rotate180:panelMain.Visible,draw:panelMain.Visible, unmount:false);
 				EventEnableToolBarButtons?.Invoke(this,toolBarButtonState);
 			}
 			else if(IsMountShowing()){
@@ -987,7 +985,6 @@ namespace OpenDental {
 					}
 				);
 				DownloadDocumentNoteFile(nodeTypeAndKey);
-				_isExportable=panelMain.Visible;
 				if(_bitmapRaw==null && _bitmapDicomRaw==null) {
 					panelMain.Visible=false;
 					if(ImageHelper.HasImageExtension(document.FileName)) {
@@ -4364,7 +4361,6 @@ namespace OpenDental {
 					if(ODBuild.IsWeb()) {
 						_cloudIframe.ShowIframe();
 						_cloudIframe.DisplayFile(_odWebView2FilePath);
-						_isExportable=true;
 						IsImageFloatLocked=true;
 						return;
 					}
@@ -4372,7 +4368,6 @@ namespace OpenDental {
 						await _odWebView2.Init();//Throws exception if Microsoft WebView2 Runtime is not installed so need to have in try-catch.
 					}
 					_odWebView2.ODWebView2Navigate(_odWebView2FilePath);
-					_isExportable=true;
 					IsImageFloatLocked=true;
 				}
 			}

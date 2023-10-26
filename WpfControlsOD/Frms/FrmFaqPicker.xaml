@@ -9,7 +9,7 @@
              Width="772" Height="362" 
              Text="FAQ Picker" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Grid x:Name="gridODMain" Width="655" Height="283" Margin="14,46,0,0" />
+        <ui:Grid x:Name="gridODMain" Width="655" Height="283" Margin="14,46,0,0" Title="FAQs" />
 		<ui:CheckBox x:Name="checkShowUnlinked" Width="268" Height="17" Margin="14,335,0,0" Text="Show Unlinked FAQs (Does not consider filters)" CheckAlign="MiddleLeft" />
 		<ui:Button x:Name="butAdd" Width="74" Height="23" Margin="684,173,0,0" Text="_Add" Click="ButAdd_Click" />
 		<ui:Button x:Name="butRefresh" Width="75" Height="23" Margin="684,44,0,0" Text="Refresh" Click="ButRefresh_Click" />

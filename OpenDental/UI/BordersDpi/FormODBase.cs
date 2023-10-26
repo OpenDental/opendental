@@ -1340,7 +1340,8 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 						Process.Start(manualPageURL);
 					}
 					else{
-						FrmHelpBrowser frmHelpBrowser=FrmHelpBrowser.GetFormHelpBrowser(enableUI:isKeyValid);//If false, then just the Help Feature page shows
+						FrmHelpBrowser frmHelpBrowser=new FrmHelpBrowser();
+						frmHelpBrowser.EnableUI(enableUI:isKeyValid);//If false, then just the Help Feature page shows
 						frmHelpBrowser.GoToPage(manualPageURL);
 						frmHelpBrowser.Show();
 						//UIHelper.ForceBringToFront(frmHelpBrowser);

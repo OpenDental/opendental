@@ -2,7 +2,7 @@
 <ConnectionSettings>
   <DatabaseConnection>
     <ComputerName>localhost</ComputerName>
-    <Database>development164</Database>
+    <Database>development233_0</Database>
     <User>root</User>
     <Password>
     </Password>
@@ -11,5 +11,7 @@
     </PasswordLow>
     <DatabaseType>MySql</DatabaseType>
     <ApplicationName>/OpenDentalServer</ApplicationName>
+    <VerboseLogging>true</VerboseLogging>
+    <LogDirectory></LogDirectory>
   </DatabaseConnection>
 </ConnectionSettings>

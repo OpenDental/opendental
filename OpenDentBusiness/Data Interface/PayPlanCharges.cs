@@ -45,6 +45,19 @@ namespace OpenDentBusiness{
 			return Crud.PayPlanChargeCrud.SelectMany(command);
 		}
 
+		///<summary>Gets all payplancharges for a specific payment plan for the API.</summary>
+		public static List<PayPlanCharge> GetPayPlanChargesForApi(int limit,int offset,long payPlanNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PayPlanCharge>>(MethodBase.GetCurrentMethod(),limit,offset,payPlanNum);
+			}
+			string command=
+				"SELECT * FROM payplancharge "
+				+"WHERE PayPlanNum="+POut.Long(payPlanNum)+" "
+				+"ORDER BY PayPlanChargeNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.PayPlanChargeCrud.SelectMany(command);
+		}
+
 		///<summary>Returns a list of payplancharges associated to the passed in payplannums.  Will return a blank list if none.</summary>
 		public static List<PayPlanCharge> GetForPayPlans(List<long> listPayPlanNums) {
 			if(listPayPlanNums==null || listPayPlanNums.Count<1) {

@@ -137,7 +137,6 @@ namespace OpenDental{
 			//what about parameters?
 			sheetDef.SheetFieldDefs=new List<SheetFieldDef>();
 			sheetDef.IsNew=true;
-			FrmHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDef);
 			formSheetDefEdit.ShowDialog();//It will be saved to db inside this form.
 			FillGrid2(sheetDef.SheetDefNum);
@@ -182,7 +181,6 @@ namespace OpenDental{
 		}
 
 		private void grid1_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			FrmHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(grid1.SelectedTag<SheetDef>());
 			formSheetDefEdit.IsInternal=true;
 			formSheetDefEdit.ShowDialog();
@@ -197,7 +195,6 @@ namespace OpenDental{
 		private void grid2_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			SheetDef sheetDef=grid2.SelectedTag<SheetDef>();
 			SheetDefs.GetFieldsAndParameters(sheetDef);
-			FrmHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDef);
 			formSheetDefEdit.ShowDialog();
 			FillGrid2(sheetDef.SheetDefNum);

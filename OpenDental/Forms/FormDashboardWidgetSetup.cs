@@ -201,7 +201,6 @@ namespace OpenDental {
 				sheetDef.IsNew=true;
 			}
 			SheetDefs.GetFieldsAndParameters(sheetDef);
-			FrmHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDef);
 			if(formSheetDefEdit.ShowDialog()==DialogResult.OK) {
 				DataValid.SetInvalid(InvalidType.Sheets);
@@ -216,7 +215,6 @@ namespace OpenDental {
 			if(gridInternal.SelectedGridRows.Count==0) {
 				return;
 			}
-			FrmHelpBrowser.InitializeIfNull();
 			SheetDef sheetDefSelected=gridInternal.SelectedTag<SheetDef>();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDefSelected);
 			formSheetDefEdit.IsInternal=true;

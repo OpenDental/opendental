@@ -641,6 +641,7 @@ namespace OpenDentBusiness {
 				public const string CareCreditIsMerchantNumberByProv="CareCreditIsMerchantNumberByProv";
 				public const string CareCreditMerchantNumber="CareCreditMerchantNumber";
 				public const string CareCreditDoDisableAdvertising="Disable Advertising";
+				public const string CareCreditPartnerCode="CareCreditPartnerCode";
 			}
 			public static class EdgeExpress {
 				public const string ForceRecurringCharge="EdgeExpressForceRecurringCharge";

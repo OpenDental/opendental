@@ -51,7 +51,6 @@ Questions (do not edit)                                              |Answers mi
 End of Checklist=========================================================================================================================
 */
 	public partial class FrmFaqPicker:FrmODBase {
-		private FrmFaqEdit _frmFaqEdit;
 		private string _manualPageUrl;
 		private string _programVersion;
 		private List<ManualPage> _listManualPagesUnlinked=new List<ManualPage>();
@@ -61,7 +60,7 @@ End of Checklist================================================================
 			_programVersion=programVersion;
 			InitializeComponent();
 			Load+=FrmFaqPicker_Load;
-			gridODMain.CellClick+=gridODMain_CellDoubleClick;
+			gridODMain.CellDoubleClick+=gridODMain_CellDoubleClick;
 		}
 
 		private void FrmFaqPicker_Load(object sender,EventArgs e) {
@@ -86,6 +85,7 @@ End of Checklist================================================================
 			else {
 				listFaqsForPageName=Faqs.GetAllForNameAndVersion(textManualPage.Text,version);
 			}
+			gridODMain.BeginUpdate();
 			gridODMain.Columns.Clear();
 			GridColumn gridColumn=new GridColumn("Version",80);
 			gridODMain.Columns.Add(gridColumn);
@@ -98,6 +98,7 @@ End of Checklist================================================================
 			gridColumn=new GridColumn("Question Text",420);
 			gridColumn.IsWidthDynamic=true;
 			gridODMain.Columns.Add(gridColumn);
+			gridODMain.ListGridRows.Clear();
 			for(int i=0;i<listFaqsForPageName.Count();i++){
 				GridRow gridRow=new GridRow();
 				gridRow.Cells.Add(listFaqsForPageName[i].ManualVersion.ToString());
@@ -118,31 +119,19 @@ End of Checklist================================================================
 				gridRow.Tag=listFaqsForPageName[i];
 				gridODMain.ListGridRows.Add(gridRow);
 			}
+			gridODMain.EndUpdate();
 		}
 
-		/// <summary>Helper method to initialize _formFaqEdit with a FormClosedEventHandler and show FormFaqEdit.</summary>
+		/// <summary>Helper method to initialize _formFaqEdit, set its faq if given, and show FormFaqEdit.</summary>
 		private void ShowFrmFaqEdit(Faq faq=null) {
-			if(_frmFaqEdit==null) {
-				_frmFaqEdit=new FrmFaqEdit();
-				if(faq is null){
-					faq=new Faq();
-					faq.IsNew=true;
-				}
-				_frmFaqEdit.FaqCur=faq;
-				_frmFaqEdit.FormClosed+=(sender,e) =>{
-					FillGrid();
-					_frmFaqEdit=null;
-				};
+			FrmFaqEdit frmFaqEdit=new FrmFaqEdit();
+			if(faq is null){
+				faq=new Faq();
+				faq.IsNew=true;
 			}
-			else {
-				MsgBox.Show(this,"Another FAQ is currently being edited.");
-				return;
-			}
-			_frmFaqEdit.Show();
-			//if(_frmFaqEdit.WindowState==FormWindowState.Minimized) {
-			//	_frmFaqEdit.WindowState=FormWindowState.Normal;
-			//}
-			//_frmFaqEdit.BringToFront();
+			frmFaqEdit.FaqCur=faq;
+			frmFaqEdit.ShowDialog();
+			FillGrid();
 		}
 
 		private void ButRefresh_Click(object sender,EventArgs e) {

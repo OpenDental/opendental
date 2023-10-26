@@ -189,6 +189,21 @@ namespace CodeBase {
 			WriteLine(line,subDirectory,false,true,daysOld);
 		}
 
+		public static bool HasRoomToWrite(){
+			string strLoggerDirDrive = Path.GetPathRoot(Logger.LoggerDirOverride);
+			DriveInfo driveInfo=DriveInfo.GetDrives().FirstOrDefault(x=>x.Name==strLoggerDirDrive);
+			if(driveInfo is null){
+				return false;
+			}
+			long freeSpaceRequired=5 * 1024;
+			freeSpaceRequired*= 1024;
+			freeSpaceRequired*= 1024;//typical HD has 500 to 1000 GB, currently requiring 5GB
+			if(driveInfo.AvailableFreeSpace>freeSpaceRequired){
+				return true;
+			}
+			return false;
+		}
+
 		public static void WriteLine(string line,string subDirectory,bool singleFileOnly,bool includeTimestamp,int daysOld=90) {
 			if(ODBuild.IsUnitTest) {
 				return;
