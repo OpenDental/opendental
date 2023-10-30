@@ -1460,7 +1460,11 @@ namespace OpenDentBusiness{
 		///<summary>For non-FHIR, ProcedureLog POST, PUT & DELETE. </summary>
 		ApiProcedureLogs,
 		///<summary>For non-FHIR, for rarely used Setup resources. </summary>
-		ApiSetup
+		ApiSetup,
+		///<summary>For non-FHIR, ASAPComm POST. </summary>
+		ApiTextingASAP,
+		///<summary>For non-FHIR, reduces throttle to 500ms and increases remote limit to 1000 (and local/service limit to 10000). </summary>
+		ApiEnterprise
 	}
 
 	///<summary>Will be deprecated soon. FHIRKeyStatus has mostly replaced this.</summary>

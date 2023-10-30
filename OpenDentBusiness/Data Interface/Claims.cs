@@ -1701,7 +1701,7 @@ namespace OpenDentBusiness{
 				decimal feeRemaining=fee-writeoffSum+adjAmtSum;
 				//We need to consider if the writeoff even has any value. This is how the original code was written,
 				//but we may only care if the value of the current claimproc's writeoff is greater than zero. If that is the case just kick out above.
-				if(!CompareDecimal.IsLessThanZero(feeRemaining) && CompareDecimal.IsGreaterThanZero(writeoffSum)) {
+				if(!CompareDecimal.IsLessThanZero(feeRemaining) || !CompareDecimal.IsGreaterThanZero(writeoffSum)) {
 					continue;
 				}
 				listProcDescripts.Add(ProcedureCodes.GetProcCode(procedure.CodeNum).ProcCode

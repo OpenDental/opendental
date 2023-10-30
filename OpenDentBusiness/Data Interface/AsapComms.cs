@@ -101,6 +101,22 @@ namespace OpenDentBusiness{
 			return listAsapCommHists;
 		}
 
+		///<summary>Gets a List of AsapComms that meets a set of criteria for the API.</summary>
+		public static List<AsapComm> GetAsapCommsForApi(int limit,int offset,long clinicNum,DateTime dateTStart,DateTime dateTEnd) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<AsapComm>>(MethodBase.GetCurrentMethod(),limit,offset,clinicNum,dateTStart,dateTEnd);
+			}
+			string command="SELECT * from asapcomm "
+				+"WHERE DateTimeEntry >= "+POut.DateT(dateTStart)+" "
+				+"AND DateTimeEntry < "+POut.DateT(dateTEnd)+" ";
+			if(clinicNum>-1) {
+				command+="AND ClinicNum="+POut.Long(clinicNum)+" ";
+			}
+			command+="ORDER BY AsapCommNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.AsapCommCrud.SelectMany(command);
+		}
+
 		#endregion
 
 		#region Insert

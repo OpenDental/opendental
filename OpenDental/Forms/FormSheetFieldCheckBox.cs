@@ -525,7 +525,7 @@ namespace OpenDental {
 					listSheetFieldDefs2[i].UiLabelMobile=SheetFieldDefCur.UiLabelMobile;
 				}
 			}
-			else if(SheetDefCur.SheetType==SheetTypeEnum.MedicalHistory) {
+			else if(SheetDefCur.SheetType==SheetTypeEnum.MedicalHistory && !fieldNameSelected.StartsWith("checkMed")) {
 				//All items with this group name get this UiLabelMobile.
 				string medicalItemNameSelected="";
 				if(listMedical.GetSelected<AllergyDef>()!=null && listMedical.GetSelected<AllergyDef>() is AllergyDef){
