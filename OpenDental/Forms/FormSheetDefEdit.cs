@@ -2551,15 +2551,19 @@ namespace OpenDental {
 			}
 			if(pointOrigin.X==0 && pointOrigin.Y==0) { //allows for cascading pastes in the upper right hand corner.
 				Rectangle rectangle=panelMain.Bounds; //Gives relative position of panel (scroll position)
-				int h=panelLeft.Height; //Current resized height/width of parent panel
-				int w=panelLeft.Width;
+				//Current resized height/width of parent panel but must be unscaled since we are dealing with unscaled figures below
+				int h=LayoutManager.Unscale(panelLeft.Height); 
+				int w=LayoutManager.Unscale(panelLeft.Width);
 				int maxH=0;
 				int maxW=0;
 				for(int i=0;i<_listSheetFieldDefsCopyPaste.Count;i++) { //calculate height/width of control to be pasted
 					maxH=Math.Max(maxH,_listSheetFieldDefsCopyPaste[i].Height);
 					maxW=Math.Max(maxW,_listSheetFieldDefsCopyPaste[i].Width);
 				}
-				pointOrigin=new Point((-1)*rectangle.X+w/2-maxW/2-10,(-1)*rectangle.Y+h/2-maxH/2-10); //Center: scroll position * (-1) + 1/2 size of window - 1/2 the size of the field - 10 for scroll bar
+				//Scrollbars do not always show up when using zoom, only add their size when visible
+				int verticalScrollWidth=panelLeft.VerticalScroll.Visible ? 10 : 0;
+				int horizontalScrollHeight=panelLeft.HorizontalScroll.Visible ? 10 : 0;
+				pointOrigin=new Point((-1)*rectangle.X+w/2-maxW/2-verticalScrollWidth,(-1)*rectangle.Y+h/2-maxH/2-horizontalScrollHeight); //Center: scroll position * (-1) + 1/2 size of window - 1/2 the size of the field - 10 for scroll bar
 				pointOrigin.X+=_pasteOffset;
 				pointOrigin.Y+=_pasteOffset+_pasteOffsetY;
 			}

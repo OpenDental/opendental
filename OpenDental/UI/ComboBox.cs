@@ -831,6 +831,9 @@ namespace OpenDental.UI{
 			if(SelectionModeMulti) {
 				return;//only for single select
 			}
+			if(Items.Count==0) {
+				return;
+			}
 			if(_listSelectedIndices.Count==0) {
 				SetSelected(0);
 				Invalidate();
