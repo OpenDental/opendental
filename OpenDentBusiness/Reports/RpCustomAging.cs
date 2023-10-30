@@ -139,7 +139,7 @@ namespace OpenDentBusiness {
 				command+=@" AND (guarAging.BalOver90 != 0) ";
 			}
 			else {
-				command+=@" AND (guarAging.BalOver90 >= 0.005 OR guarAging.Bal_61_90 >= 0.005 OR guarAging.Bal_31_60 >= 0.005 OR guarAging.Bal_0_30 >= 0.005) ";
+				command+=@" AND (guarAging.BalOver90 != 0 OR guarAging.Bal_61_90 != 0 OR guarAging.Bal_31_60 != 0 OR guarAging.Bal_0_30 != 0) ";
 			}
 			if(ageOptions.NegativeBalOptions == AgingOptions.NegativeBalAgingOptions.Exclude) {
 				command +=" AND guarAging.BalTotal > 0 ";
