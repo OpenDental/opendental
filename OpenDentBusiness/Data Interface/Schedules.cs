@@ -1979,7 +1979,6 @@ namespace OpenDentBusiness{
 				List<string> listStrOps=listOpNums.Select(x => POut.Long(x)).ToList();
 				command+="AND (scheduleop.OperatoryNum IN ("+string.Join(",",listStrOps)+") OR scheduleop.OperatoryNum IS NULL) ";
 			}
-			command+="AND scheduleop.OperatoryNum != 0 ";
 			command+="GROUP BY ScheduleNum ";
 			command+="ORDER BY StartTime ";
 			DataTable tableRaw=Db.GetTable(command);

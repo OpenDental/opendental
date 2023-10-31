@@ -1071,8 +1071,8 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>This method is a concise version of FormPayment.SavePaymentToDb() modified for the API, Patient Portal, and eClipboard. Only handles patient payments, not income transfers, insurance, or TSI payments. Also runs Aging for the patient's family. Returns Payment.PaymentNum.</summary>
-		public static long ProcessPaymentForWeb(Payment odbPayment,Patient odbPatient,double payAmt,bool isPatientPreferred=false,bool isPrepayment=false,List<AccountEntry> listAccountEntries=null,long payPlanNumDynamic=0) {
-			PaymentEdit.AutoSplit autoSplitData=PaymentEdit.AutoSplitForPayment(odbPayment.PatNum,odbPayment,isPatPrefer:isPatientPreferred,listAccountEntriesPayFirst:listAccountEntries);
+		public static long ProcessPaymentForWeb(Payment odbPayment,Patient odbPatient,double payAmt,bool isPatientPreferred=false,bool isPrepayment=false,List<AccountEntry> listAccountEntries=null,long payPlanNum=0) {
+			PaymentEdit.AutoSplit autoSplitData=PaymentEdit.AutoSplitForPayment(odbPayment.PatNum,odbPayment,isPatPrefer:isPatientPreferred,listAccountEntriesPayFirst:listAccountEntries,payPlanNum:payPlanNum);
 			odbPayment.PayAmt=payAmt; //AutoSplitForPayment empties PayAmt - Set it back to what it should be.
 			//Zero dollar splits are not valid. Remove.
 			autoSplitData.ListPaySplitsSuggested.RemoveAll(x => CompareDouble.IsZero(x.SplitAmt));
@@ -1091,9 +1091,12 @@ namespace OpenDentBusiness{
 			if(isPrepayment) {
 				autoSplitData.ListPaySplitsSuggested.Clear();
 				PaySplit odbPaySplit=CreateSinglePaySplitForWeb(odbPayment,odbPatient,odbPayment.PayAmt);
-				if(payPlanNumDynamic>0) {
-					odbPaySplit.PayPlanNum=payPlanNumDynamic;
-					odbPaySplit.UnearnedType=PrefC.GetLong(PrefName.DynamicPayPlanPrepaymentUnearnedType);
+				if(payPlanNum>0) {
+					PayPlan payPlan=PayPlans.GetOne(payPlanNum);
+					if(payPlan.IsDynamic) {
+						odbPaySplit.PayPlanNum=payPlanNum;
+						odbPaySplit.UnearnedType=PrefC.GetLong(PrefName.DynamicPayPlanPrepaymentUnearnedType);
+					}
 				}
 				autoSplitData.ListPaySplitsSuggested.Add(odbPaySplit);
 			}

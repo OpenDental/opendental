@@ -549,6 +549,10 @@ namespace WpfControls.UI{
 				}
 				else{
 					textRange.Text=value;
+					if(value.EndsWith("\r\n")){
+						Paragraph paragraph=new Paragraph();
+						flowDocument.Blocks.Add(paragraph);
+					}
 				}
 				richTextBox.Document=flowDocument;
 			}
@@ -1163,6 +1167,10 @@ namespace WpfControls.UI{
 		///<summary>Takes an index within the plaintext string and converts it to an index within the RFT. Accounts for paragraphs and single runs within each paragraph, but not for any further formatting. See discussion at top of this file.</summary>
 		private int ConvertIdxFromPlain(int idx){
 			//count number of paragraph crossings prior to this idx
+			if(idx>Text.Length){//Example Text length is 4, so valid settings are 0 through 4, where 4 is after the last char.
+				//5>4 which is not allowed. But 0-4 are allowed.
+				return 0;
+			}
 			string plainTextPrior=Text.Substring(0,idx);
 			int count=plainTextPrior.Count(x=>x=='\r');
 			return idx+count*2;//from \r\n to RunEnd,ParagraphEnd,ParagraphStart,RunStart is an increase of 2

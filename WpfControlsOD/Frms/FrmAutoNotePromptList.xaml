@@ -12,11 +12,11 @@
         <ui:Button x:Name="butNext" HorizontalAlignment="Right" Width="77" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,57" Text="_Next" Click="butNext_Click" Icon="ArrowRight" ImageAlign="Right" />
         <ui:Button x:Name="butBack" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,275,57" Text="_Back" Click="butBack_Click" Icon="ArrowLeft" />
         <ui:Button x:Name="butPreview" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,197,57" Text="_Preview" Click="butPreview_Click" />
-        <ui:Button x:Name="butSelectAll" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="20" Margin="0,0,96,304" Text="Select _All" Click="butSelectAll_Click" />
-        <ui:Button x:Name="butSelectNone" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="20" Margin="0,0,10,304" Text="Select N_one" Click="butSelectNone_Click" />
+        <ui:Button x:Name="butSelectAll" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="20" Margin="0,0,96,293" Text="Select _All" Click="butSelectAll_Click" />
+        <ui:Button x:Name="butSelectNone" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="20" Margin="0,0,10,293" Text="Select N_one" Click="butSelectNone_Click" />
         <ui:Button x:Name="butSkip" HorizontalAlignment="Right" Width="98" VerticalAlignment="Bottom" Height="24" Margin="0,0,96,57" Text="_Remove Prompt" Click="butRemovePrompt_Click" />
-        <ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="11,62,16,87" />
-        <ui:Label x:Name="labelPrompt" HorizontalAlignment="Stretch" Height="34" Margin="12,3,10,0" Text="Prompt" VAlign="Bottom" />
+        <ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="11,70,16,87" />
+        <ui:Label x:Name="labelPrompt" HorizontalAlignment="Stretch" Height="44" Margin="12,2,10,0" Text="Prompt&#10;Line 2&#10;Line3" VAlign="Bottom" IsWrap="True" />
         <ui:Button x:Name="butCancel" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,10" Text="_Exit" Click="butExit_Click" />
     </Grid>
 </local:FrmODBase>

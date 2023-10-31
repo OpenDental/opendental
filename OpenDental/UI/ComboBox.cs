@@ -58,7 +58,7 @@ namespace OpenDental.UI{
 //Or, rarely: comboArea.Items.Add(Lan.g("enumArea","First Item"),EnumArea.FirstItem);
 //Or, to exclude an enum:
 //List<EraAutomationMode> listEraAutomationModeValues=typeof(EraAutomationMode).GetEnumValues()
-//				.AsEnumerable<EraAutomationMode>()
+//				.Cast<EraAutomationMode>()
 //				.Where(x => x!=EraAutomationMode.UseGlobal)
 //				.ToList();
 //comboEraAutomation.Items.AddListEnum(listEraAutomationModeValues);

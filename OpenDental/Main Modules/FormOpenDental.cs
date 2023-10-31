@@ -1588,8 +1588,9 @@ namespace OpenDental{
 					connectStrReport=PrefC.ReportingServer.URI;
 				}
 				else {
+					string reportingSslCa=PrefC.GetStringSilent(PrefName.ReportingServerSslCa);
 					connectStrReport=DataConnection.BuildSimpleConnectionString(DatabaseType.MySql,PrefC.ReportingServer.Server,PrefC.ReportingServer.Database, 
-						PrefC.ReportingServer.MySqlUser, PrefC.ReportingServer.MySqlPass,PrefC.ReportingServer.SslCa);
+						PrefC.ReportingServer.MySqlUser, PrefC.ReportingServer.MySqlPass,reportingSslCa);
 				}
 				try {
 					programVersionReport=DataConnection.GetProgramVersion(connectStrReport);

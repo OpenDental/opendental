@@ -308,11 +308,12 @@ End of Checklist================================================================
 						//will be used in the recursive call below.
 						string autoNoteString="";
 						isAutoNote=false;
-						string autoNoteName=AutoNotes.GetAutoNoteName(strPromptResponse);
+						string autoNoteName=AutoNotes.GetAutoNoteName(strPromptResponse);//This will be the name of the nested AN
 						if(!string.IsNullOrEmpty(autoNoteName)) {
 							isAutoNote=true;
 							//For some reason the Auto Note string always contains a new line and a return character at the end of the note. Must be trimmed
-							autoNoteString=AutoNotes.GetByTitle(autoNoteName).TrimEnd('\n').TrimEnd('\r');//Returns empty string If no AutoNote is found. 
+							autoNoteString=AutoNotes.GetByTitle(autoNoteName);
+							autoNoteString=autoNoteString.TrimEnd('\n').TrimEnd('\r');//Returns empty string If no AutoNote is found. 
 						}
 						if(listAutoNoteItems.Count>i && !isAutoNote) {//The response already exist for this control type and it is note an AutoNote. Update it
 							//We need to update retval with the length of the new promptResponse. First, remove the previous promptResponse length.
@@ -327,11 +328,15 @@ End of Checklist================================================================
 						else if(isAutoNote) {//The response is an auto note. Recursively call this method.
 							//Remove the response from textMain.Text. The response was already saved. Since this is an AutoNote, the response does not need to stay 
 							//in the textMain.Text since more than likely more prompts will happen after we call the recursive method below.
-							string textMainWithoutResponse=textRichMain.Text.Substring(0,idxMatch)+GetAutoNoteResponseText(strPromptResponse);
-							if(textRichMain.Text.Length>idxMatch+listMatchesPrompts[i].Value.Length) {
-								textMainWithoutResponse+=textRichMain.Text.Substring(idxMatch+listMatchesPrompts[i].Value.Length);
+							string autoNoteResponseText=GetAutoNoteResponseText(strPromptResponse);
+							string mainText=textRichMain.Text;//the extra variables here are to help with debugging.
+							string textMainWithoutResponse=mainText.Substring(0,idxMatch)+autoNoteResponseText;
+							string matchPrompt=listMatchesPrompts[i].Value;
+							int lengthMatchPrompt=matchPrompt.Length;
+							if(mainText.Length>idxMatch+lengthMatchPrompt) {//if there's stuff after the first prompt
+								textMainWithoutResponse+=mainText.Substring(idxMatch+lengthMatchPrompt);
 							}
-							idxMatch+=GetAutoNoteResponseText(strPromptResponse).Length;
+							idxMatch+=autoNoteResponseText.Length;
 							//set the textMain.Text to the new result. This removes the promptResponse.
 							textRichMain.Text=textMainWithoutResponse;
 							textRichMain.SelectionStart=idxMatch;//This is needed in order for the recursive method call below.
@@ -446,9 +451,9 @@ End of Checklist================================================================
 			string retVal="";
 			//AutoNoteResponseText should be in the format "Auto Note Response Text : {AutoNoteName}". 
 			//The response text will be everything to the left of the ':'
-			int colonPos=promptResponse.IndexOf(':');
+			int colonPos=promptResponse.IndexOf(" :");
 			if(colonPos>-1) {
-				retVal=promptResponse.Substring(0,colonPos)+"\n";
+				retVal=promptResponse.Substring(0,colonPos)+"\r\n";
 			}
 			return retVal;
 		}

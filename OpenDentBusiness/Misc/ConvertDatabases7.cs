@@ -5087,16 +5087,6 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 23_1_56
 
-		private static void To23_2_3() {
-			string command=@"SELECT PayPlanNum FROM payplan WHERE PlanNum!=0";//PlanNum set for Insurance Plans only per schema
-			List<long> listPayPlanNums=Db.GetListLong(command);
-			if(listPayPlanNums.Count>0) {
-				//Set the guarantors in the listPayPlanNums to 0
-				command="UPDATE payplan SET Guarantor=0 WHERE PayPlanNum IN("+String.Join(",",listPayPlanNums)+")";
-				Db.NonQ(command);
-			}
-		}//End of 23_2_0() method
-
 	}
 }
 

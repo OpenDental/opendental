@@ -56,16 +56,13 @@ namespace OpenDental {
 			this.label10 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.labelSubscNote = new System.Windows.Forms.Label();
-			this.gridFrequencies = new OpenDental.UI.GridOD();
-			this.gridBenefits = new OpenDental.UI.GridOD();
 			this.groupYear = new OpenDental.UI.GroupBox();
 			this.checkCalendarYear = new OpenDental.UI.CheckBox();
 			this.textMonth = new OpenDental.ValidNum();
 			this.label30 = new System.Windows.Forms.Label();
 			this.checkSimplified = new OpenDental.UI.CheckBox();
-			this.textSubscNote = new OpenDental.ODtextBox();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butAdd = new OpenDental.UI.Button();
+			this.butAddBenefit = new OpenDental.UI.Button();
 			this.butSave = new OpenDental.UI.Button();
 			this.groupCategories = new OpenDental.UI.GroupBox();
 			this.labelWaitingPeriod = new System.Windows.Forms.Label();
@@ -115,6 +112,11 @@ namespace OpenDental {
 			this.label16 = new System.Windows.Forms.Label();
 			this.textDiagnostic = new OpenDental.ValidNum();
 			this.label17 = new System.Windows.Forms.Label();
+			this.checkShowProcCodes = new OpenDental.UI.CheckBox();
+			this.butAddFrequency = new OpenDental.UI.Button();
+			this.gridFrequencies = new OpenDental.UI.GridOD();
+			this.textSubscNote = new OpenDental.ODtextBox();
+			this.gridBenefits = new OpenDental.UI.GridOD();
 			this.panelSimple.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupYear.SuspendLayout();
@@ -326,27 +328,6 @@ namespace OpenDental {
 			this.labelSubscNote.Text = "Notes";
 			this.labelSubscNote.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// gridFrequencies
-			// 
-			this.gridFrequencies.Location = new System.Drawing.Point(696, 3);
-			this.gridFrequencies.Name = "gridFrequencies";
-			this.gridFrequencies.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
-			this.gridFrequencies.Size = new System.Drawing.Size(347, 489);
-			this.gridFrequencies.TabIndex = 161;
-			this.gridFrequencies.Title = "Frequency Limitation Benefits";
-			this.gridFrequencies.TranslationName = "TableInsBenefits";
-			// 
-			// gridBenefits
-			// 
-			this.gridBenefits.Location = new System.Drawing.Point(6, 337);
-			this.gridBenefits.Name = "gridBenefits";
-			this.gridBenefits.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridBenefits.Size = new System.Drawing.Size(574, 247);
-			this.gridBenefits.TabIndex = 3;
-			this.gridBenefits.Title = "Other Benefits";
-			this.gridBenefits.TranslationName = "TableInsBenefits";
-			this.gridBenefits.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridBenefits_CellDoubleClick);
-			// 
 			// groupYear
 			// 
 			this.groupYear.Controls.Add(this.checkCalendarYear);
@@ -397,21 +378,6 @@ namespace OpenDental {
 			this.checkSimplified.Text = "Simplified View";
 			this.checkSimplified.Click += new System.EventHandler(this.checkSimplified_Click);
 			// 
-			// textSubscNote
-			// 
-			this.textSubscNote.AcceptsTab = true;
-			this.textSubscNote.BackColor = System.Drawing.SystemColors.Window;
-			this.textSubscNote.DetectLinksEnabled = false;
-			this.textSubscNote.DetectUrls = false;
-			this.textSubscNote.Location = new System.Drawing.Point(95, 590);
-			this.textSubscNote.Name = "textSubscNote";
-			this.textSubscNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.InsPlan;
-			this.textSubscNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textSubscNote.Size = new System.Drawing.Size(485, 98);
-			this.textSubscNote.TabIndex = 6;
-			this.textSubscNote.Text = "1 - Benefits\n2\n3 lines will show here in 46 vert.\n4 lines will show here in 59 ve" +
-    "rt.\n5 lines in 72 vert\n6 lines in 85 vert\n7 lines in 98";
-			// 
 			// butDelete
 			// 
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
@@ -423,21 +389,21 @@ namespace OpenDental {
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butClear_Click);
 			// 
-			// butAdd
+			// butAddBenefit
 			// 
-			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
-			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(585, 369);
-			this.butAdd.Name = "butAdd";
-			this.butAdd.Size = new System.Drawing.Size(78, 24);
-			this.butAdd.TabIndex = 4;
-			this.butAdd.Text = "Add";
-			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
+			this.butAddBenefit.Icon = OpenDental.UI.EnumIcons.Add;
+			this.butAddBenefit.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butAddBenefit.Location = new System.Drawing.Point(585, 369);
+			this.butAddBenefit.Name = "butAddBenefit";
+			this.butAddBenefit.Size = new System.Drawing.Size(78, 24);
+			this.butAddBenefit.TabIndex = 4;
+			this.butAddBenefit.Text = "Add";
+			this.butAddBenefit.Click += new System.EventHandler(this.butAddBenefit_Click);
 			// 
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(961, 660);
+			this.butSave.Location = new System.Drawing.Point(987, 657);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 7;
@@ -459,6 +425,7 @@ namespace OpenDental {
 			this.groupCategories.Controls.Add(this.textDeductDiag);
 			this.groupCategories.Controls.Add(this.label3);
 			this.groupCategories.Controls.Add(this.textDeductXray);
+			this.groupCategories.Controls.Add(this.label21);
 			this.groupCategories.Controls.Add(this.label29);
 			this.groupCategories.Controls.Add(this.label27);
 			this.groupCategories.Controls.Add(this.label26);
@@ -478,7 +445,6 @@ namespace OpenDental {
 			this.groupCategories.Controls.Add(this.label22);
 			this.groupCategories.Controls.Add(this.textStand1);
 			this.groupCategories.Controls.Add(this.textProsth);
-			this.groupCategories.Controls.Add(this.label21);
 			this.groupCategories.Controls.Add(this.textOralSurg);
 			this.groupCategories.Controls.Add(this.label20);
 			this.groupCategories.Controls.Add(this.textPerio);
@@ -599,7 +565,7 @@ namespace OpenDental {
 			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.label3.Location = new System.Drawing.Point(269, 3);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(143, 15);
+			this.label3.Size = new System.Drawing.Size(141, 15);
 			this.label3.TabIndex = 206;
 			this.label3.Text = "Deductibles (if different)";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -792,7 +758,7 @@ namespace OpenDental {
 			// 
 			// label21
 			// 
-			this.label21.Location = new System.Drawing.Point(20, 251);
+			this.label21.Location = new System.Drawing.Point(20, 252);
 			this.label21.Name = "label21";
 			this.label21.Size = new System.Drawing.Size(120, 21);
 			this.label21.TabIndex = 190;
@@ -932,9 +898,67 @@ namespace OpenDental {
 			this.label17.Text = "Diagnostic (includes x-ray)";
 			this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// checkShowProcCodes
+			// 
+			this.checkShowProcCodes.Location = new System.Drawing.Point(696, 582);
+			this.checkShowProcCodes.Name = "checkShowProcCodes";
+			this.checkShowProcCodes.Size = new System.Drawing.Size(164, 17);
+			this.checkShowProcCodes.TabIndex = 162;
+			this.checkShowProcCodes.Text = "Show Procedure Codes";
+			this.checkShowProcCodes.Click += new System.EventHandler(this.checkShowProcCodes_Click);
+			// 
+			// butAddFrequency
+			// 
+			this.butAddFrequency.Icon = OpenDental.UI.EnumIcons.Add;
+			this.butAddFrequency.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butAddFrequency.Location = new System.Drawing.Point(991, 582);
+			this.butAddFrequency.Name = "butAddFrequency";
+			this.butAddFrequency.Size = new System.Drawing.Size(78, 24);
+			this.butAddFrequency.TabIndex = 163;
+			this.butAddFrequency.Text = "Add";
+			this.butAddFrequency.Click += new System.EventHandler(this.butAddFrequency_Click);
+			// 
+			// gridFrequencies
+			// 
+			this.gridFrequencies.Location = new System.Drawing.Point(696, 3);
+			this.gridFrequencies.Name = "gridFrequencies";
+			this.gridFrequencies.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
+			this.gridFrequencies.Size = new System.Drawing.Size(373, 573);
+			this.gridFrequencies.TabIndex = 161;
+			this.gridFrequencies.Title = "Frequency Limitation Benefits";
+			this.gridFrequencies.TranslationName = "TableInsBenefits";
+			// 
+			// textSubscNote
+			// 
+			this.textSubscNote.AcceptsTab = true;
+			this.textSubscNote.BackColor = System.Drawing.SystemColors.Window;
+			this.textSubscNote.DetectLinksEnabled = false;
+			this.textSubscNote.DetectUrls = false;
+			this.textSubscNote.Location = new System.Drawing.Point(95, 590);
+			this.textSubscNote.Name = "textSubscNote";
+			this.textSubscNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.InsPlan;
+			this.textSubscNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.textSubscNote.Size = new System.Drawing.Size(485, 98);
+			this.textSubscNote.TabIndex = 6;
+			this.textSubscNote.Text = "1 - Benefits\n2\n3 lines will show here in 46 vert.\n4 lines will show here in 59 ve" +
+    "rt.\n5 lines in 72 vert\n6 lines in 85 vert\n7 lines in 98";
+			// 
+			// gridBenefits
+			// 
+			this.gridBenefits.Location = new System.Drawing.Point(6, 337);
+			this.gridBenefits.Name = "gridBenefits";
+			this.gridBenefits.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
+			this.gridBenefits.Size = new System.Drawing.Size(574, 247);
+			this.gridBenefits.TabIndex = 3;
+			this.gridBenefits.Title = "Other Benefits";
+			this.gridBenefits.TranslationName = "TableInsBenefits";
+			this.gridBenefits.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridBenefits_CellDoubleClick);
+			// 
 			// FormInsBenefits
 			// 
-			this.ClientSize = new System.Drawing.Size(1048, 696);
+			this.ClientSize = new System.Drawing.Size(1074, 693);
+			this.Controls.Add(this.butAddFrequency);
+			this.Controls.Add(this.checkShowProcCodes);
 			this.Controls.Add(this.gridFrequencies);
 			this.Controls.Add(this.groupYear);
 			this.Controls.Add(this.checkSimplified);
@@ -943,7 +967,7 @@ namespace OpenDental {
 			this.Controls.Add(this.labelSubscNote);
 			this.Controls.Add(this.gridBenefits);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butAddBenefit);
 			this.Controls.Add(this.butSave);
 			this.Controls.Add(this.groupCategories);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -967,7 +991,7 @@ namespace OpenDental {
 		#endregion
 		private OpenDental.UI.Button butSave;
 		private OpenDental.UI.Button butDelete;
-		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butAddBenefit;
 		private OpenDental.UI.GridOD gridBenefits;
 		private OpenDental.UI.CheckBox checkSimplified;
 		private Label label1;
@@ -1045,5 +1069,7 @@ namespace OpenDental {
 		private ValidNum textSealantAge;
 		private Label label24;
 		private UI.GridOD gridFrequencies;
+		private UI.CheckBox checkShowProcCodes;
+		private UI.Button butAddFrequency;
 	}
 }

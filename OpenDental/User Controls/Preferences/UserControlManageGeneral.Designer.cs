@@ -44,6 +44,7 @@ namespace OpenDental {
 			this.labelClaimsReceivedDays = new System.Windows.Forms.Label();
 			this.checkClaimPaymentBatchOnly = new OpenDental.UI.CheckBox();
 			this.groupBoxERA = new OpenDental.UI.GroupBox();
+			this.checkEraAuto = new OpenDental.UI.CheckBox();
 			this.labelERADefault = new System.Windows.Forms.Label();
 			this.comboEraDefaultPaymentType = new OpenDental.UI.ComboBox();
 			this.labelFWT = new System.Windows.Forms.Label();
@@ -57,7 +58,6 @@ namespace OpenDental {
 			this.labelEraAutomation = new System.Windows.Forms.Label();
 			this.comboEraAutomation = new OpenDental.UI.ComboBox();
 			this.checkEraAllowTotalPayment = new OpenDental.UI.CheckBox();
-			this.checkEraAuto = new OpenDental.UI.CheckBox();
 			this.groupBoxTimeCards.SuspendLayout();
 			this.groupBoxDeposits.SuspendLayout();
 			this.groupBoxPrescriptions.SuspendLayout();
@@ -280,6 +280,16 @@ namespace OpenDental {
 			this.groupBoxERA.TabIndex = 303;
 			this.groupBoxERA.Text = "ERA";
 			// 
+			// checkEraAuto
+			// 
+			this.checkEraAuto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkEraAuto.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkEraAuto.Location = new System.Drawing.Point(19, 75);
+			this.checkEraAuto.Name = "checkEraAuto";
+			this.checkEraAuto.Size = new System.Drawing.Size(421, 17);
+			this.checkEraAuto.TabIndex = 310;
+			this.checkEraAuto.Text = "Auto-processing posts write-offs on non-primary claims";
+			// 
 			// labelERADefault
 			// 
 			this.labelERADefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -399,16 +409,6 @@ namespace OpenDental {
 			this.checkEraAllowTotalPayment.Size = new System.Drawing.Size(421, 17);
 			this.checkEraAllowTotalPayment.TabIndex = 296;
 			this.checkEraAllowTotalPayment.Text = "ERA allow total payments";
-			// 
-			// checkERAAuto
-			// 
-			this.checkEraAuto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkEraAuto.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEraAuto.Location = new System.Drawing.Point(19, 75);
-			this.checkEraAuto.Name = "checkERAAuto";
-			this.checkEraAuto.Size = new System.Drawing.Size(421, 17);
-			this.checkEraAuto.TabIndex = 310;
-			this.checkEraAuto.Text = "Auto-processing posts writeoffs on non-primary claims";
 			// 
 			// UserControlManageGeneral
 			// 

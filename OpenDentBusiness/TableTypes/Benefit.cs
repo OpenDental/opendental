@@ -194,6 +194,46 @@ namespace OpenDentBusiness{
 			return 0;//then values are the same.
 		}
 
+		/// <summary> Will determine the FrequencyOptions enum value that was used to create a given frequency benefit. </summary>
+		public FrequencyOptions GetFrequencyOption() {
+			if(QuantityQualifier==BenefitQuantity.Years) {
+				return FrequencyOptions.Every_Years;
+			}
+			else if(TimePeriod==BenefitTimePeriod.ServiceYear || TimePeriod==BenefitTimePeriod.CalendarYear) {
+				return FrequencyOptions._PerBenefitYear;
+			}
+			else if(QuantityQualifier==BenefitQuantity.Months) {
+				return FrequencyOptions.Every_Months;
+			}
+			else if(TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+				return FrequencyOptions._InLast12Months;
+			}
+			throw new Exception("Frequency Benefit did not have a matching Frequency Option");
+		}
+
+		public void SetFrequencyOption(FrequencyOptions frequencyOptions,bool isCalendarYr){
+			TimePeriod=BenefitTimePeriod.None;
+			if(frequencyOptions==FrequencyOptions.Every_Years) {
+				QuantityQualifier=BenefitQuantity.Years;
+			}
+			else if(frequencyOptions==FrequencyOptions._PerBenefitYear) {
+				QuantityQualifier=BenefitQuantity.NumberOfServices;
+				if(isCalendarYr){
+					TimePeriod=BenefitTimePeriod.CalendarYear;
+				}
+				else {
+					TimePeriod=BenefitTimePeriod.ServiceYear;
+				}
+			}
+			else if(frequencyOptions==FrequencyOptions.Every_Months) {
+				QuantityQualifier=BenefitQuantity.Months;
+			}
+			else if(frequencyOptions==FrequencyOptions._InLast12Months) {
+				QuantityQualifier=BenefitQuantity.NumberOfServices;
+				TimePeriod=BenefitTimePeriod.NumberInLast12Months;
+			}
+		}
+
 		///<summary></summary>
 		public Benefit Copy() {
 			return (Benefit)MemberwiseClone();

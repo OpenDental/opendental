@@ -384,6 +384,16 @@ namespace OpenDentBusiness {
 			//End I44628
 		}//End of 23_2_1() method
 
+		private static void To23_2_3() {
+			string command=@"SELECT PayPlanNum FROM payplan WHERE PlanNum!=0";//PlanNum set for Insurance Plans only per schema
+			List<long> listPayPlanNums=Db.GetListLong(command);
+			if(listPayPlanNums.Count>0) {
+				//Set the guarantors in the listPayPlanNums to 0
+				command="UPDATE payplan SET Guarantor=0 WHERE PayPlanNum IN("+String.Join(",",listPayPlanNums)+")";
+				Db.NonQ(command);
+			}
+		}//End of 23_2_0() method
+
 		private static void To23_2_5(){
 			string command="DROP TABLE IF EXISTS orthochartlog";
 			Db.NonQ(command);
@@ -776,6 +786,33 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To23_2_30() {
+			//Change the alignment of the TreatingProviderSpecialty and TreatingDentistProviderID claimformitem of the 2024 claim form.
+			string command="SELECT ClaimFormNum FROM claimform WHERE Description='ADA 2024'";
+			long claimFormNum2024=Db.GetLong(command);
+			if(claimFormNum2024>0) {
+				//Only change if the XPos, YPos, and Width are the default values that we used when we created the claim form.
+				command="SELECT ClaimFormItemNum " +
+					"FROM claimformitem " +
+					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='TreatingProviderSpecialty' " +
+					$"AND XPos=701 AND YPos=988 AND Width=128";//Default values
+				long claimFormItemNum=Db.GetLong(command);
+				if(claimFormItemNum>0) {
+					command=$"UPDATE claimformitem SET XPos=738, YPos=991, Width=92 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
+					Db.NonQ(command);
+				}
+				command="SELECT ClaimFormItemNum " +
+					"FROM claimformitem " +
+					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='TreatingDentistProviderID' " +
+					$"AND XPos=684 AND YPos=1046 AND Width=145";//Default values
+				claimFormItemNum=Db.GetLong(command);
+				if(claimFormItemNum>0) {
+					command=$"UPDATE claimformitem SET XPos=689, YPos=1046, Width=140 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
+					Db.NonQ(command);
+				}
+			}
+		}
+
 		private static void To23_3_1() {
 			string command;
 			//F44596 - Frequency Limitations by Treatment Area
@@ -959,5 +996,32 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//end SOTACloud bridge 
 		}//End of 23_3_2 method
+
+		private static void To23_3_4() {
+			//Change the alignment of the TreatingProviderSpecialty and TreatingDentistProviderID claimformitem of the 2024 claim form.
+			string command="SELECT ClaimFormNum FROM claimform WHERE Description='ADA 2024'";
+			long claimFormNum2024=Db.GetLong(command);
+			if(claimFormNum2024>0) {
+				//Only change if the XPos, YPos, and Width are the default values that we used when we created the claim form.
+				command="SELECT ClaimFormItemNum " +
+					"FROM claimformitem " +
+					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='TreatingProviderSpecialty' " +
+					$"AND XPos=701 AND YPos=988 AND Width=128";//Default values
+				long claimFormItemNum=Db.GetLong(command);
+				if(claimFormItemNum>0) {
+					command=$"UPDATE claimformitem SET XPos=738, YPos=991, Width=92 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
+					Db.NonQ(command);
+				}
+				command="SELECT ClaimFormItemNum " +
+					"FROM claimformitem " +
+					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='TreatingDentistProviderID' " +
+					$"AND XPos=684 AND YPos=1046 AND Width=145";//Default values
+				claimFormItemNum=Db.GetLong(command);
+				if(claimFormItemNum>0) {
+					command=$"UPDATE claimformitem SET XPos=689, YPos=1046, Width=140 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
+					Db.NonQ(command);
+				}
+			}
+		}
 	}
 }

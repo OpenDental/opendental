@@ -238,7 +238,7 @@ namespace OpenDentBusiness {
 			}
 			finally {
 				stopwatch.Stop();
-				if( Logger.DoVerboseLogging() ) {
+				if(Logger.DoVerboseLogging!=null && Logger.DoVerboseLogging()) {
 					VerboseLog( stopwatch, dtoString, dto, responseString, dateTimeReceived );
 				}
 			}

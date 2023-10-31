@@ -262,7 +262,7 @@ namespace OpenDentBusiness{
 				return;
 			}
 			string command="UPDATE labcase SET PlannedAptNum="+POut.Long(plannedAptNum)+" "
-				+"WHERE LabCaseNumIN ("+string.Join(",",listLabCaseNums.Select(x => POut.Long(x)).ToArray())+")";
+				+"WHERE LabCaseNum IN ("+string.Join(",",listLabCaseNums.Select(x => POut.Long(x)).ToArray())+")";
 			Db.NonQ(command);
 		}
 
