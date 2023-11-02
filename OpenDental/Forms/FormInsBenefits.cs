@@ -1485,6 +1485,7 @@ namespace OpenDental {
 			benefitNew.CodeNum=0;
 			benefitNew.CovCatNum=0;
 			benefitNew.IsNew=true;
+			benefitNew.PlanNum=_planNum;
 			benefitNew.SetFrequencyOption((FrequencyOptions)indexComboFrequency,MonthRenew==0);
 			benefitNew.TreatArea=(TreatmentArea)indexComboTreatArea;
 			benefitNew.Quantity=quantity;

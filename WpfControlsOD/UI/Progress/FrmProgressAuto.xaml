@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:OpenDental"
         xmlns:ui="clr-namespace:WpfControls.UI"
         mc:Ignorable="d"
+        Text="Progress"
         Height="406" Width="597">
 	<Grid Background="#FFFCFDFE">
 		<ui:Button x:Name="butCancel" Width="75" Height="24" Margin="0,65,20,0" Text="Cancel" HorizontalAlignment="Right" Click="butCancel_Click"/>

@@ -42,7 +42,7 @@ namespace OpenDentBusiness{
 				dataRow["checkDate"]=date.ToShortDateString();
 				dataRow["CheckNum"]=tableRaw.Rows[i]["CheckNum"].ToString();
 				dataRow["Note"]=tableRaw.Rows[i]["Note"].ToString();
-				table.Rows.Add(listDataRows[i]);
+				table.Rows.Add(dataRow);
 			}
 			return table;
 		}

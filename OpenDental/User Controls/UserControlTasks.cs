@@ -1710,8 +1710,16 @@ namespace OpenDental {
 			_listDefNumsRegionFilter=frmTaskFilter.ListDefNumsRegionsSelected;
 			_patientFilter=frmTaskFilter.PatientSelected;
 			if(frmTaskFilter.ClearAllClicked) {
-				TaskList taskList=_listTaskListTreeHistory.Last();
-				SetFiltersToDefault(taskList);
+				if(_listTaskListTreeHistory==null) {
+					_listTaskListTreeHistory=new List<TaskList>();
+				}
+				if(_listTaskListTreeHistory.Count>0) {
+					TaskList taskList=_listTaskListTreeHistory.Last();
+					SetFiltersToDefault(taskList);
+				}
+				else {
+					SetFiltersToDefault();
+				}
 			}
 			FillTree();
 			FillGrid();

@@ -602,9 +602,9 @@ namespace OpenDental {
 				return;
 			}
 			Cursor=Cursors.WaitCursor;
-			EmailAddress emailAddress=emailPreview.EmailAddressPreview;
+			EmailAddress emailAddressReceived=EmailAddresses.GetFirstOrDefault(x => x.EmailUsername==_emailMessage.RecipientAddress);
 			try {
-				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.RawEmailIn,_emailMessage.EmailMessageNum,emailAddress,isAck:false,_emailMessage.SentOrReceived);//Does not change read status of email regardless of success.
+				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.RawEmailIn,_emailMessage.EmailMessageNum,emailAddressReceived,isAck:false,_emailMessage.SentOrReceived);//Does not change read status of email regardless of success.
 			}
 			catch(Exception ex) {
 				MessageBox.Show(Lan.g(this,"Refreshing failed.")+"\r\n"+ex.Message);

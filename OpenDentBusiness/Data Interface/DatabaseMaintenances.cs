@@ -11664,7 +11664,7 @@ HAVING cnt>1";
 					return;
 				}
 				Value=table.Rows[0][1].ToString().ToLower().Trim();
-				IsValid=_listDesiredValues.Exists(x=> Value.Contains(x)) && string.IsNullOrWhiteSpace(Value);
+				IsValid=_listDesiredValues.Exists(x=> Value.Contains(x)) || string.IsNullOrWhiteSpace(Value);
 				if(!requiresVersionCheck || versionVarName==null || versionMin==null) {
 					return;
 				}

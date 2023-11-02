@@ -132,6 +132,7 @@ namespace OpenDentBusiness {
 						}
 						command += "DbVersion LIKE '"+POut.String(listVersionFilters[i])+"%'";
 					}
+					command += " ) ";
 				}
 				listBugSubmissions=Crud.BugSubmissionCrud.SelectMany(command);
 			},useConnectionStore);

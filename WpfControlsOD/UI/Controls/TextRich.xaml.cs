@@ -1263,6 +1263,10 @@ namespace WpfControls.UI{
 			TextSelection textSelection=richTextBox.Selection;
 			TextPointer textPointerStart=textSelection.Start;
 			richTextBox.Selection.Text=strPaste;
+			//TextPointers/Selections are copies, not references (I think).
+			//So we have to get them again.
+			textSelection=richTextBox.Selection;
+			textPointerStart=textSelection.Start;
 			//below is inspired by the code in textBox_KeyUp
 			int lengthPaste=strPaste.Length
 				+Regex.Matches(strPaste,@"\r\n").Count*2;//each CR adds 2 char. From \r\n to RunEnd,ParagraphEnd,ParagraphStart,RunStart is an increase of 2

@@ -292,6 +292,10 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<LabCase>>(MethodBase.GetCurrentMethod(),appt);
 			}
+			if(appt.AptNum==0) {
+				//A newly created appointment would have no LabCases, so return an empty list
+				return new List<LabCase>();
+			}
 			string command="SELECT * FROM labcase ";
 			if(appt.AptStatus==ApptStatus.Planned) {
 				command+="WHERE PlannedAptNum="+POut.Long(appt.AptNum);

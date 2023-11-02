@@ -3952,6 +3952,7 @@ namespace OpenDental {
 				gridPtInfo.BeginUpdate();
 				gridPtInfo.ListGridRows.Clear();
 				gridPtInfo.Columns.Clear();
+				Plugins.HookAddCode(this, "ContrChart.FillPtInfo_BeforeEndUpdate", Pd.Patient);
 				gridPtInfo.EndUpdate();
 				IsTreatmentNoteChanged=false;
 				return;
@@ -4589,6 +4590,7 @@ namespace OpenDental {
 				}
 				gridPtInfo.ListGridRows.Add(row);
 			}
+			Plugins.HookAddCode(this, "ContrChart.FillPtInfo_BeforeEndUpdate", Pd.Patient);
 			gridPtInfo.EndUpdate();
 		}
 
