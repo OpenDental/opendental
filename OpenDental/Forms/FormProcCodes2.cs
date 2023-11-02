@@ -114,9 +114,9 @@ namespace OpenDental {
 			checkGroups1.Visible=isShowingGroups;
 			checkGroups2.Visible=isShowingGroups;
 			checkGroups3.Visible=isShowingGroups;
-			LayoutManager.MoveLocation(comboFeeSchedGroup1,new Point(14,96));
-			LayoutManager.MoveLocation(comboFeeSchedGroup2,new Point(14,96));
-			LayoutManager.MoveLocation(comboFeeSchedGroup3,new Point(14,96));
+			LayoutManager.MoveLocation(comboFeeSchedGroup1,new Point(LayoutManager.Scale(14),LayoutManager.Scale(96)));
+			LayoutManager.MoveLocation(comboFeeSchedGroup2,new Point(LayoutManager.Scale(14),LayoutManager.Scale(96)));
+			LayoutManager.MoveLocation(comboFeeSchedGroup3,new Point(LayoutManager.Scale(14),LayoutManager.Scale(96)));
 			FillComboBoxes();
 			SynchAndFillListFees(false);
 			_needsSynch=false;

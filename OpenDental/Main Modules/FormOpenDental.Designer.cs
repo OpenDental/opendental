@@ -169,8 +169,6 @@ namespace OpenDental{
 			this.butNewMap.Size = new System.Drawing.Size(50, 24);
 			this.butNewMap.TabIndex = 93;
 			this.butNewMap.Text = "Map";
-			this.toolTipMap.SetToolTip(this.butNewMap, "Do not normally use the old map.\r\nBut if the new map has a bug,\r\nyou can always s" +
-        "witch to the old\r\nmap while waiting for the bug fix.\r\n");
 			this.butNewMap.Click += new System.EventHandler(this.butNewMap_Click);
 			// 
 			// labelMsg
