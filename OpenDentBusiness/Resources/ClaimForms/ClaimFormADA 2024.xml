@@ -45,7 +45,7 @@
       <ImageFileName />
       <FieldName>PatientIsGenderUnknown</FieldName>
       <FormatString />
-      <XPos>615</XPos>
+      <XPos>614</XPos>
       <YPos>419</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -57,7 +57,7 @@
       <ImageFileName />
       <FieldName>PatientIsFemale</FieldName>
       <FormatString />
-      <XPos>595</XPos>
+      <XPos>594</XPos>
       <YPos>419</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -69,7 +69,7 @@
       <ImageFileName />
       <FieldName>PatientIsMale</FieldName>
       <FormatString />
-      <XPos>575</XPos>
+      <XPos>574</XPos>
       <YPos>419</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -117,9 +117,9 @@
       <ImageFileName />
       <FieldName>TreatingDentistProviderID</FieldName>
       <FormatString />
-      <XPos>684</XPos>
+      <XPos>689</XPos>
       <YPos>1046</YPos>
-      <Width>145</Width>
+      <Width>140</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>
@@ -1329,7 +1329,7 @@
       <ImageFileName />
       <FieldName>RelatIsSelf</FieldName>
       <FormatString />
-      <XPos>445</XPos>
+      <XPos>444</XPos>
       <YPos>303</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -1341,7 +1341,7 @@
       <ImageFileName />
       <FieldName>RelatIsChild</FieldName>
       <FormatString />
-      <XPos>555</XPos>
+      <XPos>554</XPos>
       <YPos>303</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -1365,7 +1365,7 @@
       <ImageFileName />
       <FieldName>RelatIsSpouse</FieldName>
       <FormatString />
-      <XPos>495</XPos>
+      <XPos>494</XPos>
       <YPos>303</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -1377,7 +1377,7 @@
       <ImageFileName />
       <FieldName>RelatIsOther</FieldName>
       <FormatString />
-      <XPos>645</XPos>
+      <XPos>644</XPos>
       <YPos>303</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -1414,7 +1414,7 @@
       <FieldName>OtherInsRelatIsOther</FieldName>
       <FormatString />
       <XPos>354</XPos>
-      <YPos>340</YPos>
+      <YPos>341</YPos>
       <Width>0</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1438,7 +1438,7 @@
       <FieldName>SubscrIsMale</FieldName>
       <FormatString />
       <XPos>574</XPos>
-      <YPos>217</YPos>
+      <YPos>218</YPos>
       <Width>0</Width>
       <Height>0</Height>
     </ClaimFormItem>
@@ -1461,7 +1461,7 @@
       <ImageFileName />
       <FieldName>OtherInsSubscrIsMale</FieldName>
       <FormatString />
-      <XPos>175</XPos>
+      <XPos>174</XPos>
       <YPos>310</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -1474,7 +1474,7 @@
       <FieldName>SubscrIsFemale</FieldName>
       <FormatString />
       <XPos>596</XPos>
-      <YPos>217</YPos>
+      <YPos>218</YPos>
       <Width>0</Width>
       <Height>0</Height>
     </ClaimFormItem>
@@ -1486,7 +1486,7 @@
       <FieldName>SubscrIsGenderUnknown</FieldName>
       <FormatString />
       <XPos>619</XPos>
-      <YPos>217</YPos>
+      <YPos>218</YPos>
       <Width>0</Width>
       <Height>0</Height>
     </ClaimFormItem>
@@ -1546,7 +1546,7 @@
       <FieldName>IsPreAuth</FieldName>
       <FormatString />
       <XPos>184</XPos>
-      <YPos>72</YPos>
+      <YPos>74</YPos>
       <Width>0</Width>
       <Height>0</Height>
     </ClaimFormItem>
@@ -1558,7 +1558,7 @@
       <FieldName>OtherInsExistsDent</FieldName>
       <FormatString />
       <XPos>74</XPos>
-      <YPos>250</YPos>
+      <YPos>251</YPos>
       <Width>0</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1582,7 +1582,7 @@
       <FieldName>IsStandardClaim</FieldName>
       <FormatString />
       <XPos>34</XPos>
-      <YPos>73</YPos>
+      <YPos>74</YPos>
       <Width>0</Width>
       <Height>0</Height>
     </ClaimFormItem>
@@ -1630,7 +1630,7 @@
       <FieldName>OtherInsGroupNum</FieldName>
       <FormatString />
       <XPos>34</XPos>
-      <YPos>338</YPos>
+      <YPos>341</YPos>
       <Width>130</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1678,7 +1678,7 @@
       <FieldName>OtherInsRelatIsSelf</FieldName>
       <FormatString />
       <XPos>174</XPos>
-      <YPos>340</YPos>
+      <YPos>341</YPos>
       <Width>0</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1690,7 +1690,7 @@
       <FieldName>OtherInsExistsMed</FieldName>
       <FormatString />
       <XPos>154</XPos>
-      <YPos>250</YPos>
+      <YPos>251</YPos>
       <Width>0</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1714,7 +1714,7 @@
       <FieldName>OtherInsSubscrDOB</FieldName>
       <FormatString>MM/dd/yyyy</FormatString>
       <XPos>34</XPos>
-      <YPos>309</YPos>
+      <YPos>311</YPos>
       <Width>90</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1726,7 +1726,7 @@
       <FieldName>OtherInsRelatIsSpouse</FieldName>
       <FormatString />
       <XPos>224</XPos>
-      <YPos>340</YPos>
+      <YPos>341</YPos>
       <Width>0</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1738,7 +1738,7 @@
       <FieldName>OtherInsRelatIsChild</FieldName>
       <FormatString />
       <XPos>284</XPos>
-      <YPos>340</YPos>
+      <YPos>341</YPos>
       <Width>0</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -1942,7 +1942,7 @@
       <FieldName>ICDindicatorAB</FieldName>
       <FormatString />
       <XPos>515</XPos>
-      <YPos>652</YPos>
+      <YPos>653</YPos>
       <Width>24</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -2001,7 +2001,7 @@
       <ImageFileName />
       <FieldName>IsReplacementProsth</FieldName>
       <FormatString />
-      <XPos>564</XPos>
+      <XPos>563</XPos>
       <YPos>823</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -2037,7 +2037,7 @@
       <ImageFileName />
       <FieldName>IsNotReplacementProsth</FieldName>
       <FormatString />
-      <XPos>534</XPos>
+      <XPos>533</XPos>
       <YPos>823</YPos>
       <Width>0</Width>
       <Height>0</Height>
@@ -2350,7 +2350,7 @@
       <FieldName>TotalFee</FieldName>
       <FormatString />
       <XPos>829</XPos>
-      <YPos>684</YPos>
+      <YPos>685</YPos>
       <Width>68</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -2373,9 +2373,9 @@
       <ImageFileName />
       <FieldName>TreatingProviderSpecialty</FieldName>
       <FormatString />
-      <XPos>701</XPos>
-      <YPos>988</YPos>
-      <Width>128</Width>
+      <XPos>738</XPos>
+      <YPos>991</YPos>
+      <Width>92</Width>
       <Height>14</Height>
     </ClaimFormItem>
     <ClaimFormItem>
@@ -2434,7 +2434,7 @@
       <FieldName>DiagnosisA</FieldName>
       <FormatString />
       <XPos>502</XPos>
-      <YPos>667</YPos>
+      <YPos>668</YPos>
       <Width>81</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -2446,7 +2446,7 @@
       <FieldName>DiagnosisC</FieldName>
       <FormatString />
       <XPos>610</XPos>
-      <YPos>667</YPos>
+      <YPos>668</YPos>
       <Width>81</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -2518,7 +2518,7 @@
       <FieldName>DiagnosisB</FieldName>
       <FormatString />
       <XPos>502</XPos>
-      <YPos>684</YPos>
+      <YPos>685</YPos>
       <Width>81</Width>
       <Height>14</Height>
     </ClaimFormItem>
@@ -2602,7 +2602,7 @@
       <FieldName>DiagnosisD</FieldName>
       <FormatString />
       <XPos>610</XPos>
-      <YPos>684</YPos>
+      <YPos>685</YPos>
       <Width>81</Width>
       <Height>14</Height>
     </ClaimFormItem>

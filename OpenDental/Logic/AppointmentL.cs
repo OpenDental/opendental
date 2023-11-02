@@ -58,6 +58,7 @@ namespace OpenDental{
 			List<Procedure> listProceduresToDelete=procedureArrayToDelete.ToList();
 			List<long> listApptNums=listProceduresToDelete.Select(x => x.AptNum).Distinct().ToList();
 			listApptNums.AddRange(listProceduresToDelete.Select(x => x.PlannedAptNum).Distinct().ToList());
+			listApptNums.RemoveAll(x => x<=0);
 			List<Appointment> listAppointments=Appointments.GetMultApts(listApptNums);//Create a list of appointments to iterate through.
 			List<AppointmentType> listAppointmentTypes=AppointmentTypes.GetDeepCopy();
 			List<Procedure> listProceduresMultAppt=Procedures.GetProcsMultApts(listApptNums);//Will be needed for Procedures.GetProcsOneApt(...)

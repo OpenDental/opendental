@@ -203,7 +203,7 @@ namespace OpenDentBusiness {
 			chargeTypeInclude = "("+chargeTypeInclude +") ";
 			string command;
 			command=@"
-					SELECT 'PPComplete' TranType,ppc.Guarantor PatNum,ppc.ChargeDate TranDate,
+					SELECT 'PPComplete' TranType,(CASE WHEN pp.PlanNum > 0 THEN ppc.PatNum ELSE ppc.Guarantor END) PatNum,ppc.ChargeDate TranDate,
 					(CASE WHEN ppc.ChargeType != "+POut.Int((int)PayPlanChargeType.Debit)+@" THEN -ppc.Principal 
 					WHEN pp.PlanNum=0 THEN ppc.Principal+ppc.Interest ELSE 0 END) TranAmount
 					FROM payplancharge ppc 

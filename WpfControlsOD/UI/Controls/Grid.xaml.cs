@@ -1329,6 +1329,9 @@ using WpfControls.UI;
 				case GridSelectionMode.OneRow:
 					List<int> listSelectedIndicesOld=new List<int>(_listSelectedIndices);
 					_listSelectedIndices.Clear();
+					if(_mouseDownRow==-1){
+						break;
+					}
 					_listSelectedIndices.Add(_mouseDownRow);
 					SelectionCommitted?.Invoke(this,new EventArgs());
 					DrawRowSelections();

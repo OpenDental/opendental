@@ -774,5 +774,32 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
+
+		private static void To23_2_30() {
+			//Change the alignment of the TreatingProviderSpecialty and TreatingDentistProviderID claimformitem of the 2024 claim form.
+			string command="SELECT ClaimFormNum FROM claimform WHERE Description='ADA 2024'";
+			long claimFormNum2024=Db.GetLong(command);
+			if(claimFormNum2024>0) {
+				//Only change if the XPos, YPos, and Width are the default values that we used when we created the claim form.
+				command="SELECT ClaimFormItemNum " +
+					"FROM claimformitem " +
+					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='TreatingProviderSpecialty' " +
+					$"AND XPos=701 AND YPos=988 AND Width=128";//Default values
+				long claimFormItemNum=Db.GetLong(command);
+				if(claimFormItemNum>0) {
+					command=$"UPDATE claimformitem SET XPos=738, YPos=991, Width=92 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
+					Db.NonQ(command);
+				}
+				command="SELECT ClaimFormItemNum " +
+					"FROM claimformitem " +
+					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='TreatingDentistProviderID' " +
+					$"AND XPos=684 AND YPos=1046 AND Width=145";//Default values
+				claimFormItemNum=Db.GetLong(command);
+				if(claimFormItemNum>0) {
+					command=$"UPDATE claimformitem SET XPos=689, YPos=1046, Width=140 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
+					Db.NonQ(command);
+				}
+			}
+		}
 	}
 }
