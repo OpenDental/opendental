@@ -54,7 +54,7 @@ namespace OpenDental {
 
 		private void FrmBackupReminder_FormClosing(object sender,CancelEventArgs e) {
 			if(!IsDialogOK){//clicked on X at upper right
-				MsgBox.Show(this,"Please answer the questions, then click OK.");
+				MsgBox.Show(this,"Please answer the questions, then click Save.");
 				e.Cancel=true;
 			}
 		}

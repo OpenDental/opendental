@@ -325,7 +325,7 @@ namespace OpenDental{
 			if(!PrintRx(false)) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,_rxPat.PatNum,"Printed as: "+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+",ProvNum:"+_rxPat.ProvNum+",Disp:"+_rxPat.Disp+",Refills:"+_rxPat.Refills+")",_rxPat.RxNum, _rxPat.DateTStamp);
+			SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,_rxPat.PatNum,"Printed as: "+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+",ProvNum:"+_rxPat.ProvNum+",Disp:"+_rxPat.Disp+",Refills:"+_rxPat.Refills,_rxPat.RxNum, _rxPat.DateTStamp);
 			if(_rxPat.IsNew) {
 				AutomationL.Trigger(EnumAutomationTrigger.RxCreate,new List<string>(),_patient.PatNum,0,new List<RxPat>() { _rxPat });
 			}

@@ -208,6 +208,18 @@ namespace OpenDental{
 			}
 			RefreshModuleScreen(false);
 			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_tpModuleData);
+			if(PatientCur!=null && DatabaseIntegrities.DoShowPopup(PatientCur.PatNum,EnumModuleType.TreatPlan)) {
+				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(PatientCur.PatNum);
+				bool areHashesValid=Patients.AreAllHashesValid(PatientCur,listAppointments,new List<PayPlan>(),new List<PaySplit>());
+				if(!areHashesValid) {
+					DatabaseIntegrities.AddPatientModuleToCache(PatientCur.PatNum,EnumModuleType.TreatPlan); //Add to cached list for next time
+					//show popup
+					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
+					using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
+					formDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
+					formDatabaseIntegrity.ShowDialog();
+				}
+			}
 			Plugins.HookAddCode(this,"ContrTreat.ModuleSelected_end",patNum);
 		}
 

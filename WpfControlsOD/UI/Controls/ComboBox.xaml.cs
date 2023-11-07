@@ -331,9 +331,10 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 
 		///<summary>Gets the key like PatNum from the selected index. ProvNum and DefNum have their own selectors.  funcSelectKey example x=>x.PatNum.  If selected index is -1, it will try to grab the key that was passed in earlier with SetSelectedKey.  If there is none, then it will return 0.  Completely ignores IsAllSelected, so if you are interested in that, test it first. Throws exception for MultiSelect.</summary>
 		public long GetSelectedKey<T>(Func<T,long> funcSelectKey){
-			if(IsMultiSelect){
-				throw new Exception("GetSelected is ambiguous when IsMultiSelect.");
-			}
+			//if(IsMultiSelect){
+			//	throw new Exception("GetSelected is ambiguous when IsMultiSelect.");
+			//can't do this because we call it from a multiselect in ComboClinic ListClinicNumsSelected
+			//}
 			if(_listSelectedIndices.Count==0){
 				return _keyWhenMissing;//could be zero
 			}

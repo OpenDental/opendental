@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
@@ -18,7 +19,9 @@ namespace OpenDental {
 		public string Message;
 		///<summary>TxtMsgOk status of the patient.  Required if sending message without loading form or loading with patient selected.</summary>
 		public YN YNTxtMsgOk;
-		
+		/// <summary>List of short-URLs that were pre-generated and already in the message when it was send to this Form. Used to compare outgoing message to see if the user edited the message by adding new/different short-URLs.</summary>
+		private List<string> _listShortURLsAllowed=new List<string>();
+
 		public FormTxtMsgEdit() {
 			InitializeComponent();
 			InitializeLayoutManager();
@@ -27,6 +30,7 @@ namespace OpenDental {
 
 		private void FormTxtMsgEdit_Load(object sender,EventArgs e) {
 			textWirelessPhone.Text=WirelessPhone;
+			_listShortURLsAllowed=PrefC.GetListShortURLs(Message??"");
 			textMessage.Text=Message;
 			SetMessageCounts();
 			if(PatNum==0) {
@@ -102,9 +106,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"It is not OK to text this patient.");
 				return false;
 			}
-			string errorText=PrefC.GetFirstShortURL(message);
-			if(!string.IsNullOrWhiteSpace(errorText)) {
-				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
+			List<string> listShortURLs=PrefC.GetListShortURLs(message).Except(_listShortURLsAllowed).ToList();
+			if(listShortURLs.Count>0) {
+				string errorMessage=Lan.g(this,"Message cannot contain the URL")+$" {listShortURLs[0]} "+Lan.g(this,"as these are only allowed for eServices.");
+				MessageBox.Show(errorMessage);
 				return false;
 			}
 			if(SmsPhones.IsIntegratedTextingEnabled()) {

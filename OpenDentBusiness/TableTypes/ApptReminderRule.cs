@@ -425,19 +425,33 @@ namespace OpenDentBusiness {
 		///<summary>0 - Use text OR email based on patient preference.</summary>
 		Preferred = 0,
 		///<summary>1 - Attempt to send text message, if successful do not send via email. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
-		[CommType(ContactMethod=ContactMethod.TextMessage)]
+		[CommType(ContactMethod=ContactMethod.TextMessage,Flag=CommTypeFlag.Text)]
 		Text = 1,
 		///<summary>2 - Attempt to send email message, if successful do not send via text. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
-		[CommType(ContactMethod=ContactMethod.Email)]
+		[CommType(ContactMethod=ContactMethod.Email,Flag=CommTypeFlag.Email)]
 		Email = 2,
 		///<summary>3 - Attempt to send secure email message. </summary>
-		[CommType(ContactMethod=ContactMethod.Email)]
+		[CommType(ContactMethod=ContactMethod.Email,Flag=CommTypeFlag.SecureEmail)]
 		[Description("Secure Email")]
 		SecureEmail = 3,
 	}
 
+	///<summary>Copy of CommType but as Flags instead. For preference WebSchedManualSendTriggered.</summary>
+	[Flags]
+	public enum CommTypeFlag {
+		///<summary>0 - Use text OR email based on patient preference.</summary>
+		None=0,
+		///<summary>1 - Attempt to send text message, if successful do not send via email. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
+		Text=1,
+		///<summary>2 - Attempt to send email message, if successful do not send via text. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
+		Email=2,
+		///<summary>4 - Attempt to send secure email message. </summary>
+		SecureEmail=4,
+	}
+
 	public class CommTypeAttribute : Attribute {
 		public ContactMethod ContactMethod;
+		public CommTypeFlag Flag=CommTypeFlag.None;
 	}
 
 	///<summary></summary>

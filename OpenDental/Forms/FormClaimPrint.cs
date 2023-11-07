@@ -2259,6 +2259,9 @@ namespace OpenDental{
 					case "P1TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",1+startProc);
 						break;
+					case "P1TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",1+startProc);
+						break;
 					case "P1RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",1+startProc);
 						break;
@@ -2371,6 +2374,9 @@ namespace OpenDental{
 						break;
 					case "P2TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",2+startProc);
+						break;
+					case "P2TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",2+startProc);
 						break;
 					case "P2RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",2+startProc);
@@ -2489,6 +2495,9 @@ namespace OpenDental{
 					case "P3TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",3+startProc);
 						break;
+					case "P3TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",3+startProc);
+						break;
 					case "P3RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",3+startProc);
 						break;
@@ -2605,6 +2614,9 @@ namespace OpenDental{
 						break;
 					case "P4TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",4+startProc);
+						break;
+					case "P4TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",4+startProc);
 						break;
 					case "P4RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",4+startProc);
@@ -2723,6 +2735,9 @@ namespace OpenDental{
 					case "P5TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",5+startProc);
 						break;
+					case "P5TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",5+startProc);
+						break;
 					case "P5RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",5+startProc);
 						break;
@@ -2839,6 +2854,9 @@ namespace OpenDental{
 						break;
 					case "P6TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",6+startProc);
+						break;
+					case "P6TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",6+startProc);
 						break;
 					case "P6RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",6+startProc);
@@ -2957,6 +2975,9 @@ namespace OpenDental{
 					case "P7TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",7+startProc);
 						break;
+					case "P7TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",7+startProc);
+						break;
 					case "P7RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",7+startProc);
 						break;
@@ -3073,6 +3094,9 @@ namespace OpenDental{
 						break;
 					case "P8TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",8+startProc);
+						break;
+					case "P8TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",8+startProc);
 						break;
 					case "P8RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",8+startProc);
@@ -3191,6 +3215,9 @@ namespace OpenDental{
 					case "P9TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",9+startProc);
 						break;
+					case "P9TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",9+startProc);
+						break;
 					case "P9RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",9+startProc);
 						break;
@@ -3307,6 +3334,9 @@ namespace OpenDental{
 						break;
 					case "P10TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",10+startProc);
+						break;
+					case "P10TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",10+startProc);
 						break;
 					case "P10RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",10+startProc);
@@ -3425,6 +3455,9 @@ namespace OpenDental{
 					case "P11TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",11+startProc);
 						break;
+					case "P11TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",11+startProc);
+						break;
 					case "P11RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",11+startProc);
 						break;
@@ -3541,6 +3574,9 @@ namespace OpenDental{
 						break;
 					case "P12TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",12+startProc);
+						break;
+					case "P12TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",12+startProc);
 						break;
 					case "P12RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",12+startProc);
@@ -3659,6 +3695,9 @@ namespace OpenDental{
 					case "P13TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",13+startProc);
 						break;
+					case "P13TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",13+startProc);
+						break;
 					case "P13RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",13+startProc);
 						break;
@@ -3776,6 +3815,9 @@ namespace OpenDental{
 					case "P14TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",14+startProc);
 						break;
+					case "P14TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",14+startProc);
+						break;
 					case "P14RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",14+startProc);
 						break;
@@ -3892,6 +3934,9 @@ namespace OpenDental{
 						break;
 					case "P15TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",15+startProc);
+						break;
+					case "P15TreatProvSpecialty":
+						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",15+startProc);
 						break;
 					case "P15RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",15+startProc);
@@ -4567,6 +4612,15 @@ namespace OpenDental{
 						Provider providerFirst=Providers.GetFirst();//Used in order to preserve old behavior...  If this fails, then old code would have failed.
 						Provider providerClaimProc=Providers.GetFirstOrDefault(x => x.ProvNum==_listClaimProcs[procIndex].ProvNum)??providerFirst;
 						return providerClaimProc.NationalProvID;
+					}
+				case "TreatProvSpecialty":
+					if(_listClaimProcs[procIndex].ProvNum==0) {
+						return "";
+					}
+					else {
+						Provider providerFirst=Providers.GetFirst();//Used in order to preserve old behavior...  If this fails, then old code would have failed.
+						Provider providerClaimProc=Providers.GetFirstOrDefault(x => x.ProvNum==_listClaimProcs[procIndex].ProvNum)??providerFirst;
+						return X12Generator.GetTaxonomy(providerClaimProc);
 					}
 				case "PlaceNumericCode":
 					return X12object.GetPlaceService(_claim.PlaceService);

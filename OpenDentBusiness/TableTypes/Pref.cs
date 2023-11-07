@@ -2466,6 +2466,9 @@ namespace OpenDentBusiness {
 		WebSchedExistingPatSearchAfterDays,
 		/// <summary>String, the webforms url that should be launched after an existing patient signs up using web sched.</summary>
 		WebSchedExistingPatWebFormsURL,
+		///<summary>Long, 0 by default. eConnector will parse this pref to send manual recalls.</summary>
+		[PrefName(ValueType=PrefValueType.LONG)]
+		WebSchedManualSendTriggered,
 		WebSchedMessage,
 		WebSchedMessageText,
 		WebSchedMessage2,

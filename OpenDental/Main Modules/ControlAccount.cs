@@ -2296,6 +2296,22 @@ namespace OpenDental {
 			}
 			Logger.LogAction("RefreshModuleScreen",LogPath.AccountModule,() => RefreshModuleScreen(isSelectingFamily));
 			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_loadData);
+			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Account)) {
+				List<PayPlan> listPayPlans=PayPlans.GetForPatNum(_patient.PatNum);
+				DataTable tableAccount=_dataSetMain.Tables["account"];
+				List<long> listPayNums=tableAccount.Select().Select(x => PIn.Long(x["PayNum"].ToString())).ToList();
+				listPayNums.RemoveAll(x => x==0); //remove all non payment PKs
+				List<PaySplit> listPaySplits=PaySplits.GetForPayments(listPayNums);
+				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),listPayPlans,listPaySplits);
+				if(!areHashesValid) {
+					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Account); //Add to cached list for next time
+					//show popup
+					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
+					using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
+					formDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
+					formDatabaseIntegrity.ShowDialog();
+				}
+			}
 			Plugins.HookAddCode(this,"ContrAccount.ModuleSelected_end",patNum,isSelectingFamily);
 		}
 

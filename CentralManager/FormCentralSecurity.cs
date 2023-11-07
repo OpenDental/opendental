@@ -8,13 +8,14 @@ using OpenDental;
 using OpenDentBusiness;
 
 namespace CentralManager {
-	public partial class FormCentralSecurity:Form {
+	public partial class FormCentralSecurity:FormODBase {
 		public List<CentralConnection> ListConns;
 		private string _domainObjectGuid;
 
 		public FormCentralSecurity() {
 			ListConns=new List<CentralConnection>();
 			InitializeComponent();
+			InitializeLayoutManager();
 		}
 
 		private void FormCentralSecurity_Load(object sender,EventArgs e) {

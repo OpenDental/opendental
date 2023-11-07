@@ -3705,14 +3705,28 @@ namespace OpenDental{
 				(listODForms,listSignals) => {
 					//Synchronize the thread static Security.CurUser on the main thread if the Userod cache was refreshed.
 					if(listSignals.Any(x => x.IType.In(InvalidType.Security,InvalidType.AllLocal))) {
-						this.Invoke(() => ODException.SwallowAnyException(() => Security.SyncCurUser()));
+						this.Invoke(()=>{
+							try {
+								Security.SyncCurUser();
+							}
+							catch(Exception ex) {
+								string message = "SignalsTick SyncCurUser: " + MiscUtils.GetExceptionText(ex);
+								Logger.LogToPath(message,LogPath.Signals,LogPhase.Unspecified);
+							}
+						});
 					}
 					//Make a shallow copy of the list of forms that cannot be manipulated while looping through it.
 					List<FormODBase> listFormODBases=new List<FormODBase>(listODForms);
 					//Broadcast to all subscribed signal processors.
 					this.Invoke(() => {
 						for(int i=0;i<listFormODBases.Count;i++) {
-							ODException.SwallowAnyException(() => listFormODBases[i].ProcessSignals(listSignals));
+							try{
+								listFormODBases[i].ProcessSignals(listSignals);
+							}
+							catch(Exception ex) {
+								string message = "ODForm.ProcessSignals Exception: " + MiscUtils.GetExceptionText(ex);
+								Logger.LogToPath(message,LogPath.Signals,LogPhase.Unspecified,listFormODBases[i].GetType().Name);
+							}
 						}
 					});
 				},

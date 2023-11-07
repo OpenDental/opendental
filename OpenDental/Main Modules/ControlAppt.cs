@@ -3231,6 +3231,18 @@ namespace OpenDental {
 			}
 			//We have to go to the db because we need to get the most recent patient info, mainly the AskedToArriveEarly time.
 			_patient=Patients.GetPat(patNum);
+			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Appointments)) {
+				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(_patient.PatNum);
+				bool areHashesValid=Patients.AreAllHashesValid(_patient,listAppointments,new List<PayPlan>(),new List<PaySplit>());
+				if(!areHashesValid) {
+					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Appointments); //Add to cached list for next time
+					//show popup
+					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
+					using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
+					formDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
+					formDatabaseIntegrity.ShowDialog();
+				}
+			}
 			Plugins.HookAddCode(this, "ContrAppt.RefreshModuleDataPatient_end");
 		}
 

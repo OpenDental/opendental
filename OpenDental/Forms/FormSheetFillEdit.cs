@@ -1286,6 +1286,10 @@ namespace OpenDental {
 			textBox.Text=text;
 			textBox.Height=LayoutManager.Scale(sheetField.Height);
 			textBox.ScrollBars=RichTextBoxScrollBars.None;//but we do want scrollbars if needed
+			if(IsInTerminal) { 
+				// Do not allow patients to use the right click menu
+				textBox.ContextMenu=new ContextMenu();
+			}
 			textBox.HasAutoNotes=true;
 			textBox.QuickPasteType=EnumQuickPasteType.Sheets;
 			textBox.Tag=sheetField;

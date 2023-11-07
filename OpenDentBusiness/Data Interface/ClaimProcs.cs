@@ -105,7 +105,17 @@ namespace OpenDentBusiness{
 			//No remoting role check; no call to db
 			List<ClaimProc> listClaimProcsTotal=listClaimsAsTotalForPats??GetByTotForPats(listFamilyPatNums)
 				.FindAll(x => !x.Status.In(ClaimProcStatus.CapClaim,ClaimProcStatus.CapComplete,ClaimProcStatus.CapEstimate));
-			if(listClaimProcsTotal.Count == 0) {
+			//Loop through all As Total claimprocs and blindly sum ones together that are associated with the same claim.
+			//Remove all As Total claimprocs for claims that sum to zero or less.
+			List<long> listClaimNums=new List<long>();
+			for(int i=0;i<listClaimProcsTotal.Count;i++) {
+				double insPayAmtSum=listClaimProcsTotal.Where(x => x.ClaimNum==listClaimProcsTotal[i].ClaimNum).Sum(x => x.InsPayAmt);
+				if(insPayAmtSum<=0) {
+					listClaimNums.Add(listClaimProcsTotal[i].ClaimNum);
+				}
+			}
+			listClaimProcsTotal.RemoveAll(x => listClaimNums.Contains(x.ClaimNum));
+			if(listClaimProcsTotal.Count==0) {
 				return new List<PayAsTotal>();
 			}
 			List<PayAsTotal> listPayAsTotalsOutstanding=new List<PayAsTotal>();//will hold claims pay by total that have not yet been transferred.
@@ -119,8 +129,7 @@ namespace OpenDentBusiness{
 					&& x.ClinicNum==listClaimProcsGroups[i].ClinicNum)
 					.ToList();
 				double summedInsPay=listClaimProcsToSum.Sum(x => x.InsPayAmt);
-				double summedWriteOff=listClaimProcsToSum.Sum(x => x.WriteOff);
-				if(CompareDouble.IsZero(summedInsPay) && CompareDouble.IsZero(summedWriteOff)) {
+				if(CompareDouble.IsZero(summedInsPay)) {
 					continue;//these claims as total have already been transferred, or didn't have value. Nothing to do, move on to the next.
 				}
 				//else there is an imbalance that needs to be transferred
@@ -138,7 +147,6 @@ namespace OpenDentBusiness{
 				payAsTotal.ProcDate       =listClaimProcsGroups[i].ProcDate;
 				payAsTotal.DateEntry      =listClaimProcsGroups[i].DateEntry;
 				payAsTotal.SummedInsPayAmt=summedInsPay;
-				payAsTotal.SummedWriteOff =summedWriteOff;
 				listPayAsTotalsOutstanding.Add(payAsTotal);
 			}
 			if(listPayAsTotalsOutstanding.Count > listClaimProcsTotal.Count) {
@@ -208,9 +216,8 @@ namespace OpenDentBusiness{
 		private static void TransferPayAsTotal(PayAsTotal payAsTotal,List<ClaimProc> listClaimProcs,List<Procedure> listProcedures,ref ClaimTransferResult claimTransferResult) {
 			//No remoting role check; ref parameters
 			long claimNum=payAsTotal.ClaimNum;
-			double insPayAmtToAllocate=payAsTotal.SummedInsPayAmt;
-			double writeOffToAllocate=payAsTotal.SummedWriteOff;
-			if(CompareDouble.IsZero(insPayAmtToAllocate) && CompareDouble.IsZero(writeOffToAllocate)) {
+			double insPayAmtToAllocate=Math.Max(payAsTotal.SummedInsPayAmt,0);
+			if(CompareDouble.IsZero(insPayAmtToAllocate)) {
 				return;
 			}
 			List<ClaimProc> listClaimProcsForClaim=listClaimProcs.FindAll(x => x.ClaimNum==claimNum);
@@ -225,7 +232,7 @@ namespace OpenDentBusiness{
 			//Transfer as much value to each procedure as possible.
 			//Any leftover value (overpayment) should be blindly applied to the first procedure on the claim (or to unearned if no procedures are present).
 			for(int i=0;i<listClaimProcsForClaim.Count;i++) {
-				if(CompareDouble.IsZero(insPayAmtToAllocate) && CompareDouble.IsZero(writeOffToAllocate)) {
+				if(CompareDouble.IsZero(insPayAmtToAllocate)) {
 					break;
 				}
 				//There might be multiple PayAsTotal entries on a single claim so look for an existing ClaimProcTxfr objects for this claim and procedure.
@@ -270,45 +277,38 @@ namespace OpenDentBusiness{
 			//First pass will be for transferring up to the minimum amount of value into each claimproc.
 			//E.g. Some claimprocs will utilize the procedure fee if it is less than the insurance estimate or visa versa.
 			for(int i=0;i<listClaimProcTxfrsForProcs.Count;i++) {
-				if(CompareDouble.IsZero(insPayAmtToAllocate) && CompareDouble.IsZero(writeOffToAllocate)) {
+				if(CompareDouble.IsZero(insPayAmtToAllocate)) {
 					break;
 				}
 				double insPayAmt=listClaimProcTxfrsForProcs[i].GetInsPayAmtMin(insPayAmtToAllocate);
-				double writeOff=listClaimProcTxfrsForProcs[i].GetWriteOffMin(writeOffToAllocate);
 				listClaimProcTxfrsForProcs[i].ClaimProc.InsPayAmt+=insPayAmt;
-				listClaimProcTxfrsForProcs[i].ClaimProc.WriteOff+=writeOff;
 				insPayAmtToAllocate-=insPayAmt;
-				writeOffToAllocate-=writeOff;
 			}
 			#endregion
 			#region 2nd layer, maximum transfer
-			if(CompareDouble.IsZero(insPayAmtToAllocate) && CompareDouble.IsZero(writeOffToAllocate)) {
+			if(CompareDouble.IsZero(insPayAmtToAllocate)) {
 				return;
 			}
 			//There is still value to be transferred.
 			//Second pass will be for transferring up to the maximum amount of value into each claimproc.
 			//E.g. Some claimprocs will utilize the procedure fee if it is more than the insurance estimate or visa versa.
 			for(int i=0;i<listClaimProcTxfrsForProcs.Count;i++) {
-				if(CompareDouble.IsZero(insPayAmtToAllocate) && CompareDouble.IsZero(writeOffToAllocate)) {
+				if(CompareDouble.IsZero(insPayAmtToAllocate)) {
 					break;
 				}
 				double insPayAmt=listClaimProcTxfrsForProcs[i].GetInsPayAmtMax(insPayAmtToAllocate);
-				double writeOff=listClaimProcTxfrsForProcs[i].GetWriteOffMax(writeOffToAllocate);
 				listClaimProcTxfrsForProcs[i].ClaimProc.InsPayAmt+=insPayAmt;
-				listClaimProcTxfrsForProcs[i].ClaimProc.WriteOff+=writeOff;
 				insPayAmtToAllocate-=insPayAmt;
-				writeOffToAllocate-=writeOff;
 			}
 			#endregion
 			#region 3rd layer, leftover transfer
-			if(CompareDouble.IsZero(insPayAmtToAllocate) && CompareDouble.IsZero(writeOffToAllocate)) {
+			if(CompareDouble.IsZero(insPayAmtToAllocate)) {
 				return;
 			}
 			//There is STILL value to be transferred (overpayment?).
 			//Transfer the rest of the money to the first procedure and let the income transfer manager figure out the rest later.
 			if(listClaimProcTxfrsForProcs.Count > 0) {
 				listClaimProcTxfrsForProcs[0].ClaimProc.InsPayAmt+=insPayAmtToAllocate;
-				listClaimProcTxfrsForProcs[0].ClaimProc.WriteOff+=writeOffToAllocate;
 				return;
 			}
 			//Unique issue present from a conversions error that caused some claims to get created with only As Totals and no procedures.
@@ -318,7 +318,7 @@ namespace OpenDentBusiness{
 			payment.PatNum=payAsTotal.PatNum;
 			payment.ClinicNum=claimNum;
 			payment.PayDate=DateTime.Today;
-			payment.PayAmt=(insPayAmtToAllocate + writeOffToAllocate);
+			payment.PayAmt=insPayAmtToAllocate;
 			payment.PayNote=Lans.g("FormIncomeTransferManager","Transfer from claim with no claim procedures");
 			Payments.Insert(payment);
 			PaySplit paySplit=new PaySplit();
@@ -506,8 +506,8 @@ namespace OpenDentBusiness{
 			claimProc.CodeSent=payAsTotal.CodeSent;
 			claimProc.IsTransfer=true;
 			//This supplemental claimproc is designed to offset the entire PayAsTotal passed in.
+			//Only set InsPayAmt since transferring a WriteOff value doesn't make sense.
 			claimProc.InsPayAmt=(payAsTotal.SummedInsPayAmt * -1);
-			claimProc.WriteOff=(payAsTotal.SummedWriteOff * -1);
 			return claimProc;
 		}
 
@@ -3309,7 +3309,6 @@ namespace OpenDentBusiness{
 		public long ProvNum;
 		public long ClinicNum;
 		public double SummedInsPayAmt;
-		public double SummedWriteOff;
 		public string CodeSent;
 		public long InsSubNum;
 		public long PlanNum;
@@ -3379,14 +3378,10 @@ namespace OpenDentBusiness{
 		public ClaimProc ClaimProc;
 		///<summary></summary>
 		public double InsPayAmtSupplemental;
-		///<summary>The minimum InsPayEst value that can be transferred.</summary>
-		public double InsPayEstMin;
-		///<summary>The maximum InsPayEst value that can be transferred.</summary>
-		public double InsPayEstMax;
-		///<summary>The minimum WriteOff value that can be transferred.</summary>
-		public double WriteOffEstMin;
-		///<summary>The maximum WriteOff value that can be transferred.</summary>
-		public double WriteOffEstMax;
+		///<summary>The minimum value that can be transferred. This is the smaller value between the procedure fee and the insurance estimate.</summary>
+		public double AmountTxfrMin;
+		///<summary>The maximum value that can be transferred. This is the larger value between the procedure fee and the insurance estimate.</summary>
+		public double AmountTxfrMax;
 
 		///<summary></summary>
 		public long ClaimNum {
@@ -3416,24 +3411,24 @@ namespace OpenDentBusiness{
 			ClaimProc=ClaimProcs.CreateSuppClaimProcForTransfer(claimProc);
 			//InsPayEst and WriteOff logic
 			double insPayEst=Math.Max(claimProc.InsPayEst,0);
-			double writeOffEst=Math.Max(claimProc.WriteOffEst,0);
+			//Subtract how much value has already been paid and written off for this claimproc.
+			double amountInsCovered=Math.Max(claimProc.InsPayAmt + claimProc.WriteOff,0);
+			double amountCanTransfer=Math.Max(insPayEst - amountInsCovered,0);
 			//ProcFee logic
 			double procFee=0;
 			if(procedure!=null) {
-				procFee=procedure.ProcFeeTotal - insPayAmtOtherIns;
+				procFee=procedure.ProcFeeTotal - insPayAmtOtherIns - amountInsCovered;
 			}
-			InsPayEstMin=Math.Min(insPayEst,procFee);
-			InsPayEstMax=Math.Max(insPayEst,procFee);
-			WriteOffEstMin=Math.Min(writeOffEst,procFee);
-			WriteOffEstMax=Math.Max(writeOffEst,procFee);
+			AmountTxfrMin=Math.Min(amountCanTransfer,procFee);
+			AmountTxfrMax=Math.Max(amountCanTransfer,procFee);
 		}
 
 		public double GetInsPayAmtMin(double insPayAmtToAllocate) {
-			return GetInsPayAmt(InsPayEstMin,insPayAmtToAllocate);
+			return GetInsPayAmt(AmountTxfrMin,insPayAmtToAllocate);
 		}
 
 		public double GetInsPayAmtMax(double insPayAmtToAllocate) {
-			return GetInsPayAmt(InsPayEstMax,insPayAmtToAllocate);
+			return GetInsPayAmt(AmountTxfrMax,insPayAmtToAllocate);
 		}
 
 		private double GetInsPayAmt(double insPayEst,double insPayAmtToAllocate) {
@@ -3445,24 +3440,6 @@ namespace OpenDentBusiness{
 				insPayAmt=Math.Max(amtRemain,0);
 			}
 			return insPayAmt;
-		}
-
-		public double GetWriteOffMin(double writeOffToAllocate) {
-			return GetWriteOff(WriteOffEstMin,writeOffToAllocate);
-		}
-
-		public double GetWriteOffMax(double writeOffToAllocate) {
-			return GetWriteOff(WriteOffEstMax,writeOffToAllocate);
-		}
-
-		private double GetWriteOff(double writeOffEst,double writeOffToAllocate) {
-			double writeOff=0;
-			double writeOffEstRemaining=(writeOffEst - ClaimProc.WriteOff);
-			if(writeOffEst!=-1 && writeOffToAllocate!=0) {//estimated writeoff exists and there is money to allocate
-				double amt=Math.Min(writeOffToAllocate,writeOffEst);
-				writeOff=Math.Min(writeOffEstRemaining,amt);
-			}
-			return writeOff;
 		}
 	}
 

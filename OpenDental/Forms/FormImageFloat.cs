@@ -379,7 +379,8 @@ namespace OpenDental {
 			if(IsDocumentShowing()){
 				//In Web mode, the buttons do not appear when hovering over the PDF, so we need to enable the print toolbar button.
 				bool doShowPrint=panelMain.Visible;
-				toolBarButtonState=new ToolBarButtonState(print:doShowPrint, delete:true, info:true, sign:true, export:panelMain.Visible, copy:panelMain.Visible, brightAndContrast:panelMain.Visible, zoom:panelMain.Visible, zoomOne:false, crop:panelMain.Visible, pan:panelMain.Visible, adj:false, size:panelMain.Visible, flip:panelMain.Visible, rotateL:panelMain.Visible, rotateR:panelMain.Visible, rotate180:panelMain.Visible,draw:panelMain.Visible, unmount:false);
+				bool doShowExport=!GetDocumentShowing(0).FileName.IsNullOrEmpty();
+				toolBarButtonState=new ToolBarButtonState(print:doShowPrint, delete:true, info:true, sign:true, export:doShowExport, copy:panelMain.Visible, brightAndContrast:panelMain.Visible, zoom:panelMain.Visible, zoomOne:false, crop:panelMain.Visible, pan:panelMain.Visible, adj:false, size:panelMain.Visible, flip:panelMain.Visible, rotateL:panelMain.Visible, rotateR:panelMain.Visible, rotate180:panelMain.Visible,draw:panelMain.Visible, unmount:false);
 				EventEnableToolBarButtons?.Invoke(this,toolBarButtonState);
 			}
 			else if(IsMountShowing()){
@@ -1451,6 +1452,10 @@ namespace OpenDental {
 				}
 				if(ImageHelper.HasImageExtension(GetDocumentShowing(0).FileName) || GetDocumentShowing(0).FileName.EndsWith(".dcm")){
 					using Bitmap bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
+					if(bitmapCopy==null){
+						MessageBox.Show(Lan.g(this,"Unable to export, file not found."));
+						return;
+					}
 					using Graphics g=Graphics.FromImage(bitmapCopy);
 					//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
 					//translate to center of drawing area (and center of crop area)
@@ -1465,7 +1470,7 @@ namespace OpenDental {
 						ImageStore.Export(saveFileDialog.FileName,GetDocumentShowing(0),PatientCur);
 					}
 					catch(Exception ex) {
-						MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message);
+						MessageBox.Show(Lan.g(this,"Unable to export file, may be in use")+": " + ex.Message);
 						return;
 					}
 				}				
@@ -2116,7 +2121,12 @@ namespace OpenDental {
 				}
 				using FormDocumentSize formDocumentSize=new FormDocumentSize();
 				formDocumentSize.DocumentCur=GetDocumentShowing(0);
-				formDocumentSize.SizeRaw=_bitmapRaw.Size;
+				if(_bitmapDicomRaw!=null) {
+					formDocumentSize.SizeRaw=new Size(_bitmapDicomRaw.Width,_bitmapDicomRaw.Height);
+				}
+				else {
+					formDocumentSize.SizeRaw=_bitmapRaw.Size;
+				}
 				formDocumentSize.ShowDialog();
 				////the form will change DocumentCur and save it
 				if(formDocumentSize.DialogResult==DialogResult.OK) {

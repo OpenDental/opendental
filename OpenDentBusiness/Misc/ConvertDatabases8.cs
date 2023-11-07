@@ -1023,5 +1023,10 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
+
+		private static void To23_3_6() {
+			string command="INSERT INTO preference(PrefName,ValueString) VALUES('WebSchedManualSendTriggered','')";
+			Db.NonQ(command);
+		}
 	}
 }

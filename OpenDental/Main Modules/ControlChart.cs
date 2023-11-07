@@ -3852,7 +3852,9 @@ namespace OpenDental {
 			}
 			else {
 				table=Pd.TableProgNotes;
-				textSearch.Text="";
+				if(textSearch.Text!="") {
+					textSearch.Text="";
+				}
 			}
 			if(isRefreshData || Pd.ListProcGroupItems==null) {
 				if(_isModuleSelected) {
@@ -5047,6 +5049,18 @@ namespace OpenDental {
 			if(patNumPrevious!=patNum && gridProg.VScrollVisible) {
 				gridProg.ScrollToEnd();
 			}
+			if(Pd.Patient!=null && DatabaseIntegrities.DoShowPopup(Pd.PatNum,EnumModuleType.Chart)) {
+				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(Pd.PatNum);
+				bool areHashesValid=Patients.AreAllHashesValid(Pd.Patient,listAppointments,new List<PayPlan>(),new List<PaySplit>());
+				if(!areHashesValid) {
+					DatabaseIntegrities.AddPatientModuleToCache(Pd.PatNum,EnumModuleType.Chart); //Add to cached list for next time
+					//show popup
+					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
+					using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
+					formDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
+					formDatabaseIntegrity.ShowDialog();
+				}
+			}
 			Plugins.HookAddCode(this,"ContrChart.ModuleSelected_end",patNum);
 		}
 
@@ -5136,7 +5150,9 @@ namespace OpenDental {
 				butErxAccess.Enabled=false;
 				trackToothProcDates.Enabled=false;
 				textToothProcDate.Enabled=false;
-				textSearch.Text="";
+				if(textSearch.Text!="") {
+					textSearch.Text="";
+				}
 			}
 			else {
 				textTreatmentNotes.Enabled=true;
@@ -5283,7 +5299,9 @@ namespace OpenDental {
 					if(PrefC.GetBool(PrefName.AutoResetTPEntryStatus)) {
 						radioEntryTP.Select();
 					}
-					textSearch.Text="";
+					if(textSearch.Text!="") {
+						textSearch.Text="";
+					}
 					_patNumPrevious=Pd.PatNum;
 				}
 				if(PrefC.GetBool(PrefName.PatientDOBMasked)) {

@@ -304,7 +304,7 @@ namespace OpenDental {
 			this.checkEclaimsSubscIDUsesPatID.Name = "checkEclaimsSubscIDUsesPatID";
 			this.checkEclaimsSubscIDUsesPatID.Size = new System.Drawing.Size(390, 17);
 			this.checkEclaimsSubscIDUsesPatID.TabIndex = 293;
-			this.checkEclaimsSubscIDUsesPatID.Text = "On e-claims, use Optional Patent ID instead of Subscriber ID";
+			this.checkEclaimsSubscIDUsesPatID.Text = "On e-claims, use Optional Patient ID instead of Subscriber ID";
 			// 
 			// checkPpoUseUcr
 			// 

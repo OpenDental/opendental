@@ -47,13 +47,16 @@ namespace OpenDental.UI{
 				return;
 			}
 			//We have an invalid hash and we are going to show a triangle. Let's see how aggressive we will get.
-			_databaseIntegrity=DatabaseIntegrities.GetOneClass(warningIntegrityType);
-			if(_databaseIntegrity is null){
+			DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetOneClass(warningIntegrityType);
+			if(databaseIntegrity is null){
 				//connection to HQ failed, so just don't show warnings.
 				Visible=false;
 				return;
 			}
-			_databaseIntegrity.WarningIntegrityType=warningIntegrityType;//if this was default, we want the correct class type
+			_databaseIntegrity=new DatabaseIntegrity();
+			_databaseIntegrity.WarningIntegrityType=warningIntegrityType; //In case of DefaultClass, overwrite with this one
+			_databaseIntegrity.Behavior=databaseIntegrity.Behavior;
+			_databaseIntegrity.Message=databaseIntegrity.Message;
 			//for both popup and triangle, we will show this triangle
 			Visible=true;
 			if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TriangleRed) {

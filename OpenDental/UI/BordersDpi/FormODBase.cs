@@ -1711,12 +1711,14 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					//Signal processing should always use the server's time.
 					dateTimeRefreshed=MiscData.GetNowDateTime();
 				}
-				catch {
+				catch(Exception ex) {
 					//If the server cannot be reached, we still need to move the signal processing forward so use local time as a fail-safe.
 					dateTimeRefreshed=DateTime.Now;
+					Logger.LogToPath("Failed getting the server time: "+ex.Message,LogPath.Signals,LogPhase.Unspecified);
 				}
 				Signalods.DateTSignalLastRefreshed=dateTimeRefreshed;
 				Signalods.DateTApptSignalLastRefreshed=dateTimeRefreshed;
+				Logger.LogToPath(MiscUtils.GetExceptionText(e),LogPath.Signals,LogPhase.Unspecified);
 			});
 			threadRefreshSignals.AddExitHandler((o) => {
 				Logger.LogToPath("",LogPath.Signals,LogPhase.End);

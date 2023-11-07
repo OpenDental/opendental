@@ -1654,11 +1654,11 @@ namespace OpenDentBusiness {
 			//No remoting role check; no call to db
 			#region PayAsTotal
 			foreach(PayAsTotal payAsTotal in bucket.ListInsPayAsTotal) {//Use claim payments by total to pay off procedures for that specific patient.
-				if(payAsTotal.SummedInsPayAmt==0 && payAsTotal.SummedWriteOff==0) {
+				if(payAsTotal.SummedInsPayAmt==0) {
 					continue;
 				}
 				foreach(AccountEntry accountEntry in bucket.ListAccountEntries) {
-					if(payAsTotal.SummedInsPayAmt==0 && payAsTotal.SummedWriteOff==0) {
+					if(payAsTotal.SummedInsPayAmt==0) {
 						break;
 					}
 					if(accountEntry.AmountEnd==0) {
@@ -1670,9 +1670,6 @@ namespace OpenDentBusiness {
 					double amt=Math.Min((double)accountEntry.AmountEnd,payAsTotal.SummedInsPayAmt);
 					accountEntry.AmountEnd-=(decimal)amt;
 					payAsTotal.SummedInsPayAmt-=amt;
-					double amtWriteOff=Math.Min((double)accountEntry.AmountEnd,payAsTotal.SummedWriteOff);
-					accountEntry.AmountEnd-=(decimal)amtWriteOff;
-					payAsTotal.SummedWriteOff-=amtWriteOff;
 				}
 			}
 			#endregion

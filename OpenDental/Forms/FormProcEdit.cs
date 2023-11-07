@@ -356,7 +356,7 @@ namespace OpenDental {
 			//msgb.ShowDialog();
 			if(_isQuickAdd) {
 				textDate.Enabled=false;
-				ProcNoteUiHelper();//Add any default notes.
+				textNotes.Text=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);//Add any default notes.
 				butOK_Click(this,new EventArgs());
 				if(this.DialogResult!=DialogResult.OK) {
 					this.Opacity=100;
@@ -1800,45 +1800,12 @@ namespace OpenDental {
 			}
 			_procedure.ProcStatus=ProcStat.C;
 			_procedure.SiteNum=_patient.SiteNum;
-			ProcNoteUiHelper();
+			textNotes.Text=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);
 			Plugins.HookAddCode(this,"FormProcEdit.butSetComplete_Click_end",_procedure,_procedureOld,textNotes);
 			comboProcStatus.SelectedIndex=-1;
 			comboPlaceService.SelectedIndex=PrefC.GetInt(PrefName.DefaultProcedurePlaceService);
 			if(EntriesAreValid()){
 				SaveAndClose();
-			}
-		}
-
-		///<summary>Sets the UI textNotes.Text to the default proc note if any. Also checks PrefName.ProcPromptForAutoNote and remots auto notes if needed.</summary>
-		private void ProcNoteUiHelper() {
-			string procNoteDefault="";
-			if(_isQuickAdd) {//Quick Procs should insert both TP Default Note and C Default Note.
-				procNoteDefault=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.TP);
-				if(!string.IsNullOrEmpty(procNoteDefault)) {
-					procNoteDefault+="\r\n";
-				}
-			}
-			if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C) {//Only append the default note if the procedure changed status to Completed
-				procNoteDefault+=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.C);
-				if(textNotes.Text!="" && procNoteDefault!="") { //check to see if a default note is defined.
-					textNotes.Text+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
-				}
-				if(!string.IsNullOrEmpty(procNoteDefault)) {
-					textNotes.Text+=procNoteDefault;
-				}
-			}
-			if(_procedure.ProcStatus==ProcStat.TP && _procedureOld.ProcStatus==ProcStat.D){//Append the TP note if the user had to enter a tooth number or quadrant
-				procNoteDefault+=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.TP);
-				if(textNotes.Text!="" && procNoteDefault!="") { //check to see if a default note is defined.
-					textNotes.Text+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
-				}
-				if(!string.IsNullOrEmpty(procNoteDefault)) {
-					textNotes.Text+=procNoteDefault;
-				}
-			}
-			if(!PrefC.GetBool(PrefName.ProcPromptForAutoNote)) {
-				//Users do not want to be prompted for auto notes, so remove them all from the procedure note.
-				textNotes.Text=Regex.Replace(textNotes.Text,@"\[\[.+?\]\]","");
 			}
 		}
 
@@ -2652,9 +2619,10 @@ namespace OpenDental {
 				}
 				//Check if user is subcribed to the alertType and create an alert.
 				if(AlertSubs.GetAllAlertTypesForUser(_procedureOld.UserNum).Contains(AlertType.SignatureCleared)) {
-					string alertDescription="Procedure Note Change with PatNum: "+_procedureOld.PatNum.ToString()
-					+" Date:"+_procedureOld.ProcDate.ToShortDateString()
-					+" Code:"+_procedureOld.CodeNum;
+					string procCode=ProcedureCodes.GetStringProcCode(_procedureOld.CodeNum);
+					string alertDescription="Procedure Note Changed for PatNum: "+_procedureOld.PatNum.ToString()
+					+" Date: "+_procedureOld.ProcDate.ToShortDateString()
+					+" Procedure Code: "+procCode;
 					AlertItems.Insert(new AlertItem {
 						//Allow to alert to be deleted or marked as read.
 						Actions=ActionType.MarkAsRead | ActionType.Delete,
@@ -2669,7 +2637,7 @@ namespace OpenDental {
 			if(!_isQuickAdd){
 				if(_procedure.ProcStatus==ProcStat.C 
 					|| (_procedure.ProcStatus==ProcStat.TP && _procedure.Note=="")){
-					ProcNoteUiHelper();
+					textNotes.Text=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);
 				}
 			}
 			SaveAndClose();

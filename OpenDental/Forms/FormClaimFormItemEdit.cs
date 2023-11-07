@@ -326,6 +326,7 @@ namespace OpenDental {
 				"ToothNumOrArea",
 				"TreatDentMedicaidID",
 				"TreatProvNPI",
+				"TreatProvSpecialty",
 				"UnitQty",
 				"UnitQtyOrCount"
 			}.Select(y => "P"+x+y)))//P1-15SystemAndTeeth..., 28 fields, these will be alphabatized at the end of the list of all fields

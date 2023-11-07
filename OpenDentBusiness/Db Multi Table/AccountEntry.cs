@@ -324,7 +324,7 @@ namespace OpenDentBusiness {
 			Tag=payAsTotal;
 			Date=payAsTotal.DateEntry;
 			PriKey=0;//This is not a database object, no primary keys are available 
-			AmountOriginal=0-(decimal)(payAsTotal.SummedInsPayAmt+payAsTotal.SummedWriteOff);
+			AmountOriginal=0-(decimal)(payAsTotal.SummedInsPayAmt);
 			AmountAvailable=AmountOriginal;
 			AmountEnd=AmountOriginal;
 			ProvNum=payAsTotal.ProvNum;

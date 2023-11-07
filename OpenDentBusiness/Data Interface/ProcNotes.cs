@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OpenDentBusiness {
 	public class ProcNotes{
@@ -58,6 +59,40 @@ namespace OpenDentBusiness {
 				.GroupBy(x => x.ProcNum,(x,y) => y.Aggregate((y1,y2) => y1.EntryDateTime>y2.EntryDateTime?y1:y2))//group by ProcNum, get most recent ProcNote
 				.Where(x => !string.IsNullOrWhiteSpace(x.Signature))//where the most recent ProcNote is signed
 				.Select(x => x.ProcNum).ToList();//return list of ProcNums
+		}
+
+		///<summary>Modifies currentNote and returns the new note string. Also checks PrefName.ProcPromptForAutoNote and remots auto notes if needed.</summary>
+		public static string SetProcCompleteNoteHelper(bool isQuickAdd,Procedure procedure,Procedure procedureOld,long provNum,string currentNote="") {
+			string procNoteDefault="";
+			if(isQuickAdd) {//Quick Procs should insert both TP Default Note and C Default Note.
+				procNoteDefault=ProcCodeNotes.GetNote(provNum,procedure.CodeNum,ProcStat.TP);
+				if(!string.IsNullOrEmpty(procNoteDefault)) {
+					procNoteDefault+="\r\n";
+				}
+			}
+			if(procedureOld.ProcStatus!=ProcStat.C && procedure.ProcStatus==ProcStat.C) {//Only append the default note if the procedure changed status to Completed
+				procNoteDefault+=ProcCodeNotes.GetNote(provNum,procedure.CodeNum,ProcStat.C);
+				if(currentNote!="" && procNoteDefault!="") { //check to see if a default note is defined.
+					currentNote+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
+				}
+				if(!string.IsNullOrEmpty(procNoteDefault)) {
+					currentNote+=procNoteDefault;
+				}
+			}
+			if(procedure.ProcStatus==ProcStat.TP && procedureOld.ProcStatus==ProcStat.D){//Append the TP note if the user had to enter a tooth number or quadrant
+				procNoteDefault+=ProcCodeNotes.GetNote(provNum,procedure.CodeNum,ProcStat.TP);
+				if(currentNote!="" && procNoteDefault!="") { //check to see if a default note is defined.
+					currentNote+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
+				}
+				if(!string.IsNullOrEmpty(procNoteDefault)) {
+					currentNote+=procNoteDefault;
+				}
+			}
+			if(!PrefC.GetBool(PrefName.ProcPromptForAutoNote)) {
+				//Users do not want to be prompted for auto notes, so remove them all from the procedure note.
+				currentNote=Regex.Replace(currentNote,@"\[\[.+?\]\]","");
+			}
+			return currentNote;
 		}
 		
 		/*

@@ -10,6 +10,7 @@ using OpenDentBusiness;
 using CodeBase;
 using System.IO;
 using System.Net;
+using System.Diagnostics;
 
 namespace OpenDentBusiness {
 	public class PrefC {
@@ -95,8 +96,10 @@ namespace OpenDentBusiness {
 				return prefString.Split(',').Select(long.Parse).ToList();
 			}
 		}
+
 		///<summary>True if a) Computer name of this session is included in the HasVerboseLogging PrefValue OR b) OD program directory includes (blank) Verbose.txt file.</summary>
-		public static bool IsVerboseLoggingSession() {			
+		public static bool IsVerboseLoggingSession() {
+			YN ynIsVerboseLoggingSession=_isVerboseLoggingSession;
 			try {
 				if(_isVerboseLoggingSession!=YN.Unknown) {
 					//Pref flag is already set so return it.
@@ -128,12 +131,18 @@ namespace OpenDentBusiness {
 					_isVerboseLoggingSession=YN.No;
 				}
 				//Pref flag was just set so return it.
-				return _isVerboseLoggingSession==YN.Yes;				
+				return _isVerboseLoggingSession==YN.Yes;
 			}
 			catch(Exception e) {
 				e.DoNothing();
 				return false;
-			}			
+			}
+			finally {
+				if(ynIsVerboseLoggingSession!=_isVerboseLoggingSession) {
+					string message = "Logging Verbosity has changed from " + ynIsVerboseLoggingSession.ToString() + " to " + _isVerboseLoggingSession.ToString();
+					ODException.SwallowAnyException(() => { Logger.WriteLine(message, "Meta"+"\\"+Process.GetCurrentProcess().Id.ToString() ); });
+				}
+			}
 		}
 
 		///<summary>Returns the credentials (user name and password) used to access the voicemail share via SMB2.
@@ -486,21 +495,22 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		/// <summary>Returns the first short URL found, or an empty string if none are found.</summary>
+		/// <summary>Returns the first short-URL found in the supplied message, or an empty string if none are found.</summary>
 		public static string GetFirstShortURL(string msgBodyText) {
-			return GetFirstShortURL(ListTools.FromSingle(msgBodyText));
+			if(string.IsNullOrWhiteSpace(msgBodyText)) {
+				return "";
+			}
+			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
+			return listRedirectShortURLs.Find(x=>msgBodyText.Contains(x))??"";
 		}
 
-		/// <summary>Returns the first short URL found, or an empty string if none are found.</summary>
-		public static string GetFirstShortURL(List<string> listMsgBodyText) {
-			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
-			for(int i = 0;i<listMsgBodyText.Count;i++) {
-				string retVal=listRedirectShortURLs.Find(x=>listMsgBodyText[i].Contains(x));
-				if (!string.IsNullOrEmpty(retVal)) {
-					return retVal;
-				}
+		/// <summary>Returns a list of all short-URLs found in the supplied message, or an empty list if none are found.</summary>
+		public static List<string> GetListShortURLs(string msgBodyText) {
+			if(string.IsNullOrWhiteSpace(msgBodyText)) {
+				return new List<string>();
 			}
-			return "";
+			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
+			return listRedirectShortURLs.FindAll(x=>msgBodyText.Contains(x)).ToList();
 		}
 		
 		///<summary>A helper class to get Reporting Server preferences.</summary>

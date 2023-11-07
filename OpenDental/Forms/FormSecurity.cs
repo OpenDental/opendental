@@ -21,6 +21,12 @@ namespace OpenDental {
 		
 		private void FormSecurityEdit_Load(object sender,EventArgs e) {
 			LayoutMenu();
+			//userControlSecurityUserGroup must start out shorter to exactly match its designer.
+			//This is because the UI.TabPage does not properly layout in designer.
+			//This control is also used in FormCentralSecurity, where vertical space is less, so we initially match it here.
+			//In addition, we had to properly anchor to all 4 sides to the TabPage.
+			int offsetButOK=ClientSize.Height-butOK.Bottom+butOK.Height;
+			LayoutManager.MoveHeight(userControlSecurityUserGroup,ClientSize.Height-userControlSecurityUserGroup.Top-offsetButOK-5);
 		}
 
 		private void LayoutMenu() {

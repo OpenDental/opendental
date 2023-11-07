@@ -60,10 +60,14 @@ namespace CodeBase {
 		}
 
 		#region Parseable Logging
-		///<summary>This method takes a string that should be some kind of an identifier (usually method name) for the method that is being logged. 
-		///The optional string is for any additional information the implementer finds useful to be in the log string. 
-		///LogPath determines the directory to log to and LogPhase determines whether the logger is a "Start" line or a "Stop" line.</summary>
+		///<summary>Uses reflection to figure out the calling method and makes a time stamped verbose log if verbose logging is turned on.
+		///The log parameter is typically a short identifier for the action being logged.
+		///LogPath determines the directory to log to and LogPhase determines whether the logger is a "Start" line or a "Stop" line.
+		///The optionalDesc string is for any additional information the implementer finds useful to be in the log string. </summary>
 		public static void LogToPath(string log,LogPath path,LogPhase logPhase,string optionalDesc="") {
+			if(DoVerboseLogging==null || !DoVerboseLogging()) {
+				return;
+			}
 			string logWrite=GetCallingMethod()+" "+log;
 			switch(logPhase) {
 				case LogPhase.Unspecified:
@@ -126,7 +130,7 @@ namespace CodeBase {
 		///<summary>If HasVerboseLogging(Environment.MachineName) then Logger.WriteLine(log). Otherwise do nothing.</summary>
 		public static void LogVerbose(string log,string subDirectory = "") {
 			if(DoVerboseLogging==null || !DoVerboseLogging()) {
-					return;
+				return;
 			}
 			Logger.WriteLine(log,subDirectory,daysOld:30);
 		}

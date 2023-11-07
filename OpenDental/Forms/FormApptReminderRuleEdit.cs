@@ -553,16 +553,16 @@ namespace OpenDental {
 		}
 
 		private bool ContainsShortURLs() {
-			List<string> listTemplateBodyText=new List<string>();
-			for(int i = 0;i<tabControl.TabPages.Count;i++) {
-				listTemplateBodyText.AddRange(tabControl.TabPages[i].Controls.OfType<UserControlReminderMessage>().Select(x => x.TemplateSms));
+			List<UserControlReminderMessage> listUserControlReminderMessages=tabControl.TabPages.Select(x=>x.Controls).OfType<UserControlReminderMessage>().ToList();
+			List<string> listMessages=listUserControlReminderMessages.Select(x => x.TemplateSms).ToList();
+			string aggMessages=string.Join(" ",listMessages);
+			string firstShortURL=PrefC.GetFirstShortURL(aggMessages);
+			if(string.IsNullOrWhiteSpace(firstShortURL)) {
+				return false;
 			}
-			string errorText=PrefC.GetFirstShortURL(listTemplateBodyText);
-			if(!string.IsNullOrWhiteSpace(errorText)) {
-				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
-				return true;
-			}
-			return false;
+			string errorMessage=Lan.g(this,"Message cannot contain the URL")+$" {firstShortURL} "+Lan.g(this,"as these are only allowed for eServices.");
+			MessageBox.Show(errorMessage);
+			return true;
 		}
 
 		private void checkSendAll_CheckedChanged(object sender,EventArgs e) {

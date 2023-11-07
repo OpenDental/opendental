@@ -66,6 +66,7 @@ namespace OpenDentBusiness {
 				{ 
 					//add wording to the InnerException to let the user know that it's a problem with the Read-only server.
 					ex=new Exception("Read-Only Server Error",new Exception("An error occurred while trying to use the Read-Only Server.\n\n"+e.Message,e));
+					Logger.LogToPath(MiscUtils.GetExceptionText(ex),LogPath.Threads,LogPhase.Unspecified);
 				}
 			}));
 			threadGetTable.Name="ReadOnlyComplexGetTableThread";

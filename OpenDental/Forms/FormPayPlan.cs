@@ -145,7 +145,7 @@ namespace OpenDental{
 				LayoutManager.MoveLocation(labelTxAmtInfo,new Point(labelTxAmtInfo.Location.X,labelTxAmtInfo.Location.Y-20));
 			}
 			else {
-				Text=Lan.g(this,"Patient Payment Plan");
+				Text=Lan.g(this,"Old Payment Plan");
 				labelInsPlan.Visible=false;
 				textInsPlan.Visible=false;
 				butChangePlan.Visible=false;

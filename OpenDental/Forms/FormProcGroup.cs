@@ -476,9 +476,12 @@ namespace OpenDental{
 				}
 				//Check if user is subcribed to the alertType.SignatureCleared and create an alert.
 				if(AlertSubs.GetAllAlertTypesForUser(_procedureGroupOld.UserNum).Contains(AlertType.SignatureCleared)) {
-					string alertDescription="Procedure Note Change with PatNum: "+_procedureGroupOld.PatNum.ToString()
-					+" Date:"+_procedureGroupOld.ProcDate.ToShortDateString()
-					+" Code:"+_procedureGroupOld.CodeNum;
+					string procCode=ProcedureCodes.GetStringProcCode(_procedureGroupOld.CodeNum);
+					string provider=Providers.GetAbbr(_procedureGroupOld.ProvNum);
+					string alertDescription="Group Note Changed for PatNum: "+_procedureGroupOld.PatNum
+					+" Provider: "+provider
+					+" Date: "+_procedureGroupOld.ProcDate.ToShortDateString()
+					+" Procedure Code: "+procCode;
 					AlertItems.Insert(new AlertItem {
 						//Allow to alert to be deleted or marked as read.
 						Actions=ActionType.MarkAsRead | ActionType.Delete,
@@ -489,7 +492,6 @@ namespace OpenDental{
 						ClinicNum=_procedureGroupOld.ClinicNum,
 					});
 				}
-				return;
 			}
 			SaveAndClose();
 		}

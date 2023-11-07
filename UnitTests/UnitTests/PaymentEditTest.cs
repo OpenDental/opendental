@@ -11705,7 +11705,7 @@ namespace UnitTests.PaymentEdit_Tests {
 			claim.ProvBill=provNum;
 			claim.ProvTreat=provNum;
 			Claims.Insert(claim);
-			//create new as total claim proc payment.
+			//create new as total claim payment.
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.PriInsPlan.PlanNum,provNum,200,ins.PriInsSub.InsSubNum,0,0,claim.ClaimNum);
 			//Act as if we created a transfer (back when we allowed the unearned payment to have a provider)
 			Payment transfer1=PaymentT.MakePayment(pat.PatNum,200,provNum:provNum,unearnedType:unearnedType.DefNum);
@@ -11722,10 +11722,12 @@ namespace UnitTests.PaymentEdit_Tests {
 			//Should have a negative split that matched the provider and unearned type along with a positive split applied to the procedure
 			Assert.IsFalse(transferResults.HasInvalidSplits);
 			Assert.AreEqual(2,transferResults.ListSplitsCur.Count);
-			Assert.AreEqual(1,transferResults.ListSplitsCur.FindAll(x => x.UnearnedType==unearnedType.DefNum && x.ProvNum==provNum 
-				&& CompareDouble.IsEqual(x.SplitAmt,-200)).Count);
-			Assert.AreEqual(1,transferResults.ListSplitsCur.FindAll(x => x.ProcNum==proc.ProcNum && x.ProvNum==provNum
-				&& CompareDouble.IsEqual(x.SplitAmt,200)).Count);
+			Assert.AreEqual(1,transferResults.ListSplitsCur.Count(x => x.UnearnedType==unearnedType.DefNum 
+				&& x.ProvNum==provNum 
+				&& CompareDouble.IsEqual(x.SplitAmt,-200)));
+			Assert.AreEqual(1,transferResults.ListSplitsCur.Count(x => x.ProcNum==proc.ProcNum 
+				&& x.ProvNum==provNum
+				&& CompareDouble.IsEqual(x.SplitAmt,200)));
 			//Make the income transfer official by inserting the splits into the database and then run the transfer again.  No splits should be made!
 			PaySplits.InsertMany(0,transferResults.ListSplitsCur);
 			transferResults=PaymentT.BalanceAndIncomeTransfer(pat.PatNum);

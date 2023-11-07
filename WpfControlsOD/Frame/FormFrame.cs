@@ -1122,12 +1122,10 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 						Process.Start(manualPageURL);
 					}
 					else{
-						Process.Start(manualPageURL);
-//todo: fix for wpf:
-						//FormHelpBrowser formHelpBrowser=FormHelpBrowser.GetFormHelpBrowser(enableUI:isKeyValid);//If false, then just the Help Feature page shows
-						//formHelpBrowser.GoToPage(manualPageURL);
-						//formHelpBrowser.Show();
-						//UIHelper.ForceBringToFront(formHelpBrowser);
+						FrmHelpBrowser frmHelpBrowser=new FrmHelpBrowser();
+						frmHelpBrowser.EnableUI(enableUI:isKeyValid);//If false, then just the Help Feature page shows
+						frmHelpBrowser.GoToPage(manualPageURL);
+						frmHelpBrowser.Show();
 					}
 					if(!isKeyValid) {
 						//comes up on top of locked browser.

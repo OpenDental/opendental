@@ -841,6 +841,9 @@ namespace OpenDental {
 				DateTime.Now
 			);
 			listWebSchedErrors.AddRange(listTemp);
+			//Workstations don't actually care about this pref, this pref is entirely for the eConnector.
+			CommTypeFlag commType=CommTypeFlag.Text|CommTypeFlag.Email|CommTypeFlag.SecureEmail;
+			Prefs.UpdateIntNoCache(PrefName.WebSchedManualSendTriggered,(int)commType); //This pref is for the EConnector running webschedrecalls, doesn't get used by anyone else so update without cache.
 			Cursor=Cursors.Default;
 			SecurityLogs.MakeLogEntry(EnumPermType.WebSchedRecallManualSend,0,Lan.g(this,"Web Sched Recalls manually sent."));
 			if(listWebSchedErrors.Count>0) {

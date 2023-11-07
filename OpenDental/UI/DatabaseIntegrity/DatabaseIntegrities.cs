@@ -12,6 +12,8 @@ namespace OpenDental {
 	public class DatabaseIntegrities {
 		///<summary>This is only grabbed once, so the only way to refresh is to restart OD. It's lazy loaded the first time that a WarningIntegrity triangle is encountered or a plugin attempts to load.</summary>
 		private static List<DatabaseIntegrity> _listDatabaseIntegrities;
+		///<summary>List used to keep track of which patients and modules have been selected in a session. Will contain, at most, one element per patient.</summary>
+		private static List<PatientModule> _listPatientModules=new List<PatientModule>() { };
 
 		///<summary>True if the plugin is allowed to silently load without any warning. The pluginName should include the dll extension.</summary>
 		public static bool IsPluginAllowed(string pluginName){
@@ -76,12 +78,75 @@ namespace OpenDental {
 				//must have had trouble connecting to HQ,
 				return null;
 			}
-			DatabaseIntegrity databaseIntegrity=_listDatabaseIntegrities.Find(x=>x.WarningIntegrityType==warningIntegrityType);
-			if(databaseIntegrity!=null){
-				return databaseIntegrity;
+			DatabaseIntegrity databaseIntegrity=_listDatabaseIntegrities.Find(x => x.WarningIntegrityType==warningIntegrityType);
+			if(databaseIntegrity is null){ //If not found, get default behavior
+				databaseIntegrity=_listDatabaseIntegrities.Find(x => x.WarningIntegrityType==EnumWarningIntegrityType.DefaultClass);
 			}
-			DatabaseIntegrity databaseIntegrityDefault=_listDatabaseIntegrities.Find(x=>x.WarningIntegrityType==EnumWarningIntegrityType.DefaultClass);
-			return databaseIntegrityDefault;//shouldn't be null here unless something is wrong with db
+			return databaseIntegrity; //shouldn't be null unless something is wrong with db
+		}
+
+		///<summary>Can return null if couldn't connect to HQ, load preference, or Module is not set at HQ.</summary>
+		public static DatabaseIntegrity GetModule() {
+			if(_listDatabaseIntegrities is null) {
+				RefreshFromHQ();
+			}
+			if(_listDatabaseIntegrities.Count==0) {
+				RefreshCacheFromPref();
+			}
+			if(_listDatabaseIntegrities.Count==0) {
+				//must have had trouble connecting to HQ,
+				return null;
+			}
+			DatabaseIntegrity databaseIntegrity=_listDatabaseIntegrities.Find(x => x.WarningIntegrityType==EnumWarningIntegrityType.Module);
+			return databaseIntegrity; //Will be null if type Module not found
+		}
+
+		///<summary>Returns true if a Database Integrity popup should be displayed. Considers all modules visited with the passed in patient selected in the current session. Call before validating the patient's data.</summary>
+		public static bool DoShowPopup(long patNum,EnumModuleType moduleType) {
+			if(patNum==0) {
+				return false; //shouldn't happen
+			}
+			DatabaseIntegrity databaseIntegrity=GetModule();
+			if(databaseIntegrity is null) {
+				return false;
+			}
+			PatientModule patientModule=_listPatientModules.FirstOrDefault(x => x.PatNum==patNum);
+			switch(databaseIntegrity.Behavior) {
+				case EnumIntegrityBehavior.PopupSession:
+					if(_listPatientModules.Count==0) {
+						return true; //First for this session
+					}
+					break;
+				case EnumIntegrityBehavior.PopupPatient:
+					if(patientModule is null) {
+						return true; //First for this patient & session
+					}
+					break;
+				case EnumIntegrityBehavior.PopupModule:
+					if(patientModule is null || !patientModule.ListModuleTypes.Contains(moduleType)) {
+						return true; //First for this patient & session & module
+					}
+					break;
+				case EnumIntegrityBehavior.PopupModuleAlways:
+					return true;
+				default: //other Behaviors
+					return false;
+			}
+			return false; //Popup has already shown
+		}
+
+		///<summary>Updates _listPatientModule cache to include the passed in patient and module. Creates a new object when new patient is first selected. Updates existing object with each additonal module selected.</summary>
+		public static void AddPatientModuleToCache(long patNum,EnumModuleType moduleType) {
+			PatientModule patientModule=_listPatientModules.Find(x => x.PatNum==patNum);
+			if(patientModule is null) {
+				patientModule=new PatientModule();
+				patientModule.PatNum=patNum;
+				_listPatientModules.Add(patientModule);
+			}
+			if(patientModule.ListModuleTypes.Contains(moduleType)) {//already cached for patient
+				return;
+			}
+			patientModule.ListModuleTypes.Add(moduleType);
 		}
 
 		///<summary>Attempts to get the Whitelist from HQ. Saves to preference if successful, else fails silently.</summary>

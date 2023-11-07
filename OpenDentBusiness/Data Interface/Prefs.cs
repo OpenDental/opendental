@@ -148,6 +148,15 @@ namespace OpenDentBusiness{
 			return GetTableFromCache(true);
 		}
 
+		public static void RemoveFlagNoCache<T>(PrefName prefName,T enumFlag) where T : Enum {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),enumFlag);
+				return;
+			}
+			string command=$"UPDATE preference SET ValueString=Valuestring&~{POut.Long((int)(object)enumFlag)} WHERE PrefName='{POut.String(prefName.ToString())}'";
+			Db.NonQ(command);
+		}
+
 		///<summary>Fills the local cache with the passed in DataTable.</summary>
 		public static void FillCacheFromTable(DataTable table) {
 			_prefCache.FillCacheFromTable(table);
@@ -180,6 +189,15 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT ValueString FROM preference WHERE PrefName = '"+POut.String(prefName.ToString())+"'";
 			return PIn.Bool(Db.GetScalar(command));
+		}
+
+		///<summary>Gets a pref of type int without using the cache.</summary>
+		public static int GetIntNoCache(PrefName prefName) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetInt(MethodBase.GetCurrentMethod(),prefName);
+			}
+			string command="SELECT ValueString FROM preference WHERE PrefName = '"+POut.String(prefName.ToString())+"'";
+			return PIn.Int(Db.GetScalar(command));
 		}
 
 		///<summary></summary>

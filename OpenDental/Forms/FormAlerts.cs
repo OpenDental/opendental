@@ -203,6 +203,9 @@ namespace OpenDental {
 				case AlertType.WebFormsReady:
 					value+=Lan.g(this,"Web Forms Ready to Retrieve")+": ";
 					break;
+				case AlertType.SignatureCleared:
+					value+=Lan.g(this,"Signature Cleared")+": ";
+					break;
 				case AlertType.EconnectorEmailTooManySendFails:
 				case AlertType.NumberBarredFromTexting:
 				case AlertType.MultipleEConnectors:
@@ -214,9 +217,6 @@ namespace OpenDental {
 				case AlertType.CloudAlertWithinLimit:
 				case AlertType.WebSchedRecallsNotSending:
 				case AlertType.EConnectorRedistributableMissing:
-				case AlertType.SignatureCleared:
-					value+=Lan.g(this,"Signature Cleared")+": ";
-					break;
 				default:
 					value+=Lan.g(this,alertItem.Type.GetDescription())+": ";
 					break;

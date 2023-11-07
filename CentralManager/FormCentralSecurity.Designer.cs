@@ -77,7 +77,7 @@
 			this.groupBox1.Controls.Add(this.textDays);
 			this.groupBox1.Controls.Add(this.textDate);
 			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Location = new System.Drawing.Point(12, 472);
+			this.groupBox1.Location = new System.Drawing.Point(12, 492);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(395, 197);
 			this.groupBox1.TabIndex = 106;
@@ -193,7 +193,7 @@
 			this.groupBox2.Controls.Add(this.butPushLocks);
 			this.groupBox2.Controls.Add(this.textSyncCode);
 			this.groupBox2.Controls.Add(this.butPushUsers);
-			this.groupBox2.Location = new System.Drawing.Point(413, 472);
+			this.groupBox2.Location = new System.Drawing.Point(413, 492);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(267, 197);
 			this.groupBox2.TabIndex = 107;
@@ -251,11 +251,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.userControlSecurityTabs.IsForCEMT = true;
 			this.userControlSecurityTabs.Location = new System.Drawing.Point(2, 2);
-			this.userControlSecurityTabs.MinimumSize = new System.Drawing.Size(914, 217);
 			this.userControlSecurityTabs.Name = "userControlSecurityTabs";
 			this.userControlSecurityTabs.SelectedUser = null;
 			this.userControlSecurityTabs.SelectedUserGroup = null;
-			this.userControlSecurityTabs.Size = new System.Drawing.Size(969, 464);
+			this.userControlSecurityTabs.Size = new System.Drawing.Size(969, 484);
 			this.userControlSecurityTabs.TabIndex = 253;
 			this.userControlSecurityTabs.AddUserClick += new OpenDental.UserControlSecurityUserGroup.SecurityTabsEventHandler(this.userControlSecurityTabs_AddUserClick);
 			this.userControlSecurityTabs.EditUserClick += new OpenDental.UserControlSecurityUserGroup.SecurityTabsEventHandler(this.userControlSecurityTabs_EditUserClick);
@@ -268,7 +267,7 @@
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(897, 610);
+			this.butOK.Location = new System.Drawing.Point(897, 630);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 107;
@@ -278,7 +277,7 @@
 			// butClose
 			// 
 			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butClose.Location = new System.Drawing.Point(897, 640);
+			this.butClose.Location = new System.Drawing.Point(897, 660);
 			this.butClose.Name = "butClose";
 			this.butClose.Size = new System.Drawing.Size(75, 24);
 			this.butClose.TabIndex = 65;
@@ -308,7 +307,7 @@
 			this.groupBox3.Controls.Add(this.checkDomainLoginEnabled);
 			this.groupBox3.Controls.Add(this.textDomainLoginPath);
 			this.groupBox3.Controls.Add(this.labelDomainPath);
-			this.groupBox3.Location = new System.Drawing.Point(707, 472);
+			this.groupBox3.Location = new System.Drawing.Point(707, 492);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(264, 71);
 			this.groupBox3.TabIndex = 274;
@@ -332,7 +331,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(984, 676);
+			this.ClientSize = new System.Drawing.Size(984, 696);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.userControlSecurityTabs);
 			this.Controls.Add(this.groupBox2);

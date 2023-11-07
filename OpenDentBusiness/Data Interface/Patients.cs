@@ -5030,6 +5030,48 @@ namespace OpenDentBusiness {
 			return false; 
 		}
 
+		///<summary>Checks all passed lists protected by SecurityHash columns. Returns false if a single row in any table is invalidly hashed. Limited to only 20 rows per table to reduce this process's impact on performance. Ignores rows occuring before SecurityHash.DateStart.</summary>
+		public static bool AreAllHashesValid(Patient patient,List<Appointment> listAppointments,List<PayPlan> listPayPlans,List<PaySplit> listPaySplits) {
+			//No need to check MiddleTierRole; no call to db.
+			if(patient!=null && !IsPatientHashValid(patient)) {
+				return false;
+			}
+			#region PayPlans
+			listPayPlans.RemoveAll(x => x.PayPlanDate < Misc.SecurityHash.DateStart);
+			for(int i=0;i<listPayPlans.Count;i++) {
+				if(i==20) { //indicitive enough of third party usage
+					break;
+				}
+				if(!PayPlans.IsPayPlanHashValid(listPayPlans[i])) {
+					return false;
+				}
+			}
+			#endregion PayPlans
+			#region Appointments
+			listAppointments.RemoveAll(x => x.AptDateTime < Misc.SecurityHash.DateStart);
+			for(int i=0;i<listAppointments.Count;i++) {
+				if(i==20) {
+					break;
+				}
+				if(!Appointments.IsAppointmentHashValid(listAppointments[i])) {
+					return false;
+				}
+			}
+			#endregion Appointments
+			#region PaySplits
+			listPaySplits.RemoveAll(x => x.DatePay < Misc.SecurityHash.DateStart);
+			for(int i=0;i<listPaySplits.Count;i++) {
+				if(i==20) {
+					break;
+				}
+				if(!PaySplits.IsPaySplitHashValid(listPaySplits[i])) {
+					return false;
+				}
+			}
+			#endregion PaySplits
+			return true;
+		}
+
 		public static bool IsMinor(DateTime birthdate,DateTime dateCompare,int minorAge) {
 			return new DateSpan(birthdate,dateCompare).YearsDiff<minorAge;
 		}
