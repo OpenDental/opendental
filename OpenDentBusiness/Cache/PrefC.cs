@@ -486,21 +486,22 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		/// <summary>Returns the first short URL found, or an empty string if none are found.</summary>
+		/// <summary>Returns the first short-URL found in the supplied message, or an empty string if none are found.</summary>
 		public static string GetFirstShortURL(string msgBodyText) {
-			return GetFirstShortURL(ListTools.FromSingle(msgBodyText));
+			if(string.IsNullOrWhiteSpace(msgBodyText)) {
+				return "";
+			}
+			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
+			return listRedirectShortURLs.Find(x=>msgBodyText.Contains(x))??"";
 		}
 
-		/// <summary>Returns the first short URL found, or an empty string if none are found.</summary>
-		public static string GetFirstShortURL(List<string> listMsgBodyText) {
-			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
-			for(int i = 0;i<listMsgBodyText.Count;i++) {
-				string retVal=listRedirectShortURLs.Find(x=>listMsgBodyText[i].Contains(x));
-				if (!string.IsNullOrEmpty(retVal)) {
-					return retVal;
-				}
+		/// <summary>Returns a list of all short-URLs found in the supplied message, or an empty list if none are found.</summary>
+		public static List<string> GetListShortURLs(string msgBodyText) {
+			if(string.IsNullOrWhiteSpace(msgBodyText)) {
+				return new List<string>();
 			}
-			return "";
+			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
+			return listRedirectShortURLs.FindAll(x=>msgBodyText.Contains(x)).ToList();
 		}
 		
 		///<summary>A helper class to get Reporting Server preferences.</summary>

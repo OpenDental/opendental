@@ -477,6 +477,17 @@ namespace OpenDental
 			if(docNum!=0) {
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,docNum));
 			}
+			if(_patCur!=null && DatabaseIntegrities.DoShowPopup(_patCur.PatNum,EnumModuleType.Imaging)) {
+				bool areHashesValid=Patients.AreAllHashesValid(_patCur,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>());
+				if(!areHashesValid) {
+					DatabaseIntegrities.AddPatientModuleToCache(_patCur.PatNum,EnumModuleType.Imaging); //Add to cached list for next time
+					//show popup
+					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
+					using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
+					formDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
+					formDatabaseIntegrity.ShowDialog();
+				}
+			}
 			Plugins.HookAddCode(this,"ContrImages.ModuleSelected_end",patNum,docNum);
 		}
 		

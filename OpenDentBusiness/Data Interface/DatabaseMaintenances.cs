@@ -3382,12 +3382,13 @@ namespace OpenDentBusiness {
 					LEFT JOIN patient ON claimproc.PatNum=patient.PatNum
 					LEFT JOIN procedurelog ON claimproc.ProcNum=procedurelog.ProcNum 
 					WHERE claimproc.WriteOff<0
-					AND claimproc.IsTransfer=0";//The income transfer tool creates claimprocs with negative writeoffs. These are valid.
+					AND claimproc.IsTransfer=0 "+//The income transfer tool creates claimprocs with negative writeoffs. These are valid.
+					"AND claimproc.Status!="+POut.Enum(ClaimProcStatus.Supplemental);//Ignore supplementals since these are allowed to be negative
 			DataTable table=Db.GetTable(command);
 			if(table.Rows.Count==0 && !verbose) {
 				return "";
 			}
-			string log=Lans.g("FormDatabaseMaintenance","Negative writeoffs found: ")+table.Rows.Count;
+			string log=Lans.g("FormDatabaseMaintenance","Negative writeoffs found: ")+table.Rows.Count+"\r\n";
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:

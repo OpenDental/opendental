@@ -48,7 +48,7 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<SecurityLog>>(MethodBase.GetCurrentMethod(),limit,offset,permType,apiDeveloperName);
 			}
 			string command="SELECT * FROM securitylog "
-				+"WHERE LogText LIKE '%by "+apiDeveloperName+" through%' ";
+				+"WHERE LogText LIKE '%by "+POut.String(apiDeveloperName)+" through%' ";
 			if(permType>-1) {//0 is 'None' and is valid.
 				command+="AND PermType='"+POut.Long(permType)+"' ";
 			}

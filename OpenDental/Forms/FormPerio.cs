@@ -1580,7 +1580,7 @@ namespace OpenDental{
 			bool isExamInUse=MobileAppDevices.IsInUse(_patient.PatNum,MADPage.PerioExamEditPage,MADPage.PerioExamListPage);
 			bool isAllowingEdit=false;
 			if(isExamInUse) {
-				isAllowingEdit=MsgBox.Show(MsgBoxButtons.YesNo,"This patients exam(s) are currently being edited in eClipboard. Would you like to edit this exam and close the eClipboard session?");
+				isAllowingEdit=MsgBox.Show(MsgBoxButtons.YesNo,Lans.g(this, "This patient has a perio exam currently being edited in ODTouch. Would you like to edit anyway? (Not recommended)."));
 			}
 			else {
 				SetEClipBoardEditing(false);

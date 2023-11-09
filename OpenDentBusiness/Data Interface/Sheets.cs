@@ -419,10 +419,10 @@ namespace OpenDentBusiness{
 			//Always skip insurance fields, skip medications if they have active medications in the DB.
 			//Always exclude static text. Allow combo or check boxes if the fieldName is misc
 			List<SheetField> listSheetNewFieldsEmpty=sheetNew.SheetFields.FindAll(x => x.FieldType!=(SheetFieldType.StaticText)
-				&& (!x.FieldType.In(SheetFieldType.CheckBox,SheetFieldType.ComboBox) || x.FieldName=="misc"
+				&& (!x.FieldType.In(SheetFieldType.CheckBox) || x.FieldName=="misc"
 					|| (x.FieldName.StartsWith("problem") && doUseProblemFromPrevSheet) 
 					|| (x.FieldName.StartsWith("allergy") && doUseAllergyFromPrevSheet))
-				&& x.FieldValue.IsNullOrEmpty()
+				&& (x.FieldValue.IsNullOrEmpty() || x.FieldType.In(SheetFieldType.ComboBox))
 				&& !x.FieldName.StartsWith("ins1")	
 				&& !x.FieldName.StartsWith("ins2")	
 				&& (!x.FieldName.StartsWith("inputMed")	|| doUseMedicationsFromPreviousSheet)

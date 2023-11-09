@@ -261,6 +261,7 @@ namespace OpenDentBusiness{
 						command+="((";
 					}
 					command+="PageContentPlainText LIKE '%"+POut.String(stringArraySearchTokens[i])+"%' ";
+					command+="OR PageContent LIKE '%|%"+POut.String(stringArraySearchTokens[i])+"%]%'";
 				}
 				command+=") ";
 				if(!listWikiPageNumsPageTitle.IsNullOrEmpty() && searchForLinks) {

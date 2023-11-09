@@ -28,6 +28,8 @@ namespace OpenDental {
 		DefaultPlugin,
 		///<summary>If this is used, specify a PluginName in that column.</summary>
 		PluginOverride,
+		///<summary>Used to show popups when selecting any module.</summary>
+		Module,
 		//from here down, alphabetical-------------------------------------------------
 		Appointment,
 		Patient,
@@ -50,11 +52,26 @@ namespace OpenDental {
 		TriangleBlinkFast,
 		///<summary>The message comes up without clicking on the triangle.</summary>
 		Popup,
+		///<summary>The message appears when the first offending module was selected, but no other module for that patient, and for no other patient within the session.</summary>
+		PopupSession,
+		///<summary>The message appears when the first offending module was selected, but no other module for that patient, but would appear for each patient within the session.</summary>
+		PopupPatient,
+		///<summary>The message appears once for each offending module was selected for that patient. This would apply to each patient within the session.</summary>
+		PopupModule,
+		///<summary>The message appears every time an offending module was selected. This would apply to each patient within the session.</summary>
+		PopupModuleAlways,
 		///<summary>This silently allows the plugin.</summary>
 		PluginAllow,
 		PluginBlock,
 		PluginWarning
 	}
+
+	///<summary>Associates a selected patient and modules visited.</summary>
+	public class PatientModule {
+		public long PatNum;
+		public List<EnumModuleType> ListModuleTypes=new List<EnumModuleType>();
+	}
+
 }
 
 /*

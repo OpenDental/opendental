@@ -285,15 +285,17 @@ namespace OpenDental {
 
 				}
 			}
-			//Couldn't start Snip & Sketch, so try Snipping Tool next
+			//Couldn't start Snip & Sketch, so try Snipping Tool next.
+			//A 64-bit process on a 64-bit OS uses `system32`.
+			//A 32-bit process on a 64-bit OS uses `sysnative` to access the 64-bit system tools.
+			//A 32-bit process on a 32-bit OS uses `system32` as there's no need for `sysnative`.
 			if(DoesSnippingToolExist()) {
 				Process processSnippingTool=new Process();
 				string pathToSnippingTool;
-				if(!Environment.Is64BitOperatingSystem) {
-					pathToSnippingTool="sysnative";
-				}
-				else {
+				if(Environment.Is64BitProcess || !Environment.Is64BitOperatingSystem) {
 					pathToSnippingTool="system32";
+				} else {
+					pathToSnippingTool="sysnative";
 				}
 				processSnippingTool.StartInfo.FileName=$"{Environment.GetFolderPath(Environment.SpecialFolder.Windows)}\\{pathToSnippingTool}\\SnippingTool.exe";
 				try {
