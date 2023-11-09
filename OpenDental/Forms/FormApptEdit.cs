@@ -1103,7 +1103,7 @@ namespace OpenDental{
 				&& procedureSelected.PlannedAptNum!=_appointment.AptNum //Not the same planned appointment
 				&& (procedureSelected.AptNum==0 || procedureSelected.AptNum!=_appointment.AptNum)) 
 			{
-				msg="Not allowed to attached a procedure that is attached to a planned appointment from this window. See our manual for more information.";
+				msg="Procedure must be detached from the Planned Appointment before attaching to this appointment or schedule the Planned Appointment instead.";
 				return true;
 			}
 			return false;
@@ -2792,6 +2792,7 @@ namespace OpenDental{
 		}
 
 		private void FormApptEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			Signalods.SetInvalid(InvalidType.BillingList);
 			if(_appointment==null) {//Could not find _appointment in the Db on load.
 				return;
 			}

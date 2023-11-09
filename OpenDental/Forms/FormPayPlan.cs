@@ -1301,6 +1301,7 @@ namespace OpenDental{
 					SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,_patient.PatNum,Lan.g(this,"Adjustment created from payment plan for ")+_patient.GetNameFL()+", "+_listAdjustments[i].AdjAmt.ToString("c"));
 				}
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			if(PayPlans.GetOne(_payPlan.PayPlanNum)==null) {
 				//The payment plan no longer exists in the database. 
 				MsgBox.Show(this,"This payment plan has been deleted by another user.");

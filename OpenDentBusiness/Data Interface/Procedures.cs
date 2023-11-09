@@ -1853,7 +1853,7 @@ namespace OpenDentBusiness {
 					if(procOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC) && !Security.IsAuthorized(perm,dateForPerm,true)) {
 						continue;
 					}
-					ChangeProcInAppointment(AptCur,procCur);//Doesn't update DB
+						ChangeProcInAppointment(AptCur,procCur);//Doesn't update DB
 					dictOrthoProcLinks.TryGetValue(procCur.ProcNum,out orthoProcLink);
 					if(doUpdateProcFees && orthoProcLink==null) {//Can't update fees for procedures linked to orthocases.
 						procFeeHelper=procFeeHelper??new ProcFeeHelper(pat,null,null,SubList,PlanList,null);
@@ -2601,7 +2601,9 @@ namespace OpenDentBusiness {
 			}
 			proc.ClinicNum=apt.ClinicNum;
 			if(proc.ProcStatus==ProcStat.TP && apt.AptDateTime!=DateTime.MinValue) {
-				proc.ProcDate=apt.AptDateTime;
+				if((proc.PlannedAptNum==apt.AptNum && proc.AptNum==0) || apt.AptStatus!=ApptStatus.Planned) {
+					proc.ProcDate=apt.AptDateTime;
+				}
 			}
 			return proc;
 		}

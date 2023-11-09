@@ -75,17 +75,19 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		public override void ProcessSignalODs(List<Signalod> listSignalods) {
+			if(listSignalods.Any(x=>x.IType==InvalidType.BillingList)){
+				FillGrid();//Signals refresh about every 6 seconds so the data validation for the dates shouldn't be an issue here
+			}
+		}
+
 		///<summary>We will always try to preserve the selected bills as well as the scroll postition.</summary>
 		private void FillGrid() {
-			if(!textDateStart.IsValid() || !textDateEnd.IsValid()) {
-				MsgBox.Show(this,"Please fix data entry errors first.");
-				return;
-			}
 			int scrollPos=gridBill.ScrollValue;
 			List<long> selectedKeys=gridBill.SelectedIndices.OfType<int>().Select(x => PIn.Long(((DataRow)gridBill.ListGridRows[x].Tag)["StatementNum"].ToString())).ToList();
 			DateTime dateFrom=PIn.Date(textDateStart.Text);
 			DateTime dateTo=new DateTime(2200,1,1);
-			if(textDateEnd.Text!=""){
+			if(textDateEnd.Text!="" && textDateEnd.IsValid()){
 				dateTo=PIn.Date(textDateEnd.Text);
 			}
 			List<long> clinicNums=new List<long>();//an empty list indicates to Statements.GetBilling to run for all clinics
@@ -1265,6 +1267,7 @@ namespace OpenDental {
 				return;
 			}
 			else if(result==DialogResult.Cancel){
+				e.Cancel=true;
 				return;
 			}
 			//else yes:

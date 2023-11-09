@@ -983,6 +983,7 @@ namespace OpenDental{
 			journalEntry.TransactionNum=transaction.TransactionNum;
 			JournalEntries.Insert(journalEntry);
 			SecurityLogs.MakeLogEntry(EnumPermType.DepositSlips,0,_depositCur.DateDeposit.ToShortDateString()+" New "+_depositCur.Amount.ToString("c"));
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void FormDepositEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {

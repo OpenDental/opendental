@@ -429,6 +429,7 @@ namespace OpenDental {
 			if(changeAdjSplit) {
 				PaySplits.UpdateProvForAdjust(_adjustment,listPaySplitsForAdjust);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -454,6 +455,7 @@ namespace OpenDental {
 			SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentEdit,_adjustment.PatNum
 				,"Delete for patient: "+_patient.GetNameLF()+", "+_adjustment.AdjAmt.ToString("c"),0,_adjustment.SecDateTEdit);
 			Adjustments.Delete(_adjustment);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 	}

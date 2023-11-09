@@ -2613,6 +2613,7 @@ namespace OpenDental{
 				Patient patient=Patients.GetPat(PatNumCur);
 				emailMessage.ToAddress=referral.EMail;//pat.Email;
 				EmailAddress emailAddress=EmailAddresses.GetByClinic(patient.ClinicNum);
+				emailAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,patient.ClinicNum);
 				emailMessage.FromAddress=emailAddress.GetFrom();
 				emailMessage.Subject=Lan.g(this,"RE: ")+patient.GetNameFL();
 				emailMessage.MsgType=EmailMessageSource.Manual;

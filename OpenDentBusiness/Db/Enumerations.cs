@@ -407,6 +407,8 @@ namespace OpenDentBusiness{
 		FlowDefLink,
 		///<summary>110. Group of codes used with frequency limitations.</summary>
 		CodeGroups,
+		///<summary>111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</summary>
+		BillingList,
 	}
 	//<summary></summary>
 	/*public enum ButtonType{

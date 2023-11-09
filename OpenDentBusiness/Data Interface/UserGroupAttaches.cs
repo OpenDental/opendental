@@ -82,6 +82,24 @@ namespace OpenDentBusiness{
 			return GetWhere(x => x.UserGroupNum== userGroupNum);
 		}
 
+		///<summary>Gets a list of UserGroupAttaches from the database with filters for userGroupNum and userNum. 
+		///This method is for use by the API, please notify the API team before changing.</summary>
+		public static List<UserGroupAttach> GetGroupAttachesForApi(int limit,int offset,long userGroupNum,long userNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<UserGroupAttach>>(MethodBase.GetCurrentMethod(),limit,offset,userGroupNum,userNum);
+			}
+			string command="SELECT * FROM usergroupattach ";
+			if(userGroupNum>0) {
+				command+="WHERE UserGroupNum="+POut.Long(userGroupNum)+" ";
+			}
+			if(userNum>0) {
+				command+="WHERE UserNum="+POut.Long(userNum)+" ";
+			}
+			command+="ORDER BY UserGroupAttachNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.UserGroupAttachCrud.SelectMany(command);
+		}
+
 		///<summary>Gets all UserGroupAttaches from the database where the associated users or usergroups' CEMTNums are not 0.</summary>
 		public static List<UserGroupAttach> GetForCEMTUsersAndUserGroups() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

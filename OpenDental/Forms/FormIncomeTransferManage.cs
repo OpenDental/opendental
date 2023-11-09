@@ -242,6 +242,7 @@ namespace OpenDental {
 			payment.PayAmt=0;
 			payment.PayType=0;
 			Payments.Insert(payment,listPaySplits);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			string strLogic="FIFO logic";
 			if(isRigorous) {
 				strLogic="Rigorous logic";

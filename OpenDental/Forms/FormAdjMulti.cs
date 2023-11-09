@@ -524,6 +524,7 @@ namespace OpenDental {
 				string log=Lan.g(this,"Adjustment(s) created from Add Multiple Adjustments window:")+" ";
 				SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,_patient.PatNum,log+string.Join(",",listStringAdjustmentAmounts));
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 

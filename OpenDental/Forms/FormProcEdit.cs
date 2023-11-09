@@ -1318,6 +1318,7 @@ namespace OpenDental {
 			}
 			_loadData.ArrAdjustments=Adjustments.GetForProcs(new List<long>() { _procedure.ProcNum }).ToArray();
 			FillAdj();
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butAddAdjust_Click(object sender, System.EventArgs e) {
@@ -1349,6 +1350,7 @@ namespace OpenDental {
 			}
 			_loadData.ArrAdjustments=Adjustments.GetForProcs(new List<long>() { _procedure.ProcNum }).ToArray();
 			FillAdj();
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butAddExistAdj_Click(object sender,EventArgs e) {
@@ -1395,6 +1397,7 @@ namespace OpenDental {
 			Adjustments.Update(formAdjustmentPicker.AdjustmentSelected);
 			_loadData.ArrAdjustments=Adjustments.GetForProcs(new List<long>() { _procedure.ProcNum }).ToArray();
 			FillAdj();
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void textProcFee_Validating(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -2535,6 +2538,7 @@ namespace OpenDental {
 				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listprocCodes,_procedure.PatNum);
 				Procedures.AfterProcsSetComplete(new List<Procedure>() { _procedure });
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 			//it is assumed that we will do an immediate refresh after closing this window.
 		}
@@ -2705,6 +2709,8 @@ namespace OpenDental {
 					Adjustments.Delete(_listAdjustments[i]);
 				}
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
+
 	}
 }

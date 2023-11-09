@@ -460,6 +460,7 @@ namespace OpenDental{
 			adjustment.ProvNum = priProv;
 			Adjustments.Insert(adjustment);
 			TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(adjustment);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			return true;
 		}
 
@@ -475,6 +476,7 @@ namespace OpenDental{
 			AdjustmentCur.ProvNum = priProv;
 			Adjustments.Insert(AdjustmentCur);
 			TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(AdjustmentCur);
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 	}

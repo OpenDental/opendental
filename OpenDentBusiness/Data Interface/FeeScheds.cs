@@ -84,6 +84,14 @@ namespace OpenDentBusiness{
 			}
 			return retVal;
 		}
+
+		///<summary>Gets one FeeSched object from the database using the primary key. Returns null if not found.</summary>
+		public static FeeSched GetOneFeeSched(long feeSchedNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<FeeSched>(MethodBase.GetCurrentMethod(),feeSchedNum);
+			}
+			return Crud.FeeSchedCrud.SelectOne(feeSchedNum);
+		}
 		#endregion
 
 		#region Misc Methods

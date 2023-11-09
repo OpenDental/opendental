@@ -309,6 +309,7 @@ namespace OpenDental{
 							PaymentEdit.IncomeTransferData incomeTransferData=PaymentEdit.IncomeTransferData.CreateTransfer(listPaySplits[s],payment.PayNum,true,remainingAmt);
 							PaySplits.InsertMany(payment.PayNum,incomeTransferData.ListSplitsCur);
 							SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,payment.PatNum,"Automatic transfer of funds for treatment plan procedure pre-payments.");
+							Signalods.SetInvalid(InvalidType.BillingList);
 						}
 						amtBrokenProc-=splitAmt;
 					}

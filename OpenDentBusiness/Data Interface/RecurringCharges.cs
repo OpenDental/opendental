@@ -1356,6 +1356,7 @@ namespace OpenDentBusiness {
 					Payments.Update(paymentCur,oldPayment);
 				}
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			return listPaySplits;
 		}
 
@@ -1418,6 +1419,7 @@ namespace OpenDentBusiness {
 				}
 				listPaySplits.Add(split);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			return listPaySplits;
 		}
 

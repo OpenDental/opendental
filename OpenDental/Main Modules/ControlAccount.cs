@@ -1349,6 +1349,7 @@ namespace OpenDental {
 			if(formStatementOptions.DialogResult!=DialogResult.OK) {
 				Statements.DeleteStatements(new List<Statement> { statement });//detached from adjustments, procedurelogs, and paysplits as well
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			ModuleSelected(_patient.PatNum);
 		}
 

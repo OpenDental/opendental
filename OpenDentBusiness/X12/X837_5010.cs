@@ -2980,9 +2980,11 @@ namespace OpenDentBusiness
 			}
 			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
 			PatPlan patPlan=PatPlans.GetFromList(patPlans,claim.InsSubNum);//can be null
+			bool hasWarnedPatID=false;
 			if(patPlan!=null && patPlan.PatID!="" && !PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID)) {
 				Comma(strb);
 				strb.Append("Cannot use Optional Patient ID unless the preference 'On e-claims, use Optional Patient ID instead of Subscriber ID' is checked");
+				hasWarnedPatID=true;
 			}
 			if(IsDentiCal(clearinghouseClin)) {
 				if(GetFilingCode(insPlan)!="MC") {
@@ -3039,7 +3041,7 @@ namespace OpenDentBusiness
 					strb.Append("Other Insurance Relationship");
 				}
 				PatPlan patPlan2=PatPlans.GetFromList(patPlans,claim.InsSubNum2);//can be null
-				if(patPlan2!=null && patPlan2.PatID!="" && !PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID)) {
+				if(patPlan2!=null && patPlan2.PatID!="" && !PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID) && !hasWarnedPatID) {
 					Comma(strb);
 					strb.Append("Cannot use Optional Patient ID unless the preference 'On e-claims, use Optional Patient ID instead of Subscriber ID' is checked");
 				}

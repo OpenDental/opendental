@@ -4480,6 +4480,7 @@ namespace OpenDental {
 					+_paymentOld.PayAmt.ToString("c")+", with payment type '"+Payments.GetPaymentTypeDesc(_paymentOld,_listDefsPaymentType)+"'",
 					0,_paymentOld.SecDateTEdit);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -4491,6 +4492,7 @@ namespace OpenDental {
 			if(!SavePaymentToDb()) {
 				return;
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 			Plugins.HookAddCode(this,"FormPayment.butOK_Click_end",_payment,_listPaySplits);
 		}
