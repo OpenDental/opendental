@@ -911,6 +911,8 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
+							_usingProcFComplete.Add(false);
+							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -936,6 +938,8 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
+							_usingProcFComplete.Add(false);
+							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -962,6 +966,8 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(true);
+							_usingProcFComplete.Add(false);
+							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -988,6 +994,8 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
+							_usingProcFComplete.Add(false);
+							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -1013,6 +1021,8 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
+							_usingProcFComplete.Add(false);
+							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";

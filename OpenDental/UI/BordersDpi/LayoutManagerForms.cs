@@ -868,6 +868,12 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 					scaledFont=ScaleFontODZoom(control96Info.FontSize96);
 					//Bad info: This group also includes RichTextBoxes, which adapt their own font to the current dpi, except OD zoom portion which we set.
 				}
+				if(control.Controls[i] is System.Windows.Forms.Label
+					|| control.Controls[i] is System.Windows.Forms.RadioButton)
+				{
+					scaledFont*=0.96f;//We've been at .92 in the past. This keeps controls from growing significantly bigger than at 100%.
+				}
+
 				if(control.Controls[i].Font.Bold){
 					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
 				}

@@ -316,8 +316,8 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(!Regex.IsMatch(textClinicEmailAliasOverride.Text,"^[A-Za-z0-9]*$")) {
-				MsgBox.Show(this,"The Email Alias Override can only contain letters and numbers.");
+			if(!Regex.IsMatch(textClinicEmailAliasOverride.Text,"^[A-Za-z0-9.@]*$")) {
+				MsgBox.Show(this,"The Email Alias Override can only contain letters, numbers, period (.), and the at sign (@).");
 				return;
 			}
 			#endregion Validation

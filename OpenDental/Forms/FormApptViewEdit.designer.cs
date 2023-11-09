@@ -151,7 +151,7 @@ namespace OpenDental {
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(19, 4);
+			this.label3.Location = new System.Drawing.Point(30, 4);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(217, 20);
 			this.label3.TabIndex = 43;
@@ -160,7 +160,7 @@ namespace OpenDental {
 			// 
 			// textDescription
 			// 
-			this.textDescription.Location = new System.Drawing.Point(236, 4);
+			this.textDescription.Location = new System.Drawing.Point(247, 4);
 			this.textDescription.Name = "textDescription";
 			this.textDescription.Size = new System.Drawing.Size(160, 20);
 			this.textDescription.TabIndex = 44;
@@ -210,7 +210,7 @@ namespace OpenDental {
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(19, 25);
+			this.label6.Location = new System.Drawing.Point(30, 25);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(217, 20);
 			this.label6.TabIndex = 54;
@@ -219,7 +219,7 @@ namespace OpenDental {
 			// 
 			// textRowsPerIncr
 			// 
-			this.textRowsPerIncr.Location = new System.Drawing.Point(236, 25);
+			this.textRowsPerIncr.Location = new System.Drawing.Point(247, 25);
 			this.textRowsPerIncr.Name = "textRowsPerIncr";
 			this.textRowsPerIncr.Size = new System.Drawing.Size(46, 20);
 			this.textRowsPerIncr.TabIndex = 55;
@@ -406,7 +406,7 @@ namespace OpenDental {
 			// comboClinic
 			// 
 			this.comboClinic.IncludeUnassigned = true;
-			this.comboClinic.Location = new System.Drawing.Point(196, 125);
+			this.comboClinic.Location = new System.Drawing.Point(210, 125);
 			this.comboClinic.Name = "comboClinic";
 			this.comboClinic.Size = new System.Drawing.Size(200, 21);
 			this.comboClinic.TabIndex = 133;
@@ -414,14 +414,14 @@ namespace OpenDental {
 			// 
 			// textScrollTime
 			// 
-			this.textScrollTime.Location = new System.Drawing.Point(236, 67);
+			this.textScrollTime.Location = new System.Drawing.Point(247, 67);
 			this.textScrollTime.Name = "textScrollTime";
 			this.textScrollTime.Size = new System.Drawing.Size(56, 20);
 			this.textScrollTime.TabIndex = 134;
 			// 
 			// labelStartTime
 			// 
-			this.labelStartTime.Location = new System.Drawing.Point(19, 67);
+			this.labelStartTime.Location = new System.Drawing.Point(30, 67);
 			this.labelStartTime.Name = "labelStartTime";
 			this.labelStartTime.Size = new System.Drawing.Size(217, 20);
 			this.labelStartTime.TabIndex = 135;
@@ -431,7 +431,7 @@ namespace OpenDental {
 			// checkDynamicScroll
 			// 
 			this.checkDynamicScroll.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkDynamicScroll.Location = new System.Drawing.Point(20, 90);
+			this.checkDynamicScroll.Location = new System.Drawing.Point(30, 90);
 			this.checkDynamicScroll.Name = "checkDynamicScroll";
 			this.checkDynamicScroll.Size = new System.Drawing.Size(230, 17);
 			this.checkDynamicScroll.TabIndex = 61;
@@ -440,7 +440,7 @@ namespace OpenDental {
 			// checkApptBubblesDisabled
 			// 
 			this.checkApptBubblesDisabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkApptBubblesDisabled.Location = new System.Drawing.Point(20, 107);
+			this.checkApptBubblesDisabled.Location = new System.Drawing.Point(30, 107);
 			this.checkApptBubblesDisabled.Name = "checkApptBubblesDisabled";
 			this.checkApptBubblesDisabled.Size = new System.Drawing.Size(230, 17);
 			this.checkApptBubblesDisabled.TabIndex = 136;
@@ -448,16 +448,16 @@ namespace OpenDental {
 			// 
 			// textWidthOpMinimum
 			// 
-			this.textWidthOpMinimum.Location = new System.Drawing.Point(236, 46);
+			this.textWidthOpMinimum.Location = new System.Drawing.Point(247, 46);
 			this.textWidthOpMinimum.Name = "textWidthOpMinimum";
 			this.textWidthOpMinimum.Size = new System.Drawing.Size(46, 20);
 			this.textWidthOpMinimum.TabIndex = 138;
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(1, 46);
+			this.label5.Location = new System.Drawing.Point(0, 46);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(235, 20);
+			this.label5.Size = new System.Drawing.Size(247, 20);
 			this.label5.TabIndex = 137;
 			this.label5.Text = "Minimum Op width (default 0) (turns on hscroll)";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

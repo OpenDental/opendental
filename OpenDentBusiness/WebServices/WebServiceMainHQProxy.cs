@@ -123,7 +123,7 @@ namespace OpenDentBusiness {
 						//This means that the merchant number is technically inactive but that doesn't mean that web responses might not come in for older merch numbers
 						//Offices can also remove the x themselves at any point so we might as well update our records with it
 						if(merchID.StartsWith("x")) {
-							merchID=(string)merchID.Skip(1);
+							merchID=merchID.Substring(1);
 						}
 						curMerchIds.Add(merchID);
 						return true;

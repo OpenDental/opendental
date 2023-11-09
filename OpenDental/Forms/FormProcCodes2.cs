@@ -242,6 +242,9 @@ namespace OpenDental {
 							for(int g=0;g<listFeeSchedGroups1Fees.Count;g++){
 								AddFeeSchedGroupToComboBox(listFeeSchedGroups1Fees[g],comboFeeSchedGroup1,feeSchedGroupNum1Selected);
 							}
+							if(comboFeeSchedGroup1.Items.Count>0 && comboFeeSchedGroup1.SelectedIndex<0) { 
+								comboFeeSchedGroup1.SetSelected(0);
+							}
 						}
 						if(feeSchedNum2Selected>0 
 							&& checkGroups2.Checked 
@@ -251,6 +254,9 @@ namespace OpenDental {
 							for(int g=0;g<listFeeSchedGroups2Fees.Count;g++){
 								AddFeeSchedGroupToComboBox(listFeeSchedGroups2Fees[g],comboFeeSchedGroup2,feeSchedGroupNum2Selected);
 							}
+							if(comboFeeSchedGroup2.Items.Count>0 && comboFeeSchedGroup2.SelectedIndex<0) { 
+								comboFeeSchedGroup2.SetSelected(0);
+							}
 						}
 						if(feeSchedNum3Selected>0 
 							&& checkGroups3.Checked 
@@ -259,6 +265,9 @@ namespace OpenDental {
 							List<FeeSchedGroup> listFeeSchedGroups3Fees=listFeeSchedGroups3.FindAll(x => x.ListClinicNumsAll.Contains(listClinicNums[i]));
 							for(int g=0;g<listFeeSchedGroups3Fees.Count;g++){
 								AddFeeSchedGroupToComboBox(listFeeSchedGroups3Fees[g],comboFeeSchedGroup3,feeSchedGroupNum3Selected);
+							}
+							if(comboFeeSchedGroup3.Items.Count>0 && comboFeeSchedGroup3.SelectedIndex<0) { 
+								comboFeeSchedGroup3.SetSelected(0);
 							}
 						}
 					}

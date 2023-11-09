@@ -1097,6 +1097,15 @@ namespace OpenDental {
 				}
 				OpenDentBusiness.SheetPrinting.DrawFieldSpecial(SheetCur,SheetCur.SheetFields[i],g,null,0);
 			}
+			//Draw pagebreak
+			using Pen penDashPage=new Pen(Color.Green);
+			penDashPage.DashPattern=new float[] {4.0F,3.0F,2.0F,3.0F};
+			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
+			int margins=(_marginsPrint.Top+_marginsPrint.Bottom);
+			for(int i=1;i<pageCount;i++) {
+				g.DrawLine(penDashPage,0,i*(SheetCur.HeightPage-margins)+_marginsPrint.Top,SheetCur.WidthPage,i*(SheetCur.HeightPage-margins)+_marginsPrint.Top);
+			}
+			//End Draw Page Break
 			//for testing
 			//if(_listRectangleFsChars.Count>0){
 			//	g.DrawRectangles(Pens.Red,_listRectangleFsChars.ToArray());

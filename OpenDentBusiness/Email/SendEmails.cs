@@ -89,6 +89,9 @@ namespace OpenDentBusiness.Email {
 							var cdoatt=cdo.AddAttachment(attachmentPath.FullPath);
 							//Use actual file name for this field.
 							cdoatt.Fields["urn:schemas:mailheader:content-id"].Value=Path.GetFileName(attachmentPath.FullPath);
+							//Sets the 'friendly' filename for the attachment; failure to set this optional field will result in OD using the AtoZ filename for the attachment
+							//See https://www.rfc-editor.org/rfc/rfc2183 for more details
+							cdoatt.Fields["urn:schemas:mailheader:content-disposition"].Value="attachment;filename="+attachmentPath.DisplayedFilename;
 							cdoatt.Fields.Update();
 						}
 					}

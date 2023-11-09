@@ -51,7 +51,7 @@ namespace OpenDentBusiness {
 				if(!_didShowError) {
 					//This shows a dialog box, which causes paint to call this again. Recursive bad stuff happens, so we essentially only want to show this once.
 					_didShowError=true;
-					Logger.openlog.LogMB("Error in the database compduterpref table. The computer name '"
+					Logger.openlog.LogMB("Error in the database computerpref table. The computer name '"
 						+POut.String(computerName)+"' is a ComputerName in multiple records. Please run the "
 						+$"database maintenance method {nameof(DatabaseMaintenances.ComputerPrefDuplicates)}, then call us for help if you still get this message.",
 						Logger.Severity.WARNING);
