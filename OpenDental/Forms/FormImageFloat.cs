@@ -1295,13 +1295,19 @@ namespace OpenDental {
 				stringArray[0]=fileName;
 				dataObject.SetData(DataFormats.FileDrop,stringArray);
 			}
-			try {
-				System.Windows.Clipboard.SetDataObject(dataObject);//System.Windows.Forms.Clipboard fails for Thinfinity
+			if(ODBuild.IsWeb()){
+				int nodeType=(int)nodeTypeAndKey.NodeType;
+				ODCloudClient.CopyToClipboard(bitmapCopy,fileName,nodeType,nodeTypeAndKey.PriKey);
 			}
-			catch(Exception ex) {
-				MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");
-				ex.DoNothing();
-				return;
+			else{
+				try {
+					System.Windows.Clipboard.SetDataObject(dataObject);//System.Windows.Forms.Clipboard fails for Thinfinity
+				}
+				catch(Exception ex) {
+					MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");
+					ex.DoNothing();
+					return;
+				}
 			}
 			//Can't do this, or the clipboard object goes away.
 			//bitmapCopy.Dispose();
@@ -1661,7 +1667,14 @@ namespace OpenDental {
 			}
 			IDataObject iDataObject=null;
 			NodeTypeAndKey nodeTypeAndKey=null;
-			if(!ODBuild.IsWeb()) {
+			if(ODBuild.IsWeb()) {
+				if(ODCloudClient.GetNodeTypeAndKey()!=null){
+					EnumImageNodeType enumImageNodeTypeCopied=(EnumImageNodeType)ODCloudClient.GetNodeTypeAndKey().nodeType;
+					long imagePriKey=ODCloudClient.GetNodeTypeAndKey().imagekey;
+					nodeTypeAndKey=new NodeTypeAndKey(enumImageNodeTypeCopied,imagePriKey);					
+				}
+			}
+			else{
 				try {
 					iDataObject=Clipboard.GetDataObject();
 				}
