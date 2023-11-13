@@ -9445,13 +9445,11 @@ namespace OpenDental {
 			else {
 				procedure.DateTP=PIn.Date(textDate.Text);
 			}
-			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
 			if(_procStatNew==ProcStat.C) {
 				if(procedure.ProcDate.Date>DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
 					MsgBox.Show(this,"Completed procedures cannot be set for future dates.");
 					return false;
 				}
-				Procedures.SetOrthoProcComplete(procedure,procedureCode); //does nothing if not an ortho proc
 			}
 			long priorityNum=0;
 			if(comboPriority.SelectedIndex!=0) {
@@ -9483,6 +9481,10 @@ namespace OpenDental {
 				ref listClaimProcs,ref listClaimProcHistsLoop,diagnosisNum,prognosisNum)) 
 			{
 				return false;
+			}
+			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
+			if(_procStatNew==ProcStat.C) {
+				Procedures.SetOrthoProcComplete(procedure,procedureCode); //does nothing if not an ortho proc
 			}
 			long codeNumVerify;
 			bool isMandibular=false;
