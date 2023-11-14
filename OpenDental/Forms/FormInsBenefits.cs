@@ -801,13 +801,14 @@ namespace OpenDental {
 
 		private void checkCalendarYear_Click(object sender,EventArgs e) {
 			//checkstate will have already changed.
-			//right now, change any benefits in the grid.  Upon closing, the ones in simple view will be changed.
-			if(checkCalendarYear.CheckState==CheckState.Checked) {//change all to calendarYear
+			//right now, change any benefits in _listBenefitsAll, to account for Frequencies only visible in FormBenefitFrequencies
+			//Entries pulled from textboxes in Simplified View will have time period set during ConvertFormBenefits() call
+			if(checkCalendarYear.CheckState==CheckState.Checked) {//change all to CalendarYear
 				textMonth.Text="";
 				textMonth.Enabled=false;
-				for(int i=0;i<_listBenefitsGrid.Count;i++) {
-					if(_listBenefitsGrid[i].TimePeriod==BenefitTimePeriod.ServiceYear) {
-						_listBenefitsGrid[i].TimePeriod=BenefitTimePeriod.CalendarYear;
+				for(int i=0;i<_listBenefitsAll.Count;i++) {
+					if(_listBenefitsAll[i].TimePeriod==BenefitTimePeriod.ServiceYear) {
+						_listBenefitsAll[i].TimePeriod=BenefitTimePeriod.CalendarYear;
 					}
 				}
 				FillGrid();
@@ -817,11 +818,11 @@ namespace OpenDental {
 				FillGrid();
 				return;
 			}
-			//change all to serviceYear
+			//change all to ServiceYear
 			textMonth.Enabled=true;
-			for(int i=0;i<_listBenefitsGrid.Count;i++) {
-				if(_listBenefitsGrid[i].TimePeriod==BenefitTimePeriod.CalendarYear) {
-					_listBenefitsGrid[i].TimePeriod=BenefitTimePeriod.ServiceYear;
+			for(int i=0;i<_listBenefitsAll.Count;i++) {
+				if(_listBenefitsAll[i].TimePeriod==BenefitTimePeriod.CalendarYear) {
+					_listBenefitsAll[i].TimePeriod=BenefitTimePeriod.ServiceYear;
 				}
 			}
 			FillGrid();

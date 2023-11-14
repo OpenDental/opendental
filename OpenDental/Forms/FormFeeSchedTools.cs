@@ -48,8 +48,8 @@ namespace OpenDental {
 			}
 			//Only unrestricted users should be using fee tools with feeschedgroups.
 			checkShowGroups.Visible=(PrefC.GetBool(PrefName.ShowFeeSchedGroups) && !Security.CurUser.ClinicIsRestricted);
-			LayoutManager.MoveLocation(comboGroup,new Point(100,46));
-			LayoutManager.MoveLocation(comboGroupTo,new Point(100,45));
+			LayoutManager.MoveLocation(comboGroup,new Point(LayoutManager.Scale(100),LayoutManager.Scale(46)));
+			LayoutManager.MoveLocation(comboGroupTo,new Point(LayoutManager.Scale(100),LayoutManager.Scale(45)));
 			FillComboBoxes();
 			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				butImportCanada.Visible=false;
