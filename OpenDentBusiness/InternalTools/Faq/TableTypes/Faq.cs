@@ -26,6 +26,10 @@ namespace OpenDentBusiness {
 		///<summary></summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateTEntry)]
 		public DateTime DateTEntry;
+		///<summary>FK to userod.UserNum. The person who created the faq.</summary>
+		public long UserNumCreated;
+		///<summary>FK to userod.UserNum. The person who most recently edited the faq.</summary>
+		public long UserNumEdited;
 		[CrudColumn(IsNotDbColumn=true)]
 		public string ManualPageName;
 

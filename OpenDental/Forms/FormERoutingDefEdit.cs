@@ -178,7 +178,7 @@ namespace OpenDental {
 
 		private void butDown_Click(object sender,EventArgs e) {
 			ERoutingActionDef eRoutingActionDef = gridERoutingActions.SelectedTag<ERoutingActionDef>();
-			if(eRoutingActionDef==null || eRoutingActionDef.ItemOrder==_listERoutingActionDefs.Count) {
+			if(eRoutingActionDef==null || eRoutingActionDef.ItemOrder==_listERoutingActionDefs.Count-1) {
 				return;
 			}
 			_listERoutingActionDefs.Reverse(_listERoutingActionDefs.IndexOf(eRoutingActionDef),2);

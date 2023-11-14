@@ -85,18 +85,21 @@ End of Checklist================================================================
 			else {
 				listFaqsForPageName=Faqs.GetAllForNameAndVersion(textManualPage.Text,version);
 			}
+			listFaqsForPageName=Faqs.GetManualPageNamesForFaqs(listFaqsForPageName);
 			gridODMain.BeginUpdate();
 			gridODMain.Columns.Clear();
-			GridColumn gridColumn=new GridColumn("Version",80);
+			GridColumn gridColumn=new GridColumn("Version",50);
 			gridODMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Is Stickied",80,HorizontalAlignment.Center);
+			gridColumn=new GridColumn("Sticky",40,HorizontalAlignment.Center);
 			gridODMain.Columns.Add(gridColumn);
-			if(checkShowUnlinked.Checked==true) {
-				gridColumn=new GridColumn("Linked Status",80);
-				gridODMain.Columns.Add(gridColumn);
-			}
+			gridColumn=new GridColumn("Page",100);
+			gridODMain.Columns.Add(gridColumn);
 			gridColumn=new GridColumn("Question Text",420);
 			gridColumn.IsWidthDynamic=true;
+			gridODMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Created",50);
+			gridODMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Edited",50);
 			gridODMain.Columns.Add(gridColumn);
 			gridODMain.ListGridRows.Clear();
 			for(int i=0;i<listFaqsForPageName.Count();i++){
@@ -115,7 +118,12 @@ End of Checklist================================================================
 						gridRow.Cells.Add("Manual page does not exist");
 					}
 				}
+				else {
+					gridRow.Cells.Add(listFaqsForPageName[i].ManualPageName);
+				}
 				gridRow.Cells.Add(listFaqsForPageName[i].QuestionText);
+				gridRow.Cells.Add(Userods.GetName(listFaqsForPageName[i].UserNumCreated));
+				gridRow.Cells.Add(Userods.GetName(listFaqsForPageName[i].UserNumEdited));
 				gridRow.Tag=listFaqsForPageName[i];
 				gridODMain.ListGridRows.Add(gridRow);
 			}

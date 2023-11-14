@@ -425,6 +425,7 @@ namespace OpenDental {
 			if(Prefs.UpdateDateT(PrefName.LateChargeLastRunDate,dateNewCharges)) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			if(listLateChargeAdjNums.IsNullOrEmpty()) {//No adjustments were made so we don't want to run aging.
 				DialogResult=DialogResult.OK;
 				return;

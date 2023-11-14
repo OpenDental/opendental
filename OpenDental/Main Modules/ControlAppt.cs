@@ -1091,6 +1091,7 @@ namespace OpenDental {
 			//If necessary, prompt the user to ask the patient to opt in to using Short Codes.
 			FormShortCodeOptIn.PromptIfNecessary(patient,appointment.ClinicNum);
 			Plugins.HookAddCode(this,"ContrAppt.OnComplete_Click_end",appointment,_patient);
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butDelete_Click(bool showPrompt) {

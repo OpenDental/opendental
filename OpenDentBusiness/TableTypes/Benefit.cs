@@ -242,8 +242,8 @@ namespace OpenDentBusiness{
 		///<summary>Returns true if most of the fields match except BenefitNum</summary>
 		public bool IsSimilar(Benefit ben){
 			if(//PlanNum             != oldBenefitList[i].PlanNum
-				//|| PatPlanNum        != oldBenefitList[i].PatPlanNum
-					 CovCatNum         != ben.CovCatNum
+				   PatPlanNum        != ben.PatPlanNum
+				|| CovCatNum         != ben.CovCatNum
 				|| BenefitType       != ben.BenefitType
 				|| Percent           != ben.Percent
 				|| MonetaryAmt       != ben.MonetaryAmt

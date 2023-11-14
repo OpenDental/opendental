@@ -18,6 +18,18 @@ namespace OpenDentBusiness{
 			return Crud.EobAttachCrud.SelectMany(command);
 		}
 
+		///<summary>Gets all EobAttaches for a given claimpaymentnum. For used by Api Team, please notify before changing.
+		///Returns an empty list if not found.</summary>
+		public static List<EobAttach> GetEobAttachesForApi(int limit,int offset,long claimPaymentNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<EobAttach>>(MethodBase.GetCurrentMethod(),limit,offset,claimPaymentNum);
+			}
+			string command="SELECT * FROM eobattach WHERE ClaimPaymentNum="+POut.Long(claimPaymentNum)+" "
+				+"ORDER BY ClaimPaymentNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.EobAttachCrud.SelectMany(command);
+		}
+
 		///<summary>Gets one EobAttach from the db.</summary>
 		public static EobAttach GetOne(long eobAttachNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

@@ -1434,6 +1434,7 @@ namespace OpenDental {
 
 		private void FormPayPlanDynamic_Closing(object sender,CancelEventArgs e) {
 			signatureBoxWrapper?.SetTabletState(0);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			if(DialogResult==DialogResult.OK) {
 				return;
 			}

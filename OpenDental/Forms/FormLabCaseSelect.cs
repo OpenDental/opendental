@@ -47,6 +47,9 @@ namespace OpenDental{
 			if(IsSelectingUnattached) {
 				_listLabCases=LabCases.GetForPat(PatNum,IsPlanned);
 			}
+			else if(IsPlanned) {
+				_listLabCases=LabCases.GetForPlanned(AptNum);
+			}
 			else {
 				_listLabCases=LabCases.GetForApt(AptNum);
 			}

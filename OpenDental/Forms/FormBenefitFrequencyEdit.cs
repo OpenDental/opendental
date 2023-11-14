@@ -11,6 +11,7 @@ using OpenDentBusiness.Crud;
 namespace OpenDental {
 	public partial class FormBenefitFrequencyEdit:FormODBase {
 		public Benefit BenefitCur;
+		public long PatPlanNum;
 
 		public FormBenefitFrequencyEdit() {
 			InitializeComponent();
@@ -34,6 +35,7 @@ namespace OpenDental {
 				.ToList();
 			listBoxTreatArea.Items.AddList(listTreatmentAreas,x=>x.ToString());
 			listBoxTreatArea.SetSelected((int)BenefitCur.TreatArea);
+			checkPat.Checked=BenefitCur.PatPlanNum!=0;
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
@@ -53,6 +55,10 @@ namespace OpenDental {
 			BenefitCur.Quantity=PIn.Byte(textNumber.Text);
 			BenefitCur.TreatArea=listBoxTreatArea.GetSelected<TreatmentArea>();
 			BenefitCur.IsNew=false;
+			BenefitCur.PatPlanNum=0;
+			if(checkPat.Checked) {
+				BenefitCur.PatPlanNum=PatPlanNum;
+			}
 			DialogResult=DialogResult.OK;
 		}
 

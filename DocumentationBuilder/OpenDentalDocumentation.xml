@@ -15438,6 +15438,7 @@
         <EnumValue name="FlowActionDef">108. Used as template for Patient eRouting Actions</EnumValue>
         <EnumValue name="FlowDefLink">109. Used to link PatientFlowDefs with other objects: appointments, appt types, billing types, etc. </EnumValue>
         <EnumValue name="CodeGroups">110. Group of codes used with frequency limitations.</EnumValue>
+        <EnumValue name="BillingList">111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="RemoteRole" type="tinyint(4)">

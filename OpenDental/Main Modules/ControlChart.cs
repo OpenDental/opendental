@@ -9448,13 +9448,11 @@ namespace OpenDental {
 			else {
 				procedure.DateTP=PIn.Date(textDate.Text);
 			}
-			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
 			if(_procStatNew==ProcStat.C) {
 				if(procedure.ProcDate.Date>DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
 					MsgBox.Show(this,"Completed procedures cannot be set for future dates.");
 					return false;
 				}
-				Procedures.SetOrthoProcComplete(procedure,procedureCode); //does nothing if not an ortho proc
 			}
 			long priorityNum=0;
 			if(comboPriority.SelectedIndex!=0) {
@@ -9486,6 +9484,10 @@ namespace OpenDental {
 				ref listClaimProcs,ref listClaimProcHistsLoop,diagnosisNum,prognosisNum)) 
 			{
 				return false;
+			}
+			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
+			if(procedure.ProcStatus==ProcStat.C) {
+				Procedures.SetOrthoProcComplete(procedure,procedureCode); //does nothing if not an ortho proc
 			}
 			bool isMandibular=false;
 			if(!string.IsNullOrEmpty(procedure.ToothRange)) {
@@ -9941,6 +9943,7 @@ namespace OpenDental {
 			if(_procStatNew==ProcStat.C) {
 				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listProcCodes,Pd.PatNum);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		///<summary>If quickbutton, then pass in procButtonQuick and set procButton to null.</summary>
@@ -10360,6 +10363,7 @@ namespace OpenDental {
 				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listProcCodes,Pd.PatNum);
 				Pd.FillIfNeeded(EnumPdTable.Procedure);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			ModuleSelected(Pd.PatNum);
 		}
 

@@ -2333,6 +2333,7 @@ namespace OpenDental {
 			}
 			SecurityLogs.MakeLogEntry(permissions,_procedureOld.PatNum,
 				ProcedureCodes.GetProcCode(_procedureOld.CodeNum).ProcCode+" ("+_procedureOld.ProcStatus+"), "+_procedureOld.ProcFee.ToString("c")+tag);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 			Plugins.HookAddCode(this,"FormProcEdit.butDelete_Click_end",_procedure);
 		}

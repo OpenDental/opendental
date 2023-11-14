@@ -295,6 +295,7 @@ namespace OpenDental{
 			RepeatCharges.AllocateUnearned(chargeManual,procedure,DateTime.Today);
 			Recalls.Synch(_repeatCharge.PatNum);
 			MsgBox.Show(this,"Procedure added.");
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butCalculate_Click(object sender,EventArgs e) {

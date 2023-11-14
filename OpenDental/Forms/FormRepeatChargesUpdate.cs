@@ -97,6 +97,7 @@ namespace OpenDental{
 				SecurityLogs.MakeLogEntry(EnumPermType.RepeatChargeTool,0,"Repeat Charge Tool Error: "+repeatChargeResult.ErrorMsg.ToString());
 				MessageBox.Show(repeatChargeResult.ErrorMsg.ToString());
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}	
 

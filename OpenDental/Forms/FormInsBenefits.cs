@@ -97,9 +97,9 @@ namespace OpenDental {
 				groupCategories.Visible=true;
 				LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,panelSimple.Bottom+4));
 				LayoutManager.MoveHeight(gridBenefits,textSubscNote.Top-gridBenefits.Top-5);
-				LayoutManager.MoveLocation(butAddBenefit,new Point(gridBenefits.Right+5,gridBenefits.Top));
-				LayoutManager.MoveLocation(butDelete,new Point(butAddBenefit.Left,butAddBenefit.Bottom+6));
-				Width=LayoutManager.Scale(1090);
+				//LayoutManager.MoveLocation(butAddBenefit,new Point(gridBenefits.Right-78,gridBenefits.Bottom+6));
+				//LayoutManager.MoveLocation(butDelete,new Point(butAddBenefit.Left,butAddBenefit.Bottom+6));
+				Width=LayoutManager.Scale(1175);
 				//FillSimple handles all further logic.
 				FillSimple();
 				FillGridBenefits();
@@ -119,9 +119,9 @@ namespace OpenDental {
 			groupCategories.Visible=false;
 			LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,groupYear.Bottom+3));
 			LayoutManager.MoveHeight(gridBenefits,textSubscNote.Top-gridBenefits.Top-5);
-			LayoutManager.MoveLocation(butAddBenefit,new Point(gridBenefits.Right+5,gridBenefits.Top));
-			LayoutManager.MoveLocation(butDelete,new Point(butAddBenefit.Left,butAddBenefit.Bottom+6));
-			Width=LayoutManager.Scale(688);
+			//LayoutManager.MoveLocation(butAddBenefit,new Point(gridBenefits.Right-78,gridBenefits.Bottom+6));
+			//LayoutManager.MoveLocation(butDelete,new Point(butAddBenefit.Left,butAddBenefit.Bottom+6));
+			Width=LayoutManager.Scale(796);
 			FillSimple();
 			FillGridBenefits();
 		}
@@ -653,7 +653,9 @@ namespace OpenDental {
 			listBenefits.Sort();
 			gridFrequencies.BeginUpdate();
 			gridFrequencies.Columns.Clear();
-			GridColumn gridColumn=new GridColumn("Code Group",140);
+			GridColumn gridColumn=new GridColumn("Pat",35,HorizontalAlignment.Center);
+			gridFrequencies.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Code Group",140);
 			if(checkShowProcCodes.Checked) {
 				gridColumn=new GridColumn("Codes",140);
 			}
@@ -695,6 +697,7 @@ namespace OpenDental {
 					gridRow=new GridRow();
 					Benefit benefit=new Benefit();
 					benefit.CodeGroupNum=listCodeGroups[i].CodeGroupNum; // Give benefit a CodeGroupNum so the 'Save' button knows how to handle it.
+					gridRow.Cells.Add("");
 					string textForCell=listCodeGroups[i].GroupName;// Code Group or Proc Codes
 					if(checkShowProcCodes.Checked) {
 						List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetFromCommaDelimitedList(listCodeGroups[i].ProcCodes);
@@ -720,6 +723,7 @@ namespace OpenDental {
 				}
 				for(int k=0;k<listBenefitsGroup.Count;k++){//one or more
 					gridRow=new GridRow();
+					gridRow.Cells.Add(listBenefitsGroup[k].PatPlanNum==0?"":"X");
 					string textForCell=Benefits.GetCategoryString(listBenefitsGroup[k]);// Code Group or Proc Codes
 					if(checkShowProcCodes.Checked) {
 						List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetFromCommaDelimitedList(listCodeGroups[i].ProcCodes);
@@ -730,12 +734,6 @@ namespace OpenDental {
 							}
 							textForCell+=listProcedureCodes[c].ProcCode + " - " + listProcedureCodes[c].AbbrDesc;
 						}
-					}
-					else {
-						textForCell=Benefits.GetCategoryString(listBenefitsGroup[k]);
-					}
-					if(listBenefitsGroup[k].PatPlanNum>0) {
-						textForCell="(pat) " + textForCell;
 					}
 					gridRow.Cells.Add(textForCell);
 					gridRow.Cells.Add(listBenefitsGroup[k].Quantity.ToString()); //#
@@ -771,9 +769,11 @@ namespace OpenDental {
 			gridBenefits.Columns.Add(col);
 			col=new GridColumn("Amt",50);
 			gridBenefits.Columns.Add(col);
-			col=new GridColumn("Time Period",80);
+			col=new GridColumn("Time Period",90);
 			gridBenefits.Columns.Add(col);
-			col=new GridColumn("Quantity",115);
+			col=new GridColumn("Quantity",125);
+			gridBenefits.Columns.Add(col);
+			col=new GridColumn("Treat Area",100);
 			gridBenefits.Columns.Add(col);
 			gridBenefits.ListGridRows.Clear();
 			GridRow row;
@@ -821,9 +821,29 @@ namespace OpenDental {
 				else {
 					row.Cells.Add("");
 				}
+				if(_listBenefitsGrid[i].TreatArea==TreatmentArea.None) {
+					row.Cells.Add("");
+				}
+				else {
+					row.Cells.Add(_listBenefitsGrid[i].TreatArea.ToString());
+				}
 				gridBenefits.ListGridRows.Add(row);
 			}
 			gridBenefits.EndUpdate();
+		}
+
+		private void gridFrequencies_CellClick(object sender,ODGridClickEventArgs e) {
+			// Nothing to do if they click an editable column.
+			if(e.Col!=0) {
+				return;
+			}
+			string cellText=gridFrequencies.ListGridRows[e.Row].Cells[0].Text;
+			if(String.IsNullOrEmpty(cellText)) {
+				gridFrequencies.ListGridRows[e.Row].Cells[0]=new GridCell("X");
+			}
+			else {
+				gridFrequencies.ListGridRows[e.Row].Cells[0]=new GridCell("");
+			}
 		}
 
 		private void gridBenefits_CellDoubleClick(object sender,OpenDental.UI.ODGridClickEventArgs e) {
@@ -872,9 +892,9 @@ namespace OpenDental {
 			if(checkCalendarYear.CheckState==CheckState.Checked) {//change all to calendarYear
 				textMonth.Text="";
 				textMonth.Enabled=false;
-				for(int i=0;i<_listBenefitsGrid.Count;i++) {
-					if(_listBenefitsGrid[i].TimePeriod==BenefitTimePeriod.ServiceYear) {
-						_listBenefitsGrid[i].TimePeriod=BenefitTimePeriod.CalendarYear;
+				for(int i=0;i<_listBenefitsAll.Count;i++) {
+					if(_listBenefitsAll[i].TimePeriod==BenefitTimePeriod.ServiceYear) {
+						_listBenefitsAll[i].TimePeriod=BenefitTimePeriod.CalendarYear;
 					}
 				}
 				FillGridBenefits();
@@ -886,9 +906,9 @@ namespace OpenDental {
 			}
 			//change all to serviceYear
 			textMonth.Enabled=true;
-			for(int i=0;i<_listBenefitsGrid.Count;i++) {
-				if(_listBenefitsGrid[i].TimePeriod==BenefitTimePeriod.CalendarYear) {
-					_listBenefitsGrid[i].TimePeriod=BenefitTimePeriod.ServiceYear;
+			for(int i=0;i<_listBenefitsAll.Count;i++) {
+				if(_listBenefitsAll[i].TimePeriod==BenefitTimePeriod.CalendarYear) {
+					_listBenefitsAll[i].TimePeriod=BenefitTimePeriod.ServiceYear;
 				}
 			}
 			FillGridBenefits();
@@ -898,11 +918,12 @@ namespace OpenDental {
 			_listBenefitsAll.RemoveAll(x=>Benefits.IsFrequencyLimitation(x) && x.CodeGroupNum!=0);
 			List<Benefit> listBenefitsFreq=gridFrequencies.ListGridRows.Select(x=>(Benefit)x.Tag).ToList();
 			for(int i=0;i<listBenefitsFreq.Count;i++) {
-				int indexFrequencySelected=gridFrequencies.ListGridRows[i].Cells[2].ComboSelectedIndex;
-				int indexTreatAreaSelected=gridFrequencies.ListGridRows[i].Cells[3].ComboSelectedIndex;
-				Byte byteProvided=PIn.Byte(gridFrequencies.ListGridRows[i].Cells[1].Text, hasExceptions:false);
+				int indexFrequencySelected=gridFrequencies.ListGridRows[i].Cells[3].ComboSelectedIndex;
+				int indexTreatAreaSelected=gridFrequencies.ListGridRows[i].Cells[4].ComboSelectedIndex;
+				Byte byteProvided=PIn.Byte(gridFrequencies.ListGridRows[i].Cells[2].Text, hasExceptions:false);
+				bool isPatOverride=gridFrequencies.ListGridRows[i].Cells[0].Text=="X";
 				if(byteProvided>0) {
-					Benefit benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided);
+					Benefit benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided,isPatOverride);
 					_listBenefitsAll.Add(benefit);
 				}
 			}
@@ -957,8 +978,13 @@ namespace OpenDental {
 		}
 
 		private void butAddFrequency_Click(object sender,EventArgs e) {
+			if(!ConvertFormToBenefits()) {
+				MsgBox.Show("Error generating benefits from the form.");
+				return;
+			}
 			FormBenefitFrequencyEdit formBenefitFrequencyEdit = new FormBenefitFrequencyEdit();
-			formBenefitFrequencyEdit.BenefitCur = MakeFrequencyBenefit(new Benefit(),0,0,1);
+			formBenefitFrequencyEdit.BenefitCur = MakeFrequencyBenefit(new Benefit(),0,0,1,false);
+			formBenefitFrequencyEdit.PatPlanNum = _patPlanNum;
 			formBenefitFrequencyEdit.BenefitCur.PlanNum=_planNum;//used in next window to determine calendar yr.
 			Benefit benefit=gridFrequencies.SelectedTag<Benefit>();
 			if(benefit!=null) {
@@ -1130,11 +1156,12 @@ namespace OpenDental {
 			// Go through each of the entries in the grid and add the non-zero frequencies to the list of benefits.
 			List<Benefit> listBenefitsFreq=gridFrequencies.ListGridRows.Select(x=>(Benefit)x.Tag).ToList();
 			for(int i=0;i<listBenefitsFreq.Count;i++) {
-				int indexFrequencySelected=gridFrequencies.ListGridRows[i].Cells[2].ComboSelectedIndex;
-				int indexTreatAreaSelected=gridFrequencies.ListGridRows[i].Cells[3].ComboSelectedIndex;
-				Byte byteProvided=PIn.Byte(gridFrequencies.ListGridRows[i].Cells[1].Text, hasExceptions:false);
+				int indexFrequencySelected=gridFrequencies.ListGridRows[i].Cells[3].ComboSelectedIndex;
+				int indexTreatAreaSelected=gridFrequencies.ListGridRows[i].Cells[4].ComboSelectedIndex;
+				Byte byteProvided=PIn.Byte(gridFrequencies.ListGridRows[i].Cells[2].Text, hasExceptions:false);
+				bool isPatOverride=!String.IsNullOrEmpty(gridFrequencies.ListGridRows[i].Cells[0].Text);
 				if(byteProvided>0) {
-					benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided);
+					benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided,isPatOverride);
 					_listBenefitsAll.Add(benefit);
 				}
 			}
@@ -1477,7 +1504,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private Benefit MakeFrequencyBenefit(Benefit benefit, int indexComboFrequency, int indexComboTreatArea, byte quantity) {
+		private Benefit MakeFrequencyBenefit(Benefit benefit, int indexComboFrequency, int indexComboTreatArea, byte quantity, bool isPatOverride) {
 			Benefit benefitNew=benefit.Copy();
 			benefitNew.BenefitType=InsBenefitType.Limitations;
 			benefitNew.MonetaryAmt=-1;
@@ -1486,7 +1513,11 @@ namespace OpenDental {
 			benefitNew.CovCatNum=0;
 			benefitNew.IsNew=true;
 			benefitNew.PlanNum=_planNum;
-			benefitNew.SetFrequencyOption((FrequencyOptions)indexComboFrequency,MonthRenew==0);
+			benefitNew.PatPlanNum=0;
+			if(isPatOverride) {
+				benefitNew.PatPlanNum=_patPlanNum;
+			} 
+			benefitNew.SetFrequencyOption((FrequencyOptions)indexComboFrequency,checkCalendarYear.Checked);
 			benefitNew.TreatArea=(TreatmentArea)indexComboTreatArea;
 			benefitNew.Quantity=quantity;
 			benefitNew.IsNew=false;
@@ -1591,6 +1622,5 @@ namespace OpenDental {
 			Note=textSubscNote.Text;
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

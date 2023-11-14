@@ -130,6 +130,16 @@
       </Enumeration>
     </column>
   </table>
+  <table name="signalod">
+    <summary></summary>
+    <column order="5" name="IType" type="tinyint(4)">
+      <summary>Enum:InvalidType Indicates what cache or entity has been changed.</summary>
+      <Enumeration name="InvalidType">
+        <summary>When the autorefresh message is sent to the other computers, this is the type.</summary>
+        <EnumValue name="BillingList">111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="toolbutitem">
     <summary></summary>
     <column order="2" name="ToolBar" type="smallint">

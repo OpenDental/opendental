@@ -185,6 +185,38 @@ namespace OpenDentBusiness{
 				return PIn.Int($"{versionProg.Major}{versionProg.Minor }");
 			}
 		}
+		
+		/// <summary>Gets manualpage FileNames associated to each Faq and stores them in the ManualPageName column for each Faq.</summary>
+		public static List<Faq> GetManualPageNamesForFaqs(List<Faq> listFaqs) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Faq>>(MethodBase.GetCurrentMethod(),listFaqs);
+			}
+			if(listFaqs.Count==0) {
+				return listFaqs;
+			}
+			List<long> listFaqNums=listFaqs.Select(x => x.FaqNum).Distinct().ToList();
+			string command=@"
+				SELECT FaqNum, FileName 
+				FROM faqmanualpagelink 
+				INNER JOIN manualpage ON manualpage.ManualPageNum=faqmanualpagelink.ManualPageNum 
+				WHERE faqmanualpagelink.FaqNum IN ("+POut.String(string.Join(",",listFaqNums))+") "+
+				"ORDER BY faqmanualpagelink.FaqNum";
+			//If there is one faq attached to two pages, there will be two rows.
+			DataTable table=new DataTable();
+			DataAction.RunManualPublisherHQ(() => {
+				table=Db.GetTable(command);
+			});
+			//The list of faqs is missing the ManualPageName for each item.
+			//If there is one faq attached to two pages, there will be two identical rows.
+			for(int i=0;i<table.Rows.Count;i++) {
+				Faq faq=listFaqs.Find(x => x.ManualPageName==null //ignore the one we already filled
+					&& x.FaqNum==PIn.Long(table.Rows[i]["FaqNum"].ToString()));
+				if(faq!=null) {
+					faq.ManualPageName=table.Rows[i]["FileName"].ToString();
+				}
+			}
+			return listFaqs;
+		}
 
 		#endregion Get Methods
 		#region Modification Methods

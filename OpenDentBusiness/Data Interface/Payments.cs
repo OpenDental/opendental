@@ -1105,6 +1105,7 @@ namespace OpenDentBusiness{
 			Family odbFamily=Patients.GetFamily(odbPatient.PatNum);
 			Ledgers.ComputeAgingForPaysplitsAllocatedToDiffPats(odbPatient.PatNum,autoSplitData.ListPaySplitsSuggested);
 			Ledgers.ComputeAging(odbFamily.Guarantor.PatNum,DateTime.Now);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			return ret;
 		}
 

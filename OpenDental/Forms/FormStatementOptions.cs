@@ -443,6 +443,7 @@ namespace OpenDental{
 			if(checkExportCSV.Checked) {
 				Statements.SaveStatementAsCSV(StatementCur);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butPrintSheets() {
@@ -627,6 +628,7 @@ namespace OpenDental{
 			StatementCur.IsSent=checkIsSent.Checked;
 			Statements.Update(StatementCur);
 			Cursor=Cursors.Default;
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -954,6 +956,7 @@ namespace OpenDental{
 			}
 			StatementCur.IsSent=checkIsSent.Checked;
 			Statements.Update(StatementCur);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -1264,6 +1267,7 @@ namespace OpenDental{
 				FriendlyException.Show(Lan.g(this,"Error retrieving patient folder."),ex);
 				return;
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -1279,6 +1283,7 @@ namespace OpenDental{
 			if(checkExportCSV.Checked) {
 				Statements.SaveStatementAsCSV(StatementCur);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -1498,6 +1503,7 @@ namespace OpenDental{
 					FriendlyException.Show(Lan.g(this,"Error retrieving patient folder."),ex);
 				}
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.Cancel;
 		}
 

@@ -2286,6 +2286,7 @@ namespace OpenDental{
 				return;
 			}
 			FormFinalizePaymentHelper(claimPayment,_claim,_patient,_family,onlyOneClaimNum);
+			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 

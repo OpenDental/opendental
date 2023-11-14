@@ -222,6 +222,53 @@ namespace CodeBase {
 			}
 		}
 
+		///<summary></summary>
+		public static void CopyToClipboard(Bitmap bitmapCopy=null,string fileName=null,int nodeType=-1, long imageKey=-1){
+			ODCloudClientData oDCloudClientData=new ODCloudClientData();
+			if(bitmapCopy!=null){
+				try{
+					using (MemoryStream memoryStream=new MemoryStream()){
+						bitmapCopy.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+						byte[] byteArray=memoryStream.ToArray();
+						oDCloudClientData.BitmapCopy=Convert.ToBase64String(byteArray);
+					}
+				}
+				catch(Exception){
+					return;
+				}
+			}
+			if(!string.IsNullOrEmpty(fileName)){
+				oDCloudClientData.FilePath=fileName;
+			}
+			if(nodeType>-1 && imageKey>-1){
+				oDCloudClientData.NodeType=nodeType;
+				oDCloudClientData.ImageKey=imageKey;
+			}
+			try{
+				SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.CopyToClipboard);
+			}
+			catch(Exception ex){
+				ex.DoNothing();
+			}
+		}
+
+		///<summary></summary>
+		public static CloudNodeTypeAndKey GetNodeTypeAndKey(){
+			string strNodeTypeAndKey="";
+			CloudNodeTypeAndKey nodeTypeAndKey=null;
+			try{
+				strNodeTypeAndKey=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetNodeTypeAndKey);
+			}
+			catch(Exception ex) {
+				ODMessageBox.Show(ex.Message);
+			}
+			if(string.IsNullOrEmpty(strNodeTypeAndKey)){
+				return null;
+			}
+			nodeTypeAndKey=JsonConvert.DeserializeObject<CloudNodeTypeAndKey>(strNodeTypeAndKey);
+			return nodeTypeAndKey;
+		}
+
 		///<summary>Asks ODCloudClient to process a PayConnect terminal payment. If successful, returns the contents of the PosResponse object. Otherwise, returns null.
 		///Type can be 'SALE', 'AUTH', 'VOID', 'RETURN'</summary>
 		public static PayConnectResponse ProcessPaymentTerminal(string type,decimal amount,bool forceDuplicate,string refnum="") {
@@ -738,10 +785,17 @@ namespace CodeBase {
 			///<summary>Indicates that the browser should prompt the user if their ODCloudClient is not the latest version.</summary>
 			public bool DoCheckVersion=false;
 			///<summary>A random 32 byte string, base64 encoded. Sent with the auth request. Google returns it with their response
-			///so we can confirm that thier response is for our application's request.</summary>
+			///so we can confirm that their response is for our application's request.</summary>
 			public string State;
 			///<summary>Any error thrown while trying to perform acquisition will be held here.</summary>
 			public string MicrosoftRefreshToken;
+			///<summary>String of bitmap data to be attached to Clipboard</summary>
+			public string BitmapCopy;
+			///<summary>Node Type int used with ImageKey for copying documents in the image module. Corresponds to EnumImageNodeType</summary>
+			public int NodeType;
+			///<summary>Used with NodeType for copying documents in the image module.</summary>
+			public long ImageKey;
+
 		}
 
 		///<summary>Contains the arguments to be sent to OD Cloud Client. Will be serialized as JSON.</summary>
@@ -788,6 +842,12 @@ namespace CodeBase {
 					ResultCode=(int)value;
 				}
 			}
+		}
+
+		///<summary></summary>
+		public class CloudNodeTypeAndKey{
+			public int nodeType;
+			public long imagekey;
 		}
 
 		///<summary>Different action types that can be sent to ODCloudClient.</summary>
@@ -860,7 +920,11 @@ namespace CodeBase {
 			///<summary> Get image from clipboard. Returns empty string if no image is found. </summary>
 			GetClipboardImage,
 			///<summary> Clear clipboard on cloud users machine</summary>
-			ClearClipboard
+			ClearClipboard,
+			///<summary> Sends a request to the OpenDentalCloudClient to copy the System.Windows.DataObject to the clients clipboard</summary>
+			CopyToClipboard,
+			///<summary> Used when copying to clipboard. Gets the NodeTypeAndKey for the image to be copied.</summary>
+			GetNodeTypeAndKey
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

@@ -1132,6 +1132,10 @@ namespace OpenDental {
 				msgString+=" charges with payments attached.";
 				MsgBox.Show(Lans.g(this,msgString));
 			}
+			if(listPayPlanCharges.Count!=listPayPlanChargesNotDeleted.Count) {
+				//at least one payplan charge was deleted.
+				SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,_patient.PatNum,"Deleted.");
+			}
 			ModuleSelected(_patient.PatNum);
 		}
 
@@ -1799,6 +1803,7 @@ namespace OpenDental {
 			for(int i=0;i<listProcedures.Count;i++) {
 				Adjustments.CreateAdjustmentForSalesTax(listProcedures[i],true);
 			}
+			Signalods.SetInvalid(InvalidType.BillingList);
 			ModuleSelected(_patient.PatNum);
 		}
 

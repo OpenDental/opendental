@@ -23,6 +23,8 @@ namespace OpenDental {
 
 		private void FormPatientFlows_Load(object sender,EventArgs e) {
 			_clinicNum = Clinics.ClinicNum;
+			datePicker.SetDateTimeFrom(DateTime.Now.AddDays(-7));
+			datePicker.SetDateTimeTo(DateTime.Now);
 			LayoutMenu();
 			FillGrid();
 		}

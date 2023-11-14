@@ -112,6 +112,8 @@ End of Checklist================================================================
 				textImagePath.Text=FaqCur.ImageUrl;
 				textEmbeddedMediaURL.Text=FaqCur.EmbeddedMediaUrl;
 				textManualVersion.Text=FaqCur.ManualVersion.ToString();
+				textUserCreated.Text=Userods.GetName(FaqCur.UserNumCreated);
+				textUserEdited.Text=Userods.GetName(FaqCur.UserNumEdited);
 				checkSticky.Checked=FaqCur.IsStickied;
 				//Fill listbox with the manual pages the Faq object is currently linked to
 				List<string> listLinkedPages=Faqs.GetLinkedManualPages(FaqCur.FaqNum);
@@ -313,6 +315,7 @@ End of Checklist================================================================
 			if(!IsValid()) {
 				return;
 			}
+			FaqCur.UserNumEdited=Security.CurUser.UserNum;
 			List<string> listPagesToLink=listBoxLinkedPages.Items.GetAll<string>();
 			FaqCur.QuestionText=PIn.String(textQuestion.Text);
 			FaqCur.AnswerText=PIn.String(textAnswer.Text);
@@ -324,6 +327,7 @@ End of Checklist================================================================
 				_listVersions.Add(PIn.Int(textManualVersion.Text));
 			}
 			if(FaqCur.IsNew) {
+				FaqCur.UserNumCreated=Security.CurUser.UserNum;
 				//When creating a new faq the user can pick multiple versions for it to apply to.
 				//Because Faq objects are versioned we must insert a copy of the faq for each version specified.
 				for(int i=0;i<_listVersions.Count();i++) {

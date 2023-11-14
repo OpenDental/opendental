@@ -2136,7 +2136,7 @@ namespace OpenDental {
 			_listBenefits.Sort();
 			gridBenefits.BeginUpdate();
 			gridBenefits.Columns.Clear();
-			GridColumn col=new GridColumn("Pat",28);
+			GridColumn col=new GridColumn("Pat",28, HorizontalAlignment.Center);
 			gridBenefits.Columns.Add(col);
 			col=new GridColumn("Level",60);
 			gridBenefits.Columns.Add(col);

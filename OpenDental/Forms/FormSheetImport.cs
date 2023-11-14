@@ -2328,6 +2328,7 @@ namespace OpenDental {
 			if(SheetCur.SheetType==SheetTypeEnum.PatientForm) {
 				bool isImportingPriIns=false;
 				bool isImportingSecIns=false;
+				List<RefAttach> listRefAttaches=new List<RefAttach>();
 				for(int i=0;i<_listSheetImportRows.Count;i++) {
 					if(!_listSheetImportRows[i].DoImport) {
 						continue;
@@ -2392,8 +2393,7 @@ namespace OpenDental {
 							refAttach.PatNum=_patient.PatNum;
 							refAttach.RefDate=DateTime.Today;
 							refAttach.ReferralNum=((Referral)_listSheetImportRows[i].ImpValObj).ReferralNum;
-							RefAttaches.Insert(refAttach);//no security to block this action.
-							SecurityLogs.MakeLogEntry(EnumPermType.RefAttachAdd,_patient.PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
+							listRefAttaches.Add(refAttach);
 							break;
 						#endregion
 						#region Address and Home Phone
@@ -2464,6 +2464,11 @@ namespace OpenDental {
 							+Lans.g(this,"Archived patients in the family will not be updated.  All other family members will be updated as usual."));
 					}
 					Patients.UpdateAddressForFam(_patient,false,isAuthArchivedEdit);
+				}
+				//Import the refattaches
+				for(int i=0;i<listRefAttaches.Count;i++) {
+					RefAttaches.Insert(listRefAttaches[i]);//no security to block this action.
+					SecurityLogs.MakeLogEntry(EnumPermType.RefAttachAdd,_patient.PatNum,"Referred From "+Referrals.GetNameFL(listRefAttaches[i].ReferralNum));
 				}
 			}
 			#endregion

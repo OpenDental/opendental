@@ -26,8 +26,8 @@
 		<ui:TextBox x:Name="textImagePath" Width="446" Height="20" Margin="194,349,0,0" />
 		<ui:Label x:Name="labelImagePath" Width="120" Height="21" Margin="70,348,0,0" Text="Image URL (optional)" HAlign="Right" VAlign="Center" />
 		<ui:CheckBox x:Name="checkSticky" Width="113" Height="17" Margin="95,326,0,0" Text="Stickied to Top" CheckAlign="MiddleRight" />
-		<ui:Button x:Name="butVersionPick" Width="27" Height="23" Margin="367,299,0,0" Text="..." Click="butVersionPick_Click" />
-		<ui:TextBox x:Name="textManualVersion" Width="169" Height="20" Margin="195,301,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+		<ui:Button x:Name="butVersionPick" Width="27" Height="20" Margin="295,301,0,0" Text="..." Click="butVersionPick_Click" />
+		<ui:TextBox x:Name="textManualVersion" Width="100" Height="20" Margin="195,301,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
 		<ui:Label x:Name="label1" Width="108" Height="21" Margin="80,300,0,0" Text="Version" HAlign="Right" VAlign="Center" />
 		<ui:Button x:Name="buttonHyperlink" Width="25" Height="24" Margin="312,54,0,0" Text="" Click="butHyperlink_Click" BitmapFileName="ExternalLink.png" />
 		<ui:Button x:Name="buttonUnderline" Width="24" Height="24" Margin="248,54,0,0" Text="_U" Click="butUnderline_Click" />
@@ -37,5 +37,9 @@
 		<ui:Label x:Name="labelAnswerText" Width="115" Height="21" Margin="77,78,0,0" Text="Answer Content" HAlign="Right" VAlign="Center" />
 		<ui:TextBox x:Name="textQuestion" Width="365" Height="20" Margin="194,22,0,0" />
 		<ui:Label x:Name="labelQuestion" Width="100" Height="14" Margin="92,25,0,0" Text="Question Text" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelUserCreated" Width="56" Height="21" Margin="328,301,0,0" Text="Created" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textUserCreated" Width="100" Height="20" Margin="384,301,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+		<ui:Label x:Name="labelUserEdited" Width="56" Height="21" Margin="484,301,0,0" Text="Edited" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textUserEdited" Width="100" Height="20" Margin="540,301,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
 	</Grid>
 </local:FrmODBase>

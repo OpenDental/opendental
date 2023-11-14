@@ -15,7 +15,7 @@
 		<ui:Button x:Name="butRefresh" Width="75" Height="23" Margin="684,44,0,0" Text="Refresh" Click="ButRefresh_Click" />
 		<ui:TextBox x:Name="textManualVersion" Width="100" Height="20" Margin="472,15,0,0" />
 		<ui:TextBox x:Name="textManualPage" Width="196" Height="20" Margin="132,15,0,0" />
-		<ui:Label x:Name="label2" HorizontalAlignment="Right" Width="90" Height="14" Margin="0,18,306,0" Text="Manual Version:" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label2" Width="90" Height="14" Margin="376,18,0,0" Text="Manual Version:" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="label1" Width="127" Height="23" Margin="0,18,0,0" Text="Manual Page Name:" HAlign="Right" />
 	</Grid>
 </local:FrmODBase>
