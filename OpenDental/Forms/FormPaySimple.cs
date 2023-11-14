@@ -109,7 +109,7 @@ namespace OpenDental {
 		private void FillFieldsFromCard() {
 			//User selected a credit card from drop down.
 			if(_creditCard.CCNumberMasked!="") {
-				if(_creditCard.CCSource==CreditCardSource.PaySimpleACH) {
+				if(_creditCard.CCSource==CreditCardSource.PaySimpleACH || _creditCard.CCSource==CreditCardSource.PaySimplePaymentPortalACH) {
 					textCheckSaveNumber.Text=_creditCard.CCNumberMasked;
 				}
 				else {
