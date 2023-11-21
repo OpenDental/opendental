@@ -451,7 +451,7 @@ End of Checklist================================================================
 			string retVal="";
 			//AutoNoteResponseText should be in the format "Auto Note Response Text : {AutoNoteName}". 
 			//The response text will be everything to the left of the ':'
-			int colonPos=promptResponse.IndexOf(" :");
+			int colonPos=promptResponse.IndexOf(":");
 			if(colonPos>-1) {
 				retVal=promptResponse.Substring(0,colonPos)+"\r\n";
 			}

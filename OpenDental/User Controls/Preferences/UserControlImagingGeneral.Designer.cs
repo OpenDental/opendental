@@ -290,7 +290,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupImport);
 			this.Controls.Add(this.groupBoxOD2);
 			this.Name = "UserControlImagingGeneral";
-			this.Size = new System.Drawing.Size(494, 624);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxOD2.ResumeLayout(false);
 			this.groupBoxOD2.PerformLayout();
 			this.groupImport.ResumeLayout(false);

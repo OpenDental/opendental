@@ -56,7 +56,7 @@ namespace OpenDental {
 			this.Controls.Add(this.checkAgingProcLifo);
 			this.Controls.Add(this.labelCommLogAutoSaveDetails);
 			this.Name = "UserControlExperimentalPrefs";
-			this.Size = new System.Drawing.Size(494, 624);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.ResumeLayout(false);
 
 		}

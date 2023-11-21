@@ -440,7 +440,7 @@ namespace OpenDental {
 			this.Controls.Add(this.textInsWriteoffDescript);
 			this.Controls.Add(this.checkCanadianPpoLabEst);
 			this.Name = "UserControlAccountInsurance";
-			this.Size = new System.Drawing.Size(494, 652);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxClaimsMedical.ResumeLayout(false);
 			this.groupBoxClaimsPayments.ResumeLayout(false);
 			this.groupBoxOD2.ResumeLayout(false);

@@ -36,7 +36,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(582, 660);
+			this.butOK.Location = new System.Drawing.Point(582, 669);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -47,7 +47,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(663, 660);
+			this.butCancel.Location = new System.Drawing.Point(663, 669);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 2;
@@ -62,7 +62,7 @@ namespace OpenDental{
 			this.treeMain.Location = new System.Drawing.Point(12, 52);
 			this.treeMain.Name = "treeMain";
 			this.treeMain.ShowPlusMinus = false;
-			this.treeMain.Size = new System.Drawing.Size(225, 602);
+			this.treeMain.Size = new System.Drawing.Size(225, 612);
 			this.treeMain.TabIndex = 0;
 			this.treeMain.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeMain_BeforeCollapse);
 			this.treeMain.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMain_AfterSelect);
@@ -71,9 +71,9 @@ namespace OpenDental{
 			// 
 			this.panelMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-			this.panelMain.Location = new System.Drawing.Point(244, 30);
+			this.panelMain.Location = new System.Drawing.Point(244, 4);
 			this.panelMain.Name = "panelMain";
-			this.panelMain.Size = new System.Drawing.Size(494, 624);
+			this.panelMain.Size = new System.Drawing.Size(494, 660);
 			this.panelMain.TabIndex = 5;
 			// 
 			// labelCategories

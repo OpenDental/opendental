@@ -59,6 +59,10 @@
 			this.gridTesting = new OpenDental.UI.GridOD();
 			this.tabQuery = new System.Windows.Forms.TabPage();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.lblJobPriority = new System.Windows.Forms.Label();
+			this.lblJobPhase = new System.Windows.Forms.Label();
+			this.comboQueryPhaseFilter = new OpenDental.UI.ComboBox();
+			this.comboQueryPriorityFilter = new OpenDental.UI.ComboBox();
 			this.butQueriesRefresh = new OpenDental.UI.Button();
 			this.checkShowQueryComplete = new OpenDental.UI.CheckBox();
 			this.checkShowQueryCancelled = new OpenDental.UI.CheckBox();
@@ -235,7 +239,6 @@
 			this.tabControlNav.Size = new System.Drawing.Size(357, 767);
 			this.tabControlNav.TabIndex = 1;
 			this.tabControlNav.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlNav_DrawItem);
-			this.tabControlNav.SelectedIndexChanged += new System.EventHandler(this.tabControlNav_SelectedIndexChanged);
 			this.tabControlNav.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControlNav_Selecting);
 			// 
 			// tabPatternReview
@@ -553,20 +556,64 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.lblJobPriority);
+			this.groupBox1.Controls.Add(this.lblJobPhase);
+			this.groupBox1.Controls.Add(this.comboQueryPhaseFilter);
+			this.groupBox1.Controls.Add(this.comboQueryPriorityFilter);
 			this.groupBox1.Controls.Add(this.butQueriesRefresh);
 			this.groupBox1.Controls.Add(this.checkShowQueryComplete);
 			this.groupBox1.Controls.Add(this.checkShowQueryCancelled);
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.groupBox1.Location = new System.Drawing.Point(3, 3);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(343, 40);
+			this.groupBox1.Size = new System.Drawing.Size(343, 90);
 			this.groupBox1.TabIndex = 239;
-			this.groupBox1.Text = "Complete and Cancelled Filters";
+			this.groupBox1.Text = "Filters";
+			// 
+			// lblJobPriority
+			// 
+			this.lblJobPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.lblJobPriority.AutoSize = true;
+			this.lblJobPriority.Location = new System.Drawing.Point(89, 36);
+			this.lblJobPriority.Name = "lblJobPriority";
+			this.lblJobPriority.Size = new System.Drawing.Size(80, 13);
+			this.lblJobPriority.TabIndex = 247;
+			this.lblJobPriority.Text = "Priority:";
+			// 
+			// lblJobPhase
+			// 
+			this.lblJobPhase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.lblJobPhase.AutoSize = true;
+			this.lblJobPhase.Location = new System.Drawing.Point(89, 9);
+			this.lblJobPhase.Name = "lblJobPhase";
+			this.lblJobPhase.Size = new System.Drawing.Size(79, 13);
+			this.lblJobPhase.TabIndex = 246;
+			this.lblJobPhase.Text = "Phase:";
+			// 
+			// comboQueryPhaseFilter
+			// 
+			this.comboQueryPhaseFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboQueryPhaseFilter.Location = new System.Drawing.Point(175, 6);
+			this.comboQueryPhaseFilter.Name = "comboQueryPhaseFilter";
+			this.comboQueryPhaseFilter.Size = new System.Drawing.Size(163, 21);
+			this.comboQueryPhaseFilter.TabIndex = 245;
+			this.comboQueryPhaseFilter.SelectionChangeCommitted += new System.EventHandler(this.comboQueryPhaseFilter_SelectionChangeCommitted);
+			this.comboQueryPhaseFilter.SelectionModeMulti=true;
+			// 
+			// comboQueryPriorityFilter
+			// 
+			this.comboQueryPriorityFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboQueryPriorityFilter.Location = new System.Drawing.Point(175, 33);
+			this.comboQueryPriorityFilter.Name = "comboQueryPriorityFilter";
+			this.comboQueryPriorityFilter.Size = new System.Drawing.Size(163, 21);
+			this.comboQueryPriorityFilter.TabIndex = 244;
+			this.comboQueryPriorityFilter.SelectionChangeCommitted += new System.EventHandler(this.comboQueryPriorityFilter_SelectionChangeCommitted);
+			this.comboQueryPriorityFilter.SelectionModeMulti=true;
 			// 
 			// butQueriesRefresh
 			// 
 			this.butQueriesRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butQueriesRefresh.Location = new System.Drawing.Point(257, 13);
+			this.butQueriesRefresh.Location = new System.Drawing.Point(258, 61);
 			this.butQueriesRefresh.Name = "butQueriesRefresh";
 			this.butQueriesRefresh.Size = new System.Drawing.Size(80, 24);
 			this.butQueriesRefresh.TabIndex = 243;
@@ -576,16 +623,16 @@
 			// checkShowQueryComplete
 			// 
 			this.checkShowQueryComplete.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowQueryComplete.Location = new System.Drawing.Point(0, 16);
+			this.checkShowQueryComplete.Location = new System.Drawing.Point(12, 62);
 			this.checkShowQueryComplete.Name = "checkShowQueryComplete";
-			this.checkShowQueryComplete.Size = new System.Drawing.Size(135, 20);
+			this.checkShowQueryComplete.Size = new System.Drawing.Size(114, 20);
 			this.checkShowQueryComplete.TabIndex = 237;
 			this.checkShowQueryComplete.Text = "Include Complete";
 			// 
 			// checkShowQueryCancelled
 			// 
 			this.checkShowQueryCancelled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowQueryCancelled.Location = new System.Drawing.Point(116, 16);
+			this.checkShowQueryCancelled.Location = new System.Drawing.Point(110, 62);
 			this.checkShowQueryCancelled.Name = "checkShowQueryCancelled";
 			this.checkShowQueryCancelled.Size = new System.Drawing.Size(135, 20);
 			this.checkShowQueryCancelled.TabIndex = 238;
@@ -597,9 +644,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridQueries.HasMultilineHeaders = true;
-			this.gridQueries.Location = new System.Drawing.Point(2, 46);
+			this.gridQueries.Location = new System.Drawing.Point(2, 96);
 			this.gridQueries.Name = "gridQueries";
-			this.gridQueries.Size = new System.Drawing.Size(344, 638);
+			this.gridQueries.Size = new System.Drawing.Size(344, 577);
 			this.gridQueries.TabIndex = 230;
 			this.gridQueries.Title = "Queries to be done";
 			this.gridQueries.TranslationName = "Job Edit";
@@ -1331,6 +1378,7 @@
 			this.tabTesting.PerformLayout();
 			this.tabQuery.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
 			this.tabNotify.ResumeLayout(false);
 			this.tabSubscribed.ResumeLayout(false);
 			this.tabNeedsEngineer.ResumeLayout(false);
@@ -1371,6 +1419,10 @@
 		private UI.GridOD gridQueries;
 		private OpenDental.UI.CheckBox checkShowQueryCancelled;
 		private OpenDental.UI.CheckBox checkShowQueryComplete;
+		private UI.ComboBox comboQueryPhaseFilter;
+		private UI.ComboBox comboQueryPriorityFilter;
+		private System.Windows.Forms.Label lblJobPriority;
+		private System.Windows.Forms.Label lblJobPhase;
 		private System.Windows.Forms.TabPage tabDocumentation;
 		private UI.GridOD gridDocumentation;
 		private System.Windows.Forms.TabPage tabNotify;

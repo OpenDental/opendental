@@ -345,7 +345,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxPayPlans);
 			this.Controls.Add(this.groupBoxPayments);
 			this.Name = "UserControlAccountPayments";
-			this.Size = new System.Drawing.Size(494, 624);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxUnearnedIncome.ResumeLayout(false);
 			this.groupBoxPayPlans.ResumeLayout(false);
 			this.groupBoxPayPlans.PerformLayout();

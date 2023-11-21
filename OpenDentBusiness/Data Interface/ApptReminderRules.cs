@@ -246,18 +246,18 @@ If you have questions, call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.",
 					apptReminderRule.ClinicNum=clinicNum;//works with practice too because _listClinics[0] is a spoofed "Practice/Defaults" clinic with ClinicNum=0
 					apptReminderRule.TypeCur=ApptReminderType.ConfirmationFutureDay;
 					apptReminderRule.TSPrior=TimeSpan.FromDays(7);
-					apptReminderRule.TemplateSMS="[NameF] is scheduled for [ApptTime] on [ApptDate] at [OfficeName]. Reply [ConfirmCode] to confirm or call [OfficePhone].";//default message
+					apptReminderRule.TemplateSMS="[NameF] is scheduled for [ApptTime] on [ApptDate] at [OfficeName]. Reply [ConfirmCode] to confirm or call [OfficePhone]."+strAddToCalendar;//default message
 					apptReminderRule.TemplateEmail=@"[NameF], 
 
 Your appointment is scheduled for [ApptTime] on [ApptDate] at [OfficeName]. Click <a href=""[ConfirmURL]"">[ConfirmURL]</a> to confirm "+
-@"or call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.";
+@"or call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>."+strAddToCalendar;
 					apptReminderRule.TemplateEmailSubject="Appointment Confirmation";//default subject
 					apptReminderRule.TemplateSMSAggShared="[Appts]\nReply [ConfirmCode] to confirm or call [OfficePhone].";
-					apptReminderRule.TemplateSMSAggPerAppt="[NameF] is scheduled for [ApptTime] on [ApptDate] at [ClinicName].";
+					apptReminderRule.TemplateSMSAggPerAppt="[NameF] is scheduled for [ApptTime] on [ApptDate] at [ClinicName]."+strAddToCalendarPerAppt;
 					apptReminderRule.TemplateEmailSubjAggShared="Appointment Confirmation";
 					apptReminderRule.TemplateEmailAggShared=@"[Appts]
 Click <a href=""[ConfirmURL]"">[ConfirmURL]</a> to confirm or call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.";
-					apptReminderRule.TemplateEmailAggPerAppt="[NameF] is scheduled for [ApptTime] on [ApptDate] at [ClinicName].";
+					apptReminderRule.TemplateEmailAggPerAppt="[NameF] is scheduled for [ApptTime] on [ApptDate] at [ClinicName]."+strAddToCalendarPerAppt;
 					//SendOrder="0,1,2" //part of ctor
 					apptReminderRule.DoNotSendWithin=TimeSpan.FromDays(1).Add(TimeSpan.FromHours(10));
 					apptReminderRule.TemplateAutoReply="Thank you for confirming your appointment with [OfficeName].  We look forward to seeing you."+strAddToCalendar;
@@ -451,6 +451,7 @@ Please fill out these forms for each patient:
 				case ApptReminderType.ConfirmationFutureDay:
 					listStringsReplacementTags.Add("[ConfirmCode]");
 					listStringsReplacementTags.Add("[ConfirmURL]");
+					listStringsReplacementTags.Add(ApptThankYouSents.ADD_TO_CALENDAR);
 					break;
 				case ApptReminderType.PatientPortalInvite:
 					listStringsReplacementTags.Add("[UserName]");
@@ -494,6 +495,10 @@ Please fill out these forms for each patient:
 			listReplacementTags.Add("[Appts]");//[Appts] is used for child nodes
 			listReplacementTags.Sort();
 			return listReplacementTags;
+		}
+
+		public static bool IsAddToCalendarTagSupported(ApptReminderType apptReminderType) {
+			return apptReminderType.In(ApptReminderType.Reminder,ApptReminderType.ScheduleThankYou,ApptReminderType.ConfirmationFutureDay);
 		}
 
 		public enum ConfStatusUpdate {

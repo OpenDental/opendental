@@ -10,7 +10,8 @@
              Text="Close Payment Plans" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Label x:Name="label1" Width="360" Height="46" Margin="26,26,0,0" Text="Running this tool will close all payment plans that have been paid off and have no future charges. " />
-		<ui:CheckBox x:Name="checkOldPaymentPlans" Width="251" Height="18" Margin="29,91,0,0" Text="Include Old Payment Plans" CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkOldPaymentPlans" Width="357" Height="43" Margin="29,66,0,0" Text="Include Old Payment Plans (Formerly &quot;Patient Payment Plans&quot;. Replaced by Dynamic Payment Plans as of version 23.3)" CheckAlign="MiddleLeft" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,14,12" Text="Save" Click="butSave_Click" />
+		<ui:CheckBox x:Name="checkInsPaymentPlans" Width="251" Height="18" Margin="29,114,0,0" Text="Include Insurance Payment Plans" CheckAlign="MiddleLeft" />
 	</Grid>
 </local:FrmODBase>

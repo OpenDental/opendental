@@ -265,6 +265,10 @@ namespace OpenDentBusiness {
 			return GetT(fn,ConnectionNames.ServicesHQ);
 		}
 
+		public static T GetHeadmaster<T>(Func<T> fn) {
+			return GetT(fn,ConnectionNames.Headmaster);
+		}
+
 		///<summary>Perform the given function in the context of the hosting db.</summary>
 		public static T GetHosting<T>(Func<T> fn) {
 			return GetT(fn,ConnectionNames.Hosting);

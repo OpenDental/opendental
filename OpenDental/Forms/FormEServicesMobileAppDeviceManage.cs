@@ -123,6 +123,7 @@ namespace OpenDental {
 							return;
 						}
 						MobileAppDevices.Delete(gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
+						_listMobileAppDevicesAll.RemoveAll(x => x.MobileAppDeviceNum==gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
 						FillGridMobileAppDevices();
 					}
 					#endregion Delete click handler
@@ -141,13 +142,15 @@ namespace OpenDental {
 		private void SetUIEClipboardEnabled() {
 			//Determine if the user has permissions to alter eService features.
 			bool hasSetupPermission=Security.IsAuthorized(EnumPermType.EServicesSetup,true);
+			long selectedClinicNum=GetClinicNumEClipboardTab();
 			//Determine if the selected clinic is signed up for eClipboard.
-			bool isClinicSignedUpEClipboard=MobileAppDevices.IsClinicSignedUpForEClipboard(GetClinicNumEClipboardTab());
-			if(PrefC.HasClinicsEnabled && GetClinicNumEClipboardTab()==0) {
-				isClinicSignedUpEClipboard=Clinics.GetForUserod(Security.CurUser).Any(x => MobileAppDevices.IsClinicSignedUpForEClipboard(x.ClinicNum));
-			}
+			bool isClinicSignedUpEClipboard=MobileAppDevices.IsClinicSignedUpForEClipboard(selectedClinicNum);
 			//Determine if the selected clinic is signed up for ODTouch.
-			bool isClinicSignedUpODTouch=ClinicPrefs.IsODTouchAllowed(clinicPickerEClipboard.ClinicNumSelected);
+			bool isClinicSignedUpODTouch=ClinicPrefs.IsODTouchAllowed(selectedClinicNum);
+			if(PrefC.HasClinicsEnabled && selectedClinicNum==0) {
+				isClinicSignedUpEClipboard=Clinics.GetForUserod(Security.CurUser).Any(x => MobileAppDevices.IsClinicSignedUpForEClipboard(x.ClinicNum));
+				isClinicSignedUpODTouch=Clinics.GetForUserod(Security.CurUser).Any(x => ClinicPrefs.IsODTouchAllowed(x.ClinicNum));
+			}
 			_canEditEClipboard=hasSetupPermission && isClinicSignedUpEClipboard;
 			_canEditODTouch=hasSetupPermission && isClinicSignedUpODTouch;
 			gridMobileAppDevices.Enabled=hasSetupPermission;
@@ -175,17 +178,21 @@ namespace OpenDental {
 			if(!e.Col.In(idxeClipboardColumn,idxODTouchColumn)) {//They did not select the right column.
 				return;
 			}
-			if(!_canEditEClipboard && e.Col.In(idxeClipboardColumn)) {
-				MsgBox.Show("To manage devices go to the Signup Portal and enable eClipboard.");
-				return;
-			}
-			if(!_canEditODTouch && e.Col.In(idxODTouchColumn)){
-				MsgBox.Show("To manage devices go to the Signup Portal and enable ODTouch.");
-				return;
-			}
 			MobileAppDevice mobileAppDevice=gridMobileAppDevices.SelectedTag<MobileAppDevice>();
 			//There is not a tag somehow.
 			if(mobileAppDevice==null) {
+				return;
+			}
+			long selectedClinicNum=0;
+			if(PrefC.HasClinicsEnabled) {
+				selectedClinicNum=mobileAppDevice.ClinicNum;
+			}
+			if(e.Col.In(idxeClipboardColumn) && !MobileAppDevices.IsClinicSignedUpForEClipboard(selectedClinicNum)) {
+				MsgBox.Show("To manage devices go to the Signup Portal and enable eClipboard.");
+				return;
+			}
+			if(e.Col.In(idxODTouchColumn) && !ClinicPrefs.IsODTouchAllowed(selectedClinicNum)){
+				MsgBox.Show("To manage devices go to the Signup Portal and enable ODTouch.");
 				return;
 			}
 			if(e.Col==idxeClipboardColumn) {

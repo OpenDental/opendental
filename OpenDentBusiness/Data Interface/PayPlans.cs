@@ -709,7 +709,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Automatically closes all payment plans that have no future charges and that are paid off.
 		///Returns the number of payment plans that were closed.</summary>
-		public static long AutoClose(bool canIncludeOldPaymentPlans=false) {
+		public static long AutoClose(bool canIncludeOldPaymentPlans=false,bool canIncludeInsPaymentPlans=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetLong(MethodBase.GetCurrentMethod(),canIncludeOldPaymentPlans);
 			}
@@ -768,10 +768,20 @@ namespace OpenDentBusiness{
 					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Payment Plan closed using Close Payment Plan tool."));
 					count++;
 				}
-				else if(!listPayPlans[i].IsDynamic && canIncludeOldPaymentPlans) {
+				else {
+					if(listPayPlans[i].InsSubNum>0 && !canIncludeInsPaymentPlans) {
+						continue;
+					}
+					if(listPayPlans[i].InsSubNum==0 && !canIncludeOldPaymentPlans) {
+						continue;
+					}
 					listPayPlans[i].IsClosed=true;
 					PayPlans.Update(listPayPlans[i]);
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Patient Payment Plan closed using Close Payment Plan tool."));
+					string logMessage=Lans.g("PayPlans","Patient Payment Plan closed using Close Payment Plan tool.");
+					if(listPayPlans[i].InsSubNum>0) {
+						logMessage=Lans.g("PayPlans","Insurance Payment Plan closed using Close Payment Plan tool.");
+					}
+					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,listPayPlans[i].PatNum,logMessage);
 					count++;
 				}
 			}

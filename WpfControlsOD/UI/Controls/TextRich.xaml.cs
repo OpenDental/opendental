@@ -1253,6 +1253,10 @@ namespace WpfControls.UI{
 			TextPointer textPointerStart=textSelection.Start;
 			string strDate=DateTime.Today.ToShortDateString();
 			richTextBox.Selection.Text=strDate;
+			//TextPointers are copies/Selections, not references.
+			//So we have to get them again.
+			textSelection=richTextBox.Selection;
+			textPointerStart=textSelection.Start;
 			TextPointer textPointerEnd=textPointerStart.GetPositionAtOffset(strDate.Length,LogicalDirection.Forward);
 			richTextBox.Selection.Select(textPointerEnd,textPointerEnd);
 		}
@@ -1263,7 +1267,7 @@ namespace WpfControls.UI{
 			TextSelection textSelection=richTextBox.Selection;
 			TextPointer textPointerStart=textSelection.Start;
 			richTextBox.Selection.Text=strPaste;
-			//TextPointers/Selections are copies, not references (I think).
+			//TextPointers/Selections are copies, not references.
 			//So we have to get them again.
 			textSelection=richTextBox.Selection;
 			textPointerStart=textSelection.Start;

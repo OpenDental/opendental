@@ -422,7 +422,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxERA);
 			this.Controls.Add(this.checkScheduleProvEmpSelectAll);
 			this.Name = "UserControlManageGeneral";
-			this.Size = new System.Drawing.Size(494, 618);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxTimeCards.ResumeLayout(false);
 			this.groupBoxDeposits.ResumeLayout(false);
 			this.groupBoxPrescriptions.ResumeLayout(false);

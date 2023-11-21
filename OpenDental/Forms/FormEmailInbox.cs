@@ -476,7 +476,12 @@ namespace OpenDental {
 				gridSent.ListGridRows.Add(row);
 			}
 			gridSent.EndUpdate();
-			//sorting/reselcting previously selected rows
+			//sorting/reselecting previously selected rows
+			if(sortByColIdx>=gridSent.Columns.Count) {//Prevents UE on grid refresh if the user hid the FailReason column by unchecking the "Show Failed Emails" checkbox
+				//Default to sorting by Date Received descending.
+				sortByColIdx=3;
+				isSortAsc=false;
+			}
 			gridSent.SortForced(sortByColIdx,isSortAsc);
 			//Select the previously selected emails
 			for(int i=0;i<gridSent.ListGridRows.Count;i++) {

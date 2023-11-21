@@ -44,6 +44,8 @@ namespace OpenDental {
 		private Timer _timerSaveButtonText;
 		///<summary>Creates a unique identifier for this instance of the form. This can be used when creating a thread with a unique group name.</summary>
 		private string _uniqueFormIdentifier;
+		///<summary>Tab order of the currently selected control, either checkbox or textbox. 1-based in sheets.</summary>
+		private int _tabCurrent=0;
 		#endregion Fields - private
 
 		#region Fields - public
@@ -669,6 +671,17 @@ namespace OpenDental {
 			if(IsStatement) {
 				SelectFirstOptionComboBoxes();
 			}
+			List<SheetField> listSheetFieldsPositiveTabOrder=SheetCur.SheetFields.FindAll(x=>x.TabOrder>0).ToList();
+			//TabOrder is 1-indexed
+			if(listSheetFieldsPositiveTabOrder.Count>0) {
+				_tabCurrent=listSheetFieldsPositiveTabOrder.Select(x=>x.TabOrder).ToList().Min();
+				SheetField sheetFieldFirstTab=listSheetFieldsPositiveTabOrder.Find(x=>x.TabOrder==_tabCurrent);
+				if(sheetFieldFirstTab!=null) {//probably can't be null
+					if(sheetFieldFirstTab.FieldType==SheetFieldType.InputField) {
+						CreateFloatingTextBox(sheetFieldFirstTab,Point.Empty);
+					}
+				}
+			}
 			//If it is an exam and has the permission to save it, enable the save button.
 			butSave.Visible=(SheetCur.SheetType==SheetTypeEnum.ExamSheet && butOK.Enabled && butOK.Visible && !IsReadOnly);
 			if(SheetCur.IsNew && SheetCur.SheetType!=SheetTypeEnum.PaymentPlan) {//payplan does not get saved to db so sheet is always new
@@ -783,6 +796,7 @@ namespace OpenDental {
 			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
 			SheetField sheetField=HitTest(pointSheet);
 			if(sheetField?.FieldType==SheetFieldType.CheckBox){
+				_tabCurrent=sheetField.TabOrder;
 				if(sheetField.FieldValue==""){
 					sheetField.FieldValue="X";
 					if(sheetField.RadioButtonValue!="" || sheetField.RadioButtonGroup!=""){
@@ -813,6 +827,8 @@ namespace OpenDental {
 				|| sheetField?.FieldType==SheetFieldType.StaticText
 				|| sheetField?.FieldType==SheetFieldType.OutputText)
 			{
+				_tabCurrent=sheetField.TabOrder;
+				panelMain.Invalidate();
 				CreateFloatingTextBox(sheetField,e.Location);
 				ClearSigs();
 				return;
@@ -831,6 +847,8 @@ namespace OpenDental {
 				return;
 			}
 			_listPoints.Add(pointSheet);
+			_tabCurrent=0;
+			panelMain.Invalidate();
 		}
 
 		private void panelMain_MouseMove(object sender,MouseEventArgs e) {
@@ -1003,6 +1021,9 @@ namespace OpenDental {
 				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.CheckBox) {
 					continue;
 				}
+				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
+					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
 				if(SheetCur.SheetFields[i].FieldValue=="") {
 					continue;
 				}
@@ -1146,13 +1167,52 @@ namespace OpenDental {
 				if(tabOrder==0){
 					return;
 				}
-				//No, this logic will not wrap around to the first tab order.  Nobody cares.
-				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>tabOrder && x.FieldType==SheetFieldType.InputField).OrderBy(x=>x.TabOrder).ToList();
+				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>tabOrder && (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox)).OrderBy(x=>x.TabOrder).ToList();
 				if(listSheetFields.Count==0){
+					_tabCurrent=0;
 					return;
 				}
 				SheetField sheetFieldNext=listSheetFields[0];
+				_tabCurrent=sheetFieldNext.TabOrder;
+				panelMain.Invalidate();
+				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox) {
+					return;
+				}
 				CreateFloatingTextBox(sheetFieldNext,Point.Empty);
+			}
+		}
+
+		private void PanelMain_PreviewKeyDown(object sender,PreviewKeyDownEventArgs e)	{
+			//preview is used because Tab doesn't hit KeyDown because it's intercepted by Windows to select the next control
+			if(e.KeyCode==Keys.Space) {
+				SheetField sheetField=SheetCur.SheetFields.Find(x=>x.TabOrder==_tabCurrent);
+				if(sheetField==null) {
+					return;
+				}
+				ClearSigs();
+				//must be checkbox
+				if(sheetField.FieldValue=="") {
+					sheetField.FieldValue="X";
+				}
+				else{
+					sheetField.FieldValue="";
+				}
+				panelMain.Invalidate();
+			}
+			//Enter key not supported for tabbing. Causes issues.
+			if(e.KeyCode==Keys.Tab) {
+				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>_tabCurrent && (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox)).OrderBy(x=>x.TabOrder).ToList();
+				if(listSheetFields.Count==0) {
+					_tabCurrent=0;
+					return;
+				}
+				SheetField sheetFieldNext=listSheetFields[0];
+				_tabCurrent=sheetFieldNext.TabOrder;
+				panelMain.Invalidate();
+				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox) {
+					return;
+				}
+				CreateFloatingTextBox(sheetFieldNext,Point.Empty,true);
 			}
 		}
 
@@ -1176,6 +1236,7 @@ namespace OpenDental {
 			timerTextChanged.Stop();
 			timerTextChanged.Tag=sender;
 			timerTextChanged.Start();
+			ClearSigs();
 		}
 		
 		private void timerTextChanged_Tick(object sender,EventArgs e) {
@@ -1246,7 +1307,7 @@ namespace OpenDental {
 		}
 
 		///<summary>This is for an input field, static text, or output text to edit text, and then it goes away. The point passed in is so that we can put the cursor in the right place.</summary>
-		private void CreateFloatingTextBox(SheetField sheetField,Point point){
+		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false){
 			string text=sheetField.FieldValue;
 			if(sheetField.FieldType==SheetFieldType.InputField && Regex.IsMatch(text,@"\[Prompt:""[a-zA-Z_0-9 ]+""\]")) { //is an AutoNote
 				using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
@@ -1310,7 +1371,14 @@ namespace OpenDental {
 			LayoutManager.Add(textBox,panelMain);
 			//int scroll=panelScroll.VerticalScroll.Value;
 			//panelScroll.VerticalScroll.Value=scroll;
-			textBox.Select();
+			if(isFromCheckBox) {
+				//textBox will instantly lose focus if tabbing from a checkbox and using .Select() or Focus(), so use .SelectAll() instead
+				textBox.SelectAll();
+			}
+			else {
+				//SelectAll() doesn't work when tabbing from another textbox. Cursor won't show.
+				textBox.Select();
+			}
 			if(point==Point.Empty//just tabbing over from a previous field, so select end
 				|| _idxSelectedChar==-1)
 			{

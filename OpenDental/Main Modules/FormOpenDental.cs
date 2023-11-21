@@ -784,7 +784,7 @@ namespace OpenDental{
 					CentralConnectionBase cn=null;
 					ODException.SwallowAnyException(() => {
 						cn=new CentralConnectionBase {
-							ServerName=ODBuild.IsDebug() ? "localhost" : PrefC.GetString(PrefName.CustomersHQServer),
+							ServerName=PrefC.GetString(PrefName.CustomersHQServer),
 							DatabaseName=PrefC.GetString(PrefName.CustomersHQDatabase),
 							MySqlUser=PrefC.GetString(PrefName.CustomersHQMySqlUser),
 						};

@@ -958,6 +958,8 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				if(_listBoxParent.SelectionMode==SelectionMode.CheckBoxes){
 					CheckBox checkBox=new CheckBox();
 					checkBox.Text=text;
+					checkBox.Width=5000;//to prevent wrapping
+					checkBox.Margin=new Thickness(left:2,0,0,0);
 					checkBox.Click+=_listBoxParent.CheckBox_Click;
 					border.Child=checkBox;
 				}

@@ -1489,6 +1489,7 @@ namespace OpenDental {
 		}
 
 		private void FormProcedures_Closing(object sender,System.ComponentModel.CancelEventArgs e) {
+			Focus();//Forces a call of gridMain_CellLeave() to check for any new entries that need synching before the form closes.
 			if(_needsSynch){
 				Cursor=Cursors.WaitCursor;
 				SynchAndFillListFees(true);

@@ -226,7 +226,7 @@ namespace OpenDental {
 			this.Controls.Add(this.checkUseReadOnlyServer);
 			this.Controls.Add(this.groupBoxReadOnlyServerSetup);
 			this.Name = "UserControlServerConnections";
-			this.Size = new System.Drawing.Size(494, 624);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxReadOnlyServerSetup.ResumeLayout(false);
 			this.groupConnectionSettings.ResumeLayout(false);
 			this.groupConnectionSettings.PerformLayout();

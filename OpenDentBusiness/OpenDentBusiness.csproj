@@ -779,6 +779,7 @@
     <Compile Include="WebTypes\AutoComm\IAutoCommSent.cs" />
     <Compile Include="WebTypes\AutoComm\AutoCommSents.cs" />
     <Compile Include="WebTypes\AutoComm\AutoCommUtil\AutoCommWebSerializerUtil.cs" />
+    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\ConfirmationTagReplacer.cs" />
     <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\NewPatientThankYouTagReplacer.cs" />
     <Compile Include="WebTypes\Shared\PatientInfo.cs" />
     <Compile Include="WebBridges\PDMP\ApprissScript.cs" />

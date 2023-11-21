@@ -220,7 +220,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxDiscountPlanFreqLimit);
 			this.Controls.Add(this.checkFrequency);
 			this.Name = "UserControlTreatPlanFreqLimit";
-			this.Size = new System.Drawing.Size(494, 624);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxDiscountPlanFreqLimit.ResumeLayout(false);
 			this.groupBoxDiscountPlanFreqLimit.PerformLayout();
 			this.ResumeLayout(false);

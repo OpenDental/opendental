@@ -3183,8 +3183,9 @@ namespace OpenDental
 			LayoutControls();
 			//Display the document signature form.
 			using FormDocSign formDocSign=new FormDocSign(GetDocumentShowing(0),_patCur);//Updates our local document and saves changes to db also.
-			formDocSign.Location=PointToScreen(new Point(imageSelector.Left,this.ClientRectangle.Bottom-formDocSign.Height));
-			formDocSign.Width=Math.Max(0,Math.Min(formDocSign.Width,panelMain.Right-imageSelector.Left));
+			Point pointLocal=new Point(panelSplitter.Left,Height);
+			Point pointScreen=PointToScreen(pointLocal);
+			formDocSign.PointLLStart=pointScreen;
 			formDocSign.ShowDialog();
 			FillTree(true);
 			//Adjust visibility of panel note based on changes made to the signature above.

@@ -477,7 +477,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxAppearance);
 			this.Controls.Add(this.groupBoxWaitingRoom);
 			this.Name = "UserControlApptAppearance";
-			this.Size = new System.Drawing.Size(494, 624);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxOD1.ResumeLayout(false);
 			this.groupBoxBlockouts.ResumeLayout(false);
 			this.groupBoxApptBubble.ResumeLayout(false);

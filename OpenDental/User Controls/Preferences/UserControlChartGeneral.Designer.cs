@@ -432,7 +432,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxMedicalCodes);
 			this.Controls.Add(this.checkBoxRxClinicUseSelected);
 			this.Name = "UserControlChartGeneral";
-			this.Size = new System.Drawing.Size(494, 624);
+			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBoxFunctionality.ResumeLayout(false);
 			this.groupBoxFunctionality.PerformLayout();
 			this.groupBoxPerio.ResumeLayout(false);

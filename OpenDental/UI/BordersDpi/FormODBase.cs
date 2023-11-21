@@ -430,6 +430,19 @@ namespace OpenDental {
 			base.OnLoad(e);
 		}
 
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+			//PreviewKeyDown didn't work for some reason even though KeyPreview is true.
+			if(keyData==Keys.Escape){
+				CancelEventArgs ea=new CancelEventArgs();
+				CloseXClicked?.Invoke(this,ea);
+				if(ea.Cancel){
+					return base.ProcessCmdKey(ref msg,keyData);
+				}
+				Close();
+			}
+			return base.ProcessCmdKey(ref msg,keyData);
+		}
+
 		private void ODForm_Shown(object sender,EventArgs e) {
 			_hasShown=true;//Occurs after Load(...)
 			this.FormClosed+=delegate {

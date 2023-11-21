@@ -613,14 +613,16 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns only 5 columns for all saved treatment plans.</summary>
-		public static List<TreatPlan> GetAllSavedLim() {
+		public static List<TreatPlan> GetAllSavedLim(DateTime dateStart,DateTime dateEnd) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TreatPlan>>(MethodBase.GetCurrentMethod());
+				return Meth.GetObject<List<TreatPlan>>(MethodBase.GetCurrentMethod(),dateStart,dateEnd);
 			}
-			string command = "SELECT TreatPlanNum, PatNum, DateTP, SecUserNumEntry, UserNumPresenter "
-				+" FROM treatplan WHERE treatplan.TPStatus="+POut.Int((int)TreatPlanStatus.Saved);
-			DataTable table = Db.GetTable(command);
-			List<TreatPlan> listTreatPlansSavedLim = new List<TreatPlan>();
+			string command="SELECT TreatPlanNum, PatNum, DateTP, SecUserNumEntry, UserNumPresenter "
+				+" FROM treatplan WHERE treatplan.TPStatus="+POut.Int((int)TreatPlanStatus.Saved)+" "
+				+"AND DateTP>="+POut.Date(dateStart)+" "
+				+"AND DateTP<="+POut.Date(dateEnd)+" ";
+			DataTable table=Db.GetTable(command);
+			List<TreatPlan> listTreatPlansSavedLim=new List<TreatPlan>();
 			for(int i=0;i<table.Rows.Count;i++) {
 				TreatPlan treatPlan = new TreatPlan();
 				treatPlan.TreatPlanNum=PIn.Long(table.Rows[i]["TreatPlanNum"].ToString());

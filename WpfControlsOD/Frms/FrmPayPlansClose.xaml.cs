@@ -19,7 +19,7 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
-			long plansClosed=PayPlans.AutoClose(canIncludeOldPaymentPlans:(bool)checkOldPaymentPlans.Checked);
+			long plansClosed=PayPlans.AutoClose(checkOldPaymentPlans.Checked==true,checkInsPaymentPlans.Checked==true);
 			string msgText;
 			if(plansClosed>0) {
 				msgText=Lans.g(this,"Success.")+"  "+plansClosed+" "+Lans.g(this,"plan(s) closed.");

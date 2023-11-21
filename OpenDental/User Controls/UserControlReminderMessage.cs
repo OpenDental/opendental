@@ -187,16 +187,20 @@ namespace OpenDental {
 		///<summary>Validates the AddToCalendar tag. Adds to the error list if the AddToCalendar tag is present but not signed up for eConfirmations</summary>
 		public List<string> AddCalendarTagErrors() {
 			List<string> listErrors=new List<string>();
+			string addToCalTag=ApptThankYouSents.ADD_TO_CALENDAR.ToLower();
+			if(!textTemplateSms.Text.ToLower().Contains(addToCalTag)
+				&& !_templateEmail.ToLower().Contains(addToCalTag))
+			{
+				return listErrors;
+			}
 			//Only these rule types will have [AddToCalendar] tags.
 			//See UserControlReminderAgg.AddCalendarTagErrors() for auto reply validation.
-			if(!Rule.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.Reminder)) {
-				return listErrors;
-			}
 			//[AddToCalendar] tags are allowed tag when eConfirmations are enabled so don't bother validating.
-			if(PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp)) {
+			if(ApptReminderRules.IsAddToCalendarTagSupported(Rule.TypeCur) 
+				&& PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp)) 
+			{
 				return listErrors;
 			}
-			string addToCalTag=ApptThankYouSents.ADD_TO_CALENDAR.ToLower();
 			if(textTemplateSms.Text.ToLower().Contains(addToCalTag)) {
 				listErrors.AddRange(ErrorText("texts",Rule.TypeCur));
 			}
@@ -208,6 +212,10 @@ namespace OpenDental {
 
 		private List<string> ErrorText(string mode,ApptReminderType reminderType) {
 			List<string> listErrors=new List<string>();
+			if(!ApptReminderRules.IsAddToCalendarTagSupported(reminderType)) {
+				listErrors.Add(Lan.g(this,"AddToCalendar tag can only be used for Reminders, Thank-Yous, and eConfirmations."));
+				return listErrors;
+			}
 			if(reminderType==ApptReminderType.Reminder) {
 				if(mode=="texts") {
 					listErrors.Add(Lan.g(this,"Automated Reminder texts cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
@@ -222,6 +230,14 @@ namespace OpenDental {
 				}
 				else {
 					listErrors.Add(Lan.g(this,"Automated Thank-You emails cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
+				}
+			}
+			if(reminderType==ApptReminderType.ConfirmationFutureDay) {
+				if(mode=="texts") {
+					listErrors.Add(Lan.g(this,"Automated eConfirmation texts cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
+				}
+				else {
+					listErrors.Add(Lan.g(this,"Automated eConfirmation emails cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
 				}
 			}
 			return listErrors;

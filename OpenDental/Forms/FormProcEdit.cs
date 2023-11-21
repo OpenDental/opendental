@@ -115,10 +115,6 @@ namespace OpenDental {
 		}
 
 		private void FormProcInfo_Load(object sender,System.EventArgs e) {
-			if(Security.IsGlobalDateLock(EnumPermType.AdjustmentCreate,_procedureOld.ProcDate,suppressMsgBox:true)) {
-				butAddExistAdj.Enabled=false;
-				butAddAdjust.Enabled=false;
-			}
 			if(Security.IsGlobalDateLock(EnumPermType.ProcComplCreate,_procedureOld.ProcDate,suppressMsgBox:true)) {
 				butSetComplete.Enabled=false;
 			}
@@ -2449,7 +2445,13 @@ namespace OpenDental {
 			#region Additional UI syncing (_procedure dates and fee).
 			Procedures.SetMiscDateAndTimeEditFields(_procedure,textDateTP.Text,PIn.Date(textDate.Text),textTimeStart.Text,textTimeEnd.Text);
 			DateTime procedureDate=DateTime.Parse(textDate.Text);
+			List<ProcMultiVisit> listPmvs=ProcMultiVisits.GetGroupsForProcsFromDb(_listClaimProcs.Select(x => x.ProcNum).ToArray());
 			for(int i=0;i<_listClaimProcs.Count;i++) {//if the proc date has changed update the ClaimProcs
+				ProcMultiVisit pmv=listPmvs.FirstOrDefault(x => x.ProcNum==_listClaimProcs[i].ProcNum);
+				if(_listClaimProcs[i].ClaimNum!=0 && pmv!=null && !ProcMultiVisits.IsGroupInProcess(new List<ProcMultiVisit> { pmv })) {
+					//Claimproc ProcDate cannot be modified when attached to claims, where the attached procedures are also part of a complete multi-visit group.
+					continue;
+				}
 				if(_listClaimProcs[i].DateCP!=procedureDate && procedureDate.Year>1880) {
 					ClaimProc claimProcOld=_listClaimProcs[i].Copy();
 					_listClaimProcs[i].ProcDate=procedureDate;

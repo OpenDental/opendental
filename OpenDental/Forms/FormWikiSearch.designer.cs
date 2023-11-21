@@ -166,6 +166,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWikiSearch";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Wiki Search";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormWikiSearch_FormClosing);
 			this.Load += new System.EventHandler(this.FormWikiSearch_Load);

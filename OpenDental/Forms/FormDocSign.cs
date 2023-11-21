@@ -29,6 +29,8 @@ namespace OpenDental{
 		private bool _isSignatureChanged;
 		private Patient _patient;
 		private string _patFolderName;
+		///<summary>In screeen coords. LL because it's 'anchored' LL and it will grow up and right.</summary>
+		public Point PointLLStart;
 		
 		///<summary></summary>
 		public FormDocSign(Document document,Patient patient) {
@@ -42,6 +44,8 @@ namespace OpenDental{
 
 		///<summary></summary>
 		public void FormDocSign_Load(object sender, System.EventArgs e){
+			int yPos=PointLLStart.Y-Height+4;
+			Location=new Point(PointLLStart.X,yPos);
 			_isStartingUp=true;
 			textNote.Text=_document.Note;
 			signatureBoxWrapper.SignatureMode=UI.SignatureBoxWrapper.SigMode.Document;

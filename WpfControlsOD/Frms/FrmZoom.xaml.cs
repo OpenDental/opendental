@@ -79,7 +79,7 @@ namespace OpenDental {
 		}
 
 		private void textZoom_TextChanged(object sender, EventArgs e) {
-			_fits=true;
+			_fits=false;
 			int zoom=100;
 			try{
 				zoom=PIn.Int(textZoom.Text);//blank=0
@@ -97,11 +97,11 @@ namespace OpenDental {
 			if(sizeMax1.Width<=_screen1.WorkingArea.Width && sizeMax1.Height<=_screen1.WorkingArea.Height){
 				textFit1.Text="YES";
 				textFit1.ColorText=ColorOD.ToWpf(System.Drawing.Color.DarkGreen);
+				_fits=true;
 			}
 			else{
 				textFit1.Text="NO";
 				textFit1.ColorText=ColorOD.ToWpf(System.Drawing.Color.Red);
-				_fits=false;
 			}
 			if(_screen2==null){
 				return;
@@ -114,11 +114,12 @@ namespace OpenDental {
 			if(sizeMax2.Width<=_screen2.WorkingArea.Width && sizeMax2.Height<=_screen2.WorkingArea.Height){
 				textFit2.Text="YES";
 				textFit2.ColorText=ColorOD.ToWpf(System.Drawing.Color.DarkGreen);
-				return;
+				_fits=true;
 			}
-			textFit2.Text="NO";
-			textFit2.ColorText=ColorOD.ToWpf(System.Drawing.Color.Red);
-			_fits=false;
+			else{
+				textFit2.Text="NO";
+				textFit2.ColorText=ColorOD.ToWpf(System.Drawing.Color.Red);
+			}
 		}
 
 		private void butReset_Click(object sender, EventArgs e){
