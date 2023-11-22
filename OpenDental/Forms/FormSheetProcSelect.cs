@@ -31,8 +31,9 @@ namespace OpenDental {
 			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Th"),27,HorizontalAlignment.Left));
 			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Surf"),40,HorizontalAlignment.Left));
 			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Description"),318,HorizontalAlignment.Left));
+			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Stat"),30,HorizontalAlignment.Left));
 			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Amount"),63,HorizontalAlignment.Right));
-			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Code"),62,HorizontalAlignment.Center));
+			gridProcs.Columns.Add(new GridColumn(Lan.g("TableProc","Code"),0,HorizontalAlignment.Center));
 			GridRow row;
 			for(int i=0;i<listProcedures.Count;i++) {
 				row=new GridRow();
@@ -55,6 +56,13 @@ namespace OpenDental {
 					description=procedureCode.LaymanTerm;
 				}
 				row.Cells.Add(description);
+				long procNum=PIn.Long(listProcedures[i].ProcNum.ToString());
+				if(ProcMultiVisits.IsProcInProcess(procNum)) {
+					row.Cells.Add(Lan.g("enumProcStat",ProcStatExt.InProcess));
+				}
+				else {
+					row.Cells.Add(listProcedures[i].ProcStatus.ToString());
+				}
 				row.Cells.Add(listProcedures[i].ProcFee.ToString("C"));
 				row.Cells.Add(procedureCode.ProcCode);
 				row.Tag=listProcedures[i];

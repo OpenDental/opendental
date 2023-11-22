@@ -285,7 +285,7 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
-			if(Security.IsGlobalDateLock(Permissions.AdjustmentCreate,textProcDate.Value)) {
+			if(Security.IsGlobalDateLock(Permissions.AdjustmentEdit,textAdjDate.Value)) {
 				return;
 			}
 			bool isDiscountPlanAdj=(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="dp");

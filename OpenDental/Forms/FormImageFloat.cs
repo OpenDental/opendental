@@ -1256,10 +1256,13 @@ namespace OpenDental {
 							fileName=Path.GetDirectoryName(fileName)+"\\"+Path.GetFileNameWithoutExtension(fileName)+random.Next(9)+Path.GetExtension(fileName);
 						}
 						File.Copy(filePathSource,fileName);
+						if(ODBuild.IsWeb()){//File path/name will not exist. Still copy the Bitmap so that it can be pasted on local computer.
+							bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
+						}
 					}
 					else {
-						bitmapCopy = ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
-						using Graphics g = Graphics.FromImage(bitmapCopy);
+						bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
+						using Graphics g=Graphics.FromImage(bitmapCopy);
 						//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
 						//translate to center of drawing area (and center of crop area)
 						g.TranslateTransform(bitmapCopy.Width/2,bitmapCopy.Height/2);

@@ -15,17 +15,17 @@ namespace OpenDentBusiness {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateStart,dateEnd,isFirstPresented,hasAllClinics,hasClinicsEnabled,isPresenter,isGross
 					,hasAllUsers,listUserNums,listClinicNums);
 			}
-			List<ProcTP> listProcTPsAll=ReportsComplex.RunFuncOnReportServer(() => ProcTPs.GetAllLim());
-			List<TreatPlan> listSavedTreatPlans=ReportsComplex.RunFuncOnReportServer(() => TreatPlans.GetAllSavedLim());
+			List<TreatPlan> listTreatPlansSaved=ReportsComplex.RunFuncOnReportServer(() => TreatPlans.GetAllSavedLim(dateStart,dateEnd));
+			List<long> listTreatPlanNums=listTreatPlansSaved.Select(x => x.TreatPlanNum).ToList();
+			List<ProcTP> listProcTPs=ReportsComplex.RunFuncOnReportServer(() => ProcTPs.GetAllLim(listTreatPlanNums));
 			List<ProcTpTreatPlan> listProcTPTreatPlans=new List<ProcTpTreatPlan>();
-			listProcTPsAll.ForEach(x =>
-			{
+			for(int i=0;i<listProcTPs.Count();i++) {
 				listProcTPTreatPlans.Add(new ProcTpTreatPlan()
 				{
-					TreatPlanCur = listSavedTreatPlans.First(y => y.TreatPlanNum == x.TreatPlanNum),
-					ProcTPCur = x
+					TreatPlanCur=listTreatPlansSaved.First(x => x.TreatPlanNum==listProcTPs[i].TreatPlanNum),
+					ProcTPCur=listProcTPs[i]
 				});
-			});
+			}
 			//get one entry per procedure with their first/last date of presentation based on radio buttons.
 			if(isFirstPresented) {
 				listProcTPTreatPlans = listProcTPTreatPlans
@@ -45,9 +45,6 @@ namespace OpenDentBusiness {
 					.Select(x => x.First())
 					.ToList();
 			}
-			//get rid of any entries that are outside the range selected.
-			listProcTPTreatPlans=listProcTPTreatPlans.Where(x => x.TreatPlanCur.DateTP.Date >= dateStart
-				&& x.TreatPlanCur.DateTP.Date <= dateEnd).ToList();
 			//Get the associated procedures, claimprocs, adjustments, users, appointments.
 			List<Procedure> listProcsForTreatPlans = ReportsComplex.RunFuncOnReportServer(() => 
 				Procedures.GetForProcTPs(listProcTPTreatPlans.Select(x => x.ProcTPCur).ToList(),ProcStat.C,ProcStat.TP));
