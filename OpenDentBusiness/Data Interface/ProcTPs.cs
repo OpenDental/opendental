@@ -174,6 +174,14 @@ namespace OpenDentBusiness{
 			}
 			return listProcTPs;
 		}
+
+		///<summary>Gets one ProcTP object from the database using the primary key. Returns null if not found.</summary>
+		public static ProcTP GetOneyByProcTPNum(long procTPNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<ProcTP>(MethodBase.GetCurrentMethod(),procTPNum);
+			}
+			return Crud.ProcTPCrud.SelectOne(procTPNum);
+		}
 	}
 
 }

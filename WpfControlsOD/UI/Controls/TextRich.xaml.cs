@@ -367,11 +367,10 @@ namespace WpfControls.UI{
 				return str;
 			}
 			set {
+				richTextBox.Selection.Text=value;
 				TextSelection textSelection = richTextBox.Selection;
-				TextPointer textPointerStart = textSelection.Start;
 				TextPointer textPointerEnd = textSelection.End;
-				TextRange textRange = new TextRange(textPointerStart,textPointerEnd);
-				textRange.Text=value;
+				richTextBox.Selection.Select(textPointerEnd,textPointerEnd);
 			}
 		}
 

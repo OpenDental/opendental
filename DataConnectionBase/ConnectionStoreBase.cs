@@ -19,8 +19,8 @@ namespace DataConnectionBase {
 		public static Func<CentralConnectionBase> GetDentalOfficeReportServerFromPrefC=() => { return null; };
 		///<summary>Called when getting the DentalOfficeReadOnlyServer settings from PrefC.</summary>
 		public static Func<CentralConnectionBase> GetDentalOfficeReadOnlyServerFromPrefC=() => { return null; };
-		///<summary>Called when getting the TriageHQ settings.</summary>
-		public static Func<CentralConnectionBase> GetTriageHQ=() => { return null; };
+		///<summary>Called when getting the TriageHQ settings. This is intentionally set to null and does not return a valid null function like the existing report and read-only patterns. This is so the Triage connection can be explicitly defined later in the initialization process of the parent project. E.g. Open Dental instantiates this within the Shown event handler.</summary>
+		public static Func<CentralConnectionBase> GetTriageHQ=null;
 		///<summary>The current database connection.</summary>
 		private static ConnectionNames _currentConnection=ConnectionNames.DentalOffice;
 		///<summary>The current database connection. Specific to this thread.</summary>
@@ -97,7 +97,9 @@ namespace DataConnectionBase {
 				return new Dictionary<ConnectionNames,CentralConnectionBase>() { { ConnectionNames.DentalOfficeReadOnlyServer,cn??new CentralConnectionBase() } };
 			}));
 			actionTryInit(new Func<Dictionary<ConnectionNames,CentralConnectionBase>>(() => { //TriageHQ (if implemented).
-				if(HasSingleEntry(ConnectionNames.TriageHQ)) { //Only try to add this value if it doesn't already exist.
+				//GetTriageHQ defaults to null instead of a valid func that returns null so that the parent project can dictate when a TriageHQ connection can be added to the dictionary.
+				//E.g. Open Dental instantiates GetTriageHQ within the Shown event handler instead of a static constructor like the report and read-only funcs.
+				if(GetTriageHQ==null || HasSingleEntry(ConnectionNames.TriageHQ)) {//TriageHQ is not implemented or has already been added.
 					return null;
 				}
 				CentralConnectionBase cn=GetTriageHQ();

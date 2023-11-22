@@ -211,6 +211,11 @@ namespace OpenDentBusiness{
 			}).ToList();
 		}
 
+		public static EServiceFee GetEServiceFeeByEService(eServiceCode eService) {
+			string procCode=GetProcCodeForEService(eService);
+			return GetAllEServiceFees().FirstOrDefault(x => x.ESvcProcCode.ProcCode==procCode);
+		}
+
 		public static List<string> GetAllEServiceProcCodes() {
 			//No need to check MiddleTierRole; no call to db.
 			return ListEServiceProcCodes.Select(x => x.ProcCode).ToList();

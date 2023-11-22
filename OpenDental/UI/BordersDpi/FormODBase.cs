@@ -1714,6 +1714,10 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				if(listInvalidTypes.Remove(InvalidType.Prefs)) {
 					Cache.Refresh(InvalidType.Prefs);
 				}
+				//The PhoneEmpDefaults cache is unique in that it is heavily used and should never be cleared out. It should be refreshed immediately instead.
+				if(listInvalidTypes.Remove(InvalidType.PhoneEmpDefaults)) {
+					Cache.Refresh(InvalidType.PhoneEmpDefaults);
+				}
 				//The remaining caches should be cleared out and will be refilled when needed.
 				Cache.ClearCaches(listInvalidTypes.ToArray());
 				onProcess(_listODFormsSubscribed,listSignals);
