@@ -116,13 +116,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns only three columns from all ProcTPs -- TreatPlanNum, PatNum, and ProcNumOrig.</summary>
-		public static List<ProcTP> GetAllLim() {
+		public static List<ProcTP> GetAllLim(List<long> listTreatPlanNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProcTP>>(MethodBase.GetCurrentMethod());
+				return Meth.GetObject<List<ProcTP>>(MethodBase.GetCurrentMethod(),listTreatPlanNums);
 			}
-			string command = "SELECT TreatPlanNum,PatNum,ProcNumOrig FROM proctp";
-			DataTable table = Db.GetTable(command);
-			List<ProcTP> listProcTpsLim = new List<ProcTP>();
+			string command = "SELECT TreatPlanNum,PatNum,ProcNumOrig FROM proctp "
+				+"WHERE proctp.TreatPlanNum IN ("+ string.Join(",",listTreatPlanNums) +")";
+			DataTable table=Db.GetTable(command);
+			List<ProcTP> listProcTpsLim=new List<ProcTP>();
 			foreach(DataRow row in table.Rows) {
 				ProcTP procTp = new ProcTP();
 				procTp.TreatPlanNum=PIn.Long(row["TreatPlanNum"].ToString());

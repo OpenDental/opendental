@@ -6,10 +6,10 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="515" Height="121" 
+             Width="375" Height="180" 
              Text="Edit Appointment Field" Loaded="FrmApptFieldEdit_Loaded" >
     <Grid Background="#FFFCFDFE" >
-        <ui:TextBox x:Name="textValue" Width="473" Height="20" Margin="21,40,0,0" />
+        <ui:TextBox x:Name="textValue" Width="333" Height="74" Margin="21,40,0,0" IsMultiline="True"/>
         <ui:Label x:Name="labelName" Width="335" Height="20" Margin="19,17,0,0" Text="Field Name" VAlign="Bottom" />
         <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="25" Margin="0,0,21,17" Text="_Save" Click="butSave_Click" />
     </Grid>

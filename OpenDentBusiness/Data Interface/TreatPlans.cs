@@ -593,14 +593,16 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns only 5 columns for all saved treatment plans.</summary>
-		public static List<TreatPlan> GetAllSavedLim() {
+		public static List<TreatPlan> GetAllSavedLim(DateTime dateStart,DateTime dateEnd) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TreatPlan>>(MethodBase.GetCurrentMethod());
+				return Meth.GetObject<List<TreatPlan>>(MethodBase.GetCurrentMethod(),dateStart,dateEnd);
 			}
-			string command = "SELECT TreatPlanNum, PatNum, DateTP, SecUserNumEntry, UserNumPresenter "
-				+" FROM treatplan WHERE treatplan.TPStatus="+POut.Int((int)TreatPlanStatus.Saved);
-			DataTable table = Db.GetTable(command);
-			List<TreatPlan> listSavedTreatPlanLim = new List<TreatPlan>();
+			string command="SELECT TreatPlanNum, PatNum, DateTP, SecUserNumEntry, UserNumPresenter "
+				+" FROM treatplan WHERE treatplan.TPStatus="+POut.Int((int)TreatPlanStatus.Saved)+" "
+				+"AND DateTP>="+POut.Date(dateStart)+" "
+				+"AND DateTP<="+POut.Date(dateEnd)+" ";
+			DataTable table=Db.GetTable(command);
+			List<TreatPlan> listTreatPlansSavedLim=new List<TreatPlan>();
 			foreach(DataRow row in table.Rows) {
 				TreatPlan treatPlanCur = new TreatPlan();
 				treatPlanCur.TreatPlanNum=PIn.Long(row["TreatPlanNum"].ToString());
@@ -608,9 +610,9 @@ namespace OpenDentBusiness{
 				treatPlanCur.DateTP=PIn.Date(row["DateTP"].ToString());
 				treatPlanCur.SecUserNumEntry=PIn.Long(row["SecUserNumEntry"].ToString());
 				treatPlanCur.UserNumPresenter=PIn.Long(row["UserNumPresenter"].ToString());
-				listSavedTreatPlanLim.Add(treatPlanCur);
+				listTreatPlansSavedLim.Add(treatPlanCur);
 			}
-			return listSavedTreatPlanLim;
+			return listTreatPlansSavedLim;
 		}
 
 		///<summary>Sets every TreatPlan MobileAppDeviceNum to 0 if it matches the passed in mobileAppDeviceNum.</summary>

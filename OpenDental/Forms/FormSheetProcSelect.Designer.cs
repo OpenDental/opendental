@@ -33,7 +33,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(452, 660);
+			this.butOK.Location = new System.Drawing.Point(482, 660);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -44,7 +44,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(533, 660);
+			this.butCancel.Location = new System.Drawing.Point(563, 660);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 2;
@@ -59,7 +59,7 @@ namespace OpenDental{
 			this.gridProcs.Location = new System.Drawing.Point(12, 33);
 			this.gridProcs.Name = "gridProcs";
 			this.gridProcs.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridProcs.Size = new System.Drawing.Size(577, 611);
+			this.gridProcs.Size = new System.Drawing.Size(607, 611);
 			this.gridProcs.TabIndex = 70;
 			this.gridProcs.Title = "Procedures";
 			this.gridProcs.TranslationName = "Table Procedures";
@@ -77,7 +77,7 @@ namespace OpenDental{
 			// FormSheetProcSelect
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(620, 696);
+			this.ClientSize = new System.Drawing.Size(650, 696);
 			this.Controls.Add(this.labelTitle);
 			this.Controls.Add(this.gridProcs);
 			this.Controls.Add(this.butOK);

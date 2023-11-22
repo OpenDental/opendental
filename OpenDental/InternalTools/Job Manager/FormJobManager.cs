@@ -15,6 +15,8 @@ namespace OpenDental {
 	//The easiest approach is to just deal with it by keeping it on 96 dpi monitors only.
 	//If we someday decide that we must do better, we might create a separate application that's not dpi aware, which will at least not malfuction, although it will look blurry because it will still only be 96 dpi.
 	public partial class FormJobManager:FormODBase {
+		///<summary>Holds the time of the most recent refresh of the active tab and job edit UI.</summary>
+		public static DateTime LocalLastRefreshDateTime=DateTime.MinValue;
 		///<summary>Dictionary containing row notes shown when hovering.
 		///Key		=> Row index
 		///Value	=> Note for the row.</summary>
@@ -38,8 +40,8 @@ namespace OpenDental {
 		private List<JobAction> _listJobActionsCollapsed=new List<JobAction>();
 		///<summary>Filled with JobActions that will be collapsed when filling the Needs Teams.</summary>
 		private List<JobTeam> _listJobTeams;
-		///<summary>There is a timer monitoring this and refreshing the UI every second. The timer will set this to false once a refresh has taken place. Setting this to true will cause a refresh of the active tab and the job edit UI.</summary>
-		public static DateTime LocalLastRefreshDateTime=DateTime.MinValue;
+		private List<long> _listQueryPriorityFilter=new List<long>();
+		private List<JobPhase> _listQueryJobPhaseFilter=new List<JobPhase>();
 
 		private Brush _brushDefault {
 			get {
@@ -136,11 +138,19 @@ namespace OpenDental {
 			}
 			comboCatSearch.SelectedIndex=0;
 			comboPrioritySearch.Items.Add("All");
+			comboQueryPriorityFilter.IncludeAll=true;
 			List<Def> jobPriorities=Defs.GetCatList((int)DefCat.JobPriorities).ToList();
 			foreach(Def jobPriority in jobPriorities) {
 				comboPrioritySearch.Items.Add(jobPriority.ItemName,jobPriority);
+				comboQueryPriorityFilter.Items.Add(jobPriority.ItemName,jobPriority);
 			}
 			comboPrioritySearch.SelectedIndex=0;
+			comboQueryPriorityFilter.IsAllSelected=true;
+			comboQueryPhaseFilter.IncludeAll=true;
+			comboQueryPhaseFilter.Items.AddEnums<JobPhase>();
+			comboQueryPhaseFilter.IsAllSelected=true;
+			_listQueryPriorityFilter=comboQueryPriorityFilter.Items.GetAll<Def>().ConvertAll(x=>x.DefNum);
+			_listQueryJobPhaseFilter=comboQueryPhaseFilter.Items.GetAll<JobPhase>();
 			dateExcludeCompleteBefore.Value=DateTime.Now.AddMonths(-3);
 			_listHiddenTabs=new List<System.Windows.Forms.TabPage>();
 			UpdateTabVisibility();//This speeds up RefreshAndFillThreaded since it will remove some of the grids.
@@ -1535,19 +1545,21 @@ namespace OpenDental {
 			gridQueries.Columns.Add(new GridColumn("",225));
 			gridQueries.ListGridRows.Clear();
 			//Sort jobs into action dictionary
-			List<Job> listJobsSorted=JobManagerCore.ListJobsAll.Where(x => x.Category==JobCategory.Query).ToList();
+			List<Job> listJobsSorted=JobManagerCore.ListJobsAll
+				.Where(x => x.Category==JobCategory.Query
+				&& _listQueryPriorityFilter.Contains(x.Priority)
+				&& _listQueryJobPhaseFilter.Contains(x.PhaseCur))
+				.ToList();
 			listJobsSorted=listJobsSorted.OrderBy(x => x.AckDateTime).ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 			Dictionary<JobPhase,List<Job>> dictPhases=new Dictionary<JobPhase,List<Job>>();
 			foreach(Job job in listJobsSorted) {
 				if(userFilter!=null && userFilter.UserNum!=job.UserNumEngineer) {
 					continue;
 				}
-				if(!checkShowQueryComplete.Checked && job.PhaseCur==JobPhase.Complete) 
-				{
+				if(!checkShowQueryComplete.Checked && job.PhaseCur==JobPhase.Complete) {
 					continue;
 				}
-				if(!checkShowQueryCancelled.Checked && job.PhaseCur==JobPhase.Cancelled) 
-				{
+				if(!checkShowQueryCancelled.Checked && job.PhaseCur==JobPhase.Cancelled) {
 					continue;
 				}
 				JobPhase phase=job.PhaseCur;
@@ -1580,7 +1592,7 @@ namespace OpenDental {
 					gridQueries.ListGridRows.Add(
 					new GridRow(
 						new GridCell(job.AckDateTime.Year>1880?job.AckDateTime.ToShortDateString():"N/A"),
-						new GridCell(job.DateTimeTested.Year<1880?jobPriority.ItemName:job.DateTimeTested.ToShortDateString()) {
+						new GridCell($"{jobPriority.ItemName}\r\n{(job.DateTimeTested.Year>1880?job.DateTimeTested.ToShortDateString():"")}") {
 							ColorBackG=jobPriority.ItemColor,
 							ColorText=(job.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("Urgent")).DefNum) ? Color.White : Color.Black,
 						},
@@ -2877,12 +2889,30 @@ namespace OpenDental {
 			ODThread.QuitSyncThreadsByGroupName(100,"RefreshAndFillJobManager");//Give the thread 100ms before killing it.
 		}
 
-		private void tabControlNav_SelectedIndexChanged(object sender,EventArgs e) {
-
-		}
-
 		private void butExport_Click(object sender,EventArgs e) {
 			gridAction.Export($"JobManagerActionItems_{DateTime.Today.ToString("yyyy-MM-dd")}");
+		}
+
+		private void comboQueryPhaseFilter_SelectionChangeCommitted(object sender,EventArgs e) {
+			_listQueryJobPhaseFilter.Clear();
+			_listQueryJobPhaseFilter=comboQueryPhaseFilter.GetListSelected<JobPhase>();
+			if(_listQueryJobPhaseFilter.Count==0 || comboQueryPhaseFilter.IsAllSelected) {
+				_listQueryJobPhaseFilter=comboQueryPhaseFilter.Items.GetAll<JobPhase>();
+				comboQueryPhaseFilter.SetAll(false);
+				comboQueryPhaseFilter.IsAllSelected=true;
+			}
+			FillGridQueries();
+		}
+
+		private void comboQueryPriorityFilter_SelectionChangeCommitted(object sender,EventArgs e) {
+			_listQueryPriorityFilter.Clear();
+			_listQueryPriorityFilter=comboQueryPriorityFilter.GetListSelected<Def>().ConvertAll(x=>x.DefNum);
+			if(_listQueryPriorityFilter.Count==0 || comboQueryPriorityFilter.IsAllSelected) {
+				_listQueryPriorityFilter=comboQueryPriorityFilter.Items.GetAll<Def>().ConvertAll(x=>x.DefNum);
+				comboQueryPriorityFilter.SetAll(false);
+				comboQueryPriorityFilter.IsAllSelected=true;
+			}
+			FillGridQueries();
 		}
 	}
 }
