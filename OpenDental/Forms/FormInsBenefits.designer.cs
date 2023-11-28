@@ -976,6 +976,7 @@ namespace OpenDental {
 			// textExams
 			// 
 			this.textExams.Location = new System.Drawing.Point(99, 62);
+			this.textExams.MinVal = 1;
 			this.textExams.Name = "textExams";
 			this.textExams.ShowZero = false;
 			this.textExams.Size = new System.Drawing.Size(39, 20);
@@ -1000,6 +1001,7 @@ namespace OpenDental {
 			// textPano
 			// 
 			this.textPano.Location = new System.Drawing.Point(99, 41);
+			this.textPano.MinVal = 1;
 			this.textPano.Name = "textPano";
 			this.textPano.ShowZero = false;
 			this.textPano.Size = new System.Drawing.Size(39, 20);
@@ -1033,6 +1035,7 @@ namespace OpenDental {
 			// textBW
 			// 
 			this.textBW.Location = new System.Drawing.Point(99, 20);
+			this.textBW.MinVal = 1;
 			this.textBW.Name = "textBW";
 			this.textBW.ShowZero = false;
 			this.textBW.Size = new System.Drawing.Size(39, 20);

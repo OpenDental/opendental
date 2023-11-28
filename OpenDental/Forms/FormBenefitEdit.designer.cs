@@ -272,7 +272,7 @@ namespace OpenDental {
 			this.groupBox1.Location = new System.Drawing.Point(28, 30);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(284, 296);
-			this.groupBox1.TabIndex = 36;
+			this.groupBox1.TabIndex = 5;
 			this.groupBox1.Text = "";
 			// 
 			// FormBenefitEdit

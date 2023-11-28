@@ -43,6 +43,12 @@ namespace OpenDental {
 		}
 
 		private void FormClaimOverpay_Load(object sender,EventArgs e) {
+			List<ClaimProc> listPaymentClaimProcs=_listClaimProcs.FindAll(x => !x.IsOverpay);//Retrieve all the claimprocs that are not under/overrpayment claimprocs.
+			if(listPaymentClaimProcs.Count==0){//Job 49660. Will prevent phone calls to our techs by preventing UE below.
+				MsgBox.Show(this,"No valid claim procedures attached. Please delete this claim and recreate it with the desired procedures attached or run database maintenance method "+nameof(DatabaseMaintenances.ClaimDeleteWithNoClaimProcs)+".","Error");
+				Close();
+				return;
+			}
 			FillGrid();
 		}
 
