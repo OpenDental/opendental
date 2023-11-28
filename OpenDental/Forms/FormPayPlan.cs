@@ -684,7 +684,7 @@ namespace OpenDental{
 		}
 
 		private void butSignPrint_Click(object sender,EventArgs e) {
-			if(HasErrors()) {
+			if(HasErrors(allowNoCharges:true)) {
 				return;
 			}
 			SaveData();
@@ -715,7 +715,7 @@ namespace OpenDental{
 
 
 		private void butPrint_Click(object sender,System.EventArgs e) {
-			if(HasErrors()) {
+			if(HasErrors(allowNoCharges:true)) {
 				return;
 			}
 			SaveData(true);
@@ -848,7 +848,7 @@ namespace OpenDental{
 		}
 
 		private void butCloseOut_Click(object sender,EventArgs e) {
-			if(HasErrors()) {
+			if(HasErrors(allowNoCharges:true)) {
 				return;
 			}
 			bool shouldClosePlan;
@@ -900,12 +900,12 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private bool HasErrors() {
+		private bool HasErrors(bool allowNoCharges=false) {
 			if(!textDate.IsValid() || !textCompletedAmt.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return true;
 			}
-			if(gridCharges.ListGridRows.Count==0) {
+			if(gridCharges.ListGridRows.Count==0 && !allowNoCharges) {
 				MsgBox.Show(this,"An amortization schedule must be created first.");
 				return true;
 			}
@@ -1225,7 +1225,7 @@ namespace OpenDental{
 				_payPlan.IsClosed=false;
 				return false;
 			}
-			if(HasErrors()) {
+			if(HasErrors(allowNoCharges:true)) {
 				return false;
 			}
 			if(IsInsPayPlan && _payPlan.PlanNum==0) {
@@ -1315,7 +1315,9 @@ namespace OpenDental{
 				_listPayPlanCharges[i].ProvNum=comboProv.GetSelectedProvNum();
 			}
 			PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
-			SecurityLogs.MakeLogEntries(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,_listLogs);
+			if(_listPayPlanCharges.Count>0) {
+				SecurityLogs.MakeLogEntries(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,_listLogs);
+			}
 			_listLogs.Clear();//In case we save multiple times.
 		}
 

@@ -711,7 +711,7 @@ namespace OpenDentBusiness{
 		///Returns the number of payment plans that were closed.</summary>
 		public static long AutoClose(bool canIncludeOldPaymentPlans=false,bool canIncludeInsPaymentPlans=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),canIncludeOldPaymentPlans);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),canIncludeOldPaymentPlans,canIncludeInsPaymentPlans);
 			}
 			string command="";
 			DataTable table;

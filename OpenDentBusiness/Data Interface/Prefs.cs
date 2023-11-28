@@ -150,7 +150,7 @@ namespace OpenDentBusiness{
 
 		public static void RemoveFlagNoCache<T>(PrefName prefName,T enumFlag) where T : Enum {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),enumFlag);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),prefName,enumFlag);
 				return;
 			}
 			string command=$"UPDATE preference SET ValueString=Valuestring&~{POut.Long((int)(object)enumFlag)} WHERE PrefName='{POut.String(prefName.ToString())}'";

@@ -56,6 +56,8 @@ namespace WpfControls.UI {
 					continue;
 				}
 				listMenuItems[i].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+				e.Handled=true;
+				return;
 			}
 		}
 

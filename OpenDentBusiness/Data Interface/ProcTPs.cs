@@ -117,6 +117,9 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns only three columns from all ProcTPs -- TreatPlanNum, PatNum, and ProcNumOrig.</summary>
 		public static List<ProcTP> GetAllLim(List<long> listTreatPlanNums) {
+			if(listTreatPlanNums.IsNullOrEmpty()) {//No need to go through middletier if we know listTreatPlanNums is empty. Return early.
+				return new List<ProcTP>();
+			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ProcTP>>(MethodBase.GetCurrentMethod(),listTreatPlanNums);
 			}

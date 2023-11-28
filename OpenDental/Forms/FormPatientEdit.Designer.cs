@@ -716,7 +716,7 @@ namespace OpenDental{
 			this.textZip.Size = new System.Drawing.Size(184, 20);
 			this.textZip.TabIndex = 6;
 			this.textZip.TextChanged += new System.EventHandler(this.textZip_TextChanged);
-			this.textZip.Leave += new System.EventHandler(this.textBox_Leave);
+			this.textZip.Leave += new System.EventHandler(this.textZip_Leave);
 			this.textZip.Validating += new System.ComponentModel.CancelEventHandler(this.textZip_Validating);
 			// 
 			// comboZip

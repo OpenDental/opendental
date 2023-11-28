@@ -501,6 +501,38 @@ namespace OpenDentBusiness{
 			string command="SELECT * FROM fee WHERE FeeNum IN ("+string.Join(",",listFeeNums)+")";
 			return Crud.FeeCrud.SelectMany(command);
 		}
+
+		///<summary>Gets one Fee object from the database using the primary key. Returns null if not found.</summary>
+		public static Fee GetOneByFeeNum(long feeNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Fee>(MethodBase.GetCurrentMethod(),feeNum);
+			}
+			return Crud.FeeCrud.SelectOne(feeNum);
+		}
+
+		///<summary>Gets a list of Fees from db. Returns an empty list if not found.</summary>
+		public static List<Fee> GetFeesForApi(int limit,int offset,long feeSched,long codeNum,long clinicNum,long provNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Fee>>(MethodBase.GetCurrentMethod(),limit,offset,feeSched,codeNum,clinicNum,provNum);
+			}
+			string command="SELECT * from fee"
+				+" WHERE SecDateTEdit>="+POut.DateT(DateTime.MinValue);
+			if(feeSched>0) {
+				command+=" AND FeeSched="+POut.Long(feeSched);
+      }
+			if(codeNum>0){
+				command+=" AND CodeNum="+POut.Long(codeNum);
+      }
+      if(clinicNum>-1) {
+				command+=" AND ClinicNum="+POut.Long(clinicNum);
+      }
+			if(provNum>-1) {
+				command+=" AND ProvNum="+POut.Long(provNum);
+      }
+			command+=" ORDER BY FeeNum"
+				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.FeeCrud.SelectMany(command);
+		}
 		#endregion Get Methods
 
 		#region Insert

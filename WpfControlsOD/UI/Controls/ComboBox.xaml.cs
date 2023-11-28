@@ -688,6 +688,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			if(IsAllSelected){//if all is selected, we ignore other selections
 				return;
 			}
+			_listSelectedIndices.Clear();
 			for(int i=0;i<_windowComboPicker.ListIndicesSelected.Count;i++){
 				if(IncludeAll){
 					_listSelectedIndices.Add(_windowComboPicker.ListIndicesSelected[i]-1);//All is in position 0

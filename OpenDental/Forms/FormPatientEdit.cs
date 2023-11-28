@@ -1479,6 +1479,14 @@ namespace OpenDental{
 		private void textBox_Leave(object sender,System.EventArgs e) {
 			SetRequiredFields();
 		}
+
+		///<summary>TextZip needs it's own event to fill zip codes in the case where the zip code field is left blank.</summary>
+		private void textZip_Leave(object sender,EventArgs e) {
+			if(string.IsNullOrEmpty(textZip.Text)) {
+				FillComboZip();
+			}
+			SetRequiredFields();
+		}
 		
 		///<summary>Status and Gender</summary>
 		private void ListBox_SelectedIndexChanged(object sender,System.EventArgs e) {

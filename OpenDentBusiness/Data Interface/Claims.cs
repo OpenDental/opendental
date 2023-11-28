@@ -1516,6 +1516,23 @@ namespace OpenDentBusiness{
 			return Crud.ClaimCrud.SelectMany("SELECT * FROM claim WHERE PatNum = "+patNum);
 		}
 
+		///<summary>Gets a list of claims optionally filtered for the API. Returns an empty list if not found.</summary>
+		public static List<Claim> GetClaimsForApi(int limit,int offset,long patNum,string claimStatus,DateTime dateTSecEdit) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Claim>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,claimStatus,dateTSecEdit);
+			}
+			string command="SELECT * FROM claim WHERE SecDateTEdit >= "+POut.DateT(dateTSecEdit)+" ";
+			if(patNum>0) {
+				command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			if(claimStatus!="") {
+				command+="AND ClaimStatus='"+POut.String(claimStatus)+"' ";//Single character. "U", "H", "W", "S", "R", "I".
+			}
+			command+="ORDER BY ClaimNum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ClaimCrud.SelectMany(command);
+		}
+
 		///<summary>Gets the most recent ortho claim with a banding code attached.
 		///Returns null if no ortho banding code nums found or no corresponding claim found.</summary>
 		public static Claim GetOrthoBandingClaim(long patNum,long planNum) {

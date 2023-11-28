@@ -46,17 +46,20 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets a list of PaymentForApi from db. Returns an empty list if not found.</summary>
-		public static List<PaymentForApi> GetPaymentsForApi(int limit,int offset,long patNum,DateTime dateEntry) {
+		public static List<PaymentForApi> GetPaymentsForApi(int limit,int offset,long patNum,long defNumPayType,DateTime dateEntry) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PaymentForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateEntry);
+				return Meth.GetObject<List<PaymentForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,defNumPayType,dateEntry);
 			}
 			List<PaymentForApi> listPaymentForApi=new List<PaymentForApi>();
-			string command=
-				"SELECT * from payment"
-				+" WHERE PatNum="+POut.Long(patNum)
-				+" AND DateEntry>="+POut.DateT(dateEntry)
-				+" ORDER BY PayNum"
-				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			string command="SELECT * from payment WHERE DateEntry>="+POut.Date(dateEntry)+" ";
+				if(patNum>0) {
+					command+="AND PatNum="+POut.Long(patNum)+" ";
+				}
+				if(defNumPayType>-1) { //This will be 0 if this is an income transfer to another provider.
+					command+="AND PayType="+POut.Long(defNumPayType)+" ";
+				}
+				command+="ORDER BY PayNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime)); //run before payments for rigorous inclusion of payments
 			List<Payment> listPayments=Crud.PaymentCrud.SelectMany(command);
