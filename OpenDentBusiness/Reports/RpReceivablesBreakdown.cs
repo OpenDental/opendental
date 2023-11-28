@@ -158,11 +158,29 @@ namespace OpenDentBusiness {
 					if(listProvNums.Count != 0) {
 						whereProv+=" AND ProvNum IN("+string.Join(",",listProvNums)+") ";
 					}
-					query = "SELECT adjdate, SUM(adjamt) FROM adjustment WHERE "
-									+ "adjdate >= '" + bDate + "' "
-									+ "AND adjdate < '" + eDate + "' "
-									+ whereProv
-									+ " GROUP BY adjdate ORDER BY adjdate";
+					//Aging will utilize the ProcDate column when a ProcNum value is set.
+					//This report should do the same since our manual gives instructions on "Matching Receivables Breakdown and Aging of A/R Totals".
+					//Union two separate sub-queries together instead of using a complicated conditional where clause for speed purposes.
+					query=$@"SELECT TranDate, SUM(Amt) Amt
+						FROM (
+							SELECT AdjDate TranDate, SUM(AdjAmt) Amt
+							FROM adjustment
+							WHERE ProcNum = 0
+							AND AdjDate >= '{bDate}'
+							AND AdjDate < '{eDate}'
+							{whereProv}
+							GROUP BY AdjDate
+						UNION ALL 
+							SELECT ProcDate TranDate, SUM(AdjAmt) Amt
+							FROM adjustment
+							WHERE ProcNum != 0
+							AND ProcDate >= '{bDate}'
+							AND ProcDate < '{eDate}'
+							{whereProv}
+							GROUP BY ProcDate
+						) tranadjustment
+						GROUP BY TranDate
+						ORDER BY TranDate";
 					break;
 				case "TableProduction":
 					whereProv="";

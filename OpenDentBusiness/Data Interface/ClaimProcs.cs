@@ -988,6 +988,14 @@ namespace OpenDentBusiness{
 					throw new ApplicationException(Lans.g("ClaimProcs","Not allowed to delete this procedure until all supplementals for this procedure are deleted first."));
 				}
 			}
+			//Can't delete claimprocs for procedures that have Pending Supplemental claimprocs created
+			if(cp.ClaimNum!=0 && cp.Status==ClaimProcStatus.NotReceived) {
+				command="SELECT COUNT(*) FROM claimproc WHERE ProcNum="+POut.Long(cp.ProcNum)+" AND ClaimNum="+POut.Long(cp.ClaimNum)+" AND Status="+(int)ClaimProcStatus.NotReceived+" AND IsOverPay=1";
+				long supplementalCP=PIn.Long(Db.GetCount(command));
+				if(supplementalCP!=0) {
+					throw new ApplicationException(Lans.g("ClaimProcs","Not allowed to delete this estimate until all pending supplementals for this procedure are zeroed out first."));
+				}
+			}
 			//Can't delete claimprocs for procedures attached to ortho cases.
 			if(OrthoProcLinks.IsProcLinked(cp.ProcNum)) {
 				throw new ApplicationException(Lans.g("ClaimProcs","Not allowed to delete claim procedures attached to ortho cases." +

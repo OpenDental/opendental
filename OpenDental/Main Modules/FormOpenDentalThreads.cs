@@ -209,7 +209,7 @@ namespace OpenDental {
 				}
 				//We will set the unique alert items' tags to all the itemNums of duplicate items in the list so that all can be marked read/deleted later.
 				for(int t=0;t<listAlertItemsUnique.Count;t++){
-					listAlertItemsUnique[t].TagOD=listAlertItemsForUser.FindAll(x => AlertItems.AreDuplicates(listAlertItemsForUser[t],x)).Select(x=>x.AlertItemNum).ToList();
+					listAlertItemsUnique[t].TagOD=listAlertItemsForUser.FindAll(x => AlertItems.AreDuplicates(listAlertItemsUnique[t],x)).Select(x=>x.AlertItemNum).ToList();
 				}
 				List<AlertItem> listAlertItems=listAlertItemsUnique.FindAll(x => x.Type!=AlertType.ClinicsChangedInternal).ToList();//These alerts are not supposed to be displayed to the end user.
 				//Update listUserAlertTypes to only those with active AlertItems.

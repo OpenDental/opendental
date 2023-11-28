@@ -713,7 +713,7 @@ namespace OpenDental {
 			if(inputBox.DialogResult!=DialogResult.OK) {
 				return false;
 			}
-			if(inputBox.textResult.Text!="ConversionsDepartment") {
+			if(inputBox.textResult.Text!="ChangePlanType") {
 				MsgBox.Show(this,"Wrong password");
 				return false;
 			}

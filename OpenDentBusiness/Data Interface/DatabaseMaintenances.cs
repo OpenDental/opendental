@@ -1752,7 +1752,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 					command=$"SELECT COUNT(*) FROM claim " +
-						$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
+						$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum AND IsOverPay=0)";
 					int numFound=PIn.Int(Db.GetCount(command));
 					if(numFound!=0 || verbose) {
 						log+=Lans.g("FormDatabaseMaintenance","Claims found with no claimprocs")+": "+numFound+"\r\n";
@@ -1762,7 +1762,7 @@ namespace OpenDentBusiness {
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
 					command="SELECT claim.ClaimNum FROM claim "
-						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
+						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum AND IsOverPay=0)";
 					DataTable tableClaimNums=Db.GetTable(command);
 					List<long> listClaimNums=new List<long>();
 					for(int i = 0;i<tableClaimNums.Rows.Count;i++) {
@@ -1778,7 +1778,7 @@ namespace OpenDentBusiness {
 					}
 					//Orphaned claims do not show in the account module (tested) so we need to delete them because no other way.
 					command=@"DELETE FROM claim "
-						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
+						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum AND IsOverPay=0)";
 					long numberFixed=Db.NonQ(command);
 					listClaimNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.Claim,DbmLogActionType.Delete,
 						methodName,"Deleted claim from ClaimDeleteWithNoClaimProcs")));

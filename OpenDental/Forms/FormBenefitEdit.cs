@@ -184,6 +184,11 @@ namespace OpenDental {
 					MsgBox.Show(this,"Category cannot be used for this limitation benefit.\r\nUse Proc Code or Code Group instead.");
 					return;
 				}
+				//We check for an age limit above in if statement but there will never be a case where IsAgeLimit() is true and quantity is less than/equal to zero.
+				if(quantity<=0) {
+					MsgBox.Show(this,"Frequency Limitations cannot have a quantity of zero.");
+					return;
+				}
 			}
 			else {
 				//Code Groups support fluoride and sealant age limitations along with frequency limitations.
