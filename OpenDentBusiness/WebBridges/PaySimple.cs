@@ -1081,6 +1081,31 @@ namespace OpenDentBusiness {
 				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType(resStr,resType),resStr);
 			}
 
+			private static RequestResponse<T> MockSuccessGetCreditCardResponse<T>(T resType) {
+				string resStr=@"
+					{
+						""Meta"": {
+							""Errors"": null,
+							""HttpStatus"": ""Created"",
+							""HttpStatusCode"": 201,
+							""PagingDetails"": null
+						},
+						""Response"": {
+							""CreditCardNumber"": ""************1111"",
+							""ExpirationDate"": ""12/2020"",
+							""Issuer"": ""Visa"",
+							""BillingZipCode"": ""80202"",
+							""CustomerId"": 9695143,
+							""IsDefault"": true,
+							""RequiresValidation"": false,
+							""Id"": 8989970 ,
+							""LastModified"": ""2018-05-09T21:03:45Z"",
+							""CreatedOn"": ""2018-05-09T21:03:45Z""
+						}
+					}";
+				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType(resStr,resType),resStr);
+			}
+
 			///<summary>The following mock return a successful Checkout Token per PaySimple's documentation.</summary>
 			private static RequestResponse<T> MockCheckoutTokenResponse<T>(T resType) {
 				string resStr=@"
@@ -1345,6 +1370,9 @@ namespace OpenDentBusiness {
 					}
 					else if(Mock.IsSucessPostPaymentRequest && route==ApiRoute.Payment) {
 						return MockSuccessPaymentResponse(responseType,Mock.PayAmt);
+					}
+					else if(Mock.IsSucessPostPaymentRequest && route==ApiRoute.AccountCreditCard) {
+						return MockSuccessGetCreditCardResponse(responseType);
 					}
 				}
 				using(WebClient client=new WebClient()) {

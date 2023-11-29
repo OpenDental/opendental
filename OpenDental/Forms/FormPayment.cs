@@ -2515,11 +2515,14 @@ namespace OpenDental {
 					_payment.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {
 						_payment.IsCcCompleted=true;
-						textNote.Text+=payNote;
 						if(_doPrintReceipt) {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
 					}
+					else{
+						_isCCDeclined=true;
+					}
+					textNote.Text+=payNote;
 					break;
 				case EdgeExpressTransType.CreditAuth:
 					xWebResponse=EdgeExpress.CNP.GetUrlForCreditCardAlias(_patient.PatNum,CreditCardSource.EdgeExpressCNP,false,amt,doCreateToken);
@@ -2534,11 +2537,14 @@ namespace OpenDental {
 					_payment.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
 						_payment.IsCcCompleted=true;
-						textNote.Text+=payNote;
 						if(_doPrintReceipt) {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
 					}
+					else{
+						_isCCDeclined=true;
+					}
+					textNote.Text+=payNote;
 					break;
 				case EdgeExpressTransType.CreditReturn:
 					xWebResponse=EdgeExpress.CNP.ReturnTransaction(_patient.PatNum,transactionId,amt,false);
@@ -2583,11 +2589,14 @@ namespace OpenDental {
 					}
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
 						_payment.IsCcCompleted=true;
-						textNote.Text+=payNote;
 						if(_doPrintReceipt) {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
 					}
+					else{
+						_isCCDeclined=true;
+					}
+					textNote.Text+=payNote;
 					break;
 			}
 			return payNote;
