@@ -1923,7 +1923,14 @@ namespace OpenDentBusiness{
 					cp.CopayAmt=feePpo.Amount;
 				}
 				if(feeFixedBenefit!=null && CompareDouble.IsGreaterThan(feeFixedBenefit.Amount,0)) {
-					cp.CopayAmt-=feeFixedBenefit.Amount;//Deduct the fixed benefit amount from the proc fee to determine the copay for this claimproc.
+					//If we have a valid feeFixedbenefit and feePPO > procFee or carrierallowed, then we can set the copay to the UCR fee rather than the PPO fee
+					if(PrefC.GetBool(PrefName.InsPpoAlwaysUseUcrFee) && CompareDouble.IsGreaterThan(cp.CopayAmt,cp.BaseEst)) {
+						//From the manual: "The patient portion is calculated using the following formula: UCR fee - Write-Off - Fixed Benefit amount".
+						//At this point the writeoffs for this claimproc will be 0 so it can be omitted, and the fixed benefit amount is subtracted below, so just change the copay amount to the carrierallowed or the procfee (whatever BaseEst was set to above).
+						cp.CopayAmt=cp.BaseEst;
+					}
+					//Deduct the fixed benefit amount from the PPO fee or the procfee/allowed amount (whatever BaseEst was set to above) to determine the copay for this claimproc. When the InsPpoAlwaysUseUcrFee pref is set, the formula will be Copay = UCR fee - Fixed Benefit Amount, otherwise Copay =  PPO fee - Fixed Benefit Amount.
+					cp.CopayAmt-=feeFixedBenefit.Amount;
 				}
 				if(feeFixedBenefit==null && !PrefC.GetBool(PrefName.FixedBenefitBlankLikeZero)) {
 					cp.CopayAmt=-1;
