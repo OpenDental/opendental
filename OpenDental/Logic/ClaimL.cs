@@ -60,6 +60,39 @@ namespace OpenDental {
 			}).ToList();
 		}
 
+		///<summary>Block users from creating claims when a selected procedure is associated with duplicate claimprocs.
+		///A 'duplicate claimproc' does not mean that all of the information has been duplicated but instead means that there are two claimprocs for the same insurance plan.
+		///Specifically, a duplicate claimproc for primary insurance, or secondary insurance, or tertiary insurance, etc.
+		///Create a list of ProcNums that have duplicate claimprocs associated with them so that we can let the user know which procedures need manual intervention.
+		///</summary
+		public static bool WarnUsersForDuplicateClaimProcs(CreateClaimDataWrapper createClaimDataWrapper,bool isVerbose=true) {
+			List<long> listProcNums=new List<long>();
+			//Do not count 'Preauth' claimprocs as duplicates since these are expected to be present for the same insurance plan.
+			List<ClaimProc> listClaimProcsAvailable=createClaimDataWrapper.CreateClaimData_.ListClaimProcs.FindAll(x => x.Status!=ClaimProcStatus.Preauth);
+			//Only consider the claimprocs associated with the selected procedures (even if there are other procedures on the account with this problem).
+			List<CreateClaimItem> listCreateClaimItemsSelected=createClaimDataWrapper.ListCreateClaimItems.FindAll(x => x.IsSelected);
+			for(int i=0;i<listCreateClaimItemsSelected.Count;i++) {
+				List<ClaimProc> listClaimProcs=ClaimProcs.GetForProc(listClaimProcsAvailable,listCreateClaimItemsSelected[i].ProcNum);
+				//Group all of the claimprocs for this procedure by InsSubNum (e.g. by primary insurance).
+				//Keep track of any procedures that have multiple claimprocs for the same InsSubNum.
+				if(listClaimProcs.GroupBy(x => x.InsSubNum).Any(x => x.Count() > 1)) {
+					listProcNums.Add(listCreateClaimItemsSelected[i].ProcNum);
+				}
+			}
+			if(listProcNums.Count>0) {
+				string message=Lan.g("ContrAccount","Procedures with multiple claimprocs for the same insurance found:")+" "+listProcNums.Count;
+				for(int i=0;i<listProcNums.Count;i++) {
+					Procedure procedure=Procedures.GetProcFromList(createClaimDataWrapper.CreateClaimData_.ListProcs,listProcNums[i]);
+					message+="\r\n  "+Procedures.ConvertProcToString(procedure.CodeNum,procedure.Surf,procedure.ToothNum,true);
+				}
+				message+="\r\n\r\n"+Lan.g("ContrAccount","The above procedures need to have the duplicate claimprocs deleted before creating a claim.");
+				LogClaimError(createClaimDataWrapper,message,isVerbose);
+				createClaimDataWrapper.ShouldRefresh=false;
+				return true;
+			}
+			return false;
+		}
+
 		///<summary>Returns a CreateClaimDataWrapper object that is specifically designed for the claim creation process from within the UI.
 		///It contains strongly typed variables which help indicate to the claim creation method how to correctly create the claim.
 		///It also contains variables that indicate to consuming methods what happened during the claim creation process.
@@ -165,34 +198,8 @@ namespace OpenDental {
 				createClaimDataWrapper.ShouldRefresh=false;
 				return createClaimDataWrapper;
 			}
-			//Block users from creating claims when a selected procedure is associated with duplicate claimprocs.
-			//A 'duplicate claimproc' does not mean that all of the information has been duplicated but instead means that there are two claimprocs for the same insurance plan.
-			//Specifically, a duplicate claimproc for primary insurance, or secondary insurance, or tertiary insurance, etc.
-			//Create a list of ProcNums that have duplicate claimprocs associated with them so that we can let the user know which procedures need manual intervention.
-			List<long> listProcNums=new List<long>();
-			//Do not count 'Preauth' claimprocs as duplicates since these are expected to be present for the same insurance plan.
-			List<ClaimProc> listClaimProcsAvailable=createClaimDataWrapper.CreateClaimData_.ListClaimProcs.FindAll(x => x.Status!=ClaimProcStatus.Preauth);
-			//Only consider the claimprocs associated with the selected procedures (even if there are other procedures on the account with this problem).
 			List<CreateClaimItem> listCreateClaimItemsSelected=createClaimDataWrapper.ListCreateClaimItems.FindAll(x => x.IsSelected);
-			for(int i=0;i<listCreateClaimItemsSelected.Count;i++) {
-				List<ClaimProc> listClaimProcs=ClaimProcs.GetForProc(listClaimProcsAvailable,listCreateClaimItemsSelected[i].ProcNum);
-				//Group all of the claimprocs for this procedure by InsSubNum (e.g. by primary insurance).
-				//Keep track of any procedures that have multiple claimprocs for the same InsSubNum.
-				if(listClaimProcs.GroupBy(x => x.InsSubNum).Any(x => x.Count() > 1)) {
-					listProcNums.Add(listCreateClaimItemsSelected[i].ProcNum);
-				}
-			}
-			if(listProcNums.Count>0) {
-				string message=Lan.g("ContrAccount","Procedures with multiple claimprocs for the same insurance found:")+" "+listProcNums.Count;
-				for(int i=0;i<listProcNums.Count;i++) {
-					Procedure procedure=Procedures.GetProcFromList(createClaimDataWrapper.CreateClaimData_.ListProcs,listProcNums[i]);
-					message+="\r\n  "+Procedures.ConvertProcToString(procedure.CodeNum,procedure.Surf,procedure.ToothNum,true);
-				}
-				message+="\r\n\r\n"+Lan.g("ContrAccount","The above procedures need to have the duplicate claimprocs deleted before creating a claim.");
-				LogClaimError(createClaimDataWrapper,message,isVerbose);
-				createClaimDataWrapper.ShouldRefresh=false;
-				return createClaimDataWrapper;
-			}
+			WarnUsersForDuplicateClaimProcs(createClaimDataWrapper);
 			return createClaimDataWrapper;
 		}
 

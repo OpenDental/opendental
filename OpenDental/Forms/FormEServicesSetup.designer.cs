@@ -134,9 +134,9 @@ namespace OpenDental{
 			// 
 			this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.label23.Location = new System.Drawing.Point(18, 15);
+			this.label23.Location = new System.Drawing.Point(18, 1);
 			this.label23.Name = "label23";
-			this.label23.Size = new System.Drawing.Size(414, 26);
+			this.label23.Size = new System.Drawing.Size(483, 46);
 			this.label23.TabIndex = 245;
 			this.label23.Text = "eServices are Open Dental features that can be delivered electronically via the i" +
     "nternet.  \r\nAll eServices hosted by Open Dental use the eConnector Service.";
@@ -146,7 +146,7 @@ namespace OpenDental{
 			// 
 			this.labelECR.Location = new System.Drawing.Point(150, 331);
 			this.labelECR.Name = "labelECR";
-			this.labelECR.Size = new System.Drawing.Size(339, 16);
+			this.labelECR.Size = new System.Drawing.Size(352, 16);
 			this.labelECR.TabIndex = 247;
 			this.labelECR.Text = "Automated eReminders, eConfirmations, Thank-Yous, && Arrivals";
 			this.labelECR.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -155,7 +155,7 @@ namespace OpenDental{
 			// 
 			this.labelSignup.Location = new System.Drawing.Point(150, 52);
 			this.labelSignup.Name = "labelSignup";
-			this.labelSignup.Size = new System.Drawing.Size(87, 16);
+			this.labelSignup.Size = new System.Drawing.Size(100, 16);
 			this.labelSignup.TabIndex = 246;
 			this.labelSignup.Text = "Get Started Here";
 			this.labelSignup.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -285,7 +285,7 @@ namespace OpenDental{
 			// 
 			// FormEServicesSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(494, 635);
+			this.ClientSize = new System.Drawing.Size(504, 635);
 			this.Controls.Add(this.butMobileAppDevice);
 			this.Controls.Add(this.butODTouch);
 			this.Controls.Add(this.butPayPortal);

@@ -914,6 +914,10 @@ namespace OpenDental {
 				ListCreateClaimItems=GetCreateClaimItemsFromUI(),
 				CreateClaimData_=claimData,
 			};
+			//Block users for creating claims where the procedure can be associated with duplicate claim procs
+			if(ClaimL.WarnUsersForDuplicateClaimProcs(createClaimDataWrapper))  {
+				return;
+			}
 			Claim claim=new Claim();
 			claim.ClaimStatus="W";
 			claim.DateSent=DateTime.Today;

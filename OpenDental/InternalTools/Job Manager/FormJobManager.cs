@@ -114,6 +114,7 @@ namespace OpenDental {
 			FillComboUser();
 			FillComboTeamFilter(comboTeamFilterNeedsEngineer);
 			FillComboTeamFilter(comboTeamFilterNeedsExpert);
+			FillComboTeamFilter(comboTeamSearch,doAddAllOption:true);
 			#region Fill Proposed Version Combos
 			comboProposedVersionNeedsAction.Items.Add("All");
 			comboProposedVersionNeedsEngineer.Items.Add("All");
@@ -1097,7 +1098,7 @@ namespace OpenDental {
 				(int)JobCategory.NeedNoApproval,
 			};
 			//Sort jobs into category dictionary
-			Dictionary<JobCategory,List<Job>> dictCategories=GetJobsForTeam(comboTeamFilterNeedsEngineer.GetSelected<JobTeam>().JobTeamNum);
+			Dictionary<JobCategory,List<Job>> dictCategories=GetDictJobsForTeamByCategory(comboTeamFilterNeedsEngineer.GetSelected<JobTeam>().JobTeamNum);
 			LayoutManager.Move(gridAvailableJobs,new Rectangle(0,33,tabControlNav.ClientSize.Width,tabControlNav.ClientSize.Height-33));
 			gridAvailableJobs.BeginUpdate();
 			gridAvailableJobs.Columns.Clear();
@@ -1164,7 +1165,7 @@ namespace OpenDental {
 				(int)JobCategory.NeedNoApproval,
 			};
 			//Sort jobs into category dictionary
-			Dictionary<JobCategory,List<Job>> dictCategories=GetJobsForTeam(comboTeamFilterNeedsExpert.GetSelected<JobTeam>().JobTeamNum);
+			Dictionary<JobCategory,List<Job>> dictCategories=GetDictJobsForTeamByCategory(comboTeamFilterNeedsExpert.GetSelected<JobTeam>().JobTeamNum);
 			LayoutManager.Move(gridAvailableJobsExpert,new Rectangle(0,33,tabControlNav.ClientSize.Width,tabControlNav.ClientSize.Height-33));
 			gridAvailableJobsExpert.BeginUpdate();
 			gridAvailableJobsExpert.Columns.Clear();
@@ -1868,16 +1869,23 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Helper method. Returns the jobs per category for a given jobTeamNum.</summary>
-		private Dictionary<JobCategory,List<Job>> GetJobsForTeam(long jobTeamNum) {
-			List<Job> listJobs=JobManagerCore.ListJobsAll;
-			if(jobTeamNum>-1) {
-				listJobs=listJobs.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam && y.FKey==(jobTeamNum)));
+		///<summary>Helper method. Returns a dictionary of lists of jobs per job category for a given jobTeamNum.</summary>
+		private Dictionary<JobCategory,List<Job>> GetDictJobsForTeamByCategory(long jobTeamNum,List<Job> listJobs=null) {
+			return GetListJobsForTeam(jobTeamNum,listJobs).GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
+		}
+
+		///<summary>Filters the passed in list of jobs by JobTeamNum. Considers -1 and -2 for comboBox 'none' and 'all' options.
+		///If listJobs is null, it defaults to JobManagerCore.ListJobsAll.</summary>
+		private List<Job> GetListJobsForTeam(long jobTeamNum,List<Job> listJobs=null) {
+			listJobs??=JobManagerCore.ListJobsAll;//Default list to all jobs if null
+			switch(jobTeamNum) {
+				case -1://None selected, only jobs not assigned to a team
+					return listJobs.FindAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam));
+				case -2://All selected, all jobs regardless of team
+					return listJobs;
+				default://Team selected, only jobs for that team
+					return listJobs.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam && y.FKey==(jobTeamNum)));
 			}
-			else {
-				listJobs=listJobs.FindAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam));
-			}
-			return listJobs.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
 		}
 		#endregion
 
@@ -1913,9 +1921,12 @@ namespace OpenDental {
 			if(comboProposedVersionSearch.SelectedIndex!=0) {//All is not selected
 				listJobsSorted=listJobsSorted.Where(x => x.ProposedVersion==comboProposedVersionSearch.GetSelected<JobProposedVersion>()).ToList();
 			}
-			if(comboPrioritySearch.SelectedIndex!=0) {//All is not selected
-				listJobsSorted=listJobsSorted.Where(x => x.Priority==comboPrioritySearch.GetSelected<Def>().DefNum).ToList();
+			if(comboPrioritySearch.SelectedIndices.Count > 0 && !comboPrioritySearch.SelectedIndices.Contains(0)) {
+				//At least one item is selected, but none of them are 'All'.
+				List<long> listDefNumsSelected=comboPrioritySearch.GetListSelected<Def>().Select(x => x.DefNum).ToList();
+				listJobsSorted=listJobsSorted.FindAll(x => listDefNumsSelected.Contains(x.Priority));
 			}
+			listJobsSorted=GetListJobsForTeam(comboTeamSearch.GetSelected<JobTeam>().JobTeamNum,listJobsSorted);
 			if(!String.IsNullOrEmpty(textUserSearch.Text)) {
 				listJobsSorted=listJobsSorted.Where(x => Userods.GetName(x.OwnerNum).ToLower().Contains(textUserSearch.Text.ToLower())).ToList();
 			}
@@ -2015,6 +2026,10 @@ namespace OpenDental {
 		}
 
 		private void comboProposedVersionSearch_SelectionChangeCommitted(object sender,EventArgs e) {
+			FillActiveTabGrid();
+		}
+
+		private void comboTeamSearch_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillActiveTabGrid();
 		}
 
@@ -2516,8 +2531,11 @@ namespace OpenDental {
 			this.Text="Job Manager"+(comboUser.Text=="" ? "" : " - "+comboUser.Text);
 		}
 
-		private void FillComboTeamFilter(UI.ComboBox comboTeam) {
+		private void FillComboTeamFilter(UI.ComboBox comboTeam, bool doAddAllOption=false) {
 			comboTeam.Items.Clear();
+			if(doAddAllOption) {
+				comboTeam.Items.Add("All",new JobTeam(){JobTeamNum=-2});
+			}
 			comboTeam.Items.Add("None",new JobTeam(){JobTeamNum=-1});
 			comboTeam.Items.AddList(_listJobTeams, x => x.TeamName);
 			comboTeam.SelectedIndex=0;
@@ -2779,6 +2797,7 @@ namespace OpenDental {
 			comboCatSearch.Visible=!checkResults.Checked;
 			comboPrioritySearch.Visible=!checkResults.Checked;
 			comboProposedVersionSearch.Visible=!checkResults.Checked;
+			comboTeamSearch.Visible=!checkResults.Checked;
 			textUserSearch.Visible=!checkResults.Checked;
 			labelCatSearch.Visible=!checkResults.Checked;
 			labelPrioritySearch.Visible=!checkResults.Checked;

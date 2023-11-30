@@ -403,9 +403,9 @@ namespace OpenDental{
 			// labelRecallDisplayName
 			// 
 			this.labelRecallDisplayName.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.labelRecallDisplayName.Location = new System.Drawing.Point(215, 69);
+			this.labelRecallDisplayName.Location = new System.Drawing.Point(181, 69);
 			this.labelRecallDisplayName.Name = "labelRecallDisplayName";
-			this.labelRecallDisplayName.Size = new System.Drawing.Size(316, 19);
+			this.labelRecallDisplayName.Size = new System.Drawing.Size(350, 19);
 			this.labelRecallDisplayName.TabIndex = 365;
 			this.labelRecallDisplayName.Text = "Recall display name (blank disables Recall for Existing Patient)";
 			this.labelRecallDisplayName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

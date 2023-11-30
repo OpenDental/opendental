@@ -137,7 +137,6 @@ namespace OpenDental {
 			// 
 			// checkHasCaries
 			// 
-			this.checkHasCaries.AutoCheck = false;
 			this.checkHasCaries.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkHasCaries.Checked = true;
 			this.checkHasCaries.CheckState = System.Windows.Forms.CheckState.Indeterminate;
@@ -151,7 +150,6 @@ namespace OpenDental {
 			// 
 			// checkNeedsSealants
 			// 
-			this.checkNeedsSealants.AutoCheck = false;
 			this.checkNeedsSealants.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkNeedsSealants.Location = new System.Drawing.Point(4, 192);
 			this.checkNeedsSealants.Name = "checkNeedsSealants";
@@ -198,7 +196,6 @@ namespace OpenDental {
 			// 
 			// checkExistingSealants
 			// 
-			this.checkExistingSealants.AutoCheck = false;
 			this.checkExistingSealants.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkExistingSealants.Location = new System.Drawing.Point(-3, 176);
 			this.checkExistingSealants.Name = "checkExistingSealants";
@@ -210,7 +207,6 @@ namespace OpenDental {
 			// 
 			// checkCariesExperience
 			// 
-			this.checkCariesExperience.AutoCheck = false;
 			this.checkCariesExperience.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkCariesExperience.Location = new System.Drawing.Point(-1, 160);
 			this.checkCariesExperience.Name = "checkCariesExperience";
@@ -222,7 +218,6 @@ namespace OpenDental {
 			// 
 			// checkEarlyChildCaries
 			// 
-			this.checkEarlyChildCaries.AutoCheck = false;
 			this.checkEarlyChildCaries.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkEarlyChildCaries.Location = new System.Drawing.Point(-1, 144);
 			this.checkEarlyChildCaries.Name = "checkEarlyChildCaries";
@@ -234,7 +229,6 @@ namespace OpenDental {
 			// 
 			// checkMissingAllTeeth
 			// 
-			this.checkMissingAllTeeth.AutoCheck = false;
 			this.checkMissingAllTeeth.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkMissingAllTeeth.Location = new System.Drawing.Point(-1, 208);
 			this.checkMissingAllTeeth.Name = "checkMissingAllTeeth";

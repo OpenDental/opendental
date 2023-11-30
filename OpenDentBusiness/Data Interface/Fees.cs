@@ -419,7 +419,7 @@ namespace OpenDentBusiness{
 			if(PrefC.GetBool(PrefName.ShowFeeSchedGroups) && doCheckFeeSchedGroups) {
 				FeeSchedGroups.SyncGroupFees(listNew,listDB);
 			}
-			return Crud.FeeCrud.Sync(listNew,listDB,0);
+			return Crud.FeeCrud.Sync(listNew,listDB,Security.CurUser.UserNum);
 		}
 
 		///<summary>Gets from Db.  Returns all fees associated to the procedure code passed in.</summary>

@@ -941,11 +941,16 @@ namespace SlowQueryTool {
 			for(int i=listQueries.Count-1;i>=0;i--) {
 				string queryToLower=listQueries[i].Trim().ToLower();
 				if(queryToLower.StartsWith("set timestamp=")
-					|| queryToLower.StartsWith("init db")
 					|| queryToLower.StartsWith("use "))
 				{
 					listQueries.RemoveAt(i);
 				}
+			}
+			//Remove the Init DB query when there are other queries involved.
+			//Preserve the Init DB query when it is by itself.
+			//This means there is an issue with the server outside of MySQL that is causing slowness (hardware, antivirus, backups, windows, etc).
+			if(listQueries.Count > 1) {
+				listQueries.Remove("Init DB");
 			}
 			UnformattedQuery=string.Join(";\r\n",listQueries.Select(x => x.Trim()));
 		}

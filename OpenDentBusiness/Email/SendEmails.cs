@@ -202,7 +202,7 @@ namespace OpenDentBusiness.Email {
 				catch(Exception ex) {
 					//This will bubble up to the UI level and be caught in a copypaste box.
 					string errorMessage=ex.Message;
-					if(!ex.InnerException.Message.IsNullOrEmpty()) {
+					if(ex.InnerException!=null) {
 						errorMessage=ex.InnerException.Message;
 					}
 					throw new Exception($"Error sending email with OAuth authorization: {errorMessage}");

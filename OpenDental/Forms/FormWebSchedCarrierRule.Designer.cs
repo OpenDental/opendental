@@ -134,7 +134,7 @@ namespace OpenDental{
 			// 
 			this.labelTitle.Location = new System.Drawing.Point(9, 5);
 			this.labelTitle.Name = "labelTitle";
-			this.labelTitle.Size = new System.Drawing.Size(778, 21);
+			this.labelTitle.Size = new System.Drawing.Size(821, 21);
 			this.labelTitle.TabIndex = 413;
 			this.labelTitle.Text = "Set up a list of insurance carriers for patients to choose from when scheduling o" +
     "nline appointments. Rules can be set up to allow or block specific carriers.";

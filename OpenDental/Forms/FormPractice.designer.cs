@@ -358,7 +358,6 @@ namespace OpenDental {
 			// 
 			// textBillingPhone
 			// 
-			this.textBillingPhone.IsFormattingEnabled = false;
 			this.textBillingPhone.Location = new System.Drawing.Point(103, 131);
 			this.textBillingPhone.Name = "textBillingPhone";
 			this.textBillingPhone.Size = new System.Drawing.Size(121, 20);
@@ -476,7 +475,6 @@ namespace OpenDental {
 			// 
 			// textPayToPhone
 			// 
-			this.textPayToPhone.IsFormattingEnabled = false;
 			this.textPayToPhone.Location = new System.Drawing.Point(103, 113);
 			this.textPayToPhone.Name = "textPayToPhone";
 			this.textPayToPhone.Size = new System.Drawing.Size(121, 20);
@@ -574,7 +572,6 @@ namespace OpenDental {
 			// 
 			// textFax
 			// 
-			this.textFax.IsFormattingEnabled = false;
 			this.textFax.Location = new System.Drawing.Point(122, 83);
 			this.textFax.Name = "textFax";
 			this.textFax.Size = new System.Drawing.Size(121, 20);
@@ -582,7 +579,6 @@ namespace OpenDental {
 			// 
 			// textPhone
 			// 
-			this.textPhone.IsFormattingEnabled = false;
 			this.textPhone.Location = new System.Drawing.Point(122, 61);
 			this.textPhone.Name = "textPhone";
 			this.textPhone.Size = new System.Drawing.Size(121, 20);

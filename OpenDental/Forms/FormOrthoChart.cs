@@ -498,9 +498,15 @@ namespace OpenDental {
 			gridOrtho.ListGridRows.Clear();
 			GridRow row = new GridRow();
 			DateTime dateFirstOrthoProc = Procedures.GetFirstOrthoProcDate(_patientNote);
+			DateSpan dateSpan=new DateSpan(dateFirstOrthoProc,DateTime.Today);
+			int txMonthsTotal=(_patientNote.OrthoMonthsTreatOverride==-1?PrefC.GetByte(PrefName.OrthoDefaultMonthsTreat):_patientNote.OrthoMonthsTreatOverride);
+			int txTimeInMonths=(dateSpan.YearsDiff*12)+dateSpan.MonthsDiff+(dateSpan.DaysDiff<15?0:1);
+			if(txTimeInMonths>txMonthsTotal && PrefC.GetBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat)) { //Capping if preference is set
+				dateSpan=new DateSpan(dateFirstOrthoProc,dateFirstOrthoProc.AddMonths(txMonthsTotal));
+				txTimeInMonths=(dateSpan.YearsDiff*12)+dateSpan.MonthsDiff+(dateSpan.DaysDiff<15?0:1);
+			}
 			if(dateFirstOrthoProc!=DateTime.MinValue) {
 				row.Cells.Add(Lan.g(this,"Total Tx Time")+": "); //Number of Years/Months/Days since the first ortho procedure on this account
-				DateSpan dateSpan=new DateSpan(dateFirstOrthoProc,DateTime.Today);
 				string strDateDiff="";
 				if(dateSpan.YearsDiff!=0) {
 					strDateDiff+=dateSpan.YearsDiff+" "+Lan.g(this,"year"+(dateSpan.YearsDiff==1 ? "" : "s"));
@@ -526,12 +532,10 @@ namespace OpenDental {
 
 				row = new GridRow();
 				row.Cells.Add(Lan.g(this,"Tx Months Total")+": "); //this patient's OrthoClaimMonthsTreatment, or the practice default if 0.
-				int txMonthsTotal=(_patientNote.OrthoMonthsTreatOverride==-1?PrefC.GetByte(PrefName.OrthoDefaultMonthsTreat):_patientNote.OrthoMonthsTreatOverride);
 				row.Cells.Add(txMonthsTotal.ToString());
 				gridOrtho.ListGridRows.Add(row);
 
 				row = new GridRow();
-				int txTimeInMonths=dateSpan.YearsDiff * 12 + dateSpan.MonthsDiff + (dateSpan.DaysDiff < 15? 0: 1);
 				row.Cells.Add(Lan.g(this,"Months in Treatment")+": "); //idk what the difference between this and 'Total Tx Time' is.
 				row.Cells.Add(txTimeInMonths.ToString());
 				gridOrtho.ListGridRows.Add(row);

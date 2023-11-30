@@ -107,14 +107,14 @@ namespace OpenDental{
 			this.groupBox5.Controls.Add(this.label29);
 			this.groupBox5.Location = new System.Drawing.Point(12, 107);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(691, 97);
+			this.groupBox5.Size = new System.Drawing.Size(691, 107);
 			this.groupBox5.TabIndex = 79;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Setup Users";
 			// 
 			// butSetupMobileWebUsers
 			// 
-			this.butSetupMobileWebUsers.Location = new System.Drawing.Point(9, 67);
+			this.butSetupMobileWebUsers.Location = new System.Drawing.Point(9, 77);
 			this.butSetupMobileWebUsers.Name = "butSetupMobileWebUsers";
 			this.butSetupMobileWebUsers.Size = new System.Drawing.Size(220, 24);
 			this.butSetupMobileWebUsers.TabIndex = 250;
@@ -125,7 +125,7 @@ namespace OpenDental{
 			// 
 			this.label29.Location = new System.Drawing.Point(6, 16);
 			this.label29.Name = "label29";
-			this.label29.Size = new System.Drawing.Size(664, 42);
+			this.label29.Size = new System.Drawing.Size(664, 60);
 			this.label29.TabIndex = 72;
 			this.label29.Text = resources.GetString("label29.Text");
 			// 
@@ -162,13 +162,13 @@ namespace OpenDental{
 			// 
 			this.label5.Location = new System.Drawing.Point(6, 16);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(664, 42);
+			this.label5.Size = new System.Drawing.Size(664, 45);
 			this.label5.TabIndex = 72;
 			this.label5.Text = resources.GetString("label5.Text");
 			// 
 			// FormEServicesMobileWeb
 			// 
-			this.ClientSize = new System.Drawing.Size(716, 209);
+			this.ClientSize = new System.Drawing.Size(716, 219);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.Controls.Add(this.groupBox5);
 			this.Controls.Add(this.groupBox2);

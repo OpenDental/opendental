@@ -233,6 +233,15 @@ namespace OpenDental {
 		}
 
 		protected override void OnLoad(EventArgs e){
+			try{
+				List<Def> listDefsMisColors = Defs.GetDefsForCategory(DefCat.MiscColors);
+				SetBorderColor(DefCatMiscColors.MainBorder,listDefsMisColors[(int)DefCatMiscColors.MainBorder].ItemColor);
+				SetBorderColor(DefCatMiscColors.MainBorderOutline,listDefsMisColors[(int)DefCatMiscColors.MainBorderOutline].ItemColor);
+				SetBorderColor(DefCatMiscColors.MainBorderText,listDefsMisColors[(int)DefCatMiscColors.MainBorderText].ItemColor);
+			}
+			catch{
+				//can fail in windows with no db connection, like in testing
+			}
 			if(DesignMode){
 				return;
 			}

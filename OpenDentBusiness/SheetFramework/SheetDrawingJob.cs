@@ -1687,7 +1687,7 @@ namespace OpenDentBusiness {
 						checkShowFees=(bool)SheetParameter.GetParamByName(sheet.Parameters,"checkShowFees").ParamValue;
 						checkShowIns=(bool)SheetParameter.GetParamByName(sheet.Parameters,"checkShowIns").ParamValue;
 						//this is taken from HasSalesTax in the ContrTreat module
-						hasSalesTax=AvaTax.IsTaxable(sheet.PatNum) && Columns.Any(x => x.InternalName=="Tax Est");
+						hasSalesTax=AvaTax.IsTaxable(sheet.PatNum) || Columns.Any(x => x.InternalName=="Tax Est");
 					}
 					catch {
 						//if unable to find any assume default values of true

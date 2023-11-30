@@ -43,7 +43,6 @@
 			this.listBoxEmployees.Name = "listBoxEmployees";
 			this.listBoxEmployees.Size = new System.Drawing.Size(142, 862);
 			this.listBoxEmployees.TabIndex = 4;
-			this.listBoxEmployees.SelectedIndexChanged += new System.EventHandler(this.ListBoxEmployees_SelectedIndexChanged);
 			// 
 			// label14
 			// 
@@ -93,7 +92,6 @@
 			this.odDatePickerTo.Name = "odDatePickerTo";
 			this.odDatePickerTo.Size = new System.Drawing.Size(169, 23);
 			this.odDatePickerTo.TabIndex = 6;
-			this.odDatePickerTo.DateTextChanged += new System.EventHandler(this.OdDatePickerTo_DateTextChanged);
 			// 
 			// odDatePickerFrom
 			// 
@@ -103,7 +101,6 @@
 			this.odDatePickerFrom.Name = "odDatePickerFrom";
 			this.odDatePickerFrom.Size = new System.Drawing.Size(169, 23);
 			this.odDatePickerFrom.TabIndex = 5;
-			this.odDatePickerFrom.DateTextChanged += new System.EventHandler(this.OdDatePickerFrom_DateTextChanged);
 			// 
 			// gridMain
 			// 

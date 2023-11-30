@@ -118,7 +118,7 @@ namespace OpenDental{
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(915, 533);
+			this.butSave.Location = new System.Drawing.Point(915, 553);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 23);
 			this.butSave.TabIndex = 500;
@@ -130,7 +130,7 @@ namespace OpenDental{
 			// 
 			this.label25.Location = new System.Drawing.Point(12, 9);
 			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(932, 68);
+			this.label25.Size = new System.Drawing.Size(981, 90);
 			this.label25.TabIndex = 251;
 			this.label25.Text = resources.GetString("label25.Text");
 			// 
@@ -152,7 +152,7 @@ namespace OpenDental{
 			this.groupBox3.Controls.Add(this.labelListenerStatus);
 			this.groupBox3.Controls.Add(this.butListenerAlertsOff);
 			this.groupBox3.Controls.Add(this.textListenerServiceStatus);
-			this.groupBox3.Location = new System.Drawing.Point(15, 80);
+			this.groupBox3.Location = new System.Drawing.Point(15, 100);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(975, 447);
 			this.groupBox3.TabIndex = 249;
@@ -212,7 +212,7 @@ namespace OpenDental{
 			// 
 			this.labelInstallWarning.Location = new System.Drawing.Point(524, 72);
 			this.labelInstallWarning.Name = "labelInstallWarning";
-			this.labelInstallWarning.Size = new System.Drawing.Size(399, 13);
+			this.labelInstallWarning.Size = new System.Drawing.Size(399, 15);
 			this.labelInstallWarning.TabIndex = 256;
 			this.labelInstallWarning.Text = " By clicking \'Install\' you consent to running the eConnector as a service";
 			// 
@@ -230,7 +230,7 @@ namespace OpenDental{
 			this.labelListenerServiceAck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelListenerServiceAck.Location = new System.Drawing.Point(324, 318);
 			this.labelListenerServiceAck.Name = "labelListenerServiceAck";
-			this.labelListenerServiceAck.Size = new System.Drawing.Size(578, 13);
+			this.labelListenerServiceAck.Size = new System.Drawing.Size(578, 15);
 			this.labelListenerServiceAck.TabIndex = 254;
 			this.labelListenerServiceAck.Text = "Acknowledge all errors.  This will stop the eServices menu from showing yellow.";
 			this.labelListenerServiceAck.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -334,7 +334,7 @@ namespace OpenDental{
 			// 
 			// FormEServicesEConnector
 			// 
-			this.ClientSize = new System.Drawing.Size(1002, 563);
+			this.ClientSize = new System.Drawing.Size(1002, 583);
 			this.Controls.Add(this.label25);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.butSave);

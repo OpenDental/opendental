@@ -90,6 +90,8 @@
 			this.tabSearch = new System.Windows.Forms.TabPage();
 			this.gridSearch = new OpenDental.UI.GridOD();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
+			this.labelTeamSearch = new System.Windows.Forms.Label();
+			this.comboTeamSearch = new OpenDental.UI.ComboBox();
 			this.checkResults = new OpenDental.UI.CheckBox();
 			this.labeluserSearch = new System.Windows.Forms.Label();
 			this.comboProposedVersionSearch = new OpenDental.UI.ComboBox();
@@ -576,7 +578,7 @@
 			this.lblJobPriority.AutoSize = true;
 			this.lblJobPriority.Location = new System.Drawing.Point(89, 36);
 			this.lblJobPriority.Name = "lblJobPriority";
-			this.lblJobPriority.Size = new System.Drawing.Size(80, 13);
+			this.lblJobPriority.Size = new System.Drawing.Size(41, 13);
 			this.lblJobPriority.TabIndex = 247;
 			this.lblJobPriority.Text = "Priority:";
 			// 
@@ -586,7 +588,7 @@
 			this.lblJobPhase.AutoSize = true;
 			this.lblJobPhase.Location = new System.Drawing.Point(89, 9);
 			this.lblJobPhase.Name = "lblJobPhase";
-			this.lblJobPhase.Size = new System.Drawing.Size(79, 13);
+			this.lblJobPhase.Size = new System.Drawing.Size(40, 13);
 			this.lblJobPhase.TabIndex = 246;
 			this.lblJobPhase.Text = "Phase:";
 			// 
@@ -595,20 +597,20 @@
 			this.comboQueryPhaseFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboQueryPhaseFilter.Location = new System.Drawing.Point(175, 6);
 			this.comboQueryPhaseFilter.Name = "comboQueryPhaseFilter";
+			this.comboQueryPhaseFilter.SelectionModeMulti = true;
 			this.comboQueryPhaseFilter.Size = new System.Drawing.Size(163, 21);
 			this.comboQueryPhaseFilter.TabIndex = 245;
 			this.comboQueryPhaseFilter.SelectionChangeCommitted += new System.EventHandler(this.comboQueryPhaseFilter_SelectionChangeCommitted);
-			this.comboQueryPhaseFilter.SelectionModeMulti=true;
 			// 
 			// comboQueryPriorityFilter
 			// 
 			this.comboQueryPriorityFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboQueryPriorityFilter.Location = new System.Drawing.Point(175, 33);
 			this.comboQueryPriorityFilter.Name = "comboQueryPriorityFilter";
+			this.comboQueryPriorityFilter.SelectionModeMulti = true;
 			this.comboQueryPriorityFilter.Size = new System.Drawing.Size(163, 21);
 			this.comboQueryPriorityFilter.TabIndex = 244;
 			this.comboQueryPriorityFilter.SelectionChangeCommitted += new System.EventHandler(this.comboQueryPriorityFilter_SelectionChangeCommitted);
-			this.comboQueryPriorityFilter.SelectionModeMulti=true;
 			// 
 			// butQueriesRefresh
 			// 
@@ -891,9 +893,9 @@
 			// 
 			this.gridSearch.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.gridSearch.HasMultilineHeaders = true;
-			this.gridSearch.Location = new System.Drawing.Point(3, 134);
+			this.gridSearch.Location = new System.Drawing.Point(3, 161);
 			this.gridSearch.Name = "gridSearch";
-			this.gridSearch.Size = new System.Drawing.Size(343, 550);
+			this.gridSearch.Size = new System.Drawing.Size(343, 523);
 			this.gridSearch.TabIndex = 240;
 			this.gridSearch.Title = "Results";
 			this.gridSearch.TranslationName = "Job Edit";
@@ -902,6 +904,8 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.labelTeamSearch);
+			this.groupBox2.Controls.Add(this.comboTeamSearch);
 			this.groupBox2.Controls.Add(this.checkResults);
 			this.groupBox2.Controls.Add(this.labeluserSearch);
 			this.groupBox2.Controls.Add(this.comboProposedVersionSearch);
@@ -915,14 +919,33 @@
 			this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
 			this.groupBox2.Location = new System.Drawing.Point(3, 3);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(343, 131);
+			this.groupBox2.Size = new System.Drawing.Size(343, 158);
 			this.groupBox2.TabIndex = 241;
 			this.groupBox2.Text = "Filters";
+			// 
+			// labelTeamSearch
+			// 
+			this.labelTeamSearch.Location = new System.Drawing.Point(46, 86);
+			this.labelTeamSearch.Name = "labelTeamSearch";
+			this.labelTeamSearch.Size = new System.Drawing.Size(45, 16);
+			this.labelTeamSearch.TabIndex = 329;
+			this.labelTeamSearch.Text = "Team";
+			this.labelTeamSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboTeamSearch
+			// 
+			this.comboTeamSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboTeamSearch.Location = new System.Drawing.Point(92, 85);
+			this.comboTeamSearch.Name = "comboTeamSearch";
+			this.comboTeamSearch.Size = new System.Drawing.Size(247, 21);
+			this.comboTeamSearch.TabIndex = 330;
+			this.comboTeamSearch.SelectionChangeCommitted += new System.EventHandler(this.comboTeamSearch_SelectionChangeCommitted);
 			// 
 			// checkResults
 			// 
 			this.checkResults.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkResults.Location = new System.Drawing.Point(0, 107);
+			this.checkResults.Location = new System.Drawing.Point(2, 132);
 			this.checkResults.Name = "checkResults";
 			this.checkResults.Size = new System.Drawing.Size(106, 20);
 			this.checkResults.TabIndex = 328;
@@ -931,7 +954,7 @@
 			// 
 			// labeluserSearch
 			// 
-			this.labeluserSearch.Location = new System.Drawing.Point(22, 59);
+			this.labeluserSearch.Location = new System.Drawing.Point(22, 63);
 			this.labeluserSearch.Name = "labeluserSearch";
 			this.labeluserSearch.Size = new System.Drawing.Size(69, 16);
 			this.labeluserSearch.TabIndex = 326;
@@ -942,7 +965,7 @@
 			// 
 			this.comboProposedVersionSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboProposedVersionSearch.Location = new System.Drawing.Point(92, 58);
+			this.comboProposedVersionSearch.Location = new System.Drawing.Point(92, 62);
 			this.comboProposedVersionSearch.Name = "comboProposedVersionSearch";
 			this.comboProposedVersionSearch.Size = new System.Drawing.Size(247, 21);
 			this.comboProposedVersionSearch.TabIndex = 327;
@@ -951,7 +974,7 @@
 			// textUserSearch
 			// 
 			this.textUserSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textUserSearch.Location = new System.Drawing.Point(223, 83);
+			this.textUserSearch.Location = new System.Drawing.Point(223, 108);
 			this.textUserSearch.Name = "textUserSearch";
 			this.textUserSearch.Size = new System.Drawing.Size(116, 20);
 			this.textUserSearch.TabIndex = 249;
@@ -960,9 +983,9 @@
 			// labelProposedVersionSearch
 			// 
 			this.labelProposedVersionSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelProposedVersionSearch.Location = new System.Drawing.Point(182, 79);
+			this.labelProposedVersionSearch.Location = new System.Drawing.Point(186, 109);
 			this.labelProposedVersionSearch.Name = "labelProposedVersionSearch";
-			this.labelProposedVersionSearch.Size = new System.Drawing.Size(35, 23);
+			this.labelProposedVersionSearch.Size = new System.Drawing.Size(35, 16);
 			this.labelProposedVersionSearch.TabIndex = 248;
 			this.labelProposedVersionSearch.Text = "User";
 			this.labelProposedVersionSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -972,15 +995,16 @@
 			this.comboPrioritySearch.AllowScroll = false;
 			this.comboPrioritySearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboPrioritySearch.Location = new System.Drawing.Point(92, 35);
+			this.comboPrioritySearch.Location = new System.Drawing.Point(92, 39);
 			this.comboPrioritySearch.Name = "comboPrioritySearch";
+			this.comboPrioritySearch.SelectionModeMulti = true;
 			this.comboPrioritySearch.Size = new System.Drawing.Size(247, 21);
 			this.comboPrioritySearch.TabIndex = 247;
 			this.comboPrioritySearch.SelectionChangeCommitted += new System.EventHandler(this.comboPrioritySearch_SelectionChangeCommitted);
 			// 
 			// labelPrioritySearch
 			// 
-			this.labelPrioritySearch.Location = new System.Drawing.Point(36, 34);
+			this.labelPrioritySearch.Location = new System.Drawing.Point(36, 38);
 			this.labelPrioritySearch.Margin = new System.Windows.Forms.Padding(0);
 			this.labelPrioritySearch.Name = "labelPrioritySearch";
 			this.labelPrioritySearch.Size = new System.Drawing.Size(55, 20);
@@ -992,7 +1016,7 @@
 			// 
 			this.checkContactSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkContactSearch.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkContactSearch.Location = new System.Drawing.Point(181, 107);
+			this.checkContactSearch.Location = new System.Drawing.Point(181, 132);
 			this.checkContactSearch.Name = "checkContactSearch";
 			this.checkContactSearch.Size = new System.Drawing.Size(158, 20);
 			this.checkContactSearch.TabIndex = 245;
@@ -1004,7 +1028,7 @@
 			this.comboCatSearch.AllowScroll = false;
 			this.comboCatSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboCatSearch.Location = new System.Drawing.Point(92, 12);
+			this.comboCatSearch.Location = new System.Drawing.Point(92, 16);
 			this.comboCatSearch.Name = "comboCatSearch";
 			this.comboCatSearch.Size = new System.Drawing.Size(247, 21);
 			this.comboCatSearch.TabIndex = 244;
@@ -1012,7 +1036,7 @@
 			// 
 			// labelCatSearch
 			// 
-			this.labelCatSearch.Location = new System.Drawing.Point(36, 11);
+			this.labelCatSearch.Location = new System.Drawing.Point(36, 15);
 			this.labelCatSearch.Margin = new System.Windows.Forms.Padding(0);
 			this.labelCatSearch.Name = "labelCatSearch";
 			this.labelCatSearch.Size = new System.Drawing.Size(55, 20);
@@ -1508,5 +1532,7 @@
 		private UI.ComboBox comboTeamFilterNeedsEngineer;
 		private System.Windows.Forms.Label label2;
 		private UI.ComboBox comboTeamFilterNeedsExpert;
+		private System.Windows.Forms.Label labelTeamSearch;
+		private UI.ComboBox comboTeamSearch;
 	}
 }
