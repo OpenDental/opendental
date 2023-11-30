@@ -178,13 +178,13 @@ namespace OpenDental{
 		private void checkBox_Click(object sender, System.EventArgs e) {
 			switch(((UI.CheckBox)sender).CheckState){
 				case CheckState.Indeterminate:
-					((UI.CheckBox)sender).CheckState=CheckState.Checked;
-					break;
-				case CheckState.Checked:
 					((UI.CheckBox)sender).CheckState=CheckState.Unchecked;
 					break;
-				case CheckState.Unchecked:
+				case CheckState.Checked:
 					((UI.CheckBox)sender).CheckState=CheckState.Indeterminate;
+					break;
+				case CheckState.Unchecked:
+					((UI.CheckBox)sender).CheckState=CheckState.Checked;
 					break;
 			}
 		}

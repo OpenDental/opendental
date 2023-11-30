@@ -736,6 +736,10 @@ namespace OpenDental {
 					//We need to ensure any new SFD checkboxs in a group have the mobile tab order set. Even if they are 'new'.
 					if(sheetField.FieldType==SheetFieldType.CheckBox) {
 						List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetField,sheetDef.SheetFieldDefs.FindAll(x=>string.IsNullOrWhiteSpace(x.Language)));
+						//Ensure that ordering is preserved from how the mobile layout displayed it. New fields will get placed at the bottom of the order unless moved.
+						listSheetFieldDefNew=listSheetFieldDefNew.OrderByDescending(x => listMobileSheetDefs.Any(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
+							.ThenBy(x => listMobileSheetDefs.FindIndex(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
+							.ToList();
 						foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
 							//Checks for the first element
 							if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetField)) {
@@ -771,6 +775,10 @@ namespace OpenDental {
 							//We need to ensure any new SFD checkboxs in a group have the mobile tab order set. Even if they are 'new'.
 							if(sheetFieldDef.FieldType==SheetFieldType.CheckBox) {
 								List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetFieldDef,sheetDef.SheetFieldDefs.FindAll(x=>sheetFieldDef.Language==x.Language));
+								//Ensure that ordering is preserved from how the mobile layout displayed it, on a per-language basis. New fields will get placed at the bottom of the order unless moved.
+								listSheetFieldDefNew=listSheetFieldDefNew.OrderByDescending(x => sheetFieldDefLanguageGrouping.Any(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
+									.ThenBy(x => sheetFieldDefLanguageGrouping.FindIndex(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
+									.ToList();
 								foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
 									//Checks for the first element
 									if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetFieldDef)) {
