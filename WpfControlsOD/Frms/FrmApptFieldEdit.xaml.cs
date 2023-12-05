@@ -26,6 +26,7 @@ namespace OpenDental {
 		private void FrmApptFieldEdit_Loaded(object sender, RoutedEventArgs e) {
 			labelName.Text=_field.FieldName;
 			textValue.Text=_field.FieldValue;
+			textValue.textBox.Focus();
 		}
 
 		private void Frm_KeyDown(object sender,KeyEventArgs e) {

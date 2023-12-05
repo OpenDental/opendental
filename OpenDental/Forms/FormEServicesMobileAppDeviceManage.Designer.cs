@@ -33,9 +33,9 @@ namespace OpenDental{
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(598, 12);
+			this.label10.Location = new System.Drawing.Point(578, 12);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(321, 19);
+			this.label10.Size = new System.Drawing.Size(367, 19);
 			this.label10.TabIndex = 280;
 			this.label10.Text = "To add devices to this list, log in to the mobile app via the device. ";
 			// 

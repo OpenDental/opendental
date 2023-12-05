@@ -147,10 +147,10 @@ namespace OpenDental{
 			// 
 			this.label28.Location = new System.Drawing.Point(15, 41);
 			this.label28.Name = "label28";
-			this.label28.Size = new System.Drawing.Size(343, 28);
+			this.label28.Size = new System.Drawing.Size(415, 28);
 			this.label28.TabIndex = 310;
 			this.label28.Text = "Right-click on any text box to choose from a list of valid template fields.";
-			this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// checkUseDefaultsVerify
 			// 

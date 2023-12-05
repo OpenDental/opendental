@@ -1298,6 +1298,13 @@ namespace OpenDentBusiness {
 		#endregion AuditTrail, AutoCode, Automation-----------------------------------------------------------------------------------------------------
 		#region Benefit, BillingType--------------------------------------------------------------------------------------------------------------------
 
+		/***************************************************************************************************
+		 * The following benefit DBM methods BenefitsWithExactDuplicatesForInsPlan and BenefitsWithPartialDuplicatesForInsPlan have been removed.
+		 * These methods do not support the new benefit.CodeGroupNum column which causes problems.
+		 *  - BenefitsWithExactDuplicatesForInsPlan deletes valid benefits.
+		 *  - BenefitsWithPartialDuplicatesForInsPlan warns the user to go manually fix valid benefits.
+		 * Time is needed to research these DBM methods and determine if they are still necessary.
+
 		///<summary>Remove duplicates where all benefit columns match except for BenefitNum.</summary>
 		[DbmMethodAttr]
 		public static string BenefitsWithExactDuplicatesForInsPlan(bool verbose,DbmMode modeCur) {
@@ -1443,6 +1450,8 @@ namespace OpenDentBusiness {
 			}
 			return log;
 		}
+
+		**************************************************************************************************/
 
 		[DbmMethodAttr(IsReplicationUnsafe=true)]
 		public static string BillingTypesInvalid(bool verbose,DbmMode modeCur) {

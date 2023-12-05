@@ -45,12 +45,21 @@ namespace OpenDental {
 				.Replace("[WirelessPhone]",patient.WirelessPhone);
 			}
 			//fill in the [Practice Name] 
-			string clinicName=ClinicPrefs.GetPrefValue(PrefName.ShortCodeOptInClinicTitle,patient.ClinicNum);
+			//Default to practice title.
+			string clinicName="";
+			if(PrefC.HasClinicsEnabled) {
+				//Try to get clinic title speficially set for this clinic's opt-in.
+				clinicName=ClinicPrefs.GetPrefValue(PrefName.ShortCodeOptInClinicTitle,patient.ClinicNum);
+				if(string.IsNullOrEmpty(clinicName)) { //No explicit title found so use clinic.Desc.
+					clinicName=Clinics.GetDesc(patient.ClinicNum);
+				}
+			}
 			if(string.IsNullOrEmpty(clinicName)) {
 				clinicName=PrefC.GetString(PrefName.PracticeTitle);
-				if(string.IsNullOrEmpty(clinicName)) {
-					clinicName="your dentist";
-				}
+			}
+			//We could not find a suitable title so use a generic title.
+			if(string.IsNullOrEmpty(clinicName)) {
+				clinicName="your dentist";
 			}
 			return template
 				.Replace("[FName]",patient.GetNameFirstOrPreferred())

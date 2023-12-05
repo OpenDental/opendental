@@ -1442,7 +1442,7 @@ namespace OpenDentBusiness
 						EndSegment(sw);//AMT03 Not used.
 						//2320 AMT: A8 (medical,institutional,dental) COB Total Non-Covered Amount. Situational. Can be set when primary claim was not adjudicated. We do not use.
 					}
-					if(IsClaimConnect(clearinghouseClin) || IsOfficeAlly(clearinghouseClin)) {
+					if(IsClaimConnect(clearinghouseClin) || IsOfficeAlly(clearinghouseClin) || IsEDS(clearinghouseClin)) {
 						//2320 DMG: Other subscriber demographics. This segment is not allowed in X12. ClaimConnect requires this information anyway. They will fix their validator later.
 						sw.Write("DMG"+s
 							+"D8"+s//DMG01 2/3 Date Time Period Format Qualifier: D8=Date Expressed in Format CCYYMMDD.

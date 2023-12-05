@@ -51,7 +51,7 @@ namespace OpenDental {
 				}
 			}
 			if(IsNew){
-				if(!Security.IsAuthorized(Permissions.AdjustmentCreate,true)) {//Date not checked here.  Message will show later.
+				if(!Security.IsAuthorized(Permissions.AdjustmentCreate,DateTime.Now,true)) {//Date not checked here.  Message will show later.
 					if(!Security.IsAuthorized(Permissions.AdjustmentEditZero,true)) {//Let user create an adjustment of zero if they have this perm.
 						MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(Permissions.AdjustmentCreate));
 						DialogResult=DialogResult.Cancel;
@@ -286,6 +286,9 @@ namespace OpenDental {
 
 		private void butOK_Click(object sender, System.EventArgs e) {
 			if(Security.IsGlobalDateLock(Permissions.AdjustmentEdit,textAdjDate.Value)) {
+				return;
+			}
+			if(!Security.IsAuthorized(Permissions.AdjustmentCreate,textAdjDate.Value,false)) {
 				return;
 			}
 			bool isDiscountPlanAdj=(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="dp");

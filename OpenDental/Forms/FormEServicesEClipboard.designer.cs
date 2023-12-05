@@ -432,7 +432,7 @@ namespace OpenDental{
 			// 
 			// labelOps
 			// 
-			this.labelOps.Location = new System.Drawing.Point(5, 14);
+			this.labelOps.Location = new System.Drawing.Point(5, 17);
 			this.labelOps.Name = "labelOps";
 			this.labelOps.Size = new System.Drawing.Size(214, 18);
 			this.labelOps.TabIndex = 41;

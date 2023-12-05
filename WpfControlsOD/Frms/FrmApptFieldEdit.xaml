@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="375" Height="180" 
-             Text="Edit Appointment Field" Loaded="FrmApptFieldEdit_Loaded" >
+             Text="Edit Appointment Field" Loaded="FrmApptFieldEdit_Loaded" Focusable="False" >
     <Grid Background="#FFFCFDFE" >
         <ui:TextBox x:Name="textValue" Width="333" Height="74" Margin="21,40,0,0" IsMultiline="True"/>
         <ui:Label x:Name="labelName" Width="335" Height="20" Margin="19,17,0,0" Text="Field Name" VAlign="Bottom" />

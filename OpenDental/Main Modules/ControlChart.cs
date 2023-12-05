@@ -6555,11 +6555,11 @@ namespace OpenDental {
 			gridChartViews.ListGridRows.Clear();
 			GridRow row;
 			if(refreshViews) {
-				ChartViews.RefreshCache();//Ideally this would use signals to refresh
+				DataValid.SetInvalid(InvalidType.DisplayFields);
 			}
 			_listChartViews=ChartViews.GetDeepCopy();
 			if(SyncChartViewItemOrders()) {
-				ChartViews.RefreshCache();
+				DataValid.SetInvalid(InvalidType.DisplayFields);
 				_listChartViews=ChartViews.GetDeepCopy();
 			}
 			for(int i=0;i<_listChartViews.Count;i++) {

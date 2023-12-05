@@ -170,9 +170,9 @@ namespace OpenDental{
 			// label21
 			// 
 			this.label21.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label21.Location = new System.Drawing.Point(9, 45);
+			this.label21.Location = new System.Drawing.Point(2, 45);
 			this.label21.Name = "label21";
-			this.label21.Size = new System.Drawing.Size(301, 54);
+			this.label21.Size = new System.Drawing.Size(309, 64);
 			this.label21.TabIndex = 310;
 			this.label21.Text = resources.GetString("label21.Text");
 			this.label21.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -214,9 +214,9 @@ namespace OpenDental{
 			// labelDaysFuture
 			// 
 			this.labelDaysFuture.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.labelDaysFuture.Location = new System.Drawing.Point(62, 38);
+			this.labelDaysFuture.Location = new System.Drawing.Point(40, 38);
 			this.labelDaysFuture.Name = "labelDaysFuture";
-			this.labelDaysFuture.Size = new System.Drawing.Size(311, 19);
+			this.labelDaysFuture.Size = new System.Drawing.Size(333, 19);
 			this.labelDaysFuture.TabIndex = 402;
 			this.labelDaysFuture.Text = "Number of days in the future to start searching for openings";
 			this.labelDaysFuture.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -265,7 +265,7 @@ namespace OpenDental{
 			// 
 			this.radioDoNotSendText.Location = new System.Drawing.Point(7, 20);
 			this.radioDoNotSendText.Name = "radioDoNotSendText";
-			this.radioDoNotSendText.Size = new System.Drawing.Size(229, 16);
+			this.radioDoNotSendText.Size = new System.Drawing.Size(229, 18);
 			this.radioDoNotSendText.TabIndex = 77;
 			this.radioDoNotSendText.Text = "Do Not Send";
 			this.radioDoNotSendText.UseVisualStyleBackColor = true;
@@ -275,7 +275,7 @@ namespace OpenDental{
 			// 
 			this.radioSendText.Location = new System.Drawing.Point(7, 38);
 			this.radioSendText.Name = "radioSendText";
-			this.radioSendText.Size = new System.Drawing.Size(278, 18);
+			this.radioSendText.Size = new System.Drawing.Size(310, 20);
 			this.radioSendText.TabIndex = 0;
 			this.radioSendText.Text = "Patients with wireless phone (unless \'Text OK\' = No)";
 			this.radioSendText.UseVisualStyleBackColor = true;
@@ -364,7 +364,7 @@ namespace OpenDental{
 			// 
 			this.radioSendToEmailNoPreferred.Location = new System.Drawing.Point(7, 51);
 			this.radioSendToEmailNoPreferred.Name = "radioSendToEmailNoPreferred";
-			this.radioSendToEmailNoPreferred.Size = new System.Drawing.Size(438, 18);
+			this.radioSendToEmailNoPreferred.Size = new System.Drawing.Size(450, 20);
 			this.radioSendToEmailNoPreferred.TabIndex = 1;
 			this.radioSendToEmailNoPreferred.Text = "Patients with email address and no other preferred recall method is selected.";
 			this.radioSendToEmailNoPreferred.UseVisualStyleBackColor = true;
@@ -374,7 +374,7 @@ namespace OpenDental{
 			// 
 			this.radioDoNotSend.Location = new System.Drawing.Point(7, 16);
 			this.radioDoNotSend.Name = "radioDoNotSend";
-			this.radioDoNotSend.Size = new System.Drawing.Size(438, 16);
+			this.radioDoNotSend.Size = new System.Drawing.Size(438, 18);
 			this.radioDoNotSend.TabIndex = 77;
 			this.radioDoNotSend.Text = "Do Not Send";
 			this.radioDoNotSend.UseVisualStyleBackColor = true;
@@ -383,7 +383,7 @@ namespace OpenDental{
 			// 
 			this.radioSendToEmailOnlyPreferred.Location = new System.Drawing.Point(7, 69);
 			this.radioSendToEmailOnlyPreferred.Name = "radioSendToEmailOnlyPreferred";
-			this.radioSendToEmailOnlyPreferred.Size = new System.Drawing.Size(438, 18);
+			this.radioSendToEmailOnlyPreferred.Size = new System.Drawing.Size(470, 20);
 			this.radioSendToEmailOnlyPreferred.TabIndex = 74;
 			this.radioSendToEmailOnlyPreferred.Text = "Patients with email address and email is selected as their preferred recall metho" +
     "d.";
@@ -394,7 +394,7 @@ namespace OpenDental{
 			// 
 			this.radioSendToEmail.Location = new System.Drawing.Point(7, 34);
 			this.radioSendToEmail.Name = "radioSendToEmail";
-			this.radioSendToEmail.Size = new System.Drawing.Size(438, 16);
+			this.radioSendToEmail.Size = new System.Drawing.Size(438, 18);
 			this.radioSendToEmail.TabIndex = 0;
 			this.radioSendToEmail.Text = "Patients with email address";
 			this.radioSendToEmail.UseVisualStyleBackColor = true;
@@ -650,9 +650,9 @@ namespace OpenDental{
 			// 
 			// labelNumMonthsCheck
 			// 
-			this.labelNumMonthsCheck.Location = new System.Drawing.Point(62, 64);
+			this.labelNumMonthsCheck.Location = new System.Drawing.Point(40, 64);
 			this.labelNumMonthsCheck.Name = "labelNumMonthsCheck";
-			this.labelNumMonthsCheck.Size = new System.Drawing.Size(311, 19);
+			this.labelNumMonthsCheck.Size = new System.Drawing.Size(333, 19);
 			this.labelNumMonthsCheck.TabIndex = 404;
 			this.labelNumMonthsCheck.Text = "Maximum number of months to search on initial check (1-24)";
 			this.labelNumMonthsCheck.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

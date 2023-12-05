@@ -1545,8 +1545,8 @@
       <ImageFileName />
       <FieldName>IsPreAuth</FieldName>
       <FormatString />
-      <XPos>184</XPos>
-      <YPos>74</YPos>
+      <XPos>224</XPos>
+      <YPos>56</YPos>
       <Width>0</Width>
       <Height>0</Height>
     </ClaimFormItem>

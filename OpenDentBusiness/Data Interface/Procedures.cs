@@ -3805,7 +3805,7 @@ namespace OpenDentBusiness {
 					listCodeNums.Add(listBenefits[i].CodeNum);
 					listProcCodes.Add(ProcedureCodes.GetStringProcCode(listBenefits[i].CodeNum));
 				}
-				else if(listBenefits[i].CodeGroupNum > 0 && !CodeGroups.IsHidden(listBenefits[i].CodeGroupNum)) {
+				else if(listBenefits[i].CodeGroupNum > 0) {
 					//Get all of the CodeNums associated with the code group.
 					listCodeNums.AddRange(CodeGroups.GetCodeNums(listBenefits[i].CodeGroupNum));
 					//Get all of the ProcCodes associated with the CodeNums.
