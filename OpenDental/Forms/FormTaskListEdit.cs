@@ -104,7 +104,10 @@ namespace OpenDental{
 				_taskList.FromNum=0;
 			}
 			_taskList.ObjectType=listObjectType.GetSelected<TaskObjectType>();
-			_taskList.GlobalTaskFilterType=comboGlobalFilter.GetSelected<GlobalTaskFilterType>();
+			//Save filter type only if filtering is not disabled in Task Preferences.
+			if((GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)!=GlobalTaskFilterType.Disabled) {
+				_taskList.GlobalTaskFilterType=comboGlobalFilter.GetSelected<GlobalTaskFilterType>();
+			}
 			if(IsNew) {
 				try{
 					TaskLists.Insert(_taskList);

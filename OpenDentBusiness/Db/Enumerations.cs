@@ -255,7 +255,7 @@ namespace OpenDentBusiness{
 		PhoneNumbers,
 		///<summary>35. Deprecated, use SigMessages instead.  Old summary: Signal/message defs</summary>
 		Signals,
-		///<summary>36</summary>
+		///<summary>36. And ChartViews.</summary>
 		DisplayFields,
 		///<summary>37. And ApptFields.</summary>
 		PatFields,

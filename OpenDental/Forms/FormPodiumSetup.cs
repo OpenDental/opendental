@@ -135,8 +135,8 @@ namespace OpenDental {
 			if(_clinicNum==0) {
 				//Headquarters is selected so only update the location ID (might have changed) on all other location ID properties that match the "old" location ID of HQ.
 				programProperty=_listProgramPropertiesChanged.Find(x => x.ClinicNum==_clinicNum);
-				if(programProperty!=null){
-					return;//No other clinic specific changes could have been made, we need to return.
+				if(programProperty==null) {//should never happen, just in case
+					return;
 				}
 				//Get the location ID so that we correctly update all program properties with a matching location ID.
 				string locationIdOld=programProperty.PropertyValue;

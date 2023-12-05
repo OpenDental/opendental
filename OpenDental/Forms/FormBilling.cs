@@ -1263,23 +1263,23 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void FormBilling_CloseXClicked(object sender,CancelEventArgs e) {
-			//butClose_Click
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
-		private void butClose_Click(object sender,EventArgs e) {
+		private void FormBilling_FormClosing(object sender,FormClosingEventArgs e) {
 			if(gridBill.ListGridRows.Count==0){
-				Close();
+				return;
 			}
 			_isActivateFillDisabled=true;
 			DialogResult result=MessageBox.Show(Lan.g(this,"You may leave this window open while you work.  If you do close it, do you want to delete all unsent bills?"),
 				"",MessageBoxButtons.YesNoCancel);
 			if(result==DialogResult.No){
-				Close();
 				return;
 			}
 			else if(result==DialogResult.Cancel){
 				_isActivateFillDisabled=false;
+				e.Cancel=true;
 				return;
 			}
 			//else yes:
@@ -1317,7 +1317,7 @@ namespace OpenDental {
 			if(progressOD.IsCancelled){
 				return;
 			}
-			Close();
+			return;
 		}
 
 		private void butDefaults_Click(object sender,EventArgs e) {
@@ -1345,7 +1345,7 @@ namespace OpenDental {
 
 		private delegate void WarningCallback();
 
-		
+
 	}
 }
 

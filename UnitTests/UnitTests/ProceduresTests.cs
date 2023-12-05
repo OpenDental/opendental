@@ -814,7 +814,7 @@ namespace UnitTests.Procedures_Test {
 			insInfo.ListBenefits.Add(
 				BenefitT.CreateFrequencyLimitation("D1110",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.ServiceYear)
 			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
+			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 13); // Modulo of 13 because running this test in November would break it.
 			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-1).AddMonths(1);//Last year.
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D1110",ProcStat.C,"",88,proc1Date);
 			insInfo.ListAllProcs.Add(proc1);

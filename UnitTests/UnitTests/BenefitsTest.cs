@@ -1065,12 +1065,12 @@ namespace UnitTests.Benefits_Test {
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,ins.ListAllClaimProcs.First(x => x.ProcNum==proc.ProcNum).InsPayEst);
 			Assert.AreEqual(0,ins.ListAllClaimProcs.First(x => x.ProcNum==proc2.ProcNum).InsPayEst);//Reached frequency limitation
-			//Hide the code group and assert that no frequency limitation is reached for an additional procedure.
+			//Hide the code group and assert that frequency limitation is still reached for an additional procedure.
 			codeGroup=CodeGroupT.Upsert(codeGroup.GroupName,codeGroup.ProcCodes,isHidden:true);
 			Procedure proc3=ProcedureT.CreateProcedure(pat,"HCG01",ProcStat.C,"",100);
 			ClaimT.CreateClaim(new List<Procedure> { proc3 },ins);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			Assert.AreEqual(100,ins.ListAllClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);
+			Assert.AreEqual(0,ins.ListAllClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);
 		}
 	}
 }

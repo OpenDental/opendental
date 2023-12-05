@@ -44,7 +44,7 @@ namespace OpenDental {
 		private Timer _timerSaveButtonText;
 		///<summary>Creates a unique identifier for this instance of the form. This can be used when creating a thread with a unique group name.</summary>
 		private string _uniqueFormIdentifier;
-		///<summary>Tab order of the currently selected control, either checkbox or textbox. 1-based in sheets.</summary>
+		///<summary>Tab order of the currently selected control, either checkbox, textbox, or combobox. 1-based in sheets.</summary>
 		private int _tabCurrent=0;
 		#endregion Fields - private
 
@@ -832,6 +832,8 @@ namespace OpenDental {
 			if(sheetField?.FieldType==SheetFieldType.ComboBox){
 				CreateFloatingComboOptions(sheetField);
 				ClearSigs();
+				_tabCurrent=sheetField.TabOrder;
+				panelMain.Invalidate();
 				return;
 			}
 			//Can draw everywhere else
@@ -1040,6 +1042,10 @@ namespace OpenDental {
 				float xPosArrowStart=SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width;
 				float yPosArrowStart=SheetCur.SheetFields[i].YPos+(SheetCur.SheetFields[i].Height/2f);
 				using Pen _penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
+				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
+					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
+					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
 				g.DrawLine(_penArrow,
 					x1:xPosArrowStart-LayoutManager.ScaleF(13),
 					y1:yPosArrowStart-LayoutManager.ScaleF(1.5f),
@@ -1159,15 +1165,18 @@ namespace OpenDental {
 				if(tabOrder==0){
 					return;
 				}
-				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>tabOrder && (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox)).OrderBy(x=>x.TabOrder).ToList();
-				if(listSheetFields.Count==0){
+				List<SheetField> listSheetFieldsTabs=SheetCur.SheetFields
+					.FindAll(x=>x.TabOrder>tabOrder 
+						&& (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox || x.FieldType==SheetFieldType.ComboBox))
+					.OrderBy(x=>x.TabOrder).ToList();
+				if(listSheetFieldsTabs.Count==0){
 					_tabCurrent=0;
 					return;
 				}
-				SheetField sheetFieldNext=listSheetFields[0];
+				SheetField sheetFieldNext=listSheetFieldsTabs[0];
 				_tabCurrent=sheetFieldNext.TabOrder;
 				panelMain.Invalidate();
-				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox) {
+				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox || sheetFieldNext.FieldType==SheetFieldType.ComboBox) {
 					return;
 				}
 				CreateFloatingTextBox(sheetFieldNext,Point.Empty);
@@ -1181,7 +1190,15 @@ namespace OpenDental {
 				if(sheetField==null) {
 					return;
 				}
+				if(sheetField.FieldType==SheetFieldType.InputField) {
+					return;
+				}
 				ClearSigs();
+				panelMain.Invalidate();
+				if(sheetField.FieldType==SheetFieldType.ComboBox) {
+					CreateFloatingComboOptions(sheetField);
+					return;
+				}
 				//must be checkbox
 				if(sheetField.FieldValue=="") {
 					sheetField.FieldValue="X";
@@ -1189,19 +1206,18 @@ namespace OpenDental {
 				else{
 					sheetField.FieldValue="";
 				}
-				panelMain.Invalidate();
 			}
 			//Enter key not supported for tabbing. Causes issues.
 			if(e.KeyCode==Keys.Tab) {
-				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>_tabCurrent && (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox)).OrderBy(x=>x.TabOrder).ToList();
+				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>_tabCurrent && (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox || x.FieldType==SheetFieldType.ComboBox)).OrderBy(x=>x.TabOrder).ToList();
+				panelMain.Invalidate();
 				if(listSheetFields.Count==0) {
 					_tabCurrent=0;
 					return;
 				}
 				SheetField sheetFieldNext=listSheetFields[0];
 				_tabCurrent=sheetFieldNext.TabOrder;
-				panelMain.Invalidate();
-				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox) {
+				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox || sheetFieldNext.FieldType==SheetFieldType.ComboBox) {
 					return;
 				}
 				CreateFloatingTextBox(sheetFieldNext,Point.Empty,true);
@@ -1975,6 +1991,8 @@ namespace OpenDental {
 			//now sync SigBoxes
 			SheetFields.Sync(listSheetFieldsSigBoxes,SheetCur.SheetNum,isSigBoxOnly:true);
 			SheetFields.GetFieldsAndParameters(SheetCur);
+			//Method GetFieldsAndParameters() resyncs the sheet with the DB therefore wiping out any connected bitmaps
+			LoadImages();
 			//Each (SheetField)control has a tag pointing at a SheetCur.SheetField, and GetFieldsAndParameters() causes us to overwrite SheetCur.SheetFields.
 			//This leaves the tag pointing at nothing, so we need to call LayoutFields() to re-link the controls and data.
 			LayoutFields();
