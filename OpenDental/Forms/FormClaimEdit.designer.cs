@@ -3691,8 +3691,7 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Edit Claim";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormClaimEdit_CloseXClicked);
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormClaimEdit_Closing);
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormClaimEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormClaimEdit_Load);
 			this.Shown += new System.EventHandler(this.FormClaimEdit_Shown);
 			this.LocationChanged += new System.EventHandler(this.FormClaimEdit_LocationChanged);

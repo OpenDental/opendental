@@ -64,21 +64,9 @@ namespace OpenDental {
 		}
 
 		///<summary></summary>
-		private string GetShortCodeOptInClinicTitle() {			
+		private string GetShortCodeOptInClinicTitle() {
 			//Clinic 0 will be saved as a ClinicPref, not a practice wide Pref, so do not includeDefault here.
-			string title=ClinicPrefs.GetPrefValue(PrefName.ShortCodeOptInClinicTitle,comboShortCodeClinic.ClinicNumSelected);
-			if(!string.IsNullOrWhiteSpace(title)) {
-				return title;
-			}
-			title=Clinics.GetDesc(comboShortCodeClinic.ClinicNumSelected);
-			if(comboShortCodeClinic.ClinicNumSelected==0) {
-				title=PrefC.GetString(PrefName.PracticeTitle);
-			}
-			if(!string.IsNullOrWhiteSpace(title)) {
-				return title;
-			}
-			//In case a clinic had an empty Description
-			return PrefC.GetString(PrefName.PracticeTitle);
+			return ClinicPrefs.GetPrefValue(PrefName.ShortCodeOptInClinicTitle,comboShortCodeClinic.ClinicNumSelected);
 		}
 
 		private void comboShortCodeClinic_SelectionChangeCommitted(object sender,EventArgs e) {

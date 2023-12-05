@@ -177,6 +177,7 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.DisplayFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.DisplayFields.ToString());
+				ds.Tables.Add(ChartViews.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(DisplayFields.GetTableFromCache(doRefreshServerCache));
 			}
 			if(listITypes.Contains(InvalidType.DisplayReports) || isAll) {
@@ -556,6 +557,7 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.DisplayFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.DisplayFields.ToString());
+				ChartViews.FillCacheFromTable(ds.Tables["ChartView"]);
 				DisplayFields.FillCacheFromTable(ds.Tables["DisplayField"]);
 			}
 			if(listITypes.Contains(InvalidType.DisplayReports) || isAll) {
@@ -1044,6 +1046,7 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.DisplayFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.DisplayFields.ToString());
+				ChartViews.ClearCache();
 				DisplayFields.ClearCache();
 			}
 			if(listITypes.Contains(InvalidType.DisplayReports) || isAll) {

@@ -680,7 +680,7 @@ namespace OpenDentBusiness{
 				//Unusual middle tier check. Break up into trips of 100.
 				for(int i=0;i<listSchedules.Count;i+=100) {
 					List<Schedule> listSchedulesToSend=listSchedules.GetRange(i,Math.Min(100,listSchedules.Count-i));
-					Meth.GetVoid(MethodBase.GetCurrentMethod(),validate,hasSignal,listSchedulesToSend.ToArray());
+					Meth.GetVoid(MethodBase.GetCurrentMethod(),validate,hasSignal,listSchedulesToSend);
 				}
 				return;
 			}

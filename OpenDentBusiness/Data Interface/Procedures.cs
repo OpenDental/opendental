@@ -1164,10 +1164,28 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 
-		///<summary>Gets a list of ProcedureForApi from db. Returns an empty list if not found.</summary>
-		public static List<ProcedureForApi> GetProceduresForApi(int limit,int offset,long patNum,DateTime dateTStamp,long aptNum) {
+		///<summary>Gets one ProcedureForApi from db. Returns null if not found. Please notify the API team before modifying.</summary>
+		public static ProcedureForApi GetOneProcForApi(long procNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateTStamp,aptNum);
+				return Meth.GetObject<ProcedureForApi>(MethodBase.GetCurrentMethod(),procNum);
+			}
+			if(procNum==0) {
+				return null;
+			}
+			string command="SELECT * FROM procedurelog "
+				+"WHERE ProcNum = '"+POut.Long(procNum)+"'";
+			string commandDatetime="SELECT "+DbHelper.Now();
+			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before procedures for rigorous inclusion of procedures
+			ProcedureForApi procedureForApi=new ProcedureForApi();
+			procedureForApi.ProcedureCur=Crud.ProcedureCrud.SelectOne(command);
+			procedureForApi.DateTimeServer=dateTimeServer;
+			return procedureForApi;
+		}
+
+		///<summary>Gets a list of ProcedureForApi from db. Returns an empty list if not found. Please notify the API team before modifying.</summary>
+		public static List<ProcedureForApi> GetProceduresForApi(int limit,int offset,long patNum,DateTime dateTStamp,long aptNum,long clinicNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateTStamp,aptNum,clinicNum);
 			}
 			List<ProcedureForApi> listProcedureForApis=new List<ProcedureForApi>();
 			string command="SELECT * FROM procedurelog "
@@ -1177,6 +1195,9 @@ namespace OpenDentBusiness {
 			}
 			if(aptNum!=0) {
 				command+="AND AptNum='"+POut.Long(aptNum)+"' ";
+			}
+			if(clinicNum>-1) {
+				command+="AND ClinicNum='"+POut.Long(clinicNum)+"' ";
 			}
 			command+="ORDER BY ProcNum DESC "
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
@@ -3806,7 +3827,7 @@ namespace OpenDentBusiness {
 					listCodeNums.Add(listBenefits[i].CodeNum);
 					listProcCodes.Add(ProcedureCodes.GetStringProcCode(listBenefits[i].CodeNum));
 				}
-				else if(listBenefits[i].CodeGroupNum > 0 && !CodeGroups.IsHidden(listBenefits[i].CodeGroupNum)) {
+				else if(listBenefits[i].CodeGroupNum > 0) {
 					//Get all of the CodeNums associated with the code group.
 					listCodeNums.AddRange(CodeGroups.GetCodeNums(listBenefits[i].CodeGroupNum));
 					//Get all of the ProcCodes associated with the CodeNums.

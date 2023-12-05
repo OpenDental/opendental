@@ -195,7 +195,9 @@ namespace OpenDental {
 					ProcAdjs procAdjs=_listProcAdjs.First(x => x.ProcedureCur==listProcedures[i]);
 					Adjustment adjustment=GetAdjFromUI(procedureSelected: listProcedures[i],
 						listAdjustmentsRelated: procAdjs.ListAccountEntryAdjustments.Select(x => (Adjustment)x.Tag).ToList());//Get the new adjustment to be added from the UI.
-					if((double)procAdjs.AccountEntryProc.AmountEnd<=0 && adjustment.AdjAmt>0 && listTypeNeg.SelectedIndices.Count>0 && PIn.Decimal(textAmt.Text)>0) {
+					if(((double)procAdjs.AccountEntryProc.AmountEnd<=0 && adjustment.AdjAmt>0 && listTypeNeg.SelectedIndices.Count>0 && PIn.Decimal(textAmt.Text)>0)
+						|| adjustment.AdjNum!=0)//only enforce for brand new adjustments
+					{
 						continue;
 					}
 					double adjustmentAmtTotal=_listAdjustments.FindAll(x => x.ProcNum==listProcedures[i].ProcNum).Sum(x => x.AdjAmt);//Get the sum of all new adjustments.
@@ -473,14 +475,22 @@ namespace OpenDental {
 		#endregion
 
 		private void butSave_Click(object sender,EventArgs e) {
+			if(_listAdjustments.IsNullOrEmpty()) {//No adjustments have been added. Attempt to add adjustments with the current info.
+				if(!AddAdjustments()) {
+					return;//The UI is in an invalid state so no new adjustments can be created. This preserves old behavior
+				}
+			}
 			EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
 			if(enumAdjustmentBlockOrWarn!=EnumAdjustmentBlockOrWarn.Allow){
 				int count=0;
 				List<ProcAdjs> listProcAdjs=GetProcAdjs().Where(x => x.AccountEntryProc!=null).ToList();
 				for(int i=0;i<listProcAdjs.Count;i++) {
 					decimal sum=0;
+					if(listProcAdjs[i].ListAccountEntryAdjustments.All(x => x.AdjNum!=0)) {//No new adjusments were created, do not enfore preference
+						continue;
+					}
 					for(int k=0;k<listProcAdjs[i].ListAccountEntryAdjustments.Count;k++) {
-						sum+=listProcAdjs[i].ListAccountEntryAdjustments[k].AmountEnd;
+							sum+=listProcAdjs[i].ListAccountEntryAdjustments[k].AmountEnd;
 					}
 					if((listProcAdjs[i].AccountEntryProc.AmountEnd+sum) < 0) {
 						count++;

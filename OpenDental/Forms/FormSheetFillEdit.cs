@@ -2023,6 +2023,8 @@ namespace OpenDental {
 			//now sync SigBoxes
 			SheetFields.Sync(listSheetFieldsSigBoxes,SheetCur.SheetNum,isSigBoxOnly:true);
 			SheetFields.GetFieldsAndParameters(SheetCur);
+			//Method GetFieldsAndParameters() resyncs the sheet with the DB therefore wiping out any connected bitmaps
+			LoadImages();
 			//Each (SheetField)control has a tag pointing at a SheetCur.SheetField, and GetFieldsAndParameters() causes us to overwrite SheetCur.SheetFields.
 			//This leaves the tag pointing at nothing, so we need to call LayoutFields() to re-link the controls and data.
 			LayoutFields();

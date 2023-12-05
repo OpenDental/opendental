@@ -37,6 +37,8 @@ namespace OpenDental{
 				groupSSN.Text=Lan.g(this,"CDA Number");
 				radioSSN.Visible=false;
 				radioTIN.Visible=false;
+				labelST.Text=Lan.g(this,"Province");
+				labelZip.Text=Lan.g(this,"Postal Code");
 			}
 		}
 

@@ -206,17 +206,18 @@ namespace OpenDental {
 				mobileAppDevice.IsEclipboardEnabled=!mobileAppDevice.IsEclipboardEnabled;//Flip the bit.
 			}
 			if(e.Col==idxODTouchColumn) {
+				mobileAppDevice.IsODTouchEnabled=!mobileAppDevice.IsODTouchEnabled;//Flip the bit.
 				long clinicNum=clinicPickerEClipboard.ClinicNumSelected;
 				int deviceLimitForClinic=_clinicPrefHelper.GetIntVal(PrefName.ODTouchDeviceLimit,clinicNum);
 				int deviceCountForClinic=_listMobileAppDevicesAll.Where(x=>x.ClinicNum==clinicNum && x.IsODTouchEnabled).Count();
 				int previousDeviceCountForClinic=_listMobileAppDevicesOld.Where(x=>x.ClinicNum==clinicNum && x.IsODTouchEnabled).Count();
 				//If the total enabled device count has changed for the clinic, and the user doesn't want to pay extra, return.
-				if(deviceLimitForClinic<deviceCountForClinic && previousDeviceCountForClinic<deviceCountForClinic 
+				if(deviceLimitForClinic<deviceCountForClinic && previousDeviceCountForClinic<deviceCountForClinic && mobileAppDevice.IsODTouchEnabled
 					&& !MsgBox.Show(MsgBoxButtons.YesNo,$"The ODTouch device count of {deviceCountForClinic} exceeds the device limit of {deviceLimitForClinic}. This will incur a surplus charge per device over that limit. Continue?"))
 				{
+					mobileAppDevice.IsODTouchEnabled=false;
 					return;//Don't activate device.
 				}
-				mobileAppDevice.IsODTouchEnabled=!mobileAppDevice.IsODTouchEnabled;//Flip the bit.
 				SecurityLogs.MakeLogEntry(EnumPermType.EServicesSetup,0,$"ODTouch {(mobileAppDevice.IsODTouchEnabled ? "enabled" : "disabled")} for device {mobileAppDevice.UniqueID}",mobileAppDevice.MobileAppDeviceNum,LogSources.None,DateTime.Now,Security.CurUser.UserNum);
 			}
 			//Update the device because the signal processing of this form isn't friendly to keeping an in-memory list that syncs when the form closes

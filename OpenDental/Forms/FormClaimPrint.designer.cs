@@ -97,8 +97,6 @@ namespace OpenDental {
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Print Claim";
 			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormClaimPrint_CloseXClicked);
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormClaimPrint_FormClosing);
 			this.Load += new System.EventHandler(this.FormClaimPrint_Load);
 			this.Layout += new System.Windows.Forms.LayoutEventHandler(this.FormClaimPrint_Layout);
 			this.ResumeLayout(false);

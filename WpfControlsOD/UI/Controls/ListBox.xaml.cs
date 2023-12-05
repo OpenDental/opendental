@@ -65,6 +65,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		private string _overrideText="";
 		///<summary>If selected index is -1, this can be used to store and retrieve the primary key. _overrideText is what shows to the user.</summary>
 		private long _selectedKey=0;
+		private SelectionMode _selectionMode=SelectionMode.One;
 		#endregion Fields
 
 		#region Constructor
@@ -258,7 +259,20 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		[Category("OD")]
 		[Description("Set to allow none, single, multiple, or checkboxes.")]
 		[DefaultValue(SelectionMode.One)]
-		public SelectionMode SelectionMode { get; set; } = SelectionMode.One;
+		public SelectionMode SelectionMode { 
+			get{
+				return _selectionMode;
+			}
+			set{
+				_selectionMode=value;
+				if(_selectionMode==SelectionMode.CheckBoxes){
+					scrollViewer.HorizontalScrollBarVisibility=ScrollBarVisibility.Auto;
+				}
+				else{
+					scrollViewer.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;
+				}
+			} 
+		}
 
 		//[Category("OD")]
 		//[DefaultValue(int.MaxValue)]
@@ -958,7 +972,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				if(_listBoxParent.SelectionMode==SelectionMode.CheckBoxes){
 					CheckBox checkBox=new CheckBox();
 					checkBox.Text=text;
-					checkBox.Width=5000;//to prevent wrapping
+					//checkBox.Width=5000;//to prevent wrapping
 					checkBox.Margin=new Thickness(left:2,0,0,0);
 					checkBox.Click+=_listBoxParent.CheckBox_Click;
 					border.Child=checkBox;

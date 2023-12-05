@@ -425,9 +425,15 @@ namespace OpenDentBusiness {
 					case "StatementPayPlan.charges":
 					case "StatementPayPlan.credits":
 					case "StatementPayPlan.balance":
+					case "StatementPayPlanOld.charges":
+					case "StatementPayPlanOld.credits":
+					case "StatementPayPlanOld.balance":
 					case "StatementDynamicPayPlan.charges":
 					case "StatementDynamicPayPlan.credits":
 					case "StatementDynamicPayPlan.balance":
+					case "StatementPayPlanGrid.charges":
+					case "StatementPayPlanGrid.credits":
+					case "StatementPayPlanGrid.balance":
 					case "StatementInvoicePayment.amt":
 					case "TreatPlanMain.Allowed":
 					case "TreatPlanMain.Fee":
@@ -553,8 +559,10 @@ namespace OpenDentBusiness {
 								//gx.DrawString(patName,new XFont(_font.FontFamily.ToString(),_font.Size,XFontStyle.Bold),new SolidBrush(Color.Black),field.XPos-10,yPosGrid);
 							}
 							break;
-						case "StatementDynamicPayPlan":
 						case "StatementPayPlan":
+						case "StatementPayPlanOld":
+						case "StatementDynamicPayPlan":
+						case "StatementPayPlanGrid":
 							string text="Payment Plans";
 							if(gx==null) {
 								SizeF sizeFString=g.MeasureString(text,font);
@@ -649,11 +657,13 @@ namespace OpenDentBusiness {
 				if(gridSheetRow.IsFooterRow) {
 					_yAdjCurRow+=2;
 					switch(sheetField.FieldName) {
-						case "StatementDynamicPayPlan":
 						case "StatementPayPlan":
+						case "StatementPayPlanOld":
+						case "StatementDynamicPayPlan":
+						case "StatementPayPlanGrid":
 							string descript="patientPayPlanDue";
 							string textAmountDue="Payment Plan Amount Due: ";
-							if(sheetField.FieldName=="StatementDynamicPayPlan") {
+							if(sheetField.FieldName=="StatementDynamicPayPlan" || sheetField.FieldName=="StatementPayPlanGrid") {
 								descript="dynamicPayPlanDue";
 								textAmountDue="Payment Plan Amount Due:";
 							}

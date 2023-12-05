@@ -389,7 +389,7 @@ namespace OpenDental {
 			this.MinimizeBox = false;
 			this.Name = "FormBilling";
 			this.Text = "Billing List";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormBilling_CloseXClicked);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBilling_FormClosing);
 			this.Load += new System.EventHandler(this.FormBilling_Load);
 			this.contextMenu.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);

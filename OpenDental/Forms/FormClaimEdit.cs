@@ -2287,7 +2287,7 @@ namespace OpenDental{
 			}
 			FormFinalizePaymentHelper(claimPayment,_claim,_patient,_family,onlyOneClaimNum);
 			Signalods.SetInvalid(InvalidType.BillingList);
-			DialogResult=DialogResult.OK;
+			SaveCleanup();
 		}
 
 		///<summary>Called after finalizing an insurance payment to bring up various forms for the user.
@@ -2707,15 +2707,14 @@ namespace OpenDental{
 			formClaimPrint.PatNum=_claim.PatNum;
 			formClaimPrint.ClaimNum=_claim.ClaimNum;
 			formClaimPrint.DoPrintImmediately=false;
-			formClaimPrint.ShowDialog();
-			if(formClaimPrint.DialogResult==DialogResult.OK) {
-				//status will have changed to sent.
-				_claim=Claims.GetClaim(_claim.ClaimNum);
-			}
-			else if(formClaimPrint.DialogResult==DialogResult.Abort) {//if claim has been deleted, close out of current form.
+			_claim=Claims.GetClaim(_claim.ClaimNum);//status will have changed to sent.
+			if(_claim is null){
+				//if claim has been deleted, close out of current form.
+				MsgBox.Show(this,"Claim has been deleted by another user.");
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
+			formClaimPrint.ShowDialog();
 			_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
 			FillForm();
 			//no need to FillCanadian.  Nothing has changed.
@@ -2750,7 +2749,7 @@ namespace OpenDental{
 			//Claims.Update(ClaimCur);
 			SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,_claim.PatNum,Lan.g(this,"Claim printed from Claim Edit window."),
 				_claim.ClaimNum,dateTimeClaimCurSectDateTEdit);
-			DialogResult=DialogResult.OK;
+			SaveCleanup();
 		}
 
 		private void butSend_Click(object sender,EventArgs e) {
@@ -2792,7 +2791,7 @@ namespace OpenDental{
 				Cursor=Cursors.Default;
 			}
 			SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,_patient.PatNum,Lan.g(this,"Claim attachments sent from Claim Edit Window."),_claim.ClaimNum,dateTimeClaimCurSectEdit);
-			DialogResult=DialogResult.OK;
+			SaveCleanup();
 		}
 
 		///<summary>Checks the providers' term dates to see if a claim should be sent.
@@ -2919,7 +2918,7 @@ namespace OpenDental{
 					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
 						FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
 						formClaimAttachmentDXC.Show();
-						DialogResult=DialogResult.OK;
+						SaveCleanup();
 						return;
 					}
 					else if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to continue sending the claim?")) {
@@ -2943,7 +2942,7 @@ namespace OpenDental{
 			}
 			Cursor=Cursors.Default;
 			SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,_patient.PatNum,Lan.g(this,"Claim sent from Claim Edit Window."),_claim.ClaimNum,dateTimeClaimCurSectEdit);
-			DialogResult=DialogResult.OK;
+			SaveCleanup();
 		}
 
 		///<summary>Helper method that only allows one Canadian claim to be sent at a time. Returns true if the claim was sent, otherwise false.</summary>
@@ -3750,7 +3749,7 @@ namespace OpenDental{
 				+", "+Lan.g(this,"Date of Service")+": "+_claim.DateService.ToShortDateString(),
 				_claim.ClaimNum,dateTimeClaimCurSectEdit);
 			_isDeleting=true;
-			DialogResult=DialogResult.OK;
+			SaveCleanup();
 		}
 
 		///<summary>This window is complicated and can do many things. Therefore, we pre-insert the claim and other associated entities.
@@ -3949,7 +3948,7 @@ namespace OpenDental{
 			if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.WaitingToSend)){//waiting to send
 				ClaimSendQueueItem[] claimSendQueueItemsArray=updateData.ListSendQueueItems;
 				if(claimSendQueueItemsArray.Length==0 || !claimSendQueueItemsArray[0].CanSendElect) {//listQueue can be empty if another workstation deleted the claim
-					DialogResult=DialogResult.OK;
+					SaveCleanup();
 					return;
 				}
 				//string warnings;
@@ -3965,7 +3964,7 @@ namespace OpenDental{
 					if(MessageBox.Show(Lan.g(this,"Cannot send claim until missing/invalid data is fixed:")+"\r\n"+claimSendQueueItemsArray[0].MissingData+"\r\n\r\nContinue anyway?",
 						"",MessageBoxButtons.OKCancel)==DialogResult.OK)
 					{
-						DialogResult=DialogResult.OK;
+						SaveCleanup();
 					}
 					return;
 				}
@@ -4015,45 +4014,52 @@ namespace OpenDental{
 				ShowProviderTransferWindow(_claim,_patient,_family);
 			}
 			Plugins.HookAddCode(this,"FormClaimEdit.butOK_Click_end",_claim);
+			SaveCleanup();
+		}
+
+		private void SaveCleanup(){
+			DateTime dateTimeClaimSecEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
+			if(_isDeleting) {
+				InsBlueBooks.DeleteByClaimNums(_claim.ClaimNum);
+				DialogResult=DialogResult.OK;
+				return;
+			}
+			InsBlueBooks.SynchForClaimNums(_claim.ClaimNum);
+			if(IsNew) {
+				SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"New claim created for "+_patient.LName+","+_patient.FName,
+					_claim.ClaimNum,dateTimeClaimSecEdit);
+			}
+			else {//save for all except Delete
+				SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"Claim saved for "+_patient.LName+","+_patient.FName,
+					_claim.ClaimNum,dateTimeClaimSecEdit);
+			}
+			ReceiveAsNoPaymentIfNeeded();
+			//Claim is flagged as Received and the user entered payment information while the window was open.
+			if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.Received) && _isPaymentEntered) {
+				if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(EnumPermType.ClaimSend,true)) {
+					//We currenlty require that payment be entered in this instance of the form.
+					//We might later decide that we want to check for secondary whenever the primary is recieved and there is financial values entered
+					//regardless of when they were entered.
+					ClaimL.PromptForSecondaryClaim(_listClaimProcsForClaim);
+				}
+				//Try to transfer any patient payment around on the procedures associated to this claim if necessary (e.g. if Open Dental guessed deductible incorrectly).
+				if(Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today,true)) {
+					PaymentEdit.MakeIncomeTransferForClaimProcs(_patient.PatNum,_listClaimProcsForClaim);
+				}
+			}
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormClaimEdit_CloseXClicked(object sender, CancelEventArgs e){
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Changes will be lost.  Continue anyway?")){
-				e.Cancel=true;
-			}
-		}
-
-		private void FormClaimEdit_Closing(object sender,System.ComponentModel.CancelEventArgs e) {
-			DateTime dateTimeClaimSecEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
+		private void FormClaimEdit_FormClosing(object sender, CancelEventArgs e) {
 			if(DialogResult==DialogResult.OK) {
-				if(_isDeleting) {
-					InsBlueBooks.DeleteByClaimNums(_claim.ClaimNum);
-					return;
-				}
-				InsBlueBooks.SynchForClaimNums(_claim.ClaimNum);
-				if(IsNew) {
-					SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"New claim created for "+_patient.LName+","+_patient.FName,
-						_claim.ClaimNum,dateTimeClaimSecEdit);
-				}
-				else {//save for all except Delete
-					SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"Claim saved for "+_patient.LName+","+_patient.FName,
-						_claim.ClaimNum,dateTimeClaimSecEdit);
-				}
-				ReceiveAsNoPaymentIfNeeded();
-				//Claim is flagged as Received and the user entered payment information while the window was open.
-				if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.Received) && _isPaymentEntered) {
-					if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(EnumPermType.ClaimSend,true)) {
-						//We currenlty require that payment be entered in this instance of the form.
-						//We might later decide that we want to check for secondary whenever the primary is recieved and there is financial values entered
-						//regardless of when they were entered.
-						ClaimL.PromptForSecondaryClaim(_listClaimProcsForClaim);
-					}
-					//Try to transfer any patient payment around on the procedures associated to this claim if necessary (e.g. if Open Dental guessed deductible incorrectly).
-					if(Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today,true)) {
-						PaymentEdit.MakeIncomeTransferForClaimProcs(_patient.PatNum,_listClaimProcsForClaim);
-					}
-				}
+				return;
+			}
+			if(_claim==null) {
+				return;
+			}
+			DateTime dateTimeClaimSecEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Changes will be lost.  Continue anyway?")) {
+				e.Cancel=true;
 				return;
 			}
 			if(!IsNew) {

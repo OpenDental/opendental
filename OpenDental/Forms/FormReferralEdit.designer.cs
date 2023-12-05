@@ -33,7 +33,7 @@ namespace OpenDental {
 			this.textFName = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textMName = new System.Windows.Forms.TextBox();
-			this.label4 = new System.Windows.Forms.Label();
+			this.labelST = new System.Windows.Forms.Label();
 			this.textST = new System.Windows.Forms.TextBox();
 			this.groupSSN = new OpenDental.UI.GroupBox();
 			this.radioTIN = new System.Windows.Forms.RadioButton();
@@ -57,7 +57,7 @@ namespace OpenDental {
 			this.textAddress = new System.Windows.Forms.TextBox();
 			this.label22 = new System.Windows.Forms.Label();
 			this.label16 = new System.Windows.Forms.Label();
-			this.label15 = new System.Windows.Forms.Label();
+			this.labelZip = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
@@ -147,12 +147,12 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(44, 203);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(104, 16);
-			this.label4.TabIndex = 0;
-			this.label4.Text = "ST";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.labelST.Location = new System.Drawing.Point(44, 203);
+			this.labelST.Name = "labelST";
+			this.labelST.Size = new System.Drawing.Size(104, 16);
+			this.labelST.TabIndex = 0;
+			this.labelST.Text = "ST";
+			this.labelST.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// textST
 			// 
@@ -354,12 +354,12 @@ namespace OpenDental {
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(44, 225);
-			this.label15.Name = "label15";
-			this.label15.Size = new System.Drawing.Size(104, 16);
-			this.label15.TabIndex = 0;
-			this.label15.Text = "Zip";
-			this.label15.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.labelZip.Location = new System.Drawing.Point(44, 225);
+			this.labelZip.Name = "labelZip";
+			this.labelZip.Size = new System.Drawing.Size(104, 16);
+			this.labelZip.TabIndex = 0;
+			this.labelZip.Text = "Zip";
+			this.labelZip.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label7
 			// 
@@ -740,7 +740,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label17);
 			this.Controls.Add(this.label22);
 			this.Controls.Add(this.label16);
-			this.Controls.Add(this.label15);
+			this.Controls.Add(this.labelZip);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.label9);
@@ -751,7 +751,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label14);
 			this.Controls.Add(this.label10);
 			this.Controls.Add(this.groupSSN);
-			this.Controls.Add(this.label4);
+			this.Controls.Add(this.labelST);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
@@ -781,7 +781,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label labelST;
 		private OpenDental.UI.GroupBox groupSSN;
 		private System.Windows.Forms.RadioButton radioTIN;
 		private System.Windows.Forms.RadioButton radioSSN;
@@ -807,7 +807,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textAddress;
 		private System.Windows.Forms.Label label22;
 		private System.Windows.Forms.Label label16;
-		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.Label labelZip;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;

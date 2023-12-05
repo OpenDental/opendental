@@ -781,7 +781,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormClaimPayEdit_CloseXClicked(object sender,CancelEventArgs e) {
+		private void FormClaimPayEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			if(DialogResult!=DialogResult.Cancel){
+				return;
+			}
 			ClaimPaymentCur=_claimPaymentOld;
 		}
 

@@ -729,8 +729,9 @@ namespace OpenDentBusiness.Eclaims {
 				}
 				string extension=Path.GetExtension(attachmentPath).ToLower();
 				Bitmap bitmap=null;
-				//The standard format requires one of these types JPG=JPG file, DIC=DICOM, TXT=ASCII text file, DOC=Microsoft Word. Images will be converted to JPG.
-				if(extension.In(".txt",".doc",".docx")) {
+				//The standard format requires one of these types JPG=JPG file, DIC=DICOM, TXT=ASCII text file, DOC=Microsoft Word, PDF=Portable Document Format. Images will be converted to JPG.
+				//Changes made ahead of upcoming update to CDAnet message formatting, see "CDAnet Note 2020-002 Attachment.pdf" on job F38436
+				if(extension.In(".txt",".doc",".docx",".pdf")) {
 					//Good to include raw bytes as base64 in outgoing format.
 				}
 				else {

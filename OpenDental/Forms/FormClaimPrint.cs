@@ -83,7 +83,8 @@ namespace OpenDental{
 				Preview2.InvalidatePreview();
 			}
 			else {
-				butPrint.Enabled=false;
+				//User was already notified about the failure in CreateODprintout
+				DialogResult=DialogResult.Cancel;
 			}
 		}
 
@@ -132,6 +133,7 @@ namespace OpenDental{
 		private void pd2_PrintPage(object sender, PrintPageEventArgs ev){//raised for each page to be printed.
 			if(!TryFillDisplayStrings(false)) {//if failed
 				ev.HasMorePages=false;
+				Close();
 				return;
 			}
 			int procLimit=ProcLimitForFormat();
@@ -291,8 +293,12 @@ namespace OpenDental{
 		private string[][] FillRenaissance() { 
 			//IsRenaissance=true;
 			int procLimit=10;
-			TryFillDisplayStrings(true);//claimprocs is filled in FillDisplayStrings
+			bool displayStringsFilled=TryFillDisplayStrings(true);//claimprocs is filled in FillDisplayStrings
 														//, so this is just a little extra work
+			if(!displayStringsFilled) {
+				Close();
+				return new string[0][];
+			}
 			_totalPages=(int)Math.Ceiling((double)_listClaimProcs.Count/(double)procLimit);
 			string[][] stringDoubleArrayRetVals=new string[_totalPages][];
 			for(int i=0;i<_totalPages;i++){
@@ -314,18 +320,13 @@ namespace OpenDental{
 			}
 			Family family=Patients.GetFamily(PatNum);
 			Patient patient=family.GetPatient(PatNum);
-			if(patient==null) {
-				MsgBox.Show(this,"Unable to find patient.");
-				butPrint.Enabled=false;
-				return false;
-			}
+			//if(patient==null) {//impossible, you can't delete patients
+			//	MsgBox.Show(this,"Unable to find patient.");
+			//	butPrint.Enabled=false;
+			//	return false;
+			//}
 			List<Claim> listClaims=Claims.Refresh(patient.PatNum);
 			_claim=Claims.GetFromList(listClaims,ClaimNum);
-			if(_claim==null) {
-				MsgBox.Show(this,"Claim has been deleted by another user.");
-				butPrint.Enabled=false;
-				return false;
-			}
 				//((Claim)Claims.HList[ThisClaimNum]).Clone();
 			_listInsSubs=InsSubs.RefreshForFam(family);
 			_listInsPlans=InsPlans.RefreshForSubList(_listInsSubs);
@@ -356,11 +357,11 @@ namespace OpenDental{
 			else{
 				patientSubscriber=family.ListPats[family.GetIndex(_insSub.Subscriber)];
 			}
-			if(patientSubscriber==null) {//Patient for this InsSub could not be found.  Likely db corruption.
-				MsgBox.Show(this,"Insurance Plan attached to Claim does not have a valid Subscriber.  Run Database Maintenance (Tools): InsSubInvalidSubscriber.");
-				butPrint.Enabled=false;
-				return false;
-			}
+			//if(patientSubscriber==null) {//Patient for this InsSub could not be found.  Likely db corruption.
+			//	MsgBox.Show(this,"Insurance Plan attached to Claim does not have a valid Subscriber.  Run Database Maintenance (Tools): InsSubInvalidSubscriber.");
+			//	butPrint.Enabled=false;
+			//	return false;
+			//}
 			Patient patientOtherSubscriber=new Patient();
 			if(insPlan2.PlanNum!=0){//if secondary insurance exists
 				if(family.GetIndex(insSub2.Subscriber)==-1) {//from another family
@@ -457,7 +458,7 @@ namespace OpenDental{
 			//If we aren't able to find a claimform, or it has no items there's nothing we can do.
 			if(ClaimFormCur==null || ClaimFormCur.Items==null) {
 				if(!isRenaissance) {
-					MsgBox.Show("Could not retrieve claim form.\r\nClose form and try again.");
+					MsgBox.Show("Could not retrieve claim form.\r\nClosing form.  Reopen and try again.");
 				}
 				return false;
 			}
@@ -4953,14 +4954,5 @@ namespace OpenDental{
 			//Close();
 		}
 
-		private void FormClaimPrint_FormClosing(object sender,FormClosingEventArgs e) {
-			if(!butPrint.Enabled) {//if the claim has been deleted and the print button has been disabled.
-				DialogResult=DialogResult.Abort;
-			}
-		}
-
-		private void FormClaimPrint_CloseXClicked(object sender,CancelEventArgs e) {
-			DialogResult=DialogResult.OK;
-		}
 	}
 }

@@ -11,7 +11,7 @@
     </PasswordLow>
     <DatabaseType>MySql</DatabaseType>
     <ApplicationName>/OpenDentalServer</ApplicationName>
-    <VerboseLogging>true</VerboseLogging>
+    <VerboseLogging>false</VerboseLogging>
     <LogDirectory></LogDirectory>
   </DatabaseConnection>
 </ConnectionSettings>

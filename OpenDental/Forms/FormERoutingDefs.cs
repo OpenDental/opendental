@@ -122,7 +122,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void FormERoutingDefs_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
+		private void FormERoutingDefs_FormClosing(object sender,FormClosingEventArgs e) {
 			_clinicPrefHelper.SyncAllPrefs();
 			Cache.Refresh(InvalidType.ERoutingDef);
 		}

@@ -65,7 +65,7 @@ namespace OpenDental {
 			else {
 				SheetFieldDefCur.Height=0;
 				//These grids display a title.
-				if(SheetFieldDefCur.FieldName.In("StatementPayPlan","StatementDynamicPayPlan","StatementInvoicePayment","TreatPlanBenefitsFamily","TreatPlanBenefitsIndividual")) {
+				if(SheetFieldDefCur.FieldName.In("StatementPayPlan","StatementDynamicPayPlan","StatementPayPlanOld","StatementPayPlanGrid","StatementInvoicePayment","TreatPlanBenefitsFamily","TreatPlanBenefitsIndividual")) {
 					SheetFieldDefCur.Height+=18;//grid.TitleHeight;
 				}
 				SheetFieldDefCur.Height+=15;//grid.HeaderHeight

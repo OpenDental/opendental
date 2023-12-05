@@ -423,7 +423,7 @@
       <SheetFieldDefNum>372</SheetFieldDefNum>
       <SheetDefNum>0</SheetDefNum>
       <FieldType>Grid</FieldType>
-      <FieldName>StatementPayPlan</FieldName>
+      <FieldName>StatementPayPlanOld</FieldName>
       <FieldValue />
       <FontSize>8.5</FontSize>
       <FontName />
@@ -1105,7 +1105,7 @@
       <SheetFieldDefNum>395</SheetFieldDefNum>
       <SheetDefNum>0</SheetDefNum>
       <FieldType>Grid</FieldType>
-      <FieldName>StatementDynamicPayPlan</FieldName>
+      <FieldName>StatementPayPlanGrid</FieldName>
       <FieldValue />
       <FontSize>8.5</FontSize>
       <FontName />

@@ -107,7 +107,7 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormERoutingDefs";
 			this.Text = "eRouting Defs";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormERoutingDefs_CloseXClicked);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormERoutingDefs_FormClosing);
 			this.Load += new System.EventHandler(this.FormPatientFlow_Load);
 			this.ResumeLayout(false);
 

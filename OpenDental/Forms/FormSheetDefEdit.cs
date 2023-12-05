@@ -3159,7 +3159,9 @@ namespace OpenDental {
 				#region StatementPayPlan
 				case "StatementPayPlan":
 				case "StatementDynamicPayPlan":
-					string text="Payment Plans";
+				case "StatementPayPlanOld":
+				case "StatementPayPlanGrid":
+					string text ="Payment Plans";
 					sizeStr=g.MeasureString(text,new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(10),FontStyle.Bold));
 					g.FillRectangle(Brushes.White,sheetFieldDef.XPos,yPosGrid,grid.Width,heightGridTitle);
 					g.DrawString(text,new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(10),FontStyle.Bold),new SolidBrush(Color.Black),sheetFieldDef.XPos+(sheetFieldDef.Width-sizeStr.Width)/2,yPosGrid);
@@ -3281,7 +3283,7 @@ namespace OpenDental {
 				yPosGrid+=heightGridRow;
 			}
 			#region drawFooter
-			if(sheetFieldDef.FieldName=="StatementPayPlan" || sheetFieldDef.FieldName=="StatementDynamicPayPlan") {
+			if(sheetFieldDef.FieldName=="StatementPayPlan" || sheetFieldDef.FieldName=="StatementDynamicPayPlan" || sheetFieldDef.FieldName=="StatementPayPlanGrid" || sheetFieldDef.FieldName=="StatementPayPlanOld") {
 				string text="Payment Plan Amount Due: "+"0.00";
 				RectangleF rectangleF=new RectangleF(sheetFieldDef.Width-sheetFieldDef.Width-60,yPosGrid,sheetFieldDef.Width,heightGridTitle);
 				g.FillRectangle(Brushes.White,rectangleF);

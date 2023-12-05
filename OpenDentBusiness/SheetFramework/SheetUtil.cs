@@ -147,8 +147,10 @@ namespace OpenDentBusiness{
 						break;
 				}
 				if(calcH<=field.Height //calc height is smaller
+					&& field.FieldName!="StatementPayPlanOld" //allow this grid to shrink and disappear.
 					&& field.FieldName!="StatementPayPlan" //allow this grid to shrink and disappear.
 					&& field.FieldName!="StatementDynamicPayPlan" //allow this grid to shrink and disappear.
+					&& field.FieldName!="StatementPayPlanGrid" //allow this grid to shrink and disappear.
 					&& field.FieldName!="TreatPlanBenefitsFamily" //allow this grid to shrink and disappear.
 					&& field.FieldName!="TreatPlanBenefitsIndividual") //allow this grid to shrink and disappear.
 				{
@@ -310,8 +312,10 @@ namespace OpenDentBusiness{
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Age90plus",Description="over 90",ColumnWidth=75,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="AcctTotal",Description="Total",ColumnWidth=75,ItemOrder=++i });
 					break;
-				case "StatementDynamicPayPlan":
 				case "StatementPayPlan":
+				case "StatementPayPlanOld":
+				case "StatementDynamicPayPlan":
+				case "StatementPayPlanGrid":
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="date",Description="Date",ColumnWidth=80,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="description",Description="Description",ColumnWidth=250,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="charges",Description="Charges",ColumnWidth=60,ItemOrder=++i });
@@ -453,8 +457,8 @@ namespace OpenDentBusiness{
 					retVal.Add("StatementAging");
 					retVal.Add("StatementEnclosed");
 					retVal.Add("StatementMain");
-					retVal.Add("StatementPayPlan");
-					retVal.Add("StatementDynamicPayPlan");
+					retVal.Add("StatementPayPlanOld");
+					retVal.Add("StatementPayPlanGrid");
 					retVal.Add("StatementInvoicePayment");
 					break;
 				case SheetTypeEnum.MedLabResults:

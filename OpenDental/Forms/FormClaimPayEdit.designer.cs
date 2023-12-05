@@ -514,7 +514,7 @@ namespace OpenDental {
 			this.Name = "FormClaimPayEdit";
 			this.ShowInTaskbar = false;
 			this.Text = "Edit Insurance Payment";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormClaimPayEdit_CloseXClicked);
+			this.FormClosing += new FormClosingEventHandler(this.FormClaimPayEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormClaimPayEdit_Load);
 			this.groupPrepaid.ResumeLayout(false);
 			this.groupBoxDeposit.ResumeLayout(false);

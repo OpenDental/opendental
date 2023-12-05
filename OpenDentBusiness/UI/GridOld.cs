@@ -4128,8 +4128,10 @@ namespace OpenDental.UI {
 				if(i==0
 					&& (_title.StartsWith("TreatPlanBenefitsFamily") 
 					|| _title.StartsWith("TreatPlanBenefitsIndividual")
+					|| _title.StartsWith("StatementPayPlanOld")
 					|| _title.StartsWith("StatementPayPlan")
 					|| _title.StartsWith("StatementDynamicPayPlan")
+					|| _title.StartsWith("StatementPayPlanGrid")
 					|| _title.StartsWith("StatementInvoicePayment")
 					|| _title.StartsWith("StatementMain.NotIntermingled")))
 				{
@@ -4146,7 +4148,13 @@ namespace OpenDental.UI {
 				}
 				#endregion
 				#region Page break logic
-				if(i==ListGridRows.Count-1 && (_title.StartsWith("StatementPayPlan") || _title.StartsWith("StatementDynamicPayPlan") || _title.StartsWith("StatementInvoicePayment"))) {
+				if(i==ListGridRows.Count-1 
+					&& (_title.StartsWith("StatementPayPlanOld") 
+					|| _title.StartsWith("StatementPayPlan")
+					|| _title.StartsWith("StatementDynamicPayPlan") 
+					|| _title.StartsWith("StatementPayPlanGrid")
+					|| _title.StartsWith("StatementInvoicePayment"))) 
+				{
 					drawFooter=true;
 				}
 				if(yPosCur //start position of row

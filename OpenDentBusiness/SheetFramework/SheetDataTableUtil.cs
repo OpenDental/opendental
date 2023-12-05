@@ -21,9 +21,11 @@ namespace OpenDentBusiness.SheetFramework {
 					retVal=GetTable_StatementAging(stmt,patGuar);
 					break;
 				case "StatementPayPlan":
+				case "StatementPayPlanOld":
 					retVal=GetTable_StatementPayPlan(dataSet,false);
 					break;
 				case "StatementDynamicPayPlan":
+				case "StatementPayPlanGrid":
 					retVal=GetTable_StatementPayPlan(dataSet,true);
 					break;
 				case "StatementEnclosed":
