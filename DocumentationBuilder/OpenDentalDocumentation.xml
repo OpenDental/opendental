@@ -15845,7 +15845,7 @@
         <EnumValue name="FeeScheds">33</EnumValue>
         <EnumValue name="PhoneNumbers">34. This is used internally by OD, Inc with the phonenumber table and the phone server.</EnumValue>
         <EnumValue name="Signals">35. Deprecated, use SigMessages instead.  Old summary: Signal/message defs</EnumValue>
-        <EnumValue name="DisplayFields">36</EnumValue>
+        <EnumValue name="DisplayFields">36. And ChartViews.</EnumValue>
         <EnumValue name="PatFields">37. And ApptFields.</EnumValue>
         <EnumValue name="AccountingAutoPays">38</EnumValue>
         <EnumValue name="ProcButtons">39</EnumValue>
