@@ -211,6 +211,11 @@ namespace OpenDental {
 			}
 		}
 
+		private void butFontAbout_Click(object sender,EventArgs e) {
+			MsgBox.Show(this,"When updating to 23.1 from previous versions, the horizontal space between letters within sheets has increased slightly. If some text no longer fits inside the boxes, this tool can be used to reduce the font size by 0.5 for all text fields in the entire sheet. This can be done repeatedly if needed.");
+			return;
+		}
+
 		private void butOK_Click(object sender,EventArgs e) {
 			ValidateSaveAndExit();
 		}
@@ -441,6 +446,20 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void butReduceFontSize_Click(object sender,EventArgs e) {
+			for(int i=0;i<SheetCur.SheetFields.Count();i++) {
+				if(!SheetCur.SheetFields[i].FieldType.In(SheetFieldType.InputField,SheetFieldType.OutputText,SheetFieldType.StaticText)) {
+					continue;
+				}
+				if(SheetCur.SheetFields[i].FontSize<(2.5f)) {
+					SheetCur.SheetFields[i].FontSize=2;
+					continue;
+				}
+				SheetCur.SheetFields[i].FontSize-=0.5f;
+			}
+			panelMain.Invalidate();
+		}
+
 		private void butRestore_Click(object sender,EventArgs e) {
 			SheetCur.IsDeleted=false;
 			ValidateSaveAndExit();
@@ -570,6 +589,9 @@ namespace OpenDental {
 			_listPoints=new List<Point>();
 			_uniqueFormIdentifier=MiscUtils.CreateRandomAlphaNumericString(15);//Thread safe random
 			Sheets.SetPageMargin(SheetCur,_marginsPrint);
+			if(SheetCur.IsNew) {
+				butReduceFontSize.Visible=false;
+			}
 			if(IsInTerminal) {
 				labelDateTime.Visible=false;
 				textDateTime.Visible=false;
@@ -1229,6 +1251,9 @@ namespace OpenDental {
 			SheetField sheetField=(SheetField)textBox.Tag;
 			sheetField.FieldValue=textBox.Text.Trim();
 			//int scroll=panelScroll.VerticalScroll.Value;
+			if(sheetField.GrowthBehavior!=GrowthBehaviorEnum.None){
+				ResizeTextBox(textBox,sheetField,sheetField.FieldValue);
+			}
 			textBox.Dispose();
 			panelMain.Controls.Remove(textBox);
 			//panelScroll.VerticalScroll.Value=scroll;
@@ -1252,34 +1277,7 @@ namespace OpenDental {
 			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.None){
 				return;
 			}
-			FontStyle fontstyle=FontStyle.Regular;
-			if(sheetField.FontIsBold){
-				fontstyle=FontStyle.Bold;
-			}
-			using Font font=new Font(sheetField.FontName,sheetField.FontSize,fontstyle);
-			using Graphics g=this.CreateGraphics();
-			//no need worry about scaling here. Not sure why.
-			SizeF sizeF=g.MeasureString(fieldValue,font,sheetField.Width);
-			int calcH=(int)sizeF.Height;
-			calcH+=font.Height+2;//add one line just in case.
-			if(calcH<=sheetField.Height){//no growth needed. 
-				return;
-			}
-			//the field height needs to change, so:
-			//calculate growth in 96dpi
-			int amountOfGrowth=calcH-sheetField.Height;
-			sheetField.Height=calcH;
-			LayoutManager.MoveHeight(textBox,LayoutManager.Scale(calcH));
-			//Growth of entire form.
-			//seems like we should instead be changing the sheet height, but that's probably handled somewhere else.
-			LayoutManager.MoveHeight(panelMain,panelMain.Height+amountOfGrowth);
-			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownGlobal) {
-				SheetUtil.MoveAllDownBelowThis(SheetCur,sheetField,amountOfGrowth);
-			}
-			else if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownLocal) {
-				SheetUtil.MoveAllDownWhichIntersect(SheetCur,sheetField,amountOfGrowth);
-			}
-			RepositionControls();
+			ResizeTextBox(textBox,sheetField,fieldValue);
 		}
 
 		private void timerChangeSaveButtonText(object sender,EventArgs e) {
@@ -1817,6 +1815,38 @@ namespace OpenDental {
 				Point point=new Point(LayoutManager.Scale(sheetField.XPos),LayoutManager.Scale(sheetField.YPos));
 				LayoutManager.MoveLocation(panelMain.Controls[i],point);
 			}
+		}
+
+		///<summary>For resizing textBoxes with Growth Behavior set to DownLocal or DownGlobal</summary>
+		private void ResizeTextBox(System.Windows.Forms.TextBox textBox,SheetField sheetField,string fieldValue){ 
+			FontStyle fontstyle=FontStyle.Regular;
+			if(sheetField.FontIsBold){
+				fontstyle=FontStyle.Bold;
+			}
+			using Font font=new Font(sheetField.FontName,sheetField.FontSize,fontstyle);
+			using Graphics g=this.CreateGraphics();
+			//no need worry about scaling here. Not sure why.
+			SizeF sizeF=g.MeasureString(fieldValue,font,sheetField.Width);
+			int calcH=(int)sizeF.Height;
+			calcH+=font.Height+2;//add one line just in case.
+			if(calcH<=sheetField.Height){//no growth needed. 
+				return;
+			}
+			//the field height needs to change, so:
+			//calculate growth in 96dpi
+			int amountOfGrowth=calcH-sheetField.Height;
+			sheetField.Height=calcH;
+			LayoutManager.MoveHeight(textBox,LayoutManager.Scale(calcH));
+			//Growth of entire form.
+			//seems like we should instead be changing the sheet height, but that's probably handled somewhere else.
+			LayoutManager.MoveHeight(panelMain,panelMain.Height+amountOfGrowth);
+			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownGlobal) {
+				SheetUtil.MoveAllDownBelowThis(SheetCur,sheetField,amountOfGrowth);
+			}
+			else if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownLocal) {
+				SheetUtil.MoveAllDownWhichIntersect(SheetCur,sheetField,amountOfGrowth);
+			}
+			RepositionControls();
 		}
 
 		///<summary>For all the combo boxes on the form, selects the first option if nothing is already selected.</summary>
