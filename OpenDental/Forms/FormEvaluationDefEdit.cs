@@ -221,7 +221,7 @@ namespace OpenDental {
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(_evaluationDef.IsNew || MsgBox.Show(this,MsgBoxButtons.YesNo,"This will delete the evaluation def.  Continue?")) {
 				EvaluationDefs.Delete(_evaluationDef.EvaluationDefNum);
-				DialogResult=DialogResult.Cancel;
+				DialogResult=DialogResult.OK;
 			}
 		}
 
@@ -249,7 +249,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormEvaluationDefEdit_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
+		private void FormEvaluationDefEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			if(DialogResult!=DialogResult.Cancel) {
+				return;
+			}
 			if(_evaluationDef.IsNew) {
 				EvaluationDefs.Delete(_evaluationDef.EvaluationDefNum);
 			}

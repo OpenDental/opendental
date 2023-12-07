@@ -1727,6 +1727,14 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
+		///<summary>Appends an autograph to the bottom of the email body text if the autograph is not already present and returns the modified body text. When the functionality to reply to emails is implemented, this will need to be modified so that it inserts the autograph text at the bottom of the new message being composed, but above the message history.</summary>
+		public static string InsertAutograph(string bodyText,EmailAutograph emailAutograph) {
+			if(!bodyText.TrimEnd().ToLower().EndsWith(emailAutograph.AutographText.ToLower().Trim())) {
+				bodyText+="\r\n\r\n"+emailAutograph.AutographText;
+			}
+			return bodyText;
+		}
+
 		///<summary>Throws an exception if there is a permission issue.  Creates all of the necessary certificate stores for email encryption (Direct and Standard) if they do not already exist.
 		///There is no way for the user to create these stores manually through Microsoft Management Console (mmc.exe) and they are needed to import certificates.</summary>
 		public static void CreateCertificateStoresIfNeeded() {

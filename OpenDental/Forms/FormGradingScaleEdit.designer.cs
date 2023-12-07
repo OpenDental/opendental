@@ -154,7 +154,7 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormGradingScaleEdit";
 			this.Text = "Grading Scale Edit";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormGradingScaleEdit_CloseXClicked);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormGradingScaleEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormGradingScaleEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();

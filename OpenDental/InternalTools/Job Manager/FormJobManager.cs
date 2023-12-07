@@ -1446,7 +1446,25 @@ namespace OpenDental {
 			}
 			long selectedJobNum=userControlJobManagerEditor.JobNumCur;
 			int jobCount=0;
-			//sort dictionary so actions will appear in same order
+			Userod userFilter=Security.CurUser;
+			if(comboUser.SelectedIndex==1) {
+				userFilter=new Userod() { UserName="Unassigned",UserNum=0 };
+			}
+			else if(comboUser.SelectedIndex>1) {
+				userFilter=_listUsers[comboUser.SelectedIndex-2];
+			}
+			//Filter down to all incomplete jobs with subscription for selected user.
+			List<Job> listJobsFiltered=JobManagerCore.ListJobsAll.Where(x=>x.ListJobLinks.Exists(y=>y.LinkType==JobLinkType.Subscriber && y.FKey==userFilter.UserNum) && x.PhaseCur!=JobPhase.Complete).ToList();
+			//Optionally exclude OnHold jobs.
+			if(!checkSubscribedIncludeOnHold.Checked) {
+				long defNumOnHold=_listJobPriorities.Find(x => x.ItemValue.Contains("OnHold")).DefNum;
+				listJobsFiltered.RemoveAll(x => x.Priority==defNumOnHold);
+			}
+			//Order by priority.
+			listJobsFiltered=listJobsFiltered.OrderBy(x=>_listJobPriorities.Find(y=>y.DefNum == x.Priority).ItemOrder).ToList();
+			//Group jobs in dictionary by category
+			Dictionary<JobCategory,List<Job>> dictCategories=listJobsFiltered.GroupBy(x=>x.Category).ToDictionary(y=>y.Key,y=>y.ToList());
+			//sort dictionary so actions will appear in this order
 			List<int> listCategoriesSorted=new List<int> {
 				(int)JobCategory.Bug,
 				(int)JobCategory.Enhancement,
@@ -1461,15 +1479,7 @@ namespace OpenDental {
 				(int)JobCategory.Research,
 				(int)JobCategory.NeedNoApproval,
 			};
-			//Sort jobs into category dictionary
-			Dictionary<JobCategory,List<Job>> dictCategories=JobManagerCore.ListJobsAll.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
-			Userod userFilter=Security.CurUser;
-			if(comboUser.SelectedIndex==1) {
-				userFilter=new Userod() { UserName="Unassigned",UserNum=0 };
-			}
-			else if(comboUser.SelectedIndex>1) {
-				userFilter=_listUsers[comboUser.SelectedIndex-2];
-			}
+			dictCategories=dictCategories.OrderBy(x=>listCategoriesSorted.IndexOf((int)x.Key)).ToDictionary(x=>x.Key,x=>x.Value);
 			gridSubscribedJobs.BeginUpdate();
 			gridSubscribedJobs.Columns.Clear();
 			gridSubscribedJobs.Columns.Add(new GridColumn("Priority",50,HorizontalAlignment.Center));
@@ -1478,20 +1488,16 @@ namespace OpenDental {
 			gridSubscribedJobs.Columns.Add(new GridColumn("Phase",85,HorizontalAlignment.Center));
 			gridSubscribedJobs.Columns.Add(new GridColumn("",85){ IsWidthDynamic=true });
 			gridSubscribedJobs.ListGridRows.Clear();
-			dictCategories=dictCategories.OrderBy(x => listCategoriesSorted.IndexOf((int)x.Key)).ToDictionary(x => x.Key,x => x.Value);
+			//Create rows and cells for jobs of each category
 			foreach(KeyValuePair<JobCategory,List<Job>> kvp in dictCategories) {
-				List<Job> listJobsSorted=kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				if(!checkSubscribedIncludeOnHold.Checked) {
-					listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
-				}
-				listJobsSorted.RemoveAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.Subscriber && y.FKey==userFilter.UserNum));
+				List<Job> listJobsSorted=kvp.Value;
 				if(listJobsSorted.Count==0) {
 					continue;
 				}
 				gridSubscribedJobs.ListGridRows.Add(new GridRow("","","","",kvp.Key.ToString()) { ColorBackG=_colorGridHeaderBack,Bold=true });
 				foreach(Job job in listJobsSorted) {
-					Def jobPriority=_listJobPriorities.FirstOrDefault(y => y.DefNum==job.Priority);
-					string note=JobNotifications.GetNoteForChanges(job.ListJobNotifications.FirstOrDefault(x => x.UserNum==Security.CurUser.UserNum)?.Changes??JobNotificationChanges.None);
+					Def jobPriority=_listJobPriorities.Find(y => y.DefNum==job.Priority);
+					string note=JobNotifications.GetNoteForChanges(job.ListJobNotifications.Find(x=>x.UserNum==Security.CurUser.UserNum)?.Changes??JobNotificationChanges.None);
 					gridSubscribedJobs.ListGridRows.Add(
 						new GridRow(
 							new GridCell(jobPriority.ItemName),

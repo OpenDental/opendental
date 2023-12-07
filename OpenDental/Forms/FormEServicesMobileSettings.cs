@@ -64,7 +64,7 @@ namespace OpenDental {
 			}
 			//If there isn't a clinic selector, just close the form since they're done.
 			if(!PrefC.HasClinicsEnabled) {
-				DialogResult=DialogResult.OK;
+				DialogResult=DialogResult.OK;//see FormClosing
 				return;
 			}
 			_isNew=false;
@@ -83,7 +83,7 @@ namespace OpenDental {
 			}
 			catch (Exception e) {
 				MessageBox.Show(Lan.g(this,"There was an issue updating your account:")+" "+e.Message);
-				DialogResult=DialogResult.Cancel;
+				DialogResult=DialogResult.OK;//see FormClosing
 				return;
 			}
 			_mobileSettingsAuthOut.RegKeyNum=_mobileSettingsAuthIn.RegKeyNum;
@@ -194,7 +194,14 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private void FormEServicesMobileSettings_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
+		private void FormEServicesMobileSettings_FormClosing(object sender,FormClosingEventArgs e) {
+			//There are two places above where DialogResult is set to OK.
+			//In both cases, the original code was written to kick out here instead of checking CanDiscardChanges.
+			//So we are doing the same thing
+			if(DialogResult!=DialogResult.Cancel) {
+				return;
+			}
+			//Click X or Esc:
 			if(!CanDiscardChanges()) {
 				e.Cancel=true;
 			}

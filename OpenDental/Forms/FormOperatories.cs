@@ -146,6 +146,7 @@ namespace OpenDental{
 			operatory.IsNew=true;
 			if(PrefC.HasClinicsEnabled && !comboClinic.IsAllSelected && !comboClinic.IsNothingSelected) {
 				operatory.ClinicNum=comboClinic.ClinicNumSelected;
+				operatory.IsInHQView=false;
 			}
 			if(gridMain.SelectedIndices.Length>0){//a row is selected
 				operatory.ItemOrder=gridMain.SelectedIndices[0];

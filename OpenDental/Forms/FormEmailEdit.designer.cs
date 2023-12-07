@@ -170,7 +170,6 @@ namespace OpenDental{
 			this.Name = "FormEmailEdit";
 			this.Text = "Email HTML Edit";
 			this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormEmailEdit_CloseXClicked);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEmailEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormEmailEdit_Load);
 			this.SizeChanged += new System.EventHandler(this.FormEmailEdit_SizeChanged);

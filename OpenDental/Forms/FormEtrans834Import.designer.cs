@@ -139,7 +139,7 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEtrans834Import";
 			this.Text = "Import Ins Plans 834";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormEtrans834Import_CloseXClicked);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEtrans834Import_FormClosing);
 			this.Load += new System.EventHandler(this.FormEtrans834Import_Load);
 			this.ResumeLayout(false);
 

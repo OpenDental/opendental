@@ -153,7 +153,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormGradingScaleEdit_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
+		private void FormGradingScaleEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			if(DialogResult!=DialogResult.Cancel) {
+				return;
+			}
 			if(_gradingScale.IsNew) {
 				try {
 					GradingScales.Delete(_gradingScale.GradingScaleNum);

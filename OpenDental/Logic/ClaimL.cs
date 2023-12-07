@@ -68,7 +68,8 @@ namespace OpenDental {
 		public static bool WarnUsersForDuplicateClaimProcs(CreateClaimDataWrapper createClaimDataWrapper,bool isVerbose=true) {
 			List<long> listProcNums=new List<long>();
 			//Do not count 'Preauth' claimprocs as duplicates since these are expected to be present for the same insurance plan.
-			List<ClaimProc> listClaimProcsAvailable=createClaimDataWrapper.CreateClaimData_.ListClaimProcs.FindAll(x => x.Status!=ClaimProcStatus.Preauth);
+			List<ClaimProc> listClaimProcsAvailable=createClaimDataWrapper.CreateClaimData_.ListClaimProcs
+				.FindAll(x => x.Status!=ClaimProcStatus.Preauth && x.Status!=ClaimProcStatus.Supplemental);
 			//Only consider the claimprocs associated with the selected procedures (even if there are other procedures on the account with this problem).
 			List<CreateClaimItem> listCreateClaimItemsSelected=createClaimDataWrapper.ListCreateClaimItems.FindAll(x => x.IsSelected);
 			for(int i=0;i<listCreateClaimItemsSelected.Count;i++) {

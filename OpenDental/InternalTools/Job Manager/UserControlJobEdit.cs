@@ -429,8 +429,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void menuItemSubscribersUnlink_Click(object sender,EventArgs e) {
-			long FKey=gridSubscribers.SelectedTag<Userod>().UserNum;
-			RemoveJobLink(JobLinkType.Subscriber,FKey);
+			long FKey=gridSubscribers?.SelectedTag<Userod>()?.UserNum??0;
+			if(FKey>0) {
+				RemoveJobLink(JobLinkType.Subscriber,FKey);
+			}
 			FillGridWatchers();
 		}
 

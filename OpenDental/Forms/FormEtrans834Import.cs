@@ -193,7 +193,11 @@ namespace OpenDental {
 			Close();
 		}
 
-		private void FormEtrans834Import_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
+		private void FormEtrans834Import_FormClosing(object sender,FormClosingEventArgs e) {
+			//If user closed window with X or Esc, then DialogResult=DialogResult.None because this was launched with Show instead of ShowDialog.
+			if(DialogResult==DialogResult.OK) {
+				return;
+			}
 			if(_thread!=null) {
 				_thread.QuitAsync();
 			}

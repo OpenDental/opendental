@@ -158,6 +158,21 @@ namespace OpenDentBusiness{
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
 
+		public static void DeleteMany(List<long> listMobileAppDeviceNums) {
+			if(listMobileAppDeviceNums.IsNullOrEmpty()) {
+				return;
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listMobileAppDeviceNums);
+				return;
+			}
+			for(int i=0;i<listMobileAppDeviceNums.Count;i++) {
+				WebTypes.PushNotificationUtils.CI_IsAllowedChanged(listMobileAppDeviceNums[i],false); //deleting so always false
+			}
+			Crud.MobileAppDeviceCrud.DeleteMany(listMobileAppDeviceNums);
+			Signalods.SetInvalid(InvalidType.EClipboard);
+		}
+
 		#endregion Delete
 
 		///<summary>For any device whose clinic num is not in the list passed in, sets IsAllowed to false.</summary>

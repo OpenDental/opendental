@@ -20,12 +20,15 @@ namespace OpenDental {
 		private List<MobileAppDevice> _listMobileAppDevicesOld;
 		///<summary>List of mobile app devices.</summary>
 		private List<MobileAppDevice> _listMobileAppDevicesAll;
+		///<summary>List of MobileAppDeviceNums that will be deleted on save.</summary>
+		private List<long> _listMobileAppDeviceNums;
 
 		public FormEServicesMobileAppDeviceManage() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 			_clinicPrefHelper=new ClinicPrefHelper(PrefName.ODTouchDeviceLimit);
+			_listMobileAppDeviceNums=new List<long>();
 		}
 
 		private void FormEServicesMobileAppDeviceManage_Load(object sender,EventArgs e) {
@@ -118,11 +121,11 @@ namespace OpenDental {
 								" or wait until the patient is no longer using the device.");
 							return;
 						}
-						if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will immediately remove the device from the database and all other workstations." +
+						if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will remove the device from the database and all other workstations on Save." +
 							" Continue?")) {
 							return;
 						}
-						MobileAppDevices.Delete(gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
+						_listMobileAppDeviceNums.Add(gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
 						_listMobileAppDevicesAll.RemoveAll(x => x.MobileAppDeviceNum==gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
 						FillGridMobileAppDevices();
 					}
@@ -226,6 +229,7 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
+			MobileAppDevices.DeleteMany(_listMobileAppDeviceNums);
 			_listMobileAppDevicesAll.ForEach(x => MobileAppDevices.Update(x));
 			DialogResult=DialogResult.OK;
 		}

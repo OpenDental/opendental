@@ -563,14 +563,12 @@ namespace OpenDental {
 			Close();
 		}
 
-		private void FormEmailEdit_CloseXClicked(object sender,System.ComponentModel.CancelEventArgs e) {
-			//FormCloseXClicked is hit first so we can set this here.
-			_isInvalidPreview=false;//we don't care if it's invalid if they are cancelling.
-		}
-
 		private void FormEmailEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			if(DialogResult==DialogResult.Cancel) {
+				return;
+			}
 			if(_isInvalidPreview) {
-				e.Cancel=true;//don't close the form if there are errors (prevents OK click and the top right X)
+				e.Cancel=true;//don't close the form if there are errors (prevents OK click)
 			}
 		}
 

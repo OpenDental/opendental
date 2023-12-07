@@ -408,11 +408,8 @@ namespace OpenDental {
 			}
 		}
 		
-		///<summary>Currently just appends an autograph to the bottom of the email message.  When the functionality to reply to emails is implemented, 
-		///this will need to be modified so that it inserts the autograph text at the bottom of the new message being composed, but above the message
-		///history.</summary>
 		private void InsertAutograph(EmailAutograph emailAutograph) {
-			emailPreview.BodyText+="\r\n\r\n"+emailAutograph.AutographText;
+			emailPreview.BodyText=EmailMessages.InsertAutograph(emailPreview.BodyText,emailAutograph);
 		}
 
 		/// <summary>Returns true if the given EmailAutograph contains HTML tags, false otherwise. </summary>

@@ -197,7 +197,7 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesMobileSettings";
 			this.Text = "Mobile Settings";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormEServicesMobileSettings_CloseXClicked);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEServicesMobileSettings_FormClosing);
 			this.Load += new System.EventHandler(this.FormEServicesMobileSettings_Load);
 			this.groupAccountRecovery.ResumeLayout(false);
 			this.groupAccountRecovery.PerformLayout();
