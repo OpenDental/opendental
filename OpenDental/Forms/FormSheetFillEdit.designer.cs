@@ -56,6 +56,8 @@ namespace OpenDental{
 			this.checkSaveToImages = new OpenDental.UI.CheckBox();
 			this.butAddField = new OpenDental.UI.Button();
 			this.timerTextChanged = new System.Windows.Forms.Timer(this.components);
+			this.butReduceFontSize = new OpenDental.UI.Button();
+			this.butFontAbout = new OpenDental.UI.Button();
 			this.panelScroll.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -360,9 +362,34 @@ namespace OpenDental{
 			this.timerTextChanged.Interval = 3000;
 			this.timerTextChanged.Tick += new System.EventHandler(this.timerTextChanged_Tick);
 			// 
+			// butReduceFontSize
+			// 
+			this.butReduceFontSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butReduceFontSize.Location = new System.Drawing.Point(621, 646);
+			this.butReduceFontSize.Name = "butReduceFontSize";
+			this.butReduceFontSize.Size = new System.Drawing.Size(98, 24);
+			this.butReduceFontSize.TabIndex = 108;
+			this.butReduceFontSize.Text = "Reduce Font Size";
+			this.butReduceFontSize.UseVisualStyleBackColor = true;
+			this.butReduceFontSize.Click += new System.EventHandler(this.butReduceFontSize_Click);
+			// 
+			// butFontAbout
+			// 
+			this.butFontAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butFontAbout.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+			this.butFontAbout.Location = new System.Drawing.Point(722, 646);
+			this.butFontAbout.Name = "butFontAbout";
+			this.butFontAbout.Size = new System.Drawing.Size(24, 24);
+			this.butFontAbout.TabIndex = 109;
+			this.butFontAbout.Text = "?";
+			this.butFontAbout.UseVisualStyleBackColor = true;
+			this.butFontAbout.Click += new System.EventHandler(this.butFontAbout_Click);
+			// 
 			// FormSheetFillEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(887, 712);
+			this.Controls.Add(this.butFontAbout);
+			this.Controls.Add(this.butReduceFontSize);
 			this.Controls.Add(this.butAddField);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
@@ -427,5 +454,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkSaveToImages;
 		private UI.Button butAddField;
 		private System.Windows.Forms.Timer timerTextChanged;
+		private UI.Button butReduceFontSize;
+		private UI.Button butFontAbout;
 	}
 }

@@ -496,7 +496,10 @@ namespace OpenDental {
 			}
 			if(IsCareCreditTransStatusCompleted(careCreditWebResponse)) {
 				if(careCreditWebResponse.TransType==CareCreditTransType.Purchase) {
-					_payment.PayNote=_payment.PayNote+"\r\n"+CareCredit.GetFormattedNote(careCreditWebResponse);
+					if(_payment.PayNote!=""){
+						_payment.PayNote+="\r\n";
+					}
+					_payment.PayNote+=CareCredit.GetFormattedNote(careCreditWebResponse);
 					_payment.PaymentSource=CreditCardSource.CareCredit;
 					_payment.IsCcCompleted=true;
 					_payment.MerchantFee=CareCredit.GetMerchantFee(careCreditWebResponse);

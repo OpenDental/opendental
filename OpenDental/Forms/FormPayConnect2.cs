@@ -264,7 +264,7 @@ namespace OpenDental {
 			bool wasSigned=false;
 			if(TransType==transType.SALE || TransType==transType.AUTH) {
 				PayConnect2Response signatureResponse=SendSignature();
-				if(signatureResponse!=null && signatureResponse.SignatureResponse!=null && signatureResponse.SignatureResponse.Status=="0") {
+				if(signatureResponse!=null && signatureResponse.SignatureResponse!=null && signatureResponse.SignatureResponse.Status=="Processed") {
 					wasSigned=true;
 				}
 			}

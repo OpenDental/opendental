@@ -1298,13 +1298,6 @@ namespace OpenDentBusiness {
 		#endregion AuditTrail, AutoCode, Automation-----------------------------------------------------------------------------------------------------
 		#region Benefit, BillingType--------------------------------------------------------------------------------------------------------------------
 
-		/***************************************************************************************************
-		 * The following benefit DBM methods BenefitsWithExactDuplicatesForInsPlan and BenefitsWithPartialDuplicatesForInsPlan have been removed.
-		 * These methods do not support the new benefit.CodeGroupNum column which causes problems.
-		 *  - BenefitsWithExactDuplicatesForInsPlan deletes valid benefits.
-		 *  - BenefitsWithPartialDuplicatesForInsPlan warns the user to go manually fix valid benefits.
-		 * Time is needed to research these DBM methods and determine if they are still necessary.
-
 		///<summary>Remove duplicates where all benefit columns match except for BenefitNum.</summary>
 		[DbmMethodAttr]
 		public static string BenefitsWithExactDuplicatesForInsPlan(bool verbose,DbmMode modeCur) {
@@ -1318,12 +1311,12 @@ namespace OpenDentBusiness {
 				case DbmMode.Check:
 					command="SELECT COUNT(*) DuplicateCount FROM "  // Do a sub-select to get the count - for some reason it's much faster
 						+"(SELECT DISTINCT ben2.BenefitNum FROM "
-						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, COUNT(*) FROM "
-						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel "
+						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, COUNT(*) FROM "
+						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum "
 						+"FROM benefit ORDER BY BenefitNum ASC) ben3 "
-						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel "
+						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum "
 						+"HAVING COUNT(*) > 1) ben "
-						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel FROM benefit) ben2 "  // select the specific columns we want - selecting the whole table takes 4x longer for some reason
+						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum FROM benefit) ben2 "  // select the specific columns we want - selecting the whole table takes 4x longer for some reason
 						+"ON ben.PlanNum=ben2.PlanNum "
 						+"AND ben.PatPlanNum=ben2.PatPlanNum "
 						+"AND ben.CovCatNum=ben2.CovCatNum "
@@ -1335,6 +1328,7 @@ namespace OpenDentBusiness {
 						+"AND ben.Quantity=ben2.Quantity "
 						+"AND ben.CodeNum=ben2.CodeNum "
 						+"AND ben.CoverageLevel=ben2.CoverageLevel "
+						+"AND ben.CodeGroupNum=ben2.CodeGroupNum "
 						+"AND ben.BenefitNum!=ben2.BenefitNum) ben4";  //This ensures that the benefit with the lowest primary key in the match will not be counted.
 					int numFound=PIn.Int(Db.GetCount(command));
 					if(numFound>0 || verbose) {
@@ -1343,12 +1337,12 @@ namespace OpenDentBusiness {
 					break;
 				case DbmMode.Fix:
 					command="SELECT DISTINCT ben2.BenefitNum FROM "
-						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, COUNT(*) "
-						+"FROM (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel FROM benefit "
+						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, COUNT(*) "
+						+"FROM (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum FROM benefit "
 						+"ORDER BY BenefitNum ASC) ben3 "
-						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel "
+						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum "
 						+"HAVING COUNT(*) > 1) ben "
-						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel FROM benefit) ben2 "
+						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum FROM benefit) ben2 "
 						+"ON ben.PlanNum=ben2.PlanNum "
 						+"AND ben.PatPlanNum=ben2.PatPlanNum "
 						+"AND ben.CovCatNum=ben2.CovCatNum "
@@ -1360,17 +1354,24 @@ namespace OpenDentBusiness {
 						+"AND ben.Quantity=ben2.Quantity "
 						+"AND ben.CodeNum=ben2.CodeNum "
 						+"AND ben.CoverageLevel=ben2.CoverageLevel "
+						+"AND ben.CodeGroupNum=ben2.CodeGroupNum "
 						+"AND ben.BenefitNum!=ben2.BenefitNum";  //This ensures that the benefit with the lowest primary key in the match will not be deleted.
 					table=Db.GetTable(command);
+					string methodName=MethodBase.GetCurrentMethod().Name;
+					List<DbmLog> listDbmlogs=new List<DbmLog>();
 					List<long> listBenefitNums=new List<long>();
 					if(table.Rows.Count>0 || verbose) {
 						for(int i = 0;i<table.Rows.Count;i++) {
-							listBenefitNums.Add(PIn.Long(table.Rows[i]["BenefitNum"].ToString()));
+							long benefitNum=PIn.Long(table.Rows[i]["BenefitNum"].ToString());
+							listBenefitNums.Add(benefitNum);
+							DbmLog dbmLog=new DbmLog(Security.CurUser.UserNum,benefitNum,DbmLogFKeyType.Benefit,DbmLogActionType.Delete,methodName,"Deleted duplicate benefit.");
+							listDbmlogs.Add(dbmLog);
 						}
 						long numFixed=0;
 						if(listBenefitNums.Count>0) {
 							command="DELETE FROM benefit WHERE BenefitNum IN ("+string.Join(",",listBenefitNums)+")";
 							numFixed=PIn.Long(Db.NonQ(command).ToString());
+							Crud.DbmLogCrud.InsertMany(listDbmlogs);
 						}
 						log+=Lans.g("FormDatabaseMaintenance","Duplicate benefits deleted")+": "+numFixed.ToString()+"\r\n";
 					}
@@ -1398,6 +1399,7 @@ namespace OpenDentBusiness {
 					+"AND ben.QuantityQualifier=ben2.QuantityQualifier "
 					+"AND ben.Quantity=ben2.Quantity "
 					+"AND ben.CodeNum=ben2.CodeNum "
+					+"AND ben.CodeGroupNum=ben2.CodeGroupNum "
 					+"AND ben.CoverageLevel=ben2.CoverageLevel "
 					+"AND ben.BenefitNum<ben2.BenefitNum "
 				+"INNER JOIN insplan ON insplan.PlanNum=ben.PlanNum "
@@ -1450,8 +1452,6 @@ namespace OpenDentBusiness {
 			}
 			return log;
 		}
-
-		**************************************************************************************************/
 
 		[DbmMethodAttr(IsReplicationUnsafe=true)]
 		public static string BillingTypesInvalid(bool verbose,DbmMode modeCur) {

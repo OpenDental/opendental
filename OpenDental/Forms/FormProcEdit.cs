@@ -1825,7 +1825,10 @@ namespace OpenDental {
 			}
 			if(!PrefC.GetBool(PrefName.ProcPromptForAutoNote)) {
 				//Users do not want to be prompted for auto notes, so remove them all from the procedure note.
-				textNotes.Text=Regex.Replace(textNotes.Text,@"\[\[.+?\]\]","");
+				string newNote=Regex.Replace(textNotes.Text,@"\[\[.+?\]\]","");
+				if(textNotes.Text!=newNote) {
+					textNotes.Text=newNote;
+				}
 			}
 		}
 
