@@ -915,7 +915,14 @@ namespace OpenDental {
 			//But putting PanelBorders.Invalidate() after SetDesktopBounds below does not cause flicker
 			#endregion Button Hover Effects
 			#region Taskbar
-			if(WindowState==FormWindowState.Maximized && e.Y>Height-MaxInset()-2){
+			if(WindowState==FormWindowState.Maximized && e.Y>=Height-16){
+				//Check if e.y is at 1080 pixels, or the bottom of the screen
+				//Jordan-I don't understand this math, but the comments are here for future use.
+				//Example: FormODBase's height=1096, which is 1080 + 8 on top and 8 on bottom for boarders, and FormODBase.Bounds.Y's starting location is -8 which means it's bottom location is 1088.
+				//PanelBorders.Height=1081, starting location is 7 therefore the bottom location is 1088 as well
+				//MouseMove will fire at e.y=1080 inside of PanelBorders as this is technically 1088 inside of FormODBase
+				//Equation=e.Y picked up at 1080 and must be greater than or equal to FormODBase.Height 1096-16 pixels (-8 for top and bottom)
+				//Over in UIManager.LayoutFormBoundsAndFonts, PanelClient and PanelBorders get set to allow this section to be hit.
 				IntPtr hWnd=FindWindow("Shell_TrayWnd", "");
 				if(hWnd!=IntPtr.Zero){
 					APPBARDATA appBarData = new APPBARDATA();

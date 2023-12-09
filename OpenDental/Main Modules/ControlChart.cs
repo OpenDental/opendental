@@ -5371,6 +5371,10 @@ namespace OpenDental {
 			if(_isDistributorKey) {
 				FillCustomerTab();
 			}
+			ChartView chartViewDisplayOld=null;
+			if(_chartViewDisplay!=null) {
+				chartViewDisplayOld=_chartViewDisplay.Copy();
+			}
 			if(textSearch.Text!="") {
 				_listDataRowsSearchResults?.Clear();
 				_listDataRowsSearchResults=null;
@@ -5378,6 +5382,14 @@ namespace OpenDental {
 			}
 			else {
 				Logger.LogAction("FillProgNotes",LogPath.ChartModule,() => FillProgNotes(isRefreshData: false));
+			}
+			int selectedIndex=-1;
+			if(chartViewDisplayOld!=null) {
+				selectedIndex=_listChartViews.FindIndex(x=> x.ChartViewNum==chartViewDisplayOld.ChartViewNum);
+			}
+			gridChartViews.SetSelected(selectedIndex,true);
+			if(_isDistributorKey) {
+				gridCustomerViews.SetSelected(selectedIndex,true);
 			}
 			Logger.LogAction("FillPlanned",LogPath.ChartModule,() => FillPlanned());
 			Logger.LogAction("FillPtInfo",LogPath.ChartModule,() => FillPtInfo(false));

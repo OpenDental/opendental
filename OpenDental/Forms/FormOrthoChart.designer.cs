@@ -31,11 +31,10 @@ namespace OpenDental{
 			this.tabPage1 = new OpenDental.UI.TabPage();
 			this.tabPage2 = new OpenDental.UI.TabPage();
 			this.signatureBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
-			this.butOK = new OpenDental.UI.Button();
+			this.butSave = new OpenDental.UI.Button();
 			this.butAudit = new OpenDental.UI.Button();
 			this.butUseAutoNote = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
-			this.butCancel = new OpenDental.UI.Button();
 			this.gridPat = new OpenDental.UI.GridOD();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butChangeUser = new OpenDental.UI.Button();
@@ -119,16 +118,16 @@ namespace OpenDental{
 			this.signatureBoxWrapper.ClearSignatureClicked += new System.EventHandler(this.signatureBoxWrapper_ClearSignatureClicked);
 			this.signatureBoxWrapper.SignTopazClicked += new System.EventHandler(this.signatureBoxWrapper_SignTopazClicked);
 			// 
-			// butOK
+			// butSave
 			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(846, 654);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 109;
-			this.butOK.Text = "OK";
-			this.butOK.UseVisualStyleBackColor = true;
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butSave.Location = new System.Drawing.Point(927, 656);
+			this.butSave.Name = "butSave";
+			this.butSave.Size = new System.Drawing.Size(75, 24);
+			this.butSave.TabIndex = 109;
+			this.butSave.Text = "Save";
+			this.butSave.UseVisualStyleBackColor = true;
+			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
 			// butAudit
 			// 
@@ -160,17 +159,6 @@ namespace OpenDental{
 			this.butAdd.Text = "Add Row";
 			this.butAdd.UseVisualStyleBackColor = true;
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
-			// 
-			// butCancel
-			// 
-			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(927, 654);
-			this.butCancel.Name = "butCancel";
-			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 7;
-			this.butCancel.Text = "Cancel";
-			this.butCancel.UseVisualStyleBackColor = true;
-			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridPat
 			// 
@@ -332,8 +320,7 @@ namespace OpenDental{
 			this.Controls.Add(this.buttonTakeControl);
 			this.Controls.Add(this.labelLocked);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butCancel);
-			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butSave);
 			this.Controls.Add(this.labelPermAlert);
 			this.Controls.Add(this.butChangeUser);
 			this.Controls.Add(this.textUser);
@@ -351,7 +338,6 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoChart";
 			this.Text = "Ortho Chart";
-			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormOrthoChart_CloseXClicked);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormOrthoChart_FormClosing);
 			this.Load += new System.EventHandler(this.FormOrthoChart_Load);
 			this.tabControl.ResumeLayout(false);
@@ -363,12 +349,11 @@ namespace OpenDental{
 		#endregion
 
 		private UI.Button butAdd;
-		private UI.Button butCancel;
 		private UI.GridOD gridPat;
 		private UI.GridOD gridMain;
 		private UI.Button butUseAutoNote;
 		private UI.Button butAudit;
-		private UI.Button butOK;
+		private UI.Button butSave;
 		private UI.SignatureBoxWrapper signatureBoxWrapper;
 		private OpenDental.UI.TabControl tabControl;
 		private OpenDental.UI.TabPage tabPage1;
