@@ -591,6 +591,7 @@ namespace OpenDental {
 			Sheets.SetPageMargin(SheetCur,_marginsPrint);
 			if(SheetCur.IsNew) {
 				butReduceFontSize.Visible=false;
+				butFontAbout.Visible=false;
 			}
 			if(IsInTerminal) {
 				labelDateTime.Visible=false;

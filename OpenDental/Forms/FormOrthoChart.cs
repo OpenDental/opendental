@@ -81,7 +81,7 @@ namespace OpenDental {
 				butDelete.Enabled=false;
 				labelLocked.Visible=false;
 				buttonTakeControl.Visible=false;
-				butOK.Enabled=false;
+				butSave.Enabled=false;
 				gridPat.Enabled=false;
 				gridOrtho.Enabled=false;
 				gridMain.AllowSelection=false;
@@ -241,7 +241,7 @@ namespace OpenDental {
 			butAdd.Visible=false;
 			butUseAutoNote.Visible=false;
 			butDelete.Visible=false;
-			butOK.Enabled=false;
+			butSave.Enabled=false;
 			buttonTakeControl.Visible=true;
 		}
 
@@ -252,7 +252,7 @@ namespace OpenDental {
 			butAdd.Visible=true;
 			butUseAutoNote.Visible=true;
 			butDelete.Visible=true;
-			butOK.Enabled=true;
+			butSave.Enabled=true;
 			buttonTakeControl.Visible=false;
 		}
 
@@ -1231,7 +1231,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butOK_Click(object sender,EventArgs e) {
+		private void butSave_Click(object sender,EventArgs e) {
 			//The only way you can click ok is if you have a lock control.
 			PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
 			if(!_hasChanged && !signatureBoxWrapper.SigChanged) {
@@ -1279,33 +1279,22 @@ namespace OpenDental {
 			}
 		}
 
-		private void butCancel_Click(object sender,EventArgs e) {
-			if(_isLockedByMe) {
-				PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
-				DeleteRowsIfEmpty();
-			}
-			DialogResult=DialogResult.Cancel;
-		}
-
-		private void FormOrthoChart_CloseXClicked(object sender, CancelEventArgs e){
-			if(_isReadOnly){//Form was opened in read only mode so don't warn about unsaved changes.
-				DialogResult=DialogResult.Cancel;
-				return;
-			}
-			if(_hasChanged || signatureBoxWrapper.SigChanged){
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Unsaved changes will be lost.")) {
-					e.Cancel=true;
+		private void FormOrthoChart_FormClosing(object sender,FormClosingEventArgs e) {
+			if(DialogResult==DialogResult.Cancel) {
+				if(_isReadOnly){//Form was opened in read only mode so don't warn about unsaved changes.
 					return;
 				}
+				if(_hasChanged || signatureBoxWrapper.SigChanged){
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Unsaved changes will be lost.")) {
+						e.Cancel=true;
+						return;
+					}
+				}
+				if(_isLockedByMe) {
+					PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
+					DeleteRowsIfEmpty();
+				}
 			}
-			if(_isLockedByMe) {
-				PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
-				DeleteRowsIfEmpty();
-			}
-			DialogResult=DialogResult.Cancel;//to signal to FormClosing that this was a user action
-		}
-
-		private void FormOrthoChart_FormClosing(object sender,FormClosingEventArgs e) {
 			signatureBoxWrapper?.SetTabletState(0);
 			if(DialogResult!=DialogResult.None){
 				return;
