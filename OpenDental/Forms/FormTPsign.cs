@@ -26,6 +26,7 @@ namespace OpenDental{
 		public PrintDocument PrintDocumentCur;
 		private bool _sigChanged;
 		public TreatPlan TreatPlanCur;
+		private TreatPlan _treatPlanOld;
 		///<summary>Must be sorted by primary key.</summary>
 		private List<ProcTP> _listProcTPs;
 		//private bool allowTopaz;
@@ -45,6 +46,7 @@ namespace OpenDental{
 		}
 
 		private void FormTPsign_Load(object sender, System.EventArgs e) {
+			_treatPlanOld=TreatPlanCur.Copy();
 			//this window never comes up for new TP.  Always saved ahead of time.
 			if(!Security.IsAuthorized(Permissions.TreatPlanSign,TreatPlanCur.DateTP)) {
 				butOK.Enabled=false;
@@ -388,7 +390,7 @@ namespace OpenDental{
 
 		private void butOK_Click(object sender,EventArgs e) {
 			SaveSignature();//"saves" signature to TPCur, does not save to DB.
-			TreatPlans.Update(TreatPlanCur);//save signature to DB.
+			TreatPlans.Update(TreatPlanCur,_treatPlanOld);//save signature to DB.
 			TreatPlanCur.ListProcTPs=ProcTPs.RefreshForTP(TreatPlanCur.TreatPlanNum);
 			if(DoPrintUsingSheets) {
 				SheetParameter.SetParameter(SheetTP,"TreatPlan",TreatPlanCur); //update TP on sheet to have new signature for generating pdfs

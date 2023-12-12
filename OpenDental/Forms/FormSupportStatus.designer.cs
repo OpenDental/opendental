@@ -97,7 +97,7 @@ namespace OpenDental{
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(235, 21);
 			this.label2.TabIndex = 8;
-			this.label2.Text = "Access to Help, 3D ToothChart, and Imaging:";
+			this.label2.Text = "Access to Help and Imaging:";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// FormSupportStatus
