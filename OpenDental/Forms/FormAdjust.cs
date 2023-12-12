@@ -288,7 +288,7 @@ namespace OpenDental {
 			if(Security.IsGlobalDateLock(EnumPermType.AdjustmentEdit,textAdjDate.Value)) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,textAdjDate.Value,false)) {
+			if(IsNew && !Security.IsAuthorized(EnumPermType.AdjustmentCreate,textAdjDate.Value,false)) {
 				return;
 			}
 			bool isDiscountPlanAdj=(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="dp");

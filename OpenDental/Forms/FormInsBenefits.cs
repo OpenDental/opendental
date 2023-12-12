@@ -1516,6 +1516,7 @@ namespace OpenDental {
 			benefitNew.PatPlanNum=0;
 			if(isPatOverride) {
 				benefitNew.PatPlanNum=_patPlanNum;
+				benefitNew.PlanNum=0;
 			} 
 			benefitNew.SetFrequencyOption((FrequencyOptions)indexComboFrequency,checkCalendarYear.Checked);
 			benefitNew.TreatArea=(TreatmentArea)indexComboTreatArea;

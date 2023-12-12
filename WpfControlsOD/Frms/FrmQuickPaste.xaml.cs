@@ -42,7 +42,7 @@ namespace OpenDental {
 		}
 
 		private void FormQuickPaste_Load(object sender, EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AutoNoteQuickNoteEdit,true)) {
+			if(!Security.IsAuthorized(EnumPermType.AutoNoteQuickNoteEdit,true) || IsSelectionMode) {
 				butAddCat.IsEnabled=false;
 				butDeleteCat.IsEnabled=false;
 				butAddNote.IsEnabled=false;
@@ -217,6 +217,7 @@ namespace OpenDental {
 			QuickPasteNote quickPasteNote=new QuickPasteNote();
 			quickPasteNote.QuickPasteCatNum=_listQuickPasteCats[listCat.SelectedIndex].QuickPasteCatNum;
 			FrmQuickPasteNoteEdit frmQuickPasteNoteEdit=new FrmQuickPasteNoteEdit(quickPasteNote);
+			frmQuickPasteNoteEdit.IsReadOnly=IsSelectionMode;
 			frmQuickPasteNoteEdit.ShowDialog();
 			if(frmQuickPasteNoteEdit.IsDialogOK==false || frmQuickPasteNoteEdit.QuickPasteNoteCur==null) {//Deleted
 				return;
@@ -242,6 +243,7 @@ namespace OpenDental {
 
 		private void ShowEditWindow(QuickPasteNote quickPasteNote) {
 			FrmQuickPasteNoteEdit frmQuickPasteNoteEdit=new FrmQuickPasteNoteEdit((QuickPasteNote)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag);
+			frmQuickPasteNoteEdit.IsReadOnly=IsSelectionMode;
 			frmQuickPasteNoteEdit.ShowDialog();
 			if(frmQuickPasteNoteEdit.IsDialogOK==false) {
 				return;

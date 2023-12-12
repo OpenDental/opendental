@@ -348,13 +348,13 @@ namespace OpenDentBusiness{
 		///Unlike other permissions, if this permission node isn't checked then a user is not barred from creating this specific adjustment type</summary>
 		public static bool HasPermissionForAdjType(Def adjTypeDef,bool suppressMessage = true) {
 			List<UserGroup> listUserGroupsAdjTypeDeny=UserGroups.GetForPermission(EnumPermType.AdjustmentTypeDeny);
-			List<UserGroup> listUserGroupsForUser=UserGroups.GetForUser(Security.CurUser.UserNum, (Security.CurUser.UserNumCEMT!=0))
-				.FindAll(x => listUserGroupsAdjTypeDeny.Any(y => y.UserGroupNum==x.UserGroupNum));
-			List<long> listUserGroupNums=listUserGroupsForUser.Select(x => x.UserGroupNum).ToList();
+			List<UserGroup> listUserGroupsForUser=UserGroups.GetForUser(Security.CurUser.UserNum, (Security.CurUser.UserNumCEMT!=0));
+			List<UserGroup> listUserGroupsForUserWithAdjTypeDeny=listUserGroupsForUser.FindAll(x => listUserGroupsAdjTypeDeny.Any(y => y.UserGroupNum==x.UserGroupNum));
+			List<long> listUserGroupNums=listUserGroupsForUserWithAdjTypeDeny.Select(x => x.UserGroupNum).ToList();
 			List<GroupPermission> listGroupPermissions=GetForUserGroups(listUserGroupNums, EnumPermType.AdjustmentTypeDeny)
 				.FindAll(x => x.FKey==adjTypeDef.DefNum || x.FKey==0);// Fkey of 0 means all adjTypeDefs were selected
 			//Return true when not all the user's groups with AdjustmentTypeDeny have the adjTypeDef.DefNum checked or have the Fkey value of 0 so the adjustment is not blocked.
-			if(listGroupPermissions.IsNullOrEmpty() || listGroupPermissions.Count!=listUserGroupNums.Count ) {
+			if(listGroupPermissions.IsNullOrEmpty() || listGroupPermissions.Count!=listUserGroupsForUser.Count ) {
         return true;
 			}
 			if(suppressMessage) {

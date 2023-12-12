@@ -980,6 +980,9 @@ namespace OpenDentBusiness{
 		///<summary>Builds WHERE clauses appropriate to the task filters that are applied.  Returns empty string if not filtering.</summary>
 		private static string BuildFilterWhereClause(long currentUserNum,List<long> listClinicNumsFilter=null,
 			List<long> listDefNumsRegionFilter=null,DateTime dateStartFilter=new DateTime(),DateTime dateEndFilter=new DateTime(),Patient patientFilter=null) {
+			if(currentUserNum==0) {//The currentUserNum will be zero when merging patients; cannot build the filter without a valid patnum
+				return "";
+			}
 			if(listClinicNumsFilter==null) {
 				listClinicNumsFilter=new List<long>();
 			}

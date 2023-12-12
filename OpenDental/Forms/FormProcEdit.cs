@@ -2644,7 +2644,10 @@ namespace OpenDental {
 			if(!_isQuickAdd){
 				if(_procedure.ProcStatus==ProcStat.C 
 					|| (_procedure.ProcStatus==ProcStat.TP && _procedure.Note=="")){
-					textNotes.Text=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);
+					string procNotes=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);
+					if (textNotes.Text!=procNotes) {
+						textNotes.Text=procNotes;
+					}
 				}
 			}
 			SaveAndClose();

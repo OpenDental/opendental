@@ -464,7 +464,13 @@ namespace OpenDentBusiness {
 		///<summary>Returns true if the database hosted by Open Dental.</summary>
 		public static bool IsCloudMode {
 			get {
-				return PrefC.GetInt(PrefName.DatabaseMode)==(int)DatabaseModeEnum.Cloud;
+				try {
+					return PrefC.GetInt(PrefName.DatabaseMode)==(int)DatabaseModeEnum.Cloud;
+				}
+				catch(Exception ex) {
+					ex.DoNothing();//This method might get called before the DatabaseMode preference is added.
+					return false;
+				}
 			}
 		}
 

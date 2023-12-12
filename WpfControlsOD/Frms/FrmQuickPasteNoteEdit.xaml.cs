@@ -14,6 +14,7 @@ namespace OpenDental {
 	/// <summary> </summary>
 	public partial class FrmQuickPasteNoteEdit : FrmODBase {
 		public QuickPasteNote QuickPasteNoteCur;
+		public bool IsReadOnly;
 
 		///<summary></summary>
 		public FrmQuickPasteNoteEdit(QuickPasteNote quickPasteNote){
@@ -28,7 +29,7 @@ namespace OpenDental {
 		}
 
 		private void FrmQuickPasteNoteEdit_Load(object sender, EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AutoNoteQuickNoteEdit,true)) {
+			if(!Security.IsAuthorized(EnumPermType.AutoNoteQuickNoteEdit,true) || IsReadOnly) {
 				textAbbreviation.ReadOnly=true;
 				textNote.ReadOnly=true;
 				butDelete.IsEnabled=false;

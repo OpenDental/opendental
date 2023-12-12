@@ -115,7 +115,6 @@ namespace OpenDental{
 			this.groupChargeFrequency.Name = "groupChargeFrequency";
 			this.groupChargeFrequency.Size = new System.Drawing.Size(495, 114);
 			this.groupChargeFrequency.TabIndex = 19;
-			this.groupChargeFrequency.TabStop = true;
 			this.groupChargeFrequency.Text = "Charge Frequency";
 			// 
 			// comboDays
@@ -237,7 +236,6 @@ namespace OpenDental{
 			this.groupProcedures.Name = "groupProcedures";
 			this.groupProcedures.Size = new System.Drawing.Size(493, 142);
 			this.groupProcedures.TabIndex = 26;
-			this.groupProcedures.TabStop = true;
 			this.groupProcedures.Text = "Authorized Procedures";
 			this.groupProcedures.Visible = false;
 			// 
@@ -314,7 +312,6 @@ namespace OpenDental{
 			this.groupRecurringCharges.Name = "groupRecurringCharges";
 			this.groupRecurringCharges.Size = new System.Drawing.Size(495, 235);
 			this.groupRecurringCharges.TabIndex = 7;
-			this.groupRecurringCharges.TabStop = true;
 			this.groupRecurringCharges.Text = "Authorized Recurring Charges";
 			// 
 			// textDateStop
@@ -400,9 +397,9 @@ namespace OpenDental{
 			// checkChrgWithNoBal
 			// 
 			this.checkChrgWithNoBal.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkChrgWithNoBal.Location = new System.Drawing.Point(322, 17);
+			this.checkChrgWithNoBal.Location = new System.Drawing.Point(302, 17);
 			this.checkChrgWithNoBal.Name = "checkChrgWithNoBal";
-			this.checkChrgWithNoBal.Size = new System.Drawing.Size(128, 26);
+			this.checkChrgWithNoBal.Size = new System.Drawing.Size(148, 26);
 			this.checkChrgWithNoBal.TabIndex = 15;
 			this.checkChrgWithNoBal.Text = "Run charge even if no family balance present";
 			// 

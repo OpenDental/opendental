@@ -47,7 +47,7 @@ namespace OpenDental {
 			gridRemainTimeUnits.Columns.Add(col);
 			col=new GridColumn(Lan.g(gridRemainTimeUnits.TranslationName,"Used"),60,HorizontalAlignment.Center);
 			gridRemainTimeUnits.Columns.Add(col);
-			col=new GridColumn(Lan.g(gridRemainTimeUnits.TranslationName,"Remaining"),60,HorizontalAlignment.Center);
+			col=new GridColumn(Lan.g(gridRemainTimeUnits.TranslationName,"Remaining"),67,HorizontalAlignment.Center);
 			gridRemainTimeUnits.Columns.Add(col);
 			gridRemainTimeUnits.EndUpdate();
 		}

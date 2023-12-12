@@ -86,6 +86,12 @@ namespace OpenDental{
 				MsgBox.Show(this,"Unable to connect to AvaTax API.");
 				return;
 			}
+			Prefs.RefreshCache();
+			//If aging is still running, then AgingBeginDateTime will have a value in it, otherwise if aging is not running, AgingBeginDateTime will be DateTime.MinVal due to GetDateT.
+			if(PrefC.GetDateT(PrefName.AgingBeginDateTime)>DateTime.MinValue){
+				MsgBox.Show(this, "Aging is already running. Repeat Charges cannot run until aging finishes. If you believe the current aging process has finished, a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General and pressing the 'Clear' button.");
+				return;
+			}
 			Cursor=Cursors.WaitCursor;
 			RepeatChargeResult repeatChargeResult=RepeatCharges.RunRepeatingCharges(MiscData.GetNowDateTime(),checkRunAging.Checked);
 			string metrics=repeatChargeResult.ProceduresAddedCount+" "+Lan.g(this,"procedures added.")+"\r\n"+repeatChargeResult.ClaimsAddedCount+" "

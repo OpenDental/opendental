@@ -737,8 +737,16 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 					x: 0,
 					y: hTitle+widthBorder,
 					width: formODBase.Width-widthBorder*2,
-					height: formODBase.Height-hTitle-widthBorder*2);
-				formODBase.PanelBorders.Bounds=new Rectangle(-1,widthBorder-1,formODBase.Width-widthBorder*2+1,formODBase.Height-widthBorder);
+					height: formODBase.Height-hTitle-widthBorder*2-1); 
+				//FormODBase window height - title 26 - 8 top/bottom - 1
+				//The 1 pixel must be exposed for PanelBorders_MouseMove to get hit.
+				//130 lines into that method, there is a section that allows an autohide taskbar to be activated.
+				//Jordan-I don't understand this math, but the comments are here for future use.
+				//FormODBase.PanelClient was covering the entire screen, this Z axis overlap was preventing formODBase.PanelBorders.Bounds's event PanelBorders_MouseMove from firing.  So we first need to remove 1 pixel from formODBase.PanelClient's height, then we need to ensure that formODBase.PanelBorders is at least 1 pixel taller so that the bottom pixel is exposed and therefore hoverable for the event.
+				//Equation=PanelClient.Height 1053 + y (starting location of title 26 + 8) = 1087 bottom location
+				//PanelBorders starting location equals widthborder 8-1 or 7
+				//PanelBorders needs a bottom of 1088. Set height equal to PanelBorders bottom 1087 - 6 pixles since PanelBorders starts at y=7 and needs to be 1 pixel taller than PanelClient 1081+7=1088 bottom location.  Now PanelBorders and FormODBase share the same bottom location.
+				formODBase.PanelBorders.Bounds=new Rectangle(-1,widthBorder-1,formODBase.Width-widthBorder*2+1,formODBase.PanelClient.Bounds.Bottom-6);
 			}
 			else{
 				formODBase.PanelClient.Bounds=new Rectangle(

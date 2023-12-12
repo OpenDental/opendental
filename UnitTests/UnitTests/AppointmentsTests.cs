@@ -622,6 +622,86 @@ namespace UnitTests.Appointments_Tests {
 		}
 
 		[TestMethod]
+		public void Appointments_GetSearchResults_MultipleOpsForProvWithBlockouts() {
+			PrefT.UpdateInt(PrefName.AppointmentSearchBehavior,(int)SearchBehaviorCriteria.ProviderTimeOperatory);
+			long patNum=PatientT.CreatePatient("MOFPWB").PatNum;
+			//Create a provider, two operatories, and two provider schedules--one for each operatory. Schedules are for today.
+			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
+			Operatory operatory1=OperatoryT.CreateOperatory("abbr-MOFPWB1","opName--MOFPWB1");
+			Operatory operatory2=OperatoryT.CreateOperatory("abbr-MOFPWB2","opName--MOFPWB2");
+			Schedule schedule1=ScheduleT.CreateSchedule(DateTime.Today
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,16,0,0).TimeOfDay
+				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{operatory1.OperatoryNum});//Op 1 is 8a-4p
+			Schedule schedule2=ScheduleT.CreateSchedule(DateTime.Today
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,10,0,0).TimeOfDay
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,14,0,0).TimeOfDay
+				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{operatory2.OperatoryNum});//Op 2 is 10a-2p
+			//Create an "NS" blockout on the first operatory, which will not allow scheduling. 
+			long defNumNoSchedBlockout=DefT.CreateDefinition(DefCat.BlockoutTypes,"NS-MOFPWB",BlockoutType.NoSchedule.GetDescription()).DefNum;
+			Schedule scheduleNoSchedBlockout=ScheduleT.CreateSchedule(DateTime.Today
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,12,0,0).TimeOfDay
+				,ScheduleType.Blockout,blockoutType:defNumNoSchedBlockout,listOpNums:new List<long>{operatory1.OperatoryNum}); //NS blockout on Op 1 from 8a-12p
+			//Create appointment that the search will be to find a spot for.
+			Appointment patApt=AppointmentT.CreateAppointment(patNum,DateTime.Now,operatory1.OperatoryNum,provNum);
+			TimeSpan beforeTime=TestT.SetDateTime(hour:18);
+			TimeSpan afterTime=TestT.SetDateTime();//8 AM
+			List<long> listOpsInView=new List<long>() {operatory1.OperatoryNum,operatory2.OperatoryNum };
+			//Search starting yesterday, so that we see today's schedules.
+			List<ScheduleOpening> searchResults=ApptSearch.GetSearchResults(patApt.AptNum,DateTime.Today.AddDays(-1),DateTime.Today.AddDays(2),new List<long>() {provNum,0}
+			,listOpsInView,new List<long> {0},beforeTime,afterTime,new List<long>(){0});
+			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==10 && x.DateTimeAvail.Minute==0 
+				&& x.DateTimeAvail.Date==DateTime.Today.Date).Count);
+		}
+
+		[TestMethod]
+		public void Appointments_GetSearchResults_MultipleOpsForDynamicProvWithBlockouts() {
+			PrefT.UpdateInt(PrefName.AppointmentSearchBehavior,(int)SearchBehaviorCriteria.ProviderTimeOperatory);
+			long patNum=PatientT.CreatePatient("MOFPWB").PatNum;
+			//Create a provider, two operatories with the provider assigned to them, and two provider schedules. Schedules are for today.
+			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
+			Operatory operatory1=OperatoryT.CreateOperatory("abbr-MOFDPWB1","opName--MOFDPWB1",provDentist:provNum);
+			Operatory operatory2=OperatoryT.CreateOperatory("abbr-MOFDPWB2","opName--MOFDPWB2",provDentist:provNum);
+			Schedule schedule1=ScheduleT.CreateSchedule(DateTime.Today
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,12,0,0).TimeOfDay
+				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{}); //Dynamic, 8a-12p
+			Schedule schedule2=ScheduleT.CreateSchedule(DateTime.Today
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,14,0,0).TimeOfDay
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,16,0,0).TimeOfDay
+				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{}); //Dynamic, 2p-4p
+			//Create an "NS" blockout on the first operatory, which will not allow scheduling. 
+			long defNumNoSchedBlockout=DefT.CreateDefinition(DefCat.BlockoutTypes,"NS-MOFDPWB",BlockoutType.NoSchedule.GetDescription()).DefNum;
+			Schedule scheduleNoSchedBlockout=ScheduleT.CreateSchedule(DateTime.Today
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,12,0,0).TimeOfDay
+				,ScheduleType.Blockout,blockoutType:defNumNoSchedBlockout,listOpNums:new List<long>{operatory1.OperatoryNum}); //NS blockout on Op 1 from 8a-12p
+			//Create appointment that the search will be to find a spot for.
+			Appointment patApt=AppointmentT.CreateAppointment(patNum,DateTime.Now,operatory1.OperatoryNum,provNum);
+			TimeSpan beforeTime=TestT.SetDateTime(hour:18);
+			TimeSpan afterTime=TestT.SetDateTime();//8 AM
+			List<long> listOpsInView=new List<long>() {operatory1.OperatoryNum,operatory2.OperatoryNum };
+			//Search starting yesterday, so that we see today's schedules.
+			List<ScheduleOpening> searchResults=ApptSearch.GetSearchResults(patApt.AptNum,DateTime.Today.AddDays(-1),DateTime.Today.AddDays(2),new List<long>() {provNum,0}
+			,listOpsInView,new List<long> {0},beforeTime,afterTime,new List<long>(){0});
+			//Should be an opening at 8am, since the provider is scheduled for both operatories at the same times, and only one of the two has a blockout.
+			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==8 && x.DateTimeAvail.Minute==0 
+				&& x.DateTimeAvail.Date==DateTime.Today.Date).Count);
+			//Put another "NS" blockout down, this time on the second operatory from 8:30-10:30.
+			Schedule scheduleNoSchedBlockout2=ScheduleT.CreateSchedule(DateTime.Today
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,30,0).TimeOfDay
+				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,10,30,0).TimeOfDay
+				,ScheduleType.Blockout,blockoutType:defNumNoSchedBlockout,listOpNums:new List<long>{operatory2.OperatoryNum}); //NS blockout on Op 2 from 830a-1030a
+			//Try search again.
+			searchResults=ApptSearch.GetSearchResults(patApt.AptNum,DateTime.Today.AddDays(-1),DateTime.Today.AddDays(2),new List<long>() {provNum,0}
+			,listOpsInView,new List<long> {0},beforeTime,afterTime,new List<long>(){0});
+			//Should be an opening at 10:30am, since the provider is scheduled for both operatories at the same times, and both are blocked out in the morning until 1030, and the appointment is too large to fit at 8.
+			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==10 && x.DateTimeAvail.Minute==30 
+				&& x.DateTimeAvail.Date==DateTime.Today.Date).Count);
+		}
+
+		[TestMethod]
 		public void Appointments_GetSearchResults_MultipleOpsForProvWithOneOpConflict() {
 			PrefT.UpdateInt(PrefName.AppointmentSearchBehavior,(int)SearchBehaviorCriteria.ProviderTimeOperatory);//just look at the op conflicts,no prov time 
 			//create provider and schedule for provider that the search will be for

@@ -291,7 +291,11 @@ namespace OpenDentBusiness {
 						_loadActiveTPData.ListFees,lookupFees,
 						orthoProcLink,orthoCase,orthoSchedule,listOrthoProcLinksForOrthoCase,_loadActiveTPData.BlueBookEstimateData);
 					//then, add this information to loopList so that the next procedure is aware of it.
-					listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i],listProceduresForTPs[i].CodeNum));
+					List<ClaimProcHist> listClaimProcHistsToAdd = ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i],listProceduresForTPs[i].CodeNum);
+					for(int c=0;c<listClaimProcHistsToAdd.Count;c++) {
+						listClaimProcHistsToAdd[c].ProcDate=dateTimeTP;
+					}
+					listClaimProcHistsLoops.AddRange(listClaimProcHistsToAdd);
 				}
 				SyncCanadianLabs(_listClaimProcs,listProceduresForTPs);
 				//We don't want to save the claimprocs if it's a date other than DateTime.Today, since they are calculated using modified date information.

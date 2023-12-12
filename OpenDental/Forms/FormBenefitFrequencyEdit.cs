@@ -58,6 +58,7 @@ namespace OpenDental {
 			BenefitCur.PatPlanNum=0;
 			if(checkPat.Checked) {
 				BenefitCur.PatPlanNum=PatPlanNum;
+				BenefitCur.PlanNum=0;
 			}
 			DialogResult=DialogResult.OK;
 		}
