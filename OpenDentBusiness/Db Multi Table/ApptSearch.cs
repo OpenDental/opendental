@@ -208,71 +208,82 @@ namespace OpenDentBusiness {
 
 		///<summary>Searches through operatory time relative to the appointment time to mark if operatory has availability. 
 		///Helper method for GetSearchResults.</summary>
-		private static List<ScheduleOpening> FillOperatoryTime(List<ApptSearchOperatorySchedule> listOpScheds,List<ApptSearchProviderSchedule> listProvScheds
-			,Appointment appointmentToAdd,DateTime dayEvaluating,List<long> listProvNums,List<long> listBlockoutTypes,List<ScheduleOp> listSchedOps,List<Schedule> listSchedules) 
+		private static List<ScheduleOpening> FillOperatoryTime(List<ApptSearchOperatorySchedule> listApptSearchOperatorySchedules,List<ApptSearchProviderSchedule> listApptSearchProviderSchedules
+			,Appointment appointmentToAdd,DateTime dateEvaluating,List<long> listProvNums,List<long> listBlockoutTypes,List<ScheduleOp> listScheduleOps,List<Schedule> listSchedules) 
 		{
 			//No need to check MiddleTierRole; no call to db.
-			List<ScheduleOpening> listPotentialOpApptTime=new List<ScheduleOpening>();//create or clear 
+			List<ScheduleOpening> listScheduleOpenings=new List<ScheduleOpening>();//create or clear 
 			for(int i=0;i<288;i++) {//search every 5 minute increment per day
 				if(i+appointmentToAdd.Pattern.Length>288) {//skip if appointment would span across midnight
 					break;
 				}
-				foreach(ApptSearchOperatorySchedule opSched in listOpScheds) {
-					bool addDateTime=true;
+				foreach(ApptSearchOperatorySchedule apptSearchOperatorySchedule in listApptSearchOperatorySchedules) {
+					bool doAddDateTime=true;
 					for(int k=0;k<appointmentToAdd.Pattern.Length;k++) {//check appointment against operatories
-						if(opSched.IsOpAvailable[i+k]==false) {
-							addDateTime=false;
+						if(apptSearchOperatorySchedule.IsOpAvailable[i+k]==false) {
+							doAddDateTime=false;
 							break;
 						}
 					}
-					if(!addDateTime){
+					if(!doAddDateTime){
 						continue;
 					}
 					//check appointment against providers available for the given operatory
-					bool provAvail=false;
+					bool isProvAvailable=false;
 					long provNumAvail=0;
 					for(int k=0;k<listProvNums.Count;k++) {
-						//0 listBlockoutTypes means we are not searching for blockouts, so we only want provider schedules
-						bool isProviderSchedulesOnly=(listProvScheds[k].ProviderNum==0 && listBlockoutTypes[0]==0);
-						if(!opSched.ProviderNums.Contains(listProvNums[k])) {
+						if(!apptSearchOperatorySchedule.ProviderNums.Contains(listProvNums[k])) {
 							continue;
 						}
-						provAvail=true;
-						provNumAvail=listProvScheds[k].ProviderNum;
+						isProvAvailable=true;
+						provNumAvail=listApptSearchProviderSchedules[k].ProviderNum;
 						for(int m=0;m<appointmentToAdd.Pattern.Length;m++) {
-							//if provider bar time slot
-							if((listProvScheds[k].IsProvAvailable[i+m]==false && appointmentToAdd.Pattern[m]=='X') || listProvScheds[k].IsProvScheduled[i+m]==false
-									|| isProviderSchedulesOnly)
+							//If provider is not available, and the appointment has an "X" for provider time at this spot in the pattern
+							//OR provider is not scheduled to work
+							//OR current schedule is a blockout, while we're not considering blockouts
+							if((listApptSearchProviderSchedules[k].IsProvAvailable[i+m]==false && appointmentToAdd.Pattern[m]=='X') 
+								|| listApptSearchProviderSchedules[k].IsProvScheduled[i+m]==false
+								|| listApptSearchProviderSchedules[k].ProviderNum==0 && listBlockoutTypes[0]==0)
 							{
-								provAvail=false;
+								isProvAvailable=false;
 								break;
 							}
-							else if(provNumAvail==0) {//this is a blockout. 
+							else if(provNumAvail==0) { //This is a blockout schedule, which we want to consider since we got to this point (provNumAvail is 0 and listBlockoutTypes contains non-zero elements). We only want to return times where blockout types are scheduled.
 								//Get a list of any blockouts that are scheduled within this 5 minute timeframe. 
-								//We need to be careful about when and where the blockout is actually at.
-								List<Schedule> listBlockoutSchedsForOpening=listSchedules.FindAll(x => x.ProvNum==0 
-									&& x.SchedDate.Date==dayEvaluating.Date
-									&& x.StartTime<=dayEvaluating.AddMinutes(i*5).TimeOfDay 
-									&& x.StopTime>=dayEvaluating.AddMinutes(i*5).TimeOfDay).ToList();
-								List<long> listOpNumsForSchedule=listSchedOps.FindAll(x => listBlockoutSchedsForOpening.Any(y => x.ScheduleNum==y.ScheduleNum))
+								//If none of those blockouts cover our current ApptSearchOperatorySchedule's operatory at this time, then we do not want to consider this time as available.
+								List<Schedule> listSchedulesBlockouts=listSchedules.FindAll(x => x.ProvNum==0 
+									&& x.SchedDate.Date==dateEvaluating.Date
+									&& x.StartTime<=dateEvaluating.AddMinutes(i*5).TimeOfDay 
+									&& x.StopTime>=dateEvaluating.AddMinutes(i*5).TimeOfDay).ToList();
+								List<long> listOpNumsForSchedule=listScheduleOps.FindAll(x => listSchedulesBlockouts.Any(y => x.ScheduleNum==y.ScheduleNum))
 									.Select(x => x.OperatoryNum).Distinct().ToList();
-								if(!listOpNumsForSchedule.Contains(opSched.OperatoryNum)) {
-									provAvail=false;
+								if(!listOpNumsForSchedule.Contains(apptSearchOperatorySchedule.OperatoryNum)) {
+									isProvAvailable=false;
+								}
+							}
+							else { //This is an open provider schedule, but they may not be scheduled at this time for this operatory. Verify the provider is open at this time, and if applicable, for this operatory.
+								List<Schedule> listSchedulesForProviderAndOp=listSchedules.FindAll(x => x.ProvNum==provNumAvail 
+								&& (x.Ops.Count==0 || x.Ops.Contains(apptSearchOperatorySchedule.OperatoryNum))
+								&& x.SchedDate.Date==dateEvaluating.Date
+								&& x.StartTime<=dateEvaluating.AddMinutes(i*5).TimeOfDay 
+								&& x.StopTime>=dateEvaluating.AddMinutes(i*5).TimeOfDay).ToList();
+								if(listSchedulesForProviderAndOp.Count==0) {
+									isProvAvailable=false;
 								}
 							}
 						}
-						if(provAvail) {//found a provider with an available operatory
+						if(isProvAvailable) {//found a provider with an available time and operatory
 							break;
 						}
 					}
-					if(provAvail) {
-						DateTime timeOpeningStart=dayEvaluating.AddMinutes(i*5);
-						listPotentialOpApptTime.Add(new ScheduleOpening {DateTimeAvail=timeOpeningStart,ProvNum=provNumAvail
-							,OpNum=opSched.OperatoryNum });
+					if(isProvAvailable) {
+						DateTime timeOpeningStart=dateEvaluating.AddMinutes(i*5);
+						listScheduleOpenings.Add(new ScheduleOpening {DateTimeAvail=timeOpeningStart,ProvNum=provNumAvail
+							,OpNum=apptSearchOperatorySchedule.OperatoryNum });
 					}
 				}
 			}
-			return listPotentialOpApptTime;
+			return listScheduleOpenings;
 		}
 
 		///<summary>Get all provider operatory availabilities for passed in data.</summary>
