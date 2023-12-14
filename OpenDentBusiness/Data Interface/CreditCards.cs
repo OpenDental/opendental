@@ -726,6 +726,7 @@ namespace OpenDentBusiness{
 			string command=$"SELECT * FROM creditcard WHERE PaySimpleToken='{POut.String(token)}' ";
 			if(!isAch) {
 				command+=$"AND CCSource!={POut.Int((int)CreditCardSource.PaySimpleACH)} ";
+				command+=$"AND CCSource!={POut.Int((int)CreditCardSource.PaySimplePaymentPortalACH)} ";
 			}
 			return CountSameCard(Crud.CreditCardCrud.SelectMany(command));
 		}

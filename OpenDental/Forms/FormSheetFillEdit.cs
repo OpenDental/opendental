@@ -105,6 +105,12 @@ namespace OpenDental {
 			formSheetFillEdit.IsReadOnly=isReadOnly;
 			formSheetFillEdit.Show();
 		}
+
+		///<summary>Returns the bottom Y index of the given page number for the current sheet, adjusted for margins.  Used for drawing page breaks and limiting Y position of added fields.</summary>
+		private int GetBottomOfPage(int pageCount) {
+			int marginPerPage=_marginsPrint.Top+_marginsPrint.Bottom;
+			return pageCount*(SheetCur.HeightPage-marginPerPage)+_marginsPrint.Top;
+		}
 		#endregion Methods - public
 
 		#region Methods - Event Handlers
@@ -790,9 +796,11 @@ namespace OpenDental {
 			if(sheetField.FieldType!=SheetFieldType.PatImage){
 				return;
 			}
+			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
 			using FormSheetFieldEditPatImage formSheetFieldEditPatImage=new FormSheetFieldEditPatImage();
 			formSheetFieldEditPatImage.SheetFieldCur=sheetField;
 			formSheetFieldEditPatImage.SheetCur=SheetCur;
+			formSheetFieldEditPatImage.BottomYLimit=GetBottomOfPage(pageCount)-1;
 			formSheetFieldEditPatImage.ShowDialog();
 			if(formSheetFieldEditPatImage.DialogResult!=DialogResult.OK){
 				return;
@@ -808,6 +816,8 @@ namespace OpenDental {
 			sheetField.BitmapLoaded?.Dispose();
 			sheetField.BitmapLoaded=null;
 			LoadImageOnePat(sheetField);
+			//Refresh panel view because PatImage location might have changed to be off the screen.
+			LayoutFields();
 			panelMain.Invalidate();
 		}
 
@@ -1161,7 +1171,8 @@ namespace OpenDental {
 			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
 			int margins=(_marginsPrint.Top+_marginsPrint.Bottom);
 			for(int i=1;i<pageCount;i++) {
-				g.DrawLine(penDashPage,0,i*(SheetCur.HeightPage-margins)+_marginsPrint.Top,SheetCur.WidthPage,i*(SheetCur.HeightPage-margins)+_marginsPrint.Top);
+				int bottomYOfPage=GetBottomOfPage(i);
+				g.DrawLine(penDashPage,0,bottomYOfPage,SheetCur.WidthPage,bottomYOfPage);
 			}
 			//End Draw Page Break
 			//for testing

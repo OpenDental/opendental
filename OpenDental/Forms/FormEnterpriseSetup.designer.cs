@@ -155,6 +155,7 @@ namespace OpenDental {
 			this.tabControlMain.Controls.Add(this.tabFamily);
 			this.tabControlMain.Controls.Add(this.tabReport);
 			this.tabControlMain.Controls.Add(this.tabManage);
+			this.tabControlMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControlMain.Location = new System.Drawing.Point(6, 6);
 			this.tabControlMain.Name = "tabControlMain";
 			this.tabControlMain.Size = new System.Drawing.Size(502, 636);
@@ -297,7 +298,7 @@ namespace OpenDental {
 			this.label41.Name = "label41";
 			this.label41.Size = new System.Drawing.Size(234, 18);
 			this.label41.TabIndex = 251;
-			this.label41.Text = "Enforce Valid Adjustments";
+			this.label41.Text = "Paysplits Allocation";
 			this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelAgingServiceTimeDue
@@ -322,7 +323,7 @@ namespace OpenDental {
 			this.label39.Name = "label39";
 			this.label39.Size = new System.Drawing.Size(234, 18);
 			this.label39.TabIndex = 249;
-			this.label39.Text = "Enforce Valid Paysplits";
+			this.label39.Text = "Adjustments Allocation";
 			this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkBillShowTransSinceZero
@@ -518,13 +519,13 @@ namespace OpenDental {
 			// 
 			// checkEnterpriseAllowRefresh
 			// 
+			this.checkEnterpriseAllowRefresh.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkEnterpriseAllowRefresh.Location = new System.Drawing.Point(6, 170);
 			this.checkEnterpriseAllowRefresh.Name = "checkEnterpriseAllowRefresh";
 			this.checkEnterpriseAllowRefresh.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkEnterpriseAllowRefresh.Size = new System.Drawing.Size(461, 18);
 			this.checkEnterpriseAllowRefresh.TabIndex = 292;
 			this.checkEnterpriseAllowRefresh.Text = "Allow Refresh While Typing in Select Patient Window";
-			this.checkEnterpriseAllowRefresh.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label2
 			// 
@@ -548,6 +549,7 @@ namespace OpenDental {
 			// 
 			// checkMatchExactPhoneNum
 			// 
+			this.checkMatchExactPhoneNum.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 146);
 			this.checkMatchExactPhoneNum.Name = "checkMatchExactPhoneNum";
 			this.checkMatchExactPhoneNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -555,7 +557,6 @@ namespace OpenDental {
 			this.checkMatchExactPhoneNum.TabIndex = 292;
 			this.checkMatchExactPhoneNum.Text = "Only match patients by exact phone number";
 			this.checkMatchExactPhoneNum.CheckedChanged += new System.EventHandler(this.checkExactMatchPhoneNum_CheckedChanged);
-			this.checkMatchExactPhoneNum.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkPatientSelectFilterRestrictedClinics
 			// 
@@ -578,7 +579,6 @@ namespace OpenDental {
 			// checkUsePhoneNumTable
 			// 
 			this.checkUsePhoneNumTable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkUsePhoneNumTable.Checked = false;
 			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(6, 102);
 			this.checkUsePhoneNumTable.Name = "checkUsePhoneNumTable";
 			this.checkUsePhoneNumTable.Size = new System.Drawing.Size(406, 17);

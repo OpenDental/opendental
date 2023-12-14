@@ -130,6 +130,7 @@ namespace OpenDental {
 			List<InsSub> listInsSubsSelected=InsSubs.GetMany(listInsSubNums);
 			List<DataRow> listRowsSucceeded=new List<DataRow>();
 			int rowsFailed=0;
+			List<long> listPatNumsFailed=new List<long>();
 			List<Benefit> listBenefitsAll=Benefits.Refresh(listPatPlansSelected,listInsSubsSelected);
 			List<string> listHiddenProcCodes=new List<string>();
 			for(int i = 0;i < gridMain.SelectedIndices.Count();i++) {
@@ -157,6 +158,10 @@ namespace OpenDental {
 					//Todo: show the message somehow at the end.
 					//MsgBox.Show($"Cannot create auto ortho procedure because procedure is in a hidden category: {ProcedureCodes.GetProcCode(codeNum)}");
 					rowsFailed++;
+					continue;
+				}
+				if(provNum==0) {//Procedure was possibly deleted, 
+					listPatNumsFailed.Add(patNum);
 					continue;
 				}
 				Procedure procedure = Procedures.CreateOrthoAutoProcsForPat(patNum,codeNum,provNum,clinicNum,dateTimeDue);
@@ -193,6 +198,9 @@ namespace OpenDental {
 				+Lan.g(this,"claim(s) generated and")+" "+rowsFailed+" "+Lan.g(this,"failures")+".";
 			if(listHiddenProcCodes.Count > 0) {
 				message+="\r\n"+Lan.g(this,"Some failed because the following procedures are in a hidden category")+$": {string.Join(", ",listHiddenProcCodes)}";
+			}
+			if(listPatNumsFailed.Count > 0) {
+				message+="\r\n"+Lan.g(this,"Claims could not be made for these patients because of deleted ortho procedures")+$": {string.Join(", ",listPatNumsFailed)}";
 			}
 			MsgBox.Show(message);
 			for(int i=0;i<listRowsSucceeded.Count;i++) {

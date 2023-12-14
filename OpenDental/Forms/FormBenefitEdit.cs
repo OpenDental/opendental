@@ -134,7 +134,8 @@ namespace OpenDental {
 				MsgBox.Show(this,"Not allowed to check the Pat box because no patient is available.");
 				return;
 			}
-			if(benefitType!=InsBenefitType.CoInsurance && percent>=0) {
+			if(benefitType!=InsBenefitType.CoInsurance && percent > 0) {//-1 or 0 is allowed for other types
+				//We must allow Exclusion with 0 (this "if" must fail) to remain backward compatible for NADG
 				MsgBox.Show(this,"Not allowed to enter a percentage unless type is CoInsurance.");
 				return;
 			}
@@ -231,15 +232,6 @@ namespace OpenDental {
 				DialogResult=DialogResult.OK;
 			}
 			BenefitCur=null;
-		}
-
-		private void FormBenefitEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult==DialogResult.Cancel){
-				// Sometimes the benefit has already been made null by the delete button
-				if(BenefitCur!=null && BenefitCur.IsNew) {
-					BenefitCur=null;
-				}
-			}
 		}
 	}
 }

@@ -98,7 +98,7 @@ namespace OpenDental {
 				textCheckSaveNumber.ReadOnly=true;
 				textBankName.ReadOnly=true;
 			}
-			if(_creditCard==null || _creditCard.CCSource!=CreditCardSource.PaySimpleACH) {
+			if(_creditCard==null || _creditCard.IsPaySimpleACH()) {
 				textCardNumber.Select();
 				return;
 			}
@@ -109,7 +109,7 @@ namespace OpenDental {
 		private void FillFieldsFromCard() {
 			//User selected a credit card from drop down.
 			if(_creditCard.CCNumberMasked!="") {
-				if(_creditCard.CCSource==CreditCardSource.PaySimpleACH || _creditCard.CCSource==CreditCardSource.PaySimplePaymentPortalACH) {
+				if(_creditCard.IsPaySimpleACH()) {
 					textCheckSaveNumber.Text=_creditCard.CCNumberMasked;
 				}
 				else {
@@ -395,7 +395,7 @@ namespace OpenDental {
 			if(!checkOneTimePaymentACH.Checked
 				&& _creditCard!=null //if the user selected a saved CC
 				&& !string.IsNullOrWhiteSpace(_creditCard.PaySimpleToken) //there is a stored token for this card
-				&& _creditCard.CCSource==CreditCardSource.PaySimpleACH)
+				&& _creditCard.IsPaySimpleACH())
 			{
 				accountNumber=_creditCard.PaySimpleToken;
 			}
@@ -447,8 +447,8 @@ namespace OpenDental {
 			if(checkOneTimePaymentACH.Checked) {//not storing the account token
 				return apiResponseRetVal;
 			}
-			UpsertCreditCard(apiResponseRetVal,StringTools.TruncateBeginning(textCheckSaveNumber.Text,4).PadLeft(textCheckSaveNumber.Text.Length,'*'),CreditCardSource.PaySimpleACH,
-				DateTime.MinValue);
+			CreditCardSource source=_creditCard?.CCSource??CreditCardSource.PaySimpleACH;
+			UpsertCreditCard(apiResponseRetVal,StringTools.TruncateBeginning(textCheckSaveNumber.Text,4).PadLeft(textCheckSaveNumber.Text.Length,'*'),source,DateTime.MinValue);
 			return apiResponseRetVal;
 		}
 
@@ -582,7 +582,10 @@ namespace OpenDental {
 		}
 
 		private bool VerifyDataACH() {
-			if(_creditCard==null || string.IsNullOrEmpty(_creditCard.PaySimpleToken) || _creditCard.CCSource!=CreditCardSource.PaySimpleACH) {
+			// If Credit Card is not null, contains a token, and is currently set as a credit card of some sort in CCsource...
+			// AKA: If this thing is not an ACH account (but is/was a valid CreditCard)...
+			// Then validate the user input fields because apparently we are trying to convert the CC entry into an ACH.
+			if(string.IsNullOrEmpty(_creditCard?.PaySimpleToken) || !_creditCard.IsPaySimpleACH()) {
 				if(!Regex.IsMatch(textRoutingNumber.Text,"^[0-9]+$")) {
 					MsgBox.Show(this,"Invalid Routing Number.");
 					return false;

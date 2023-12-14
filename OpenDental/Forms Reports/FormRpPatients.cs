@@ -412,6 +412,7 @@ namespace OpenDental {
 			}
 			if(NeedProcLogFirst || NeedProcLogLast) {
 				listWhereClauses.Add("procedurelog.patnum=patient.patnum");
+				listWhereClauses.Add("procedurelog.procstatus!="+POut.Enum<ProcStat>(ProcStat.D));
 			}
 			if(NeedRecall) {
 				listWhereClauses.Add("recall.PatNum=patient.PatNum");

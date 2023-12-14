@@ -951,7 +951,14 @@ namespace OpenDentBusiness {
 					if(activeAllergies!="") {
 						activeAllergies+=", ";
 					}
-					activeAllergies+=AllergyDefs.GetDescription(listAllergies[i].AllergyDefNum);
+					string activeAllergy="";
+					try {//unknown methods can cause the allergy to be deleted sometimes
+						activeAllergy=AllergyDefs.GetDescription(listAllergies[i].AllergyDefNum);
+					}
+					catch {
+						continue;
+					}
+					activeAllergies+=activeAllergy;
 				}
 				#endregion
 				#region Medication

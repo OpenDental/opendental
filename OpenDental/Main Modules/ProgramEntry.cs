@@ -86,6 +86,7 @@ namespace OpenDental {
 			}
 			if(File.Exists(Path.Combine(appDir,"NoCustomBorders.txt"))){
 				FormODBase.AreBordersMS=true;
+				FormFrame.AreBordersMS=true;
 			}
 			//In Win10, this registry entry is for 'Let Windows try to fix apps so they're not blurry'.
 			//In Win11, behavior is true, but the registry entry is gone and there is no option to change it.

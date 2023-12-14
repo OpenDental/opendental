@@ -316,7 +316,6 @@ namespace OpenDental {
 			this.Name = "FormBenefitEdit";
 			this.ShowInTaskbar = false;
 			this.Text = "Edit Benefit";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBenefitEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormBenefitEdit_Load);
 			this.groupQuantity.ResumeLayout(false);
 			this.groupQuantity.PerformLayout();

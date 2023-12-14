@@ -46,7 +46,7 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 		///Optionally pass in a recall object in order to consider all other recalls due for the patient.  This will potentially affect the time pattern.
 		///Throws exceptions.</summary>
 		public static List<TimeSlot> GetAvailableWebSchedTimeSlots(RecallType recallType,List<Provider> listProviders,Clinic clinic
-			,DateTime dateStart,DateTime dateEnd,Recall recallCur=null,Logger.IWriteLine log=null) 
+			,DateTime dateStart,DateTime dateEnd,Recall recallCur=null,Logger.IWriteLine log=null,bool isFromWebSched=true) 
 		{
 			//No need to check MiddleTierRole; no call to db.
 			if(recallType==null) {//Validate that recallType is not null.
@@ -56,8 +56,11 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 			//Get all the Operatories that are flagged for Web Sched.
 			List<Operatory> listOperatories=Operatories.GetOpsForWebSched();
 			if(listOperatories.Count < 1) {//This is very possible for offices that aren't set up the way that we expect them to be.
-				throw new ODException(Lans.g("WebSched","There are no operatories set up for Web Sched.")+"\r\n"
-					+Lans.g("WebSched","Please call us to schedule your appointment."),ODException.ErrorCodes.NoOperatoriesSetup);
+				string errrorMessage=Lans.g("WebSched","There are no operatories set up for Web Sched.");
+				if(isFromWebSched) {
+					errrorMessage+="\r\n"+Lans.g("WebSched","Please call us to schedule your appointment.");
+				}
+				throw new ODException(errrorMessage,ODException.ErrorCodes.NoOperatoriesSetup);
 			}
 			log?.WriteLine("listOperatories:\r\n\t"+string.Join(",\r\n\t",listOperatories.Select(x => x.OperatoryNum+" - "+x.Abbrev)),LogLevel.Verbose);
 			//Make sure that we only return not is not persons.

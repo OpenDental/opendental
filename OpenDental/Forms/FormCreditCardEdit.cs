@@ -146,7 +146,7 @@ namespace OpenDental {
 				}
 			}
 			if(_isPaySimpleEnabled) {
-				textAccountType.Text=(CreditCardCur.CCSource==CreditCardSource.PaySimpleACH ? Lans.g(this,"ACH") : Lans.g(this,"Credit Card"));
+				textAccountType.Text=CreditCardCur.IsPaySimpleACH() ? Lans.g(this,"ACH") : Lans.g(this,"Credit Card");
 			}
 			textPreviousStartDate.Text=_creditCard.DateStart.ToShortDateString();
 		}
@@ -652,7 +652,7 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.WaitCursor;
 			try {
-				if(CreditCardCur.CCSource==CreditCardSource.PaySimpleACH) {
+				if(CreditCardCur.IsPaySimpleACH()) {
 					PaySimple.DeleteACHAccount(CreditCardCur);
 				}
 				else if(CreditCardCur.CCSource==CreditCardSource.PaySimple) {//Credit card

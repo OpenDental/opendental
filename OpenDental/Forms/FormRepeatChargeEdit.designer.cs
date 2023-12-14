@@ -41,7 +41,7 @@ namespace OpenDental {
 			this.labelChargeAmount = new System.Windows.Forms.Label();
 			this.labelDateStart = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.textNote = new System.Windows.Forms.TextBox();
+			this.textNote = new OpenDental.ODtextBox();
 			this.labelNote = new System.Windows.Forms.Label();
 			this.textDesc = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
@@ -134,6 +134,7 @@ namespace OpenDental {
 			this.textNote.MaxLength = 10000;
 			this.textNote.Multiline = true;
 			this.textNote.Name = "textNote";
+			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
 			this.textNote.Size = new System.Drawing.Size(424, 114);
 			this.textNote.TabIndex = 6;
 			// 
@@ -549,7 +550,7 @@ namespace OpenDental {
 		private Label labelDateStart;
 		private Label label4;
 		private ValidDate textDateStop;
-		private TextBox textNote;
+		private ODtextBox textNote;
 		private Label labelNote;
 		private TextBox textDesc;
 		private Label label6;

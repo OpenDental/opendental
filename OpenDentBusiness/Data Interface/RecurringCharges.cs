@@ -1078,7 +1078,7 @@ namespace OpenDentBusiness {
 			strBuilderResultFile.AppendLine("Recurring charge results for "+DateTime.Now.ToShortDateString()+" ran at "+DateTime.Now.ToShortTimeString());
 			strBuilderResultFile.AppendLine();
 			string paySimpleAccountId=chargeData.PaySimpleToken;
-			int tokenCount=CreditCards.GetPaySimpleTokenCount(paySimpleAccountId,chargeData.CCSource==CreditCardSource.PaySimpleACH);
+			int tokenCount=CreditCards.GetPaySimpleTokenCount(paySimpleAccountId,chargeData.CCSource==CreditCardSource.PaySimpleACH || chargeData.CCSource==CreditCardSource.PaySimplePaymentPortalACH);
 			if(string.IsNullOrWhiteSpace(paySimpleAccountId) || tokenCount!=1) {
 				string msg=(tokenCount>1)?"A duplicate token was found":"A token was not found";
 				MarkFailed(chargeData,Lans.g(_lanThis,msg+", the card cannot be charged."));
@@ -1133,7 +1133,7 @@ namespace OpenDentBusiness {
 				}
 				strBuilderResultText.AppendLine(response.ToNoteString(clinicDesc,"Manual",Security.CurUser.UserName,expStr,"PaySimple Token"));
 				resultAmt=(double)response.Amount;
-				response.BuildReceiptString(ccCur.CCNumberMasked,ccExpMonth,ccExpYear,"",clinicNumCur,isACH: ccCur.CCSource==CreditCardSource.PaySimpleACH);
+				response.BuildReceiptString(ccCur.CCNumberMasked,ccExpMonth,ccExpYear,"",clinicNumCur,isACH: ccCur.IsPaySimpleACH());
 				receipt=response.TransactionReceipt;
 			}
 			catch(Exception ex) {
@@ -1271,13 +1271,13 @@ namespace OpenDentBusiness {
 			if(ccSource==CreditCardSource.PaySimple) {
 				ppPayTypeDesc=PaySimple.PropertyDescs.PaySimplePayTypeCC;
 			}
-			else if(ccSource==CreditCardSource.PaySimpleACH) {
+			else if(ccSource==CreditCardSource.PaySimpleACH || ccSource==CreditCardSource.PaySimplePaymentPortalACH) {
 				ppPayTypeDesc=PaySimple.PropertyDescs.PaySimplePayTypeACH;
 			}
 			else if(ccSource==CreditCardSource.EdgeExpressCNP || ccSource==CreditCardSource.EdgeExpressRCM) {
 				ppPayTypeDesc=EdgeExpressProps.PaymentType;
 			}
-			if(ccSource!=CreditCardSource.PaySimpleACH) {
+			if(ccSource!=CreditCardSource.PaySimpleACH && ccSource!=CreditCardSource.PaySimplePaymentPortalACH) {
 				paymentCur.PayType=PrefC.GetLong(PrefName.RecurringChargesPayTypeCC);
 			}
 			if(paymentCur.PayType==0) {//Pref default not set or this is ACH

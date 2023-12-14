@@ -2734,25 +2734,25 @@ namespace OpenDentBusiness {
 
 	public enum RigorousAccounting {
 		///<summary>0 - Payments are automatically split and paysplit validity is enforced.</summary>
-		[Description("Enforce Fully")]
+		[Description("Rigorous")]
 		EnforceFully,
 		///<summary>1 - Payments are automatically split, but paysplit validity is not enforced.</summary>
 		[Description("Auto-Split Only")]
 		AutoSplitOnly,
 		///<summary>2 - Payments are not automatically split, nor is paysplit validity enforced.</summary>
-		[Description("Don't Enforce")]
+		[Description("Manual")]
 		DontEnforce
 	}
 
 	public enum RigorousAdjustments {
 		///<summary>0 - Automatically link adjustments and procedures, adjustment linking enforced.</summary>
-		[Description("Enforce Fully")]
+		[Description("Rigorous")]
 		EnforceFully,
 		///<summary>1 - Adjustment links are made automatically, but it can be edited.</summary>
 		[Description("Link Only")]
 		LinkOnly,
 		///<summary>2 - Adjustment links aren't made, nor are they enforced.</summary>
-		[Description("Don't Enforce")]
+		[Description("Manual")]
 		DontEnforce
 	}
 

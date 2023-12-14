@@ -236,7 +236,7 @@ namespace OpenDental {
 			// 
 			this.label9.Location = new System.Drawing.Point(6, 114);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(208, 77);
+			this.label9.Size = new System.Drawing.Size(239, 77);
 			this.label9.TabIndex = 6;
 			this.label9.Text = "Only for offices that run reports after updating fee schedules and before selecti" +
     "ng patients. Recalculates treatment planned estimates, write-offs, ortho cases, " +

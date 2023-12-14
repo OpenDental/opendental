@@ -240,7 +240,7 @@ namespace OpenDental {
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				//Get the next 30 days of open time schedules with the current settings.
-				listTimeSlots=TimeSlots.GetAvailableWebSchedTimeSlots(recallType,listProviders,clinic,dateStart,dateStart.AddDays(30));
+				listTimeSlots=TimeSlots.GetAvailableWebSchedTimeSlots(recallType,listProviders,clinic,dateStart,dateStart.AddDays(30),isFromWebSched:false);
 			};
 			progressOD.StartingMessage=Lan.g(this,"Loading available time slots. This can take a few minutes on large databases.");
 			try{

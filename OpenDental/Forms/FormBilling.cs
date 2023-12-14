@@ -867,7 +867,7 @@ namespace OpenDental {
 						+numOfBatchesTotal,Math.Ceiling(((double)curStatementsProcessed/numOfStatementsInBatch)*100)+"%",curStatementsProcessed,numOfStatementsInBatch,ProgBarStyle.Blocks,"2")));
 					continue;
 				}
-				if(_listStatementNumsToSkipAfterPause.Contains(statementCur.StatementNum) || statementCur.IsSent) {
+				if(_listStatementNumsToSkipAfterPause.Contains(statementCur.StatementNum)) {
 					//The statement was deleted or marked sent elsewhere.
 					curStatementsProcessed++;
 					//2 means misc error
