@@ -58,6 +58,8 @@ namespace OpenDental {
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Image Category"),120);
 			gridMain.Columns.Add(col);
+			col=new GridColumn(Lan.g(this,"Updated"),70);
+			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row;
 			_table=Sheets.GetPatientFormsTable(PatNum);
@@ -68,6 +70,7 @@ namespace OpenDental {
 				row.Cells.Add(_table.Rows[i]["showInTerminal"].ToString());
 				row.Cells.Add(_table.Rows[i]["description"].ToString());
 				row.Cells.Add(_table.Rows[i]["imageCat"].ToString());
+				row.Cells.Add(_table.Rows[i]["DateTSheetEdited"].ToString());
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
