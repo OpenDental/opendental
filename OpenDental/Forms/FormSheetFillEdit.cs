@@ -46,6 +46,8 @@ namespace OpenDental {
 		private string _uniqueFormIdentifier;
 		///<summary>Tab order of the currently selected control, either checkbox, textbox, or combobox. 1-based in sheets.</summary>
 		private int _tabCurrent=0;
+		///<summary>The current sheetField the user is hovering over. Used to add a hovering highlight. This can only be a combobox or checkbox.</summary>
+		private SheetField _sheetFieldHover;
 		#endregion Fields - private
 
 		#region Fields - public
@@ -209,6 +211,11 @@ namespace OpenDental {
 			if(_isAutoSave && checkSaveToImages.Checked) {
 				SaveAsDocument('U',"PatientForm");
 			}
+		}
+
+		private void butFontAbout_Click(object sender,EventArgs e) {
+			MsgBox.Show(this,"When updating to 23.1 from previous versions, the horizontal space between letters within sheets has increased slightly. If some text no longer fits inside the boxes, this tool can be used to reduce the font size by 0.5 for all text fields in the entire sheet. This can be done repeatedly if needed.");
+			return;
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
@@ -441,6 +448,20 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void butReduceFontSize_Click(object sender,EventArgs e) {
+			for(int i=0;i<SheetCur.SheetFields.Count();i++) {
+				if(!SheetCur.SheetFields[i].FieldType.In(SheetFieldType.InputField,SheetFieldType.OutputText,SheetFieldType.StaticText)) {
+					continue;
+				}
+				if(SheetCur.SheetFields[i].FontSize<(2.5f)) {
+					SheetCur.SheetFields[i].FontSize=2;
+					continue;
+				}
+				SheetCur.SheetFields[i].FontSize-=0.5f;
+			}
+			panelMain.Invalidate();
+		}
+
 		private void butRestore_Click(object sender,EventArgs e) {
 			SheetCur.IsDeleted=false;
 			ValidateSaveAndExit();
@@ -570,6 +591,10 @@ namespace OpenDental {
 			_listPoints=new List<Point>();
 			_uniqueFormIdentifier=MiscUtils.CreateRandomAlphaNumericString(15);//Thread safe random
 			Sheets.SetPageMargin(SheetCur,_marginsPrint);
+			if(SheetCur.IsNew) {
+				butReduceFontSize.Visible=false;
+				butFontAbout.Visible=false;
+			}
 			if(IsInTerminal) {
 				labelDateTime.Visible=false;
 				textDateTime.Visible=false;
@@ -820,6 +845,7 @@ namespace OpenDental {
 				|| sheetField?.FieldType==SheetFieldType.OutputText)
 			{
 				_tabCurrent=sheetField.TabOrder;
+				_sheetFieldHover=null;
 				panelMain.Invalidate();
 				CreateFloatingTextBox(sheetField,e.Location);
 				ClearSigs();
@@ -846,10 +872,23 @@ namespace OpenDental {
 		}
 
 		private void panelMain_MouseMove(object sender,MouseEventArgs e) {
-			if(!_isMouseDown){
+			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
+			if(!_isMouseDown) {
+				SheetField sheetField=HitTest(pointSheet);
+				if(_sheetFieldHover==sheetField){//works even if either or both are null
+					return;
+				}
+				if(sheetField?.FieldType==SheetFieldType.CheckBox || sheetField?.FieldType==SheetFieldType.ComboBox) {
+					_sheetFieldHover=sheetField;
+					panelMain.Invalidate();
+					return;
+				}
+				_sheetFieldHover=null;
+				panelMain.Invalidate();
 				return;
 			}
-			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
+			_sheetFieldHover=null;
+			panelMain.Invalidate();
 			if(checkErase.Checked){
 				//look for any lines that intersect the "eraser".
 				//since the line segments are so short, it's sufficient to check end points.
@@ -1018,6 +1057,9 @@ namespace OpenDental {
 				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
 					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
 				}
+				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
+					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
 				if(SheetCur.SheetFields[i].FieldValue=="") {
 					continue;
 				}
@@ -1043,6 +1085,10 @@ namespace OpenDental {
 				float yPosArrowStart=SheetCur.SheetFields[i].YPos+(SheetCur.SheetFields[i].Height/2f);
 				using Pen _penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
 				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
+					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
+					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
+				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
 					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
 					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
 				}
@@ -1294,6 +1340,7 @@ namespace OpenDental {
 			//int scrollVal=panelScroll.VerticalScroll.Value;
 			Point point=new Point(LayoutManager.Scale(sheetField.XPos),yPos+height);//+scrollVal);
 			contextMenu.Show(panelMain,point);//Can't resize width, it's done according to width of items.
+			_isMouseDown=false;//contextMenu is closed, so Mouse shouldn't be considered down anymore
 		}
 
 		///<summary>This is for an input field, static text, or output text to edit text, and then it goes away. The point passed in is so that we can put the cursor in the right place.</summary>

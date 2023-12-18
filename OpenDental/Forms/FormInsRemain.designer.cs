@@ -83,11 +83,10 @@ namespace OpenDental{
 			this.groupBoxIndIns.Controls.Add(this.label16);
 			this.groupBoxIndIns.Controls.Add(this.textSecDed);
 			this.groupBoxIndIns.Controls.Add(this.textSecUsed);
-			this.groupBoxIndIns.Location = new System.Drawing.Point(574, 86);
+			this.groupBoxIndIns.Location = new System.Drawing.Point(581, 86);
 			this.groupBoxIndIns.Name = "groupBoxIndIns";
 			this.groupBoxIndIns.Size = new System.Drawing.Size(193, 160);
 			this.groupBoxIndIns.TabIndex = 1;
-			this.groupBoxIndIns.TabStop = false;
 			this.groupBoxIndIns.Text = "Individual Insurance";
 			// 
 			// textPriDed
@@ -293,11 +292,10 @@ namespace OpenDental{
 			this.groupBoxFamilyIns.Controls.Add(this.label9);
 			this.groupBoxFamilyIns.Controls.Add(this.textFamSecDed);
 			this.groupBoxFamilyIns.Controls.Add(this.label17);
-			this.groupBoxFamilyIns.Location = new System.Drawing.Point(574, 5);
+			this.groupBoxFamilyIns.Location = new System.Drawing.Point(581, 5);
 			this.groupBoxFamilyIns.Name = "groupBoxFamilyIns";
 			this.groupBoxFamilyIns.Size = new System.Drawing.Size(193, 80);
 			this.groupBoxFamilyIns.TabIndex = 0;
-			this.groupBoxFamilyIns.TabStop = false;
 			this.groupBoxFamilyIns.Text = "Family Insurance";
 			// 
 			// textFamPriMax
@@ -383,7 +381,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridRemainTimeUnits.Location = new System.Drawing.Point(12, 5);
 			this.gridRemainTimeUnits.Name = "gridRemainTimeUnits";
-			this.gridRemainTimeUnits.Size = new System.Drawing.Size(556, 397);
+			this.gridRemainTimeUnits.Size = new System.Drawing.Size(563, 397);
 			this.gridRemainTimeUnits.TabIndex = 4;
 			this.gridRemainTimeUnits.Title = "Time Units Remaining";
 			this.gridRemainTimeUnits.TranslationName = "TableTimeRemaining";
@@ -391,7 +389,7 @@ namespace OpenDental{
 			// butClose
 			// 
 			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butClose.Location = new System.Drawing.Point(693, 378);
+			this.butClose.Location = new System.Drawing.Point(700, 378);
 			this.butClose.Name = "butClose";
 			this.butClose.Size = new System.Drawing.Size(75, 24);
 			this.butClose.TabIndex = 3;
@@ -400,8 +398,7 @@ namespace OpenDental{
 			// 
 			// FormInsRemain
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(780, 414);
+			this.ClientSize = new System.Drawing.Size(787, 414);
 			this.Controls.Add(this.gridRemainTimeUnits);
 			this.Controls.Add(this.groupBoxIndIns);
 			this.Controls.Add(this.groupBoxFamilyIns);

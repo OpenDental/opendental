@@ -1847,7 +1847,7 @@ namespace OpenDentBusiness {
 			}
 			string command=$@"SELECT DISTINCT patient.PatNum,patient.LName,patient.FName,patient.MiddleI,patient.Preferred,patient.Birthdate,patient.SSN,
 				patient.HmPhone,patient.WkPhone,patient.Address,patient.Address2,patient.PatStatus,patient.BillingType,patient.ChartNumber,patient.City,patient.State,patient.Zip,
-				patient.PriProv,patient.SiteNum,patient.Email,patient.Country,patient.ClinicNum,patient.SecProv,patient.WirelessPhone,patient.TxtMsgOk,patient.DateFirstVisit,patient.MedUrgNote,patient.CreditType,
+				patient.PriProv,patient.SiteNum,patient.Email,patient.Country,patient.ClinicNum,patient.SecProv,patient.WirelessPhone,patient.TxtMsgOk,patient.DateFirstVisit,patient.MedUrgNote,patient.CreditType,patient.Ward,patient.AdmitDate,
 				{exactMatchSnippet} isExactMatch,"
 				//using this sub-select instead of joining these two tables because the runtime is much better this way
 				//Example: large db with joins single clinic 19.8 sec, all clinics 32.484 sec; with sub-select single clinic 0.054 sec, all clinics 0.007 sec
@@ -2001,9 +2001,9 @@ namespace OpenDentBusiness {
 					arrayRows=arrayRows.Take(40).ToArray();
 				}
 			}
+			List<string> listPatNumStrs=table.Select().Select(x => x["PatNum"].ToString()).ToList();
 			Dictionary<string,Tuple<DateTime,DateTime>> dictNextLastApts=new Dictionary<string,Tuple<DateTime,DateTime>>();
 			if(ptSearchArgs.HasNextLastVisit && ptSearchArgs.DoLimit && table.Rows.Count>0) {
-				List<string> listPatNums=table.Select().Select(x => x["PatNum"].ToString()).ToList();
 				command=$@"SELECT PatNum,
 					COALESCE(MIN(CASE WHEN AptStatus={SOut.Int((int)ApptStatus.Scheduled)} AND AptDateTime>={DbHelper.Now()}
 						THEN AptDateTime END),{SOut.DateT(DateTime.MinValue)}) NextVisit,
@@ -2011,10 +2011,15 @@ namespace OpenDentBusiness {
 						THEN AptDateTime END),{SOut.DateT(DateTime.MinValue)}) LastVisit
 					FROM appointment 
 					WHERE AptStatus IN({SOut.Int((int)ApptStatus.Scheduled)},{SOut.Int((int)ApptStatus.Complete)})
-				  AND PatNum IN ({string.Join(",",listPatNums)})
+				  AND PatNum IN ({string.Join(",",listPatNumStrs)})
 					GROUP BY PatNum";
 				dictNextLastApts=ReportsComplex.RunFuncOnReadOnlyServer(() => Db.GetTable(command).Select() 
 					.ToDictionary(x => x["PatNum"].ToString(),x => Tuple.Create(SIn.DateT(x["NextVisit"].ToString()),SIn.DateT(x["LastVisit"].ToString()))));
+			}
+			List<EhrPatient> listEhrPatients=new List<EhrPatient>();
+			if(DisplayFields.IsInUse(DisplayFieldCategory.PatientSelect,"DischargeDate")) {
+				List<long> listPatNums=listPatNumStrs.Select(x=>PIn.Long(x)).ToList();
+				listEhrPatients=EhrPatients.GetByPatNums(listPatNums);
 			}
 			DataTable PtDataTable=table.Clone();//does not copy any data
 			PtDataTable.TableName="table";
@@ -2024,6 +2029,8 @@ namespace OpenDentBusiness {
 			//lastVisit and nextVisit are not part of PtDataTable and need to be added manually from the corresponding dictionary.
 			PtDataTable.Columns.Add("lastVisit");
 			PtDataTable.Columns.Add("nextVisit");
+			//DischargeDate is not a part of the table and must be added manually by grabbing the ehrpatient data.
+			PtDataTable.Columns.Add("DischargeDate");
 			PtDataTable.Columns.OfType<DataColumn>().ForEach(x => x.DataType=typeof(string));
 			DataRow r;
 			DateTime date;
@@ -2086,6 +2093,16 @@ namespace OpenDentBusiness {
 				r["DateFirstVisit"]=dRow["DateFirstVisit"].ToString();
 				r["CreditType"]=dRow["CreditType"].ToString();
 				r["MedurgNote"]=dRow["MedUrgNote"].ToString();
+				r["Ward"]=dRow["Ward"].ToString();
+				date=PIn.Date(dRow["AdmitDate"].ToString());
+				if(date.Year>1880) {
+					r["AdmitDate"]=date.ToShortDateString();
+				}
+				long patNum=PIn.Long(r["PatNum"].ToString());
+				date=listEhrPatients.Find(x=>x.PatNum==patNum)?.DischargeDate??new DateTime();
+				if(date.Year>1880) {
+					r["DischargeDate"]=date.ToShortDateString();
+				}
 				PtDataTable.Rows.Add(r);
 			}
 			return PtDataTable;

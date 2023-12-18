@@ -2884,6 +2884,9 @@ namespace OpenDental{
 
 		#region Methods - Private - Other
 		private void FillPatientPicture() {
+			if(Plugins.HookMethod(this,"ContrFamily.FillPatientPicture",_patient,pictureBoxPat)){
+				return;
+			}
 			pictureBoxPat.Image?.Dispose();
 			pictureBoxPat.Image=null;
 			pictureBoxPat.TextNullImage=Lan.g(this,"Patient Picture Unavailable");
