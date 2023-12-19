@@ -94,6 +94,9 @@ namespace OpenDental {
 			if(_adjustment.ProcDate.Year > 1880) {
 				textProcDate.Text=_adjustment.ProcDate.ToShortDateString();
 			}
+			if(_adjustment.ProcNum!=0) {
+				textProcDate.ReadOnly=true;
+			}
 			if(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="+"){//pos
 				textAmount.Text=_adjustment.AdjAmt.ToString("F");
 			}
@@ -263,9 +266,11 @@ namespace OpenDental {
 			_adjustment.ProcNum=formProcSelect.ListProceduresSelected[0].ProcNum;
 			FillProcedure();
 			textProcDate.Text=formProcSelect.ListProceduresSelected[0].ProcDate.ToShortDateString();
+			textProcDate.ReadOnly=true;
 		}
 
 		private void butDetachProc_Click(object sender, System.EventArgs e) {
+			textProcDate.ReadOnly=false;
 			comboProv.Enabled=true;
 			butPickProv.Enabled=true;
 			comboClinic.Enabled=true;

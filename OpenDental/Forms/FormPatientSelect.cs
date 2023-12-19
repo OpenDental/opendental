@@ -615,6 +615,15 @@ namespace OpenDental{
 						case "Specialty":
 							row.Cells.Add(_tablePats.Rows[i]["Specialty"].ToString());
 							break;
+						case "Ward":
+							row.Cells.Add(_tablePats.Rows[i]["Ward"].ToString());
+							break;
+						case "AdmitDate":
+							row.Cells.Add(_tablePats.Rows[i]["AdmitDate"].ToString());
+							break;
+						case "DischargeDate":
+							row.Cells.Add(_tablePats.Rows[i]["DischargeDate"].ToString());
+							break;
 					}
 				}
 				gridMain.ListGridRows.Add(row);

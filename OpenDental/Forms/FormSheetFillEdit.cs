@@ -46,6 +46,8 @@ namespace OpenDental {
 		private string _uniqueFormIdentifier;
 		///<summary>Tab order of the currently selected control, either checkbox, textbox, or combobox. 1-based in sheets.</summary>
 		private int _tabCurrent=0;
+		///<summary>The current sheetField the user is hovering over. Used to add a hovering highlight. This can only be a combobox or checkbox.</summary>
+		private SheetField _sheetFieldHover;
 		#endregion Fields - private
 
 		#region Fields - public
@@ -618,7 +620,6 @@ namespace OpenDental {
 				butAddField.Visible=false;
 				MinimizeBox=false;
 				MaximizeBox=false;
-				this.TopMost=true;
 			}
 			if(SheetCur.IsLandscape){
 				LayoutManager.MoveWidth(panelMain,SheetCur.Height);//+20 for VScrollBar
@@ -796,6 +797,9 @@ namespace OpenDental {
 			if(sheetField.FieldType!=SheetFieldType.PatImage){
 				return;
 			}
+			if(IsInTerminal) {
+				return;
+			}
 			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
 			using FormSheetFieldEditPatImage formSheetFieldEditPatImage=new FormSheetFieldEditPatImage();
 			formSheetFieldEditPatImage.SheetFieldCur=sheetField;
@@ -861,8 +865,13 @@ namespace OpenDental {
 				|| sheetField?.FieldType==SheetFieldType.OutputText)
 			{
 				_tabCurrent=sheetField.TabOrder;
+				_sheetFieldHover=null;
+				bool isRightClick=false;
+				if(e.Button==MouseButtons.Right) {
+					isRightClick=true;
+				}
 				panelMain.Invalidate();
-				CreateFloatingTextBox(sheetField,e.Location);
+				CreateFloatingTextBox(sheetField,e.Location,isRightClick:isRightClick);
 				ClearSigs();
 				return;
 			}
@@ -887,10 +896,23 @@ namespace OpenDental {
 		}
 
 		private void panelMain_MouseMove(object sender,MouseEventArgs e) {
-			if(!_isMouseDown){
+			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
+			if(!_isMouseDown) {
+				SheetField sheetField=HitTest(pointSheet);
+				if(_sheetFieldHover==sheetField){//works even if either or both are null
+					return;
+				}
+				if(sheetField?.FieldType==SheetFieldType.CheckBox || sheetField?.FieldType==SheetFieldType.ComboBox) {
+					_sheetFieldHover=sheetField;
+					panelMain.Invalidate();
+					return;
+				}
+				_sheetFieldHover=null;
+				panelMain.Invalidate();
 				return;
 			}
-			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
+			_sheetFieldHover=null;
+			panelMain.Invalidate();
 			if(checkErase.Checked){
 				//look for any lines that intersect the "eraser".
 				//since the line segments are so short, it's sufficient to check end points.
@@ -999,6 +1021,9 @@ namespace OpenDental {
 				}
 				if(SheetCur.SheetFields[i].BitmapLoaded==null){
 					g.DrawRectangle(Pens.Black,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
+					if(IsInTerminal) {
+						continue;
+					}
 					using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(8.25f));
 					float y=SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height/2;
 					g.DrawString("Double click to add an image",font,Brushes.Black,SheetCur.SheetFields[i].XPos,y);
@@ -1059,6 +1084,9 @@ namespace OpenDental {
 				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
 					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
 				}
+				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
+					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
 				if(SheetCur.SheetFields[i].FieldValue=="") {
 					continue;
 				}
@@ -1084,6 +1112,10 @@ namespace OpenDental {
 				float yPosArrowStart=SheetCur.SheetFields[i].YPos+(SheetCur.SheetFields[i].Height/2f);
 				using Pen _penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
 				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
+					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
+					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
+				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
 					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
 					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
 				}
@@ -1330,10 +1362,11 @@ namespace OpenDental {
 			//int scrollVal=panelScroll.VerticalScroll.Value;
 			Point point=new Point(LayoutManager.Scale(sheetField.XPos),yPos+height);//+scrollVal);
 			contextMenu.Show(panelMain,point);//Can't resize width, it's done according to width of items.
+			_isMouseDown=false;//contextMenu is closed, so Mouse shouldn't be considered down anymore
 		}
 
 		///<summary>This is for an input field, static text, or output text to edit text, and then it goes away. The point passed in is so that we can put the cursor in the right place.</summary>
-		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false){
+		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false,bool isRightClick=false){
 			string text=sheetField.FieldValue;
 			if(sheetField.FieldType==SheetFieldType.InputField && Regex.IsMatch(text,@"\[Prompt:""[a-zA-Z_0-9 ]+""\]")) { //is an AutoNote
 				using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
@@ -1412,6 +1445,9 @@ namespace OpenDental {
 			}
 			else{
 				textBox.SelectionStart=_idxSelectedChar;
+			}
+			if(isRightClick) {
+				textBox.ContextMenu.Show(panelMain,point);
 			}
 		}
 

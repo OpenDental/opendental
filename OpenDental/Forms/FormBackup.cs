@@ -292,7 +292,8 @@ namespace OpenDental {
 		private void InstanceMethodDatabaseBackup(string databaseName,string backupFromPath,string backupToPath,double databaseSize,bool isInnoDb,out string msg) {
 			double currentValue=0;
 			string fromPath=ODFileUtils.CombinePaths(backupFromPath,databaseName);
-			if(InnoDb.HasInnoDbTables(databaseName)) {
+			bool hasInnoDbTables=InnoDb.HasInnoDbTables(databaseName);
+			if(hasInnoDbTables) {
 				string dbName=MiscData.MakeABackup(isAutoBackup: false);
 				fromPath=ODFileUtils.CombinePaths(backupFromPath,dbName);
 			}
@@ -316,6 +317,10 @@ namespace OpenDental {
 			}
 			catch {
 				throw new Exception(Lan.g(this,"Failed to create directory for backup."));
+			}
+			if(!hasInnoDbTables) {
+				//Make sure all data has been written to the disk before making a file copy. Run a flush tables for all database(s) if MyISAM.
+				MiscData.FlushTables();
 			}
 			for(int i = 0;i<fileInfoArray.Length;i++) {
 				string fromFile=fileInfoArray[i].FullName;
@@ -346,7 +351,7 @@ namespace OpenDental {
 				ODEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
 			}
 			msg=Lan.g(this,"Database backup complete.");
-			if(InnoDb.HasInnoDbTables(databaseName)) {
+			if(hasInnoDbTables) {
 				msg+=" "+Lan.g(this,"A copy has been backed up to your target directory");
 				try {
 					Directory.Delete(fromPath,true);

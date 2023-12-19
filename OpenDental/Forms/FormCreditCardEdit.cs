@@ -180,7 +180,7 @@ namespace OpenDental {
 				else if(Regex.IsMatch(textExpDate.Text,@"^\d{4}$")) {//0807
 					CreditCardCur.CCExpiration=new DateTime(Convert.ToInt32("20"+textExpDate.Text.Substring(2,2)),Convert.ToInt32(textExpDate.Text.Substring(0,2)),1);
 				}
-				else if(CreditCardCur.CCSource!=CreditCardSource.PaySimpleACH) {
+				else if(!CreditCardCur.IsPaySimpleACH()) {
 					MsgBox.Show(this,"Expiration format invalid.");
 					return false;
 				}
@@ -566,7 +566,7 @@ namespace OpenDental {
 				return;
 			}
 			CreditCards.Delete(CreditCardCur.CreditCardNum);
-			List<CreditCard> listCreditCards=CreditCards.Refresh(_patient.PatNum);
+			List<CreditCard> listCreditCards=CreditCards.RefreshAll(_patient.PatNum);
 			for(int i=0;i<listCreditCards.Count;i++) {
 				listCreditCards[i].ItemOrder=listCreditCards.Count-(i+1);
 				CreditCards.Update(listCreditCards[i]);//Resets ItemOrder.
@@ -711,7 +711,7 @@ namespace OpenDental {
 				CreditCardCur.ChargeFrequency=GetFormattedChargeFrequency();
 			}
 			if(CreditCardCur.IsNew) {
-				List<CreditCard> listCreditCards=CreditCards.Refresh(_patient.PatNum);
+				List<CreditCard> listCreditCards=CreditCards.RefreshAll(_patient.PatNum);
 				CreditCardCur.ItemOrder=listCreditCards.Count;
 				CreditCardCur.CCSource=CreditCardSource.None;
 				CreditCardCur.ClinicNum=Clinics.ClinicNum;

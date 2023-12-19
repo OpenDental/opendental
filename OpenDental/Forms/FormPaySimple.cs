@@ -457,7 +457,7 @@ namespace OpenDental {
 				_creditCard=new CreditCard();
 				_creditCard.IsNew=true;
 				_creditCard.PatNum=_patient.PatNum;
-				List<CreditCard> listCreditCardsItemOrderCount=CreditCards.Refresh(_patient.PatNum);
+				List<CreditCard> listCreditCardsItemOrderCount=CreditCards.RefreshAll(_patient.PatNum);
 				_creditCard.ItemOrder=listCreditCardsItemOrderCount.Count;
 			}
 			if(dateCCExp.Year > 1880) {

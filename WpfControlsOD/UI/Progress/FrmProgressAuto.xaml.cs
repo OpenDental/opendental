@@ -40,12 +40,12 @@ namespace WpfControls.UI {
 
 		public FrmProgressAuto() {
 			InitializeComponent();
-			Loaded+=FrmProgressAuto_Loaded;
+			Load+=FrmProgressAuto_Load;
 			FormClosing+=FormProgressAuto_FormClosing;
 			CloseXClicked+=FrmProgressAuto_CloseXClicked;
 		}
 
-		private void FrmProgressAuto_Loaded(object sender,RoutedEventArgs e) {
+		private void FrmProgressAuto_Load(object sender,EventArgs e) {
 			ODEvent.Fired+=ODEvent_Fired;
 			labelMsg.Text=StartingMessage;//this will never be null because of how it's passed in from ProgressOD.
 			if(!ShowCancelButton){

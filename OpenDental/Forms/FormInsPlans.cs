@@ -106,8 +106,14 @@ namespace OpenDental{
 			col=new GridColumn(Lans.g("TableInsurancePlans","City"),80);
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lans.g("TableInsurancePlans","ST"),25);
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")){//Canadian. en-CA or fr-CA
+				col=new GridColumn(Lans.g("TableInsurancePlans","Prov"),40);
+			}
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lans.g("TableInsurancePlans","Zip"),50);
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")){
+				col=new GridColumn(Lans.g("TableInsurancePlans","Postal"),50);
+			}
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lans.g("TableInsurancePlans",groupNum),70);
 			gridMain.Columns.Add(col);

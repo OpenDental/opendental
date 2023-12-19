@@ -423,7 +423,7 @@ namespace OpenDental {
 						CreditCard newCreditCard=new CreditCard();
 						newCreditCard.IsNew=true;
 						newCreditCard.PatNum=_patient.PatNum;
-						List<CreditCard> listCreditCardsItemOrderCount=CreditCards.Refresh(_patient.PatNum);
+						List<CreditCard> listCreditCardsItemOrderCount=CreditCards.RefreshAll(_patient.PatNum);
 						newCreditCard.ItemOrder=listCreditCardsItemOrderCount.Count;
 						int expiryYear=int.Parse(cardData.ExpiryYear);
 						int expiryMonth=int.Parse(cardData.ExpiryMonth);

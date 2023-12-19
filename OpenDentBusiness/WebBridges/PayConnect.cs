@@ -365,7 +365,7 @@ namespace OpenDentBusiness {
 				throw new ODException("Invalid CC Alias",ODException.ErrorCodes.OtkArgsInvalid);
 			}
 			CreditCards.Delete(cc.CreditCardNum);
-			List<CreditCard> creditCards=CreditCards.Refresh(pat.PatNum);
+			List<CreditCard> creditCards=CreditCards.RefreshAll(pat.PatNum);
 			for(int i=0;i<creditCards.Count;i++) {
 				creditCards[i].ItemOrder=creditCards.Count-(i+1);
 				CreditCards.Update(creditCards[i]);//Resets ItemOrder.

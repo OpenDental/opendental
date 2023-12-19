@@ -102,6 +102,17 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
+		/// <summary> Returns true if a display field with the provided InternalName is set to show in the provided DisplayFieldCategory. </summary>
+		public static bool IsInUse(DisplayFieldCategory displayFieldCategory, string internalName) {
+			//No need to check MiddleTierRole; no call to db.
+			if(string.IsNullOrEmpty(internalName)) {
+				return false;
+			}
+			List<DisplayField> listDisplayFields=GetForCategory(displayFieldCategory);
+			bool isVisibleCategory=listDisplayFields.Find(x=>x.InternalName==internalName)!=null;
+			return isVisibleCategory;
+		}
+
 		///<Summary>Returns an ordered list for just one category.  Do not use with None, or it will malfunction.  These are display fields that the user has entered, which are stored in the db, and then are pulled into the cache.  Categories with no display fields will return the default list.</Summary>
 		public static List<DisplayField> GetForCategory(DisplayFieldCategory category){
 			//No need to check MiddleTierRole; no call to db.
@@ -687,6 +698,9 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("NextVisit",70,category));
 					list.Add(new DisplayField("Invoice Number",90,category));
 					list.Add(new DisplayField("Specialty",90,category));
+					list.Add(new DisplayField("Ward",90,category));
+					list.Add(new DisplayField("AdmitDate",90,category));
+					list.Add(new DisplayField("DischargeDate",100,category));
 					break;
 				#endregion PatientSelect
 				#region PatientInformation

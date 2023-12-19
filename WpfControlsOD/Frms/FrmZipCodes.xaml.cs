@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,12 +43,18 @@ namespace OpenDental {
 			gridZipCode.Columns.Clear();
 			GridColumn gridColumn;
 			gridColumn=new GridColumn(Lans.g(this,"ZipCode"),75);
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				gridColumn=new GridColumn(Lans.g(this,"Postal"),75);
+			}
 			gridZipCode.Columns.Add(gridColumn);
 			gridColumn=new GridColumn(Lans.g(this,"City"),270);
 			gridZipCode.Columns.Add(gridColumn);
-			gridColumn=new GridColumn(Lans.g(this,"State"),50);
+			gridColumn=new GridColumn(Lans.g(this,"State"),80);
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				gridColumn=new GridColumn(Lans.g(this,"Prov"),80);
+			}
 			gridZipCode.Columns.Add(gridColumn);
-			gridColumn=new GridColumn(Lans.g(this,"Frequent"),80);
+			gridColumn=new GridColumn(Lans.g(this,"Frequent"),0);
 			gridColumn.IsWidthDynamic=true;
 			gridZipCode.Columns.Add(gridColumn);
 			gridZipCode.ListGridRows.Clear();

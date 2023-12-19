@@ -21,6 +21,11 @@ namespace OpenDental{
 		}
 
 		private void FormPractice_Load(object sender, System.EventArgs e) {
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				label6.Text=Lang.g(this,"City, Prov, Postal");
+				label11.Text=Lang.g(this,"City, Prov, Postal");
+				label15.Text=Lang.g(this,"City, Prov, Postal");
+			}
 			checkIsMedicalOnly.Checked=PrefC.GetBool(PrefName.PracticeIsMedicalOnly);
 			if(Programs.UsingEcwTightOrFullMode()) {
 				checkIsMedicalOnly.Visible=false;

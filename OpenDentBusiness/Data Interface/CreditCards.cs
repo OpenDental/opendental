@@ -49,8 +49,15 @@ namespace OpenDentBusiness{
 		public static List<CreditCard> Refresh(long patNum){
 			//No need to check MiddleTierRole; no call to db.
 			List<CreditCardSource> listSources=Enum.GetValues(typeof(CreditCardSource)).Cast<CreditCardSource>()
-				.Where(x => !x.In(CreditCardSource.PayConnectPortalLogin,CreditCardSource.CareCredit)).ToList();
+				.Where(x => !x.In(CreditCards.GetCreditCardSourcesForOnlinePayments().ToArray())).ToList();
 			return RefreshBySource(patNum,listSources);
+		}
+
+		///<summary>If patNum==0 then does not filter on PatNum; otherwise filters on PatNum. Includes all credit cards sources.</summary>
+		public static List<CreditCard> RefreshAll(long patNum){
+			//No need to check MiddleTierRole; no call to db.
+			List<CreditCardSource> listCreditCardSources=Enum.GetValues(typeof(CreditCardSource)).Cast<CreditCardSource>().ToList();
+			return RefreshBySource(patNum,listCreditCardSources);
 		}
 
 		///<summary>Get all credit cards by a given list of CreditCardSource(s). Optionally filter by a given patNum.</summary>
@@ -125,7 +132,7 @@ namespace OpenDentBusiness{
 				CCExpiration=xWebResponse.AccountExpirationDate,
 				CCSource=xWebResponse.CCSource,
 				ClinicNum=xWebResponse.ClinicNum,
-				ItemOrder=Refresh(xWebResponse.PatNum).Count,
+				ItemOrder=RefreshAll(xWebResponse.PatNum).Count,
 				Address="",
 				Zip="",
 				ChargeAmt=0,
@@ -953,7 +960,7 @@ namespace OpenDentBusiness{
 			CreditCardSource ccSource) 
 		{
 			CreditCard cc=new CreditCard();
-			List<CreditCard> itemOrderCount=Refresh(patNum);
+			List<CreditCard> itemOrderCount=RefreshAll(patNum);
 			cc.ItemOrder=itemOrderCount.Count;
 			cc.PatNum=patNum;
 			cc.CCExpiration=new DateTime(Convert.ToInt32("20"+expYear),Convert.ToInt32(expMonth),1);

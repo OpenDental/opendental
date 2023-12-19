@@ -256,9 +256,9 @@ namespace OpenDental {
 			// label11
 			// 
 			this.label11.BackColor = System.Drawing.Color.Transparent;
-			this.label11.Location = new System.Drawing.Point(9, 86);
+			this.label11.Location = new System.Drawing.Point(0, 86);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(95, 15);
+			this.label11.Size = new System.Drawing.Size(104, 15);
 			this.label11.TabIndex = 0;
 			this.label11.Text = "City, ST, Zip";
 			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -327,9 +327,9 @@ namespace OpenDental {
 			// 
 			// label20
 			// 
-			this.label20.Location = new System.Drawing.Point(6, 86);
+			this.label20.Location = new System.Drawing.Point(0, 86);
 			this.label20.Name = "label20";
-			this.label20.Size = new System.Drawing.Size(98, 15);
+			this.label20.Size = new System.Drawing.Size(104, 15);
 			this.label20.TabIndex = 0;
 			this.label20.Text = "City, ST, Zip";
 			this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -427,9 +427,9 @@ namespace OpenDental {
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(6, 86);
+			this.label15.Location = new System.Drawing.Point(0, 86);
 			this.label15.Name = "label15";
-			this.label15.Size = new System.Drawing.Size(98, 15);
+			this.label15.Size = new System.Drawing.Size(104, 15);
 			this.label15.TabIndex = 0;
 			this.label15.Text = "City, ST, Zip";
 			this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

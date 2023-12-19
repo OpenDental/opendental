@@ -238,12 +238,12 @@ namespace OpenDental {
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(397, 16);
+			this.label7.Location = new System.Drawing.Point(387, 16);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(164, 16);
+			this.label7.Size = new System.Drawing.Size(180, 16);
 			this.label7.TabIndex = 33;
 			this.label7.Text = "Only apply to these Billing Types";
-			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// panel1
 			// 
@@ -290,7 +290,7 @@ namespace OpenDental {
 			// 
 			// label12
 			// 
-			this.label12.Location = new System.Drawing.Point(135, 73);
+			this.label12.Location = new System.Drawing.Point(133, 73);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(12, 14);
 			this.label12.TabIndex = 38;
@@ -299,7 +299,7 @@ namespace OpenDental {
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(135, 100);
+			this.label11.Location = new System.Drawing.Point(133, 100);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(12, 14);
 			this.label11.TabIndex = 37;
@@ -346,7 +346,7 @@ namespace OpenDental {
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(135, 14);
+			this.label8.Location = new System.Drawing.Point(133, 14);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(12, 14);
 			this.label8.TabIndex = 28;
@@ -538,9 +538,9 @@ namespace OpenDental {
 			// labelExcludeIfPendingDays
 			// 
 			this.labelExcludeIfPendingDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelExcludeIfPendingDays.Location = new System.Drawing.Point(67, 80);
+			this.labelExcludeIfPendingDays.Location = new System.Drawing.Point(30, 80);
 			this.labelExcludeIfPendingDays.Name = "labelExcludeIfPendingDays";
-			this.labelExcludeIfPendingDays.Size = new System.Drawing.Size(220, 16);
+			this.labelExcludeIfPendingDays.Size = new System.Drawing.Size(252, 16);
 			this.labelExcludeIfPendingDays.TabIndex = 262;
 			this.labelExcludeIfPendingDays.Text = "Exclude if insurance pending _ days or less";
 			this.labelExcludeIfPendingDays.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

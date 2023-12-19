@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using CodeBase;
@@ -40,6 +41,11 @@ namespace OpenDental {
 		}
 
 		private void FormClinicEdit_Load(object sender, System.EventArgs e) {
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				label11.Text=Lang.g(this,"City, Prov, Postal");
+				label20.Text=Lang.g(this,"City, Prov, Postal");
+				label15.Text=Lang.g(this,"City, Prov, Postal");
+			}
 			checkIsMedicalOnly.Checked=ClinicCur.IsMedicalOnly;
 			if(Programs.UsingEcwTightOrFullMode()) {
 				checkIsMedicalOnly.Visible=false;

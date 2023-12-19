@@ -2,6 +2,7 @@ using CodeBase;
 using OpenDentBusiness;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -28,6 +29,11 @@ namespace OpenDental{
 		}
 
 		private void FormSiteEdit_Load(object sender,EventArgs e) {
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				labelST.Text=Lang.g(this,"Province");
+				labelZip.Text=Lang.g(this,"Postal Code");
+				butEditZip.Text=Lang.g(this,"Edit Postal");
+			}
 			textDescription.Text=SiteCur.Description;
 			comboPlaceService.Items.AddEnums<PlaceOfService>();
 			comboPlaceService.SetSelectedEnum(SiteCur.PlaceService);
@@ -130,7 +136,12 @@ namespace OpenDental{
 
 		private void butEditZip_Click(object sender,EventArgs e) {
 			if(textZip.Text.Length==0) {
-				MessageBox.Show(Lan.g(this,"Please enter a zipcode first."));
+				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+					MessageBox.Show(Lang.g(this,"Please enter a Postal Code first."));
+				}
+				else{
+					MessageBox.Show(Lang.g(this,"Please enter a zipcode first."));
+				}
 				return;
 			}
 			List<ZipCode> listZipCodes=ZipCodes.GetALMatches(textZip.Text);

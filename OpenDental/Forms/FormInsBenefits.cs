@@ -856,8 +856,10 @@ namespace OpenDental {
 				_listBenefitsGrid.RemoveAt(benefitListI);
 				_listBenefitsAll.RemoveAt(benefitListAllI);
 			}
+			if(Benefits.IsFrequencyLimitation(formBenefitEdit.BenefitCur)) {
+				FillGridFrequencies();
+			}
 			FillGridBenefits();
-			FillGridFrequencies();
 		}
 
 		///<summary>Returns true if there are a mixture of benefits with calendar and service year time periods.</summary>

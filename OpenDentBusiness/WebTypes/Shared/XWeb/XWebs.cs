@@ -564,7 +564,7 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 				response.Alias=_cc.XChargeToken;
 				try { response.PayNote="Deleted CreditCard: "+JsonConvert.SerializeObject(_cc); } catch { }				
 				CreditCards.Delete(_cc.CreditCardNum);
-				List<CreditCard> creditCards=CreditCards.Refresh(_patNum);
+				List<CreditCard> creditCards=CreditCards.RefreshAll(_patNum);
 				for(int i=0;i<creditCards.Count;i++) {
 					creditCards[i].ItemOrder=creditCards.Count-(i+1);
 					CreditCards.Update(creditCards[i]);//Resets ItemOrder.

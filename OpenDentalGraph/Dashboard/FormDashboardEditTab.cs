@@ -74,6 +74,7 @@ Double-click tab header to rename tab.";
 				addClinicDefaultToolStripMenuItem.Visible=false;
 			}
 			AddDefaultTabs();
+			this.KeyDown+=FormDashboardEditTab_KeyDown;
 		}
 
 		private void RefreshData(bool invalidateFirst) {
@@ -91,6 +92,12 @@ Double-click tab header to rename tab.";
 			this.Text=title;
 		}
 		#endregion
+
+		private void FormDashboardEditTab_KeyDown(object sender,KeyEventArgs e) {
+			if(e.KeyData==Keys.Escape){
+				Close();
+			}
+		}
 
 		private void listItems_MouseDown(object sender,MouseEventArgs e) {
 			int i=listItems.IndexFromPoint(new Point(e.X,e.Y));

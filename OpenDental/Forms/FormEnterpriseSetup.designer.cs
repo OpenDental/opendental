@@ -298,7 +298,7 @@ namespace OpenDental {
 			this.label41.Name = "label41";
 			this.label41.Size = new System.Drawing.Size(234, 18);
 			this.label41.TabIndex = 251;
-			this.label41.Text = "Paysplits Allocation";
+			this.label41.Text = "Adjustments Allocation";
 			this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelAgingServiceTimeDue
@@ -323,7 +323,7 @@ namespace OpenDental {
 			this.label39.Name = "label39";
 			this.label39.Size = new System.Drawing.Size(234, 18);
 			this.label39.TabIndex = 249;
-			this.label39.Text = "Adjustments Allocation";
+			this.label39.Text = "Paysplits Allocation";
 			this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkBillShowTransSinceZero

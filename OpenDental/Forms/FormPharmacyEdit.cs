@@ -23,6 +23,9 @@ namespace OpenDental {
 		}
 
 		private void FormPharmacyEdit_Load(object sender, System.EventArgs e) {
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				label11.Text=Lang.g(this,"City, Province, Postal Code");
+			}
 			textStoreName.Text=PharmacyCur.StoreName;
 			textPhone.Text=PharmacyCur.Phone;
 			textFax.Text=PharmacyCur.Fax;

@@ -95,7 +95,7 @@ namespace OpenDentBusiness {
 					CCExpiration=new DateTime(2000+int.Parse(responseValues.CreditCardExpireDate.Substring(2,2)),int.Parse(responseValues.CreditCardExpireDate.Substring(0,2)),1),//CCExpDate is stored as MMyy from PayConnect
 					CCSource=CCSource,
 					ClinicNum=Patients.GetPat(PatNum).ClinicNum,
-					ItemOrder=CreditCards.Refresh(PatNum).Count,
+					ItemOrder=CreditCards.RefreshAll(PatNum).Count,
 					Address="",
 					Zip="",
 					ChargeAmt=0,

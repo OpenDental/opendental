@@ -555,6 +555,15 @@ namespace OpenDentBusiness {
 			string command=$"SELECT SUM(DATA_LENGTH + INDEX_LENGTH) FROM information_schema.TABLES WHERE TABLE_SCHEMA = '{database}' AND TABLE_TYPE = 'BASE TABLE' GROUP BY TABLE_SCHEMA";
 			return Db.GetLong(command);
 		}
+
+		///<summary>Runs the 'FLUSH TABLES;' command.</summary>
+		public static void FlushTables() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod());
+				return;
+			}
+			Db.NonQ("FLUSH TABLES");
+		}
 	}
 
 	
