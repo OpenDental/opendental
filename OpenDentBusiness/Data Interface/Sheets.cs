@@ -355,7 +355,8 @@ namespace OpenDentBusiness{
 			//Remove any sheets that the patient shouldn't see based on age. A value of -1 means ignore.
 			listSheetsToCreate.RemoveAll(x => x.MinAge!=-1 && pat.Age<x.MinAge);
 			listSheetsToCreate.RemoveAll(x => x.MaxAge!=-1 && pat.Age>x.MaxAge);
-			listSheetsToCreate=EClipboardSheetDefs.FilterPrefillStatuses(listSheetsToCreate,listAlreadyCompleted);
+			listSheetsToCreate=EClipboardSheetDefs.FilterPrefillStatuses(listSheetsToCreate,listAlreadyCompleted, clinicNum:appt.ClinicNum, listSheetsInTerminal:listAlreadyInTerminal)
+				.OrderBy(x => x.ItemOrder).ToList();
 			byte showInTerminal=GetBiggestShowInTerminal(appt.PatNum);
 			List<Sheet> listNewSheets=new List<Sheet>();
 			foreach(EClipboardSheetDef sheetInsert in listSheetsToCreate.OrderBy(x => x.ItemOrder)) {

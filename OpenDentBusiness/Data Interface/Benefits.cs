@@ -1045,6 +1045,12 @@ namespace OpenDentBusiness {
 						continue;
 					}
 				}
+				//If the used family max is an umbrella max, 
+				//don't subtract the estimates from procedures that are outside of the general coverage category 
+				//StrProcCode can be blank for claimprocs with Status Adjustment
+				if(benFam.CovCatNum==0 && !IsCodeInGeneralSpan(histList[i].StrProcCode) && histList[i].StrProcCode!="") {
+					continue;
+				}
 				//if no category, then benefits are not restricted by proc code.
 				maxFam-=histList[i].Amount;
 			}
@@ -1082,7 +1088,8 @@ namespace OpenDentBusiness {
 				}
 				//If the used family max is an umbrella max, 
 				//don't subtract the estimates from procedures that are outside of the general coverage category 
-				if(benFam.CovCatNum==0 && !IsCodeInGeneralSpan(loopList[i].StrProcCode)) {
+				//StrProcCode can be blank for claimprocs with Status Adjustment
+				if(benFam.CovCatNum==0 && !IsCodeInGeneralSpan(loopList[i].StrProcCode) && loopList[i].StrProcCode!="") {
 					continue;
 				}
 				//if no category, then benefits are not restricted by proc code.

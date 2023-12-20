@@ -388,9 +388,6 @@ namespace OpenDental {
 		///<summary>Helper to get and store the UI elements so we do not need to pass in more than what is necessary. Set from the UI, not DB.</summary>
 		private bool TryGetTermsFromUI(out PayPlanTerms payPlanTerms,bool isSilent=false,bool doValidateTerms=true) {
 			payPlanTerms=new PayPlanTerms();
-			if(!String.IsNullOrWhiteSpace(ValidateUI())) {
-				return false;
-			}
 			if(doValidateTerms && !ValidateTerms(isSilent)) {//saveData relies on this, if removed from this method, needs to be addded to SaveData()
 				return false;
 			}
@@ -399,15 +396,7 @@ namespace OpenDental {
 			payPlanTerms.Frequency=GetChargeFrequency();//verify this is just based on the ui, not the db.
 			payPlanTerms.DynamicPayPlanTPOption=GetSelectedTreatmentPlannedOption();
 			payPlanTerms.DateInterestStart=PIn.Date(textDateInterestStart.Text);//Will be DateTime.MinDate if field is blank.
-			try {
-				payPlanTerms.PayCount=PIn.Int(textPaymentCount.Text);
-			}
-			catch{
-				if(!isSilent) {
-					MsgBox.Show(this,"Payment Count invalid.");
-				}
-				return false;
-			}
+			payPlanTerms.PayCount=PIn.Int(textPaymentCount.Text, hasExceptions:false); //The world will not end if PayCount is interpreted as zero.
 			payPlanTerms.PeriodPayment=PIn.Decimal(textPeriodPayment.Text);
 			payPlanTerms.PrincipalAmount=PIn.Double(textTotalPrincipal.Text);
 			payPlanTerms.RoundDec=CultureInfo.CurrentCulture.NumberFormat.NumberDecimalDigits;
@@ -826,10 +815,11 @@ namespace OpenDental {
 				|| !textPaymentCount.IsValid()
 				|| !textCompletedAmt.IsValid()) 
 			{
-				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors first."));
+				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors."));
 			}
-			if(!textPeriodPayment.IsValid() && gridLinkedProduction.ListGridRows.Count!=0) {
-				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors first."));
+			//If the prior case is true, this should not be added a second time.
+			else if(!textPeriodPayment.IsValid() && gridLinkedProduction.ListGridRows.Count!=0) {
+				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors."));
 			}
 			return stringBuilderErrors.ToString();
 		}

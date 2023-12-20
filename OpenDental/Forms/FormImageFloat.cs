@@ -4543,6 +4543,7 @@ namespace OpenDental {
 			}
 			NodeTypeAndKey nodeTypeAndKey=null;
 			Document document=null;
+			bool isBlockingNavigation=_odWebView2.DoBlockNavigation;
 			for(int i=0;i<stringArrayFileNames.Length;i++) {
 				try {
 					if(CloudStorage.IsCloudStorage) {
@@ -4560,6 +4561,9 @@ namespace OpenDental {
 				catch(Exception ex) {
 					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+openFileDialog.FileName);
 					continue;
+				}
+				if(i>0){
+					_odWebView2.DoBlockNavigation=false;//Allows previewing of additional PDFs when importing more than one file.
 				}
 				EventFillTree?.Invoke(this,false);
 				EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
@@ -4579,6 +4583,7 @@ namespace OpenDental {
 					EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				}
 			}
+			_odWebView2.DoBlockNavigation=isBlockingNavigation;
 			/*todo:
 			if(treeMain.SelectedNode!=null) {
 				treeMain.SelectedNode.EnsureVisible();

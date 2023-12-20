@@ -83,12 +83,18 @@ namespace OpenDentBusiness {
 			return CCSource==CreditCardSource.PayConnectPortal || CCSource==CreditCardSource.PayConnectPortalLogin;
 		}
 
+		///<summary>Currently checks for the following "CreditCardSource" enum values: PaySimpleACH, PaySimplePaymentPortalACH</summary>
+		public bool IsPaySimpleACH() {
+			return	CCSource==CreditCardSource.PaySimpleACH ||
+							CCSource==CreditCardSource.PaySimplePaymentPortalACH;
+		}
+
 		///<summary>Gets a string of the companies the credit cards has tokens for.</summary>
 		public string GetTokenString() {
 			if(!Programs.HasMultipleCreditCardProgramsEnabled()
 				|| (string.IsNullOrEmpty(XChargeToken) && string.IsNullOrEmpty(PayConnectToken) && string.IsNullOrEmpty(PaySimpleToken))) 
 			{
-				if(CCSource==CreditCardSource.PaySimpleACH) {
+				if(IsPaySimpleACH()) {
 					return "("+Lans.g(this,"ACH")+")";
 				}
 				return "";
@@ -106,7 +112,7 @@ namespace OpenDentBusiness {
 				listTokens.Add("PayConnect"+(IsPayConnectPortal() ? " Portal" : ""));
 			}
 			if(!string.IsNullOrEmpty(PaySimpleToken)) {
-				listTokens.Add("PaySimple"+(CCSource==CreditCardSource.PaySimpleACH ? " "+Lans.g(this,"ACH") : ""));
+				listTokens.Add("PaySimple"+(IsPaySimpleACH() ? " "+Lans.g(this,"ACH") : ""));
 			}
 			return "("+string.Join(", ",listTokens)+")";
 		}

@@ -1494,9 +1494,7 @@ namespace OpenDentBusiness {
 			//Apply overpayments to principal
 			List<PayPlanChargeSplits> listPrincipalChargeSplits=new List<PayPlanChargeSplits>();
 			if(isPayOnPrincipal) {
-				//All new principal charges suggested will be for the same date as the most recent charge (for DPP reasons). Do not use today's date.
-				DateTime chargeDateMostRecent=recalcData.ListPayPlanCharges.Max(x => x.ChargeDate);
-				listPrincipalChargeSplits=CreatePrincipalChargeSplitsForAmount(recalcData.GetOverpaidAmount(),chargeDateMostRecent,prepayUnearnedType,ref recalcData.ListProductionEntry,payPlan);
+				listPrincipalChargeSplits=CreatePrincipalChargeSplitsForAmount(recalcData.GetOverpaidAmount(),DateTime.Today,prepayUnearnedType,ref recalcData.ListProductionEntry,payPlan);
 				listPayPlanChargeSplits.AddRange(listPrincipalChargeSplits);
 			}
 			#endregion

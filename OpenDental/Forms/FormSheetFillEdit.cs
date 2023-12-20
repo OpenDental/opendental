@@ -46,6 +46,8 @@ namespace OpenDental {
 		private string _uniqueFormIdentifier;
 		///<summary>Tab order of the currently selected control, either checkbox, textbox, or combobox. 1-based in sheets.</summary>
 		private int _tabCurrent=0;
+		///<summary>The current sheetField the user is hovering over. Used to add a hovering highlight. This can only be a combobox or checkbox.</summary>
+		private SheetField _sheetFieldHover;
 		#endregion Fields - private
 
 		#region Fields - public
@@ -104,6 +106,12 @@ namespace OpenDental {
 			}
 			formSheetFillEdit.IsReadOnly=isReadOnly;
 			formSheetFillEdit.Show();
+		}
+
+		///<summary>Returns the bottom Y index of the given page number for the current sheet, adjusted for margins.  Used for drawing page breaks and limiting Y position of added fields.</summary>
+		private int GetBottomOfPage(int pageCount) {
+			int marginPerPage=_marginsPrint.Top+_marginsPrint.Bottom;
+			return pageCount*(SheetCur.HeightPage-marginPerPage)+_marginsPrint.Top;
 		}
 		#endregion Methods - public
 
@@ -782,9 +790,11 @@ namespace OpenDental {
 			if(sheetField.FieldType!=SheetFieldType.PatImage){
 				return;
 			}
+			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
 			using FormSheetFieldEditPatImage formSheetFieldEditPatImage=new FormSheetFieldEditPatImage();
 			formSheetFieldEditPatImage.SheetFieldCur=sheetField;
 			formSheetFieldEditPatImage.SheetCur=SheetCur;
+			formSheetFieldEditPatImage.BottomYLimit=GetBottomOfPage(pageCount)-1;
 			formSheetFieldEditPatImage.ShowDialog();
 			if(formSheetFieldEditPatImage.DialogResult!=DialogResult.OK){
 				return;
@@ -800,6 +810,8 @@ namespace OpenDental {
 			sheetField.BitmapLoaded?.Dispose();
 			sheetField.BitmapLoaded=null;
 			LoadImageOnePat(sheetField);
+			//Refresh panel view because PatImage location might have changed to be off the screen.
+			LayoutFields();
 			panelMain.Invalidate();
 		}
 
@@ -843,8 +855,13 @@ namespace OpenDental {
 				|| sheetField?.FieldType==SheetFieldType.OutputText)
 			{
 				_tabCurrent=sheetField.TabOrder;
+				_sheetFieldHover=null;
+				bool isRightClick=false;
+				if(e.Button==MouseButtons.Right) {
+					isRightClick=true;
+				}
 				panelMain.Invalidate();
-				CreateFloatingTextBox(sheetField,e.Location);
+				CreateFloatingTextBox(sheetField,e.Location,isRightClick:isRightClick);
 				ClearSigs();
 				return;
 			}
@@ -869,10 +886,23 @@ namespace OpenDental {
 		}
 
 		private void panelMain_MouseMove(object sender,MouseEventArgs e) {
-			if(!_isMouseDown){
+			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
+			if(!_isMouseDown) {
+				SheetField sheetField=HitTest(pointSheet);
+				if(_sheetFieldHover==sheetField){//works even if either or both are null
+					return;
+				}
+				if(sheetField?.FieldType==SheetFieldType.CheckBox || sheetField?.FieldType==SheetFieldType.ComboBox) {
+					_sheetFieldHover=sheetField;
+					panelMain.Invalidate();
+					return;
+				}
+				_sheetFieldHover=null;
+				panelMain.Invalidate();
 				return;
 			}
-			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
+			_sheetFieldHover=null;
+			panelMain.Invalidate();
 			if(checkErase.Checked){
 				//look for any lines that intersect the "eraser".
 				//since the line segments are so short, it's sufficient to check end points.
@@ -1041,6 +1071,9 @@ namespace OpenDental {
 				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
 					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
 				}
+				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
+					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
 				if(SheetCur.SheetFields[i].FieldValue=="") {
 					continue;
 				}
@@ -1066,6 +1099,10 @@ namespace OpenDental {
 				float yPosArrowStart=SheetCur.SheetFields[i].YPos+(SheetCur.SheetFields[i].Height/2f);
 				using Pen _penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
 				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
+					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
+					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
+				}
+				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
 					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
 					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
 				}
@@ -1153,7 +1190,8 @@ namespace OpenDental {
 			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
 			int margins=(_marginsPrint.Top+_marginsPrint.Bottom);
 			for(int i=1;i<pageCount;i++) {
-				g.DrawLine(penDashPage,0,i*(SheetCur.HeightPage-margins)+_marginsPrint.Top,SheetCur.WidthPage,i*(SheetCur.HeightPage-margins)+_marginsPrint.Top);
+				int bottomYOfPage=GetBottomOfPage(i);
+				g.DrawLine(penDashPage,0,bottomYOfPage,SheetCur.WidthPage,bottomYOfPage);
 			}
 			//End Draw Page Break
 			//for testing
@@ -1302,10 +1340,11 @@ namespace OpenDental {
 			//int scrollVal=panelScroll.VerticalScroll.Value;
 			Point point=new Point(LayoutManager.Scale(sheetField.XPos),yPos+height);//+scrollVal);
 			contextMenu.Show(panelMain,point);//Can't resize width, it's done according to width of items.
+			_isMouseDown=false;//contextMenu is closed, so Mouse shouldn't be considered down anymore
 		}
 
 		///<summary>This is for an input field, static text, or output text to edit text, and then it goes away. The point passed in is so that we can put the cursor in the right place.</summary>
-		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false){
+		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false,bool isRightClick=false){
 			//Convert \n that are by themselves to \r\n. Explanation is in SheetsInternal.GetSheetFromResource().
 			string text=Regex.Replace(sheetField.FieldValue,@"(?<!\r)\n","\r\n");
 			_idxSelectedChar=HitTestChars(sheetField,point,text);
@@ -1369,6 +1408,9 @@ namespace OpenDental {
 			}
 			else{
 				textBox.SelectionStart=_idxSelectedChar;
+			}
+			if(isRightClick) {
+				textBox.ContextMenu.Show(panelMain,point);
 			}
 		}
 
