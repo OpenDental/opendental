@@ -15,7 +15,7 @@ using Microsoft.Web.WebView2.WinForms;
 //This can throw exceptions if WebView2 runtime is not installed, needs to be wrapped in a try-catch for this reason.
 namespace CodeBase.Controls {
 	public partial class ODWebView2:WebView2 {
-		/// <summary>Prevents WebView2 from navigating. Determines what value _doBlockNavigation is set to after navigating. Never programatically changed.</summary>
+		/// <summary>Prevents WebView2 from navigating. Determines what value _doBlockNavigation is set to after navigating.</summary>
 		public bool DoBlockNavigation=false;
 		/// <summary>Prevents navigation. Altered by OdWebView2Navigate and CoreWebView2_NavigationCompleted to allow navigation via OdWebView2Navigate.</summary>
 		private bool _doBlockNavigation=false;

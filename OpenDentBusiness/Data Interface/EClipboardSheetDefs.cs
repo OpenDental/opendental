@@ -149,8 +149,20 @@ namespace OpenDentBusiness{
 			return eClipboardSheetDef.IgnoreSheetDefNums.Split(',').Select(x=>PIn.Long(x)).ToList();
 		}
 
-		///<summary>Filters out and returns a list of EClipSheetDefs based on ignore fields.</summary>
-		public static List<EClipboardSheetDef> FilterPrefillStatuses(List<EClipboardSheetDef> listeClipSheetDefs,List<Sheet> listSheetsCompleted) {
+		/// <summary> Returns a list of EClipboardSheetDefs for the passed in sheetDefNums at the specified clinic. Only includes when PrefillStatus=Once </summary>
+		public static List<EClipboardSheetDef> GetManyEClipboardSheetDefsForOnceRuleAtClinic(List<long> sheetDefNums, long clinicNum) {
+			if(sheetDefNums==null || sheetDefNums.Count==0) {
+				return new List<EClipboardSheetDef>();
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<List<EClipboardSheetDef>>(MethodBase.GetCurrentMethod(),sheetDefNums, clinicNum);
+			}
+			string command=$"SELECT * FROM eclipboardsheetdef WHERE SheetDefNum in ({string.Join(",",sheetDefNums)}) AND ClinicNum={clinicNum} AND PrefillStatus = {POut.Enum<PrefillStatuses>(PrefillStatuses.Once)}";
+			return Crud.EClipboardSheetDefCrud.SelectMany(command);
+		}
+
+		///<summary> Filters out and returns a list of EClipboardSheetDefs based on ignore fields. Considers completed sheets, existing sheets, and sheets to be generated. ClinicNum is from appointment. </summary>
+		public static List<EClipboardSheetDef> FilterPrefillStatuses(List<EClipboardSheetDef> listeClipSheetDefs,List<Sheet> listSheetsCompleted, long clinicNum, List<Sheet> listSheetsInTerminal=null) {
 			//No remoting role. No call to DB.
 			List<EClipboardSheetDef> retVal=new List<EClipboardSheetDef>(listeClipSheetDefs);
 			List<long> listSheetDefNumsToRemove=new List<long>();
@@ -165,7 +177,19 @@ namespace OpenDentBusiness{
 				List<long> listToRemove=GetListIgnoreSheetDefNums(retVal[i]);
 				listSheetDefNumsToRemove.AddRange(listToRemove);
 			}
-			retVal.RemoveAll(x=>listSheetDefNumsToRemove.Contains(x.SheetDefNum));
+			if(listSheetsInTerminal!=null && listSheetsInTerminal.Count>0) {
+				//We now have the sheets to ignore from the newly adding sheet defs, now check the ones that exist in the terminal already.
+				//If the office is using eClipboard default clinic settings for all clinics, use 0 regardless of what clinic their appointment is at.
+				clinicNum=PrefC.GetBool(PrefName.EClipboardUseDefaults)?0:clinicNum;
+				//Fetch the EClipboardSheetDefs that already exist, for the clinic the patient is checking in to.
+				List<EClipboardSheetDef> listEClipboardSheetDefsForSheetsInTerminal=GetManyEClipboardSheetDefsForOnceRuleAtClinic(listSheetsInTerminal.Select(x=>x.SheetDefNum).ToList(), clinicNum);
+				//Loop through existing sheets, concatenating their SheetsToIgnore fields.
+				for(int i=0; i<listEClipboardSheetDefsForSheetsInTerminal.Count; i++) {
+					listSheetDefNumsToRemove.AddRange(GetListIgnoreSheetDefNums(listEClipboardSheetDefsForSheetsInTerminal[i]));
+				}
+			}
+			//Remove all of the eClipboardSheetDefs from our result that are ignored by one of the sheets in the checklist.
+			retVal.RemoveAll(x=>listSheetDefNumsToRemove.Distinct().Contains(x.SheetDefNum));
 			return retVal;
 		}
 		#endregion Get Methods

@@ -28,7 +28,13 @@ namespace OpenDental {
 
 		private void FillGrid() {
 			List<CodeGroup> listCodeGroups=CodeGroups.GetDeepCopy();//including hidden
-			List<Benefit> listBenefits=ListBenefitsAll.FindAll(x=>Benefits.IsFrequencyLimitation(x) && x.CodeGroupNum!=0);
+			List<Benefit> listBenefits=ListBenefitsAll.FindAll(x=>Benefits.IsFrequencyLimitation(x) && x.CodeGroupNum!=0 
+				//We want to exclude the Patient Overrides from this grid because they should only be visible in FormInsBenefits.GridBenefits
+				//This was actually causing a bug in 23.2. In 23.3, this window was deprecated and this grid was moved into FormInsBenefits.
+				//In 23.3, we added full support for patient overrides.
+				//But in 23.2, to do a patient override, it can only be done in the main grid in the non-simple view.
+				//Any patient override would only show in the main grid (including simple at bottom), not here.
+				&& x.PatPlanNum==0);
 			listBenefits.Sort();
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();

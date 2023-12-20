@@ -146,7 +146,7 @@ namespace OpenDental {
 				}
 			}
 			if(_isPaySimpleEnabled) {
-				textAccountType.Text=(CreditCardCur.CCSource==CreditCardSource.PaySimpleACH ? Lans.g(this,"ACH") : Lans.g(this,"Credit Card"));
+				textAccountType.Text=CreditCardCur.IsPaySimpleACH() ? Lans.g(this,"ACH") : Lans.g(this,"Credit Card");
 			}
 			textPreviousStartDate.Text=_creditCard.DateStart.ToShortDateString();
 		}
@@ -180,7 +180,7 @@ namespace OpenDental {
 				else if(Regex.IsMatch(textExpDate.Text,@"^\d{4}$")) {//0807
 					CreditCardCur.CCExpiration=new DateTime(Convert.ToInt32("20"+textExpDate.Text.Substring(2,2)),Convert.ToInt32(textExpDate.Text.Substring(0,2)),1);
 				}
-				else if(CreditCardCur.CCSource!=CreditCardSource.PaySimpleACH) {
+				else if(!CreditCardCur.IsPaySimpleACH()) {
 					MsgBox.Show(this,"Expiration format invalid.");
 					return false;
 				}
@@ -652,7 +652,7 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.WaitCursor;
 			try {
-				if(CreditCardCur.CCSource==CreditCardSource.PaySimpleACH) {
+				if(CreditCardCur.IsPaySimpleACH()) {
 					PaySimple.DeleteACHAccount(CreditCardCur);
 				}
 				else if(CreditCardCur.CCSource==CreditCardSource.PaySimple) {//Credit card

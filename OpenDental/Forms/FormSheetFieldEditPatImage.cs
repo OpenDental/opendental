@@ -15,6 +15,8 @@ namespace OpenDental {
 		///<summary>This is the object we are editing.</summary>
 		public SheetField SheetFieldCur;
 		public Sheet SheetCur;
+		///<summary>The Y value to limit placement of PatImage to, should be set by caller.</summary>
+		public int BottomYLimit;
 
 		public FormSheetFieldEditPatImage() {
 			InitializeComponent();
@@ -23,11 +25,13 @@ namespace OpenDental {
 		}
 
 		private void FormSheetFieldPatImage_Load(object sender,EventArgs e) {
+			if(BottomYLimit==0) {
+				BottomYLimit=SheetCur.Height;
+			}
 			FillFields();
 		}
 
 		private void FillFields(){
-			textYPos.MaxVal=SheetCur.Height-1;//The maximum y-value of the sheet field must be within the page vertically.
 			textFieldValueDoc.Text="";
 			textFieldValueMount.Text="";
 			if(SheetFieldCur.FieldValue.StartsWith("MountNum:")){
@@ -85,6 +89,8 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
+			//The maximum y-value of the sheet field must be within the sheet vertically.
+			textYPos.MaxVal=BottomYLimit-PIn.Int(textHeight.Text);
 			if(!textXPos.IsValid()
 				|| !textYPos.IsValid()
 				|| !textWidth.IsValid()

@@ -195,7 +195,7 @@ namespace OpenDental{
 			gridMain.ListGridRows.Add(row);
 			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Email Aggregate"),Lans.g(this,"Subject Line.  Available variables")+": [NameF], "
 				+"[ClinicName], [PracticeName], [OfficeName]",PrefName.WebSchedAggregatedEmailSubject);
-			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Email Aggregate"),Lans.g(this,"Email body.  Available variables")+": [FamilyListURLs], [NameF],"
+			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Email Aggregate"),Lans.g(this,"Email body.  Available variables")+": [FamilyListURLs], [FamilyList], [NameF],"
 				+" [ClinicName], [ClinicPhone], [PracticeName], [PracticePhone], [OfficeName], [OfficePhone]",PrefName.WebSchedAggregatedEmailBody);
 			//
 			row=new GridRow();
@@ -205,7 +205,7 @@ namespace OpenDental{
 			row.Cells.Add(PrefC.GetString(PrefName.WebSchedMessageText));
 			row.Tag=PrefName.WebSchedMessageText.ToString();
 			gridMain.ListGridRows.Add(row);
-			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Text Aggregate"),Lans.g(this,"Available variables")+": [FamilyListURLs], [NameF], [ClinicName],"
+			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Text Aggregate"),Lans.g(this,"Available variables")+": [FamilyListURLs], [FamilyList], [NameF], [ClinicName],"
 				+" [ClinicPhone], [PracticeName], [PracticePhone], [OfficeName], [OfficePhone]",PrefName.WebSchedAggregatedTextMessage);
 			#endregion
 			#region 2nd Reminder

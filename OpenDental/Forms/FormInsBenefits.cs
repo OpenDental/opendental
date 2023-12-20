@@ -211,22 +211,23 @@ namespace OpenDental {
 				}
 				#endregion
 				#region Frequencies
+				// For this whole section we want to exclude the Patient Overrides because they belong in _listBenefitsGrid
 				//BWs group
-				else if(textBW.Text=="" && Benefits.IsBitewingFrequency(benefit)) {
+				else if(textBW.Text=="" && Benefits.IsBitewingFrequency(benefit) && benefit.PatPlanNum==0) {
 					textBW.Text=benefit.Quantity.ToString();
 					comboBW.SetSelectedEnum(frequencyOption);
 				}
 				//Pano
-				else if(textPano.Text=="" && Benefits.IsPanoFrequency(benefit)) {
+				else if(textPano.Text=="" && Benefits.IsPanoFrequency(benefit) && benefit.PatPlanNum==0) {
 					textPano.Text=benefit.Quantity.ToString();
 					comboPano.SetSelectedEnum(frequencyOption);
 				}
 				//Exam group
-				else if(textExams.Text=="" && Benefits.IsExamFrequency(benefit)) {
+				else if(textExams.Text=="" && Benefits.IsExamFrequency(benefit) && benefit.PatPlanNum==0) {
 					textExams.Text=benefit.Quantity.ToString();
 					comboExams.SetSelectedEnum(frequencyOption);
 				}
-				else if(checkSimplified.Checked && Benefits.IsFrequencyLimitation(benefit) && benefit.CodeGroupNum!=0) {
+				else if(checkSimplified.Checked && Benefits.IsFrequencyLimitation(benefit) && benefit.CodeGroupNum!=0  && benefit.PatPlanNum==0) {
 					// Will be shown in Form opened by 'More' button (butFrequencies)
 				}
 				#endregion
@@ -950,7 +951,8 @@ namespace OpenDental {
 			long codeGroupNumBW=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.BW);
 			long codeGroupNumPano=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.PanoFMX);
 			long codeGroupNumExams=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.Exam);
-			listBenefitsFreqLimits=listBenefitsFreqLimits.FindAll(x=>!x.CodeGroupNum.In(codeGroupNumBW,codeGroupNumPano,codeGroupNumExams));
+			// Exclude Patient Override Frequencies because they're already in _listBenefitsGrid
+			listBenefitsFreqLimits=listBenefitsFreqLimits.FindAll(x=>!x.CodeGroupNum.In(codeGroupNumBW,codeGroupNumPano,codeGroupNumExams) && x.PatPlanNum==0);
 			//Pull from grid==========================================================================================
 			_listBenefitsAll=new List<Benefit>(_listBenefitsGrid);
 			_listBenefitsAll.AddRange(listBenefitsFreqLimits);

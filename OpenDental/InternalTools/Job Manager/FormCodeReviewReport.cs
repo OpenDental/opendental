@@ -44,8 +44,10 @@ namespace OpenDental {
 		}
 
 		private void butRunReport_Click(object sender,EventArgs e) {
+			DateTime dateFrom=new DateTime(dateTimeFrom.Value.Year,dateTimeFrom.Value.Month,dateTimeFrom.Value.Day,0,0,0);
+			DateTime dateTo=new DateTime(dateTimeTo.Value.Year,dateTimeTo.Value.Month,dateTimeTo.Value.Day,23,59,59);
 			// We don't bother making this global since it won't ever change unless they edit the search criteria.
-			List<Job> listJobs=Jobs.GetJobsWithReviewsByUser(_engineerUserNum,dateTimeFrom.Value,dateTimeTo.Value);
+			List<Job> listJobs=Jobs.GetJobsWithReviewsByUser(_engineerUserNum,dateFrom,dateTo,checkIncludeInDev.Checked);
 			FillGrid(listJobs);
 		}
 

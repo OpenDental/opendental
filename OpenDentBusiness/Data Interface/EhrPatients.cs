@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using CodeBase;
 using DataConnectionBase;
+using System.Collections.Generic;
+using System.Data;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -65,6 +67,14 @@ namespace OpenDentBusiness{
 			return Crud.EhrPatientCrud.SelectOne(patNum);
 		}
 	
+		public static List<EhrPatient> GetByPatNums(List<long> listPatNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<EhrPatient>>(MethodBase.GetCurrentMethod(),listPatNums);
+			}
+			string command="SELECT * FROM ehrpatient WHERE PatNum IN ("+string.Join(",",listPatNums)+")";
+			return Crud.EhrPatientCrud.SelectMany(command);
+		}
+
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.
 

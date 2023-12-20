@@ -381,18 +381,21 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns all jobs that were reviewed by the user(Num) in the date range.</summary>
-		public static List<Job> GetJobsWithReviewsByUser(long userNum,DateTime dateFrom,DateTime dateTo) {
+		public static List<Job> GetJobsWithReviewsByUser(long userNum,DateTime dateFrom,DateTime dateTo,bool doIncludeInDevelpment) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Job>>(MethodBase.GetCurrentMethod(),userNum,dateFrom,dateTo);
+				return Meth.GetObject<List<Job>>(MethodBase.GetCurrentMethod(),userNum,dateFrom,dateTo,doIncludeInDevelpment);
 			}
 			List<JobPhase> listPhases=new List<JobPhase>(){ JobPhase.Complete,JobPhase.Documentation };
+			if(doIncludeInDevelpment) {
+				listPhases.Add(JobPhase.Development);
+			}
 			List<JobReviewStatus> listStatuses=new List<JobReviewStatus>(){ JobReviewStatus.NeedsAdditionalWork,JobReviewStatus.NeedsAdditionalReview,JobReviewStatus.Done };
 			string command=$@"SELECT * FROM job
 				INNER JOIN jobreview ON jobreview.JobNum=job.JobNum
 				WHERE job.PhaseCur IN({string.Join(",",listPhases.Select(x => POut.Enum(x)))})
 				AND jobreview.ReviewStatus IN('{string.Join("','",listStatuses.Select(x => x.ToString()))}')
 				AND jobreview.ReviewerNum={POut.Long(userNum)}
-				AND jobreview.DateTStamp BETWEEN {POut.Date(dateFrom)} AND {POut.Date(dateTo)}
+				AND jobreview.DateTStamp BETWEEN {POut.DateT(dateFrom)} AND {POut.DateT(dateTo)}
 				GROUP BY job.JobNum
 				ORDER BY jobreview.DateTStamp DESC;";
 

@@ -164,7 +164,9 @@ namespace OpenDental {
 				return;
 			}
 			_payPlanTemplate.PayPlanTemplateName=textTemplateName.Text;
-			_payPlanTemplate.ClinicNum=comboBoxClinic.GetSelectedClinic().ClinicNum;
+			if(PrefC.HasClinicsEnabled) {
+				_payPlanTemplate.ClinicNum=comboBoxClinic.GetSelectedClinic().ClinicNum;
+			}
 			_payPlanTemplate.APR=PIn.Double(textAPR.Text);
 			_payPlanTemplate.InterestDelay=PIn.Int(textInterestDelay.Text);
 			_payPlanTemplate.PayAmt=PIn.Double(textPeriodPayment.Text);

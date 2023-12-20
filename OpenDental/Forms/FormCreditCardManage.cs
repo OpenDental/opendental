@@ -133,7 +133,7 @@ namespace OpenDental {
 				}
 				if(Programs.IsEnabled(ProgramName.PaySimple)) {
 					row.Cells.Add(!string.IsNullOrEmpty(creditCard.PaySimpleToken) ? "X" : "");
-					row.Cells.Add(creditCard.CCSource.In(CreditCardSource.PaySimpleACH,CreditCardSource.PaySimplePaymentPortalACH) ? "X" : "");
+					row.Cells.Add(creditCard.IsPaySimpleACH() ? "X" : "");
 				}
 				if(PrefC.HasOnlinePaymentEnabled(out programNameForPayments)) {
 					if(programNameForPayments.In(ProgramName.Xcharge,ProgramName.EdgeExpress)) {
