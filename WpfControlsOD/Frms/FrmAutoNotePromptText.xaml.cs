@@ -31,6 +31,7 @@ namespace OpenDental {
 			_noteDescription=noteDescription;
 			//Lan.F(this);
 			Load+=FrmAutoNotePromptText_Load;
+			PreviewKeyDown+=FrmAutoNotePromptText_PreviewKeyDown;
 		}
 
 		private void FrmAutoNotePromptText_Load(object sender,EventArgs e) {
@@ -50,6 +51,27 @@ namespace OpenDental {
 			IsRetry=false;
 			int adj=ScaleFormValue(150);
 			_formFrame.Top+=adj;
+		}
+
+		private void FrmAutoNotePromptText_PreviewKeyDown(object sender,KeyEventArgs e) {
+			if(Keyboard.Modifiers!=ModifierKeys.Alt) {
+				return;
+			}
+			if(e.SystemKey==Key.R) {
+				butRemovePrompt_Click(this,new EventArgs());
+			}
+			if(e.SystemKey==Key.S) {
+				butSkipForNow_Click(this,new EventArgs());
+			}
+			if(e.SystemKey==Key.N) {
+				butNext_Click(this,new EventArgs());
+			}
+			if(e.SystemKey==Key.B) {
+				butBack_Click(this,new EventArgs());
+			}
+			if(e.SystemKey==Key.E) {
+				butExit_Click(this,new EventArgs());
+			}
 		}
 
 		private void butRemovePrompt_Click(object sender,EventArgs e) {

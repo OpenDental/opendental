@@ -72,7 +72,7 @@ namespace OpenDental{
 			this.listBoxExclusionDays.Location = new System.Drawing.Point(45, 148);
 			this.listBoxExclusionDays.Name = "listBoxExclusionDays";
 			this.listBoxExclusionDays.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listBoxExclusionDays.Size = new System.Drawing.Size(120, 95);
+			this.listBoxExclusionDays.Size = new System.Drawing.Size(120, 115);
 			this.listBoxExclusionDays.TabIndex = 6;
 			this.listBoxExclusionDays.Text = "listBoxExclusionDays";
 			// 
@@ -151,8 +151,8 @@ namespace OpenDental{
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(372, 34);
 			this.label1.TabIndex = 14;
-			this.label1.Text = "Set which days of the week or dates to exclude sending eConfirmations and WebSche" +
-    "d Recalls";
+			this.label1.Text = "Set which days of the week or dates to exclude sending eConfirmations and Web Sch" +
+    "ed Recalls";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// FormeConfimationExclusionDays
@@ -172,7 +172,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butSave);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormeConfimationExclusionDays";
-			this.Text = "eConfirmation and WebSched Recall Exclusion Days";
+			this.Text = "eConfirmation and Web Sched Recall Exclusion Days";
 			this.Load += new System.EventHandler(this.FormAutoCommExclusionDays_Load);
 			this.ResumeLayout(false);
 

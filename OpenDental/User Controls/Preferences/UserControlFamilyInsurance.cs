@@ -59,7 +59,7 @@ namespace OpenDental {
 			string promptMsg=Lan.g(this,"Would you like to immediately change all plans to use assignment of benefits?\r\n"
 					+$"Warning: This will update all existing plans to render payment to the provider on all future claims.");
 			if(!checkInsDefaultAssignmentOfBenefits.Checked) {
-				promptMsg=Lan.g(this,"Would you like to immediately change all plans to use assignment of benefits?\r\n"
+				promptMsg=Lan.g(this,"Would you like to immediately change all plans to not use assignment of benefits?\r\n"
 					+$"Warning: This will update all existing plans to render payment to the patient on all future claims.");
 			}
 			if(MessageBox.Show(promptMsg,Lan.g(this,"Change all plans?"),MessageBoxButtons.YesNo)==DialogResult.No) {

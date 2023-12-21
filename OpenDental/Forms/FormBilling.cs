@@ -1257,7 +1257,7 @@ namespace OpenDental {
 		}
 
 		private void FormBilling_FormClosing(object sender,FormClosingEventArgs e) {
-			if(gridBill.ListGridRows.Count==0){
+			if(radioSent.Checked || gridBill.ListGridRows.Count==0){
 				return;
 			}
 			DialogResult result=MessageBox.Show(Lan.g(this,"You may leave this window open while you work.  If you do close it, do you want to delete all unsent bills?"),

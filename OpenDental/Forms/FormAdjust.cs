@@ -96,6 +96,7 @@ namespace OpenDental {
 			}
 			if(_adjustment.ProcNum!=0) {
 				textProcDate.ReadOnly=true;
+				butDetachProc.Enabled=true;
 			}
 			if(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="+"){//pos
 				textAmount.Text=_adjustment.AdjAmt.ToString("F");

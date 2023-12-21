@@ -251,7 +251,7 @@ namespace OpenDental {
 			// listTreatArea
 			// 
 			this.listTreatArea.ItemStrings = new string[] {
-        "None",
+        "Default",
         "Surface",
         "Tooth",
         "Mouth",
@@ -270,7 +270,7 @@ namespace OpenDental {
 			this.labelTreatmentArea.Name = "labelTreatmentArea";
 			this.labelTreatmentArea.Size = new System.Drawing.Size(103, 32);
 			this.labelTreatmentArea.TabIndex = 38;
-			this.labelTreatmentArea.Text = "Treatment Area\r\n(None implies All)";
+			this.labelTreatmentArea.Text = "Treatment Area\r\n";
 			this.labelTreatmentArea.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// comboCodeGroup

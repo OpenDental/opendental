@@ -2673,20 +2673,23 @@ namespace OpenDentBusiness{
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before appts for rigorous inclusion of appts
 			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);
 			if(listCodeNums.Count>0 && listAppointments.Count>0) {
-				//Get every procedure's CodeNum and it's corresponding AptNum for all appointments in listAppts.
-				command="SELECT procedurelog.AptNum,procedurelog.CodeNum "
+				//Get every procedure's CodeNum and it's corresponding AptNum/PlannedAptNum for all appointments in listAppts.
+				command="SELECT procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum "
 					+"FROM procedurelog "
 					+"WHERE procedurelog.AptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
-					+"GROUP BY procedurelog.AptNum,procedurelog.CodeNum";
+					+"OR procedurelog.PlannedAptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
+					+"GROUP BY procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum";
 				//Sam and Saul tried to speed this up many different ways. This was the best way to make sure we always use indexes on procedurelog.
 				var listFilteredAptNum=Db.GetTable(command).AsEnumerable()
 					.Select(x => new {
 						AptNum=PIn.Long(x["AptNum"].ToString()),
+						PlannedApptNum=PIn.Long(x["PlannedAptNum"].ToString()),
 						CodeNum=PIn.Long(x["CodeNum"].ToString()),
 					})
 					//We only care about code nums that were included in the range provided.
 					.Where(x => listCodeNums.Any(y => y==x.CodeNum))
-					.Select(x => x.AptNum).ToList();
+					//If the appointment is Unscheduled and Planned, the AptNum will be 0.
+					.Select(x => x.AptNum>0?x.AptNum:x.PlannedApptNum).ToList();
 				//Remove the appointments that are not in the list of filtered AptNums.
 				listAppointments.RemoveAll(x => !listFilteredAptNum.Contains(x.AptNum));
 			}
@@ -2748,20 +2751,23 @@ namespace OpenDentBusiness{
 			+"ORDER BY appointment.AptDateTime";
 			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);
 			if(listCodeNums.Count>0 && listAppointments.Count>0) {
-				//Get every procedure's CodeNum and it's corresponding AptNum for all appointments in listAppts.
-				command="SELECT procedurelog.AptNum,procedurelog.CodeNum "
+				//Get every procedure's CodeNum and it's corresponding AptNum/PlannedAptNum for all appointments in listAppts.
+				command="SELECT procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum "
 					+"FROM procedurelog "
 					+"WHERE procedurelog.AptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
-					+"GROUP BY procedurelog.AptNum,procedurelog.CodeNum";
+					+"OR procedurelog.PlannedAptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
+					+"GROUP BY procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum";
 				//Sam and Saul tried to speed this up many different ways. This was the best way to make sure we always use indexes on procedurelog.
 				var listFilteredAptNum=Db.GetTable(command).AsEnumerable()
 					.Select(x => new {
 						AptNum=PIn.Long(x["AptNum"].ToString()),
+						PlannedApptNum=PIn.Long(x["PlannedAptNum"].ToString()),
 						CodeNum=PIn.Long(x["CodeNum"].ToString()),
 					})
 					//We only care about code nums that were included in the range provided.
 					.Where(x => listCodeNums.Any(y => y==x.CodeNum))
-					.Select(x => x.AptNum).ToList();
+					//If the appointment is Unscheduled and Planned, the AptNum will be 0.
+					.Select(x => x.AptNum>0?x.AptNum:x.PlannedApptNum).ToList();
 				//Remove the appointments that are not in the list of filtered AptNums.
 				listAppointments.RemoveAll(x => !listFilteredAptNum.Contains(x.AptNum));
 			}

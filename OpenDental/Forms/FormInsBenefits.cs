@@ -674,7 +674,7 @@ namespace OpenDental {
 			gridFrequencies.Columns.Add(gridColumn);
 			gridColumn=new GridColumn("Treat Area",100);
 			List<string> listStringsTreatmentArea=new List<string>() {
-				"All",
+				"Default",
 				TreatmentArea.Surf.ToString(),
 				TreatmentArea.Tooth.ToString(),
 				TreatmentArea.Mouth.ToString(),

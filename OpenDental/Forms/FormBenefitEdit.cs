@@ -76,7 +76,9 @@ namespace OpenDental {
 			listCoverageLevel.Items.AddEnums<BenefitCoverageLevel>();
 			listCoverageLevel.SetSelectedEnum(BenefitCur.CoverageLevel);
 			listTreatArea.Items.Clear();
+			listTreatArea.Items.Add("Default",TreatmentArea.None);
 			listTreatArea.Items.AddEnums<TreatmentArea>();
+			listTreatArea.Items.RemoveAt(1); // There are now two instances of TreatmentArea.None, remove the one that will display as "None"
 			listTreatArea.SetSelectedEnum(BenefitCur.TreatArea);
 		}
 

@@ -36,6 +36,7 @@ namespace OpenDental {
 			Load+=FrmAutoNotePromptList_Load;
 			KeyDown+=FrmAutoNotePromptList_KeyDown;
 			listMain.MouseDoubleClick+=listMain_MouseDoubleClick;
+			PreviewKeyDown+=FrmAutoNotePromptList_PreviewKeyDown;
 		}
 
 		private void FrmAutoNotePromptList_Load(object sender,EventArgs e) {
@@ -71,6 +72,7 @@ namespace OpenDental {
 			}
 			int adj=ScaleFormValue(150);
 			_formFrame.Top+=adj;
+			Focus();//so that Alt keys will work.
 		}
 
 		private void listMain_MouseDoubleClick(object sender,MouseEventArgs e) {
@@ -95,6 +97,40 @@ namespace OpenDental {
 				return;
 			}
 			IsDialogOK=true;
+		}
+
+		private void FrmAutoNotePromptList_PreviewKeyDown(object sender,KeyEventArgs e) {
+			if(Keyboard.Modifiers!=ModifierKeys.Alt) {
+				return;
+			}
+			if(e.SystemKey==Key.R) {
+				butRemovePrompt_Click(this,new EventArgs());
+				return;
+			}
+			if(e.SystemKey==Key.N) {
+				butNext_Click(this,new EventArgs());
+				return;
+			}
+			if(e.SystemKey==Key.B) {
+				butBack_Click(this,new EventArgs());
+				return;
+			}
+			if(e.SystemKey==Key.P) {
+				butPreview_Click(this,new EventArgs());
+				return;
+			}
+			if(e.SystemKey==Key.A) {
+				butSelectAll_Click(this,new EventArgs());
+				return;
+			}
+			if(e.SystemKey==Key.O) {
+				butSelectNone_Click(this,new EventArgs());
+				return;
+			}
+			if(e.SystemKey==Key.E) {
+				butExit_Click(this,new EventArgs());
+				return;
+			}
 		}
 
 		private void butRemovePrompt_Click(object sender,EventArgs e) {

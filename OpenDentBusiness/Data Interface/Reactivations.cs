@@ -165,6 +165,9 @@ namespace OpenDentBusiness{
 			//Get information we will need to do the query
 			List<long> listReactCommLogTypeDefNums=Defs.GetDefsForCategory(DefCat.CommLogTypes,isShort:true)
 				.FindAll(x => CommItemTypeAuto.REACT.GetDescription(useShortVersionIfAvailable:true).Equals(x.ItemValue)).Select(x => x.DefNum).ToList();
+			if(listReactCommLogTypeDefNums.Count==0) {
+				return new DataTable();
+			}
 			int contactInterval=PrefC.GetInt(PrefName.ReactivationContactInterval);
 			List<PatientStatus> listPatStatuses=new List<PatientStatus>() {PatientStatus.Patient,PatientStatus.Prospective};
 			if(isInactiveIncluded) {

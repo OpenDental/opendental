@@ -33,9 +33,9 @@ namespace OpenDental{
 			// labelExplanation
 			// 
 			this.labelExplanation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelExplanation.Location = new System.Drawing.Point(12, 674);
+			this.labelExplanation.Location = new System.Drawing.Point(12, 670);
 			this.labelExplanation.Name = "labelExplanation";
-			this.labelExplanation.Size = new System.Drawing.Size(601, 40);
+			this.labelExplanation.Size = new System.Drawing.Size(601, 47);
 			this.labelExplanation.TabIndex = 7;
 			this.labelExplanation.Text = "Replacement fields are case-sensitive, and must be an exact match of what is show" +
     "n here.\r\nFields that are supported from this specific location are shown in blac" +
