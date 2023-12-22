@@ -45,6 +45,13 @@
   </table>
   <table name="eservicelog">
     <summary></summary>
+    <column order="4" name="EServiceAction" type="smallint(6)">
+      <summary>Enum:eServiceAction</summary>
+      <Enumeration name="eServiceAction">
+        <summary>List of some possible eServices.</summary>
+        <EnumValue name="ECSubmitSheetFailed">82 - EClipboard - Error: Failed to submit sheet</EnumValue>
+      </Enumeration>
+    </column>
     <column order="5" name="KeyType" type="smallint(6)">
       <summary>Enum:FKeyType</summary>
       <Enumeration name="FKeyType">

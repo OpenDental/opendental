@@ -6525,6 +6525,7 @@
         <EnumValue name="ECCreditCardErrorMakingPaymentWithAlias">79 - eClipboard - Error: error making payment</EnumValue>
         <EnumValue name="ECCreditCardErrorMakingPaymentPatientNotFound">80 - eClipboard - Error: Making Payment, patient not found</EnumValue>
         <EnumValue name="ECCreditCardErrorMakingPaymentInvalidAmount">81 - eClipboard - Error: Making Payment, invalid amount </EnumValue>
+        <EnumValue name="ECSubmitSheetFailed">82 - EClipboard - Error: Failed to submit sheet</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="KeyType" type="smallint(6)">
