@@ -15,6 +15,28 @@ namespace OpenDentBusiness {
 
 	///<summary></summary>
 	public class Programs{
+
+		/// <summary>List of the ini fields for the TigerView bridge that contain PHI.</summary>
+		private static readonly List<string> LIST_TIGERVIEW_PHI_FIELDS=new List<string>{
+			"PatientID",
+			"FirstName",
+			"LastName",
+			"MiddleName",
+			"DOB",
+			"Gender",
+			"PatientSSN",
+			"SubscriberSSN",
+			"Email",
+			"phHome",
+			"phWork",
+			"addrStreetNo",
+			"addrStreetName",
+			"addrSuiteNo",
+			"addrCity",
+			"addrState",
+			"addrZip",
+		};
+
 		#region Cache Pattern
 		private class ProgramCache : CacheListAbs<Program> {
 			protected override List<Program> GetCacheFromDb() {
@@ -391,7 +413,35 @@ namespace OpenDentBusiness {
 			//SteriSimple: Has no file paths containing outgoing patient data from Open Dental.
 			//ThreeShape: Has no file paths containing outgoing patient data from Open Dental.
 			//TigerView:
-			ScrubFileForProperty(ProgramName.TigerView,"Tiger1.ini path","",false);//C:\Program Files\PDI\Shared files\Imaging.ini.  TigerView complains if the file is not present.
+			program=Programs.GetCur(ProgramName.TigerView);//C:\Program Files\PDI\Shared files\Imaging.ini.  TigerView complains if the file is not present.
+			if(program.Enabled) {
+				ProgramProperty programProperty=ProgramProperties.GetPropForProgByDesc(program.ProgramNum,"Tiger1.ini path");
+				if(File.Exists(programProperty.PropertyValue)) {
+					List<string> listLines=new List<string>();
+					try {
+						listLines=File.ReadAllLines(programProperty.PropertyValue).ToList();
+					}
+					catch {
+						//Another instance of OD might be closing at the same time, in which case the delete will fail. Could also be a permission issue or a concurrency issue. Ignore.
+					}
+					int index;
+					for(int i=0;i<LIST_TIGERVIEW_PHI_FIELDS.Count;i++) {//Clear out all fields that contain PHI rather that clearing the whole file.
+						index=listLines.FindIndex(x => x.ToLower().TrimStart().StartsWith(LIST_TIGERVIEW_PHI_FIELDS[i].ToLower()));
+						if(index < 0) {
+							continue;
+						}
+						listLines[index]=$"{LIST_TIGERVIEW_PHI_FIELDS[i]}=";
+					}
+					if(!listLines.IsNullOrEmpty()) {//Only try to write if the read was successful above.
+						try {
+							File.WriteAllLines(programProperty.PropertyValue,listLines);
+						}
+						catch {
+							//Another instance of OD might be closing at the same time, in which case the delete will fail. Could also be a permission issue or a concurrency issue. Ignore.
+						}
+					}
+				}
+			}
 			//Trojan: Has no file paths containing outgoing patient data from Open Dental.
 			//Trophy: Has no file paths containing outgoing patient data from Open Dental.
 			//TrophyEnhanced: Has no file paths containing outgoing patient data from Open Dental.

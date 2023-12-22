@@ -3057,7 +3057,8 @@ namespace OpenDental{
 				_menuItemClinicsMain.Click-=menuClick_OpenPickList;
 				_menuItemClinicsMain.Click+=menuClick_OpenPickList;
 			}
-			RefreshLocalData(InvalidType.Views);//fills apptviews, sets the view, and then calls ContrAppt.ModuleSelected
+			RefreshLocalData(InvalidType.Views,//fills apptviews, sets the view, and then calls ContrAppt.ModuleSelected
+				InvalidType.ToolButsAndMounts);//because program link buttons can be shown/hidden by clinic
 			if(!controlAppt.Visible) {
 				RefreshCurrentModule();//calls ModuleSelected of the current module, don't do this if ContrAppt2 is visible since it was just done above
 			}

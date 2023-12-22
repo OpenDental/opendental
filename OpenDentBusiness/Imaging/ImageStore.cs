@@ -41,6 +41,9 @@ namespace OpenDentBusiness {
 					pat.ImageFolder,'/');//use '/' char instead of Path.DirectorySeparatorChar
 			}
 			else if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+				object[] objectArray={pat,AtoZpath};
+				Plugins.HookAddCode(null,"ImageStore.GetPatientFolder_LocalAtoZ",objectArray);
+				AtoZpath=(string)objectArray[1];
 				retVal=ODFileUtils.CombinePaths(AtoZpath,
 					pat.ImageFolder.Substring(0,1).ToUpper(),
 					pat.ImageFolder);//use Path.DirectorySeparatorChar
