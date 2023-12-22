@@ -597,7 +597,7 @@ namespace OpenDental {
 			_listPoints=new List<Point>();
 			_uniqueFormIdentifier=MiscUtils.CreateRandomAlphaNumericString(15);//Thread safe random
 			Sheets.SetPageMargin(SheetCur,_marginsPrint);
-			if(SheetCur.IsNew) {
+			if(SheetCur.IsNew || IsInTerminal) {
 				butReduceFontSize.Visible=false;
 				butFontAbout.Visible=false;
 			}
@@ -856,12 +856,8 @@ namespace OpenDental {
 			{
 				_tabCurrent=sheetField.TabOrder;
 				_sheetFieldHover=null;
-				bool isRightClick=false;
-				if(e.Button==MouseButtons.Right) {
-					isRightClick=true;
-				}
 				panelMain.Invalidate();
-				CreateFloatingTextBox(sheetField,e.Location,isRightClick:isRightClick);
+				CreateFloatingTextBox(sheetField,e.Location);
 				ClearSigs();
 				return;
 			}
@@ -1344,7 +1340,7 @@ namespace OpenDental {
 		}
 
 		///<summary>This is for an input field, static text, or output text to edit text, and then it goes away. The point passed in is so that we can put the cursor in the right place.</summary>
-		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false,bool isRightClick=false){
+		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false){
 			//Convert \n that are by themselves to \r\n. Explanation is in SheetsInternal.GetSheetFromResource().
 			string text=Regex.Replace(sheetField.FieldValue,@"(?<!\r)\n","\r\n");
 			_idxSelectedChar=HitTestChars(sheetField,point,text);
@@ -1408,9 +1404,6 @@ namespace OpenDental {
 			}
 			else{
 				textBox.SelectionStart=_idxSelectedChar;
-			}
-			if(isRightClick) {
-				textBox.ContextMenu.Show(panelMain,point);
 			}
 		}
 

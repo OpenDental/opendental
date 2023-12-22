@@ -1268,7 +1268,7 @@ namespace OpenDental {
 		}
 
 		private void FormBilling_FormClosing(object sender,FormClosingEventArgs e) {
-			if(gridBill.ListGridRows.Count==0){
+			if(radioSent.Checked || gridBill.ListGridRows.Count==0){
 				return;
 			}
 			_isActivateFillDisabled=true;
