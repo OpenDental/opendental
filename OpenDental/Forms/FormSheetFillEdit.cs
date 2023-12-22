@@ -591,7 +591,7 @@ namespace OpenDental {
 			_listPoints=new List<Point>();
 			_uniqueFormIdentifier=MiscUtils.CreateRandomAlphaNumericString(15);//Thread safe random
 			Sheets.SetPageMargin(SheetCur,_marginsPrint);
-			if(SheetCur.IsNew) {
+			if(SheetCur.IsNew || IsInTerminal) {
 				butReduceFontSize.Visible=false;
 				butFontAbout.Visible=false;
 			}

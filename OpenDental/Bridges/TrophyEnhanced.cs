@@ -75,6 +75,9 @@ namespace OpenDental.Bridges{
 				//Quotes are not necessary around these command line parameters.
 				+" -N"+Tidy(pat.LName)+", "+Tidy(pat.FName);
 			//MessageBox.Show(comline);
+			object[] objectArray={pat,storagePath,comline};
+			Plugins.HookAddCode(null,"TrophyEnhanced.SendData_end",objectArray);
+			comline=(string)objectArray[2];
 			try{
 				ODFileUtils.ProcessStart(path,comline);
 			}
