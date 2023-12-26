@@ -110,6 +110,7 @@ namespace OpenDental {
 			this.textDateTimeEntered.ReadOnly = true;
 			this.textDateTimeEntered.Size = new System.Drawing.Size(147, 20);
 			this.textDateTimeEntered.TabIndex = 6;
+			this.textDateTimeEntered.TabStop = false;
 			// 
 			// label3
 			// 
@@ -212,6 +213,7 @@ namespace OpenDental {
 			this.textAccount.ReadOnly = true;
 			this.textAccount.Size = new System.Drawing.Size(230, 20);
 			this.textAccount.TabIndex = 4;
+			this.textAccount.TabStop = false;
 			// 
 			// textMemo
 			// 
@@ -309,7 +311,6 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(444, 106);
 			this.groupBox1.TabIndex = 4;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Source Documents";
 			// 
 			// butOpenInvoice
@@ -338,6 +339,7 @@ namespace OpenDental {
 			this.textSourceInvoice.ReadOnly = true;
 			this.textSourceInvoice.Size = new System.Drawing.Size(231, 20);
 			this.textSourceInvoice.TabIndex = 14;
+			this.textSourceInvoice.TabStop = false;
 			// 
 			// label1
 			// 
@@ -392,6 +394,7 @@ namespace OpenDental {
 			this.textSourceDeposit.ReadOnly = true;
 			this.textSourceDeposit.Size = new System.Drawing.Size(231, 20);
 			this.textSourceDeposit.TabIndex = 8;
+			this.textSourceDeposit.TabStop = false;
 			// 
 			// butAttachDep
 			// 
@@ -419,7 +422,7 @@ namespace OpenDental {
 			this.textDate.Location = new System.Drawing.Point(132, 59);
 			this.textDate.Name = "textDate";
 			this.textDate.Size = new System.Drawing.Size(100, 20);
-			this.textDate.TabIndex = 5;
+			this.textDate.TabIndex = 1;
 			// 
 			// butOK
 			// 
@@ -467,6 +470,7 @@ namespace OpenDental {
 			this.textDateTimeEdited.ReadOnly = true;
 			this.textDateTimeEdited.Size = new System.Drawing.Size(147, 20);
 			this.textDateTimeEdited.TabIndex = 22;
+			this.textDateTimeEdited.TabStop = false;
 			// 
 			// labelDateTimeEdited
 			// 
@@ -484,6 +488,7 @@ namespace OpenDental {
 			this.textUserEntered.ReadOnly = true;
 			this.textUserEntered.Size = new System.Drawing.Size(100, 20);
 			this.textUserEntered.TabIndex = 24;
+			this.textUserEntered.TabStop = false;
 			// 
 			// labelUserEntered
 			// 
@@ -501,6 +506,7 @@ namespace OpenDental {
 			this.textUserEdited.ReadOnly = true;
 			this.textUserEdited.Size = new System.Drawing.Size(100, 20);
 			this.textUserEdited.TabIndex = 26;
+			this.textUserEdited.TabStop = false;
 			// 
 			// labelUserEdited
 			// 

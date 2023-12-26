@@ -73,7 +73,8 @@ namespace OpenDental {
 				GridRow row=new GridRow();
 				row.Cells.Add(listTemplates[i].PayPlanTemplateName);//Name
 				if(PrefC.HasClinicsEnabled) {
-					row.Cells.Add(listTemplates[i].ClinicNum.ToString());//Clinic
+					string clinicAbbr=Clinics.GetAbbr(listTemplates[i].ClinicNum);
+					row.Cells.Add(clinicAbbr);//Clinic
 				}
 				row.Cells.Add(listTemplates[i].APR.ToString());//APR
 				row.Cells.Add(listTemplates[i].InterestDelay.ToString());//Interest Delay
