@@ -500,7 +500,12 @@ namespace OpenDental.InternalTools.Phones {
 			{
 				return;
 			}
-			bitmap=GetEmployeePicture(employeeNum);
+			try {
+				bitmap=GetEmployeePicture(employeeNum);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();//Network error or file permission issue.
+			}
 			if(bitmap!=null){
 				userControlMapDetails1.SetBitmap(bitmap,EnumMapImageDisplayStatus.Stock,employeeNum);
 				return;

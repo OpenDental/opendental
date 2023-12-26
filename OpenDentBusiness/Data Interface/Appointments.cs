@@ -998,18 +998,20 @@ namespace OpenDentBusiness{
 			if(includeVerifyIns){
 				string insPlanNums=string.Join(",",listPlanNums);
 				string patNums=string.Join(",",listPatNums);//always valid
-				command="SELECT FKey,DateLastVerified,VerifyType,patplan.PatNum,NULL HideFromVerifyList,inssub.PlanNum "
+				command="SELECT FKey,MAX(DateLastVerified) AS DateLastVerified,VerifyType,patplan.PatNum,NULL HideFromVerifyList,inssub.PlanNum "
 					+"FROM insverify "
 					+"LEFT JOIN patplan ON patplan.PatPlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+" "
 					+"LEFT JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum "
 					+"WHERE patplan.PatNum IN("+patNums+") "
 					+"AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+" "
+					+"GROUP BY patplan.PatPlanNum "//Grouping to ensure we get latest DateLastVerified if there are multiple rows for one patnum (JobNum:50382)
 					+"UNION ALL "
-					+"SELECT FKey,DateLastVerified,VerifyType,NULL PatNum,insplan.HideFromVerifyList,NULL PlanNum "
+					+"SELECT FKey,MAX(DateLastVerified) AS DateLastVerified,VerifyType,NULL PatNum,insplan.HideFromVerifyList,NULL PlanNum "
 					+"FROM insverify "
 					+"LEFT JOIN insplan ON insplan.PlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)+" "
 					+"WHERE insverify.FKey IN("+insPlanNums+") "
-					+"AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit);
+					+"AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)+" "
+					+"GROUP BY insverify.FKey";//Grouping here as well per JobNum:50382
 				if(insPlanNums!="") {//if no insPlans, then there can't be any patPlans.
 					tableInsVerify=dcon.GetTable(command);
 				}

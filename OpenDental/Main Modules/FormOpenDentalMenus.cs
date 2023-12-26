@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -336,7 +337,12 @@ namespace OpenDental{
 			_menuItemSites=new MenuItemOD("Sites",menuItemSites_Click);
 			menuItemLists.Add(_menuItemSites);
 			menuItemLists.Add("State Abbreviations",menuItemStateAbbrs_Click);
-			menuItemLists.Add("&Zip Codes",menuItemZipCodes_Click);
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				menuItemLists.Add("Postal Codes",menuItemZipCodes_Click);
+			}
+			else{
+				menuItemLists.Add("&Zip Codes",menuItemZipCodes_Click);
+			}
 		}
 		#endregion Lists
 

@@ -33,6 +33,10 @@ namespace OpenDental {
 		}
 
 		private void FrmZipCodes_Load(object sender, EventArgs e) {
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				this.Text=Lang.g(this,"Postal Codes");
+				gridZipCode.Title=Lang.g(this,"Postal Codes");
+			}
 		  FillGrid();
 		}
 

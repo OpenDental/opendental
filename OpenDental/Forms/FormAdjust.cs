@@ -294,8 +294,10 @@ namespace OpenDental {
 			if(Security.IsGlobalDateLock(EnumPermType.AdjustmentEdit,textAdjDate.Value)) {
 				return;
 			}
-			if(IsNew && !Security.IsAuthorized(EnumPermType.AdjustmentCreate,textAdjDate.Value,false)) {
-				return;
+			if(textAmount.Value!=0 || !Security.IsAuthorized(EnumPermType.AdjustmentEditZero)) {//if it's a $0 adjustment and they have that permission we don't care about AdjustmentCreate
+				if(IsNew && !Security.IsAuthorized(EnumPermType.AdjustmentCreate,textAdjDate.Value,false)) {
+					return;
+				}
 			}
 			bool isDiscountPlanAdj=(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="dp");
 			if(!textAdjDate.IsValid() || !textProcDate.IsValid() || !textAmount.IsValid()) {
