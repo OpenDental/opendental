@@ -416,6 +416,7 @@ namespace OpenDental {
 			if(listAdjustments.IsNullOrEmpty()) {
 				return;//No adjustments to update.
 			}
+			bool hasSkipped=false;
 			for(int i=0;i<listAdjustments.Count;i++) {
 				Procedure procedure=null;
 				List<Adjustment> listAdjustmentsRelated=new List<Adjustment>();
@@ -434,8 +435,16 @@ namespace OpenDental {
 						listAdjustmentsRelated.Add((Adjustment)procAdjs.ListAccountEntryAdjustments[j].Tag);
 					}
 				}
+				//zero adjustments are checked in the save click
+				if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,dateAdjustment.Value,true) && listAdjustments[i].AdjAmt!=0) {
+					hasSkipped=true;
+					continue;
+				}
 				//Pass in a shallow copy of the adjustment which will get directly manipulated / updated.
 				GetAdjFromUI(adjustment:listAdjustments[i],procedureSelected:procedure,listAdjustmentsRelated:listAdjustmentsRelated);
+			}
+			if(hasSkipped) {
+				MsgBox.Show(this,"Adjustment amount has to be 0.00 due to security permission.");
 			}
 			FillGrid();
 		}
@@ -517,7 +526,8 @@ namespace OpenDental {
 				listPatNums:ListTools.FromSingle(_patient.PatNum),
 				isIncomeTxfr:!radioIncludeAll.Checked,
 				loadData:loadData,hasInsOverpay:true);
-			if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,PIn.Date(dateAdjustment.Text),true)) {//User does not have full edit permission.
+			if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,PIn.Date(dateAdjustment.Text),true) 
+				||_listAdjustments.Any(x =>!Security.IsAuthorized(EnumPermType.AdjustmentCreate,x.AdjDate,true))) {//User does not have full edit permission.
 				//Therefore the user only has the ability to edit $0 adjustments (see Load()).
 				if(_listAdjustments.Any(x => !CompareDouble.IsZero(x.AdjAmt))) {
 					MsgBox.Show(this,"Amount has to be 0.00 due to security permission.");

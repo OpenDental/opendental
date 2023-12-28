@@ -949,7 +949,13 @@ namespace OpenDentBusiness{
 		}
 
 		public static Sheet CreateExamSheet(long patNum,long sheetDefNum) {
-			SheetDef sheetDef=SheetDefs.GetSheetDef(sheetDefNum);
+			SheetDef sheetDef=null;
+			if(sheetDefNum==0) {
+				sheetDef=SheetDefs.GetSheetsDefault(SheetTypeEnum.ExamSheet);
+			}
+			else {
+				sheetDef=SheetDefs.GetSheetDef(sheetDefNum);
+			}
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,patNum);
 			SheetParameter.SetParameter(sheet,"PatNum",patNum);
 			SheetFiller.FillFields(sheet);

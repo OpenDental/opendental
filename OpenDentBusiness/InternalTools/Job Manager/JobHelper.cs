@@ -51,18 +51,20 @@ namespace OpenDentBusiness
 				return;
 			}
 			_listEngineers=new List<Engineer>();
-			try {
-				string command="SELECT Title,EmployeeNum FROM wikilist_employees WHERE Title LIKE '%Engineer%'";
-				DataTable dt=Db.GetTable(command);
-				foreach(DataRow dr in dt.Rows) {
-					Employee emp=Employees.GetEmp(PIn.Long(dr["EmployeeNum"].ToString()));
-					Userod user=Userods.GetUserByEmployeeNum(emp.EmployeeNum);
-					Engineer newEngineer=new Engineer(user,emp,PIn.String(dr["Title"].ToString()));
-					_listEngineers.Add(newEngineer);
+			string command="SELECT Title,EmployeeNum FROM wikilist_employees WHERE Title LIKE '%Engineer%'";
+			DataTable table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) {
+				DataRow row=table.Rows[i];
+				Employee employee=Employees.GetEmp(PIn.Long(row["EmployeeNum"].ToString()));
+				if(employee is null) { //Employee not found/created yet
+					continue;
 				}
-			}
-			catch(Exception e) {
-				//Do nothing
+				Userod user=Userods.GetUserByEmployeeNum(employee.EmployeeNum);
+				if(user is null) { //UserOD not found/created yet
+					continue;
+				}
+				Engineer engineer=new Engineer(user,employee,PIn.String(row["Title"].ToString()));
+				_listEngineers.Add(engineer);
 			}
 		}
 	}
