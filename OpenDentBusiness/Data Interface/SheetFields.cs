@@ -253,7 +253,8 @@ namespace OpenDentBusiness{
 			else{//Incorrect format.
 				stringAll=stringArray[0];
 			}
-			string fieldVal= selectedOption+";"+stringAll;
+			//If there are any double && signs, we need to set them back to single & symbols so that they display correctly after a user makes a selection
+			string fieldVal=selectedOption.Replace("&&","&")+";"+stringAll;
 			sheetField.FieldValue=fieldVal;
 		}
 	}
