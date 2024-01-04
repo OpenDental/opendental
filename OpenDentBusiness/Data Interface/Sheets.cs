@@ -114,10 +114,11 @@ namespace OpenDentBusiness{
 					continue;
 				}
 				Crud.SheetCrud.Insert(listSheets[i]);
-				foreach(SheetField fld in listSheets[i].SheetFields) {
-					fld.SheetNum=listSheets[i].SheetNum;
-					Crud.SheetFieldCrud.Insert(fld);
+				List<SheetField> listSheetFields=listSheets[i].SheetFields;
+				for(int j=0;j<listSheetFields.Count;j++) {
+					listSheetFields[j].SheetNum=listSheets[i].SheetNum;
 				}
+				Crud.SheetFieldCrud.InsertMany(listSheetFields);
 			}
 		}
 

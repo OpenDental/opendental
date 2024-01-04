@@ -228,7 +228,7 @@ namespace OpenDental {
 			// 
 			this.textClaimsReceivedDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.textClaimsReceivedDays.Location = new System.Drawing.Point(380, 33);
-			this.textClaimsReceivedDays.MaxVal = 999999;
+			this.textClaimsReceivedDays.MaxVal = 50000;
 			this.textClaimsReceivedDays.MinVal = 1;
 			this.textClaimsReceivedDays.Name = "textClaimsReceivedDays";
 			this.textClaimsReceivedDays.ShowZero = false;

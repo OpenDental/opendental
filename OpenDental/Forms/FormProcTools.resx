@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="checkDcodes.Text" xml:space="preserve">
-    <value>D Codes - Add any missing 2024 CDT Codes and fix descriptions and blank abbreviations of existing codes. The default claim form will also be swtich to the 2024 claim form. This option does not work in the trial version, self-compiled version, or outside the USA.</value>
+    <value>D Codes - Add any missing 2024 CDT Codes and fix descriptions and blank abbreviations of existing codes. The default claim form will also be switched to the 2024 claim form. This option does not work in the trial version, self-compiled version, or outside the USA.</value>
   </data>
   <data name="label5.Text" xml:space="preserve">
     <value>These tools are typically used by a new customer after upgrading from the trial version to the full version. They perform a number of necessary tasks to make a new database functional. They can also be used individually later if you have damaged your settings. Auto codes, for example, are hard to set up, but they are also usually the same for everyone.</value>

@@ -127,7 +127,7 @@ namespace OpenDental {
 
 		public bool SaveManageGeneral() {
 			if(!textClaimsReceivedDays.IsValid()) {
-				MsgBox.Show(this,"Show claims received after days must be a positive integer or blank.");
+				MsgBox.Show(this,"Show claims received after days must be a positive integer (max 50,000) or blank.");
 				return false;
 			}
 			Changed|=Prefs.UpdateBool(PrefName.RxSendNewToQueue,checkRxSendNewToQueue.Checked);

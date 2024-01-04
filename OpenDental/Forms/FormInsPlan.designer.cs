@@ -738,7 +738,7 @@ namespace OpenDental {
 			// 
 			// radioChangeAll
 			// 
-			this.radioChangeAll.Location = new System.Drawing.Point(6, 25);
+			this.radioChangeAll.Location = new System.Drawing.Point(6, 17);
 			this.radioChangeAll.Name = "radioChangeAll";
 			this.radioChangeAll.Size = new System.Drawing.Size(211, 17);
 			this.radioChangeAll.TabIndex = 158;
@@ -751,13 +751,13 @@ namespace OpenDental {
 			this.groupChanges.Controls.Add(this.radioChangeAll);
 			this.groupChanges.Location = new System.Drawing.Point(467, 655);
 			this.groupChanges.Name = "groupChanges";
-			this.groupChanges.Size = new System.Drawing.Size(240, 44);
+			this.groupChanges.Size = new System.Drawing.Size(240, 35);
 			this.groupChanges.TabIndex = 159;
 			// 
 			// radioCreateNew
 			// 
 			this.radioCreateNew.Checked = true;
-			this.radioCreateNew.Location = new System.Drawing.Point(6, 8);
+			this.radioCreateNew.Location = new System.Drawing.Point(6, 1);
 			this.radioCreateNew.Name = "radioCreateNew";
 			this.radioCreateNew.Size = new System.Drawing.Size(211, 17);
 			this.radioCreateNew.TabIndex = 159;
@@ -837,7 +837,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(814, 673);
+			this.butOK.Location = new System.Drawing.Point(814, 671);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -849,7 +849,7 @@ namespace OpenDental {
 			this.butLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butLabel.Image = global::OpenDental.Properties.Resources.butLabel;
 			this.butLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butLabel.Location = new System.Drawing.Point(201, 673);
+			this.butLabel.Location = new System.Drawing.Point(201, 671);
 			this.butLabel.Name = "butLabel";
 			this.butLabel.Size = new System.Drawing.Size(81, 24);
 			this.butLabel.TabIndex = 125;
@@ -861,7 +861,7 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(13, 673);
+			this.butDelete.Location = new System.Drawing.Point(13, 671);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(81, 24);
 			this.butDelete.TabIndex = 112;
@@ -872,7 +872,7 @@ namespace OpenDental {
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(900, 673);
+			this.butCancel.Location = new System.Drawing.Point(900, 671);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 14;
@@ -2030,7 +2030,7 @@ namespace OpenDental {
 			// 
 			// FormInsPlan
 			// 
-			this.ClientSize = new System.Drawing.Size(984, 700);
+			this.ClientSize = new System.Drawing.Size(984, 696);
 			this.Controls.Add(this.tabControlInsPlan);
 			this.Controls.Add(this.checkDontVerify);
 			this.Controls.Add(this.label34);

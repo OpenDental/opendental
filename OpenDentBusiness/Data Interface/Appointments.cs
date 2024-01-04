@@ -3316,7 +3316,7 @@ namespace OpenDentBusiness{
 			if(PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger)==defNumApptConfirmed) {
 				command+=",DateTimeArrived="+POut.DateT(DateTime.Now);
 				if(createSheetsForCheckin) {
-					Sheets.CreateSheetsForCheckIn(appointment);
+				   Sheets.CreateSheetsForCheckIn(appointment);
 				}
 			}
 			else if(PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger)==defNumApptConfirmed){

@@ -125,6 +125,7 @@ namespace OpenDental{
 			this.tabControl1.Controls.Add(this.tabVerify);
 			this.tabControl1.Controls.Add(this.tabAssignStandard);
 			this.tabControl1.Controls.Add(this.tabAssignMedicaid);
+			this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControl1.Location = new System.Drawing.Point(3, 125);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.Size = new System.Drawing.Size(971, 533);
@@ -168,6 +169,7 @@ namespace OpenDental{
 			this.tabControlVerificationList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabControlVerificationList.Controls.Add(this.tabCurrent);
 			this.tabControlVerificationList.Controls.Add(this.tabPastDue);
+			this.tabControlVerificationList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControlVerificationList.Location = new System.Drawing.Point(3, 3);
 			this.tabControlVerificationList.Name = "tabControlVerificationList";
 			this.tabControlVerificationList.Size = new System.Drawing.Size(957, 340);
@@ -221,7 +223,7 @@ namespace OpenDental{
 			// 
 			// butVerifyPat
 			// 
-			this.butVerifyPat.Location = new System.Drawing.Point(294, 485);
+			this.butVerifyPat.Location = new System.Drawing.Point(294, 483);
 			this.butVerifyPat.Name = "butVerifyPat";
 			this.butVerifyPat.Size = new System.Drawing.Size(174, 24);
 			this.butVerifyPat.TabIndex = 230;
@@ -256,7 +258,7 @@ namespace OpenDental{
 			// 
 			// butVerifyPlan
 			// 
-			this.butVerifyPlan.Location = new System.Drawing.Point(515, 485);
+			this.butVerifyPlan.Location = new System.Drawing.Point(515, 483);
 			this.butVerifyPlan.Name = "butVerifyPlan";
 			this.butVerifyPlan.Size = new System.Drawing.Size(153, 24);
 			this.butVerifyPlan.TabIndex = 100;
@@ -593,7 +595,7 @@ namespace OpenDental{
 			// 
 			// butAssignUserStandard
 			// 
-			this.butAssignUserStandard.Location = new System.Drawing.Point(441, 486);
+			this.butAssignUserStandard.Location = new System.Drawing.Point(441, 485);
 			this.butAssignUserStandard.Name = "butAssignUserStandard";
 			this.butAssignUserStandard.Size = new System.Drawing.Size(75, 24);
 			this.butAssignUserStandard.TabIndex = 81;
@@ -625,7 +627,7 @@ namespace OpenDental{
 			// 
 			// butAssignUserMedicaid
 			// 
-			this.butAssignUserMedicaid.Location = new System.Drawing.Point(441, 486);
+			this.butAssignUserMedicaid.Location = new System.Drawing.Point(441, 485);
 			this.butAssignUserMedicaid.Name = "butAssignUserMedicaid";
 			this.butAssignUserMedicaid.Size = new System.Drawing.Size(75, 24);
 			this.butAssignUserMedicaid.TabIndex = 84;
@@ -945,7 +947,7 @@ namespace OpenDental{
 			// 
 			// FormInsVerificationList
 			// 
-			this.ClientSize = new System.Drawing.Size(974, 658);
+			this.ClientSize = new System.Drawing.Size(974, 661);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.groupVerificationFilters);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
