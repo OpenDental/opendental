@@ -554,6 +554,8 @@ namespace OpenDental {
 					saveFileDialog.InitialDirectory="C:\\";
 				}
 				saveFileDialog.FileName=fileName;
+				saveFileDialog.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
+				saveFileDialog.FilterIndex=0;
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					Cursor=Cursors.Default;
 					return;
