@@ -38,6 +38,8 @@ namespace OpenDental {
 		private static Color _colorGridHeaderBack=Color.FromArgb(223,234,245);
 		///<summary>Filled with JobActions that will be collapsed when filling the Needs Action grid.</summary>
 		private List<JobAction> _listJobActionsCollapsed=new List<JobAction>();
+		///<summary>Filled with JobActions that will be collapsed when filling the Project Management grid.</summary>
+		private List<JobAction> _listJobActionsCollapsedProject=new List<JobAction>();
 		///<summary>Filled with JobActions that will be collapsed when filling the Needs Action grid.</summary>
 		private List<JobTeam> _listJobTeams;
 		private List<long> _listQueryPriorityFilter=new List<long>();
@@ -85,6 +87,10 @@ namespace OpenDental {
 					//NeedNoApproval can't be created from here
 					categoryList.Remove("UnresolvedIssue");
 				}
+				if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+					//Project can't be created from here
+					categoryList.Remove("Project");
+				}
 				if(!JobPermissions.IsAuthorized(JobPerm.Concept,true)) {
 					categoryList.Remove("Feature");
 					categoryList.Remove("Bug");
@@ -115,6 +121,7 @@ namespace OpenDental {
 			FillComboTeamFilter(comboTeamFilterNeedsEngineer);
 			FillComboTeamFilter(comboTeamFilterNeedsExpert);
 			FillComboTeamFilter(comboTeamSearch,doAddAllOption:true);
+			FillComboTeamFilter(comboTeamFilterProjectManagement);
 			#region Fill Proposed Version Combos
 			comboProposedVersionNeedsAction.Items.Add("All");
 			comboProposedVersionNeedsEngineer.Items.Add("All");
@@ -340,7 +347,7 @@ namespace OpenDental {
 			}
 			#endregion
 			#region JobPerm.UnresolvedIssues
-			//If user has UnresolvedIssues permission, user as access to the UnresolvedIssues tab
+			//If user has UnresolvedIssues permission, user has access to the UnresolvedIssues tab
 			if(JobPermissions.IsAuthorized(JobPerm.UnresolvedIssues,true)) {
 				if(_listHiddenTabs.Contains(tabUnresolvedIssues)) {
 					tabControlNav.TabPages.Add(tabUnresolvedIssues);
@@ -351,6 +358,21 @@ namespace OpenDental {
 				if(tabControlNav.TabPages.Contains(tabUnresolvedIssues)) {
 					tabControlNav.TabPages.Remove(tabUnresolvedIssues);
 					_listHiddenTabs.Add(tabUnresolvedIssues);
+				}
+			}
+			#endregion
+			#region JobPerm.ProjectManager
+			//If user has ProjectManger permission, user has access to the ProjectManagement tab
+			if(JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+				if(_listHiddenTabs.Contains(tabProjectManagement)) {
+					tabControlNav.TabPages.Add(tabProjectManagement);
+					_listHiddenTabs.Remove(tabProjectManagement);
+				}
+			}
+			else {
+				if(tabControlNav.TabPages.Contains(tabProjectManagement)) {
+					tabControlNav.TabPages.Remove(tabProjectManagement);
+					_listHiddenTabs.Add(tabProjectManagement);
 				}
 			}
 			#endregion
@@ -429,6 +451,9 @@ namespace OpenDental {
 			}
 			else if(tabControlNav.SelectedTab==tabSubmittedJobs) {
 				FillGridSubmittedJobs();
+			}
+			else if(tabControlNav.SelectedTab==tabProjectManagement) {
+				FillGridProjectManagement();
 			}
 			Cursor=Cursors.Default;
 		}		
@@ -605,6 +630,10 @@ namespace OpenDental {
 			Job job=Jobs.GetOneFilled(jobNum);
 			if(job==null) {
 				MessageBox.Show("Job not found.");
+				return;
+			}
+			if(job.Category==JobCategory.Project && !JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+				MessageBox.Show("ProjectManager permission is needed to view Projects.");
 				return;
 			}
 			LoadJob(job,true,loadAction);
@@ -1137,6 +1166,88 @@ namespace OpenDental {
 				for(int i = 0;i<gridAvailableJobs.ListGridRows.Count;i++) {
 					if((gridAvailableJobs.ListGridRows[i].Tag is Job)&&((Job)gridAvailableJobs.ListGridRows[i].Tag).JobNum==selectedJobNum) {
 						gridAvailableJobs.SetSelected(i,true);
+						break;
+					}
+				}
+			}
+		}
+
+		///<summary>Fills tabProjectManagement with top parent Projects.</summary>
+		private void FillGridProjectManagement() {
+			if(!tabControlNav.TabPages.Contains(tabProjectManagement)) {
+				return;
+			}
+			List<Job> listJobs=JobManagerCore.ListJobsAll.FindAll(x => x.Category==JobCategory.Project && x.JobNum==x.TopParentNum);
+			long jobTeamNum=comboTeamFilterProjectManagement.GetSelected<JobTeam>().JobTeamNum;
+			if(jobTeamNum>-1) {
+				listJobs=listJobs.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam && y.FKey==jobTeamNum));
+			}
+			else {
+				listJobs=listJobs.FindAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam));
+			}
+			_dicRowNotes.Clear();
+			gridProjectManagement.Title="Projects";
+			long selectedJobNum=userControlJobManagerEditor.JobNumCur;
+			gridProjectManagement.BeginUpdate();
+			gridProjectManagement.Columns.Clear();
+			gridProjectManagement.Columns.Add(new GridColumn("Priority",50,HorizontalAlignment.Center));
+			gridProjectManagement.Columns.Add(new GridColumn("Owner",65,HorizontalAlignment.Center));
+			gridProjectManagement.Columns.Add(new GridColumn("",245));
+			gridProjectManagement.ListGridRows.Clear();
+			//Sort jobs into action dictionary
+			Dictionary<JobAction,List<Job>> dictActions=new Dictionary<JobAction,List<Job>>();
+			foreach(Job job in listJobs) {
+				JobAction action=job.OwnerAction;
+				if(!dictActions.ContainsKey(action)) {
+					dictActions[action]=new List<Job>();
+				}
+				dictActions[action].Add(job);
+			}
+			//sort dictionary so actions will appear in same order
+			dictActions=dictActions.OrderBy(x => (int)x.Key).ToDictionary(x => x.Key,x => x.Value);
+			foreach(KeyValuePair<JobAction,List<Job>> kvp in dictActions) {
+				if(kvp.Key==JobAction.Undefined || kvp.Key==JobAction.UnknownJobPhase || kvp.Key==JobAction.None) {
+					//Undefined occurs when there is no action to take. 
+					//UnknownJobPhase occurs when there is something wrong with the programming.
+					continue;
+				}
+				List<Job> listJobsSorted=kvp.Value//filter
+					.OrderBy(x => x.OwnerNum!=0)//sort
+					.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
+				if(listJobsSorted.Count==0) {
+					continue;
+				}
+				//Add a 'category title' row to the grid which will have the corresponding JobAction enum as its tag.
+				//Always show the count of sorted jobs within each job action category regardless if the category is collapsed or not.
+				string jobActionRowTitleStr=$"{kvp.Key.ToString()} ({listJobsSorted.Count})";
+				gridProjectManagement.ListGridRows.Add(new GridRow("","",jobActionRowTitleStr) { ColorBackG=_colorGridHeaderBack,Bold=true,Tag=kvp.Key });
+				if(_listJobActionsCollapsedProject.Contains(kvp.Key)) {
+					continue;
+				}
+				JobAction[] writeAdviseReview=new[] { JobAction.WriteCode,JobAction.ReviewCode,JobAction.WaitForReview,JobAction.Advise };
+				foreach(Job job in listJobsSorted) {
+					Def jobPriority=_listJobPriorities.FirstOrDefault(y => y.DefNum==job.Priority);
+					string ownerString=job.OwnerNum==0 ? "-" : Userods.GetName(job.OwnerNum);
+					gridProjectManagement.ListGridRows.Add(
+					new GridRow(
+						new GridCell(jobPriority.ItemName) {
+							ColorBackG=jobPriority.ItemColor,
+							ColorText=(job.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("Urgent")).DefNum) ? Color.White : Color.Black,
+						},
+						new GridCell(ownerString),
+						new GridCell(job.ToString()) { ColorBackG=(job.ToString().ToLower().Contains(textSearch.Text.ToLower())&&!string.IsNullOrWhiteSpace(textSearch.Text) ? Color.LightYellow : Color.Empty) }
+						) {
+						Tag=job
+					}
+					);
+				}
+			}
+			gridProjectManagement.EndUpdate();
+			//RESELECT JOB
+			if(selectedJobNum>0 && selectedJobNum==userControlJobManagerEditor.JobNumCur) {
+				for(int i=0;i<gridProjectManagement.ListGridRows.Count;i++) {
+					if((gridProjectManagement.ListGridRows[i].Tag is Job) && ((Job)gridProjectManagement.ListGridRows[i].Tag).JobNum==selectedJobNum) {
+						gridProjectManagement.SetSelected(i,true);
 						break;
 					}
 				}
@@ -2027,6 +2138,10 @@ namespace OpenDental {
 			FillActiveTabGrid();
 		}
 
+		private void comboTeamFilterProjectManagement_SelectionChangeCommitted(object sender,EventArgs e) {
+			FillActiveTabGrid();
+		}
+
 		private void comboProposedVersionNeedsExpert_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillActiveTabGrid();
 		}
@@ -2136,6 +2251,10 @@ namespace OpenDental {
 			OpenNonModalJob(GetSelectedJob(gridSubmittedJobs,e.Row));
 		}
 
+		private void gridProjectManagement_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+			OpenNonModalJob(GetSelectedJob(gridProjectManagement,e.Row));
+		}
+
 		private void gridAction_CellClick(object sender,ODGridClickEventArgs e) {
 			if(gridAction.ListGridRows[e.Row].Tag==null) {
 				return;
@@ -2156,6 +2275,30 @@ namespace OpenDental {
 			//Rows that have a tag of type Job should cause the entire JM window and registered entities notified that they need to load the selected job.
 			if(gridAction.ListGridRows[e.Row].Tag is Job) {
 				LoadJob((Job)gridAction.ListGridRows[e.Row].Tag,false);
+				return;
+			}
+		}
+
+		private void gridProjectManagement_CellClick(object sender,ODGridClickEventArgs e) {
+			if(gridProjectManagement.ListGridRows[e.Row].Tag==null) {
+				return;
+			}
+			//Rows that have a tag of type JobAction are the 'category title' rows that are bold with a colored background.
+			//When a user single clicks on one of these rows it should collapse or expand the entire category based on its current state.
+			if(gridProjectManagement.ListGridRows[e.Row].Tag is JobAction) {
+				JobAction jobAction=(JobAction)gridProjectManagement.ListGridRows[e.Row].Tag;
+				if(_listJobActionsCollapsedProject.Contains(jobAction)) {
+					_listJobActionsCollapsedProject.RemoveAll(x => x==jobAction);
+				}
+				else {
+					_listJobActionsCollapsedProject.Add(jobAction);
+				}
+				FillGridProjectManagement();
+				return;
+			}
+			//Rows that have a tag of type Job should cause the entire JM window and registered entities notified that they need to load the selected job.
+			if(gridProjectManagement.ListGridRows[e.Row].Tag is Job) {
+				LoadJob((Job)gridProjectManagement.ListGridRows[e.Row].Tag,false);
 				return;
 			}
 		}
@@ -2573,6 +2716,9 @@ namespace OpenDental {
 			}
 			//Get category list for the user
 			List<string> categoryList=CategoryList;
+			if(parentNum>0 && topParentNum>0 && userControlJobManagerEditor.JobCur.Category!=JobCategory.Project) {
+				categoryList.Remove("Project");//Projects can only have other Projects as Parents
+			}
 			if(categoryList.Count==0) {//Should only happen if we forget to stop them from being able to click the button
 				MsgBox.Show(this,"You are not authorized to create jobs.");
 				return;
@@ -2779,17 +2925,17 @@ namespace OpenDental {
 		}
 
 		private void butAdvSearch_Click(object sender,EventArgs e) {
-			using FormJobSearch FormJS=new FormJobSearch();
-			FormJS.InitialSearchString=textSearch.Text;
+			using FormJobSearch formJobSearch=new FormJobSearch();
+			formJobSearch.InitialSearchString=textSearch.Text;
 			//pass in data here to reduce calls to DB.
-			FormJS.ShowDialog(this);
-			if(FormJS.DialogResult!=DialogResult.OK) {
+			formJobSearch.ShowDialog(this);
+			if(formJobSearch.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			checkContactSearch.Checked=true;
 			checkResults.Checked=true;//sets control visibility as well.
 			tabControlNav.SelectedTab=tabSearch;//Search tab to see search results.
-			LoadJob(FormJS.SelectedJob,true);
+			LoadJob(formJobSearch.SelectedJob,true);
 			//Search list has already been updated
 			FillGridSearch();
 		}
@@ -2823,6 +2969,10 @@ namespace OpenDental {
 			if(job==null || userControlJobManagerEditor.UnsavedChangesCheck()) {
 				return;
 			}
+			if(job.Category==JobCategory.Project && !JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+				MessageBox.Show("ProjectManager permission is needed to view Projects.");
+				return;
+			}
 			#region Refresh UI Elements
 			if(doRefreshUI) {
 				FillActiveTabGrid();
@@ -2838,6 +2988,10 @@ namespace OpenDental {
 		///<summary>Opens a non-modal job editor. This method is here so FormJobManager can still maintain ownership of the form.</summary>
 		public static void OpenNonModalJob(Job job) {
 			if(job==null) {//Double clicking on a title row, or something went wrong.
+				return;
+			}
+			if(job.Category==JobCategory.Project && !JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+				MessageBox.Show("ProjectManager permission is needed to view Projects.");
 				return;
 			}
 			FormJobEdit FormJE=_listJobEditForms.FirstOrDefault(x=> x.JobCur.JobNum==job.JobNum);

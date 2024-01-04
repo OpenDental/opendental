@@ -81,7 +81,8 @@ namespace OpenDental {
 			gridProcedureAdjustments.Columns.Clear();
 			const int colWidthDescription=200;
 			const int colWidthAdjAmt=80;
-			int widthCol=gridProcedureAdjustments.Width-10-colWidthDescription-colWidthAdjAmt;
+			//Columns width are set const values, and are relational to the grids base size, so we need to unscale the grid's width to keep all of the values consistent when using zoom.
+			int widthCol=LayoutManager.Unscale(gridProcedureAdjustments.Width)-10-colWidthDescription-colWidthAdjAmt;
 			gridProcedureAdjustments.Columns.Add(new UI.GridColumn("Description",colWidthDescription,HorizontalAlignment.Left));
 			gridProcedureAdjustments.Columns.Add(new UI.GridColumn("Reason",widthCol,HorizontalAlignment.Left));
 			gridProcedureAdjustments.Columns.Add(new UI.GridColumn("AdjAmt",colWidthAdjAmt,HorizontalAlignment.Right));
@@ -148,7 +149,8 @@ namespace OpenDental {
 			gridSupplementalInfo.BeginUpdate();
 			gridSupplementalInfo.Columns.Clear();
 			const int colWidthAmt=80;
-			int widthCol=gridSupplementalInfo.Width-10-colWidthAmt;
+			//Columns width are set const values, and are relational to the grids base size, so we need to unscale the grid's width to keep all of the values consistent when using zoom.
+			int widthCol=LayoutManager.Unscale(gridSupplementalInfo.Width)-10-colWidthAmt;
 			gridSupplementalInfo.Columns.Add(new GridColumn("Description",widthCol,HorizontalAlignment.Left));
 			gridSupplementalInfo.Columns.Add(new GridColumn("Amt",colWidthAmt,HorizontalAlignment.Right));
 			gridSupplementalInfo.ListGridRows.Clear();

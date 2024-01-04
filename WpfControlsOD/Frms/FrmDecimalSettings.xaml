@@ -12,8 +12,7 @@
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
 		<ui:Label x:Name="label1" Width="409" Height="62" Margin="22,12,0,0" Text="The currency decimal setting for this computer is not the recommended value of '2'. This could result in the loss of financial data. To change this, go to
 Control Panel | Region | Additional Settings... | Currency tab | No. of digits after decimal." VAlign="Center" />
-		<ui:TextBox x:Name="textDecimal" Width="56" Height="20" Margin="225,77,0,0" ColorBack="#FFF0F0F0" HAlign="Right" />
-		<ui:Label x:Name="label2" Width="171" Height="17" Margin="53,78,0,0" Text="Number of digits after decimal" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label2" Width="195" Height="17" Margin="53,78,0,0" Text="Number of digits after decimal" HAlign="Right" VAlign="Center" />
 		<ui:CheckBox x:Name="checkNoShow" Width="367" Height="18" Margin="64,114,0,0" Text="Do not show this window on startup (this computer only)" CheckAlign="MiddleLeft" />
 	</Grid>
 </local:FrmODBase>

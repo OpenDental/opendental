@@ -64,29 +64,29 @@ namespace OpenDentBusiness{
 		}
 		#endregion
 
-		/*///<summary>Returns header widths for list sorted in the same order as the columns appear in the DB. Can be more efficient than using cache.</summary>
+		///<summary>Returns header widths for list sorted in the same order as the columns appear in the DB. Can be more efficient than using cache.</summary>
 		public static List<WikiListHeaderWidth> GetForListNoCache(string listName) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<WikiListHeaderWidth>>(MethodBase.GetCurrentMethod(),listName);
 			}
-			List<WikiListHeaderWidth> retVal = new List<WikiListHeaderWidth>();
-			List<WikiListHeaderWidth> tempList = new List<WikiListHeaderWidth>();
+			List<WikiListHeaderWidth> listWikiListHeaderWidthsRet = new List<WikiListHeaderWidth>();
+			List<WikiListHeaderWidth> listWikiListHeaderWidthsTemp = new List<WikiListHeaderWidth>();
 			string command="DESCRIBE wikilist_"+POut.String(listName);
-			DataTable listDescription=Db.GetTable(command);
+			DataTable tableDescriptions=Db.GetTable(command);
 			command="SELECT * FROM wikilistheaderwidth WHERE ListName='"+POut.String(listName)+"'";
-			tempList=Crud.WikiListHeaderWidthCrud.SelectMany(command);
-			for(int i=0;i<listDescription.Rows.Count;i++) {
-				for(int j=0;j<tempList.Count;j++) {
-					//Add WikiListHeaderWidth from tempList to retVal if it is the next row in listDescription.
-					if(listDescription.Rows[i][0].ToString()==tempList[j].ColName) {
-						retVal.Add(tempList[j]);
+			listWikiListHeaderWidthsTemp=Crud.WikiListHeaderWidthCrud.SelectMany(command);
+			for(int i = 0;i<tableDescriptions.Rows.Count;i++) {
+				for(int j = 0;j<listWikiListHeaderWidthsTemp.Count;j++) {
+					//Add WikiListHeaderWidth from listWikiListHeaderWidthsTemp to listWikiListHeaderWidthsRet if it is the next row in tableDescriptions.
+					if(tableDescriptions.Rows[i][0].ToString()==listWikiListHeaderWidthsTemp[j].ColName) {
+						listWikiListHeaderWidthsRet.Add(listWikiListHeaderWidthsTemp[j]);
 						break;
 					}
 				}
 				//next description row.
 			}
-			return retVal;
-		}*/
+			return listWikiListHeaderWidthsRet;
+		}
 
 		///<summary>Returns header widths for list sorted in the same order as the columns appear in the DB.  Uses cache.</summary>
 		public static List<WikiListHeaderWidth> GetForList(string listName) {

@@ -578,6 +578,7 @@ namespace OpenDental{
 			_dateCopyStart=Schedules.GetDateCal(_dateFromDate,gridMain.SelectedCell.Y,selectedCol);
 			_dateCopyEnd=_dateCopyStart;
 			textClipboard.Text=_dateCopyStart.ToShortDateString();
+			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,textClipboard.Text+" was copied.");
 		}
 
 		private void butCopyWeek_Click(object sender,EventArgs e) {
@@ -621,6 +622,7 @@ namespace OpenDental{
 			_dateCopyStart=Schedules.GetDateCal(_dateFromDate,gridMain.SelectedCell.Y,startI);
 			_dateCopyEnd=_dateCopyStart.AddDays(dateSpan);
 			textClipboard.Text=_dateCopyStart.ToShortDateString()+seperator+_dateCopyEnd.ToShortDateString();
+			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,textClipboard.Text+" was copied.");
 		}
 
 		private void butPaste_Click(object sender,EventArgs e) {
@@ -736,7 +738,7 @@ namespace OpenDental{
 				listSchedulesToDelete=FilterScheduleList(listSchedulesToDelete,true);
 				Schedules.DeleteMany(listSchedulesToDelete.Select(x => x.ScheduleNum).ToList());
 			}
-			Schedule schedule;
+			Schedule schedule=new Schedule();
 			int weekDelta=0;
 			if(isWeekCopied){
 				TimeSpan span=dateSelectedStart-_dateCopyStart;
@@ -773,6 +775,7 @@ namespace OpenDental{
 				textClipboard.Text=_dateCopyStart.ToShortDateString();
 			}
 			_changed=true;
+			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Pasted schedule from "+textClipboard.Text+" to "+schedule.SchedDate.ToShortDateString());
 			actionCloseScheduleProgress?.Invoke();
 		}
 
@@ -871,7 +874,7 @@ namespace OpenDental{
 			//Flag every schedule that we are copying as new (because conflict detection requires schedules marked as new)
 			listSchedulesToCopy.ForEach(x => x.IsNew=true);
 			Logger.LogToPath("RefreshPeriod",LogPath.Signals,LogPhase.End);
-			Schedule schedule;
+			Schedule schedule=new Schedule();
 			int weekDelta=0;
 			TimeSpan timeSpan;
 			if(isWeekCopied) {
@@ -973,6 +976,8 @@ namespace OpenDental{
 				textClipboard.Text=_dateCopyStart.ToShortDateString();
 			}
 			_changed=true;
+			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Repeated schedule "+repeatCount+" time(s) from "+textClipboard.Text+
+				" to "+schedule.SchedDate.ToShortDateString());
 			actionCloseScheduleProgress?.Invoke();
 			Logger.LogToPath("",LogPath.Signals,LogPhase.End);
 		}

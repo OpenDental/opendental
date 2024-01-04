@@ -55,6 +55,7 @@ namespace OpenDental {
 			}
 			textZoom.Text=zoom.ToString();
 			//always triggers textZoom_TextChanged
+			textZoom.SelectAll();
 		}
 
 		private static void CalcScreens(){

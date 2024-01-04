@@ -423,6 +423,7 @@ namespace OpenDental {
 				return;
 			}
 			Schedule scheduleTemp;
+			List<long> listProviderNums=new List<long>();
 			for(int i=0;i<listProv.SelectedIndices.Count;i++){
 				if(listProv.SelectedIndices[i]==0) {
 					continue;
@@ -431,8 +432,22 @@ namespace OpenDental {
 				scheduleTemp=schedule.Copy();
 				scheduleTemp.SchedType=ScheduleType.Provider;
 				scheduleTemp.ProvNum=_listProviders[listProv.SelectedIndices[i]].ProvNum;
+				listProviderNums.Add(scheduleTemp.ProvNum);
 				_listSchedules.Add(scheduleTemp);
 			}
+			listProviderNums=listProviderNums.Distinct().ToList();
+			List<string> listProviderNames=new List<string>();
+			for(int i=0;i<listProviderNums.Count;i++) {
+				Provider provider=Providers.GetFirstOrDefault(x => x.ProvNum==listProviderNums[i]);
+				if(provider==null) {
+					continue;
+				}
+				listProviderNames.Add(Providers.GetFormalName(provider.ProvNum));
+			}
+			if(listProviderNames.Count>0){
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listProviderNames.OrderBy(x => x)));
+			}
+			List<long> listEmployeeNums=new List<long>();
 			for(int i=0;i<listEmp.SelectedIndices.Count;i++) {
 				if(listEmp.SelectedIndices[i]==0) {
 					continue;
@@ -441,7 +456,20 @@ namespace OpenDental {
 				scheduleTemp=schedule.Copy();
 				scheduleTemp.SchedType=ScheduleType.Employee;
 				scheduleTemp.EmployeeNum=_listEmployees[listEmp.SelectedIndices[i]].EmployeeNum;
+				listEmployeeNums.Add(scheduleTemp.EmployeeNum);
 				_listSchedules.Add(scheduleTemp);
+			}
+			listEmployeeNums=listEmployeeNums.Distinct().ToList();
+			List<string> listEmployeeNames=new List<string>();
+			for(int i=0;i<listEmployeeNums.Count;i++) {
+				Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listEmployeeNums[i]);
+				if(employee==null) {
+					continue;
+				}
+				listEmployeeNames.Add(employee.FName);//Internal database includes the initial of the last name.
+			}
+			if(listEmployeeNames.Count>0){
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listEmployeeNames.OrderBy(x => x)));
 			}
 			FillGrid();
 		}
@@ -576,6 +604,15 @@ namespace OpenDental {
 				}
 			}
 			_listSchedules.RemoveAll(x => listSchedulesToRemove.Contains(x));
+			List<string> listProviderNames=new List<string>();
+			for(int i=0;i<listSchedulesToRemove.Count;i++) {
+				Provider provider=Providers.GetFirstOrDefault(x => x.ProvNum==listSchedulesToRemove[i].ProvNum);
+				if(provider==null) {
+					continue;
+				}
+				listProviderNames.Add(Providers.GetFormalName(provider.ProvNum));
+			}
+			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Removed for "+string.Join(", ",listProviderNames.OrderBy(x => x)));
 			FillGrid();
 		}
 

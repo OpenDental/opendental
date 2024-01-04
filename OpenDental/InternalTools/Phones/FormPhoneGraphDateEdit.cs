@@ -13,6 +13,7 @@ namespace OpenDental {
 	public partial class FormPhoneGraphDateEdit:FormODBase {
 		public DateTime DateEdit;
 		private List<Employee> _listEmployeeSupers;
+		private List<int> _listSupersSelectedIndiciesOld=new List<int>();
 
 		public FormPhoneGraphDateEdit(DateTime dateEdit,bool showScheduleButton=true) {
 			InitializeComponent();
@@ -43,19 +44,31 @@ namespace OpenDental {
 				listSupers.Items.Add(_listEmployeeSupers[i].FName);
 				if(listEmpNumsSuper.Contains(_listEmployeeSupers[i].EmployeeNum.ToString())){
 					listSupers.SetSelected(i);
+					_listSupersSelectedIndiciesOld.Add(i);
 				}
 			}
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
-			Prefs.UpdateRaw("GraphEmployeeTimesPeak",textPeak.Text);
-			Prefs.UpdateRaw("GraphEmployeeTimesSuperPeak",textSuperPeak.Text);
+			string _textPeakOld=PrefC.GetRaw("GraphEmployeeTimesPeak");
+			string _textSuperPeakOld=PrefC.GetRaw("GraphEmployeeTimesSuperPeak");
+			Prefs.UpdateRaw("GraphEmployeeTimesPeak",POut.String(textPeak.Text));
+			Prefs.UpdateRaw("GraphEmployeeTimesSuperPeak",POut.String(textSuperPeak.Text));
 			string strSupers="";
 			for(int i=0;i<listSupers.SelectedIndices.Count;i++){
 				if(i>0){
 					strSupers+=",";
 				}
 				strSupers+=_listEmployeeSupers[listSupers.SelectedIndices[i]].EmployeeNum.ToString();
+			}
+			if(POut.String(textPeak.Text)!=_textPeakOld) {
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Peak of red line changed from "+_textPeakOld+" to "+POut.String(textPeak.Text));
+			}
+			if(POut.String(textSuperPeak.Text)!=_textSuperPeakOld) {
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Super Peak changed from "+_textSuperPeakOld+" to "+POut.String(textSuperPeak.Text));
+			}
+			if(listSupers.SelectedIndices.Exists(x => !_listSupersSelectedIndiciesOld.Contains(x)) || _listSupersSelectedIndiciesOld.Exists(x => !listSupers.SelectedIndices.Contains(x))) {
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Updated prescheduled supervisors list.");
 			}
 			Prefs.UpdateRaw("GraphEmployeeMaxPresched",strSupers);
 			Signalods.SetInvalid(InvalidType.Prefs);

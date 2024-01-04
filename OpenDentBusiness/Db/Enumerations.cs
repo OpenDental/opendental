@@ -409,6 +409,8 @@ namespace OpenDentBusiness{
 		CodeGroups,
 		///<summary>111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</summary>
 		BillingList,
+		///<summary>112. Indicates that database connection settings have changed and the cached connections should be reinitialized.</summary>
+		ConnectionStoreClear,
 	}
 	//<summary></summary>
 	/*public enum ButtonType{

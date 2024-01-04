@@ -2598,6 +2598,7 @@ namespace OpenDental {
 			}
 			//Atach new job
 			using FormJobSearch formJobSearch = new FormJobSearch();
+			formJobSearch.DoBlockProjects=true;
 			formJobSearch.ShowDialog();
 			if(formJobSearch.DialogResult!=DialogResult.OK || formJobSearch.SelectedJobNum==0) {
 				return;

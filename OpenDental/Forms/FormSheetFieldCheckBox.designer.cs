@@ -187,7 +187,7 @@ namespace OpenDental{
 			this.comboRadioGroupNameMisc.Location = new System.Drawing.Point(119, 49);
 			this.comboRadioGroupNameMisc.Name = "comboRadioGroupNameMisc";
 			this.comboRadioGroupNameMisc.Size = new System.Drawing.Size(197, 21);
-			this.comboRadioGroupNameMisc.TabIndex = 121;
+			this.comboRadioGroupNameMisc.TabIndex = 0;
 			this.comboRadioGroupNameMisc.SelectedIndexChanged += new System.EventHandler(this.comboRadioGroupNameMisc_SelectedIndexChanged);
 			// 
 			// textUiLabelMobileMisc

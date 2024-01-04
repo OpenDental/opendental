@@ -1028,5 +1028,10 @@ namespace OpenDentBusiness {
 			string command="INSERT INTO preference(PrefName,ValueString) VALUES('WebSchedManualSendTriggered','')";
 			Db.NonQ(command);
 		}
+
+		private static void To23_3_21() {
+			string command="ALTER TABLE resellerservice ADD FeeRetail double NOT NULL DEFAULT -1";
+			Db.NonQ(command);
+		}
 	}
 }

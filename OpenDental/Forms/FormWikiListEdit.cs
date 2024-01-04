@@ -45,16 +45,11 @@ namespace OpenDental {
 		///<summary>Fills the grid with the contents of the corresponding wiki list table in the database.
 		///After filling the grid, FilterGrid() will get invoked to apply any advanced search options.</summary>
 		private void FillGrid() {
-			_listWikiListHeaderWidths=WikiListHeaderWidths.GetForList(WikiListCurName);
+			_listWikiListHeaderWidths=WikiListHeaderWidths.GetForListNoCache(WikiListCurName);
 			_table=WikiLists.GetByName(WikiListCurName);
 			if(_table.Rows.Count>0 && _listWikiListHeaderWidths.Count!=_table.Columns.Count) {//if these do not match, something happened to be desynched at the right moment.
-				WikiListHeaderWidths.RefreshCache();
-				_table=WikiLists.GetByName(WikiListCurName);
-				_listWikiListHeaderWidths=WikiListHeaderWidths.GetForList(WikiListCurName);
-				if(_listWikiListHeaderWidths.Count!=_table.Columns.Count) {//if they still do not match, one of them did not get synched correctly.
-					MsgBox.Show(this,"Unable to open the wiki list.");
-					return;
-				}
+				MsgBox.Show(this,"Unable to open the wiki list.");
+				return;
 			}
 			_hasHiddenColumns=_listWikiListHeaderWidths.Any(x => x.IsHidden);
 			gridMain.BeginUpdate();

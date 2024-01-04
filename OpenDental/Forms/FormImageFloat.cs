@@ -4695,7 +4695,10 @@ namespace OpenDental {
 			}
 			NodeTypeAndKey nodeTypeAndKey=null;
 			Document document=null;
-			bool isBlockingNavigation=_odWebView2.DoBlockNavigation;
+			bool isBlockingNavigation=false;
+			if(!ODBuild.IsWeb()){
+				isBlockingNavigation=_odWebView2.DoBlockNavigation;
+			}
 			for(int i=0;i<stringArrayFileNames.Length;i++) {
 				try {
 					if(CloudStorage.IsCloudStorage) {
@@ -4714,7 +4717,7 @@ namespace OpenDental {
 					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+openFileDialog.FileName);
 					continue;
 				}
-				if(i>0){
+				if(!ODBuild.IsWeb() && i>0){
 					_odWebView2.DoBlockNavigation=false;//Allows previewing of additional PDFs when importing more than one file.
 				}
 				EventFillTree?.Invoke(this,false);
@@ -4735,7 +4738,9 @@ namespace OpenDental {
 					EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				}
 			}
-			_odWebView2.DoBlockNavigation=isBlockingNavigation;
+			if(!ODBuild.IsWeb()){
+				_odWebView2.DoBlockNavigation=isBlockingNavigation;//Set back to how it was prior to importing.
+			}
 			/*todo:
 			if(treeMain.SelectedNode!=null) {
 				treeMain.SelectedNode.EnsureVisible();

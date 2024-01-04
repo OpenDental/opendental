@@ -299,8 +299,8 @@ namespace OpenDental {
 			_hasChanged |=Prefs.UpdateBool(PrefName.ReportsDoShowHiddenTPPrepayments,checkReportDisplayUnearnedTP.Checked);
 			_hasChanged |=Prefs.UpdateString(PrefName.ReportsIncompleteProcsExcludeCodes,string.Join(",",listAllExcludeCodes));
 			if(UpdateReportingServer()) {
-				ConnectionStoreBase.ClearConnectionDictionary();
 				_hasChanged=true;
+				DataValid.SetInvalid(InvalidType.ConnectionStoreClear);
 			}
 			if(_hasChanged) {
 				DataValid.SetInvalid(InvalidType.Prefs);

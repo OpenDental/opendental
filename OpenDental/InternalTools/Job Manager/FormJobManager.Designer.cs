@@ -116,6 +116,10 @@
 			this.checkShowOnHoldSubmitted = new OpenDental.UI.CheckBox();
 			this.gridSubmittedJobs = new OpenDental.UI.GridOD();
 			this.userControlJobManagerEditor = new OpenDental.UserControlJobManagerEditor();
+			this.tabProjectManagement = new System.Windows.Forms.TabPage();
+			this.gridProjectManagement = new OpenDental.UI.GridOD();
+			this.labelProjectManagementTeam = new System.Windows.Forms.Label();
+			this.comboTeamFilterProjectManagement = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butAdvSearch = new OpenDental.UI.Button();
 			this.butMe = new OpenDental.UI.Button();
@@ -160,6 +164,7 @@
 			this.groupBox3.SuspendLayout();
 			this.tabUnresolvedIssues.SuspendLayout();
 			this.tabSubmittedJobs.SuspendLayout();
+			this.tabProjectManagement.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// contextMenuQueries
@@ -233,6 +238,7 @@
 			this.tabControlNav.Controls.Add(this.tabMarketing);
 			this.tabControlNav.Controls.Add(this.tabUnresolvedIssues);
 			this.tabControlNav.Controls.Add(this.tabSubmittedJobs);
+			this.tabControlNav.Controls.Add(this.tabProjectManagement);
 			this.tabControlNav.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControlNav.Location = new System.Drawing.Point(0, 0);
 			this.tabControlNav.Multiline = true;
@@ -248,10 +254,10 @@
 			this.tabPatternReview.Controls.Add(this.label13);
 			this.tabPatternReview.Controls.Add(this.dateExcludeCompleteBefore);
 			this.tabPatternReview.Controls.Add(this.gridPatternReview);
-			this.tabPatternReview.Location = new System.Drawing.Point(4, 76);
+			this.tabPatternReview.Location = new System.Drawing.Point(4, 94);
 			this.tabPatternReview.Name = "tabPatternReview";
 			this.tabPatternReview.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPatternReview.Size = new System.Drawing.Size(349, 687);
+			this.tabPatternReview.Size = new System.Drawing.Size(349, 669);
 			this.tabPatternReview.TabIndex = 12;
 			this.tabPatternReview.Text = "Pattern Review";
 			this.tabPatternReview.UseVisualStyleBackColor = true;
@@ -285,7 +291,7 @@
 			this.gridPatternReview.Location = new System.Drawing.Point(3, 26);
 			this.gridPatternReview.Name = "gridPatternReview";
 			this.gridPatternReview.ShowContextMenu = false;
-			this.gridPatternReview.Size = new System.Drawing.Size(343, 658);
+			this.gridPatternReview.Size = new System.Drawing.Size(343, 640);
 			this.gridPatternReview.TabIndex = 239;
 			this.gridPatternReview.Title = "Jobs For Review";
 			this.gridPatternReview.TranslationName = "FormJobManager";
@@ -298,10 +304,10 @@
 			this.tabAction.Controls.Add(this.comboProposedVersionNeedsAction);
 			this.tabAction.Controls.Add(this.checkShowUnassigned);
 			this.tabAction.Controls.Add(this.gridAction);
-			this.tabAction.Location = new System.Drawing.Point(4, 76);
+			this.tabAction.Location = new System.Drawing.Point(4, 94);
 			this.tabAction.Name = "tabAction";
 			this.tabAction.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAction.Size = new System.Drawing.Size(349, 687);
+			this.tabAction.Size = new System.Drawing.Size(349, 669);
 			this.tabAction.TabIndex = 0;
 			this.tabAction.Text = "Needs Action";
 			this.tabAction.UseVisualStyleBackColor = true;
@@ -352,7 +358,7 @@
 			this.gridAction.Location = new System.Drawing.Point(3, 48);
 			this.gridAction.Name = "gridAction";
 			this.gridAction.ShowContextMenu = false;
-			this.gridAction.Size = new System.Drawing.Size(343, 636);
+			this.gridAction.Size = new System.Drawing.Size(343, 618);
 			this.gridAction.TabIndex = 227;
 			this.gridAction.Title = "Action Items";
 			this.gridAction.TranslationName = "FormJobManager";
@@ -364,10 +370,10 @@
 			// 
 			this.tabSpecialProjects.Controls.Add(this.checkShowUnassignedSpecial);
 			this.tabSpecialProjects.Controls.Add(this.gridSpecial);
-			this.tabSpecialProjects.Location = new System.Drawing.Point(4, 76);
+			this.tabSpecialProjects.Location = new System.Drawing.Point(4, 94);
 			this.tabSpecialProjects.Name = "tabSpecialProjects";
 			this.tabSpecialProjects.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSpecialProjects.Size = new System.Drawing.Size(349, 687);
+			this.tabSpecialProjects.Size = new System.Drawing.Size(349, 669);
 			this.tabSpecialProjects.TabIndex = 11;
 			this.tabSpecialProjects.Text = "Special Projects";
 			this.tabSpecialProjects.UseVisualStyleBackColor = true;
@@ -392,7 +398,7 @@
 			this.gridSpecial.Location = new System.Drawing.Point(3, 31);
 			this.gridSpecial.Name = "gridSpecial";
 			this.gridSpecial.ShowContextMenu = false;
-			this.gridSpecial.Size = new System.Drawing.Size(343, 653);
+			this.gridSpecial.Size = new System.Drawing.Size(343, 635);
 			this.gridSpecial.TabIndex = 239;
 			this.gridSpecial.Title = "Action Items";
 			this.gridSpecial.TranslationName = "FormTaskEdit";
@@ -404,10 +410,10 @@
 			this.tabDocumentation.Controls.Add(this.label1);
 			this.tabDocumentation.Controls.Add(this.textDocumentationVersion);
 			this.tabDocumentation.Controls.Add(this.gridDocumentation);
-			this.tabDocumentation.Location = new System.Drawing.Point(4, 76);
+			this.tabDocumentation.Location = new System.Drawing.Point(4, 94);
 			this.tabDocumentation.Name = "tabDocumentation";
 			this.tabDocumentation.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDocumentation.Size = new System.Drawing.Size(349, 687);
+			this.tabDocumentation.Size = new System.Drawing.Size(349, 669);
 			this.tabDocumentation.TabIndex = 6;
 			this.tabDocumentation.Text = "Documentation";
 			this.tabDocumentation.UseVisualStyleBackColor = true;
@@ -439,7 +445,7 @@
 			this.gridDocumentation.HasMultilineHeaders = true;
 			this.gridDocumentation.Location = new System.Drawing.Point(3, 26);
 			this.gridDocumentation.Name = "gridDocumentation";
-			this.gridDocumentation.Size = new System.Drawing.Size(343, 657);
+			this.gridDocumentation.Size = new System.Drawing.Size(343, 639);
 			this.gridDocumentation.TabIndex = 239;
 			this.gridDocumentation.Title = "Action Items";
 			this.gridDocumentation.TranslationName = "FormTaskEdit";
@@ -455,10 +461,10 @@
 			this.tabTesting.Controls.Add(this.label3);
 			this.tabTesting.Controls.Add(this.textVersionText);
 			this.tabTesting.Controls.Add(this.gridTesting);
-			this.tabTesting.Location = new System.Drawing.Point(4, 76);
+			this.tabTesting.Location = new System.Drawing.Point(4, 94);
 			this.tabTesting.Name = "tabTesting";
 			this.tabTesting.Padding = new System.Windows.Forms.Padding(3);
-			this.tabTesting.Size = new System.Drawing.Size(349, 687);
+			this.tabTesting.Size = new System.Drawing.Size(349, 669);
 			this.tabTesting.TabIndex = 9;
 			this.tabTesting.Text = "Testing";
 			this.tabTesting.UseVisualStyleBackColor = true;
@@ -537,7 +543,7 @@
 			this.gridTesting.HasMultilineHeaders = true;
 			this.gridTesting.Location = new System.Drawing.Point(3, 62);
 			this.gridTesting.Name = "gridTesting";
-			this.gridTesting.Size = new System.Drawing.Size(343, 608);
+			this.gridTesting.Size = new System.Drawing.Size(343, 590);
 			this.gridTesting.TabIndex = 228;
 			this.gridTesting.Title = "Completed Jobs";
 			this.gridTesting.TranslationName = "FormTaskEdit";
@@ -548,10 +554,10 @@
 			// 
 			this.tabQuery.Controls.Add(this.groupBox1);
 			this.tabQuery.Controls.Add(this.gridQueries);
-			this.tabQuery.Location = new System.Drawing.Point(4, 76);
+			this.tabQuery.Location = new System.Drawing.Point(4, 94);
 			this.tabQuery.Name = "tabQuery";
 			this.tabQuery.Padding = new System.Windows.Forms.Padding(3);
-			this.tabQuery.Size = new System.Drawing.Size(349, 687);
+			this.tabQuery.Size = new System.Drawing.Size(349, 669);
 			this.tabQuery.TabIndex = 5;
 			this.tabQuery.Text = "Queries";
 			this.tabQuery.UseVisualStyleBackColor = true;
@@ -659,9 +665,9 @@
 			// 
 			this.tabNotify.Controls.Add(this.gridNotify);
 			this.tabNotify.Controls.Add(this.checkNotifyShowHqOnly);
-			this.tabNotify.Location = new System.Drawing.Point(4, 76);
+			this.tabNotify.Location = new System.Drawing.Point(4, 94);
 			this.tabNotify.Name = "tabNotify";
-			this.tabNotify.Size = new System.Drawing.Size(349, 687);
+			this.tabNotify.Size = new System.Drawing.Size(349, 669);
 			this.tabNotify.TabIndex = 7;
 			this.tabNotify.Text = "Notify Customer";
 			this.tabNotify.UseVisualStyleBackColor = true;
@@ -674,7 +680,7 @@
 			this.gridNotify.HasMultilineHeaders = true;
 			this.gridNotify.Location = new System.Drawing.Point(3, 29);
 			this.gridNotify.Name = "gridNotify";
-			this.gridNotify.Size = new System.Drawing.Size(343, 655);
+			this.gridNotify.Size = new System.Drawing.Size(343, 637);
 			this.gridNotify.TabIndex = 240;
 			this.gridNotify.Title = "Action Items";
 			this.gridNotify.TranslationName = "FormTaskEdit";
@@ -696,10 +702,10 @@
 			// 
 			this.tabSubscribed.Controls.Add(this.checkSubscribedIncludeOnHold);
 			this.tabSubscribed.Controls.Add(this.gridSubscribedJobs);
-			this.tabSubscribed.Location = new System.Drawing.Point(4, 76);
+			this.tabSubscribed.Location = new System.Drawing.Point(4, 94);
 			this.tabSubscribed.Name = "tabSubscribed";
 			this.tabSubscribed.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSubscribed.Size = new System.Drawing.Size(349, 687);
+			this.tabSubscribed.Size = new System.Drawing.Size(349, 669);
 			this.tabSubscribed.TabIndex = 8;
 			this.tabSubscribed.Text = "Subscribed Jobs";
 			this.tabSubscribed.UseVisualStyleBackColor = true;
@@ -724,7 +730,7 @@
 			this.gridSubscribedJobs.Location = new System.Drawing.Point(2, 30);
 			this.gridSubscribedJobs.Name = "gridSubscribedJobs";
 			this.gridSubscribedJobs.NoteSpanStop = 4;
-			this.gridSubscribedJobs.Size = new System.Drawing.Size(344, 654);
+			this.gridSubscribedJobs.Size = new System.Drawing.Size(344, 636);
 			this.gridSubscribedJobs.TabIndex = 239;
 			this.gridSubscribedJobs.Title = "Subscribed Jobs";
 			this.gridSubscribedJobs.TranslationName = "Job Edit";
@@ -738,10 +744,10 @@
 			this.tabNeedsEngineer.Controls.Add(this.label7);
 			this.tabNeedsEngineer.Controls.Add(this.comboProposedVersionNeedsEngineer);
 			this.tabNeedsEngineer.Controls.Add(this.gridAvailableJobs);
-			this.tabNeedsEngineer.Location = new System.Drawing.Point(4, 76);
+			this.tabNeedsEngineer.Location = new System.Drawing.Point(4, 94);
 			this.tabNeedsEngineer.Name = "tabNeedsEngineer";
 			this.tabNeedsEngineer.Padding = new System.Windows.Forms.Padding(3);
-			this.tabNeedsEngineer.Size = new System.Drawing.Size(349, 687);
+			this.tabNeedsEngineer.Size = new System.Drawing.Size(349, 669);
 			this.tabNeedsEngineer.TabIndex = 2;
 			this.tabNeedsEngineer.Text = "Needs Engineer";
 			this.tabNeedsEngineer.UseVisualStyleBackColor = true;
@@ -799,10 +805,10 @@
 			this.tabNeedsExpert.Controls.Add(this.label8);
 			this.tabNeedsExpert.Controls.Add(this.comboProposedVersionNeedsExpert);
 			this.tabNeedsExpert.Controls.Add(this.gridAvailableJobsExpert);
-			this.tabNeedsExpert.Location = new System.Drawing.Point(4, 76);
+			this.tabNeedsExpert.Location = new System.Drawing.Point(4, 94);
 			this.tabNeedsExpert.Name = "tabNeedsExpert";
 			this.tabNeedsExpert.Padding = new System.Windows.Forms.Padding(3);
-			this.tabNeedsExpert.Size = new System.Drawing.Size(349, 687);
+			this.tabNeedsExpert.Size = new System.Drawing.Size(349, 669);
 			this.tabNeedsExpert.TabIndex = 3;
 			this.tabNeedsExpert.Text = "Needs Expert";
 			this.tabNeedsExpert.UseVisualStyleBackColor = true;
@@ -856,10 +862,10 @@
 			// tabOnHold
 			// 
 			this.tabOnHold.Controls.Add(this.gridJobsOnHold);
-			this.tabOnHold.Location = new System.Drawing.Point(4, 76);
+			this.tabOnHold.Location = new System.Drawing.Point(4, 94);
 			this.tabOnHold.Name = "tabOnHold";
 			this.tabOnHold.Padding = new System.Windows.Forms.Padding(3);
-			this.tabOnHold.Size = new System.Drawing.Size(349, 687);
+			this.tabOnHold.Size = new System.Drawing.Size(349, 669);
 			this.tabOnHold.TabIndex = 4;
 			this.tabOnHold.Text = "On Hold";
 			this.tabOnHold.UseVisualStyleBackColor = true;
@@ -870,7 +876,7 @@
 			this.gridJobsOnHold.HasMultilineHeaders = true;
 			this.gridJobsOnHold.Location = new System.Drawing.Point(3, 3);
 			this.gridJobsOnHold.Name = "gridJobsOnHold";
-			this.gridJobsOnHold.Size = new System.Drawing.Size(343, 681);
+			this.gridJobsOnHold.Size = new System.Drawing.Size(343, 663);
 			this.gridJobsOnHold.TabIndex = 230;
 			this.gridJobsOnHold.Title = "Jobs On Hold";
 			this.gridJobsOnHold.TranslationName = "Job Edit";
@@ -881,10 +887,10 @@
 			// 
 			this.tabSearch.Controls.Add(this.gridSearch);
 			this.tabSearch.Controls.Add(this.groupBox2);
-			this.tabSearch.Location = new System.Drawing.Point(4, 76);
+			this.tabSearch.Location = new System.Drawing.Point(4, 94);
 			this.tabSearch.Name = "tabSearch";
 			this.tabSearch.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSearch.Size = new System.Drawing.Size(349, 687);
+			this.tabSearch.Size = new System.Drawing.Size(349, 669);
 			this.tabSearch.TabIndex = 10;
 			this.tabSearch.Text = "Search";
 			this.tabSearch.UseVisualStyleBackColor = true;
@@ -1048,10 +1054,10 @@
 			// 
 			this.tabMarketing.Controls.Add(this.groupBox3);
 			this.tabMarketing.Controls.Add(this.gridMarketing);
-			this.tabMarketing.Location = new System.Drawing.Point(4, 76);
+			this.tabMarketing.Location = new System.Drawing.Point(4, 94);
 			this.tabMarketing.Name = "tabMarketing";
 			this.tabMarketing.Padding = new System.Windows.Forms.Padding(3);
-			this.tabMarketing.Size = new System.Drawing.Size(349, 687);
+			this.tabMarketing.Size = new System.Drawing.Size(349, 669);
 			this.tabMarketing.TabIndex = 13;
 			this.tabMarketing.Text = "Design/Marketing";
 			this.tabMarketing.UseVisualStyleBackColor = true;
@@ -1104,7 +1110,7 @@
 			this.gridMarketing.HasMultilineHeaders = true;
 			this.gridMarketing.Location = new System.Drawing.Point(2, 46);
 			this.gridMarketing.Name = "gridMarketing";
-			this.gridMarketing.Size = new System.Drawing.Size(344, 638);
+			this.gridMarketing.Size = new System.Drawing.Size(344, 620);
 			this.gridMarketing.TabIndex = 240;
 			this.gridMarketing.Title = "Design Jobs to be done";
 			this.gridMarketing.TranslationName = "Job Edit";
@@ -1115,10 +1121,10 @@
 			this.tabUnresolvedIssues.Controls.Add(this.gridUnresolvedIssues);
 			this.tabUnresolvedIssues.Controls.Add(this.butRefreshUnresolved);
 			this.tabUnresolvedIssues.Controls.Add(this.checkIncludeCancelledUnresolved);
-			this.tabUnresolvedIssues.Location = new System.Drawing.Point(4, 76);
+			this.tabUnresolvedIssues.Location = new System.Drawing.Point(4, 94);
 			this.tabUnresolvedIssues.Name = "tabUnresolvedIssues";
 			this.tabUnresolvedIssues.Padding = new System.Windows.Forms.Padding(3);
-			this.tabUnresolvedIssues.Size = new System.Drawing.Size(349, 687);
+			this.tabUnresolvedIssues.Size = new System.Drawing.Size(349, 669);
 			this.tabUnresolvedIssues.TabIndex = 14;
 			this.tabUnresolvedIssues.Text = "Unresolved Issues";
 			this.tabUnresolvedIssues.UseVisualStyleBackColor = true;
@@ -1131,7 +1137,7 @@
 			this.gridUnresolvedIssues.HasMultilineHeaders = true;
 			this.gridUnresolvedIssues.Location = new System.Drawing.Point(2, 35);
 			this.gridUnresolvedIssues.Name = "gridUnresolvedIssues";
-			this.gridUnresolvedIssues.Size = new System.Drawing.Size(344, 644);
+			this.gridUnresolvedIssues.Size = new System.Drawing.Size(344, 626);
 			this.gridUnresolvedIssues.TabIndex = 245;
 			this.gridUnresolvedIssues.Title = "Unresolved Issues";
 			this.gridUnresolvedIssues.TranslationName = "Job Edit";
@@ -1160,10 +1166,10 @@
 			// 
 			this.tabSubmittedJobs.Controls.Add(this.checkShowOnHoldSubmitted);
 			this.tabSubmittedJobs.Controls.Add(this.gridSubmittedJobs);
-			this.tabSubmittedJobs.Location = new System.Drawing.Point(4, 76);
+			this.tabSubmittedJobs.Location = new System.Drawing.Point(4, 94);
 			this.tabSubmittedJobs.Name = "tabSubmittedJobs";
 			this.tabSubmittedJobs.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSubmittedJobs.Size = new System.Drawing.Size(349, 687);
+			this.tabSubmittedJobs.Size = new System.Drawing.Size(349, 669);
 			this.tabSubmittedJobs.TabIndex = 15;
 			this.tabSubmittedJobs.Text = "Submitted Jobs";
 			this.tabSubmittedJobs.UseVisualStyleBackColor = true;
@@ -1186,12 +1192,57 @@
 			this.gridSubmittedJobs.Location = new System.Drawing.Point(3, 29);
 			this.gridSubmittedJobs.Name = "gridSubmittedJobs";
 			this.gridSubmittedJobs.ShowContextMenu = false;
-			this.gridSubmittedJobs.Size = new System.Drawing.Size(343, 654);
+			this.gridSubmittedJobs.Size = new System.Drawing.Size(343, 636);
 			this.gridSubmittedJobs.TabIndex = 239;
 			this.gridSubmittedJobs.Title = "Submitted Jobs";
 			this.gridSubmittedJobs.TranslationName = "FormJobManager";
 			this.gridSubmittedJobs.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSubmittedJobs_CellDoubleClick);
 			this.gridSubmittedJobs.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSubmittedJobs_CellClick);
+			// 
+			// tabProjectManagement
+			// 
+			this.tabProjectManagement.Controls.Add(this.gridProjectManagement);
+			this.tabProjectManagement.Controls.Add(this.labelProjectManagementTeam);
+			this.tabProjectManagement.Controls.Add(this.comboTeamFilterProjectManagement);
+			this.tabProjectManagement.Location = new System.Drawing.Point(4, 94);
+			this.tabProjectManagement.Name = "tabProjectManagement";
+			this.tabProjectManagement.Size = new System.Drawing.Size(349, 669);
+			this.tabProjectManagement.TabIndex = 16;
+			this.tabProjectManagement.Text = "Project Management";
+			this.tabProjectManagement.UseVisualStyleBackColor = true;
+			// 
+			// gridProjectManagement
+			// 
+			this.gridProjectManagement.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridProjectManagement.HasMultilineHeaders = true;
+			this.gridProjectManagement.Location = new System.Drawing.Point(3, 34);
+			this.gridProjectManagement.Name = "gridProjectManagement";
+			this.gridProjectManagement.ShowContextMenu = false;
+			this.gridProjectManagement.Size = new System.Drawing.Size(343, 632);
+			this.gridProjectManagement.TabIndex = 328;
+			this.gridProjectManagement.Title = "Projects";
+			this.gridProjectManagement.TranslationName = "FormJobManager";
+			this.gridProjectManagement.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridProjectManagement_CellDoubleClick);
+			this.gridProjectManagement.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridProjectManagement_CellClick);
+			// 
+			// labelProjectManagementTeam
+			// 
+			this.labelProjectManagementTeam.Location = new System.Drawing.Point(180, 8);
+			this.labelProjectManagementTeam.Name = "labelProjectManagementTeam";
+			this.labelProjectManagementTeam.Size = new System.Drawing.Size(45, 16);
+			this.labelProjectManagementTeam.TabIndex = 326;
+			this.labelProjectManagementTeam.Text = "Team";
+			this.labelProjectManagementTeam.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboTeamFilterProjectManagement
+			// 
+			this.comboTeamFilterProjectManagement.Location = new System.Drawing.Point(231, 7);
+			this.comboTeamFilterProjectManagement.Name = "comboTeamFilterProjectManagement";
+			this.comboTeamFilterProjectManagement.Size = new System.Drawing.Size(112, 21);
+			this.comboTeamFilterProjectManagement.TabIndex = 327;
+			this.comboTeamFilterProjectManagement.SelectionChangeCommitted += new System.EventHandler(this.comboTeamFilterProjectManagement_SelectionChangeCommitted);
 			// 
 			// userControlJobManagerEditor
 			// 
@@ -1415,6 +1466,7 @@
 			this.groupBox3.ResumeLayout(false);
 			this.tabUnresolvedIssues.ResumeLayout(false);
 			this.tabSubmittedJobs.ResumeLayout(false);
+			this.tabProjectManagement.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1532,6 +1584,10 @@
 		private UI.ComboBox comboTeamFilterNeedsEngineer;
 		private System.Windows.Forms.Label label2;
 		private UI.ComboBox comboTeamFilterNeedsExpert;
+		private System.Windows.Forms.TabPage tabProjectManagement;
+		private System.Windows.Forms.Label labelProjectManagementTeam;
+		private UI.ComboBox comboTeamFilterProjectManagement;
+		private UI.GridOD gridProjectManagement;
 		private System.Windows.Forms.Label labelTeamSearch;
 		private UI.ComboBox comboTeamSearch;
 	}

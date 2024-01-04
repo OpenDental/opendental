@@ -117,8 +117,8 @@ namespace OpenDentBusiness{
 				List<SheetField> listSheetFields=listSheets[i].SheetFields;
 				for(int j=0;j<listSheetFields.Count;j++) {
 					listSheetFields[j].SheetNum=listSheets[i].SheetNum;
-					Crud.SheetFieldCrud.Insert(listSheetFields[j]);
 				}
+				Crud.SheetFieldCrud.InsertMany(listSheetFields);
 			}
 		}
 

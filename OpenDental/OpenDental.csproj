@@ -2687,6 +2687,12 @@
     <Compile Include="InternalTools\Job Manager\FormJobTimeLog.Designer.cs">
       <DependentUpon>FormJobTimeLog.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Job Manager\UserControlProjectEdit.Designer.cs">
+      <DependentUpon>UserControlProjectEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Job Manager\UserControlProjectEdit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="InternalTools\Job Manager\UserControlJobManagerEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -8090,6 +8096,9 @@
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlMarketingEdit.resx">
       <DependentUpon>UserControlMarketingEdit.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Job Manager\UserControlProjectEdit.resx">
+      <DependentUpon>UserControlProjectEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlSprintManager.resx">
       <DependentUpon>UserControlSprintManager.cs</DependentUpon>
     </EmbeddedResource>
@@ -10522,6 +10531,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlJobEdit.resx">
       <DependentUpon>UserControlJobEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\FormJobReviewEdit.resx">
       <DependentUpon>FormJobReviewEdit.cs</DependentUpon>

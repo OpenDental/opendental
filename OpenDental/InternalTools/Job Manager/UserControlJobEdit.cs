@@ -92,7 +92,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			comboJobTeam.Items.AddList(listJobTeams,x => x.TeamName);
 			comboJobTeam.SelectedIndex=0;
 			_listCategoryNames=Enum.GetNames(typeof(JobCategory)).ToList();
-			_listCategoryNamesFiltered=_listCategoryNames.Where(x => !x.In(JobCategory.Query.ToString(),JobCategory.MarketingDesign.ToString())).ToList();
+			_listCategoryNamesFiltered=_listCategoryNames.Where(x => !x.In(JobCategory.Query.ToString(),JobCategory.MarketingDesign.ToString(),JobCategory.Project.ToString())).ToList();
 			_listCategoryNamesFiltered.ForEach(x => comboCategory.Items.Add(x));
 			if(!JobPermissions.IsAuthorized(JobPerm.TestingCoordinator,true) && tabControlMain.TabPages.Contains(tabTesting)) {
 				tabControlMain.TabPages.Remove(tabTesting);

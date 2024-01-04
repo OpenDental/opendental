@@ -498,12 +498,13 @@ namespace OpenDental {
 				return;
 			}
 			//Atach new job
-			using FormJobSearch formJobSearch = new FormJobSearch();
+			using FormJobSearch formJobSearch=new FormJobSearch();
+			formJobSearch.DoBlockProjects=true;
 			formJobSearch.ShowDialog();
 			if(formJobSearch.DialogResult!=DialogResult.OK || formJobSearch.SelectedJobNum==0) {
 				return;
 			}
-			JobLink jobLink = new JobLink();
+			JobLink jobLink=new JobLink();
 			jobLink.JobNum=formJobSearch.SelectedJobNum;
 			jobLink.FKey=TaskCur.TaskNum;
 			jobLink.LinkType=JobLinkType.Task;
@@ -970,6 +971,8 @@ namespace OpenDental {
 			List<string> listCategories=Enum.GetNames(typeof(JobCategory)).ToList();
 			//Queries can't be created from here
 			listCategories.Remove(JobCategory.Query.ToString());
+			//Projects can't be created from here
+			listCategories.Remove(JobCategory.Project.ToString());
 			listCategories.Remove(JobCategory.MarketingDesign.ToString());
 			if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
 				listCategories.Remove(JobCategory.NeedNoApproval.ToString());

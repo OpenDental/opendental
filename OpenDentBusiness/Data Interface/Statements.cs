@@ -734,9 +734,9 @@ namespace OpenDentBusiness {
 			for(int i=0;i<listPayNums.Count;i++) {
 				Payment payment=Payments.GetPayment(listPayNums[i]);
 				List<PaySplit> listPaySplits=PaySplits.GetForPayment(listPayNums[i]);
-				for(int j=0;j<listPaySplits.Count;j++) {
+				for(int l=0;l<listPaySplits.Count;l++) {
 					StmtLink stmtLink=new StmtLink();
-					stmtLink.FKey=listPaySplits[i].SplitNum;
+					stmtLink.FKey=listPaySplits[l].SplitNum;
 					stmtLink.StatementNum=statement.StatementNum;
 					stmtLink.StmtLinkType=StmtLinkTypes.PaySplit;
 					StmtLinks.Insert(stmtLink);

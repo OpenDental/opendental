@@ -88,7 +88,7 @@ namespace OpenDental {
 			this.butPickHyg.Location = new System.Drawing.Point(412, 124);
 			this.butPickHyg.Name = "butPickHyg";
 			this.butPickHyg.Size = new System.Drawing.Size(23, 21);
-			this.butPickHyg.TabIndex = 123;
+			this.butPickHyg.TabIndex = 6;
 			this.butPickHyg.Text = "...";
 			this.butPickHyg.Click += new System.EventHandler(this.butPickHyg_Click);
 			// 
@@ -97,7 +97,7 @@ namespace OpenDental {
 			this.butPickProv.Location = new System.Drawing.Point(412, 103);
 			this.butPickProv.Name = "butPickProv";
 			this.butPickProv.Size = new System.Drawing.Size(23, 21);
-			this.butPickProv.TabIndex = 122;
+			this.butPickProv.TabIndex = 5;
 			this.butPickProv.Text = "...";
 			this.butPickProv.Click += new System.EventHandler(this.butPickProv_Click);
 			// 
@@ -116,6 +116,7 @@ namespace OpenDental {
 			this.checkIsWebSched.Name = "checkIsWebSched";
 			this.checkIsWebSched.Size = new System.Drawing.Size(135, 16);
 			this.checkIsWebSched.TabIndex = 119;
+			this.checkIsWebSched.TabStop = false;
 			this.checkIsWebSched.Text = "Is Recall";
 			// 
 			// comboClinic
@@ -126,6 +127,7 @@ namespace OpenDental {
 			this.comboClinic.Name = "comboClinic";
 			this.comboClinic.Size = new System.Drawing.Size(289, 21);
 			this.comboClinic.TabIndex = 4;
+			this.comboClinic.TabStop = false;
 			this.comboClinic.SelectionChangeCommitted += new System.EventHandler(this.ComboClinic_SelectionChangeCommitted);
 			// 
 			// label3
@@ -151,6 +153,7 @@ namespace OpenDental {
 			this.checkSetProspective.Name = "checkSetProspective";
 			this.checkSetProspective.Size = new System.Drawing.Size(104, 16);
 			this.checkSetProspective.TabIndex = 8;
+			this.checkSetProspective.TabStop = false;
 			this.checkSetProspective.Text = "Set Prospective";
 			// 
 			// checkIsHygiene
@@ -160,6 +163,7 @@ namespace OpenDental {
 			this.checkIsHygiene.Name = "checkIsHygiene";
 			this.checkIsHygiene.Size = new System.Drawing.Size(104, 16);
 			this.checkIsHygiene.TabIndex = 7;
+			this.checkIsHygiene.TabStop = false;
 			this.checkIsHygiene.Text = "Is Hygiene";
 			// 
 			// label8
@@ -176,6 +180,7 @@ namespace OpenDental {
 			this.comboHyg.Name = "comboHyg";
 			this.comboHyg.Size = new System.Drawing.Size(252, 21);
 			this.comboHyg.TabIndex = 6;
+			this.comboHyg.TabStop = false;
 			// 
 			// comboProv
 			// 
@@ -183,6 +188,7 @@ namespace OpenDental {
 			this.comboProv.Name = "comboProv";
 			this.comboProv.Size = new System.Drawing.Size(252, 21);
 			this.comboProv.TabIndex = 5;
+			this.comboProv.TabStop = false;
 			// 
 			// label6
 			// 
@@ -209,6 +215,7 @@ namespace OpenDental {
 			this.checkIsHidden.Name = "checkIsHidden";
 			this.checkIsHidden.Size = new System.Drawing.Size(104, 16);
 			this.checkIsHidden.TabIndex = 3;
+			this.checkIsHidden.TabStop = false;
 			this.checkIsHidden.Text = "Is Hidden";
 			// 
 			// textAbbrev
@@ -217,7 +224,7 @@ namespace OpenDental {
 			this.textAbbrev.MaxLength = 5;
 			this.textAbbrev.Name = "textAbbrev";
 			this.textAbbrev.Size = new System.Drawing.Size(78, 20);
-			this.textAbbrev.TabIndex = 2;
+			this.textAbbrev.TabIndex = 1;
 			// 
 			// label2
 			// 
@@ -242,7 +249,7 @@ namespace OpenDental {
 			this.butOK.Location = new System.Drawing.Point(411, 463);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
-			this.butOK.TabIndex = 8;
+			this.butOK.TabIndex = 9;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
@@ -252,7 +259,7 @@ namespace OpenDental {
 			this.butCancel.Location = new System.Drawing.Point(502, 463);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 26);
-			this.butCancel.TabIndex = 9;
+			this.butCancel.TabIndex = 10;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
@@ -280,7 +287,7 @@ namespace OpenDental {
 			this.groupBoxApptType.Location = new System.Drawing.Point(18, 191);
 			this.groupBoxApptType.Name = "groupBoxApptType";
 			this.groupBoxApptType.Size = new System.Drawing.Size(556, 186);
-			this.groupBoxApptType.TabIndex = 128;
+			this.groupBoxApptType.TabIndex = 7;
 			this.groupBoxApptType.Text = "Web Sched Settings";
 			// 
 			// labelWSEPDesc
@@ -309,6 +316,7 @@ namespace OpenDental {
 			this.textWSEPApptTypes.ReadOnly = true;
 			this.textWSEPApptTypes.Size = new System.Drawing.Size(252, 20);
 			this.textWSEPApptTypes.TabIndex = 131;
+			this.textWSEPApptTypes.TabStop = false;
 			// 
 			// labelWSEPApptTypes
 			// 
@@ -327,6 +335,7 @@ namespace OpenDental {
 			this.textWSNPAApptTypes.ReadOnly = true;
 			this.textWSNPAApptTypes.Size = new System.Drawing.Size(252, 20);
 			this.textWSNPAApptTypes.TabIndex = 129;
+			this.textWSNPAApptTypes.TabStop = false;
 			// 
 			// butWSNPAPickApptTypes
 			// 
@@ -352,6 +361,7 @@ namespace OpenDental {
 			this.butUpdateProvs.Name = "butUpdateProvs";
 			this.butUpdateProvs.Size = new System.Drawing.Size(75, 26);
 			this.butUpdateProvs.TabIndex = 129;
+			this.butUpdateProvs.TabStop = false;
 			this.butUpdateProvs.Text = "Update All";
 			this.butUpdateProvs.Click += new System.EventHandler(this.ButUpdateProvs_Click);
 			// 
@@ -378,6 +388,7 @@ namespace OpenDental {
 			this.comboOpType.Name = "comboOpType";
 			this.comboOpType.Size = new System.Drawing.Size(252, 21);
 			this.comboOpType.TabIndex = 1;
+			this.comboOpType.TabStop = false;
 			// 
 			// label12
 			// 

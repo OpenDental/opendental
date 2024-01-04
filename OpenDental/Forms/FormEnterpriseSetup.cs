@@ -319,7 +319,10 @@ namespace OpenDental {
 					((RigorousAdjustments)prefRigorousAdjustments).GetDescription()+" to "
 					+((RigorousAdjustments)comboRigorousAdjustments.SelectedIndex).GetDescription()+".");
 			}
-			hasChanges|=UpdateReportingServer();
+			if(UpdateReportingServer()) {
+				hasChanges=true;
+				DataValid.SetInvalid(InvalidType.ConnectionStoreClear);
+			}
 			hasChanges|=UpdateClaimSnapshotRuntime();
 			hasChanges|=UpdateClaimSnapshotTrigger();
 			if(hasChanges) {

@@ -13,7 +13,6 @@ using System.Xml;
 
 namespace OpenDental {
 	public partial class FormJobSearch:FormODBase {
-		public string InitialSearchString="";
 		///<summary>List of all jobs currently loaded into JobManagerHelper</summary>
 		private List<Job> _listJobsAll;
 		private List<Job> _listJobsSearch;
@@ -23,6 +22,9 @@ namespace OpenDental {
 		private List<Job> _listSelectedJobs;
 		private bool _isMultiSelect;
 		private List<Def> _listJobPriorities;
+		public bool ShowProjectsOnly=false;
+		public bool DoBlockProjects=false;
+		public string InitialSearchString="";
 
 		///<summary>Returns the JobNum for the selected job.  Returns 0 if no job selected.
 		///This getter is helpful when the only information needed is the JobNum which will save db calls due to not filling the Job object.</summary>
@@ -69,8 +71,18 @@ namespace OpenDental {
 			listBoxPhases.SetSelected((int)JobPhase.Cancelled+1,false);
 			listBoxPhases.SetSelected((int)JobPhase.Complete+1,false);
 			//Categories
-			listBoxCategory.Items.Add("Any");
-			listBoxCategory.Items.AddEnums<JobCategory>();
+			if(ShowProjectsOnly) {
+				listBoxCategory.Items.Add("Project",JobCategory.Project);
+			}
+			else {
+				listBoxCategory.Items.Add("Any");
+				foreach(JobCategory jobCategory in Enum.GetValues(typeof(JobCategory))) {
+					if(DoBlockProjects && jobCategory==JobCategory.Project){
+						continue;
+					}
+					listBoxCategory.Items.Add(jobCategory.ToString(),jobCategory);
+				}
+			}
 			listBoxCategory.SetSelected(0);
 			//Priorities
 			listBoxPriorities.Items.Add("Any");
@@ -95,7 +107,7 @@ namespace OpenDental {
 			if(listBoxUsers.SelectedIndices.Count>0 && !listBoxUsers.SelectedIndices.Contains(0)) {
 				userNums=listBoxUsers.GetListSelected<Userod>().Select(x => x.UserNum).ToArray();//This excludes 'Any' so is safe
 			}
-			if(listBoxCategory.SelectedIndices.Count>0 && !listBoxCategory.SelectedIndices.Contains(0)) {
+			if(listBoxCategory.SelectedIndices.Count>0 && (!listBoxCategory.SelectedIndices.Contains(0) || ShowProjectsOnly)) {
 				jobCats=listBoxCategory.GetListSelected<JobCategory>().ToArray();//This excludes 'Any' so is safe
 			}
 			if(listBoxPhases.SelectedIndices.Count>0 && !listBoxPhases.SelectedIndices.Contains(0)) {
@@ -177,6 +189,9 @@ namespace OpenDental {
 					continue;
 				}
 				if(!jobCur.DateTimeEntry.Between(dateFrom.Value,dateTo.Value)) {
+					continue;
+				}
+				if(DoBlockProjects && jobCur.Category==JobCategory.Project) {
 					continue;
 				}
 				bool isJobMatch=false;
@@ -274,8 +289,14 @@ namespace OpenDental {
 			}
 			if(_isMultiSelect) {
 				_listSelectedJobs=gridMain.SelectedGridRows.Select(x => (Job)x.Tag).ToList();
+				if(!ValidateProject(_listSelectedJobs.Exists(x => x.Category==JobCategory.Project))) {
+					return;
+				}
 			}
 			_selectedJob=(Job)gridMain.ListGridRows[e.Row].Tag;
+			if(!ValidateProject(_selectedJob.Category==JobCategory.Project)) {
+				return;
+			}
 			DialogResult=DialogResult.OK;
 		}
 
@@ -290,8 +311,24 @@ namespace OpenDental {
 					return;
 				}
 				_listSelectedJobs=gridMain.SelectedGridRows.Select(x => (Job)x.Tag).ToList();
+				if(!ValidateProject(_listSelectedJobs.Exists(x => x.Category==JobCategory.Project))) {
+					return;
+				}
+			}
+			else {
+				if(!ValidateProject(_selectedJob.Category==JobCategory.Project)) {
+					return;
+				}
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private bool ValidateProject(bool isProjectSelected) {
+			if(DoBlockProjects && isProjectSelected) {
+					MsgBox.Show(this,"Projects cannot be selected.");
+					return false;
+			}
+			return true;
 		}
 
 		private void butCancel_Click(object sender,EventArgs e) {

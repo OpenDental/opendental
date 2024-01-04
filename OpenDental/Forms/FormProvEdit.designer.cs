@@ -1043,7 +1043,7 @@ namespace OpenDental {
 			// 
 			// dateTerm
 			// 
-			this.dateTerm.BackColor = System.Drawing.SystemColors.Control;
+			this.dateTerm.BackColor = System.Drawing.SystemColors.Window;
 			this.dateTerm.CalendarLocation = OpenDental.UI.ODDatePicker.EnumCalendarLocation.ToTheRight;
 			this.dateTerm.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.dateTerm.Location = new System.Drawing.Point(139, 453);

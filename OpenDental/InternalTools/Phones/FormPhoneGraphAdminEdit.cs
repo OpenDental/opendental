@@ -43,6 +43,9 @@ namespace OpenDental {
 				MsgBox.Show("Please fix entry first.");
 				return;
 			}
+			if(PhoneGraphCur.DailyLimit!=dailyLimit) {
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Max Prescheduled Off changed from "+PhoneGraphCur.DailyLimit+" to "+dailyLimit);
+			}
 			PhoneGraphCur.DailyLimit=dailyLimit;
 			PhoneGraphs.InsertOrUpdate(PhoneGraphCur);
 			DialogResult=DialogResult.OK;

@@ -1133,7 +1133,9 @@ namespace OpenDentBusiness {
 				//Only get the claim procs associated with the remaining procedures in the list.
 				//Mimics ClaimProcs.Refresh(long PatNum) which orders by LineNumber in the query.
 				List<ClaimProc> claimProcs=ClaimProcs.RefreshForProcs(listProcNums).OrderBy(x => x.LineNumber).ToList();
+				List<ClaimProc> listClaimProcsAll=null;
 				if(hasCompletedProcs) {//Compute estimates for completed procedures that are NOT associated with a claim.
+					listClaimProcsAll=new List<ClaimProc>(claimProcs);
 					List<long> listProcNumsComplete=procs.Where(x => x.ProcStatus==ProcStat.C).Select(x => x.ProcNum).ToList();
 					//Ignore claimprocs associated with a claim and a completed procedure.
 					//These are historical claimprocs that should not have estimates recalculated.
@@ -1161,7 +1163,7 @@ namespace OpenDentBusiness {
 					pat.PriProv,pat.SecProv,pat.FeeSched,plans,procs.Select(x=>x.ClinicNum).ToList(),null,//don't need appts to set proc provs
 					listSubstLinks,discountPlanNum);
 				Procedures.ComputeEstimatesForAll(patNum,claimProcs,procs,plans,patPlans,benefitList,pat.Age,subs,
-					null,false,listSubstLinks,listFees);
+					listClaimProcsAll,false,listSubstLinks,listFees);
 				Patients.SetHasIns(patNum);
 			}
 		}

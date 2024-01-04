@@ -199,6 +199,9 @@ namespace OpenDental {
 			if(listCat.SelectedIndex==-1) {
 				return;
 			}
+			if(IsSelectionMode){
+				return;
+			}
 			FrmQuickPasteCat frmQuickPasteCat=new FrmQuickPasteCat(_listQuickPasteCats[listCat.SelectedIndex]);
 			frmQuickPasteCat.ShowDialog();
 			if(frmQuickPasteCat.IsDialogOK==false) {

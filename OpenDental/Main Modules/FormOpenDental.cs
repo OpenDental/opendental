@@ -1732,7 +1732,14 @@ namespace OpenDental{
 		///<summary>Performs a few tasks that must be done when local data is changed.</summary>
 		private void RefreshLocalDataPostCleanup(params InvalidType[] arrayITypes) {//This is where the flickering and reset of windows happens
 			bool isAll=arrayITypes.Contains(InvalidType.AllLocal);
-			#region IvalidType.Prefs
+			#region InvalidType.ConnectionStoreClear
+			//The read-only server is in charge of refreshing caches.
+			//It is important that connection store information be cleared in post cleanup in order to use the most accurate local data that was just updated.
+			if(arrayITypes.Contains(InvalidType.ConnectionStoreClear) || isAll) {
+				ConnectionStoreBase.ClearConnectionDictionary();
+			}
+			#endregion
+			#region InvalidType.Prefs
 			if(arrayITypes.Contains(InvalidType.Prefs) || isAll) {
 				if(PrefC.GetBool(PrefName.EasyHidePublicHealth)) {
 					_menuItemSites.Available=false;

@@ -353,6 +353,15 @@ namespace OpenDentBusiness {
 			return GetNodeHierarchyAll(jobHierarchy.Last(),listJobsByTopParent);
 		}
 
+		///<summary>Updates the JobManagerCore cache list by Top Parent.</summary>
+		public static void RefreshInMemoryListByTopParent(Job job,bool includeCompleted,bool includeCancelled) {
+			if(job==null) {
+				return;
+			}
+			List<Job> listJobsByTopParent=GetAllByTopParentNum(job.TopParentNum,includeCompleted,includeCancelled);
+			JobManagerCore.AddTreeJobsToList(listJobsByTopParent);
+		}
+
 		///<summary>Recursively travels through the given list of jobs to find all of the jobs that are direct descendants of the given job.</summary>
 		public static List<Job> GetChildJobs(Job job,List<Job> listJobs) {
 			List<Job> listChildJobs=listJobs.FindAll(x => x.ParentNum==job.JobNum);
@@ -377,6 +386,24 @@ namespace OpenDentBusiness {
 				return Meth.GetObject<List<Job>>(MethodBase.GetCurrentMethod(),topParentNum);
 			}
 			string command = "SELECT * FROM job WHERE TopParentNum="+POut.Long(topParentNum);
+			return Crud.JobCrud.SelectMany(command);
+		}
+
+		public static List<Job> GetAllByTopParentNum(long topParentNum,bool includeComplete,bool includeCancelled) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Job>>(MethodBase.GetCurrentMethod(),topParentNum,includeComplete,includeCancelled);
+			}
+			List<JobPhase> listJobPhase=new List<JobPhase>();
+			string command = "SELECT * FROM job WHERE TopParentNum="+POut.Long(topParentNum);
+			if(!includeComplete) {
+				listJobPhase.Add(JobPhase.Complete);
+			}
+			if(!includeCancelled) {
+				listJobPhase.Add(JobPhase.Cancelled);
+			}
+			if(!listJobPhase.IsNullOrEmpty()) {
+				command+=$" AND PhaseCur NOT IN ({string.Join(",",listJobPhase.Select(x => POut.Enum(x)))})";
+			}
 			return Crud.JobCrud.SelectMany(command);
 		}
 

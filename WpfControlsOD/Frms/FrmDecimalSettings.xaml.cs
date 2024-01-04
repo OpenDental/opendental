@@ -22,7 +22,8 @@ namespace OpenDental {
 		
 		private void FrmDecimalSettings_Load(object sender,EventArgs e) {
 			checkNoShow.Checked=ComputerPrefs.LocalComputer.NoShowDecimal;
-			textDecimal.Text=CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits.ToString();
+			string decimalDigits=CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits.ToString();
+			label2.Text+=": "+decimalDigits;
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {

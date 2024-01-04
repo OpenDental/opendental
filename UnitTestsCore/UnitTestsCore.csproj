@@ -191,6 +191,7 @@
     <Compile Include="TableTypes\RecallTriggerT.cs" />
     <Compile Include="TableTypes\RefAttachT.cs" />
     <Compile Include="TableTypes\ReferralT.cs" />
+    <Compile Include="TableTypes\ResellerServiceT.cs" />
     <Compile Include="TableTypes\ResellerT.cs" />
     <Compile Include="TableTypes\RegistrationKeyT.cs" />
     <Compile Include="TableTypes\RepeatChargeT.cs" />
