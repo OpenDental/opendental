@@ -1034,10 +1034,6 @@ namespace OpenDentBusiness {
 			string command="UPDATE claimproc SET NoBillIns=0 WHERE IsOverPay!=0";
 			Db.NonQ(command);
 			//End E50054
-			command="ALTER TABLE resellerservice ADD FeeRetail double NOT NULL DEFAULT -1";
-			Db.NonQ(command);
-			command="ALTER TABLE reseller ADD AllowSignupPortal tinyint NOT NULL";
-			Db.NonQ(command);
 		}
 	}
 }

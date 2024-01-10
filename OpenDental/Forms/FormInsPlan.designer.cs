@@ -958,7 +958,7 @@ namespace OpenDental {
 			// 
 			this.comboManualBlueBook.Location = new System.Drawing.Point(145, 42);
 			this.comboManualBlueBook.Name = "comboManualBlueBook";
-			this.comboManualBlueBook.Size = new System.Drawing.Size(212, 21);
+			this.comboManualBlueBook.Size = new System.Drawing.Size(256, 21);
 			this.comboManualBlueBook.TabIndex = 112;
 			// 
 			// labelOutOfNetwork
@@ -974,7 +974,7 @@ namespace OpenDental {
 			// 
 			this.comboOutOfNetwork.Location = new System.Drawing.Point(145, 19);
 			this.comboOutOfNetwork.Name = "comboOutOfNetwork";
-			this.comboOutOfNetwork.Size = new System.Drawing.Size(212, 21);
+			this.comboOutOfNetwork.Size = new System.Drawing.Size(256, 21);
 			this.comboOutOfNetwork.TabIndex = 1;
 			// 
 			// comboFeeSched
@@ -1017,7 +1017,7 @@ namespace OpenDental {
 			// 
 			this.comboCopay.Location = new System.Drawing.Point(145, 36);
 			this.comboCopay.Name = "comboCopay";
-			this.comboCopay.Size = new System.Drawing.Size(212, 21);
+			this.comboCopay.Size = new System.Drawing.Size(256, 21);
 			this.comboCopay.TabIndex = 0;
 			// 
 			// label1

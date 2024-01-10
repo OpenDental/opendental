@@ -210,6 +210,10 @@ namespace OpenDental {
 					tabControlNav.TabPages.Add(tabNeedsEngineer);
 					_listHiddenTabs.Remove(tabNeedsEngineer);
 				}
+				if(_listHiddenTabs.Contains(tabProjectManagement)) {
+					tabControlNav.TabPages.Add(tabProjectManagement);
+					_listHiddenTabs.Remove(tabProjectManagement);
+				}
 			}
 			else {
 				if(tabControlNav.TabPages.Contains(tabAction)) {
@@ -223,6 +227,10 @@ namespace OpenDental {
 				if(tabControlNav.TabPages.Contains(tabNeedsEngineer)) {
 					tabControlNav.TabPages.Remove(tabNeedsEngineer);
 					_listHiddenTabs.Add(tabNeedsEngineer);
+				}
+				if(tabControlNav.TabPages.Contains(tabProjectManagement)) {
+					tabControlNav.TabPages.Remove(tabProjectManagement);
+					_listHiddenTabs.Add(tabProjectManagement);
 				}
 			}
 			#endregion
@@ -358,21 +366,6 @@ namespace OpenDental {
 				if(tabControlNav.TabPages.Contains(tabUnresolvedIssues)) {
 					tabControlNav.TabPages.Remove(tabUnresolvedIssues);
 					_listHiddenTabs.Add(tabUnresolvedIssues);
-				}
-			}
-			#endregion
-			#region JobPerm.ProjectManager
-			//If user has ProjectManger permission, user has access to the ProjectManagement tab
-			if(JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-				if(_listHiddenTabs.Contains(tabProjectManagement)) {
-					tabControlNav.TabPages.Add(tabProjectManagement);
-					_listHiddenTabs.Remove(tabProjectManagement);
-				}
-			}
-			else {
-				if(tabControlNav.TabPages.Contains(tabProjectManagement)) {
-					tabControlNav.TabPages.Remove(tabProjectManagement);
-					_listHiddenTabs.Add(tabProjectManagement);
 				}
 			}
 			#endregion
@@ -630,10 +623,6 @@ namespace OpenDental {
 			Job job=Jobs.GetOneFilled(jobNum);
 			if(job==null) {
 				MessageBox.Show("Job not found.");
-				return;
-			}
-			if(job.Category==JobCategory.Project && !JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-				MessageBox.Show("ProjectManager permission is needed to view Projects.");
 				return;
 			}
 			LoadJob(job,true,loadAction);
@@ -2969,10 +2958,6 @@ namespace OpenDental {
 			if(job==null || userControlJobManagerEditor.UnsavedChangesCheck()) {
 				return;
 			}
-			if(job.Category==JobCategory.Project && !JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-				MessageBox.Show("ProjectManager permission is needed to view Projects.");
-				return;
-			}
 			#region Refresh UI Elements
 			if(doRefreshUI) {
 				FillActiveTabGrid();
@@ -2988,10 +2973,6 @@ namespace OpenDental {
 		///<summary>Opens a non-modal job editor. This method is here so FormJobManager can still maintain ownership of the form.</summary>
 		public static void OpenNonModalJob(Job job) {
 			if(job==null) {//Double clicking on a title row, or something went wrong.
-				return;
-			}
-			if(job.Category==JobCategory.Project && !JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-				MessageBox.Show("ProjectManager permission is needed to view Projects.");
 				return;
 			}
 			FormJobEdit FormJE=_listJobEditForms.FirstOrDefault(x=> x.JobCur.JobNum==job.JobNum);

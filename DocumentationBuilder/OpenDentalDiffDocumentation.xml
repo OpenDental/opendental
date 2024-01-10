@@ -42,7 +42,7 @@
   <table name="benefit">
     <summary></summary>
     <column order="15" name="TreatArea" type="tinyint(4)">
-      <summary>Enum:TreatmentArea . Only for frequency limitations, ignored for all other benefits. Enforced by the UI. Example 3 fillings per year [mouth].</summary>
+      <summary>Enum:TreatmentArea . Only for frequency limitations, ignored for all other benefits. Enforced by the UI. Example 3 fillings per year [mouth]. 0 means default.</summary>
       <Enumeration name="TreatmentArea">
         <summary>Used in procedurecode setup to specify the treatment area for a procedure.  This determines what fields are available when editing an appointment.</summary>
         <EnumValue name="None">0-goes on claims as blank.</EnumValue>

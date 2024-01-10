@@ -369,8 +369,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			butParentPick.Visible=false;
 			butParentRemove.Visible=false;
 			comboJobTeam.Enabled=false;
+			textVersion.ReadOnly=true;
 			butVersionPrompt.Enabled=false;
 			textEditorProjectDescription.ReadOnly=true;
+			butChangeEst.Enabled=false;
 			butCreateFeature.Enabled=false;
 			butCreateBug.Enabled=false;
 			butCreateEnhancement.Enabled=false;
@@ -381,11 +383,17 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_jobCur==null) {
 				return;
 			}
+			else if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+				butCreateFeature.Enabled=true;
+				butCreateBug.Enabled=true;
+				butCreateEnhancement.Enabled=true;
+				butCreateInternalRequest.Enabled=true;
+				butCreateHQRequest.Enabled=true;
+				butCreateResearch.Enabled=true;
+				return;
+			}
 			switch(_jobCur.PhaseCur) {
 				case JobPhase.Concept:
-					if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-						break;
-					}
 					textTitle.ReadOnly=false;
 					comboPriority.Enabled=true;
 					textVersion.ReadOnly=false;
@@ -394,6 +402,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 					comboJobTeam.Enabled=true;
 					butVersionPrompt.Enabled=true;
 					textEditorProjectDescription.ReadOnly=false;
+					butChangeEst.Enabled=true;
 					butCreateFeature.Enabled=true;
 					butCreateBug.Enabled=true;
 					butCreateEnhancement.Enabled=true;
@@ -403,7 +412,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 					butCreateProject.Enabled=true;
 					break;
 				case JobPhase.Development:
-					if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true) && _jobCur.UserNumExpert!=Security.CurUser.UserNum && _jobCur.UserNumExpert!=0) {
+					if(_jobCur.UserNumExpert!=0 && _jobCur.UserNumExpert!=Security.CurUser.UserNum) {
 						break;//only the expert can edit the job description.
 					}
 					comboPriority.Enabled=true;
@@ -413,6 +422,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 					comboJobTeam.Enabled=true;
 					butVersionPrompt.Enabled=true;
 					textEditorProjectDescription.ReadOnly=false;
+					butChangeEst.Enabled=true;
 					butCreateFeature.Enabled=true;
 					butCreateBug.Enabled=true;
 					butCreateEnhancement.Enabled=true;
@@ -472,9 +482,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 					break;
 				case (JobPhase.Development):
 					hasPermission=JobPermissions.IsAuthorized(JobPerm.ProjectManager,true) || _isOverride;
-					actionMenu.MenuItems.Add(new MenuItem((_jobCur.UserNumExpert==0 ? "A" : "Rea")+"ssign Project Manager",actionMenu_AssignProjectManagerClick) { Enabled=true });
+					actionMenu.MenuItems.Add(new MenuItem((_jobCur.UserNumExpert==0 ? "A" : "Rea")+"ssign Project Manager",actionMenu_AssignProjectManagerClick) { Enabled=hasPermission });
 					//If the job doesn't have an expert then an engineer may take the job
-					if(_jobCur.UserNumExpert==0 && JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+					if(_jobCur.UserNumExpert==0 && hasPermission) {
 						actionMenu.MenuItems.Add(new MenuItem("Take Project",actionMenu_TakeJobClick) { Enabled=true });
 					}
 					hasPermission=JobPermissions.IsAuthorized(JobPerm.ProjectManager,true) && (_jobCur.UserNumExpert==0 || _jobCur.UserNumExpert==Security.CurUser.UserNum);
@@ -483,7 +493,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 					actionMenu.MenuItems.Add(new MenuItem("Cancel Project",actionMenu_CancelJobClick) { Enabled=hasPermission });
 					break;
 				case (JobPhase.Cancelled):
-					hasPermission=JobPermissions.IsAuthorized(JobPerm.Approval,true);
+					hasPermission=JobPermissions.IsAuthorized(JobPerm.ProjectManager,true);
 					actionMenu.MenuItems.Add(new MenuItem("Reopen Project as Concept",actionMenu_ReopenConceptClick) { Enabled=hasPermission });
 					actionMenu.MenuItems.Add(new MenuItem("Reopen Project as in Development",actionMenu_ReopenProjectClick) { Enabled=hasPermission });
 					break;
@@ -1057,7 +1067,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 				return;
 			}
 			long userNumExpert=_jobCur.UserNumExpert;
-			if(_jobCur.UserNumExpert==0 && !PickUserByJobPermission("Pick Project Manager",JobPerm.ProjectManager,out userNumExpert,_jobCur.UserNumExpert>0 ? _jobCur.UserNumExpert : _jobCur.UserNumConcept,true)) {
+			long userNumSuggestedExpert=(_jobCur.UserNumExpert>0) ? _jobCur.UserNumExpert : _jobCur.UserNumConcept;
+			if(_jobCur.UserNumExpert==0 
+				&& !PickUserByJobPermission("Pick Project Manager",JobPerm.ProjectManager,out userNumExpert,userNumSuggestedExpert,true)) 
+			{
 				return;
 			}
 			_jobCur.UserNumExpert=userNumExpert;

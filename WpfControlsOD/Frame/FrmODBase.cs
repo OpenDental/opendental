@@ -464,8 +464,9 @@ How to:
 				Focus();//so that Esc and other keystrokes will work
 				return;
 			}
+			Keyboard.ClearFocus();//Clear to ensure that iInputElementFocused can only be an element from this frm
 			SetFocusRecursive(grid);
-			IInputElement iInputElementFocused=Keyboard.FocusedElement;
+			IInputElement iInputElementFocused=Keyboard.FocusedElement;//should be null or the result of SetFocusRecursive(grid);
 			if(iInputElementFocused==null){
 				Focusable=true;
 				Focus();

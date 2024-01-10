@@ -95,10 +95,6 @@ namespace OpenDental {
 			if(job==null || UnsavedChangesCheck()) {
 				return;
 			}
-			if(job.Category==JobCategory.Project && !JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-				MessageBox.Show("ProjectManager permission is needed to view Projects.");
-				return;
-			}
 			ShowEditorForJob(job);
 		}
 
