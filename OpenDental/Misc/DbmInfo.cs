@@ -26,12 +26,12 @@ namespace OpenDental.Misc {
 						ManualFix="If the appointments are in the past, manually set each appointment complete or set each procedure's status to treatment planned. If the appointments are in the future, the procedures will detach from the appointment once the notification is received. Manually revisit each appointment and reattach the procedures.",
 						WhyItHappens="Procedures were set complete from the Chart Module but the appointments they were attached to were not set complete."
 					},
-				//new DbmInfo() {
-				//		MethodName=nameof(DatabaseMaintenances.BenefitsWithPartialDuplicatesForInsPlan),
-				//		Explanation="Multiple benefits on a single insurance plan are nearly identical except they have differing Percent or MonetaryAmts.",
-				//		ManualFix="In Lists, Insurance Plans double-click the matching insurance plan to open it, then double-click benefit information to open the Edit Benefits window. Check that the box in the top left called Simplified View is unchecked, then look through the benefits list to find any duplicates, double clicking and deleting them. Click OK twice to close the windows.",
-				//		WhyItHappens="Either a duplicate benefit was entered manually, or in an older version a bug sometimes created a duplicate benefit when adding a plan to a patient and changing benefit information."
-				//	},
+				new DbmInfo() {
+						MethodName=nameof(DatabaseMaintenances.BenefitsWithPartialDuplicatesForInsPlan),
+						Explanation="Multiple benefits on a single insurance plan are nearly identical except they have differing Percent or MonetaryAmts.",
+						ManualFix="In Lists, Insurance Plans double-click the matching insurance plan to open it, then double-click benefit information to open the Edit Benefits window. Check that the box in the top left called Simplified View is unchecked, then look through the benefits list to find any duplicates, double clicking and deleting them. Click OK twice to close the windows.",
+						WhyItHappens="Either a duplicate benefit was entered manually, or in an older version a bug sometimes created a duplicate benefit when adding a plan to a patient and changing benefit information."
+					},
 				new DbmInfo() {
 						MethodName=nameof(DatabaseMaintenances.ClaimMissingProcedures),
 						Explanation="Claims missing all claim procedure information (e.g., codes, descriptions, etc).",
