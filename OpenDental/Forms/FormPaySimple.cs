@@ -306,69 +306,16 @@ namespace OpenDental {
 				return null;
 			}
 			try {
-				switch(_transType) {
-					case PaySimple.TransType.SALE:
-						//If _patCur is null or the PatNum is 0, we will make a one time payment for an UNKNOWN patient.  
-						//This is currently only intended for prepaid insurance cards.
-						apiResponseRetVal=PaySimple.MakePayment((_patient==null ? 0 : _patient.PatNum),_creditCard,PIn.Decimal(textAmount.Text),textCardNumber.Text
-							,new DateTime(expYear,expMonth,1),checkOneTimePayment.Checked,textZipCode.Text,textSecurityCode.Text,_clinicNum,_carrierName);
-						break;
-					case PaySimple.TransType.AUTH:
-						//Will retreive a new customer id from PaySimple if the patient doesn't exist already.
-						long paySimpleCustomerId=PaySimple.GetCustomerIdForPat(_patient.PatNum,_patient.FName,_patient.LName,_clinicNum);
-						//I have no idea if an insurance can make an auth payment but incase they can I check for it.
-						if(paySimpleCustomerId==0) {//Insurance payment, make a new customer id every time per Nathan on 04/26/2018
-							if((_patient==null || _patient.PatNum==0)) {
-								paySimpleCustomerId=PaySimple.AddCustomer("UNKNOWN","UNKNOWN","",_clinicNum);
-							}
-							else {
-								throw new ODException(Lan.g(this,"Invalid PaySimple Customer Id found."));
-							}
-						}
-						try {
-							apiResponseRetVal=PaySimple.AddCreditCard(paySimpleCustomerId,textCardNumber.Text,new DateTime(expYear,expMonth,1),textZipCode.Text,_clinicNum);
-						}
-						catch(PaySimpleException ex) {
-							PaySimple.HandlePaySimpleException(ex,paySimpleCustomerId);
-						}
-						break;
-					case PaySimple.TransType.RETURN:
-						if(string.IsNullOrWhiteSpace(textRefNumber.Text)) {
-							throw new ODException(Lan.g(this,"Invalid PaySimple Payment ID."));
-						}
-						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"You are about to return a payment.  This action is irreversible.  Continue?")) {
-							throw new ODException(Lan.g(this,"Payment return was cancelled by user."));
-						}
-						apiResponseRetVal=PaySimple.ReversePayment(textRefNumber.Text,_clinicNum);
-						break;
-					case PaySimple.TransType.VOID:
-						if(string.IsNullOrWhiteSpace(textRefNumber.Text)) {
-							throw new ODException(Lan.g(this,"Invalid PaySimple Payment ID."));
-						}
-						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"You are about to void a payment.  This action is irreversible.  Continue?")) {
-							throw new ODException(Lan.g(this,"Payment void was cancelled by user."));
-						}
-						apiResponseRetVal=PaySimple.VoidPayment(textRefNumber.Text,_clinicNum);
-						break;
-					default:
-						throw new Exception("Invalid transmission type: "+_transType.ToString());
-				}
+				apiResponseRetVal=ProcessPaymentHelper(expYear, expMonth);
 			}
 			catch(PaySimpleException ex) {
-				MessageBox.Show(ex.Message);
-				if(ex.ErrorType==PaySimpleError.CustomerDoesNotExist && MsgBox.Show(this,MsgBoxButtons.OKCancel,
-					"Delete the link to the customer id for this patient?")) 
-				{
+				//Only handling PaySimpleException all other exceptions handled in ProcessPaymentHelperMethod
+				if(ex.ErrorType==PaySimpleError.CustomerDoesNotExist) {
 					PatientLinks.DeletePatNumTos(ex.CustomerId,PatientLinkType.PaySimple);
+					apiResponseRetVal=ProcessPaymentHelper(expYear,expMonth,true);
 				}
-				return null;
 			}
-			catch(ODException wex) {
-				MessageBox.Show(wex.Message);//This should have already been Lans.g if applicable.
-				return null;
-			}
-			catch(Exception ex) {
-				MessageBox.Show(Lan.g(this,"Error:")+" "+ex.Message);
+			if(apiResponseRetVal==null) { 
 				return null;
 			}
 			if(_transType.In(PaySimple.TransType.SALE,PaySimple.TransType.RETURN,PaySimple.TransType.VOID)) {//Only print a receipt if transaction is an approved SALE, RETURN, or VOID			
@@ -611,6 +558,75 @@ namespace OpenDental {
 				return false;
 			}
 			return true;
+		}
+
+		private PaySimple.ApiResponse ProcessPaymentHelper(int expYear,int expMonth,bool isRetry=false) {
+			PaySimple.ApiResponse apiResponseRetVal=null;
+			try {
+				switch(_transType) {
+					case PaySimple.TransType.SALE:
+						//If _patCur is null or the PatNum is 0, we will make a one time payment for an UNKNOWN patient.  
+						//This is currently only intended for prepaid insurance cards.
+						apiResponseRetVal=PaySimple.MakePayment((_patient==null ? 0 : _patient.PatNum),_creditCard,PIn.Decimal(textAmount.Text),textCardNumber.Text
+							,new DateTime(expYear,expMonth,1),checkOneTimePayment.Checked,textZipCode.Text,textSecurityCode.Text,_clinicNum,_carrierName);
+						break;
+					case PaySimple.TransType.AUTH:
+						//Will retreive a new customer id from PaySimple if the patient doesn't exist already.
+						long paySimpleCustomerId=PaySimple.GetCustomerIdForPat(_patient.PatNum,_patient.FName,_patient.LName,_clinicNum);
+						//I have no idea if an insurance can make an auth payment but incase they can I check for it.
+						if(paySimpleCustomerId==0) {//Insurance payment, make a new customer id every time per Nathan on 04/26/2018
+							if((_patient==null || _patient.PatNum==0)) {
+								paySimpleCustomerId=PaySimple.AddCustomer("UNKNOWN","UNKNOWN","",_clinicNum);
+							}
+							else {
+								throw new ODException(Lan.g(this,"Invalid PaySimple Customer Id found."));
+							}
+						}
+						try {
+							apiResponseRetVal=PaySimple.AddCreditCard(paySimpleCustomerId,textCardNumber.Text,new DateTime(expYear,expMonth,1),textZipCode.Text,_clinicNum);
+						}
+						catch(PaySimpleException ex) {
+							PaySimple.HandlePaySimpleException(ex,paySimpleCustomerId);
+						}
+						break;
+					case PaySimple.TransType.RETURN:
+						if(string.IsNullOrWhiteSpace(textRefNumber.Text)) {
+							throw new ODException(Lan.g(this,"Invalid PaySimple Payment ID."));
+						}
+						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"You are about to return a payment.  This action is irreversible.  Continue?")) {
+							throw new ODException(Lan.g(this,"Payment return was cancelled by user."));
+						}
+						apiResponseRetVal=PaySimple.ReversePayment(textRefNumber.Text,_clinicNum);
+						break;
+					case PaySimple.TransType.VOID:
+						if(string.IsNullOrWhiteSpace(textRefNumber.Text)) {
+							throw new ODException(Lan.g(this,"Invalid PaySimple Payment ID."));
+						}
+						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"You are about to void a payment.  This action is irreversible.  Continue?")) {
+							throw new ODException(Lan.g(this,"Payment void was cancelled by user."));
+						}
+						apiResponseRetVal=PaySimple.VoidPayment(textRefNumber.Text,_clinicNum);
+						break;
+					default:
+						throw new Exception("Invalid transmission type: "+_transType.ToString());
+				}
+			}
+			catch(PaySimpleException ex) {
+				if(ex.ErrorType==PaySimpleError.CustomerDoesNotExist && !isRetry) {
+					throw ex;
+				}
+				MessageBox.Show(ex.Message);
+				return null;
+			}
+			catch(ODException wex) {
+				MessageBox.Show(wex.Message);//This should have already been Lans.g if applicable.
+				return null;
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Error:")+" "+ex.Message);
+				return null;
+			}
+			return apiResponseRetVal;
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {

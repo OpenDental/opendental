@@ -113,7 +113,7 @@ namespace OpenDental {
 			this.panelSig.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.panelSig.Location = new System.Drawing.Point(0, 581);
 			this.panelSig.Name = "panelSig";
-			this.panelSig.Size = new System.Drawing.Size(1159, 115);
+			this.panelSig.Size = new System.Drawing.Size(1099, 115);
 			this.panelSig.TabIndex = 92;
 			// 
 			// textTypeSig
@@ -149,7 +149,7 @@ namespace OpenDental {
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(1012, 70);
+			this.butCancel.Location = new System.Drawing.Point(1012, 78);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 25);
 			this.butCancel.TabIndex = 94;
@@ -160,7 +160,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(1012, 38);
+			this.butOK.Location = new System.Drawing.Point(1012, 46);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 25);
 			this.butOK.TabIndex = 93;
@@ -185,7 +185,7 @@ namespace OpenDental {
 			this.ToolBarMain.ImageList = this.imageListMain;
 			this.ToolBarMain.Location = new System.Drawing.Point(0, 0);
 			this.ToolBarMain.Name = "ToolBarMain";
-			this.ToolBarMain.Size = new System.Drawing.Size(1159, 25);
+			this.ToolBarMain.Size = new System.Drawing.Size(1099, 25);
 			this.ToolBarMain.TabIndex = 5;
 			this.ToolBarMain.ButtonClick += new OpenDental.UI.ODToolBarButtonClickEventHandler(this.ToolBarMain_ButtonClick);
 			// 
