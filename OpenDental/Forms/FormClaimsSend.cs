@@ -588,7 +588,7 @@ namespace OpenDental{
 				if(!formClaimPrint.PrintImmediate(Lan.g(this,"Multiple claims printed"),PrintSituation.Claim,0,(doUsePrinterSettingsForAll && !isFirstIteration))) {
 					return;
 				}
-				Etranss.SetClaimSentOrPrinted(claimSendQueueItem.ClaimNum,claimSendQueueItem.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+				Etranss.SetClaimSentOrPrinted(claimSendQueueItem.ClaimNum,claimSendQueueItem.ClaimStatus,claimSendQueueItem.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 				if(Claims.ReceiveAsNoPaymentIfNeeded(claimSendQueueItem.ClaimNum)) {
 					listClaimNums.Add(claimSendQueueItem.ClaimNum);
 				}

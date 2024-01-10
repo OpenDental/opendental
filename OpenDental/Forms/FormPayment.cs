@@ -2715,6 +2715,10 @@ namespace OpenDental {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
 					}
+					else {
+						//error processing return
+						throw new ODException($"Error processing return: '{xWebResponse.XWebResponseCode}'");
+					}
 					break;
 				case EdgeExpressTransType.CreditVoid:
 					xWebResponse=EdgeExpress.CNP.VoidTransaction(_patient.PatNum,transactionId,amt,false);

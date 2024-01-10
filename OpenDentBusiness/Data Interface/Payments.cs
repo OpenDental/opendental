@@ -343,7 +343,11 @@ namespace OpenDentBusiness{
 			if (ccSource.In(CreditCardSource.EdgeExpressPaymentPortal, CreditCardSource.EdgeExpressPaymentPortalGuest, CreditCardSource.EdgeExpressCNP, CreditCardSource.EdgeExpressRCM)) {
 				ccSourceString = "EdgeExpress";
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,ccSourceString+" "+Lans.g("Payments.InsertFromXWeb","payment by")+" "+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),LogSources.PatientPortal);
+			LogSources logSource=LogSources.None;
+			if((CreditCards.GetCreditCardSourcesForOnlinePayments().Contains(ccSource))) {
+				logSource=LogSources.PaymentPortal;
+			}
+			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,ccSourceString+" "+Lans.g("Payments.InsertFromXWeb","payment by")+" "+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),logSource);
 			if(logGuid!="") {//There is no way to make an XWeb payment from the Patient Portal without making a log GUID.
 				EServiceLogs.MakeLogEntry(eServiceAction.PPPaymentCreatedByXWeb,eServiceType.PatientPortal,
 					FKeyType.PayNum,patNum:patNum,FKey:retVal,clinicNum:clinicNum,logGuid:logGuid,note:amount.ToString("c"));
@@ -373,8 +377,12 @@ namespace OpenDentBusiness{
 			}
 			Patient patient=Patients.GetPat(patNum);
 			long ret=ProcessPaymentForWeb(payment,patient,amount);
+			LogSources logSource=LogSources.None;
+			if((CreditCards.GetCreditCardSourcesForOnlinePayments().Contains(ccSource))) {
+				logSource=LogSources.PaymentPortal;
+			}
 			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,Lans.g("Payments.InsertFromPayConnect","PayConnect payment by")+" "
-				+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),LogSources.PatientPortal);
+				+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),logSource);
 			if(logGuid!="") {//There is no way to make a PayConnect payment from the Patient Portal without making a log GUID.
 				EServiceLogs.MakeLogEntry(eServiceAction.PPPaymentCreatedByPayconnect,eServiceType.PatientPortal,
 					FKeyType.PayNum,patNum:patNum,clinicNum:clinicNum,FKey:ret,logGuid:logGuid,note:amount.ToString("c"));
@@ -432,8 +440,12 @@ namespace OpenDentBusiness{
 			}
 			Patient patient=Patients.GetPat(patNum);
 			long payNum=ProcessPaymentForWeb(payment,patient,amount);
+			LogSources logSource=LogSources.None;
+			if((CreditCards.GetCreditCardSourcesForOnlinePayments().Contains(creditCardSource))) {
+				logSource=LogSources.PaymentPortal;
+			}
 			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,Lans.g("Payments.InsertFromPaySimple","PaySimple payment by") + " "
-				+ Patients.GetLim(patNum).GetNameLF() + ", " + amount.ToString("c"),LogSources.PaymentPortal);
+				+ Patients.GetLim(patNum).GetNameLF() + ", " + amount.ToString("c"),logSource);
 			return payNum;
 		}
 

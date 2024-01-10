@@ -1183,6 +1183,10 @@ namespace OpenDental{
 
 		private void gridSent_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			ClaimAttach claimAttach=(ClaimAttach)gridSent.ListGridRows[e.Row].Tag;
+			if(!PrefC.GetBool(PrefName.SaveDXCAttachments)) {
+				MsgBox.Show(this,$"Not allowed to view attachment. Attachments can only be viewed when the 'Save DXC Attachments to Images Module' preference is set.");
+				return;
+			}
 			string patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
 			if(CloudStorage.IsCloudStorage) {
 				string pathAndFileName=ODFileUtils.CombinePaths(patFolder,claimAttach.ActualFileName,'/');
@@ -2742,7 +2746,7 @@ namespace OpenDental{
 			}
 			if(!_isNotAuthorized) {//if already sent, we want to block users from changing sent date without permission.
 				//also changes claimstatus to sent, and date:
-				Etranss.SetClaimSentOrPrinted(_claim.ClaimNum,_claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+				Etranss.SetClaimSentOrPrinted(_claim.ClaimNum,_claim.ClaimStatus,_claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 			}
 			//ClaimCur.ClaimStatus="S";
 			//ClaimCur.DateSent=DateTime.Today;

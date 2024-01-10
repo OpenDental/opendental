@@ -72,10 +72,10 @@ namespace OpenDental{
 			this.textWebSchedPerDay.MaxVal = 10000000;
 			this.textWebSchedPerDay.MinVal = 0;
 			this.textWebSchedPerDay.Name = "textWebSchedPerDay";
+			this.textWebSchedPerDay.ShowZero = false;
 			this.textWebSchedPerDay.Size = new System.Drawing.Size(39, 20);
 			this.textWebSchedPerDay.TabIndex = 265;
-			this.textWebSchedPerDay.Leave += new System.EventHandler(this.textWebSchedPerDay_Leave);
-			this.textWebSchedPerDay.ShowZero = false;
+			this.textWebSchedPerDay.Validating += new System.ComponentModel.CancelEventHandler(this.textWebSchedPerDay_Validating);
 			// 
 			// labelMaxWebSched
 			// 
@@ -137,6 +137,7 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormAsapSetup";
 			this.Text = "ASAP List Setup";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormAsapSetup_FormClosing);
 			this.Load += new System.EventHandler(this.FormAsapSetup_Load);
 			this.groupBoxASAPPrompt.ResumeLayout(false);
 			this.ResumeLayout(false);

@@ -59,7 +59,7 @@ namespace OpenDentBusiness{
 		public DateTime SecDateTEdit;
 		///<summary>FK to codegroup.CodeGroupNum  The group of procedure codes that apply to this frequency limitation benefit.</summary>
 		public long CodeGroupNum;
-		///<summary>Enum:TreatmentArea . Only for frequency limitations, ignored for all other benefits. Enforced by the UI. Example 3 fillings per year [mouth].</summary>
+		///<summary>Enum:TreatmentArea . Only for frequency limitations, ignored for all other benefits. Enforced by the UI. Example 3 fillings per year [mouth]. 0 means default.</summary>
 		public TreatmentArea TreatArea;
 
 		public Benefit() {

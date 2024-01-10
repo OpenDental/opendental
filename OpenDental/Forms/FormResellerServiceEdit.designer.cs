@@ -56,7 +56,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(349, 240);
+			this.butOK.Location = new System.Drawing.Point(254, 216);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 251;
@@ -68,7 +68,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 240);
+			this.butDelete.Location = new System.Drawing.Point(12, 216);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(84, 24);
 			this.butDelete.TabIndex = 41;
@@ -78,7 +78,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(349, 210);
+			this.butCancel.Location = new System.Drawing.Point(349, 216);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 3;
@@ -193,7 +193,7 @@ namespace OpenDental{
 			// 
 			// FormResellerServiceEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(446, 276);
+			this.ClientSize = new System.Drawing.Size(446, 252);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.textFeeRetail);
 			this.Controls.Add(this.label3);

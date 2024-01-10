@@ -76,6 +76,28 @@ namespace OpenDental {
 			ProcedureCur.Note=textNotes.Text+"\r\n"
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+" "+Security.CurUser.UserName+":  "
 				+textAppended.Text;
+			if((procedure.UserNum!=ProcedureCur.UserNum) && !procedure.Signature.IsNullOrEmpty()) {
+				//Check if user is subcribed to the alertType.SignatureCleared and create an alert.
+				if(AlertSubs.GetAllAlertTypesForUser(procedure.UserNum).Contains(AlertType.SignatureCleared)) {
+					string procCode=ProcedureCodes.GetStringProcCode(procedure.CodeNum);
+					string procedureType=Lans.g(this,"Procedure");
+					if(ProcedureCodes.GetStringProcCode(ProcedureCur.CodeNum)==ProcedureCodes.GroupProcCode) {
+						procedureType=Lans.g(this,"Group");
+					}
+					string alertDescription=Lans.g(this,"Locked")+" "+procedureType+" "+Lans.g(this,"Note Changed for PatNum:")+" "+procedure.PatNum+" "
+					+Lans.g(this,"Date:")+" "+procedure.ProcDate.ToShortDateString()+" "
+					+Lans.g(this,"Procedure Code:")+" "+procCode;
+					AlertItems.Insert(new AlertItem {
+						//Allow to alert to be deleted or marked as read.
+						Actions=ActionType.MarkAsRead | ActionType.Delete,
+						Description=alertDescription,
+						Severity=SeverityType.Low,
+						Type=AlertType.SignatureCleared,
+						UserNum=procedure.UserNum,
+						ClinicNum=procedure.ClinicNum,
+					});
+				}
+			}
 			try {
 				SaveSignature();
 			}

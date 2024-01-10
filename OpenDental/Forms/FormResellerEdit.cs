@@ -36,6 +36,7 @@ namespace OpenDental {
 			if(_resellerCur.PasswordHash.Trim()!="") {
 				password="********";//Don't show the password hash.
 			}
+			checkAllowSignupPortal.Checked=_resellerCur.AllowSignupPortal;
 			textPassword.Text=password;
 			FillGridMain();
 			FillGridServices();
@@ -244,6 +245,7 @@ namespace OpenDental {
 			if(textPassword.Text!="********") {
 				_resellerCur.LoginDetails=Authentication.GenerateLoginDetailsSHA512(textPassword.Text);
 			}
+			_resellerCur.AllowSignupPortal=checkAllowSignupPortal.Checked;
 			Resellers.Update(_resellerCur);
 			DialogResult=DialogResult.OK;
 		}

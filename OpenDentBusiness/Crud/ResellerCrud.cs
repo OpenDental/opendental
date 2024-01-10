@@ -47,13 +47,14 @@ namespace OpenDentBusiness.Crud{
 			Reseller reseller;
 			foreach(DataRow row in table.Rows) {
 				reseller=new Reseller();
-				reseller.ResellerNum     = PIn.Long  (row["ResellerNum"].ToString());
-				reseller.PatNum          = PIn.Long  (row["PatNum"].ToString());
-				reseller.UserName        = PIn.String(row["UserName"].ToString());
-				reseller.ResellerPassword= PIn.String(row["ResellerPassword"].ToString());
-				reseller.BillingType     = PIn.Long  (row["BillingType"].ToString());
-				reseller.VotesAllotted   = PIn.Int   (row["VotesAllotted"].ToString());
-				reseller.Note            = PIn.String(row["Note"].ToString());
+				reseller.ResellerNum      = PIn.Long  (row["ResellerNum"].ToString());
+				reseller.PatNum           = PIn.Long  (row["PatNum"].ToString());
+				reseller.UserName         = PIn.String(row["UserName"].ToString());
+				reseller.ResellerPassword = PIn.String(row["ResellerPassword"].ToString());
+				reseller.BillingType      = PIn.Long  (row["BillingType"].ToString());
+				reseller.VotesAllotted    = PIn.Int   (row["VotesAllotted"].ToString());
+				reseller.Note             = PIn.String(row["Note"].ToString());
+				reseller.AllowSignupPortal= PIn.Bool  (row["AllowSignupPortal"].ToString());
 				retVal.Add(reseller);
 			}
 			return retVal;
@@ -72,6 +73,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("BillingType");
 			table.Columns.Add("VotesAllotted");
 			table.Columns.Add("Note");
+			table.Columns.Add("AllowSignupPortal");
 			foreach(Reseller reseller in listResellers) {
 				table.Rows.Add(new object[] {
 					POut.Long  (reseller.ResellerNum),
@@ -81,6 +83,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Long  (reseller.BillingType),
 					POut.Int   (reseller.VotesAllotted),
 					            reseller.Note,
+					POut.Bool  (reseller.AllowSignupPortal),
 				});
 			}
 			return table;
@@ -100,7 +103,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ResellerNum,";
 			}
-			command+="PatNum,UserName,ResellerPassword,BillingType,VotesAllotted,Note) VALUES(";
+			command+="PatNum,UserName,ResellerPassword,BillingType,VotesAllotted,Note,AllowSignupPortal) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(reseller.ResellerNum)+",";
 			}
@@ -110,7 +113,8 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(reseller.ResellerPassword)+"',"
 				+    POut.Long  (reseller.BillingType)+","
 				+    POut.Int   (reseller.VotesAllotted)+","
-				+"'"+POut.String(reseller.Note)+"')";
+				+"'"+POut.String(reseller.Note)+"',"
+				+    POut.Bool  (reseller.AllowSignupPortal)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -135,7 +139,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ResellerNum,";
 			}
-			command+="PatNum,UserName,ResellerPassword,BillingType,VotesAllotted,Note) VALUES(";
+			command+="PatNum,UserName,ResellerPassword,BillingType,VotesAllotted,Note,AllowSignupPortal) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(reseller.ResellerNum)+",";
 			}
@@ -145,7 +149,8 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(reseller.ResellerPassword)+"',"
 				+    POut.Long  (reseller.BillingType)+","
 				+    POut.Int   (reseller.VotesAllotted)+","
-				+"'"+POut.String(reseller.Note)+"')";
+				+"'"+POut.String(reseller.Note)+"',"
+				+    POut.Bool  (reseller.AllowSignupPortal)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -158,12 +163,13 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one Reseller in the database.</summary>
 		public static void Update(Reseller reseller) {
 			string command="UPDATE reseller SET "
-				+"PatNum          =  "+POut.Long  (reseller.PatNum)+", "
-				+"UserName        = '"+POut.String(reseller.UserName)+"', "
-				+"ResellerPassword= '"+POut.String(reseller.ResellerPassword)+"', "
-				+"BillingType     =  "+POut.Long  (reseller.BillingType)+", "
-				+"VotesAllotted   =  "+POut.Int   (reseller.VotesAllotted)+", "
-				+"Note            = '"+POut.String(reseller.Note)+"' "
+				+"PatNum           =  "+POut.Long  (reseller.PatNum)+", "
+				+"UserName         = '"+POut.String(reseller.UserName)+"', "
+				+"ResellerPassword = '"+POut.String(reseller.ResellerPassword)+"', "
+				+"BillingType      =  "+POut.Long  (reseller.BillingType)+", "
+				+"VotesAllotted    =  "+POut.Int   (reseller.VotesAllotted)+", "
+				+"Note             = '"+POut.String(reseller.Note)+"', "
+				+"AllowSignupPortal=  "+POut.Bool  (reseller.AllowSignupPortal)+" "
 				+"WHERE ResellerNum = "+POut.Long(reseller.ResellerNum);
 			Db.NonQ(command);
 		}
@@ -195,6 +201,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="Note = '"+POut.String(reseller.Note)+"'";
 			}
+			if(reseller.AllowSignupPortal != oldReseller.AllowSignupPortal) {
+				if(command!="") { command+=",";}
+				command+="AllowSignupPortal = "+POut.Bool(reseller.AllowSignupPortal)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -223,6 +233,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(reseller.Note != oldReseller.Note) {
+				return true;
+			}
+			if(reseller.AllowSignupPortal != oldReseller.AllowSignupPortal) {
 				return true;
 			}
 			return false;

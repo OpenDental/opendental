@@ -481,14 +481,17 @@ namespace OpenDentBusiness{
 			Etrans835Attaches.DeleteMany(-1,etrans.EtransNum);
 		}
 
-		///<summary>Sets the status of the claim to sent, usually as part of printing.  Also makes an entry in etrans.  If this is Canadian eclaims, then this function gets run first.  If the claim is to be sent elecronically, then the messagetext is created after this method and an attempt is made to send the claim.  Finally, the messagetext is added to the etrans.  This is necessary because the transaction numbers must be incremented and assigned to each claim before creating the message and attempting to send.  For Canadians, it will always record the attempt as an etrans even if claim is not set to status of sent.</summary>
-		public static Etrans SetClaimSentOrPrinted(long claimNum,long patNum,long clearinghouseNum,EtransType etype,int batchNumber,long userNum) {
+		///<summary>Sets the status of the claim to sent (if not already received), usually as part of printing.  Also makes an entry in etrans.  If this is Canadian eclaims, then this function gets run first.  If the claim is to be sent elecronically, then the messagetext is created after this method and an attempt is made to send the claim.  Finally, the messagetext is added to the etrans.  This is necessary because the transaction numbers must be incremented and assigned to each claim before creating the message and attempting to send.  For Canadians, it will always record the attempt as an etrans even if claim is not set to status of sent.</summary>
+		public static Etrans SetClaimSentOrPrinted(long claimNum,string claimStatus,long patNum,long clearinghouseNum,EtransType etype,int batchNumber,long userNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Etrans>(MethodBase.GetCurrentMethod(),claimNum,patNum,clearinghouseNum,etype,batchNumber,userNum);
+				return Meth.GetObject<Etrans>(MethodBase.GetCurrentMethod(),claimNum,claimStatus,patNum,clearinghouseNum,etype,batchNumber,userNum);
 			}
 			Etrans etrans=CreateEtransForClaim(claimNum,patNum,clearinghouseNum,etype,batchNumber,userNum);
 			etrans=SetCanadianEtransFields(etrans);//etrans.CarrierNum, etrans.CarrierNum2 and etrans.EType all set prior to calling this.
-			Claims.SetClaimSent(claimNum);
+			string claimStatusReceived=ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true);
+			if(claimStatus!=claimStatusReceived) { //We don't want to change the claim's status unnecessarily when printing / viewing
+				Claims.SetClaimSent(claimNum);
+			}
 			Insert(etrans);
 			return GetEtrans(etrans.EtransNum);//Since the DateTimeTrans is set upon insert, we need to read the record again in order to get the date.
 		}

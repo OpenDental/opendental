@@ -22,6 +22,8 @@ namespace OpenDentBusiness {
 		public int VotesAllotted;
 		///<summary>An override for the default registrationkey.Note for new reseller customers.</summary>
 		public string Note;
+		///<summary>Set to true to allow access to the signup portal for this resellers customers.</summary>
+		public bool AllowSignupPortal;
 
 		/// <summary>The getter will return a struct created from the database-ready password which is stored in the Password field.
 		/// The setter will manipulate the Password variable to the string representation of this PasswordContainer object.</summary>

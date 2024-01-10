@@ -165,6 +165,30 @@ namespace OpenDental {
 			FillGridRequirements();
 		}
 
+		///<summary>Gets or sets the main textbox RTF format text.</summary>
+		public Font MainFontConcept {
+			get {
+				return textConcept.Font;
+			}
+			set {
+				textConcept.Font=value;
+				ODjobTextEditor_Layout(this,null);
+				Invalidate();
+			}
+		}
+
+		///<summary>Gets or sets the main textbox RTF format text.</summary>
+		public Font MainFontWriteup {
+			get {
+				return textWriteup.Font;
+			}
+			set {
+				textWriteup.Font=value;
+				ODjobTextEditor_Layout(this,null);
+				Invalidate();
+			}
+		}
+
 		private Color SelectedColor {
 			get {
 				return Color.LightGray;

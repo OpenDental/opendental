@@ -191,7 +191,7 @@ namespace OpenDental {
 			return clinicPref.ValueString;
 		}
 
-		private void textWebSchedPerDay_Leave(object sender,EventArgs e) {
+		private void textWebSchedPerDaySave() {
 			if(!textWebSchedPerDay.IsValid()) {
 				return;
 			}
@@ -220,5 +220,12 @@ namespace OpenDental {
 			}
 		}
 
+		private void textWebSchedPerDay_Validating(object sender,System.ComponentModel.CancelEventArgs e) {
+			textWebSchedPerDaySave();
+		}
+
+		private void FormAsapSetup_FormClosing(object sender,FormClosingEventArgs e) {
+			textWebSchedPerDaySave();
+		}
 	}
 }

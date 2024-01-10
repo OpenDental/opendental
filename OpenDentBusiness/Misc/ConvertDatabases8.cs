@@ -1029,8 +1029,14 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
-		private static void To23_3_21() {
-			string command="ALTER TABLE resellerservice ADD FeeRetail double NOT NULL DEFAULT -1";
+		private static void To23_3_22() {
+			//Start E50054
+			string command="UPDATE claimproc SET NoBillIns=0 WHERE IsOverPay!=0";
+			Db.NonQ(command);
+			//End E50054
+			command="ALTER TABLE resellerservice ADD FeeRetail double NOT NULL DEFAULT -1";
+			Db.NonQ(command);
+			command="ALTER TABLE reseller ADD AllowSignupPortal tinyint NOT NULL";
 			Db.NonQ(command);
 		}
 	}

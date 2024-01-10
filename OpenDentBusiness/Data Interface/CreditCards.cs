@@ -48,9 +48,11 @@ namespace OpenDentBusiness{
 		///proper.</summary>
 		public static List<CreditCard> Refresh(long patNum){
 			//No need to check MiddleTierRole; no call to db.
-			List<CreditCardSource> listSources=Enum.GetValues(typeof(CreditCardSource)).Cast<CreditCardSource>()
+			List<CreditCardSource> listCreditCardSources=Enum.GetValues(typeof(CreditCardSource)).Cast<CreditCardSource>()
 				.Where(x => !x.In(CreditCards.GetCreditCardSourcesForOnlinePayments().ToArray())).ToList();
-			return RefreshBySource(patNum,listSources);
+			//This CCSource is used in ODProper and Payment Portal/Patient Portal. Adding so OD Proper can handle this CCSource correctly.
+			listCreditCardSources.Add(CreditCardSource.EdgeExpressCNP);
+			return RefreshBySource(patNum,listCreditCardSources);
 		}
 
 		///<summary>If patNum==0 then does not filter on PatNum; otherwise filters on PatNum. Includes all credit cards sources.</summary>

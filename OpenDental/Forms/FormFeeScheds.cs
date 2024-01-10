@@ -113,7 +113,7 @@ namespace OpenDental{
 			_listFeeSchedsForType.Sort(CompareItemOrder);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn col=new GridColumn(Lan.g("TableFeeScheds","Description"),145);
+			GridColumn col=new GridColumn(Lan.g("TableFeeScheds","Description"),200);
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("TableFeeScheds","Type"),70);
 			gridMain.Columns.Add(col);

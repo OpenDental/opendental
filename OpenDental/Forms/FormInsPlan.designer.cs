@@ -919,14 +919,14 @@ namespace OpenDental {
 			this.panelPlan.Controls.Add(this.groupPlan);
 			this.panelPlan.Controls.Add(this.comboPlanType);
 			this.panelPlan.Controls.Add(this.label14);
-			this.panelPlan.Location = new System.Drawing.Point(-3, 33);
+			this.panelPlan.Location = new System.Drawing.Point(-3, 45);
 			this.panelPlan.Name = "panelPlan";
-			this.panelPlan.Size = new System.Drawing.Size(454, 406);
+			this.panelPlan.Size = new System.Drawing.Size(455, 398);
 			this.panelPlan.TabIndex = 154;
 			// 
 			// checkUseBlueBook
 			// 
-			this.checkUseBlueBook.Location = new System.Drawing.Point(329, 331);
+			this.checkUseBlueBook.Location = new System.Drawing.Point(126, 350);
 			this.checkUseBlueBook.Name = "checkUseBlueBook";
 			this.checkUseBlueBook.Size = new System.Drawing.Size(107, 18);
 			this.checkUseBlueBook.TabIndex = 191;
@@ -939,7 +939,7 @@ namespace OpenDental {
 			this.groupCarrierAllowedAmounts.Controls.Add(this.comboManualBlueBook);
 			this.groupCarrierAllowedAmounts.Controls.Add(this.labelOutOfNetwork);
 			this.groupCarrierAllowedAmounts.Controls.Add(this.comboOutOfNetwork);
-			this.groupCarrierAllowedAmounts.Location = new System.Drawing.Point(14, 353);
+			this.groupCarrierAllowedAmounts.Location = new System.Drawing.Point(13, 370);
 			this.groupCarrierAllowedAmounts.Name = "groupCarrierAllowedAmounts";
 			this.groupCarrierAllowedAmounts.Size = new System.Drawing.Size(404, 70);
 			this.groupCarrierAllowedAmounts.TabIndex = 112;
@@ -981,7 +981,7 @@ namespace OpenDental {
 			// 
 			this.comboFeeSched.Location = new System.Drawing.Point(126, 329);
 			this.comboFeeSched.Name = "comboFeeSched";
-			this.comboFeeSched.Size = new System.Drawing.Size(200, 21);
+			this.comboFeeSched.Size = new System.Drawing.Size(286, 21);
 			this.comboFeeSched.TabIndex = 180;
 			this.comboFeeSched.SelectionChangeCommitted += new System.EventHandler(this.comboFeeSched_SelectionChangeCommitted);
 			// 
@@ -990,7 +990,7 @@ namespace OpenDental {
 			this.groupCoPay.Controls.Add(this.labelCopayFeeSched);
 			this.groupCoPay.Controls.Add(this.label3);
 			this.groupCoPay.Controls.Add(this.comboCopay);
-			this.groupCoPay.Location = new System.Drawing.Point(14, 426);
+			this.groupCoPay.Location = new System.Drawing.Point(13, 443);
 			this.groupCoPay.Name = "groupCoPay";
 			this.groupCoPay.Size = new System.Drawing.Size(404, 64);
 			this.groupCoPay.TabIndex = 181;
@@ -1040,7 +1040,7 @@ namespace OpenDental {
 			// 
 			// label29
 			// 
-			this.label29.Location = new System.Drawing.Point(15, 6);
+			this.label29.Location = new System.Drawing.Point(15, 5);
 			this.label29.Name = "label29";
 			this.label29.Size = new System.Drawing.Size(110, 17);
 			this.label29.TabIndex = 152;
@@ -1409,7 +1409,7 @@ namespace OpenDental {
 			// 
 			this.comboPlanType.Location = new System.Drawing.Point(126, 306);
 			this.comboPlanType.Name = "comboPlanType";
-			this.comboPlanType.Size = new System.Drawing.Size(200, 21);
+			this.comboPlanType.Size = new System.Drawing.Size(286, 21);
 			this.comboPlanType.TabIndex = 149;
 			this.comboPlanType.SelectionChangeCommitted += new System.EventHandler(this.comboPlanType_SelectionChangeCommitted);
 			// 

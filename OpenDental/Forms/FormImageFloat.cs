@@ -752,7 +752,8 @@ namespace OpenDental {
 				Document document=GetDocumentShowing(0);
 				xTitle=e.MarginBounds.X+e.MarginBounds.Width/2;
 				yTitle=e.MarginBounds.Top;
-				if(document.ImgType==ImageType.Radiograph) {
+				long defNumToothChart=Defs.GetImageCat(ImageCategorySpecial.T);//toothchart
+				if(document.ImgType==ImageType.Radiograph || defNumToothChart==document.DocCategory) {
 					str=PatientCur.GetNameLF();
 					widthStr=(int)g.MeasureString(str,fontTitle).Width;
 					g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
@@ -1341,9 +1342,10 @@ namespace OpenDental {
 					return;
 				}
 			}
-			//Can't do this, or the clipboard object goes away.
-			//bitmapCopy.Dispose();
-			//bitmapCopy=null;
+			if(bitmapCopy!=null) {
+				bitmapCopy.Dispose();
+				bitmapCopy=null;
+			}
 			long patNum=0;
 			if(PatientCur!=null) {
 				patNum=PatientCur.PatNum;

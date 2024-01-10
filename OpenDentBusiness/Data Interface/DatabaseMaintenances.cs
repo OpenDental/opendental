@@ -207,9 +207,14 @@ namespace OpenDentBusiness {
 							+Lans.g("FormDatabaseMaintenance","The sql_mode must be blank or NO_AUTO_CREATE_USER and is currently set to")
 							+" "+sqlmodeDisplay+".\r\n";
 					}*/
+					//E46954 disabled the "Fix" logic above in favor of showing the bad config to the user and asking them to fix it with suggested options
+					//However, we must still return an error message from this case in order to trigger the correct feedback logic
+					if(!listGlobalVars.TrueForAll(x => x.IsValid)) {
+						issueLog+=warningMessage+Lans.g("FormDatabaseMaintenance","Double click to see a break down.")+"\r\n";
+					}
 					break;
 			}//end switch
-			return issueLog+"$#$"+warningMessage;
+			return issueLog;
 		}
 
 		///<summary>Returns a Tuple with Item1=log string and Item2=whether the table checks were successful.</summary>

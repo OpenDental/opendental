@@ -1226,6 +1226,7 @@ namespace OpenDental {
 		}
 
 		private void TextBox_PreviewKeyDown(object sender,PreviewKeyDownEventArgs e) {
+			ClearSigs();
 			//preview is used because Tab doesn't hit KeyDown because it's intercepted by Windows to select the next control
 			ODtextBox textBox=(ODtextBox)sender;
 			SheetField sheetField=(SheetField)textBox.Tag;
@@ -1321,7 +1322,6 @@ namespace OpenDental {
 			timerTextChanged.Stop();
 			timerTextChanged.Tag=sender;
 			timerTextChanged.Start();
-			ClearSigs();
 		}
 		
 		private void timerTextChanged_Tick(object sender,EventArgs e) {

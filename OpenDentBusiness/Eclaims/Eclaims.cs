@@ -192,13 +192,13 @@ namespace OpenDentBusiness.Eclaims
 				etransMsgText.MessageText=messageText;
 				EtransMessageTexts.Insert(etransMsgText);
 				for(int j=0;j<queueItems.Count;j++) {
-					Etrans etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].PatNum,
+					Etrans etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].ClaimStatus,queueItems[j].PatNum,
 						clearinghouseClin.HqClearinghouseNum,etype,batchNum,Security.CurUser.UserNum);
 					//Attempted fix for problems with Eclaims SendBatch attempts throwing null reference UEs. Job #41284
 					//If SetClaimSentOrPrinted() returns null, then we try again.
 					if(etrans==null) {
 						System.Threading.Thread.Sleep(100);
-						etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].PatNum,
+						etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].ClaimStatus,queueItems[j].PatNum,
 							clearinghouseClin.HqClearinghouseNum,etype,batchNum,Security.CurUser.UserNum);
 					}
 					if(etrans==null) {

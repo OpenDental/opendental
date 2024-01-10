@@ -276,6 +276,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(jobPhase==JobPhase.Development && grid==gridPendingReview) {
 				listJobs=listJobs.FindAll(x => x.ListJobReviews.Exists(y => y.ReviewStatus.In(JobReviewStatus.Sent,JobReviewStatus.Seen,JobReviewStatus.UnderReview)));
 			}
+			else if(jobPhase==JobPhase.Development && grid==gridDevelopment) {
+				listJobs=listJobs.FindAll(x => !x.ListJobReviews.Exists(y => y.ReviewStatus.In(JobReviewStatus.Sent,JobReviewStatus.Seen,JobReviewStatus.UnderReview)));
+			}
 			int jobCount=0;
 			grid.Enabled=true;
 			grid.BeginUpdate();

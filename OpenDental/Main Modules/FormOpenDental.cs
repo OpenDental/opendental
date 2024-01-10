@@ -4008,7 +4008,9 @@ namespace OpenDental{
 					{
 						continue;//Not a popup task or is already open.
 					}
-					listTasksPopup.Add(listTasksRefreshed[i]);
+					if(!listTasksPopup.Contains(listTasksRefreshed[i])) {
+						listTasksPopup.Add(listTasksRefreshed[i]);
+					}
 				}
 			}
 			for(int i=0;i<listTasksPopup.Count;i++) {

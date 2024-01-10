@@ -58,6 +58,7 @@
 			this.textVersionText = new System.Windows.Forms.TextBox();
 			this.gridTesting = new OpenDental.UI.GridOD();
 			this.tabQuery = new System.Windows.Forms.TabPage();
+			this.gridQueries = new OpenDental.UI.GridOD();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.lblJobPriority = new System.Windows.Forms.Label();
 			this.lblJobPhase = new System.Windows.Forms.Label();
@@ -66,7 +67,6 @@
 			this.butQueriesRefresh = new OpenDental.UI.Button();
 			this.checkShowQueryComplete = new OpenDental.UI.CheckBox();
 			this.checkShowQueryCancelled = new OpenDental.UI.CheckBox();
-			this.gridQueries = new OpenDental.UI.GridOD();
 			this.tabNotify = new System.Windows.Forms.TabPage();
 			this.gridNotify = new OpenDental.UI.GridOD();
 			this.checkNotifyShowHqOnly = new OpenDental.UI.CheckBox();
@@ -552,8 +552,8 @@
 			// 
 			// tabQuery
 			// 
-			this.tabQuery.Controls.Add(this.groupBox1);
 			this.tabQuery.Controls.Add(this.gridQueries);
+			this.tabQuery.Controls.Add(this.groupBox1);
 			this.tabQuery.Location = new System.Drawing.Point(4, 94);
 			this.tabQuery.Name = "tabQuery";
 			this.tabQuery.Padding = new System.Windows.Forms.Padding(3);
@@ -561,6 +561,19 @@
 			this.tabQuery.TabIndex = 5;
 			this.tabQuery.Text = "Queries";
 			this.tabQuery.UseVisualStyleBackColor = true;
+			// 
+			// gridQueries
+			// 
+			this.gridQueries.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.gridQueries.HasMultilineHeaders = true;
+			this.gridQueries.Location = new System.Drawing.Point(2, 96);
+			this.gridQueries.Name = "gridQueries";
+			this.gridQueries.Size = new System.Drawing.Size(344, 577);
+			this.gridQueries.TabIndex = 230;
+			this.gridQueries.Title = "Queries to be done";
+			this.gridQueries.TranslationName = "Job Edit";
+			this.gridQueries.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellDoubleClick);
+			this.gridQueries.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellClick);
 			// 
 			// groupBox1
 			// 
@@ -645,21 +658,6 @@
 			this.checkShowQueryCancelled.Size = new System.Drawing.Size(135, 20);
 			this.checkShowQueryCancelled.TabIndex = 238;
 			this.checkShowQueryCancelled.Text = "Include Cancelled";
-			// 
-			// gridQueries
-			// 
-			this.gridQueries.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridQueries.HasMultilineHeaders = true;
-			this.gridQueries.Location = new System.Drawing.Point(2, 96);
-			this.gridQueries.Name = "gridQueries";
-			this.gridQueries.Size = new System.Drawing.Size(344, 577);
-			this.gridQueries.TabIndex = 230;
-			this.gridQueries.Title = "Queries to be done";
-			this.gridQueries.TranslationName = "Job Edit";
-			this.gridQueries.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellDoubleClick);
-			this.gridQueries.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellClick);
 			// 
 			// tabNotify
 			// 

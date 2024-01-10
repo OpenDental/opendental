@@ -50,6 +50,7 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.textVotesAllotted = new System.Windows.Forms.TextBox();
+			this.checkAllowSignupPortal = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -97,6 +98,7 @@ namespace OpenDental{
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.checkAllowSignupPortal);
 			this.groupBox1.Controls.Add(this.labelCredentials);
 			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.label5);
@@ -312,6 +314,14 @@ namespace OpenDental{
 			this.textVotesAllotted.TabIndex = 247;
 			this.textVotesAllotted.Text = "0";
 			// 
+			// checkAllowSignupPortal
+			// 
+			this.checkAllowSignupPortal.Location = new System.Drawing.Point(104, 96);
+			this.checkAllowSignupPortal.Name = "checkAllowSignupPortal";
+			this.checkAllowSignupPortal.Size = new System.Drawing.Size(290, 33);
+			this.checkAllowSignupPortal.TabIndex = 250;
+			this.checkAllowSignupPortal.Text = "Allow Reseller Customers to use signup portal";
+			// 
 			// FormResellerEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(804, 561);
@@ -368,5 +378,6 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.TextBox textVotesAllotted;
 		private UI.ComboBox comboBillingType;
+		private UI.CheckBox checkAllowSignupPortal;
 	}
 }

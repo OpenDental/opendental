@@ -2287,7 +2287,7 @@
       <summary>FK to definition.DefNum. Most users will leave this blank.  Some offices may set up tracking statuses such as 'review', 'hold', 'riskmanage', etc.</summary>
     </column>
     <column order="66" name="DateResent" type="date">
-      <summary>Used for historical purposes only, not sent electronically. Automatically set when CorrectionType is not original and the claim is resent.</summary>
+      <summary>Used for historical purposes only, not sent electronically. Automatically set when CorrectionType is original and the claim is resent.</summary>
     </column>
     <column order="67" name="CorrectionType" type="tinyint(4)">
       <summary>Enum:ClaimCorrectionType X12 CLM05-3. Usually set to original, but can be used to resubmit claims.  Also used in 1500 Medical Claim Form field 22.</summary>
@@ -6996,8 +6996,8 @@
       <summary>Enum:EtransType</summary>
       <Enumeration name="EtransType">
         <summary>The _CA of some types should get stripped off when displaying to users.</summary>
-        <EnumValue name="ClaimSent">0 X12-837.  Should we differenitate between different kinds of 837s and 4010 vs 5010?</EnumValue>
-        <EnumValue name="ClaimPrinted">1 claim</EnumValue>
+        <EnumValue name="ClaimSent">0 X12-837.</EnumValue>
+        <EnumValue name="ClaimPrinted">1 claim physically printed.</EnumValue>
         <EnumValue name="Claim_CA">2 Canada. Type 01</EnumValue>
         <EnumValue name="Claim_Ren">3 Renaissance</EnumValue>
         <EnumValue name="ClaimAck_CA">4 Canada. Type 11</EnumValue>
@@ -15439,6 +15439,7 @@
         <EnumValue name="FlowDefLink">109. Used to link PatientFlowDefs with other objects: appointments, appt types, billing types, etc. </EnumValue>
         <EnumValue name="CodeGroups">110. Group of codes used with frequency limitations.</EnumValue>
         <EnumValue name="BillingList">111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</EnumValue>
+        <EnumValue name="ConnectionStoreClear">112. Indicates that database connection settings have changed and the cached connections should be reinitialized.</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="RemoteRole" type="tinyint(4)">

@@ -545,7 +545,7 @@ namespace OpenDental {
 					}
 					break;
 				}
-				Etranss.SetClaimSentOrPrinted(claim.ClaimNum,claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+				Etranss.SetClaimSentOrPrinted(claim.ClaimNum,claim.ClaimStatus,claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 				//This call may receive the claim, but we don't want to prompt for secondary claims because we are already in the process of doing that.
 				Claims.ReceiveAsNoPaymentIfNeeded(claim.ClaimNum);
 			}

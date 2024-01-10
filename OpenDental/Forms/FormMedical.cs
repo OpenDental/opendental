@@ -175,7 +175,7 @@ namespace OpenDental {
 				}
 				if(!isForPrinting) {
 					if(Erx.IsFromNewCrop(_listMedicationPats[i].ErxGuid)) {
-						row.Cells.Add("Legacy");
+						row.Cells.Add("NewCrop");
 					}
 					else if(Erx.IsFromDoseSpot(_listMedicationPats[i].ErxGuid) || Erx.IsDoseSpotPatReported(_listMedicationPats[i].ErxGuid)) {
 						row.Cells.Add("DoseSpot");

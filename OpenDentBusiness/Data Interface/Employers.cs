@@ -91,6 +91,17 @@ namespace OpenDentBusiness{
 			}
 		}*/
 		
+		///<summary>Gets employers from database. Returns an empty list if none found.</summary>
+		public static List<Employer> GetEmployersForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Employer>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM employer ";
+			command+="ORDER BY employernum "//Ensure order for limit and offset
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.EmployerCrud.SelectMany(command);
+		}
+
 		public static void Update(Employer empCur, Employer empOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),empCur,empOld);

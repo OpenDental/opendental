@@ -126,7 +126,7 @@ namespace OpenDental {
 					row.Cells.Add(Lans.g(this,"UNKNOWN"));
 				}
 				else{
-					row.Cells.Add(patient.GetNameFL());
+					row.Cells.Add(patient.GetNameLF());
 				}
 				if(PrefC.HasClinicsEnabled) {
 					row.Cells.Add(Clinics.GetFirstOrDefault(x => x.ClinicNum==listRecurringCharges[i].ClinicNum)?.Description??"");

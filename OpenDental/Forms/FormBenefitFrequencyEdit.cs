@@ -28,7 +28,7 @@ namespace OpenDental {
 			textNumber.Text=BenefitCur.Quantity.ToString();
 			listBoxTimePeriod.Items.AddEnums<FrequencyOptions>();
 			listBoxTimePeriod.SetSelectedEnum(BenefitCur.GetFrequencyOption());
-			listBoxTreatArea.Items.Add("All",TreatmentArea.None);//replaces None for ui
+			listBoxTreatArea.Items.Add("Default",TreatmentArea.None);//replaces None for ui
 			List<TreatmentArea> listTreatmentAreas =typeof(TreatmentArea).GetEnumValues()
 				.Cast<TreatmentArea>()
 				.Where(x => x!=TreatmentArea.None)
