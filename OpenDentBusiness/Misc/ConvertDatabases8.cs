@@ -801,5 +801,14 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
+
+		private static void To23_2_54() {
+			//Start E50054
+			string command="UPDATE claimproc SET NoBillIns=0 WHERE IsOverPay!=0";
+			Db.NonQ(command);
+			//End E50054
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('WebSchedManualSendTriggered','')";
+			Db.NonQ(command);
+		}
 	}
 }

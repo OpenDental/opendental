@@ -469,6 +469,10 @@ namespace OpenDental {
 
 		///<summary>Goes to the patients account for the selected claim.</summary>
 		private void MenuItemGoToAccount_Click(object sender,EventArgs e) {
+			if(gridClaims.GetSelectedIndex()==-1) {
+				MsgBox.Show(this,"No claim is selected.");
+				return;
+			}
 			Hx835_Claim hx835_Claim=gridClaims.SelectedTag<ClaimRowData>().Hx835_Claim_;
 			if(hx835_Claim==null) {
 				MsgBox.Show(this,"No claim is selected.");
