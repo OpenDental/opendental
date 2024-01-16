@@ -84,6 +84,9 @@ namespace OpenDental {
 			}
 		}
 
+		public delegate void UserControlJobManagerEditorGoToJobEventHandler(object sender,long jobNum);
+		public event UserControlJobManagerEditorGoToJobEventHandler GoToJobEvent=null;
+
 		public UserControlJobManagerEditor() {
 			InitializeComponent();
 		}
@@ -292,6 +295,13 @@ namespace OpenDental {
 		}
 
 		private void userControlProjectEdit_RequestJob(object sender,long jobNum) {
+			if(!userControlProjectEdit.IsPopout) {
+				//Pass this to the containing form so the job stack can be updated and UI will be refreshed.
+				if(GoToJobEvent!=null) {
+					GoToJobEvent(sender,jobNum);
+				}
+				return;
+			}
 			Job job=JobManagerCore.ListJobsAll.FirstOrDefault(x => x.JobNum==jobNum);
 			if(job==null) {
 				GoToJob(jobNum);//Try and get the job from the database.

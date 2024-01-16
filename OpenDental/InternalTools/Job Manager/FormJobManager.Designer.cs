@@ -117,6 +117,7 @@
 			this.gridSubmittedJobs = new OpenDental.UI.GridOD();
 			this.userControlJobManagerEditor = new OpenDental.UserControlJobManagerEditor();
 			this.tabProjectManagement = new System.Windows.Forms.TabPage();
+			this.checkOnlyShowTopLevel = new OpenDental.UI.CheckBox();
 			this.gridProjectManagement = new OpenDental.UI.GridOD();
 			this.labelProjectManagementTeam = new System.Windows.Forms.Label();
 			this.comboTeamFilterProjectManagement = new OpenDental.UI.ComboBox();
@@ -1199,6 +1200,7 @@
 			// 
 			// tabProjectManagement
 			// 
+			this.tabProjectManagement.Controls.Add(this.checkOnlyShowTopLevel);
 			this.tabProjectManagement.Controls.Add(this.gridProjectManagement);
 			this.tabProjectManagement.Controls.Add(this.labelProjectManagementTeam);
 			this.tabProjectManagement.Controls.Add(this.comboTeamFilterProjectManagement);
@@ -1208,6 +1210,16 @@
 			this.tabProjectManagement.TabIndex = 16;
 			this.tabProjectManagement.Text = "Project Management";
 			this.tabProjectManagement.UseVisualStyleBackColor = true;
+			// 
+			// checkOnlyShowTopLevel
+			// 
+			this.checkOnlyShowTopLevel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkOnlyShowTopLevel.Location = new System.Drawing.Point(3, 8);
+			this.checkOnlyShowTopLevel.Name = "checkOnlyShowTopLevel";
+			this.checkOnlyShowTopLevel.Size = new System.Drawing.Size(171, 20);
+			this.checkOnlyShowTopLevel.TabIndex = 329;
+			this.checkOnlyShowTopLevel.Text = "Only show top-level projects";
+			this.checkOnlyShowTopLevel.CheckedChanged += new System.EventHandler(this.checkOnlyShowTopLevel_CheckedChanged);
 			// 
 			// gridProjectManagement
 			// 
@@ -1250,6 +1262,7 @@
 			this.userControlJobManagerEditor.Name = "userControlJobManagerEditor";
 			this.userControlJobManagerEditor.Size = new System.Drawing.Size(1158, 767);
 			this.userControlJobManagerEditor.TabIndex = 0;
+			this.userControlJobManagerEditor.GoToJobEvent += new UserControlJobManagerEditor.UserControlJobManagerEditorGoToJobEventHandler(this.userControlJobManagerEditor_GoToJob);
 			// 
 			// label5
 			// 
@@ -1588,5 +1601,6 @@
 		private UI.GridOD gridProjectManagement;
 		private System.Windows.Forms.Label labelTeamSearch;
 		private UI.ComboBox comboTeamSearch;
+		private UI.CheckBox checkOnlyShowTopLevel;
 	}
 }

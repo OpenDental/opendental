@@ -1117,7 +1117,7 @@ namespace OpenDental{
 			Procedure procedureSelected=((Procedure)gridProc.ListGridRows[e.Row].Tag);
 			//Only invert the procedure if we didn't block the original row inversion in gridProc_CellClick(...)
 			if(!DisableDetachingOfCompletedProcFromCompletedAppt(procedureSelected,_appointment,out string msg)
-				|| DisableDetachingOfAttachedToAPlannedApt(procedureSelected,out msg)) 
+				&& !DisableDetachingOfAttachedToAPlannedApt(procedureSelected,out msg)) 
 			{
 				InvertCurProcSelected(e.Row);
 			}

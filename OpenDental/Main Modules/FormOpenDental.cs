@@ -378,6 +378,7 @@ namespace OpenDental{
 			if(File.Exists(Path.Combine(appDir,"NoD2D.txt"))){
 				IconLibrary.OnlyGDI=true;
 			}
+			EscClosesWindow=false;
 		}
 
 		private void FormOpenDental_Shown(object sender,EventArgs e) {

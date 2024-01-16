@@ -813,13 +813,20 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To23_2_54() {
+			//Start E50054
+			string command="UPDATE claimproc SET NoBillIns=0 WHERE IsOverPay!=0";
+			Db.NonQ(command);
+			//End E50054
+		}
+
 		private static void To23_3_1() {
 			string command;
 			//F44596 - Frequency Limitations by Treatment Area
 			command="ALTER TABLE benefit ADD TreatArea tinyint NOT NULL";
 			Db.NonQ(command);
 			//B46378 - Definitions window hide Adjustment Type created wrong message
-			command="UPDATE preference SET PrefNum=0 WHERE PrefName='RefundAdjustmentType'";//clearing this preference since it was never implemented
+			command="UPDATE preference SET ValueString='0' WHERE PrefName='RefundAdjustmentType'";//clearing this preference since it was never implemented
 			//Users were able to set a value for this preference for a brief time before it was removed from the UI.That locks any value the was previosly set by the user.
 			//This job will allow users to hide the preference associated with the RefundAdjustmentType.
 			Db.NonQ(command);
@@ -1025,8 +1032,11 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To23_3_6() {
-			string command="INSERT INTO preference(PrefName,ValueString) VALUES('WebSchedManualSendTriggered','')";
-			Db.NonQ(command);
+			string command="SELECT COUNT(*) FROM preference WHERE PrefName='WebSchedManualSendTriggered'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('WebSchedManualSendTriggered','')";
+				Db.NonQ(command);
+			}
 		}
 
 		private static void To23_3_22() {

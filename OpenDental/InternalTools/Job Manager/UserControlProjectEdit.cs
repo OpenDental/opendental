@@ -27,6 +27,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 		private List<Def> _listPriorities;
 		private List<Def> _listPrioritiesAll;
 		private List<Job> _listJobsByTopParent;
+		private const string _CHILD_JOB_MENU="Create Child Job";
 		public bool IsNew;
 		///<summary>Set this to true when the job is open outside of FormJobManager. Disables some functionality.</summary>
 		public bool IsPopout;
@@ -66,6 +67,25 @@ namespace OpenDental.InternalTools.Job_Manager {
 			comboJobTeam.Items.Add("None",new JobTeam(){JobTeamNum=-1});
 			comboJobTeam.Items.AddList(_listJobTeams,x => x.TeamName);
 			comboJobTeam.SelectedIndex=0;
+			CreateGridContextMenus();
+		}
+
+		private bool TryGetSelectedJobFromMenuItem(MenuItem menuItem,out Job job,out string error) {
+			job=null;
+			error="";
+			if(menuItem==null) {
+				error="Provided MenuItem was null.";
+				return false;
+			}
+			if(menuItem.Tag.GetType()!=typeof(GridOD)){
+				error=$"Expected MenuItem.Tag to be type {nameof(GridOD)} but received {nameof(menuItem.Tag)}.";
+				return false;
+			}
+			if(!TryGetSelectedJobFromGrid((GridOD)menuItem.Tag,out job)) {
+				error="Could not find the selected job.";
+				return false;
+			}
+			return true;
 		}
 
 		///<summary>Should only be called once when new job should be loaded into control. If called again, changes will be lost.</summary>
@@ -261,7 +281,12 @@ namespace OpenDental.InternalTools.Job_Manager {
 				return;
 			}
 			List<Job> listJobs=new List<Job>();
-			listJobs=JobManagerCore.ListJobsAll.FindAll(x => x.ParentNum==_jobCur.JobNum);
+			if(checkShowAllChildJobs.Checked) {
+				listJobs=GetDescedentJobs(_jobCur.JobNum,true);
+			}
+			else {
+				listJobs=JobManagerCore.ListJobsAll.FindAll(x => x.ParentNum==_jobCur.JobNum);
+			}
 			if(jobPhase!=JobPhase.Complete) {
 				listJobs=listJobs.FindAll(x => x.PhaseCur==jobPhase)
 					.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder)
@@ -279,7 +304,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else if(jobPhase==JobPhase.Development && grid==gridDevelopment) {
 				listJobs=listJobs.FindAll(x => !x.ListJobReviews.Exists(y => y.ReviewStatus.In(JobReviewStatus.Sent,JobReviewStatus.Seen,JobReviewStatus.UnderReview)));
 			}
-			int jobCount=0;
 			grid.Enabled=true;
 			grid.BeginUpdate();
 			grid.Columns.Clear();
@@ -342,10 +366,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 				row.Tag=listJobs[i];
 				grid.ListGridRows.Add(row);
 			}
-			jobCount+=listJobs.Count;
-			grid.Title=jobPhase.ToString()+" ("+jobCount+")";
+			grid.Title=jobPhase.ToString()+" ("+listJobs.Count+")";
 			if(grid==gridPendingReview) {
-				grid.Title="Pending Review";
+				grid.Title="Pending Review" +" ("+listJobs.Count+")";
 			}
 			grid.EndUpdate();
 		}
@@ -383,68 +406,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_jobCur==null) {
 				return;
 			}
-			else if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-				butCreateFeature.Enabled=true;
-				butCreateBug.Enabled=true;
-				butCreateEnhancement.Enabled=true;
-				butCreateInternalRequest.Enabled=true;
-				butCreateHQRequest.Enabled=true;
-				butCreateResearch.Enabled=true;
-				return;
-			}
-			switch(_jobCur.PhaseCur) {
-				case JobPhase.Concept:
-					textTitle.ReadOnly=false;
-					comboPriority.Enabled=true;
-					textVersion.ReadOnly=false;
-					butParentPick.Visible=true;
-					butParentRemove.Visible=true;
-					comboJobTeam.Enabled=true;
-					butVersionPrompt.Enabled=true;
-					textEditorProjectDescription.ReadOnly=false;
-					butChangeEst.Enabled=true;
-					butCreateFeature.Enabled=true;
-					butCreateBug.Enabled=true;
-					butCreateEnhancement.Enabled=true;
-					butCreateInternalRequest.Enabled=true;
-					butCreateHQRequest.Enabled=true;
-					butCreateResearch.Enabled=true;
-					butCreateProject.Enabled=true;
-					break;
-				case JobPhase.Development:
-					if(_jobCur.UserNumExpert!=0 && _jobCur.UserNumExpert!=Security.CurUser.UserNum) {
-						break;//only the expert can edit the job description.
-					}
-					comboPriority.Enabled=true;
-					textVersion.ReadOnly=false;
-					butParentPick.Visible=true;
-					butParentRemove.Visible=true;
-					comboJobTeam.Enabled=true;
-					butVersionPrompt.Enabled=true;
-					textEditorProjectDescription.ReadOnly=false;
-					butChangeEst.Enabled=true;
-					butCreateFeature.Enabled=true;
-					butCreateBug.Enabled=true;
-					butCreateEnhancement.Enabled=true;
-					butCreateInternalRequest.Enabled=true;
-					butCreateHQRequest.Enabled=true;
-					butCreateResearch.Enabled=true;
-					butCreateProject.Enabled=true;
-					break;
-				case JobPhase.Complete:
-					break;
-				case JobPhase.Cancelled:
-					break;
-				default:
-					MessageBox.Show("Unsupported job status. Add to UserControlProjectEdit.CheckPermissions()");
-					break;
-			}
-			//Set project description and title to readonly if "Checked out"
-			textEditorProjectDescription.ReadOnly=false;
-			if(_jobCur.UserNumCheckout!=0 && _jobCur.UserNumCheckout!=Security.CurUser.UserNum) {
-				textTitle.ReadOnly=true;
-				textEditorProjectDescription.ReadOnly=true;
-			}
 			if(_isOverride) {//Enable everything and make everything visible
 				textTitle.ReadOnly=false;
 				comboPriority.Enabled=true;
@@ -462,6 +423,53 @@ namespace OpenDental.InternalTools.Job_Manager {
 				butCreateHQRequest.Enabled=true;
 				butCreateResearch.Enabled=true;
 				butCreateProject.Enabled=true;
+				return;
+			}
+			else {
+				EnableCreateJobButtons();
+			}
+			//At this point, we want to return because users with view-only permission should not be able to make changes to the Project
+			if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+				return;
+			}
+			switch(_jobCur.PhaseCur) {
+				case JobPhase.Concept:
+					textTitle.ReadOnly=false;
+					comboPriority.Enabled=true;
+					textVersion.ReadOnly=false;
+					butParentPick.Visible=true;
+					butParentRemove.Visible=true;
+					comboJobTeam.Enabled=true;
+					butVersionPrompt.Enabled=true;
+					textEditorProjectDescription.ReadOnly=false;
+					butChangeEst.Enabled=true;
+					break;
+				case JobPhase.Development:
+					if(_jobCur.UserNumExpert!=0 && _jobCur.UserNumExpert!=Security.CurUser.UserNum) {
+						break;//only the expert can edit the job description.
+					}
+					comboPriority.Enabled=true;
+					textVersion.ReadOnly=false;
+					butParentPick.Visible=true;
+					butParentRemove.Visible=true;
+					comboJobTeam.Enabled=true;
+					butVersionPrompt.Enabled=true;
+					textEditorProjectDescription.ReadOnly=false;
+					butChangeEst.Enabled=true;
+					break;
+				case JobPhase.Complete:
+					break;
+				case JobPhase.Cancelled:
+					break;
+				default:
+					MessageBox.Show("Unsupported job status. Add to UserControlProjectEdit.CheckPermissions()");
+					break;
+			}
+			//Set project description and title to readonly if "Checked out"
+			textEditorProjectDescription.ReadOnly=false;
+			if(_jobCur.UserNumCheckout!=0 && _jobCur.UserNumCheckout!=Security.CurUser.UserNum) {
+				textTitle.ReadOnly=true;
+				textEditorProjectDescription.ReadOnly=true;
 			}
 		}
 
@@ -520,6 +528,20 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			butActions.ContextMenu=actionMenu;
 			butActions.ContextMenu.Show(butActions,new Point(0,butActions.Height));
+		}
+
+		/// <summary>This method enables the "Create Jobs" buttons based on the user's JobPermissions. If more buttons get added to the designer, just add them their enabled values underneath their appropriate JobPermission check.</summary>
+		private void EnableCreateJobButtons() {
+			butCreateFeature.Enabled=true;
+			butCreateBug.Enabled=true;
+			butCreateEnhancement.Enabled=true;
+			butCreateInternalRequest.Enabled=true;
+			butCreateHQRequest.Enabled=true;
+			butCreateResearch.Enabled=true;
+			if(JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+				butCreateNeedsNoApproval.Enabled=true;
+				butCreateProject.Enabled=true;
+			}
 		}
 
 		//Allows save to be called from outside this control.
@@ -945,7 +967,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			Jobs.Update(jobFromDB);//update the checkout num.
 			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
 		}
-
 		private void butCreateJob_Click(object sender,EventArgs e) {
 			if(_isLoading) {
 				return;
@@ -955,14 +976,14 @@ namespace OpenDental.InternalTools.Job_Manager {
 				MsgBox.Show(this,"No job currently selected. Select a job to be a parent job.");
 				return;
 			}
-			if((UI.Button)sender==butCreateFeature) {
-				AddNewJob(JobCategory.Feature,job.JobNum,job.TopParentNum);
-			}
-			else if((UI.Button)sender==butCreateBug) {
+			if((UI.Button)sender==butCreateBug) {
 				AddNewJob(JobCategory.Bug,job.JobNum,job.TopParentNum);
 			}
 			else if((UI.Button)sender==butCreateEnhancement) {
 				AddNewJob(JobCategory.Enhancement,job.JobNum,job.TopParentNum);
+			}
+			else if((UI.Button)sender==butCreateFeature) {
+				AddNewJob(JobCategory.Feature,job.JobNum,job.TopParentNum);
 			}
 			else if((UI.Button)sender==butCreateHQRequest) {
 				AddNewJob(JobCategory.HqRequest,job.JobNum,job.TopParentNum);
@@ -970,12 +991,15 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else if((UI.Button)sender==butCreateInternalRequest) {
 				AddNewJob(JobCategory.InternalRequest,job.JobNum,job.TopParentNum);
 			}
-			else if((UI.Button)sender==butCreateResearch) {
-				AddNewJob(JobCategory.Research,job.JobNum,job.TopParentNum);
+			else if((UI.Button)sender==butCreateNeedsNoApproval){
+				AddNewJob(JobCategory.NeedNoApproval,job.JobNum,job.TopParentNum);
 			}
 			else if((UI.Button)sender==butCreateProject) {
 				AddNewJob(JobCategory.Project,job.JobNum,job.TopParentNum);
 			}
+			else if((UI.Button)sender==butCreateResearch) {
+				AddNewJob(JobCategory.Research,job.JobNum,job.TopParentNum);
+			}			
 		}
 
 		private void butParentRemove_Click(object sender,EventArgs e) {
@@ -1207,6 +1231,140 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 		#endregion Project Options Events
 
+		#region ContextMenu Events
+		/// <summary>Use this to set custom rules for enabling/disabling MenuItems for a grid's ContextMenu.</summary>
+		private void gridContextMenu_Popup(object sender, EventArgs e) { 
+			try {
+				ContextMenu contextMenu=(ContextMenu)sender;
+				//Always start with an Enabled state and disable as needed below
+				SetEnabledForAllChildMenuItems(contextMenu.MenuItems,true);
+				if(!TryGetSelectedJobFromGrid((GridOD)contextMenu.Tag,out Job job)){
+					SetEnabledForAllChildMenuItems(contextMenu.MenuItems,false);
+					return;
+				}
+				//Cannot create child jobs for Documentation/Cancelled/Complete Phases
+				bool isEnabled=(!job.PhaseCur.In(JobPhase.Documentation,JobPhase.Complete,JobPhase.Cancelled));
+				contextMenu.MenuItems.Find(_CHILD_JOB_MENU,true).FirstOrDefault().Enabled=isEnabled;
+			}
+			catch(Exception ex) { 
+				MsgBox.Show("There was an error setting the Enabled values for this context menu's items.\r\n"+ex.Message);
+			}
+		}
+
+		private void menuItemCreateChildJob_Click(object sender, EventArgs e) {
+			MenuItem menuItem=(MenuItem)sender;
+			if(!TryGetSelectedJobFromMenuItem(menuItem,out Job job,out string error)) {
+				MsgBox.Show(error);
+				return;
+			}
+			if(!Enum.TryParse(menuItem.Text,out JobCategory category)) {
+				MsgBox.Show("There was an error getting the JobCategory for your selection.");
+				return;
+			}
+			AddNewJob(category,job.JobNum,job.TopParentNum);
+		}
+
+		/// <summary>Use this to set custom rules for enabling/disabling JobCategory MenuItems in the ContextMenu.</summary>
+		private void menuItemCreateChildJob_Popup(object sender, EventArgs e) {
+			try {
+				MenuItem parentMenuItem=(MenuItem)sender;
+				//Always start with an Enabled state and disable as needed below
+				SetEnabledForAllChildMenuItems(parentMenuItem.MenuItems,true);
+				if(!TryGetSelectedJobFromGrid((GridOD)parentMenuItem.Tag,out Job job)){
+					SetEnabledForAllChildMenuItems(parentMenuItem.MenuItems,false);
+					return;
+				}
+				//Projects must be children of other Projects
+				bool isEnabled=(job.Category==JobCategory.Project);
+				MenuItem menuItem=parentMenuItem.MenuItems.Find(JobCategory.Project.ToString(),true).FirstOrDefault();
+				if(menuItem!=null) {
+					menuItem.Enabled=isEnabled;
+				}
+				//Additional rules here ...
+			}
+			catch(Exception ex) { 
+				MsgBox.Show("There was an error setting the Enabled values for Child Job Categories.\r\n"+ex.ToString());
+			}
+		}
+
+		private void menuItemGoToJob_Click(object sender, EventArgs e) {
+			if(!TryGetSelectedJobFromMenuItem((MenuItem)sender,out Job job,out string error)){
+				MsgBox.Show(error);
+				return;
+			}
+			if(RequestJob!=null) { 
+				RequestJob(this,job.JobNum);
+			}
+		}
+				
+		/// <summary>Adds MenuItems to the MenuItem passed in, one for each JobCategory the user has permission to. For clarity: this manipulates the passed in object.</summary>
+		private void AddChildJobCategoriesToMenuItem(MenuItem menuItemCreateChildJob,GridOD grid) {
+			if(menuItemCreateChildJob==null || grid==null) {
+				return;
+			}
+			//The context menu will be populated with the categories a user is allowed to create based on their permissions.
+			foreach(string category in JobManagerCore.CategoryList) {
+				MenuItem menuItem = new MenuItem();
+				menuItem.Text=category;
+				menuItem.Tag=grid;
+				menuItem.Name=category;
+				menuItem.Click+=new System.EventHandler(menuItemCreateChildJob_Click);
+				menuItemCreateChildJob.MenuItems.Add(menuItem);
+			}
+		}
+
+		private void CreateGridContextMenus() {
+			List<GridOD> listGrids=new List<GridOD>() {
+				gridProjects,
+				gridConcept,
+				gridDefinition,
+				gridDevelopment,
+				gridPendingReview,
+				gridDocumentation,
+				gridComplete
+			};
+			foreach(GridOD grid in listGrids) {
+				if(grid.ContextMenu==null) { 
+					grid.ContextMenu=new ContextMenu();
+					grid.ContextMenu.Tag=grid;
+					grid.ContextMenu.Popup+=new System.EventHandler(gridContextMenu_Popup);
+					//Go to Job
+					MenuItem menuItemGoToJob=new MenuItem();
+					menuItemGoToJob.Text="Go to Job";
+					menuItemGoToJob.Click+=new System.EventHandler(menuItemGoToJob_Click);
+					menuItemGoToJob.Tag=grid;
+					grid.ContextMenu.MenuItems.Add(menuItemGoToJob);
+					//Create child job (nested menu)
+					MenuItem menuItemCreateChildJob=new MenuItem();
+					menuItemCreateChildJob.Text=_CHILD_JOB_MENU;
+					menuItemCreateChildJob.Name=_CHILD_JOB_MENU;
+					menuItemCreateChildJob.Tag= grid;
+					AddChildJobCategoriesToMenuItem(menuItemCreateChildJob,grid);
+					menuItemCreateChildJob.Popup+=new System.EventHandler(menuItemCreateChildJob_Popup);
+					grid.ContextMenu.MenuItems.Add(menuItemCreateChildJob);
+				}
+			}
+		}
+
+		private void SetEnabledForAllChildMenuItems(System.Windows.Forms.Menu.MenuItemCollection menuItems,bool isEnabled) {
+			foreach(MenuItem childMenuItem in menuItems) {
+				childMenuItem.Enabled=isEnabled;
+			}
+		}
+
+		private bool TryGetSelectedJobFromGrid(GridOD grid,out Job job) {
+			job=null;
+			if(grid==null) {
+				return false;
+			}
+			job=grid.SelectedTag<Job>();
+			if(job==null) {
+				return false;
+			}
+			return true;
+		}
+		#endregion ContextMenu Events
+
 		private bool ValidateJob(Job job) {
 			if(string.IsNullOrWhiteSpace(job.Title)) {
 				MessageBox.Show("Invalid Title.");
@@ -1410,19 +1568,22 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		///<summary>Gets a list of all descendants that are not cancelled jobs.</summary>
-		private List<Job> GetDescedantJobs(long parentNum) {
+		private List<Job> GetDescedentJobs(long parentNum,bool doRefreshJobs=false) {
+			if(_listJobsByTopParent==null || doRefreshJobs) {
+				RefreshListJobsByTopParent(checkIncludeComplete.Checked,checkIncludeCancelled.Checked);
+			}
 			List<Job> listJobsChildren=_listJobsByTopParent.FindAll(x => x.ParentNum==parentNum);
-			List<Job> listJobsDescedants=new List<Job>();
+			List<Job> listJobsDescedents=new List<Job>();
 			if(listJobsChildren.IsNullOrEmpty()) {
 				return listJobsChildren;
 			}
 			foreach(Job job in listJobsChildren) {
-				if(job.PhaseCur==JobPhase.Cancelled) {
+				if(!checkIncludeCancelled.Checked && job.PhaseCur==JobPhase.Cancelled) {
 					continue;
 				}
-				listJobsDescedants.AddRange(GetDescedantJobs(job.JobNum));
+				listJobsDescedents.AddRange(GetDescedentJobs(job.JobNum,false));
 			}
-			listJobsChildren.AddRange(listJobsDescedants);
+			listJobsChildren.AddRange(listJobsDescedents);
 			return listJobsChildren;
 		}
 
@@ -1431,9 +1592,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 				return;
 			}
 			//Get listJobs
-			Jobs.RefreshInMemoryListByTopParent(_jobCur,checkIncludeComplete.Checked,checkIncludeCancelled.Checked);
-			_listJobsByTopParent=JobManagerCore.ListJobsAll.FindAll(x => x.TopParentNum==_jobCur.TopParentNum && x.PhaseCur!=JobPhase.Cancelled);
-			List<Job> listJobsAllDecendants=GetDescedantJobs(_jobCur.JobNum);
+			RefreshListJobsByTopParent(checkIncludeComplete.Checked,checkIncludeCancelled.Checked);
+			List<Job> listJobsAllDecendants=GetDescedentJobs(_jobCur.JobNum,false);
 			double totalHoursEst=0;
 			double totalHourActual=0;
 			foreach(Job job in listJobsAllDecendants) {
@@ -1447,6 +1607,20 @@ namespace OpenDental.InternalTools.Job_Manager {
 			textHoursLeftDescendants.Text=(totalHoursEst-totalHourActual).ToString();
 		}
 
+		private void RefreshListJobsByTopParent(bool includeComplete,bool includeCancelled) {
+			Jobs.RefreshInMemoryListByTopParent(_jobCur,includeComplete,includeCancelled);
+			_listJobsByTopParent=JobManagerCore.ListJobsAll.FindAll(x => x.TopParentNum==_jobCur.TopParentNum);
+			if(!includeComplete) {
+				_listJobsByTopParent.RemoveAll(x => x.PhaseCur==JobPhase.Complete);
+			}
+			if(!includeCancelled) {
+				_listJobsByTopParent.RemoveAll(x => x.PhaseCur==JobPhase.Cancelled);
+			}
+		}
+
+		private void checkShowAllChildJobs_Click(object sender,EventArgs e) {
+			FillAllChildGrids();
+		}
 	}//end class
 
 }//end namespace

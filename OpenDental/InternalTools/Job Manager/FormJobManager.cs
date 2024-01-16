@@ -63,47 +63,6 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Returns a list of permissions based on the current user logged in.</summary>
-		private List<string> CategoryList {
-			get {
-				List<string> categoryList=Enum.GetNames(typeof(JobCategory)).ToList();
-				if(!JobPermissions.IsAuthorized(JobPerm.QueryTech,true)) {
-					//Queries can't be created from here
-					categoryList.Remove("Query");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.DesignTech,true)) {
-					//Marketing Jobs can't be created from here
-					categoryList.Remove("MarketingDesign");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.SpecialProject,true)) {
-					//SpecialProjects can't be created from here
-					categoryList.Remove("SpecialProject");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-					//NeedNoApproval can't be created from here
-					categoryList.Remove("NeedNoApproval");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.UnresolvedIssues,true)) {
-					//NeedNoApproval can't be created from here
-					categoryList.Remove("UnresolvedIssue");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-					//Project can't be created from here
-					categoryList.Remove("Project");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.Concept,true)) {
-					categoryList.Remove("Feature");
-					categoryList.Remove("Bug");
-					categoryList.Remove("Enhancement");
-					categoryList.Remove("ProgramBridge");
-					categoryList.Remove("InternalRequest");
-					categoryList.Remove("Conversion");
-					categoryList.Remove("Research");
-				}
-				return categoryList;
-			}
-		}
-
 		public FormJobManager() {
 			InitializeComponent();
 			InitializeLayoutManager(isLayoutMS:true);
@@ -118,10 +77,10 @@ namespace OpenDental {
 			_listJobTeams=JobTeams.GetDeepCopy();
 			FillPriorityList();
 			FillComboUser();
-			FillComboTeamFilter(comboTeamFilterNeedsEngineer);
-			FillComboTeamFilter(comboTeamFilterNeedsExpert);
+			FillComboTeamFilter(comboTeamFilterNeedsEngineer,doAddAllOption:true);
+			FillComboTeamFilter(comboTeamFilterNeedsExpert,doAddAllOption:true);
 			FillComboTeamFilter(comboTeamSearch,doAddAllOption:true);
-			FillComboTeamFilter(comboTeamFilterProjectManagement);
+			FillComboTeamFilter(comboTeamFilterProjectManagement,doAddAllOption:true);
 			#region Fill Proposed Version Combos
 			comboProposedVersionNeedsAction.Items.Add("All");
 			comboProposedVersionNeedsEngineer.Items.Add("All");
@@ -1164,15 +1123,15 @@ namespace OpenDental {
 		///<summary>Fills tabProjectManagement with top parent Projects.</summary>
 		private void FillGridProjectManagement() {
 			if(!tabControlNav.TabPages.Contains(tabProjectManagement)) {
-				return;
+				return; 
 			}
-			List<Job> listJobs=JobManagerCore.ListJobsAll.FindAll(x => x.Category==JobCategory.Project && x.JobNum==x.TopParentNum);
 			long jobTeamNum=comboTeamFilterProjectManagement.GetSelected<JobTeam>().JobTeamNum;
-			if(jobTeamNum>-1) {
-				listJobs=listJobs.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam && y.FKey==jobTeamNum));
+			List<Job> listJobs;
+			if(checkOnlyShowTopLevel.Checked) {
+				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project && x.JobNum==x.TopParentNum);
 			}
-			else {
-				listJobs=listJobs.FindAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam));
+			else{
+				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project);
 			}
 			_dicRowNotes.Clear();
 			gridProjectManagement.Title="Projects";
@@ -2510,6 +2469,10 @@ namespace OpenDental {
 			FillActiveTabGrid();
 		}
 
+		private void checkOnlyShowTopLevel_CheckedChanged(object sender,EventArgs e) {
+			FillActiveTabGrid();
+		}
+
 		private void butQueriesRefresh_Click(object sender,EventArgs e) {
 			//Completed and Cancelled jobs are not cached by default.
 			//Go get any jobs from the database that match the filter criteria for the queries tab (check boxes and date range).
@@ -2704,7 +2667,7 @@ namespace OpenDental {
 				return;
 			}
 			//Get category list for the user
-			List<string> categoryList=CategoryList;
+			List<string> categoryList=JobManagerCore.CategoryList;
 			if(parentNum>0 && topParentNum>0 && userControlJobManagerEditor.JobCur.Category!=JobCategory.Project) {
 				categoryList.Remove("Project");//Projects can only have other Projects as Parents
 			}
@@ -2951,6 +2914,10 @@ namespace OpenDental {
 		#endregion
 
 		#region JobEdit Methods
+		private void userControlJobManagerEditor_GoToJob(object sender,long jobNum) {
+			LoadJob(Jobs.GetOneFilled(jobNum),true);
+		}
+
 		///<summary>Loads whatever job control is necessary in order to display the job within the manager.
 		///Also refreshes the cache with the job passed in and updates all corresponding controls and grids.
 		///This method will not load the passed in job if the current job cannot be saved correctly.</summary>

@@ -57,6 +57,12 @@
 			this.labelHoursEstimate = new System.Windows.Forms.Label();
 			this.labelHoursEstimateSum = new System.Windows.Forms.Label();
 			this.labelHoursLeftSum = new System.Windows.Forms.Label();
+			this.labelHoursActual = new System.Windows.Forms.Label();
+			this.textCheckedOut = new System.Windows.Forms.TextBox();
+			this.labelCheckedOut = new System.Windows.Forms.Label();
+			this.timerTitle = new System.Windows.Forms.Timer(this.components);
+			this.timerVersion = new System.Windows.Forms.Timer(this.components);
+			this.textHoursActualDescendants = new OpenDental.ValidDouble();
 			this.butChangeEst = new OpenDental.UI.Button();
 			this.textHoursLeftDescendants = new OpenDental.ValidDouble();
 			this.butCalculateSums = new OpenDental.UI.Button();
@@ -66,6 +72,7 @@
 			this.butParentRemove = new OpenDental.UI.Button();
 			this.butVersionPrompt = new OpenDental.UI.Button();
 			this.groupGridFilters = new OpenDental.UI.GroupBox();
+			this.checkShowAllChildJobs = new OpenDental.UI.CheckBox();
 			this.checkIncludeCancelled = new OpenDental.UI.CheckBox();
 			this.checkIncludeComplete = new OpenDental.UI.CheckBox();
 			this.butActions = new OpenDental.UI.Button();
@@ -74,6 +81,7 @@
 			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.comboJobTeam = new OpenDental.UI.ComboBox();
 			this.groupAddChild = new OpenDental.UI.GroupBox();
+			this.butCreateNeedsNoApproval = new OpenDental.UI.Button();
 			this.butCreateProject = new OpenDental.UI.Button();
 			this.butCreateHQRequest = new OpenDental.UI.Button();
 			this.butCreateBug = new OpenDental.UI.Button();
@@ -81,12 +89,6 @@
 			this.butCreateInternalRequest = new OpenDental.UI.Button();
 			this.butCreateFeature = new OpenDental.UI.Button();
 			this.butCreateResearch = new OpenDental.UI.Button();
-			this.textHoursActualDescendants = new OpenDental.ValidDouble();
-			this.labelHoursActual = new System.Windows.Forms.Label();
-			this.textCheckedOut = new System.Windows.Forms.TextBox();
-			this.labelCheckedOut = new System.Windows.Forms.Label();
-			this.timerTitle = new System.Windows.Forms.Timer(this.components);
-			this.timerVersion = new System.Windows.Forms.Timer(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -495,6 +497,54 @@
 			this.labelHoursLeftSum.Text = "Hrs. Left Sum";
 			this.labelHoursLeftSum.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// labelHoursActual
+			// 
+			this.labelHoursActual.Location = new System.Drawing.Point(11, 221);
+			this.labelHoursActual.Name = "labelHoursActual";
+			this.labelHoursActual.Size = new System.Drawing.Size(83, 20);
+			this.labelHoursActual.TabIndex = 375;
+			this.labelHoursActual.Text = "Hrs. Actual Sum";
+			this.labelHoursActual.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textCheckedOut
+			// 
+			this.textCheckedOut.Location = new System.Drawing.Point(95, 112);
+			this.textCheckedOut.MaxLength = 100;
+			this.textCheckedOut.Name = "textCheckedOut";
+			this.textCheckedOut.ReadOnly = true;
+			this.textCheckedOut.Size = new System.Drawing.Size(117, 20);
+			this.textCheckedOut.TabIndex = 378;
+			this.textCheckedOut.TabStop = false;
+			// 
+			// labelCheckedOut
+			// 
+			this.labelCheckedOut.Location = new System.Drawing.Point(4, 114);
+			this.labelCheckedOut.Name = "labelCheckedOut";
+			this.labelCheckedOut.Size = new System.Drawing.Size(90, 16);
+			this.labelCheckedOut.TabIndex = 377;
+			this.labelCheckedOut.Text = "Checked Out";
+			this.labelCheckedOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// timerTitle
+			// 
+			this.timerTitle.Interval = 3000;
+			this.timerTitle.Tick += new System.EventHandler(this.timerTitle_Tick);
+			// 
+			// timerVersion
+			// 
+			this.timerVersion.Interval = 3000;
+			this.timerVersion.Tick += new System.EventHandler(this.timerVersion_Tick);
+			// 
+			// textHoursActualDescendants
+			// 
+			this.textHoursActualDescendants.Location = new System.Drawing.Point(95, 220);
+			this.textHoursActualDescendants.MaxVal = 1000000D;
+			this.textHoursActualDescendants.MinVal = 0D;
+			this.textHoursActualDescendants.Name = "textHoursActualDescendants";
+			this.textHoursActualDescendants.ReadOnly = true;
+			this.textHoursActualDescendants.Size = new System.Drawing.Size(44, 20);
+			this.textHoursActualDescendants.TabIndex = 376;
+			// 
 			// butChangeEst
 			// 
 			this.butChangeEst.Location = new System.Drawing.Point(141, 177);
@@ -575,18 +625,29 @@
 			// groupGridFilters
 			// 
 			this.groupGridFilters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
+			this.groupGridFilters.Controls.Add(this.checkShowAllChildJobs);
 			this.groupGridFilters.Controls.Add(this.checkIncludeCancelled);
 			this.groupGridFilters.Controls.Add(this.checkIncludeComplete);
-			this.groupGridFilters.Location = new System.Drawing.Point(8, 546);
+			this.groupGridFilters.Location = new System.Drawing.Point(8, 528);
 			this.groupGridFilters.Name = "groupGridFilters";
-			this.groupGridFilters.Size = new System.Drawing.Size(204, 65);
+			this.groupGridFilters.Size = new System.Drawing.Size(204, 83);
 			this.groupGridFilters.TabIndex = 358;
 			this.groupGridFilters.Text = "Grid Filters";
+			// 
+			// checkShowAllChildJobs
+			// 
+			this.checkShowAllChildJobs.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkShowAllChildJobs.Location = new System.Drawing.Point(6, 55);
+			this.checkShowAllChildJobs.Name = "checkShowAllChildJobs";
+			this.checkShowAllChildJobs.Size = new System.Drawing.Size(150, 18);
+			this.checkShowAllChildJobs.TabIndex = 328;
+			this.checkShowAllChildJobs.Text = "Show all descendent jobs";
+			this.checkShowAllChildJobs.Click += new System.EventHandler(this.checkShowAllChildJobs_Click);
 			// 
 			// checkIncludeCancelled
 			// 
 			this.checkIncludeCancelled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncludeCancelled.Location = new System.Drawing.Point(46, 44);
+			this.checkIncludeCancelled.Location = new System.Drawing.Point(42, 35);
 			this.checkIncludeCancelled.Name = "checkIncludeCancelled";
 			this.checkIncludeCancelled.Size = new System.Drawing.Size(114, 18);
 			this.checkIncludeCancelled.TabIndex = 327;
@@ -596,7 +657,7 @@
 			// checkIncludeComplete
 			// 
 			this.checkIncludeComplete.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncludeComplete.Location = new System.Drawing.Point(46, 20);
+			this.checkIncludeComplete.Location = new System.Drawing.Point(42, 17);
 			this.checkIncludeComplete.Name = "checkIncludeComplete";
 			this.checkIncludeComplete.Size = new System.Drawing.Size(114, 18);
 			this.checkIncludeComplete.TabIndex = 326;
@@ -649,6 +710,7 @@
 			// groupAddChild
 			// 
 			this.groupAddChild.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
+			this.groupAddChild.Controls.Add(this.butCreateNeedsNoApproval);
 			this.groupAddChild.Controls.Add(this.butCreateProject);
 			this.groupAddChild.Controls.Add(this.butCreateHQRequest);
 			this.groupAddChild.Controls.Add(this.butCreateBug);
@@ -658,120 +720,81 @@
 			this.groupAddChild.Controls.Add(this.butCreateResearch);
 			this.groupAddChild.Location = new System.Drawing.Point(7, 330);
 			this.groupAddChild.Name = "groupAddChild";
-			this.groupAddChild.Size = new System.Drawing.Size(205, 214);
+			this.groupAddChild.Size = new System.Drawing.Size(205, 192);
 			this.groupAddChild.TabIndex = 335;
-			this.groupAddChild.Text = "Add child job for selected Project";
+			this.groupAddChild.Text = "Create child job for selected Project";
+			// 
+			// butNeedsNoApproval
+			// 
+			this.butCreateNeedsNoApproval.Location = new System.Drawing.Point(103, 74);
+			this.butCreateNeedsNoApproval.Name = "butNeedsNoApproval";
+			this.butCreateNeedsNoApproval.Size = new System.Drawing.Size(98, 22);
+			this.butCreateNeedsNoApproval.TabIndex = 333;
+			this.butCreateNeedsNoApproval.Text = "NeedsNoApproval";
+			this.butCreateNeedsNoApproval.Click += new System.EventHandler(this.butCreateJob_Click);
 			// 
 			// butCreateProject
 			// 
-			this.butCreateProject.Location = new System.Drawing.Point(57, 186);
+			this.butCreateProject.Location = new System.Drawing.Point(4, 102);
 			this.butCreateProject.Name = "butCreateProject";
-			this.butCreateProject.Size = new System.Drawing.Size(104, 22);
+			this.butCreateProject.Size = new System.Drawing.Size(98, 22);
 			this.butCreateProject.TabIndex = 332;
 			this.butCreateProject.Text = "Project";
 			this.butCreateProject.Click += new System.EventHandler(this.butCreateJob_Click);
 			// 
 			// butCreateHQRequest
 			// 
-			this.butCreateHQRequest.Location = new System.Drawing.Point(57, 130);
+			this.butCreateHQRequest.Location = new System.Drawing.Point(103, 46);
 			this.butCreateHQRequest.Name = "butCreateHQRequest";
-			this.butCreateHQRequest.Size = new System.Drawing.Size(104, 22);
+			this.butCreateHQRequest.Size = new System.Drawing.Size(98, 22);
 			this.butCreateHQRequest.TabIndex = 329;
 			this.butCreateHQRequest.Text = "HQ Request";
 			this.butCreateHQRequest.Click += new System.EventHandler(this.butCreateJob_Click);
 			// 
 			// butCreateBug
 			// 
-			this.butCreateBug.Location = new System.Drawing.Point(57, 46);
+			this.butCreateBug.Location = new System.Drawing.Point(4, 18);
 			this.butCreateBug.Name = "butCreateBug";
-			this.butCreateBug.Size = new System.Drawing.Size(104, 22);
+			this.butCreateBug.Size = new System.Drawing.Size(98, 22);
 			this.butCreateBug.TabIndex = 322;
 			this.butCreateBug.Text = "Bug";
 			this.butCreateBug.Click += new System.EventHandler(this.butCreateJob_Click);
 			// 
 			// butCreateEnhancement
 			// 
-			this.butCreateEnhancement.Location = new System.Drawing.Point(57, 74);
+			this.butCreateEnhancement.Location = new System.Drawing.Point(103, 18);
 			this.butCreateEnhancement.Name = "butCreateEnhancement";
-			this.butCreateEnhancement.Size = new System.Drawing.Size(104, 22);
+			this.butCreateEnhancement.Size = new System.Drawing.Size(98, 22);
 			this.butCreateEnhancement.TabIndex = 327;
 			this.butCreateEnhancement.Text = "Enhancement";
 			this.butCreateEnhancement.Click += new System.EventHandler(this.butCreateJob_Click);
 			// 
 			// butCreateInternalRequest
 			// 
-			this.butCreateInternalRequest.Location = new System.Drawing.Point(57, 102);
+			this.butCreateInternalRequest.Location = new System.Drawing.Point(4, 74);
 			this.butCreateInternalRequest.Name = "butCreateInternalRequest";
-			this.butCreateInternalRequest.Size = new System.Drawing.Size(104, 22);
+			this.butCreateInternalRequest.Size = new System.Drawing.Size(98, 22);
 			this.butCreateInternalRequest.TabIndex = 328;
 			this.butCreateInternalRequest.Text = "Internal Request";
 			this.butCreateInternalRequest.Click += new System.EventHandler(this.butCreateJob_Click);
 			// 
 			// butCreateFeature
 			// 
-			this.butCreateFeature.Location = new System.Drawing.Point(57, 18);
+			this.butCreateFeature.Location = new System.Drawing.Point(4, 46);
 			this.butCreateFeature.Name = "butCreateFeature";
-			this.butCreateFeature.Size = new System.Drawing.Size(104, 22);
+			this.butCreateFeature.Size = new System.Drawing.Size(98, 22);
 			this.butCreateFeature.TabIndex = 330;
 			this.butCreateFeature.Text = "Feature";
 			this.butCreateFeature.Click += new System.EventHandler(this.butCreateJob_Click);
 			// 
 			// butCreateResearch
 			// 
-			this.butCreateResearch.Location = new System.Drawing.Point(57, 158);
+			this.butCreateResearch.Location = new System.Drawing.Point(103, 102);
 			this.butCreateResearch.Name = "butCreateResearch";
-			this.butCreateResearch.Size = new System.Drawing.Size(104, 22);
+			this.butCreateResearch.Size = new System.Drawing.Size(98, 22);
 			this.butCreateResearch.TabIndex = 331;
 			this.butCreateResearch.Text = "Research";
 			this.butCreateResearch.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// textHoursActualDescendants
-			// 
-			this.textHoursActualDescendants.Location = new System.Drawing.Point(95, 220);
-			this.textHoursActualDescendants.MaxVal = 1000000D;
-			this.textHoursActualDescendants.MinVal = 0D;
-			this.textHoursActualDescendants.Name = "textHoursActualDescendants";
-			this.textHoursActualDescendants.ReadOnly = true;
-			this.textHoursActualDescendants.Size = new System.Drawing.Size(44, 20);
-			this.textHoursActualDescendants.TabIndex = 376;
-			// 
-			// labelHoursActual
-			// 
-			this.labelHoursActual.Location = new System.Drawing.Point(11, 221);
-			this.labelHoursActual.Name = "labelHoursActual";
-			this.labelHoursActual.Size = new System.Drawing.Size(83, 20);
-			this.labelHoursActual.TabIndex = 375;
-			this.labelHoursActual.Text = "Hrs. Actual Sum";
-			this.labelHoursActual.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textCheckedOut
-			// 
-			this.textCheckedOut.Location = new System.Drawing.Point(95, 112);
-			this.textCheckedOut.MaxLength = 100;
-			this.textCheckedOut.Name = "textCheckedOut";
-			this.textCheckedOut.ReadOnly = true;
-			this.textCheckedOut.Size = new System.Drawing.Size(117, 20);
-			this.textCheckedOut.TabIndex = 378;
-			this.textCheckedOut.TabStop = false;
-			// 
-			// labelCheckedOut
-			// 
-			this.labelCheckedOut.Location = new System.Drawing.Point(4, 114);
-			this.labelCheckedOut.Name = "labelCheckedOut";
-			this.labelCheckedOut.Size = new System.Drawing.Size(90, 16);
-			this.labelCheckedOut.TabIndex = 377;
-			this.labelCheckedOut.Text = "Checked Out";
-			this.labelCheckedOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// timerTitle
-			// 
-			this.timerTitle.Interval = 3000;
-			this.timerTitle.Tick += new System.EventHandler(this.timerTitle_Tick);
-			// 
-			// timerVersion
-			// 
-			this.timerVersion.Interval = 3000;
-			this.timerVersion.Tick += new System.EventHandler(this.timerVersion_Tick);
 			// 
 			// UserControlProjectEdit
 			// 
@@ -893,5 +916,7 @@
 		private System.Windows.Forms.Label labelCheckedOut;
 		private System.Windows.Forms.Timer timerTitle;
 		private System.Windows.Forms.Timer timerVersion;
+		private UI.CheckBox checkShowAllChildJobs;
+		private UI.Button butCreateNeedsNoApproval;
 	}
 }

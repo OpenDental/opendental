@@ -217,6 +217,12 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Default true.</summary>
+		[Category("OD")]
+		[Description("Default true.")]
+		[DefaultValue(true)]
+		public bool EscClosesWindow{get;set; }=true;
+
 		/*This is probably a bad idea because it hides too much from the programmers.
 		public new Control.ControlCollection Controls{
 			get{
@@ -433,12 +439,9 @@ namespace OpenDental {
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			//PreviewKeyDown didn't work for some reason even though KeyPreview is true.
 			if(keyData==Keys.Escape){
-				CancelEventArgs ea=new CancelEventArgs();
-				CloseXClicked?.Invoke(this,ea);
-				if(ea.Cancel){
-					return base.ProcessCmdKey(ref msg,keyData);
+				if(EscClosesWindow){
+					Close();
 				}
-				Close();
 			}
 			return base.ProcessCmdKey(ref msg,keyData);
 		}

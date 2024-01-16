@@ -131,6 +131,10 @@ namespace OpenDental {
 			if(widthRatio<heightRatio) {
 				scalingRatio=widthRatio;
 			}
+			//Passing in 0 causes g.ScaleTransform to throw an error.
+			if(scalingRatio==0) {
+				return;
+			}
 			g.ScaleTransform(scalingRatio,scalingRatio);
 			Rectangle rectangle=new Rectangle(0,0,sheetSelected.WidthPage,sheetSelected.HeightPage);
 			g.FillRectangle(Brushes.White,rectangle);

@@ -116,11 +116,6 @@ namespace OpenDental {
 				if(_canEditEClipboard || _canEditODTouch) {
 					#region Delete click handler
 					void DeleteClick(object sender,EventArgs e) {
-						if(gridMobileAppDevices.SelectedTag<MobileAppDevice>().PatNum>0) {
-							MsgBox.Show("A patient is currently using this device. Please clear the patient from the device using the Kiosk Manager" +
-								" or wait until the patient is no longer using the device.");
-							return;
-						}
 						if(!MsgBox.Show(MsgBoxButtons.YesNo,"This will remove the device from the database and all other workstations on Save." +
 							" Continue?")) {
 							return;

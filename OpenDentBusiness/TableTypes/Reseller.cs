@@ -4,6 +4,7 @@ namespace OpenDentBusiness {
 
 	///<summary>Only used at HQ.  If a row is present in this table, then this customer is a reseller.  Also holds their credentials for the reseller portal.</summary>
 	[Serializable]
+	[CrudTable(IsMissingInGeneral=true)]
 	public class Reseller:TableBase {
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]

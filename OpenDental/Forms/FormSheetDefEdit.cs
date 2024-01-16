@@ -2892,6 +2892,12 @@ namespace OpenDental {
 						return false;
 					}
 					break;
+				case SheetTypeEnum.PaymentPlan:
+					if(SheetDef_.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.SigBox).GroupBy(x => x.Language).Any(x => x.ToList().Count>1)) {
+						MessageBox.Show(Lan.g(this,"Payment plans cannot have more than one signature box."));
+						return false;
+					}
+					break;
 			}
 			//Verify that the current SheetDef can be serialized and deserialized correctly (valid XML).
 			XmlSerializer xmlSerializer=new XmlSerializer(typeof(SheetDef));

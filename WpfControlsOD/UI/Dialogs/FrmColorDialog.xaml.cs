@@ -220,11 +220,19 @@ namespace WpfControls.UI {
 
 		///<summary>Sets the box showing the final color.</summary>
 		private void SetColorFinal(){
+			if(panelColorFinal is null){
+				//Jordan this was null in certain scenarios, although we can't duplicate now.
+				return;
+			}
 			panelColorFinal.ColorBack=_color;
 		}
 
 		///<summary>//Sets hex box according to current color</summary>
 		private void SetHex(){
+			if(textHex is null){
+				//Jordan this was null in certain scenarios, although we can't duplicate now.
+				return;
+			}
 			_isInputLocked=true;
 			textHex.Text=_color.ToString();//includes #
 			_isInputLocked=false;

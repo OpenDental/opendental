@@ -156,6 +156,12 @@ How to:
 		#endregion Events
 
 		#region Properties
+		///<summary>Default true.</summary>
+		[Category("OD")]
+		[Description("Default true.")]
+		[DefaultValue(true)]
+		public bool EscClosesWindow{get;set; }=true;
+
 		[Description("Default true. Set to false to hide the help button.  Form 'HelpButton' property is ignored.")]
 		[Category("OD")]
 		[DefaultValue(true)]
@@ -598,11 +604,12 @@ How to:
 			//It's already built in for you here:
 			if(e.Key==Key.Escape) {
 				CancelEventArgs ea=new CancelEventArgs();
-				CloseXClicked?.Invoke(this,ea);
 				if(ea.Cancel){
 					return;
 				}
-				Close();
+				if(EscClosesWindow){
+					Close();
+				}
 			}
 			//You can always create an event handler for CloseXClicked or FormClosing if you want to warn or block them.
 			//--------------------------------------------------------------------------------------------------------------
