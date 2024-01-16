@@ -26,7 +26,17 @@ namespace OpenDentBusiness.Email {
 		public static void WireEmailUnsecure(BasicEmailAddress address,BasicEmailMessage emailMessage,NameValueCollection nameValueCollectionHeaders
 			,params AlternateView[] arrayAlternateViews) 
 		{
-			WireEmailUnsecure(address,emailMessage,nameValueCollectionHeaders,EMAIL_SEND_TIMEOUT_MS,arrayAlternateViews);
+			try {
+				WireEmailUnsecure(address,emailMessage,nameValueCollectionHeaders,EMAIL_SEND_TIMEOUT_MS,arrayAlternateViews);
+			}
+			catch(Exception ex){
+				if(ex.Message.Split(' ').Contains("451")) {
+					throw new ODException("Email provider is having temporary send issues. This could be due to high email demand. Please try again later.");
+				}
+				else {
+					throw new ODException("Error sending email",ex);
+				}
+			}
 		}
 
 		///<summary>Throws exceptions. Attempts to physically send the message over the network wire. This is used from wherever email needs to be 

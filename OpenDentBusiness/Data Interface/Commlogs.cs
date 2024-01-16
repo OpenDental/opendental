@@ -209,7 +209,11 @@ namespace OpenDentBusiness{
 			newMeasureEvent.DateTEvent=com.CommDateTime;
 			newMeasureEvent.EventType=EhrMeasureEventType.ReminderSent;
 			newMeasureEvent.PatNum=com.PatNum;
-			newMeasureEvent.MoreInfo=com.Note;
+			string moreInfo=com.Note;
+			if(moreInfo.Length>200) {
+				moreInfo=moreInfo.Substring(0,199)+"...";
+			}
+			newMeasureEvent.MoreInfo=moreInfo;
 			EhrMeasureEvents.Insert(newMeasureEvent);
 			return com;
 		}

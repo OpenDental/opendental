@@ -1308,7 +1308,7 @@ namespace OpenDentBusiness{
 			claimProcOverpay.Percentage=-1;//Not applicable.
 			claimProcOverpay.PercentOverride=-1;//Not applicable.
 			claimProcOverpay.CopayAmt=-1;//Not applicable.
-			claimProcOverpay.NoBillIns=true;//The regular payment claimproc is what you sent to insurance, not the overpay claimproc.
+			claimProcOverpay.NoBillIns=false;//Job 50054. NADG wants this set to false. When true, it hides the financial info for the claimproc in the Procedure Info window.
 			claimProcOverpay.PaidOtherIns=-1;//Not applicable.
 			claimProcOverpay.BaseEst=insEstTotalOverride;
 			claimProcOverpay.CopayOverride=-1;//Not applicable.
