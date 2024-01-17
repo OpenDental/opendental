@@ -5158,7 +5158,7 @@ namespace OpenDental.UI{
 				panelHeaderTip.Visible=false;
 				return;
 			}
-			panelHeaderTip.Width=TextRenderer.MeasureText(txt,_font).Width+2;
+			panelHeaderTip.Width=TextRenderer.MeasureText(txt,_font).Width+10;//Add in extra pixels to help with zoom font changes
 			panelHeaderTip.Height=TextRenderer.MeasureText(txt,_font).Height+3;
 			labelHeaderTip.Height=panelHeaderTip.Height;
 			labelHeaderTip.Text=txt;
