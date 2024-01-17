@@ -130,6 +130,7 @@ namespace OpenDentBusiness{
 			}
 			List<OrthoChartRow> listOrthChartRowsForPat=OrthoChartRows.GetAllForPatient(patCur.PatNum,doIncludeOrthoCharts:false);
 			List<OrthoChart> listDB=GetByOrthoChartRowNums(listOrthChartRowsForPat.Select(x => x.OrthoChartRowNum).ToList());
+			OrthoChartLogs.Log("OrthoCharts.Sync() - orthocharts after getting from the database.",listDB,0,Environment.MachineName,patCur.PatNum,Security.CurUser.UserNum);
 			//This code is mostly a copy of the Crud sync.  Differences include sort and logging.
 			//Inserts, updates, or deletes database rows to match supplied list.
 			//Adding items to lists changes the order of operation. All inserts are completed first, then updates, then deletes.
@@ -149,7 +150,9 @@ namespace OpenDentBusiness{
 			}
 			listNew=listNew.FindAll(x => listColNames.Contains(x.FieldName));
 			listNew.Sort(OrthoCharts.Sort);
+			OrthoChartLogs.Log("OrthoCharts.Sync() - orthocharts passed into method after sorting.",listNew,0,Environment.MachineName,patCur.PatNum,Security.CurUser.UserNum);
 			listDB.Sort(OrthoCharts.Sort);
+			OrthoChartLogs.Log("OrthoCharts.Sync() - orthocharts from db after sorting.",listDB,0,Environment.MachineName,patCur.PatNum,Security.CurUser.UserNum);
 			int idxNew=0;
 			int idxDB=0;
 			OrthoChart fieldNew;
@@ -176,12 +179,12 @@ namespace OpenDentBusiness{
 					idxDB++;
 					continue;
 				}
-				else if(fieldNew.OrthoChartRowNum<fieldDB.OrthoChartRowNum) {//newPK less than dbPK, newItem is 'next'
+				else if(fieldNew.OrthoChartNum<fieldDB.OrthoChartNum) {//newPK less than dbPK, newItem is 'next'
 					listIns.Add(fieldNew);
 					idxNew++;
 					continue;
 				}
-				else if(fieldNew.OrthoChartRowNum>fieldDB.OrthoChartRowNum) {//dbPK less than newPK, dbItem is 'next'
+				else if(fieldNew.OrthoChartNum>fieldDB.OrthoChartNum) {//dbPK less than newPK, dbItem is 'next'
 					listDel.Add(fieldDB);
 					idxDB++;
 					continue;
