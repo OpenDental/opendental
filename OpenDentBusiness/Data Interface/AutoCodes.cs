@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using CodeBase;
 using DataConnectionBase;
 
 namespace OpenDentBusiness{
@@ -152,6 +153,48 @@ namespace OpenDentBusiness{
 				autoCodeNum=autoCode.AutoCodeNum;
 			}
 			return autoCodeNum;
+		}
+
+		///<summary>Applies the autocode to the procedure that is passed in. Since the procedure is being passed in by reference, we are editing it and do not need to return it.</summary>
+		public static void ApplyAutoCodeToProcedure(Procedure procedure,long verifyCodeNum,List<PatPlan> listPatPlans,List<InsSub> listInsSubs,List<InsPlan> listInsPlan,Patient patient,List<ClaimProc> listClaimProcs,List<Benefit> listBenefits,ProcedureCode procedureCode,string strTeeth) {
+			Procedure procedureOld=procedure.Copy();
+			procedure.CodeNum=verifyCodeNum;
+			List<ProcStat> listProcStats=new List<ProcStat>();
+			listProcStats.Add(ProcStat.TP);
+			listProcStats.Add(ProcStat.C);
+			listProcStats.Add(ProcStat.TPi);
+			listProcStats.Add(ProcStat.Cn);
+			if(listProcStats.Contains(procedure.ProcStatus)) {//Only change the fee if Complete, TP, TPi, or Cn.
+				InsSub insSub=null;
+				InsPlan insPlan=null;
+				if(listPatPlans.Count>0) {
+					insSub=InsSubs.GetSub(listPatPlans[0].InsSubNum,listInsSubs);
+					insPlan=InsPlans.GetPlan(insSub.PlanNum,listInsPlan);
+				}
+				procedure.ProcFee=Fees.GetAmount0(procedure.CodeNum,FeeScheds.GetFeeSched(patient,listInsPlan,listPatPlans,listInsSubs,procedure.ProvNum),
+					procedure.ClinicNum,procedure.ProvNum);
+				if(insPlan!=null && insPlan.PlanType=="p") {//PPO
+					double standardFee=Fees.GetAmount0(procedure.CodeNum,Providers.GetProv(Patients.GetProvNum(patient)).FeeSched,procedure.ClinicNum,
+						procedure.ProvNum);
+					procedure.ProcFee=Math.Max(procedure.ProcFee,standardFee);
+				}
+			}
+			Procedures.Update(procedure,procedureOld);
+			//Compute estimates required, otherwise if adding through quick add, it could have incorrect WO or InsEst if code changed.
+			Procedures.ComputeEstimates(procedure,patient.PatNum,listClaimProcs,true,listInsPlan,listPatPlans,listBenefits,patient.Age,listInsSubs);
+			Recalls.Synch(procedure.PatNum);
+			if(!procedure.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)) {
+				return;
+			}
+			string strLogText=procedureCode.ProcCode+" ("+procedure.ProcStatus+"), ";
+			if(strTeeth!=null && strTeeth.Trim()!="") {
+				strLogText+=Lans.g("FrmAutoCodeLessIntrusive","Teeth")+": "+strTeeth+", ";
+			}
+			strLogText+=Lans.g("FrmAutoCodeLessIntrusive","Fee")+": "+procedure.ProcFee.ToString("F")+", "+procedureCode.Descript;
+			if(procedure.ProcStatus.In(ProcStat.EO,ProcStat.EC)) {
+				SecurityLogs.MakeLogEntry(EnumPermType.ProcExistingEdit,patient.PatNum,strLogText);
+			}
+			return;
 		}
 
 		//------

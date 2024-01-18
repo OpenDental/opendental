@@ -1108,14 +1108,26 @@ namespace OpenDentBusiness{
 			return Crud.ProcedureCodeCrud.SelectMany(command);
 		}
 
-		///<summary>Gets procedurecodes from the database after a supplied DateTStamp, ordered by ProcCode. Used in the API.</summary>
+		///<summary>Gets one procedurecode from db. Returns null if not found.</summary>
+		public static ProcedureCode GetOneProcCodeForApi(long codeNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<ProcedureCode>(MethodBase.GetCurrentMethod(),codeNum);
+			}
+			string command="SELECT * FROM procedurecode "
+				+"WHERE CodeNum = '"+POut.Long(codeNum)+"'";
+			return Crud.ProcedureCodeCrud.SelectOne(command);
+		}
+
+		///<summary>Gets procedurecodes from the database optionally filtered by DateTStamp.</summary>
 		public static List<ProcedureCode> GetProcCodesForApi(int limit,int offset,DateTime dateTStamp) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ProcedureCode>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStamp);
 			}
-			string command="SELECT * FROM procedurecode "
-				+"WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" "
-				+"ORDER BY ProcCode "
+			string command="SELECT * FROM procedurecode ";
+			if(dateTStamp>DateTime.MinValue) {
+				command+="WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" ";
+			}
+			command+="ORDER BY CodeNum "//Ensure order for limit and offset. Ordered by ProcCode in 23.3.24 and older.
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.ProcedureCodeCrud.SelectMany(command);
 		}

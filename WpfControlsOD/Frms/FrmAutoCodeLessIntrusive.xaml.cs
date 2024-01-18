@@ -85,44 +85,7 @@ namespace OpenDental {
 				return;
 			}
 			//Moved from FormProcEdit.SaveAndClose() in version 16.3+
-			Procedure procedureOld=ProcedureCur.Copy();
-			ProcedureCur.CodeNum=_verifyCodeNum;
-			List<ProcStat> listProcStats=new List<ProcStat>();
-			listProcStats.Add(ProcStat.TP);
-			listProcStats.Add(ProcStat.C);
-			listProcStats.Add(ProcStat.TPi);
-			listProcStats.Add(ProcStat.Cn);
-			if(listProcStats.Contains(ProcedureCur.ProcStatus)) {//Only change the fee if Complete, TP, TPi, or Cn.
-				InsSub insSub=null;
-				InsPlan insPlan=null;
-				if(_listPatPlans.Count>0) {
-					insSub=InsSubs.GetSub(_listPatPlans[0].InsSubNum,_listInsSubs);
-					insPlan=InsPlans.GetPlan(insSub.PlanNum,_listInsPlans);
-				}
-				ProcedureCur.ProcFee=Fees.GetAmount0(ProcedureCur.CodeNum,FeeScheds.GetFeeSched(_patient,_listInsPlans,_listPatPlans,_listInsSubs,ProcedureCur.ProvNum),
-					ProcedureCur.ClinicNum,ProcedureCur.ProvNum);
-				if(insPlan!=null && insPlan.PlanType=="p") {//PPO
-					double standardFee=Fees.GetAmount0(ProcedureCur.CodeNum,Providers.GetProv(Patients.GetProvNum(_patient)).FeeSched,ProcedureCur.ClinicNum,
-						ProcedureCur.ProvNum);
-					ProcedureCur.ProcFee=Math.Max(ProcedureCur.ProcFee,standardFee);
-				}
-			}
-			Procedures.Update(ProcedureCur,procedureOld);
-			//Compute estimates required, otherwise if adding through quick add, it could have incorrect WO or InsEst if code changed.
-			Procedures.ComputeEstimates(ProcedureCur,_patient.PatNum,_listClaimProcs,true,_listInsPlans,_listPatPlans,_listBenefits,_patient.Age,_listInsSubs);
-			Recalls.Synch(ProcedureCur.PatNum);
-			if(!ProcedureCur.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)) {
-				IsDialogOK=true;
-				return;
-			}
-			string strLogText=_procedureCode.ProcCode+" ("+ProcedureCur.ProcStatus+"), ";
-			if(_strTeeth!=null && _strTeeth.Trim()!="") {
-				strLogText+=Lans.g(this,"Teeth")+": "+_strTeeth+", ";
-			}
-			strLogText+=Lans.g(this,"Fee")+": "+ProcedureCur.ProcFee.ToString("F")+", "+_procedureCode.Descript;
-			if(ProcedureCur.ProcStatus.In(ProcStat.EO,ProcStat.EC)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcExistingEdit,_patient.PatNum,strLogText);
-			}
+			AutoCodes.ApplyAutoCodeToProcedure(ProcedureCur,_verifyCodeNum,_listPatPlans,_listInsSubs,_listInsPlans,_patient,_listClaimProcs,_listBenefits,_procedureCode,_strTeeth);
 			IsDialogOK=true;
 		}
 

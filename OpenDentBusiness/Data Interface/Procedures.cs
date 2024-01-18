@@ -5256,13 +5256,20 @@ namespace OpenDentBusiness {
 
 		///<summary>Checks auto codes if the procedure is not complete or the user has permission to edit completed procedures, can prompt user.
 		///Returns false if the user is required by the ProcEditRequireAutoCodes preference to use the suggested procedure code and they chose
-		///to return to the edit procedure window.</summary>
+		///to return to the edit procedure window. If a user is not passed in, it will be set to the current user that is logged in.</summary>
 		public static bool TryAutoCodesPrompt(ref Procedure procedure,Procedure procedureOld,ProcedureCode procedureCode,bool isMandibular,Patient patient,ref List<ClaimProc> listClaimProcsForProc,
-			Func<long,Procedure> funcPromptFormACLI)
+			Func<long,Procedure> funcPromptFormACLI,Userod userod=null)
 		{
 			EnumPermType perm=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteEdit,procedure);
 			DateTime dateForPerm=GetDateForPermCheck(procedure);
-			if(!procedureOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC) || Security.IsAuthorized(perm,dateForPerm,true)) {
+			bool isAuthorized;
+			if(userod==null) {
+				isAuthorized=Security.IsAuthorized(perm,dateForPerm,true);
+			}
+			else {
+				isAuthorized=Security.IsAuthorized(perm,dateForPerm,true,true,userod);
+			}
+			if(!procedureOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC) || isAuthorized) {
 				//Only check auto codes if the procedure is not complete or the user has permission to edit completed procedures.
 				long codeNumRecommended=AutoCodeItems.GetRecommendedCodeNum(procedure,procedureCode,patient,isMandibular,listClaimProcsForProc);
 				if(procedure.CodeNum!=codeNumRecommended) {
