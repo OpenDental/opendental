@@ -419,7 +419,7 @@ namespace OpenDental {
 			// 
 			this.radioButRange.Location = new System.Drawing.Point(170, 10);
 			this.radioButRange.Name = "radioButRange";
-			this.radioButRange.Size = new System.Drawing.Size(130, 17);
+			this.radioButRange.Size = new System.Drawing.Size(167, 17);
 			this.radioButRange.TabIndex = 1;
 			this.radioButRange.Text = "Range of Companies";
 			this.radioButRange.UseVisualStyleBackColor = true;
@@ -603,6 +603,7 @@ namespace OpenDental {
 			this.tabLabelSetup.Controls.Add(this.tabInsCo);
 			this.tabLabelSetup.Controls.Add(this.tabCustomLabels);
 			this.tabLabelSetup.Controls.Add(this.tabBirthday);
+			this.tabLabelSetup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabLabelSetup.Location = new System.Drawing.Point(13, 13);
 			this.tabLabelSetup.Name = "tabLabelSetup";
 			this.tabLabelSetup.Size = new System.Drawing.Size(423, 345);

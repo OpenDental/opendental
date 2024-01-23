@@ -2627,6 +2627,7 @@ namespace OpenDental {
 				_patient=null;
 				_family=null;
 				_dataSetMain=null;
+				_listPaySplitsHidden.Clear();
 				Plugins.HookAddCode(this,"ContrAccount.RefreshModuleData_null");
 				return;
 			}

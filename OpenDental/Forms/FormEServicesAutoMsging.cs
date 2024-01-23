@@ -236,13 +236,13 @@ namespace OpenDental {
 
 		private void FillActivateButton(PrefName prefNameEnabled,string serviceName,UI.Button but,System.Windows.Forms.TextBox textBox) {
 			if(PrefC.GetBool(prefNameEnabled)) {
-				textBox.Text=serviceName+" : "+Lan.g(this,"Active");
+				textBox.Text=serviceName+": "+Lan.g(this,"Active");
 				textBox.BackColor=Color.FromArgb(236,255,236);//light green
 				textBox.ForeColor=Color.Black;//instead of disabled grey
 				but.Text=Lan.g(this,"Deactivate ")+serviceName;
 			}
 			else {
-				textBox.Text=serviceName+" : "+Lan.g(this,"Inactive");
+				textBox.Text=serviceName+": "+Lan.g(this,"Inactive");
 				textBox.BackColor=Color.FromArgb(254,235,233);//light red;
 				textBox.ForeColor=Color.Black;//instead of disabled grey
 				but.Text=Lan.g(this,"Activate ")+serviceName;

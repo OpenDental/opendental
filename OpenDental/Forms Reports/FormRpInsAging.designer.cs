@@ -273,9 +273,9 @@ namespace OpenDental {
 			// 
 			// checkOnlyShowPatsOutstandingClaims
 			// 
-			this.checkOnlyShowPatsOutstandingClaims.Location = new System.Drawing.Point(18, 222);
+			this.checkOnlyShowPatsOutstandingClaims.Location = new System.Drawing.Point(18, 227);
 			this.checkOnlyShowPatsOutstandingClaims.Name = "checkOnlyShowPatsOutstandingClaims";
-			this.checkOnlyShowPatsOutstandingClaims.Size = new System.Drawing.Size(227, 41);
+			this.checkOnlyShowPatsOutstandingClaims.Size = new System.Drawing.Size(227, 34);
 			this.checkOnlyShowPatsOutstandingClaims.TabIndex = 12;
 			this.checkOnlyShowPatsOutstandingClaims.Text = "Only show patients with outstanding claims";
 			this.checkOnlyShowPatsOutstandingClaims.CheckedChanged += new System.EventHandler(this.checkShowBreakdownOptions_CheckedChanged);

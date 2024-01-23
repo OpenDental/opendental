@@ -77,9 +77,8 @@
 			// 
 			// tabTemplates
 			// 
-			this.tabTemplates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.tabTemplates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.tabTemplates.Controls.Add(this.tabEmailTemplate);
 			this.tabTemplates.Controls.Add(this.tabSMSTemplate);
 			this.tabTemplates.Controls.Add(this.tabAutoReplyTemplate);
@@ -121,11 +120,12 @@
 			// 
 			// labelEmailSubjAggShared
 			// 
-			this.labelEmailSubjAggShared.Location = new System.Drawing.Point(7, 20);
+			this.labelEmailSubjAggShared.Location = new System.Drawing.Point(7, 21);
 			this.labelEmailSubjAggShared.Name = "labelEmailSubjAggShared";
-			this.labelEmailSubjAggShared.Size = new System.Drawing.Size(471, 13);
+			this.labelEmailSubjAggShared.Size = new System.Drawing.Size(471, 16);
 			this.labelEmailSubjAggShared.TabIndex = 13;
 			this.labelEmailSubjAggShared.Text = "The subject heading template.";
+			this.labelEmailSubjAggShared.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textEmailSubjAggShared
 			// 
@@ -179,11 +179,12 @@
 			// 
 			// labelEmailAggShared
 			// 
-			this.labelEmailAggShared.Location = new System.Drawing.Point(7, 20);
+			this.labelEmailAggShared.Location = new System.Drawing.Point(7, 19);
 			this.labelEmailAggShared.Name = "labelEmailAggShared";
-			this.labelEmailAggShared.Size = new System.Drawing.Size(471, 13);
+			this.labelEmailAggShared.Size = new System.Drawing.Size(471, 16);
 			this.labelEmailAggShared.TabIndex = 16;
 			this.labelEmailAggShared.Text = "The message body template. Used once per aggregate message.";
+			this.labelEmailAggShared.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// groupBoxEmailAggPerAppt
 			// 
@@ -252,10 +253,11 @@
 			// 
 			this.labelSMSAggPerAppt.Location = new System.Drawing.Point(7, 20);
 			this.labelSMSAggPerAppt.Name = "labelSMSAggPerAppt";
-			this.labelSMSAggPerAppt.Size = new System.Drawing.Size(471, 13);
+			this.labelSMSAggPerAppt.Size = new System.Drawing.Size(471, 16);
 			this.labelSMSAggPerAppt.TabIndex = 11;
 			this.labelSMSAggPerAppt.Text = "A single appointment template. Formats each appointment listed in the aggregate m" +
     "essage.";
+			this.labelSMSAggPerAppt.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textSMSAggPerAppt
 			// 
@@ -290,9 +292,10 @@
 			// 
 			this.labelSMSAggShared.Location = new System.Drawing.Point(7, 20);
 			this.labelSMSAggShared.Name = "labelSMSAggShared";
-			this.labelSMSAggShared.Size = new System.Drawing.Size(471, 13);
+			this.labelSMSAggShared.Size = new System.Drawing.Size(471, 16);
 			this.labelSMSAggShared.TabIndex = 9;
 			this.labelSMSAggShared.Text = "The message body template. Used once per aggregate message.";
+			this.labelSMSAggShared.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textSMSAggShared
 			// 
@@ -338,9 +341,10 @@
 			// 
 			this.labelAggregateAutoReply.Location = new System.Drawing.Point(7, 20);
 			this.labelAggregateAutoReply.Name = "labelAggregateAutoReply";
-			this.labelAggregateAutoReply.Size = new System.Drawing.Size(471, 13);
+			this.labelAggregateAutoReply.Size = new System.Drawing.Size(471, 16);
 			this.labelAggregateAutoReply.TabIndex = 11;
 			this.labelAggregateAutoReply.Text = "Aggregate appointment confirmation auto reply template.";
+			this.labelAggregateAutoReply.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textAggregateAutoReply
 			// 
@@ -373,9 +377,10 @@
 			// 
 			this.labelSingleAutoReply.Location = new System.Drawing.Point(7, 20);
 			this.labelSingleAutoReply.Name = "labelSingleAutoReply";
-			this.labelSingleAutoReply.Size = new System.Drawing.Size(471, 13);
+			this.labelSingleAutoReply.Size = new System.Drawing.Size(471, 16);
 			this.labelSingleAutoReply.TabIndex = 11;
 			this.labelSingleAutoReply.Text = "A single appointment confirmation auto reply template.";
+			this.labelSingleAutoReply.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textSingleAutoReply
 			// 
@@ -419,10 +424,11 @@
 			// 
 			this.label2.Location = new System.Drawing.Point(7, 20);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(614, 13);
+			this.label2.Size = new System.Drawing.Size(614, 16);
 			this.label2.TabIndex = 11;
 			this.label2.Text = "Automatic response when arrival message is received from patient.  Leave blank to" +
     " disable.";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textArrivalResponse
 			// 
@@ -455,10 +461,11 @@
 			// 
 			this.label1.Location = new System.Drawing.Point(7, 20);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(614, 13);
+			this.label1.Size = new System.Drawing.Size(614, 16);
 			this.label1.TabIndex = 11;
 			this.label1.Text = "Message sent when office is ready for the patient.  Accessed by right-clicking on" +
     " appointment.";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// textComeIn
 			// 
@@ -476,8 +483,6 @@
 			// 
 			// groupBoxTags
 			// 
-			this.groupBoxTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBoxTags.Controls.Add(this.labelTags);
 			this.groupBoxTags.Location = new System.Drawing.Point(1, 2);
 			this.groupBoxTags.Name = "groupBoxTags";
@@ -497,10 +502,9 @@
 			// 
 			// UserControlReminderAgg
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
 			this.Controls.Add(this.groupBoxTags);
 			this.Controls.Add(this.tabTemplates);
-			this.MinimumSize = new System.Drawing.Size(641, 537);
 			this.Name = "UserControlReminderAgg";
 			this.Size = new System.Drawing.Size(641, 537);
 			this.tabTemplates.ResumeLayout(false);

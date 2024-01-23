@@ -287,13 +287,6 @@ How to:
 		#endregion Methods - public
 
 		#region Methods - private
-		///<summary>If you have some unmanaged resources to dispose of, you can do it here.  Make sure to call base.Dispose() at the end.</summary>
-		protected void Dispose(){
-			_formFrame?.Dispose();
-			//The above might not be needed. When we change isDialogOK, we also Close.
-			//I think MS instead makes the dialog window not visible, which is why we must either dispose or close when using WinForms.
-		}
-
 		///<summary>Does the same thing that DoEvents does in WinForms: refreshes UI even if you're in the middle of a method.</summary>
 		protected void DoEvents() {
 			//This was adapted directly from the MS C# manual: Dispatcher.PushFrame,
@@ -564,7 +557,8 @@ How to:
 		private void FormFrame_FormClosed(object sender,System.Windows.Forms.FormClosedEventArgs e) {
 			//I don't care about the CloseReason, so this can be a plain EventArgs
 			FormClosed?.Invoke(sender,new EventArgs());
-			Dispose();
+			//_formFrame?.Dispose();//No. This would cause the main OD form to end up behind other program windows.
+			//When Close is called, Win32 Dispose automatically gets called. Maybe we're calling it too soon or something.
 		}
 
 		private void FormFrame_FormClosing(object sender,System.Windows.Forms.FormClosingEventArgs e) {

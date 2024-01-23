@@ -84,6 +84,9 @@ namespace OpenDental {
 			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				checkCanadianPpoLabEst.Visible=false;
 			}
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				checkEclaimsSubscIDUsesPatID.Visible=false;
+			}
 		}
 
 		public bool SaveAccountInsurance() {

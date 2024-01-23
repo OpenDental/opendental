@@ -87,16 +87,16 @@ namespace OpenDental {
 			// 
 			// labelInstruct
 			// 
-			this.labelInstruct.Location = new System.Drawing.Point(18,34);
+			this.labelInstruct.Location = new System.Drawing.Point(3,34);
 			this.labelInstruct.Name = "labelInstruct";
-			this.labelInstruct.Size = new System.Drawing.Size(258,30);
+			this.labelInstruct.Size = new System.Drawing.Size(281,30);
 			this.labelInstruct.TabIndex = 40;
 			this.labelInstruct.Text = "Enter the first few letters of the patient's last name or the drug name, or leave blank to view all:";
 			this.labelInstruct.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textBoxInput
 			// 
-			this.textBoxInput.Location = new System.Drawing.Point(282,40);
+			this.textBoxInput.Location = new System.Drawing.Point(290,40);
 			this.textBoxInput.Name = "textBoxInput";
 			this.textBoxInput.Size = new System.Drawing.Size(116,20);
 			this.textBoxInput.TabIndex = 0;

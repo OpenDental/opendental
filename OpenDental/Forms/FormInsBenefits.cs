@@ -953,6 +953,17 @@ namespace OpenDental {
 				FillGridBenefits();
 				return;
 			}
+			Benefit benefitAgeLimit=null;
+			if(Benefits.IsFluorideAgeLimit(formBenefitEdit.BenefitCur)) {
+				benefitAgeLimit=_listBenefitsAll.Find(x=>Benefits.IsFluorideAgeLimit(x));
+			}
+			else if(Benefits.IsSealantAgeLimit(formBenefitEdit.BenefitCur)) {
+				benefitAgeLimit=_listBenefitsAll.Find(x=>Benefits.IsSealantAgeLimit(x));
+			}
+			if(benefitAgeLimit!=null) {
+				_listBenefitsAll.Remove(benefitAgeLimit);
+				_listBenefitsGrid.Remove(benefitAgeLimit);
+			}
 			_listBenefitsGrid.Add(formBenefitEdit.BenefitCur);
 			_listBenefitsAll.Add(formBenefitEdit.BenefitCur);
 			if(panelSimple.Visible && ConvertFormToBenefits(isSilent:true)) {

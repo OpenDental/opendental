@@ -841,7 +841,7 @@ namespace OpenDental {
 			this.checkSaveDXC.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkSaveDXC.Size = new System.Drawing.Size(256, 20);
 			this.checkSaveDXC.TabIndex = 22;
-			this.checkSaveDXC.Text = "Save DXC Attachments to Images Module";
+			this.checkSaveDXC.Text = "Save DXC Attachments to Imaging Module";
 			this.checkSaveDXC.Visible = false;
 			// 
 			// checkSaveDXCSoap

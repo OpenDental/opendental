@@ -334,6 +334,12 @@ namespace OpenDental {
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Please be prepared to wait up to ten minutes while all the bills get processed.\r\nOnce complete, the pdf print preview will be launched in Adobe Reader.  You will print from that program.  Continue?")){
 				return;
 			}
+			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.BillingDefaultsSmsTemplate))) {
+				if(MessageBox.Show(Lan.g(this,"Cannot send blank text messages. Please update the SMS Statements template in Billing Defaults. Statements will still be printed and sent electronically.  Continue?"),Lan.g(this,"Send Statements - Warning"),MessageBoxButtons.OKCancel)!=DialogResult.OK)
+				{
+					return;
+				}
+			}
 			PdfDocument pdfDocumentOutput= new PdfDocument();
 			_hasToShowPdf=false;
 			DateTime dateTimeNow = MiscData.GetNowDateTime();//used to keep track of the time when this first started.
@@ -492,7 +498,7 @@ namespace OpenDental {
 				if(PrefC.HasClinicsEnabled) {
 					clinicNum=listClinicNums[numOfBatchesSent-1]; //-1 because we start on +1 for the batch number
 				}
-				//Now to print, send eBills, and text messages.  If any return false, the user canceled during execution.
+				//Now to print, send eBills, and text messages.  If any return false, the user canceled during execution OR aging was supposed to run and didn't OR an office knowingly clicked to continue to send statements with out the BillingDefaultsSmsTemplate pref set
 				if(!PrintBatch(numOfBatchesSent,numOfBatchesTotal,listDictPatnumsSkipped,ref emailed,ref printed,ref listEbillStatements
 						,ref outputDocument,ref curStatementIdx,ref curStatementsProcessed,ref skippedDeleted,ref listStatementsToSend,ref dictionaryStatementData)
 					|| !SendEBills(numOfBatchesSent,numOfBatchesTotal,numOfStatementsInBatch,clinicNum,selectedFile:null,listDictPatnumsSkipped,ref sentElect,ref listEbillStatements
@@ -1095,6 +1101,9 @@ namespace OpenDental {
 
 		///<summary>Sends text messages to the current batch of statements. Changes to this method will also need to be made to OpenDentalService.ScheduledProcessThread.SendTextMessages().</summary>
 		private bool SendTextMessages(List<Dictionary<long,string>> listDictionariesPatnumsSkipped,ref List<Statement> listStatements,ref int texted) {
+			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.BillingDefaultsSmsTemplate))) {
+				return false;
+			}
 			List<SmsToMobile> listTextsToSend=new List<SmsToMobile>();
 			//Tuple<GuidMessage,StatementNum>
 			List<Tuple<string,long>> listStmtNumsToUpdate=new List<Tuple<string,long>>();

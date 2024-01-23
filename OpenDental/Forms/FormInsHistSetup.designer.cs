@@ -52,7 +52,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(377, 248);
+			this.butOK.Location = new System.Drawing.Point(306, 242);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 10;
@@ -63,7 +63,7 @@ namespace OpenDental{
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(377, 278);
+			this.butCancel.Location = new System.Drawing.Point(306, 272);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 11;
@@ -74,10 +74,10 @@ namespace OpenDental{
 			// 
 			this.labelHeading.Location = new System.Drawing.Point(12, 9);
 			this.labelHeading.Name = "labelHeading";
-			this.labelHeading.Size = new System.Drawing.Size(424, 34);
+			this.labelHeading.Size = new System.Drawing.Size(379, 33);
 			this.labelHeading.TabIndex = 4;
-			this.labelHeading.Text = "Set procedures for each category in Preferences.  Editing dates will automaticall" +
-    "y create appropriate procedures with status of ExistingOther.";
+			this.labelHeading.Text = "Set procedures for each category in Preferences.  Adding dates will automatically" +
+    " create appropriate procedures with status of ExistingOther.";
 			// 
 			// labelExam
 			// 
@@ -272,7 +272,7 @@ namespace OpenDental{
 			// FormInsHistSetup
 			// 
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(464, 314);
+			this.ClientSize = new System.Drawing.Size(393, 308);
 			this.Controls.Add(this.labelDebridgement);
 			this.Controls.Add(this.textDateDebridgement);
 			this.Controls.Add(this.labelPerioMaint);

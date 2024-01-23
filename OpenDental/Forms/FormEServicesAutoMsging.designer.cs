@@ -255,28 +255,28 @@ namespace OpenDental{
 			// 
 			// textStatusConfirmations
 			// 
-			this.textStatusConfirmations.Location = new System.Drawing.Point(6, 48);
+			this.textStatusConfirmations.Location = new System.Drawing.Point(4, 48);
 			this.textStatusConfirmations.Name = "textStatusConfirmations";
 			this.textStatusConfirmations.ReadOnly = true;
-			this.textStatusConfirmations.Size = new System.Drawing.Size(152, 20);
+			this.textStatusConfirmations.Size = new System.Drawing.Size(154, 20);
 			this.textStatusConfirmations.TabIndex = 260;
 			this.textStatusConfirmations.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// textStatusReminders
 			// 
-			this.textStatusReminders.Location = new System.Drawing.Point(6, 19);
+			this.textStatusReminders.Location = new System.Drawing.Point(4, 19);
 			this.textStatusReminders.Name = "textStatusReminders";
 			this.textStatusReminders.ReadOnly = true;
-			this.textStatusReminders.Size = new System.Drawing.Size(152, 20);
+			this.textStatusReminders.Size = new System.Drawing.Size(154, 20);
 			this.textStatusReminders.TabIndex = 262;
 			this.textStatusReminders.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// textStatusThankYous
 			// 
-			this.textStatusThankYous.Location = new System.Drawing.Point(6, 77);
+			this.textStatusThankYous.Location = new System.Drawing.Point(4, 77);
 			this.textStatusThankYous.Name = "textStatusThankYous";
 			this.textStatusThankYous.ReadOnly = true;
-			this.textStatusThankYous.Size = new System.Drawing.Size(152, 20);
+			this.textStatusThankYous.Size = new System.Drawing.Size(154, 20);
 			this.textStatusThankYous.TabIndex = 273;
 			this.textStatusThankYous.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -294,10 +294,10 @@ namespace OpenDental{
 			// 
 			// textStatusArrivals
 			// 
-			this.textStatusArrivals.Location = new System.Drawing.Point(6, 135);
+			this.textStatusArrivals.Location = new System.Drawing.Point(4, 135);
 			this.textStatusArrivals.Name = "textStatusArrivals";
 			this.textStatusArrivals.ReadOnly = true;
-			this.textStatusArrivals.Size = new System.Drawing.Size(152, 20);
+			this.textStatusArrivals.Size = new System.Drawing.Size(154, 20);
 			this.textStatusArrivals.TabIndex = 504;
 			this.textStatusArrivals.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -313,10 +313,10 @@ namespace OpenDental{
 			// 
 			// textStatusNotifications
 			// 
-			this.textStatusNotifications.Location = new System.Drawing.Point(6, 164);
+			this.textStatusNotifications.Location = new System.Drawing.Point(4, 164);
 			this.textStatusNotifications.Name = "textStatusNotifications";
 			this.textStatusNotifications.ReadOnly = true;
-			this.textStatusNotifications.Size = new System.Drawing.Size(152, 20);
+			this.textStatusNotifications.Size = new System.Drawing.Size(154, 20);
 			this.textStatusNotifications.TabIndex = 507;
 			this.textStatusNotifications.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -512,10 +512,10 @@ namespace OpenDental{
 			// 
 			// textStatusNewPatThanks
 			// 
-			this.textStatusNewPatThanks.Location = new System.Drawing.Point(6, 106);
+			this.textStatusNewPatThanks.Location = new System.Drawing.Point(4, 106);
 			this.textStatusNewPatThanks.Name = "textStatusNewPatThanks";
 			this.textStatusNewPatThanks.ReadOnly = true;
-			this.textStatusNewPatThanks.Size = new System.Drawing.Size(152, 20);
+			this.textStatusNewPatThanks.Size = new System.Drawing.Size(154, 20);
 			this.textStatusNewPatThanks.TabIndex = 517;
 			this.textStatusNewPatThanks.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -543,10 +543,10 @@ namespace OpenDental{
 			// 
 			// textStatusGeneralMessage
 			// 
-			this.textStatusGeneralMessage.Location = new System.Drawing.Point(6, 193);
+			this.textStatusGeneralMessage.Location = new System.Drawing.Point(4, 193);
 			this.textStatusGeneralMessage.Name = "textStatusGeneralMessage";
 			this.textStatusGeneralMessage.ReadOnly = true;
-			this.textStatusGeneralMessage.Size = new System.Drawing.Size(152, 20);
+			this.textStatusGeneralMessage.Size = new System.Drawing.Size(154, 20);
 			this.textStatusGeneralMessage.TabIndex = 509;
 			this.textStatusGeneralMessage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 

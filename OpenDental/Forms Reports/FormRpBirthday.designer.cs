@@ -56,7 +56,7 @@ namespace OpenDental {
 			// 
 			butSave.AdjustImageLocation = new System.Drawing.Point(0,0);
 			butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			butSave.Location = new System.Drawing.Point(202,30);
+			butSave.Location = new System.Drawing.Point(202,34);
 			butSave.Name = "butSave";
 			butSave.Size = new System.Drawing.Size(87,26);
 			butSave.TabIndex = 44;
@@ -174,7 +174,7 @@ namespace OpenDental {
 			// textPostcardMsg
 			// 
 			this.textPostcardMsg.AcceptsReturn = true;
-			this.textPostcardMsg.Location = new System.Drawing.Point(10,30);
+			this.textPostcardMsg.Location = new System.Drawing.Point(10,34);
 			this.textPostcardMsg.Multiline = true;
 			this.textPostcardMsg.Name = "textPostcardMsg";
 			this.textPostcardMsg.Size = new System.Drawing.Size(186,87);
@@ -183,7 +183,7 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(7,12);
+			this.label4.Location = new System.Drawing.Point(7,16);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(158,17);
 			this.label4.TabIndex = 18;
@@ -194,7 +194,7 @@ namespace OpenDental {
 			// 
 			this.butPostcards.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPostcards.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPostcards.Location = new System.Drawing.Point(202,91);
+			this.butPostcards.Location = new System.Drawing.Point(202,95);
 			this.butPostcards.Name = "butPostcards";
 			this.butPostcards.Size = new System.Drawing.Size(87,26);
 			this.butPostcards.TabIndex = 16;

@@ -83,7 +83,7 @@ namespace OpenDentBusiness{
 				return;
 			}
 			if(fieldDefNum==0) {
-					return;
+				return;
 			}
 			//Only delete records of the correct fieldDefType (Pat vs Appt)
 			Db.NonQ("DELETE FROM fielddeflink WHERE FieldDefNum="+POut.Long(fieldDefNum)+" AND FieldDefType="+POut.Int((int)fieldDefType));

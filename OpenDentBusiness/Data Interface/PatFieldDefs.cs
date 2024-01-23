@@ -35,6 +35,10 @@ namespace OpenDentBusiness {
 		///<summary>The object that accesses the cache in a thread-safe manner.</summary>
 		private static PatFieldDefCache _patFieldDefCache=new PatFieldDefCache();
 
+		public static int GetCount(bool isShort=false) {
+			return _patFieldDefCache.GetCount(isShort);
+		}
+
 		public static bool GetExists(Predicate<PatFieldDef> match,bool isShort=false) {
 			return _patFieldDefCache.GetExists(match,isShort);
 		}
@@ -154,6 +158,16 @@ namespace OpenDentBusiness {
 			//No need to check MiddleTierRole; no call to db.
 			PatFieldDef patFieldDef=GetFirstOrDefault(x => x.FieldName==FieldName,true);
 			return (patFieldDef==null ? "" : patFieldDef.PickList);
+		}
+
+		///<summary>Gets one PatFieldDef from the DB. Used in the API.</summary>
+		public static PatFieldDef GetPatFieldDefForApi(long patFieldDefNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<PatFieldDef>(MethodBase.GetCurrentMethod(),patFieldDefNum);
+			}
+			string command="SELECT * FROM patfielddef"
+				+" WHERE PatFieldDefNum = "+POut.Long(patFieldDefNum);
+			return Crud.PatFieldDefCrud.SelectOne(patFieldDefNum);
 		}
 
 		///<summary>Sync pattern, must sync entire table. Probably only to be used in the master problem list window.</summary>

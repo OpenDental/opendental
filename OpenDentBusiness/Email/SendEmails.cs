@@ -44,8 +44,7 @@ namespace OpenDentBusiness.Email {
 		///be null.</summary>
 		public static void WireEmailUnsecure(BasicEmailAddress address,BasicEmailMessage emailMessage,NameValueCollection nameValueCollectionHeaders,
 			int emailSendTimeoutMs=EMAIL_SEND_TIMEOUT_MS,params AlternateView[] arrayAlternateViews) {
-			//For now we only support OAuth for Gmail but this may change in the future.
-			if(!address.AccessToken.IsNullOrEmpty() && address.AuthenticationType.In(BasicOAuthType.Google,BasicOAuthType.Microsoft)) {
+			if(address.AuthenticationType.In(BasicOAuthType.Google,BasicOAuthType.Microsoft)) {
 				SendEmailOAuth(address,emailMessage);
 			}
 			else {

@@ -1509,10 +1509,9 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			//CommBridge can be None in testing when trying to write to local file (example CanadaFakeClearinghouse), and is
 			//also helpful in production if you want to see live payload output to file without worrying about software certificates.
-			bool isItrans=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS);
-			bool isItrans2=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS2);
+			bool isItrans=clearinghouseClin.CommBridge.In(EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2);
 			bool isClaimstream=(clearinghouseClin.CommBridge==EclaimsCommBridge.Claimstream);
-			bool isCertificateNeeded=(network!=null && (isClaimstream || isItrans2));
+			bool isCertificateNeeded=(network!=null && isClaimstream);
 			string saveFolder=clearinghouseClin.ExportPath;
 			if(isCertificateNeeded) {//Download vendor identity certificate to appropriate subfolder if needed.
 				DirectoryInfo dirInfo=new DirectoryInfo(saveFolder);
@@ -1538,9 +1537,6 @@ namespace OpenDentBusiness.Eclaims {
 				else if(isClaimstream) {
 					errorMsg=Lans.g("Canadian","Transaction not supported for network")+" "+network.Descript;
 					return "";//Return empty response, since we never received one.
-				}
-				if(isItrans2 && !Directory.Exists(ODFileUtils.CombinePaths(saveFolder,subDir))) {
-					subDir="";
 				}
 				saveFolder=ODFileUtils.CombinePaths(saveFolder,subDir);
 				if(!Directory.Exists(saveFolder)) {
@@ -1683,7 +1679,7 @@ namespace OpenDentBusiness.Eclaims {
 				});
 			}
 			if(!File.Exists(outputFile)) {
-				if(isItrans || isItrans2) {
+				if(isItrans) {
 					errorMsg=Lans.g("Canadian","No response from iCAService (ITRANS) or ICDService (ITRANS 2.0). Ensure that the correct service for your version of ITRANS is started and the corresponding folder has the necessary permissions.");
 				}
 				else if(isClaimstream) {
@@ -1733,7 +1729,7 @@ namespace OpenDentBusiness.Eclaims {
 					errorCode=responses[1];
 				}
 				errorMsg=Lans.g("Canadian","Error")+" "+errorCode+"\r\n\r\n"+Lans.g("Canadian","Raw Response")+":\r\n"+resultPrefix+result+"\r\n\r\n";
-				if(isItrans || isItrans2) {
+				if(isItrans) {
 					if(errorCode=="1013") {
 						errorMsg+=Lans.g("Canadian","The CDA digital certificate for the provider is either missing, not exportable, expired, or invalid.")+"\r\n";
 					}

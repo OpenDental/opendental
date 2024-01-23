@@ -149,7 +149,7 @@ namespace OpenDental {
 			this.radioWriteoffClaimDate.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
 			this.radioWriteoffClaimDate.Location = new System.Drawing.Point(9, 62);
 			this.radioWriteoffClaimDate.Name = "radioWriteoffClaimDate";
-			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(244, 40);
+			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(270, 35);
 			this.radioWriteoffClaimDate.TabIndex = 3;
 			this.radioWriteoffClaimDate.Text = "Using initial claim date for write-off estimates, insurance pay date for write-of" +
 			"f adjustments";

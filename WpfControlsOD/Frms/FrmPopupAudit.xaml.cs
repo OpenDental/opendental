@@ -62,12 +62,16 @@ namespace OpenDental {
 				row.Cells.Add(Lans.g("enumEnumPopupLevel",ListPopups[i].PopupLevel.ToString()));
 				row.Cells.Add((ListPopups[i].DateTimeDisabled!=DateTime.MinValue && ListPopups[i].DateTimeDisabled < DateTime.Now)?"X":"");
 				row.Cells.Add(ListPopups[i].Description);
+				row.Tag=ListPopups[i];
 				gridPopupAudit.ListGridRows.Add(row);
 			}
 			gridPopupAudit.EndUpdate();
 		}
 
 		private void gridPopupAudit_CellDoubleClick(object sender,GridClickEventArgs e) {
+			if(gridPopupAudit.SelectedTag<Popup>()==null) {
+				return;
+			}
 			FrmPopupEdit frmPopupEdit=new FrmPopupEdit();
 			frmPopupEdit.PopupAudit=PopupCur;
 			DateTime dateLastEdit=DateTime.MinValue;

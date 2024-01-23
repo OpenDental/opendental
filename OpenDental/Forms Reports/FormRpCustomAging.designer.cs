@@ -276,9 +276,9 @@ namespace OpenDental {
 			// 
 			this.radioWriteoffClaimDate.Location = new System.Drawing.Point(5, 61);
 			this.radioWriteoffClaimDate.Name = "radioWriteoffClaimDate";
-			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(146, 30);
+			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(149, 32);
 			this.radioWriteoffClaimDate.TabIndex = 2;
-			this.radioWriteoffClaimDate.Text = "Initial claim date for est.\r\nIns pay date for adj.";
+			this.radioWriteoffClaimDate.Text = "Initial claim date for est\r\nIns pay date for adj";
 			this.radioWriteoffClaimDate.UseVisualStyleBackColor = true;
 			// 
 			// radioWriteoffInsPayDate

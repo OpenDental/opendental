@@ -258,9 +258,9 @@ namespace OpenDental {
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(6, 109);
+			this.label5.Location = new System.Drawing.Point(3, 109);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(259, 24);
+			this.label5.Size = new System.Drawing.Size(275, 24);
 			this.label5.TabIndex = 2;
 			this.label5.Text = "(This is discussed in the PPO section of the manual)";
 			// 

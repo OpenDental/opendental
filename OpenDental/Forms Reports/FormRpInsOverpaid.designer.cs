@@ -71,7 +71,7 @@ namespace OpenDental {
 			this.radioGroupByProc.Checked = true;
 			this.radioGroupByProc.Location = new System.Drawing.Point(255, 268);
 			this.radioGroupByProc.Name = "radioGroupByProc";
-			this.radioGroupByProc.Size = new System.Drawing.Size(189, 17);
+			this.radioGroupByProc.Size = new System.Drawing.Size(245, 17);
 			this.radioGroupByProc.TabIndex = 21;
 			this.radioGroupByProc.TabStop = true;
 			this.radioGroupByProc.Text = "Filter results by procedure (default)";
@@ -129,7 +129,7 @@ namespace OpenDental {
 			// 
 			this.labelDisclaimer.Location = new System.Drawing.Point(252, 347);
 			this.labelDisclaimer.Name = "labelDisclaimer";
-			this.labelDisclaimer.Size = new System.Drawing.Size(248, 52);
+			this.labelDisclaimer.Size = new System.Drawing.Size(270, 54);
 			this.labelDisclaimer.TabIndex = 60;
 			this.labelDisclaimer.Text = "This report only considers insurance payments and \r\nwrite-offs, not patient payme" +
 			"nts and adjustments. \r\nUse the Procedures Overpaid Report to include \r\npatient p" +

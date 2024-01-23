@@ -825,7 +825,7 @@ namespace OpenDental {
 				toolBarSend.Enabled=true;
 				return;
 			}
-			if(emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
+			if(emailAddress.RefreshToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
 				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"This email address needs to be re-authenticated. Sign into this email through Microsoft?")) {
 					MicrosoftTokenHelper microsoftToken=new MicrosoftTokenHelper();
 					if(ODBuild.IsWeb()) {
@@ -900,8 +900,9 @@ namespace OpenDental {
 			catch(Exception ex){
 				Cursor=Cursors.Default;
 				if(ODBuild.IsWeb() && ex.InnerException!=null) {
-					if(ex.InnerException.Message.Contains("InvalidAuthenticationToken")) {
+					if(ex.InnerException.Message.Contains("InvalidAuthenticationToken") && emailAddress.AuthenticationType==OAuthType.Microsoft) {
 						emailAddress.AccessToken="";
+						emailAddress.RefreshToken="";
 						EmailAddresses.Update(emailAddress);
 						DataValid.SetInvalid(InvalidType.Email);
 						butSend_Click(sender,e);

@@ -20,6 +20,7 @@ namespace OpenDental{
 		private List<ProgramProperty> _listProgramPropertiesWebPay=new List<ProgramProperty>();
 		///<summary>Used to revert the clinic drop down if the user tries to change clinics and the payment type hasn't been set.</summary>
 		private long _clinicNumRevert;
+		private bool _isLoading = false;
 		private List<Def> _listDefsPayTypes;
 
 		///<summary></summary>
@@ -34,6 +35,7 @@ namespace OpenDental{
 		}
 
 		private void FormXchargeSetup_Load(object sender,EventArgs e) {
+			_isLoading=true;
 			_program=Programs.GetCur(ProgramName.Xcharge);
 			if(_program==null) {
 				return;//should never happen
@@ -68,6 +70,7 @@ namespace OpenDental{
 				textPassword.ReadOnly=true;
 			}
 			FillFields();
+			_isLoading=false;
 		}
 
 		///<summary>Fills all but comboClinic, checkEnabled, textPath, and textOverride which are filled on load.</summary>
@@ -397,6 +400,18 @@ namespace OpenDental{
 					listProgramPropertiesPropertyDesc=_listProgramProperties.FindAll(x => x.ClinicNum==listClinicNums[i] && x.PropertyDesc=="PaymentType" && x.PropertyValue==hqPayType);
 					for(int j = 0;j<listProgramPropertiesPropertyDesc.Count;j++) {
 						listProgramPropertiesPropertyDesc[j].PropertyValue=strDefNumPayType;
+					}
+				}
+			}
+		}
+
+		private void checkEnabled_CheckedChanged(object sender,EventArgs e) {
+			if(ODBuild.IsWeb()) {
+				bool isDisabledForWeb=Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(_program.ProgName);
+				if(checkEnabled.Checked && isDisabledForWeb) {
+					checkEnabled.Checked=false;
+					if(!_isLoading){
+						MsgBox.Show(this,"Web users cannot currently enable this bridge");
 					}
 				}
 			}

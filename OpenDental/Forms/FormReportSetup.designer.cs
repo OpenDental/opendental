@@ -288,7 +288,7 @@ namespace OpenDental{
 			// 
 			this.label11.Location = new System.Drawing.Point(6, 56);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(386, 26);
+			this.label11.Size = new System.Drawing.Size(386, 33);
 			this.label11.TabIndex = 14;
 			this.label11.Text = "The currently logged in user\'s credentials will be used to when accessing the Mid" +
     "dle Tier database.";
@@ -307,7 +307,7 @@ namespace OpenDental{
 			// 
 			this.label2.Location = new System.Drawing.Point(0, 3);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(534, 37);
+			this.label2.Size = new System.Drawing.Size(541, 37);
 			this.label2.TabIndex = 213;
 			this.label2.Text = resources.GetString("label2.Text");
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
