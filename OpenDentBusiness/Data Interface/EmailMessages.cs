@@ -843,7 +843,10 @@ namespace OpenDentBusiness{
 				return;
 			}
 			//Verify that we can connect to Google using OAuth before moving on as we can't refresh tokens from OpenDentalEmail Processor.
-			if(!emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.SMTPserver.ToLower()=="smtp.gmail.com") {
+			if(emailAddress.AuthenticationType==OAuthType.Google) {
+				if(emailAddress.RefreshToken.IsNullOrEmpty()) {
+					throw new ODException(emailAddress.EmailUsername+" needs to be re-authenticated. Please sign out and back in to continue.");
+				}
 				using GmailApi.GmailService gService=GoogleApiConnector.CreateGmailService(ODEmailAddressToBasic(emailAddress));
 				try {
 					//This call to Google is only to ensure that we have a valid OAuth token.  
@@ -866,7 +869,10 @@ namespace OpenDentBusiness{
 				}
 			}
 			//Refresh the token for Microsoft here because it won't be able to be updated in the db further.
-			else if(!emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
+			else if(emailAddress.AuthenticationType==OAuthType.Microsoft) {
+				if(emailAddress.RefreshToken.IsNullOrEmpty()) {
+					throw new ODException(emailAddress.EmailUsername+" needs to be re-authenticated. Please sign out and back in to continue.");
+				}
 				try {
 					MicrosoftApiConnector.GetProfile(emailAddress.EmailUsername,emailAddress.AccessToken);
 				}
@@ -914,9 +920,7 @@ namespace OpenDentBusiness{
 		///<summary>Receives emails from the email server for the email address passed in. Returns the count of new emails that were downloaded.</summary>
 		public static int ReceiveFromInbox(EmailAddress emailAddress) {
 			//No need to check MiddleTierRole; no call to db.
-			if(!emailAddress.AccessToken.IsNullOrEmpty() 
-				&& ((emailAddress.AuthenticationType==OAuthType.Google && emailAddress.DownloadInbox) || emailAddress.AuthenticationType==OAuthType.Microsoft)) 
-			{
+			if(emailAddress.DownloadInbox && emailAddress.AuthenticationType.In(OAuthType.Google,OAuthType.Microsoft)) {
 				return RetrieveFromInboxOAuth(emailAddress);
 			}
 			int countNewEmails=0;
@@ -1039,6 +1043,9 @@ namespace OpenDentBusiness{
 
 		///<summary>Use token based authentication to retrieve emails. Returns the count of new emails that were downloaded.</summary>
 		private static int RetrieveFromInboxOAuth(EmailAddress emailAddressInbox,bool hasRetried=false) {
+			if(emailAddressInbox.RefreshToken.IsNullOrEmpty()) {
+				throw new ODException(emailAddressInbox.EmailUsername+" needs to be re-authenticated. Please sign out and back in to continue.");
+			}
 			if(emailAddressInbox.AuthenticationType==OAuthType.Google) {
 				return RetrieveFromGmailInbox(emailAddressInbox,hasRetried);
 			}
@@ -1616,7 +1623,7 @@ namespace OpenDentBusiness{
 		public static void RefreshGmailToken(EmailAddress emailAddress) {
 			//No need to check MiddleTierRole; no call to db.
 			string dbToken=EmailAddresses.GetOneFromDb(emailAddress.EmailAddressNum).AccessToken;
-			if(dbToken!=emailAddress.AccessToken) {
+			if(!dbToken.IsNullOrEmpty() && dbToken!=emailAddress.AccessToken) {
 				emailAddress.AccessToken=dbToken; //This means that another service has already updated the token in the db, so use that one
 			}
 			else {
@@ -1631,7 +1638,7 @@ namespace OpenDentBusiness{
 		public static void RefreshMicrosoftToken(EmailAddress emailAddress) {
 			//No need to check MiddleTierRole; no call to db.
 			string dbToken=EmailAddresses.GetOneFromDb(emailAddress.EmailAddressNum).AccessToken;
-			if(dbToken!=emailAddress.AccessToken) {
+			if(!dbToken.IsNullOrEmpty() && dbToken!=emailAddress.AccessToken) {
 				emailAddress.AccessToken=dbToken; //This means that another service has already updated the token in the db, so use that one
 				return;
 			}

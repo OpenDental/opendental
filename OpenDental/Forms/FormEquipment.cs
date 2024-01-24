@@ -158,7 +158,7 @@ namespace OpenDental {
 		private void butPrint_Click(object sender,EventArgs e) {
 			_pagesPrinted=0;
 			_isHeadingPrinted=false;
-			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Equipment list printed"));
+			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Equipment list printed"),CodeBase.PrintoutOrientation.Landscape);
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {

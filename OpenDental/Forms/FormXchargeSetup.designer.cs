@@ -90,6 +90,7 @@ namespace OpenDental {
 			this.checkEnabled.Size = new System.Drawing.Size(273, 17);
 			this.checkEnabled.TabIndex = 2;
 			this.checkEnabled.Text = "Enabled (affects all clinics)";
+			this.checkEnabled.CheckedChanged += new System.EventHandler(this.checkEnabled_CheckedChanged);
 			// 
 			// textPath
 			// 

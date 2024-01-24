@@ -1391,6 +1391,9 @@ using WpfControls.UI;
 					DrawRowSelections();
 					break;
 				case GridSelectionMode.MultiExtended:
+					if(_mouseDownRow==-1){
+						break;
+					}
 					if(ControlIsDown()) {
 						//we need to remember exactly which rows were selected the moment the mouse down started.
 						//Then, if the mouse gets dragged up or down, the rows between mouse start and mouse end
