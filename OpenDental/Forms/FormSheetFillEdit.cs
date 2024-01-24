@@ -1065,8 +1065,14 @@ namespace OpenDental {
 				}
 				//FieldValue is X
 				using Pen pen=new Pen(Color.Black);//checkboxes have no color choice, and they've always been drawn with 1 px thickness
-				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height);
-				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].YPos);
+				//Jordan In 23.1, we switched from controls to direct drawing.
+				//Example for manual:
+				//Rectangle: x=0, y=0, w=13, h=13
+				//Checkbox: x=1, y=1, w=12, h=12
+				//The checkbox will then really only draw 11x11 because of the -1 in drawing
+				//This results in exactly 1 pixel inset, and the 11x11 is also technically correct.
+				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height-1);
+				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height-1,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].YPos);
 			}
 			//Combobox-----------------------------------------------------------------------------------------------------------------
 			for(int i=0;i<SheetCur.SheetFields.Count;i++){
