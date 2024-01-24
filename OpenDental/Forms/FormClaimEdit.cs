@@ -1177,7 +1177,7 @@ namespace OpenDental{
 		private void gridSent_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			ClaimAttach claimAttach=(ClaimAttach)gridSent.ListGridRows[e.Row].Tag;
 			if(!PrefC.GetBool(PrefName.SaveDXCAttachments)) {
-				MsgBox.Show(this,$"Not allowed to view attachment. Attachments can only be viewed when the 'Save DXC Attachments to Images Module' preference is set.");
+				MsgBox.Show(this,$"Not allowed to view attachment. Attachments can only be viewed when the 'Save DXC Attachments to Imaging Module' preference is set.");
 				return;
 			}
 			string patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());

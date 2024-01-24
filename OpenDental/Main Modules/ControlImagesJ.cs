@@ -562,7 +562,7 @@ namespace OpenDental
 				nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Mount,mountNum);
 			}
 			formImageFloat.SelectTreeNode(nodeTypeAndKey);
-			formImageFloat.Show(this);
+			formImageFloat.Show();
 			formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);//#2
 			//the above line can trigger a resize due to dpi change, so once more:
 			formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);//#3

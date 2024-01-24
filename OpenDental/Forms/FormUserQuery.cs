@@ -237,7 +237,8 @@ namespace OpenDental {
 			_isHeadingPrinted=false;
 			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
-				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} printed")
+				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} printed"),
+				PrintoutOrientation.Landscape
 			);
 		}
 
@@ -251,6 +252,7 @@ namespace OpenDental {
 			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed"),
+				PrintoutOrientation.Landscape,
 				isForcedPreview:true
 			);
 		}
