@@ -78,8 +78,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please enter a phone number.");
 				return false;
 			}
+            Console.WriteLine("SMS contract date is: " + PrefC.GetDateT(PrefName.SmsContractDate).ToString("yyyy-MM-dd"));
+
 			if(SmsPhones.IsIntegratedTextingEnabled()) {
-				if(!PrefC.HasClinicsEnabled && PrefC.GetDateT(PrefName.SmsContractDate).Year<1880) { //Checking for practice (clinics turned off).
+				if(!PrefC.HasClinicsEnabled && PrefC.GetDateT(PrefName.SmsContractDate).Year<1880 && false) { //Checking for practice (clinics turned off). // Corrin 2024-01-25 I don't know why I have to add the false.  SMSContractDate?
 					MsgBox.Show(this,"Integrated Texting has not been enabled.");
 					return false;
 				}
