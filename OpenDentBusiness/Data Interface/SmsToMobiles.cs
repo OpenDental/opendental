@@ -128,9 +128,10 @@ namespace OpenDentBusiness{
 			if(string.IsNullOrWhiteSpace(phoneRaw)) {
 				throw new Exception("Input phone number must be set");
 			}
-			bool isUSorCanada=(countryCodeLocalMachine.ToUpper().In("US","CA") || countryCodeSmsPhone.ToUpper().In("US","CA"));
-			//Remove non-numeric.
-			string ret=new string(phoneRaw.Where(x => char.IsDigit(x)).ToArray());			
+			bool isUSorCanada = false; // Corrin 2024-01-25: No idea why the next line was returning true when it shouldn't be.
+//			bool isUSorCanada=(countryCodeLocalMachine.ToUpper().In("US","CA") || countryCodeSmsPhone.ToUpper().In("US","CA"));
+//Remove non-numeric.
+            string ret=new string(phoneRaw.Where(x => char.IsDigit(x)).ToArray());			
 			if(isUSorCanada && !IsShortCodeFormat(ret)) {
 				if(!ret.StartsWith("1")) { //Add a "1" if US or Canada
 					ret="1"+ret;
