@@ -2881,6 +2881,7 @@
     <Compile Include="Logic\aaLogicUI.cs" />
     <Compile Include="Logic\AppointmentL.cs" />
     <Compile Include="Logic\UserOdPrefL.cs" />
+    <Compile Include="Main Modules\AsyncReceiveSMS.cs" />
     <Compile Include="Main Modules\ControlAccount.Designer.cs">
       <DependentUpon>ControlAccount.cs</DependentUpon>
     </Compile>

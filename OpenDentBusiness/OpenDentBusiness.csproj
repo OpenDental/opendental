@@ -645,6 +645,7 @@
     <Compile Include="Misc\SecurityHash.cs" />
     <Compile Include="ODEvents\ODEvents.cs" />
     <Compile Include="ODEvents\MiddleTierConnectionEvent.cs" />
+    <Compile Include="Shared\ODSMS.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

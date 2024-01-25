@@ -133,9 +133,14 @@ namespace OpenDental {
 			Application.ThreadException+=new ThreadExceptionEventHandler((object s,ThreadExceptionEventArgs e) => {
 				actionUnhandled(e.Exception,"ProgramEntry");
 			});
-			//OpenDentalCloud.dll references Dropbox.Api.dll which references Newtonsoft.Json.dll version 7.0.0.0. Sometimes it also says it can't find 
-			//9.0.0.0.
-			ODInitialize.FixPackageAssembly("Newtonsoft.Json",ODFileUtils.CombinePaths(AppDomain.CurrentDomain.BaseDirectory,"Newtonsoft.Json.dll"));
+            //OpenDentalCloud.dll references Dropbox.Api.dll which references Newtonsoft.Json.dll version 7.0.0.0. Sometimes it also says it can't find 
+            //9.0.0.0.
+            if (ODSMS.RECEIVE_SMS)
+            {
+                OpenDental.Main_Modules.AsyncReceiveSMS.receiveSMS();
+            }
+
+            ODInitialize.FixPackageAssembly("Newtonsoft.Json",ODFileUtils.CombinePaths(AppDomain.CurrentDomain.BaseDirectory,"Newtonsoft.Json.dll"));
 			if(commandLineArgs.Any(x => x.ToLower()=="issilentupdate=true")) {
 				formOpenDental.FormOpenDentalShown();//Form never shows. It returns out after not too long.
 				//This prevents zombie process when drawing icons in Direct2D EnumContext.Graphics.
