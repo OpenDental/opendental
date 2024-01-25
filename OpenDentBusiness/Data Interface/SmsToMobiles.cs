@@ -325,6 +325,7 @@ namespace OpenDentBusiness
 		{
 			Console.WriteLine("sending sms!");
 			EventLog.WriteEntry("ODSMS", "Sending SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
+			bool useODSMS = true;
 
 			//No need to check MiddleTierRole; no call to db.
 			if (Plugins.HookMethod(null, "SmsToMobiles.SendSms_start", listMessages))
@@ -335,28 +336,31 @@ namespace OpenDentBusiness
 			{
 				throw new Exception("No messages to send.");
 			}
-			foreach (SmsToMobile msg in listMessages)
+			if (useODSMS)
 			{
-				if (msg.MobilePhoneNumber[0] == '+')
+				foreach (SmsToMobile msg in listMessages)
 				{
-					msg.MobilePhoneNumber = msg.MobilePhoneNumber.Substring(1);
-				}
-				else if (msg.MobilePhoneNumber[0] == '0')
-				{
-					msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
-				}
-				string auth = OpenDental.ODSMS.AUTH;
-				string computername = "Computer Name; " + ODEnvironment.MachineName;
-				Console.WriteLine(computername);
-				EventLog.WriteEntry("ODSMS", computername, EventLogEntryType.Information, 101, 1, new byte[10]);
-				string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
-				EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
+					if (msg.MobilePhoneNumber[0] == '+')
+					{
+						msg.MobilePhoneNumber = msg.MobilePhoneNumber.Substring(1);
+					}
+					else if (msg.MobilePhoneNumber[0] == '0')
+					{
+						msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
+					}
+					string auth = OpenDental.ODSMS.AUTH;
+					string computername = "Computer Name; " + ODEnvironment.MachineName;
+					Console.WriteLine(computername);
+					EventLog.WriteEntry("ODSMS", computername, EventLogEntryType.Information, 101, 1, new byte[10]);
+					string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
+					EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
 
 
-				Console.WriteLine(send);
-				EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
-				// http://localhost:9710/http/send-message?username=admin&password=password&to=%6421467784&message-type=sms.automatic&message=Message+Text
-				SmsGo(send, msg.MobilePhoneNumber, "http/request-status-update?" + auth + "&message-id=");
+					Console.WriteLine(send);
+					EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
+					// http://localhost:9710/http/send-message?username=admin&password=password&to=%6421467784&message-type=sms.automatic&message=Message+Text
+					SmsGo(send, msg.MobilePhoneNumber, "http/request-status-update?" + auth + "&message-id=");
+				}
 			}
 			return listMessages;
 		}
