@@ -221,14 +221,22 @@ namespace OpenDental {
 		}
 
 		///<summary>Attempts to load databaseIntegrities whitelist from preference into cache.</summary>
-		private static void RefreshCacheFromPref() {
-			string whiteListObfuscated=Prefs.GetOne(PrefName.DatabaseIntegritiesWhiteList).ValueString;
-			string whiteListPlainText="";
-			if(whiteListObfuscated!="") {
-				whiteListPlainText=CDT.Class1.TryDecrypt(whiteListObfuscated);
-				FillCache(whiteListPlainText);
+		private static void RefreshCacheFromPref()
+		{
+			string whiteListObfuscated = Prefs.GetOne(PrefName.DatabaseIntegritiesWhiteList).ValueString;
+			string whiteListPlainText = "";
+			if (whiteListObfuscated != "")
+			{
+				whiteListPlainText = CDT.Class1.TryDecrypt(whiteListObfuscated);
+				if (whiteListObfuscated != whiteListPlainText)
+				{
+					FillCache(whiteListPlainText);
+				}
+				else
+				{
+					Console.WriteLine("Failure decrypting WhiteListObfuscated");
+				}
 			}
 		}
-
 	}
 }
