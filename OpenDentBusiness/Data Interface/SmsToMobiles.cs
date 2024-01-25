@@ -361,7 +361,44 @@ namespace OpenDentBusiness
 					// http://localhost:9710/http/send-message?username=admin&password=password&to=%6421467784&message-type=sms.automatic&message=Message+Text
 					SmsGo(send, msg.MobilePhoneNumber, "http/request-status-update?" + auth + "&message-id=");
 				}
-			}
+			} else
+			{
+                System.Xml.Serialization.XmlSerializer xmlListSmsToMobileSerializer = new System.Xml.Serialization.XmlSerializer(typeof(List<SmsToMobile>));
+                StringBuilder strbuild = new StringBuilder();
+                using (XmlWriter writer = XmlWriter.Create(strbuild, WebSerializer.CreateXmlWriterSettings(true)))
+                {
+                    writer.WriteStartElement("Payload");
+                    writer.WriteStartElement("ListSmsToMobile");
+                    xmlListSmsToMobileSerializer.Serialize(writer, listMessages);
+                    writer.WriteEndElement(); //ListSmsToMobile	
+                    writer.WriteEndElement(); //Payload	
+                }
+                string result = "";
+                try
+                {
+                    result = WebServiceMainHQProxy.GetWebServiceMainHQInstance()
+                        .SmsSend(PayloadHelper.CreatePayload(strbuild.ToString(), eServiceCode.IntegratedTexting));
+                }
+                catch (Exception ex)
+                {
+                    ex.DoNothing();
+                    throw new Exception("Unable to send using web service.");
+                }
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(result);
+                XmlNode nodeError = doc.SelectSingleNode("//Error");
+                XmlNode nodeSmsToMobiles = doc.SelectSingleNode("//ListSmsToMobile");
+                if (nodeSmsToMobiles is null)
+                {
+                    throw new Exception(nodeError?.InnerText ?? "Output node not found: ListSmsToMobile");
+                }
+                using XmlReader reader = XmlReader.Create(new System.IO.StringReader(nodeSmsToMobiles.InnerXml));
+                listMessages = (List<SmsToMobile>)xmlListSmsToMobileSerializer.Deserialize(reader);
+                if (listMessages is null)
+                { //List should always be there even if it's empty.
+                    throw new Exception(nodeError?.InnerText ?? "Output node not found: Error");
+                }
+            }
 			return listMessages;
 		}
 	}
