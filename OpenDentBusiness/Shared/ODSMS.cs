@@ -41,7 +41,6 @@ namespace OpenDental
                         string receiver_name = line.Replace("RECEIVER:", "");
                         if (receiver_name == ODEnvironment.MachineName)
                         {
-                            EventLog.WriteEntry("ODSMS", "Name matches, enabling SMS reception", EventLogEntryType.Information, 101, 1, new byte[10]);
                             RECEIVE_SMS = true;
                         }
                     }
@@ -50,6 +49,13 @@ namespace OpenDental
             catch (FileNotFoundException) {
                 EventLog.WriteEntry("ODSMS", "odsms.txt config file not found - stuff is about to break", EventLogEntryType.Error, 101, 1, new byte[10]);
                 throw;
+            }
+            if (RECEIVE_SMS)
+            {
+                EventLog.WriteEntry("ODSMS", "Name matches, enabling SMS reception", EventLogEntryType.Information, 101, 1, new byte[10]);
+            } else
+            {
+                EventLog.WriteEntry("ODSMS", "Not receiving SMS on this computer", EventLogEntryType.Information, 101, 1, new byte[10]);
             }
 
             EventLog.WriteEntry("ODSMS", "Successfully loaded odsms.txt config file", EventLogEntryType.Information, 101, 1, new byte[10]);
