@@ -15,6 +15,9 @@ namespace OpenDental
         static ODSMS()
         {
 
+            string MachineName = Environment.MachineName; 
+            // Not ODEnvironment.MachineNmae - if you remote into a machine and run OD there, treat it as that machine
+
             // Set up event log -- must be run as Administrator
             try
             {
@@ -26,6 +29,9 @@ namespace OpenDental
                 Console.WriteLine("Event source already exists, or we don't have permission to create it.");
                 EventLog.WriteEntry("ODSMS", "Event source already exists, or we don't have permission to create it", EventLogEntryType.Information, 101, 1, new byte[10]);
             }
+
+            EventLog.WriteEntry("ODSMS", "Running custom build of Open Dental on " + MachineName, EventLogEntryType.Information, 101, 1, new byte[10]);
+
 
             string configPath = @"L:\odsms.txt";
             try
@@ -39,7 +45,7 @@ namespace OpenDental
                     if (line.StartsWith("RECEIVER:"))
                     {
                         string receiver_name = line.Replace("RECEIVER:", "");
-                        if (receiver_name == ODEnvironment.MachineName)
+                        if (receiver_name == MachineName)
                         {
                             RECEIVE_SMS = true;
                         }
@@ -55,7 +61,7 @@ namespace OpenDental
                 EventLog.WriteEntry("ODSMS", "Name matches, enabling SMS reception", EventLogEntryType.Information, 101, 1, new byte[10]);
             } else
             {
-                EventLog.WriteEntry("ODSMS", "Not receiving SMS on this computer", EventLogEntryType.Information, 101, 1, new byte[10]);
+                EventLog.WriteEntry("ODSMS", "Not receiving SMS on this computer:" + MachineName, EventLogEntryType.Information, 101, 1, new byte[10]);
             }
 
             EventLog.WriteEntry("ODSMS", "Successfully loaded odsms.txt config file", EventLogEntryType.Information, 101, 1, new byte[10]);
