@@ -59,6 +59,9 @@ namespace OpenDentBusiness {
 					rxPat.IsErxOld=true;
 					rxPat.SendStatus=RxSendStatus.SentElect;//To maintain backward compatibility.
 				}
+				if(rxPat.SendStatus!=rxPatOld.SendStatus) {
+					SecurityLogs.MakeLogEntry(Permissions.None,rxPat.PatNum,"ERX changed Send Status of Rx "+rxPat.Drug+" from "+rxPatOld.SendStatus+" to "+rxPat.SendStatus,rxPat.RxNum,rxPatOld.DateTStamp);
+				}
 				RxPats.Update(rxPat);
 			}
 			//If rxCui==0, then third party eRx option (DoseSpot, NewCrop, etc) did not provide an RxCui.  

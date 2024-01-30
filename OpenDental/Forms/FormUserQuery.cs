@@ -229,6 +229,10 @@ namespace OpenDental {
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
+			PrintoutOrientation printoutOrientation=PrintoutOrientation.Portrait;
+			if(radioLandscape.Checked) {
+				printoutOrientation=PrintoutOrientation.Landscape;
+			}
 			if(_gridResults.ListGridRows.Count == 0 && _gridResults.Columns.Count == 0) {
 				MsgBox.Show(MessageBoxButtons.OK,Lan.g(this,"No report to print. Please run a query."));
 				return;
@@ -238,11 +242,15 @@ namespace OpenDental {
 			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} printed"),
-				PrintoutOrientation.Landscape
+				printoutOrientation
 			);
 		}
 
 		private void butPrintPreview_Click(object sender,EventArgs e) {
+			PrintoutOrientation printoutOrientation=PrintoutOrientation.Portrait;
+			if(radioLandscape.Checked) {
+				printoutOrientation=PrintoutOrientation.Landscape;
+			}
 			if(_gridResults.ListGridRows.Count == 0 && _gridResults.Columns.Count == 0) {
 				MsgBox.Show(MessageBoxButtons.OK,Lan.g(this,"No report to preview. Please run a query."));
 				return;
@@ -252,7 +260,7 @@ namespace OpenDental {
 			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed"),
-				PrintoutOrientation.Landscape,
+				printoutOrientation,
 				isForcedPreview:true
 			);
 		}
