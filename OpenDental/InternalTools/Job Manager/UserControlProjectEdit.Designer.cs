@@ -80,20 +80,11 @@
 			this.comboPhase = new OpenDental.UI.ComboBox();
 			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.comboJobTeam = new OpenDental.UI.ComboBox();
-			this.groupAddChild = new OpenDental.UI.GroupBox();
-			this.butCreateNeedsNoApproval = new OpenDental.UI.Button();
-			this.butCreateProject = new OpenDental.UI.Button();
-			this.butCreateHQRequest = new OpenDental.UI.Button();
-			this.butCreateBug = new OpenDental.UI.Button();
-			this.butCreateEnhancement = new OpenDental.UI.Button();
-			this.butCreateInternalRequest = new OpenDental.UI.Button();
-			this.butCreateFeature = new OpenDental.UI.Button();
-			this.butCreateResearch = new OpenDental.UI.Button();
+			this.butAddExistingJob = new OpenDental.UI.Button();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
 			this.groupGridFilters.SuspendLayout();
-			this.groupAddChild.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// labelTitle
@@ -334,8 +325,6 @@
 			// gridProjects
 			// 
 			this.gridProjects.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.gridProjects.HasAddButton = true;
-			this.gridProjects.HScrollVisible = true;
 			this.gridProjects.Location = new System.Drawing.Point(3, 38);
 			this.gridProjects.Name = "gridProjects";
 			this.gridProjects.ShowContextMenu = false;
@@ -345,7 +334,6 @@
 			this.gridProjects.TranslationName = "FormJobManager";
 			this.gridProjects.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridProjects_CellDoubleClick);
 			this.gridProjects.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridProjects_CellClick);
-			this.gridProjects.TitleAddClick += new System.EventHandler(this.gridProjects_TitleAddClick);
 			// 
 			// labelProjectDescription
 			// 
@@ -707,98 +695,19 @@
 			this.comboJobTeam.TabIndex = 339;
 			this.comboJobTeam.SelectionChangeCommitted += new System.EventHandler(this.comboJobTeam_SelectionChangeCommitted);
 			// 
-			// groupAddChild
+			// butAddExistingJob
 			// 
-			this.groupAddChild.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
-			this.groupAddChild.Controls.Add(this.butCreateNeedsNoApproval);
-			this.groupAddChild.Controls.Add(this.butCreateProject);
-			this.groupAddChild.Controls.Add(this.butCreateHQRequest);
-			this.groupAddChild.Controls.Add(this.butCreateBug);
-			this.groupAddChild.Controls.Add(this.butCreateEnhancement);
-			this.groupAddChild.Controls.Add(this.butCreateInternalRequest);
-			this.groupAddChild.Controls.Add(this.butCreateFeature);
-			this.groupAddChild.Controls.Add(this.butCreateResearch);
-			this.groupAddChild.Location = new System.Drawing.Point(7, 330);
-			this.groupAddChild.Name = "groupAddChild";
-			this.groupAddChild.Size = new System.Drawing.Size(205, 192);
-			this.groupAddChild.TabIndex = 335;
-			this.groupAddChild.Text = "Create child job for selected Project";
-			// 
-			// butNeedsNoApproval
-			// 
-			this.butCreateNeedsNoApproval.Location = new System.Drawing.Point(103, 74);
-			this.butCreateNeedsNoApproval.Name = "butNeedsNoApproval";
-			this.butCreateNeedsNoApproval.Size = new System.Drawing.Size(98, 22);
-			this.butCreateNeedsNoApproval.TabIndex = 333;
-			this.butCreateNeedsNoApproval.Text = "NeedsNoApproval";
-			this.butCreateNeedsNoApproval.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// butCreateProject
-			// 
-			this.butCreateProject.Location = new System.Drawing.Point(4, 102);
-			this.butCreateProject.Name = "butCreateProject";
-			this.butCreateProject.Size = new System.Drawing.Size(98, 22);
-			this.butCreateProject.TabIndex = 332;
-			this.butCreateProject.Text = "Project";
-			this.butCreateProject.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// butCreateHQRequest
-			// 
-			this.butCreateHQRequest.Location = new System.Drawing.Point(103, 46);
-			this.butCreateHQRequest.Name = "butCreateHQRequest";
-			this.butCreateHQRequest.Size = new System.Drawing.Size(98, 22);
-			this.butCreateHQRequest.TabIndex = 329;
-			this.butCreateHQRequest.Text = "HQ Request";
-			this.butCreateHQRequest.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// butCreateBug
-			// 
-			this.butCreateBug.Location = new System.Drawing.Point(4, 18);
-			this.butCreateBug.Name = "butCreateBug";
-			this.butCreateBug.Size = new System.Drawing.Size(98, 22);
-			this.butCreateBug.TabIndex = 322;
-			this.butCreateBug.Text = "Bug";
-			this.butCreateBug.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// butCreateEnhancement
-			// 
-			this.butCreateEnhancement.Location = new System.Drawing.Point(103, 18);
-			this.butCreateEnhancement.Name = "butCreateEnhancement";
-			this.butCreateEnhancement.Size = new System.Drawing.Size(98, 22);
-			this.butCreateEnhancement.TabIndex = 327;
-			this.butCreateEnhancement.Text = "Enhancement";
-			this.butCreateEnhancement.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// butCreateInternalRequest
-			// 
-			this.butCreateInternalRequest.Location = new System.Drawing.Point(4, 74);
-			this.butCreateInternalRequest.Name = "butCreateInternalRequest";
-			this.butCreateInternalRequest.Size = new System.Drawing.Size(98, 22);
-			this.butCreateInternalRequest.TabIndex = 328;
-			this.butCreateInternalRequest.Text = "Internal Request";
-			this.butCreateInternalRequest.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// butCreateFeature
-			// 
-			this.butCreateFeature.Location = new System.Drawing.Point(4, 46);
-			this.butCreateFeature.Name = "butCreateFeature";
-			this.butCreateFeature.Size = new System.Drawing.Size(98, 22);
-			this.butCreateFeature.TabIndex = 330;
-			this.butCreateFeature.Text = "Feature";
-			this.butCreateFeature.Click += new System.EventHandler(this.butCreateJob_Click);
-			// 
-			// butCreateResearch
-			// 
-			this.butCreateResearch.Location = new System.Drawing.Point(103, 102);
-			this.butCreateResearch.Name = "butCreateResearch";
-			this.butCreateResearch.Size = new System.Drawing.Size(98, 22);
-			this.butCreateResearch.TabIndex = 331;
-			this.butCreateResearch.Text = "Research";
-			this.butCreateResearch.Click += new System.EventHandler(this.butCreateJob_Click);
+			this.butAddExistingJob.Location = new System.Drawing.Point(8, 334);
+			this.butAddExistingJob.Name = "butAddExistingJob";
+			this.butAddExistingJob.Size = new System.Drawing.Size(204, 22);
+			this.butAddExistingJob.TabIndex = 322;
+			this.butAddExistingJob.Text = "Add Existing Job to Project";
+			this.butAddExistingJob.Click += new System.EventHandler(this.butAddExistingJob_Click);
 			// 
 			// UserControlProjectEdit
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.Controls.Add(this.butAddExistingJob);
 			this.Controls.Add(this.textCheckedOut);
 			this.Controls.Add(this.labelCheckedOut);
 			this.Controls.Add(this.textHoursActualDescendants);
@@ -836,7 +745,6 @@
 			this.Controls.Add(this.labelJobTeam);
 			this.Controls.Add(this.textJobNum);
 			this.Controls.Add(this.labelJobNum);
-			this.Controls.Add(this.groupAddChild);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "UserControlProjectEdit";
 			this.Size = new System.Drawing.Size(1476, 865);
@@ -846,7 +754,6 @@
 			this.tableLayoutPanel2.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.groupGridFilters.ResumeLayout(false);
-			this.groupAddChild.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -858,21 +765,15 @@
 		private UI.GridOD gridConcept;
 		private UI.GridOD gridDefinition;
 		private UI.GridOD gridDevelopment;
-		private UI.Button butCreateBug;
+		private UI.Button butAddExistingJob;
 		private UI.GridOD gridComplete;
 		private UI.GridOD gridDocumentation;
 		private UI.GridOD gridPendingReview;
 		private UI.CheckBox checkIncludeComplete;
-		private UI.Button butCreateEnhancement;
-		private UI.Button butCreateInternalRequest;
-		private UI.Button butCreateHQRequest;
-		private UI.Button butCreateFeature;
-		private UI.Button butCreateResearch;
 		private UI.GridOD gridProjects;
 		private UI.GridOD gridDiscussion;
 		private OdtextEditor textEditorProjectDescription;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private UI.GroupBox groupAddChild;
 		private UI.ComboBox comboJobTeam;
 		private System.Windows.Forms.Label labelJobTeam;
 		private System.Windows.Forms.TextBox textJobNum;
@@ -896,7 +797,6 @@
 		private UI.Button butVersionPrompt;
 		private UI.Button butParentPick;
 		private UI.Button butParentRemove;
-		private UI.Button butCreateProject;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
 		private System.Windows.Forms.TextBox textSubmitter;
@@ -917,6 +817,5 @@
 		private System.Windows.Forms.Timer timerTitle;
 		private System.Windows.Forms.Timer timerVersion;
 		private UI.CheckBox checkShowAllChildJobs;
-		private UI.Button butCreateNeedsNoApproval;
 	}
 }

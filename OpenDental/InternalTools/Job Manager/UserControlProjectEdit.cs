@@ -193,7 +193,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			gridProjects.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Parent"),50);
 			gridProjects.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Title"),800);
+			col=new GridColumn(Lan.g(this,"Title"),600){ IsWidthDynamic=true };
 			gridProjects.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Team"),150);
 			gridProjects.Columns.Add(col);
@@ -283,6 +283,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 			List<Job> listJobs=new List<Job>();
 			if(checkShowAllChildJobs.Checked) {
 				listJobs=GetDescedentJobs(_jobCur.JobNum,true);
+				RemoveCompletedJobsFromListJobs(listJobs);
+				RemoveCompletedJobsFromListJobs(_listJobsByTopParent);
 			}
 			else {
 				listJobs=JobManagerCore.ListJobsAll.FindAll(x => x.ParentNum==_jobCur.JobNum);
@@ -396,16 +398,11 @@ namespace OpenDental.InternalTools.Job_Manager {
 			butVersionPrompt.Enabled=false;
 			textEditorProjectDescription.ReadOnly=true;
 			butChangeEst.Enabled=false;
-			butCreateFeature.Enabled=false;
-			butCreateBug.Enabled=false;
-			butCreateEnhancement.Enabled=false;
-			butCreateInternalRequest.Enabled=false;
-			butCreateHQRequest.Enabled=false;
-			butCreateResearch.Enabled=false;
-			butCreateProject.Enabled=false;
+			butAddExistingJob.Enabled=false;
 			if(_jobCur==null) {
 				return;
 			}
+			butAddExistingJob.Enabled=true;
 			if(_isOverride) {//Enable everything and make everything visible
 				textTitle.ReadOnly=false;
 				comboPriority.Enabled=true;
@@ -416,17 +413,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				comboJobTeam.Enabled=true;
 				butVersionPrompt.Enabled=true;
 				textEditorProjectDescription.ReadOnly=false;
-				butCreateFeature.Enabled=true;
-				butCreateBug.Enabled=true;
-				butCreateEnhancement.Enabled=true;
-				butCreateInternalRequest.Enabled=true;
-				butCreateHQRequest.Enabled=true;
-				butCreateResearch.Enabled=true;
-				butCreateProject.Enabled=true;
 				return;
-			}
-			else {
-				EnableCreateJobButtons();
 			}
 			//At this point, we want to return because users with view-only permission should not be able to make changes to the Project
 			if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
@@ -528,20 +515,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			butActions.ContextMenu=actionMenu;
 			butActions.ContextMenu.Show(butActions,new Point(0,butActions.Height));
-		}
-
-		/// <summary>This method enables the "Create Jobs" buttons based on the user's JobPermissions. If more buttons get added to the designer, just add them their enabled values underneath their appropriate JobPermission check.</summary>
-		private void EnableCreateJobButtons() {
-			butCreateFeature.Enabled=true;
-			butCreateBug.Enabled=true;
-			butCreateEnhancement.Enabled=true;
-			butCreateInternalRequest.Enabled=true;
-			butCreateHQRequest.Enabled=true;
-			butCreateResearch.Enabled=true;
-			if(JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-				butCreateNeedsNoApproval.Enabled=true;
-				butCreateProject.Enabled=true;
-			}
 		}
 
 		//Allows save to be called from outside this control.
@@ -706,60 +679,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 		private void FillPriorityList() {
 			_listJobPriorities=Defs.GetDefsForCategory(DefCat.JobPriorities);
 			List<string> listPriorityItemValues=_listJobPriorities.SelectMany(y => y.ItemValue.Split(',')).ToList();
-		}
-
-		private void gridProjects_TitleAddClick(object sender,EventArgs e) {
-			if(_isLoading || _jobCur==null) {
-				return;
-			}
-			if((_jobCur.PhaseCur==JobPhase.Cancelled || _jobCur.PhaseCur==JobPhase.Complete) && !IsOverride) {
-				MessageBox.Show("Cannot add child Projects to Projects that are Complete or Cancelled.");
-				return;
-			}
-			using FormJobSearch formJobSearch=new FormJobSearch();
-			formJobSearch.ShowProjectsOnly=true;
-			formJobSearch.ShowDialog();
-			if(formJobSearch.DialogResult!=DialogResult.OK) {
-				return;
-			}
-			Job job=formJobSearch.SelectedJob;
-			if(job==null) {
-				return;
-			}
-			if(job.JobNum==_jobCur.JobNum) {
-				MsgBox.Show(this,"A child job must be different from its parent. "+_jobCur.ToString());
-				return;
-			}
-			else if(job.ParentNum==_jobCur.JobNum) {
-				MsgBox.Show(this,"The selected job is already a child of "+_jobCur.ToString()+".");
-				return;
-			}
-			else if(job.ParentNum!=0
-				&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"The selected job already has a parent. Are you sure you want to reassign its parent to "+_jobCur.ToString()+"?")) {
-				return;
-			}
-			//Assign parent
-			long topParentNumOld=job.TopParentNum;// old top parent of selected
-			if(Jobs.CheckForLoop(job.JobNum,_jobCur.JobNum)) {//check infinite loop for selected job and new parent
-				MsgBox.Show(this,"Invalid parent job, would create an infinite loop.");
-				return;
-			}
-			long parentNumOld=job.ParentNum;
-			job.ParentNum=_jobCur.JobNum;// set new
-			job.TopParentNum=_jobCur.TopParentNum;// set new
-			Jobs.Update(job);
-			JobLogs.MakeLogEntryForParentChange(job,job.ParentNum,parentNumOld);
-			List<Job> listJobsUpdated=new List<Job>{job};
-			if(job.TopParentNum!=topParentNumOld) {
-				List<Job> listTopParentJobs=Jobs.GetAllByTopParentNum(topParentNumOld);
-				listJobsUpdated.AddRange(Jobs.GetChildJobs(job,listTopParentJobs));
-			}
-			listJobsUpdated.ForEach(x => x.TopParentNum=job.TopParentNum);
-			Jobs.UpdateTopParentList(job.TopParentNum,listJobsUpdated.Select(x => x.JobNum).ToList());
-			listJobsUpdated.Add(_jobCur);
-			for(int i=0;i<listJobsUpdated.Count;i++) {
-				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,listJobsUpdated[i].JobNum);
-			}
 		}
 
 		private void gridProjects_CellClick(object sender,ODGridClickEventArgs e) {
@@ -967,39 +886,66 @@ namespace OpenDental.InternalTools.Job_Manager {
 			Jobs.Update(jobFromDB);//update the checkout num.
 			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
 		}
-		private void butCreateJob_Click(object sender,EventArgs e) {
-			if(_isLoading) {
+		private void butAddExistingJob_Click(object sender,EventArgs e) {
+			AddExistingJobToProject();
+		}
+
+		private void AddExistingJobToProject() {
+			if(_isLoading || _jobCur==null) {
 				return;
 			}
-			Job job=_jobCur;
+			if((_jobCur.PhaseCur==JobPhase.Cancelled || _jobCur.PhaseCur==JobPhase.Complete) && !IsOverride) {
+				MessageBox.Show("Cannot add child Jobs to Projects that are Complete or Cancelled.");
+				return;
+			}
+			using FormJobSearch formJobSearch=new FormJobSearch();
+			formJobSearch.ShowDialog();
+			if(formJobSearch.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			Job job=formJobSearch.SelectedJob;
 			if(job==null) {
-				MsgBox.Show(this,"No job currently selected. Select a job to be a parent job.");
 				return;
 			}
-			if((UI.Button)sender==butCreateBug) {
-				AddNewJob(JobCategory.Bug,job.JobNum,job.TopParentNum);
+			if(job.JobNum==_jobCur.JobNum) {
+				MsgBox.Show(this,"A child job must be different from its parent. "+_jobCur.ToString());
+				return;
 			}
-			else if((UI.Button)sender==butCreateEnhancement) {
-				AddNewJob(JobCategory.Enhancement,job.JobNum,job.TopParentNum);
+			else if(job.ParentNum==_jobCur.JobNum) {
+				MsgBox.Show(this,"The selected job is already a child of "+_jobCur.ToString()+".");
+				return;
 			}
-			else if((UI.Button)sender==butCreateFeature) {
-				AddNewJob(JobCategory.Feature,job.JobNum,job.TopParentNum);
+			else if(job.ParentNum!=0
+				&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"The selected job already has a parent. Are you sure you want to reassign its parent to "+_jobCur.ToString()+"?")) {
+				return;
 			}
-			else if((UI.Button)sender==butCreateHQRequest) {
-				AddNewJob(JobCategory.HqRequest,job.JobNum,job.TopParentNum);
+			//Assign parent
+			if(Jobs.CheckForLoop(job.JobNum,_jobCur.JobNum)) {//check infinite loop for selected job and new parent
+				MsgBox.Show(this,"Invalid parent job, would create an infinite loop.");
+				return;
 			}
-			else if((UI.Button)sender==butCreateInternalRequest) {
-				AddNewJob(JobCategory.InternalRequest,job.JobNum,job.TopParentNum);
+			long topParentNumOld=job.TopParentNum;// old top parent of selected
+			long parentNumOld=job.ParentNum;
+			job.ParentNum=_jobCur.JobNum;// set new
+			job.TopParentNum=_jobCur.TopParentNum;// set new
+			UpdateParentForJobs(job,parentNumOld,topParentNumOld);
+		}
+
+		private void UpdateParentForJobs(Job job,long parentNumOld,long topParentNumOld) {
+			Jobs.Update(job);
+			if(job.ParentNum!=parentNumOld) {
+				JobLogs.MakeLogEntryForParentChange(job,job.ParentNum,parentNumOld);
 			}
-			else if((UI.Button)sender==butCreateNeedsNoApproval){
-				AddNewJob(JobCategory.NeedNoApproval,job.JobNum,job.TopParentNum);
+			List<Job> listJobsUpdated=new List<Job>{job};
+			if(job.TopParentNum!=topParentNumOld) {
+				List<Job> listTopParentJobs=Jobs.GetAllByTopParentNum(topParentNumOld);
+				listJobsUpdated.AddRange(Jobs.GetChildJobs(job,listTopParentJobs));
 			}
-			else if((UI.Button)sender==butCreateProject) {
-				AddNewJob(JobCategory.Project,job.JobNum,job.TopParentNum);
+			listJobsUpdated.ForEach(x => x.TopParentNum=job.TopParentNum);
+			Jobs.UpdateTopParentList(job.TopParentNum,listJobsUpdated.Select(x => x.JobNum).ToList());
+			for(int i=0;i<listJobsUpdated.Count;i++) {
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,listJobsUpdated[i].JobNum);
 			}
-			else if((UI.Button)sender==butCreateResearch) {
-				AddNewJob(JobCategory.Research,job.JobNum,job.TopParentNum);
-			}			
 		}
 
 		private void butParentRemove_Click(object sender,EventArgs e) {
@@ -1019,19 +965,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				_jobOld.ParentNum=0;
 				_jobCur.TopParentNum=_jobCur.JobNum;
 				_jobOld.TopParentNum=_jobCur.JobNum;
-				Jobs.Update(_jobCur);
-				if(_jobCur.ParentNum!=parentNumOld) {
-					JobLogs.MakeLogEntryForParentChange(_jobCur,_jobCur.ParentNum,parentNumOld);
-				}
-				List<Job> listJobsUpdated=new List<Job>();
-				listJobsUpdated.Add(_jobCur);
-				if(_jobCur.TopParentNum!=topParentNumOld) {
-					List<Job> listTopParentJobs=Jobs.GetAllByTopParentNum(topParentNumOld);
-					listJobsUpdated.AddRange(Jobs.GetChildJobs(_jobCur,listTopParentJobs));
-				}
-				listJobsUpdated.ForEach(x => x.TopParentNum=_jobCur.TopParentNum);
-				Jobs.UpdateTopParentList(_jobCur.TopParentNum,listJobsUpdated.Select(x => x.JobNum).ToList());
-				listJobsUpdated.ForEach(x => Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,x.JobNum));
+				UpdateParentForJobs(_jobCur,parentNumOld,topParentNumOld);
 			}
 		}
 
@@ -1068,18 +1002,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				_jobOld.ParentNum=job.JobNum;
 				_jobCur.TopParentNum=job.TopParentNum;
 				_jobOld.TopParentNum=job.TopParentNum;
-				Jobs.Update(_jobCur);
-				if(_jobCur.ParentNum!=parentNumOld) {
-					JobLogs.MakeLogEntryForParentChange(_jobCur,_jobCur.ParentNum,parentNumOld);
-				}
-				List<Job> listJobsUpdated=new List<Job>{_jobCur};
-				if(_jobCur.TopParentNum!=topParentNumOld) {
-					List<Job> listTopParentJobs=Jobs.GetAllByTopParentNum(topParentNumOld);
-					listJobsUpdated.AddRange(Jobs.GetChildJobs(_jobCur,listTopParentJobs));
-				}
-				listJobsUpdated.ForEach(x => x.TopParentNum=_jobCur.TopParentNum);
-				Jobs.UpdateTopParentList(_jobCur.TopParentNum,listJobsUpdated.Select(x => x.JobNum).ToList());
-				listJobsUpdated.ForEach(x => Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,x.JobNum));
+				UpdateParentForJobs(_jobCur,parentNumOld,topParentNumOld);
 			}
 		}
 		#endregion
@@ -1567,10 +1490,11 @@ namespace OpenDental.InternalTools.Job_Manager {
 			JobLogs.MakeLogEntryForView(_jobCur);
 		}
 
-		///<summary>Gets a list of all descendants that are not cancelled jobs.</summary>
+		///<summary>Gets a list of all descendents that are not cancelled jobs.</summary>
 		private List<Job> GetDescedentJobs(long parentNum,bool doRefreshJobs=false) {
 			if(_listJobsByTopParent==null || doRefreshJobs) {
-				RefreshListJobsByTopParent(checkIncludeComplete.Checked,checkIncludeCancelled.Checked);
+				bool includeComplete=checkIncludeComplete.Checked || checkShowAllChildJobs.Checked;
+				RefreshListJobsByTopParent(includeComplete,checkIncludeCancelled.Checked);
 			}
 			List<Job> listJobsChildren=_listJobsByTopParent.FindAll(x => x.ParentNum==parentNum);
 			List<Job> listJobsDescedents=new List<Job>();
@@ -1592,11 +1516,13 @@ namespace OpenDental.InternalTools.Job_Manager {
 				return;
 			}
 			//Get listJobs
-			RefreshListJobsByTopParent(checkIncludeComplete.Checked,checkIncludeCancelled.Checked);
-			List<Job> listJobsAllDecendants=GetDescedentJobs(_jobCur.JobNum,false);
+			RefreshListJobsByTopParent(true,false);
+			List<Job> listJobsAllDescendants=GetDescedentJobs(_jobCur.JobNum,false);
+			listJobsAllDescendants.RemoveAll(x => x.PhaseCur.In(JobPhase.Complete,JobPhase.Cancelled));
+			RemoveCompletedJobsFromListJobs(_listJobsByTopParent);
 			double totalHoursEst=0;
 			double totalHourActual=0;
-			foreach(Job job in listJobsAllDecendants) {
+			foreach(Job job in listJobsAllDescendants) {
 				if(job.Category!=JobCategory.Project) {
 					totalHourActual+=job.HoursActual;
 					totalHoursEst+=job.HoursEstimate;
@@ -1620,6 +1546,15 @@ namespace OpenDental.InternalTools.Job_Manager {
 
 		private void checkShowAllChildJobs_Click(object sender,EventArgs e) {
 			FillAllChildGrids();
+		}
+		///<summary>Removes completed jobs from provided list if checkIncludeComplete is not checked. This is helpful for filtering out completed after getting descendents from completed jobs.</summary>
+		private void RemoveCompletedJobsFromListJobs(List<Job> listJobs) {
+			if(listJobs.IsNullOrEmpty()) {
+				return;
+			}
+			if(!checkIncludeComplete.Checked) {
+				listJobs.RemoveAll(x => x.PhaseCur==JobPhase.Complete);
+			}
 		}
 	}//end class
 

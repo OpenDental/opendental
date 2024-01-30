@@ -1914,7 +1914,6 @@ namespace OpenDental {
 			//no need worry about scaling here. Not sure why.
 			SizeF sizeF=g.MeasureString(fieldValue,font,sheetField.Width);
 			int calcH=(int)sizeF.Height;
-			calcH+=font.Height+2;//add one line just in case.
 			if(calcH<=sheetField.Height){//no growth needed. 
 				return;
 			}

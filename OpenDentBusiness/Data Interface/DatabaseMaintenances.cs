@@ -176,7 +176,7 @@ namespace OpenDentBusiness {
 				return successLog;
 			}
 			// If we have any issues, we reset the log (which would only have messages relating to non-error states at this point), and add the approriate errors/issues to the log. We set hasCritcalWarning=true to indicate that we have possible data-loss due to the incorrect settings.
-			string warningMessage=Lans.g("FormDatabaseMaintenance","There are some global MySQL variables that are not set correctly. A manual fix is required to prevent data loss. For more information please check the web manual at")+" https://opendental.com/manual/my.ini ";
+			string warningMessage=Lans.g("FormDatabaseMaintenance","There are some global MySQL variables that are not set correctly. A manual fix is required to prevent data loss. For more information please check the web manual at")+" https://opendental.com/manual/myini.html ";
 			string issueLog="";
 			switch(modeCur) {
 				case DbmMode.Breakdown:

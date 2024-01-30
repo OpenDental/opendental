@@ -132,5 +132,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.Cancel; //removing new jobs from the DB is taken care of in FormClosing
 		}
 
+		private void butAutoNote_Click(object sender,EventArgs e) {
+			FrmAutoNoteCompose frmAutoNoteCompose = new FrmAutoNoteCompose();
+			frmAutoNoteCompose.ShowDialog();
+			if(frmAutoNoteCompose.IsDialogOK) {
+				textDescription.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			}
+		}
 	}
 }

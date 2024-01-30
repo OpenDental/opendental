@@ -300,35 +300,40 @@ namespace OpenDental{
 			int[] summaryGroups2= { 2 };
 			int[] summaryGroups3= { 3 };
 			int[] summaryGroups4= { 1,2,3 };
+			QueryObject query=null;
 			//Insurance Payments Query-------------------------------------
-			QueryObject query=report.AddQuery(tableIns,"Insurance Payments","PayType",SplitByKind.Definition,1,true,dictInsDefNames,fontSubTitle);
-			query.AddColumn("Date",90,FieldValueType.Date,font);
-			//query.GetColumnDetail("Date").SuppressIfDuplicate = true;
-			query.GetColumnDetail("Date").StringFormat="d";
-			query.AddColumn("Carrier",150,FieldValueType.String,font);
-			query.AddColumn("Patient Name",150,FieldValueType.String,font);
-			query.AddColumn("Provider",90,FieldValueType.String,font);
-			if(PrefC.HasClinicsEnabled) {
-				query.AddColumn("Clinic",120,FieldValueType.String,font);
+			if(tableIns.Rows.Count!=0) {
+				query=report.AddQuery(tableIns,"Insurance Payments","PayType",SplitByKind.Definition,1,true,dictInsDefNames,fontSubTitle);
+				query.AddColumn("Date",90,FieldValueType.Date,font);
+				//query.GetColumnDetail("Date").SuppressIfDuplicate = true;
+				query.GetColumnDetail("Date").StringFormat="d";
+				query.AddColumn("Carrier",150,FieldValueType.String,font);
+				query.AddColumn("Patient Name",150,FieldValueType.String,font);
+				query.AddColumn("Provider",90,FieldValueType.String,font);
+				if(PrefC.HasClinicsEnabled) {
+					query.AddColumn("Clinic",120,FieldValueType.String,font);
+				}
+				query.AddColumn("Check#",75,FieldValueType.String,font);
+				query.AddColumn("Amount",90,FieldValueType.Number,font);
+				query.AddGroupSummaryField("Total Insurance Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroups1),Color.Black,fontBold,0,20);
 			}
-			query.AddColumn("Check#",75,FieldValueType.String,font);
-			query.AddColumn("Amount",90,FieldValueType.Number,font);
-			query.AddGroupSummaryField("Total Insurance Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroups1),Color.Black,fontBold,0,20);
+			if(tablePat.Rows.Count!=0) {
 			//Patient Payments Query---------------------------------------
-			query=report.AddQuery(tablePat,"Patient Payments","PayType",SplitByKind.Definition,2,true,dictPatDefNames,fontSubTitle);
-			query.AddColumn("Date",90,FieldValueType.Date,font);
-			//query.GetColumnDetail("Date").SuppressIfDuplicate = true;
-			query.GetColumnDetail("Date").StringFormat="d";
-			query.AddColumn("Paying Patient",270,FieldValueType.String,font);
-			query.AddColumn("Provider",90,FieldValueType.String,font);
-			if(PrefC.HasClinicsEnabled) {
-				query.AddColumn("Clinic",120,FieldValueType.String,font);
+				query=report.AddQuery(tablePat,"Patient Payments","PayType",SplitByKind.Definition,2,true,dictPatDefNames,fontSubTitle);
+				query.AddColumn("Date",90,FieldValueType.Date,font);
+				//query.GetColumnDetail("Date").SuppressIfDuplicate = true;
+				query.GetColumnDetail("Date").StringFormat="d";
+				query.AddColumn("Paying Patient",270,FieldValueType.String,font);
+				query.AddColumn("Provider",90,FieldValueType.String,font);
+				if(PrefC.HasClinicsEnabled) {
+					query.AddColumn("Clinic",120,FieldValueType.String,font);
+				}
+				query.AddColumn("Check#",75,FieldValueType.String,font);
+				query.AddColumn("Amount",120,FieldValueType.Number,font);
+				query.AddGroupSummaryField("Total Patient Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroups2),Color.Black,fontBold,0,20);
 			}
-			query.AddColumn("Check#",75,FieldValueType.String,font);
-			query.AddColumn("Amount",120,FieldValueType.Number,font);
-			query.AddGroupSummaryField("Total Patient Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroups2),Color.Black,fontBold,0,20);
 			//Credit Card Online Patient Payments Query---------------------------------------
-			if(checkShowOnlinePatientPaymentsSeparately.Checked) {
+			if(checkShowOnlinePatientPaymentsSeparately.Checked && tableOnlinePat.Rows.Count!=0) {
 				query=report.AddQuery(tableOnlinePat,"Online Patient Payments","PayType",SplitByKind.Definition,3,true,dictPatDefNames,fontSubTitle);
 				query.AddColumn("Date",90,FieldValueType.Date,font);
 				//query.GetColumnDetail("Date").SuppressIfDeuplicate = true;
@@ -342,7 +347,9 @@ namespace OpenDental{
 				query.AddColumn("Amount",120,FieldValueType.Number,font);
 				query.AddGroupSummaryField("Total Online Patient Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroups3),Color.Black,fontBold,0,20);
 			}
-			query.AddGroupSummaryField("Total All Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroups4),Color.Black,fontBold,0,4);
+			if(query!=null) {
+				query.AddGroupSummaryField("Total All Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroups4),Color.Black,fontBold,0,4);
+			}
 			report.AddPageNum(font);
 			report.AddGridLines();
 			report.AddPageFooterText("PageFooter","*Part of a bulk check, which can be located by going to the listed patient's account",font,0,

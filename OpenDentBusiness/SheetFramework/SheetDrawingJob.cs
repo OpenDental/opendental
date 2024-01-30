@@ -1238,7 +1238,7 @@ namespace OpenDentBusiness {
 				g.FillRectangle(Brushes.White,0,sheet.HeightPage-_printMargin.Bottom,sheet.WidthPage,sheet.HeightPage);
 			}
 			else {
-				gx.DrawRectangle(XPens.White,Brushes.White,p(0),p(sheet.HeightPage-_printMargin.Bottom),p(sheet.WidthPage),p(sheet.HeightPage));
+				gx.DrawRectangle(XPens.White,Brushes.White,0,sheet.HeightPage-_printMargin.Bottom,sheet.WidthPage,sheet.HeightPage);
 			}
 			if(sheet.SheetType==SheetTypeEnum.MedLabResults) {
 				DrawMedLabFooter(sheet,g,gx,pagesPrinted,yPosPrint,medLab);
@@ -1676,10 +1676,10 @@ namespace OpenDentBusiness {
 			//Even though _printMargins and _yPosPrint are available in this context they are passed in so for future compatibility with webforms.
 			int pageCount=Sheets.CalculatePageCount(sheet,margins);
 			int bottomOfPrintableArea=topOfPrintableArea+sheet.HeightPage-margins.Bottom;
-			if(field.YPos>bottomOfPrintableArea && pagesPrinted<pageCount-1){
+			if(field.YPos>=bottomOfPrintableArea && pagesPrinted<pageCount-1){
 				return false;//field is entirely on one of the next pages. Unless we are on the first or last page, then it could be in the bottom margin.
 			}
-			if(field.Bounds.Bottom<topOfPrintableArea && pagesPrinted>0) {
+			if(field.Bounds.Bottom-margins.Top<=topOfPrintableArea && pagesPrinted>0) {
 				return false;//field is entirely on one of the previous pages. Unless we are on the first page, then it is in the top margin.
 			}
 			return true;//field is all or partially on current page.

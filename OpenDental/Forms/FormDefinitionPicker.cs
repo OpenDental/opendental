@@ -108,12 +108,8 @@ namespace OpenDental {
 			listSelectedIndexes.ForEach(x => gridMain.SetSelected(x,true));
 		}
 
-		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
-			ListDefsSelected.Clear();
-			ListDefsSelected.AddRange(gridMain.SelectedIndices.Select(x => (Def)gridMain.ListGridRows[x].Tag));
-		}
-
 		private void checkShowHidden_CheckedChanged(object sender,EventArgs e) {
+			GetSelectedGridTags();
 			FillGrid();
 		}
 
@@ -121,7 +117,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void GetSelectedGridTags(){
+			ListDefsSelected=gridMain.SelectedTags<Def>();
+		}
+
 		private void butOK_Click(object sender,EventArgs e) {
+			GetSelectedGridTags();
 			DialogResult=DialogResult.OK;
 		}
 

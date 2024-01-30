@@ -1716,12 +1716,20 @@ namespace OpenDental
 			if(keyValue=="b" || keyValue=="s" || keyValue=="p" || keyValue=="c") {
 				PerioCell perioCell=GetPerioCell(ColRowSelected,false);
 				bool hasText=false;
+				bool isSkippedTooth=(_listSkippedTeeth.Contains(perioCell.ToothNum));
 				if(ThreeAtATime){
 					//don't backup
 				}
 				else if(perioCell.Text!=null && perioCell.Text!=""){
 					hasText=true;
 					//so enter value for current cell
+				}
+				else if(isSkippedTooth) {
+					//The only way to get to a skipped tooth is to click on it.
+					//This means there should be less automation.
+					//Always put bleeding points, etc., on the current position.
+					//Bleeding points don't cause advance anyway, whether on skipped tooth or not.
+					hasText=true;
 				}
 				else{
 					hasText=false;

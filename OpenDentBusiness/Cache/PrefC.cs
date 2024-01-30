@@ -576,7 +576,7 @@ namespace OpenDentBusiness {
 
 			public static string SslCa {
 				get {
-					return PrefC.GetString(PrefName.ReportingServerSslCa);
+					return PrefC.GetStringSilent(PrefName.ReportingServerSslCa);
 				}
 			}
 		}
@@ -610,7 +610,7 @@ namespace OpenDentBusiness {
 			}
 			public static string SslCa {
 				get {
-					return PrefC.GetString(PrefName.ReadOnlyServerSslCa);
+					return PrefC.GetStringSilent(PrefName.ReadOnlyServerSslCa);
 				}
 			}
 			public static string Database {

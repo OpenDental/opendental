@@ -68,6 +68,9 @@ namespace OpenDentBusiness{
 		}
 	
 		public static List<EhrPatient> GetByPatNums(List<long> listPatNums) {
+			if(listPatNums.IsNullOrEmpty()) {
+				return new List<EhrPatient>();
+			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<EhrPatient>>(MethodBase.GetCurrentMethod(),listPatNums);
 			}

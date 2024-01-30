@@ -40,6 +40,7 @@ namespace OpenDental {
 			IsWebForm = isWebForm;
 			Load+=FrmSheetPicker_Load;
 			listMain.MouseDoubleClick+=listMain_DoubleClick;
+			textSearch.TextChanged+=textSearch_TextChanged;
 		}
 
 		private void FrmSheetPicker_Load(object sender,EventArgs e) {
@@ -98,11 +99,7 @@ namespace OpenDental {
 			if(SheetType==SheetTypeEnum.PatientForm) {
 				ListSheetDefs=ListSheetDefs.OrderBy(x => x.Description).ToList();
 			}
-			listMain.Items.AddList(ListSheetDefs,x => x.Description);
-			if(AllowMultiSelect && ListSheetDefsSelected!=null) {
-				List<int> listSelectedIndices=ListSheetDefs.Where(x=>ListSheetDefsSelected.Any(y=>y.SheetDefNum==x.SheetDefNum)).Select(x=>ListSheetDefs.FindIndex(y=>y.SheetDefNum==x.SheetDefNum)).ToList();
-				listMain.SelectedIndices=listSelectedIndices;
-			}
+			FillListBox();
 		}
 
 		private void listMain_DoubleClick(object sender,MouseButtonEventArgs e) {
@@ -110,7 +107,7 @@ namespace OpenDental {
 				return;
 			}
 			ListSheetDefsSelected=new List<SheetDef>();
-			SheetDef sheetDef=ListSheetDefs[listMain.SelectedIndices[0]];
+			SheetDef sheetDef=(SheetDef)listMain.Items.GetObjectAt(listMain.SelectedIndices[0]);
 			if(sheetDef.SheetDefNum!=0) {
 				SheetDefs.GetFieldsAndParameters(sheetDef);
 			}
@@ -142,7 +139,7 @@ namespace OpenDental {
 					continue;
 				}
 				_listIndexesAdded.Add(listMain.SelectedIndices[i]);
-				sheetDef=ListSheetDefs[listMain.SelectedIndices[i]];
+				sheetDef=(SheetDef)listMain.Items.GetObjectAt(listMain.SelectedIndices[i]);
 				if(sheetDef.SheetDefNum>0) {
 					SheetDefs.GetFieldsAndParameters(sheetDef);
 				}
@@ -150,6 +147,23 @@ namespace OpenDental {
 			}
 			DoTerminalSend=true;
 			IsDialogOK=true;
+		}
+
+		private void FillListBox(){
+			List<long> listSheetDefNumsSelected=listMain.GetListSelected<SheetDef>().Select(x => x.SheetDefNum).ToList();
+			listMain.Items.Clear();
+			List<SheetDef> listSheetDefs=ListSheetDefs.FindAll(x => x.Description.ToLower().Contains(textSearch.Text.ToLower().Trim()));
+			listMain.Items.AddList(listSheetDefs,x => x.Description);
+			//reselect
+			for(int i=0;i<listMain.Items.Count;i++){
+				if(listSheetDefNumsSelected.Contains(((SheetDef)listMain.Items.GetObjectAt(i)).SheetDefNum)){
+					listMain.SetSelected(i);
+				}
+			}
+		}
+
+		private void textSearch_TextChanged(object sender,EventArgs e) {
+			FillListBox();
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
@@ -167,10 +181,14 @@ namespace OpenDental {
 			}*/
 			if(AllowMultiSelect) {
 				ListSheetDefsSelected=listMain.GetListSelected<SheetDef>();
-				ListSheetDefsSelected.Where(x=>x.SheetDefNum!=0).ForEach(x=>SheetDefs.GetFieldsAndParameters(x));
+				for(int i=0;i<ListSheetDefsSelected.Count;i++){
+					if(ListSheetDefsSelected[i].SheetDefNum!=0){
+						SheetDefs.GetFieldsAndParameters(ListSheetDefsSelected[i]);
+					}
+				}
 			}
 			else {
-				SheetDef sheetDef=ListSheetDefs[listMain.SelectedIndices[0]];
+				SheetDef sheetDef=(SheetDef)listMain.Items.GetObjectAt(listMain.SelectedIndices[0]);
 				if(sheetDef.SheetDefNum!=0) {
 					SheetDefs.GetFieldsAndParameters(sheetDef);
 				}

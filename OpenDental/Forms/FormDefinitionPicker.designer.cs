@@ -53,7 +53,6 @@ namespace OpenDental{
 			this.gridMain.TabIndex = 4;
 			this.gridMain.TranslationName = "TableDefinitionPicker";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
-			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
 			// 
 			// checkShowHidden
 			// 

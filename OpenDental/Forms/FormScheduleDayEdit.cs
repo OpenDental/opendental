@@ -445,7 +445,7 @@ namespace OpenDental {
 				listProviderNames.Add(Providers.GetFormalName(provider.ProvNum));
 			}
 			if(listProviderNames.Count>0){
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listProviderNames.OrderBy(x => x)));
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listProviderNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
 			}
 			List<long> listEmployeeNums=new List<long>();
 			for(int i=0;i<listEmp.SelectedIndices.Count;i++) {
@@ -469,7 +469,7 @@ namespace OpenDental {
 				listEmployeeNames.Add(employee.FName);//Internal database includes the initial of the last name.
 			}
 			if(listEmployeeNames.Count>0){
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listEmployeeNames.OrderBy(x => x)));
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listEmployeeNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
 			}
 			FillGrid();
 		}
@@ -612,7 +612,20 @@ namespace OpenDental {
 				}
 				listProviderNames.Add(Providers.GetFormalName(provider.ProvNum));
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Removed for "+string.Join(", ",listProviderNames.OrderBy(x => x)));
+			if(listProviderNames.Count>0) {
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Removed for "+string.Join(", ",listProviderNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
+			}
+			List<string> listEmployeeNames=new List<string>();
+			for(int i=0;i<listSchedulesToRemove.Count;i++) {
+				Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listSchedulesToRemove[i].EmployeeNum);
+				if(employee==null) {
+					continue;
+				}
+				listEmployeeNames.Add(employee.FName);//Internal database includes the initial of the last name.
+			}
+			if(listEmployeeNames.Count>0) {
+				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Removed for "+string.Join(", ",listEmployeeNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
+			}
 			FillGrid();
 		}
 

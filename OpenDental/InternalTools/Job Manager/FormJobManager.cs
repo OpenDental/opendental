@@ -1128,10 +1128,10 @@ namespace OpenDental {
 			long jobTeamNum=comboTeamFilterProjectManagement.GetSelected<JobTeam>().JobTeamNum;
 			List<Job> listJobs;
 			if(checkOnlyShowTopLevel.Checked) {
-				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project && x.JobNum==x.TopParentNum);
+				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project && x.JobNum==x.TopParentNum && !x.PhaseCur.In(JobPhase.Complete,JobPhase.Cancelled));
 			}
 			else{
-				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project);
+				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project && !x.PhaseCur.In(JobPhase.Complete,JobPhase.Cancelled));
 			}
 			_dicRowNotes.Clear();
 			gridProjectManagement.Title="Projects";

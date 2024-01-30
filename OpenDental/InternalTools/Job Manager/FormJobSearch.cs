@@ -22,7 +22,6 @@ namespace OpenDental {
 		private List<Job> _listSelectedJobs;
 		private bool _isMultiSelect;
 		private List<Def> _listJobPriorities;
-		public bool ShowProjectsOnly=false;
 		public bool DoBlockProjects=false;
 		public string InitialSearchString="";
 
@@ -71,17 +70,12 @@ namespace OpenDental {
 			listBoxPhases.SetSelected((int)JobPhase.Cancelled+1,false);
 			listBoxPhases.SetSelected((int)JobPhase.Complete+1,false);
 			//Categories
-			if(ShowProjectsOnly) {
-				listBoxCategory.Items.Add("Project",JobCategory.Project);
-			}
-			else {
-				listBoxCategory.Items.Add("Any");
-				foreach(JobCategory jobCategory in Enum.GetValues(typeof(JobCategory))) {
-					if(DoBlockProjects && jobCategory==JobCategory.Project){
-						continue;
-					}
-					listBoxCategory.Items.Add(jobCategory.ToString(),jobCategory);
+			listBoxCategory.Items.Add("Any");
+			foreach(JobCategory jobCategory in Enum.GetValues(typeof(JobCategory))) {
+				if(DoBlockProjects && jobCategory==JobCategory.Project){
+					continue;
 				}
+				listBoxCategory.Items.Add(jobCategory.ToString(),jobCategory);
 			}
 			listBoxCategory.SetSelected(0);
 			//Priorities
@@ -107,7 +101,7 @@ namespace OpenDental {
 			if(listBoxUsers.SelectedIndices.Count>0 && !listBoxUsers.SelectedIndices.Contains(0)) {
 				userNums=listBoxUsers.GetListSelected<Userod>().Select(x => x.UserNum).ToArray();//This excludes 'Any' so is safe
 			}
-			if(listBoxCategory.SelectedIndices.Count>0 && (!listBoxCategory.SelectedIndices.Contains(0) || ShowProjectsOnly)) {
+			if(listBoxCategory.SelectedIndices.Count>0 && (!listBoxCategory.SelectedIndices.Contains(0))) {
 				jobCats=listBoxCategory.GetListSelected<JobCategory>().ToArray();//This excludes 'Any' so is safe
 			}
 			if(listBoxPhases.SelectedIndices.Count>0 && !listBoxPhases.SelectedIndices.Contains(0)) {
@@ -294,7 +288,7 @@ namespace OpenDental {
 				}
 			}
 			_selectedJob=(Job)gridMain.ListGridRows[e.Row].Tag;
-			if(!ValidateProject(_selectedJob.Category==JobCategory.Project)) {
+			if(_selectedJob==null || !ValidateProject(_selectedJob.Category==JobCategory.Project)) {
 				return;
 			}
 			DialogResult=DialogResult.OK;
@@ -305,6 +299,10 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
+			if(_selectedJob==null) {
+				MsgBox.Show(this,"Please select at least one job before clicking OK.");
+				return;
+			}
 			if(_isMultiSelect) {
 				if(gridMain.SelectedGridRows.Count==0) {
 					MsgBox.Show(this,"Please select at least one job before clicking OK.");

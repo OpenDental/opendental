@@ -931,7 +931,7 @@ namespace OpenDental {
 			// 
 			// butAddDiagnosticCode
 			// 
-			this.butAddDiagnosticCode.Location = new System.Drawing.Point(380, 389);
+			this.butAddDiagnosticCode.Location = new System.Drawing.Point(387, 389);
 			this.butAddDiagnosticCode.Name = "butAddDiagnosticCode";
 			this.butAddDiagnosticCode.Size = new System.Drawing.Size(42, 20);
 			this.butAddDiagnosticCode.TabIndex = 54;

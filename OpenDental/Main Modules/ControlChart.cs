@@ -10363,6 +10363,15 @@ namespace OpenDental {
 						List<Procedure> listProceduresTooth=_listProceduresCharted.FindAll(x => x.ToothNum==_toothChartRelay.SelectedTeeth[i] && x.ToothRange=="");
 						ProcMultiVisits.CreateGroup(listProceduresTooth);
 					}
+					if(_toothChartRelay.SelectedTeeth.Count==0){
+						List<Procedure> listProceduresTeeth=_listProceduresCharted.FindAll(x => !string.IsNullOrEmpty(x.ToothNum) && x.ToothRange=="");
+						List<string> listDistinctToothNumbers=listProceduresTeeth.Select(x => x.ToothNum).ToList();
+						listDistinctToothNumbers=listDistinctToothNumbers.Distinct().ToList();
+						for(int i=0;i<listDistinctToothNumbers.Count;i++) {
+							List<Procedure> listProceduresTeethMatches=listProceduresTeeth.FindAll(x => x.ToothNum==listDistinctToothNumbers[i]).ToList();
+							ProcMultiVisits.CreateGroup(listProceduresTeethMatches);
+						}
+					}
 					//Add any leftover procedures to it's own group
 					List<Procedure> listProceduresRanged=_listProceduresCharted.FindAll(x => x.ToothNum=="");
 					ProcMultiVisits.CreateGroup(listProceduresRanged);
