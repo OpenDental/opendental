@@ -478,6 +478,7 @@
 			this.labelK.TabIndex = 44;
 			this.labelK.Text = "2";
 			this.labelK.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelK.Visible = false;
 			// 
 			// labelJ
 			// 

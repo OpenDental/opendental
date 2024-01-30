@@ -2785,6 +2785,9 @@ namespace OpenDental.UI{
 			string strRemaining=str;
 			while(true){
 				SizeF sizeOneRow=new SizeF(rectangleLayout.Width,heightLine);
+				if(strRemaining.Length>32000) {//GDI+ only allows 32,000 characters at a time
+					strRemaining=strRemaining.Substring(0,32000);//so it doesn't crash MeasureString()
+				}
 				//we don't care about the size returned here, just the outs
 				g.MeasureString(strRemaining,font,sizeOneRow,stringFormatLeft,out int charactersFitted,out int linesFilled);
 				if(linesFilled==0 || charactersFitted==0){//can happen when half height rows can't draw			
