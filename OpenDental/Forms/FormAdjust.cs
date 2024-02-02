@@ -291,6 +291,10 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
+			if(!textAdjDate.IsValid() || !textProcDate.IsValid() || !textAmount.IsValid()) {
+				MsgBox.Show(this,"Please fix data entry errors first.");
+				return;
+			}
 			if(Security.IsGlobalDateLock(Permissions.AdjustmentEdit,textAdjDate.Value)) {
 				return;
 			}
@@ -300,10 +304,6 @@ namespace OpenDental {
 				}
 			}
 			bool isDiscountPlanAdj=(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="dp");
-			if(!textAdjDate.IsValid() || !textProcDate.IsValid() || !textAmount.IsValid()) {
-				MsgBox.Show(this,"Please fix data entry errors first.");
-				return;
-			}
 			if(PIn.Date(textAdjDate.Text).Date > DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
 				MsgBox.Show(this,"Adjustment date can not be in the future.");
 				return;
