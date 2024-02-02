@@ -115,9 +115,6 @@ namespace OpenDental {
 		}
 
 		private void FormProcInfo_Load(object sender,System.EventArgs e) {
-			if(Security.IsGlobalDateLock(EnumPermType.ProcComplCreate,_procedureOld.ProcDate,suppressMsgBox:true)) {
-				butSetComplete.Enabled=false;
-			}
 			if(PrefC.IsODHQ) {
 				labelTaxEst.Visible=true;
 				textTaxAmt.Visible=true;

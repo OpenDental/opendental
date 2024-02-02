@@ -233,6 +233,32 @@ namespace UnitTests.PayPlanEdit_Tests {
 		}
 
 		[TestMethod]
+		public void PayPlanEdit_GetListExpectedCharges_ChargesAreGeneratedAndBackdatedCorrectly() {
+			//set up dynamic pay plan prefs
+			PrefT.UpdateDateT(PrefName.DynamicPayPlanLastDateTime,DateTime.MinValue);
+			PrefT.UpdateDateT(PrefName.DynamicPayPlanRunTime,DateTime.Now);
+			//set up payment plan
+			Patient pat=PatientT.CreatePatient(MethodBase.GetCurrentMethod().Name);
+			Family fam=Patients.GetFamily(pat.PatNum);
+			long provNum=ProviderT.CreateProvider("LS");
+			//create the production that will be attached to the payment plan
+			List<Procedure> listProcs=new List<Procedure>();
+			List<Adjustment> listAdjs=new List<Adjustment>();
+			listProcs.Add(ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",165,DateTime.Today));
+			listProcs.Add(ProcedureT.CreateProcedure(pat,"D0221",ProcStat.C,"",25,DateTime.Today));
+			listAdjs.Add(AdjustmentT.MakeAdjustment(pat.PatNum,10));
+			PayPlan dynamicPayPlan=PayPlanT.CreateDynamicPaymentPlan(pat.PatNum,pat.PatNum,DateTime.Today.AddMonths(-1),5,0,22,listProcs,listAdjs);
+			//run logic to generate charges (look at recurring charges tests for reference)
+			List<PayPlanCharge> listChargesDb=PayPlanCharges.GetForPayPlan(dynamicPayPlan.PayPlanNum);
+			List<PayPlanLink> listEntries=PayPlanLinks.GetForPayPlans(new List<long>{dynamicPayPlan.PayPlanNum});
+			PayPlanTerms terms=PayPlanT.GetTerms(dynamicPayPlan,listEntries);
+			List<PayPlanCharge> listChargesThisPeriod=PayPlanEdit.GetListExpectedCharges(listChargesDb,terms,fam,listEntries,dynamicPayPlan,true);
+			//assert expected results
+			Assert.AreEqual(22,listChargesThisPeriod.Sum(x=>x.Principal));
+			Assert.AreEqual(listChargesDb[0].ChargeDate,terms.DateFirstPayment);
+		}
+
+		[TestMethod]
 		public void PayPlanEdit_GetListExpectedCharges_CorrectInterestCalculatedAfterDirectOverpayment() {
 			//set up dynamic pay plan prefs
 			PrefT.UpdateDateT(PrefName.DynamicPayPlanLastDateTime,DateTime.MinValue);

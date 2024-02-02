@@ -995,7 +995,7 @@ namespace OpenDentBusiness {
 				listPaySplits=PaySplits.GetForPayPlans(new List<long>(){payplan.PayPlanNum});
 			}
 			int chargesCount=listChargesInDB.Count;
-			int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency);
+			int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency,payplan.PayPlanNum);
 			return GetListExpectedCharges(listChargesInDB,terms,famCur,listPayPlanLinks,listPaySplits,payplan,isNextPeriodOnly,chargesCount,periodCount
 				,isForDownPaymentCharge,listExpectedChargesDownPayment);
 		}
@@ -1098,9 +1098,13 @@ namespace OpenDentBusiness {
 		}
 
 		/// <summary>Calculates all periods between date of first charge and now.</summary>
-		public static int CalcPeriodsForFrequency(DateTime dateFirstCharge,PayPlanFrequency frequency) {
+		public static int CalcPeriodsForFrequency(DateTime dateFirstCharge,PayPlanFrequency frequency,long payPlanNum) {
 			int period=0;
 			if(dateFirstCharge==DateTime.MinValue) {
+				return period;
+			}
+			//If no charges have been issued for the payment plan yet, then the period should always be 0.
+			if(PayPlanCharges.GetForPayPlan(payPlanNum).IsNullOrEmpty()) {
 				return period;
 			}
 			if(frequency==PayPlanFrequency.Weekly) {
@@ -1108,16 +1112,14 @@ namespace OpenDentBusiness {
 					dateFirstCharge=dateFirstCharge.AddDays(7);
 					period++;
 				}
-				return period;
 			}
-			if(frequency==PayPlanFrequency.EveryOtherWeek) {
+			else if(frequency==PayPlanFrequency.EveryOtherWeek) {
 				while(DateTime_.Today>dateFirstCharge) {
 					dateFirstCharge=dateFirstCharge.AddDays(14);
 					period++;
 				}
-				return period;
 			}
-			if(frequency==PayPlanFrequency.OrdinalWeekday) {
+			else if(frequency==PayPlanFrequency.OrdinalWeekday) {
 				while(DateTime_.Today>dateFirstCharge) {
 					DateTime roughMonth=dateFirstCharge.AddMonths(1);
 					DayOfWeek dayOfWeekFirstDate=dateFirstCharge.DayOfWeek;
@@ -1135,21 +1137,18 @@ namespace OpenDentBusiness {
 					dateFirstCharge=dateFirstCharge.AddDays(7*(ordinalOfMonth-1));
 					period++;
 				}
-				return period;
 			}
-			if(frequency==PayPlanFrequency.Monthly) {
+			else if(frequency==PayPlanFrequency.Monthly) {
 				while(DateTime_.Today>dateFirstCharge) {
 					dateFirstCharge=dateFirstCharge.AddMonths(1);
 					period++;
 				}
-				return period;
 			}
-			if(frequency==PayPlanFrequency.Quarterly) {
+			else if(frequency==PayPlanFrequency.Quarterly) {
 				while(DateTime_.Today>dateFirstCharge) {
 					dateFirstCharge=dateFirstCharge.AddMonths(3);
 					period++;
 				}
-				return period;
 			}
 			return period;
 		}
@@ -1205,7 +1204,7 @@ namespace OpenDentBusiness {
 					List<PayPlanLink> listLinksForPayPlan=listPayPlanLinksAll.FindAll(x => x.PayPlanNum==payplan.PayPlanNum);
 					PayPlanTerms terms=PayPlanEdit.GetPayPlanTerms(payplan,listLinksForPayPlan);
 					//get the expected period that this charge would be for.
-					int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency);
+					int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency,payplan.PayPlanNum);
 					DateTime nextExpectedDate =PayPlanEdit.CalcNextPeriodDate(payplan.DatePayPlanStart,periodCount,payplan.ChargeFrequency);
 					if(nextExpectedDate==DateTime_.Today && listPayPlanChargesInDb.Exists(x => x.ChargeDate==nextExpectedDate && !x.Note.Contains("Down Payment"))) {
 						continue;
@@ -1931,9 +1930,6 @@ namespace OpenDentBusiness {
 			}
 			if(payPlanTerms.DateAgreement > DateTime_.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)){
 				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment plan date cannot be set for the future."));
-			}
-			if(payPlanTerms.DateFirstPayment.Date < DateTime_.Today && isNew){
-				sb.AppendLine(Lans.g("FormPayPlanDynamic","Please enter a date on or after today for the date of the first payment."));
 			}
 			if(linkedProdCount!=0 && payPlanTerms.PayCount==0 && payPlanTerms.PeriodPayment==0){
 				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment cannot be 0."));
