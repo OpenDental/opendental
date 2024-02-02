@@ -44,6 +44,8 @@ namespace OpenDental {
 			radioPatientSelectedTask.Click+=RadioPatientSelectedTask_Click;
 			butSelectPatient.Visible=false;//Hidden until formSelectPatient is built in WPF
 			radioSpecificPatient.Visible=false;//Hidden until formSelectPatient is built in WPF
+			comboClinic.IncludeAll=true;
+			comboRegion.IncludeAll=true;
 		}
 
 		private void FrmTaskFilter_Load(object sender,EventArgs e) {
@@ -86,6 +88,9 @@ namespace OpenDental {
 					comboClinic.SetSelected(i);
 				}
 			}
+			if(comboClinic.SelectedIndices.Count==0) {
+				comboClinic.IsAllSelected=true;
+			}
 		}
 
 		private void FillComboBoxRegions() {
@@ -97,6 +102,9 @@ namespace OpenDental {
 				if(ListDefNumsRegionsSelected.Contains(listDefsRegions[i].DefNum)) {
 					comboRegion.SetSelected(i);
 				}
+			}
+			if(comboRegion.SelectedIndices.Count==0) {
+				comboRegion.IsAllSelected=true;
 			}
 		}
 
@@ -117,19 +125,19 @@ namespace OpenDental {
 
 		private void ComboClinic_SelectionChangeCommitted(object sender, EventArgs e) {
 			if(comboClinic.SelectedIndices.Count>0) {
-				comboRegion.SelectedIndex=-1;
+				comboRegion.IsAllSelected=true;
 			}
 		}
 
 		private void ComboRegion_SelectionChangeCommitted(object sender, EventArgs e) {
 			if(comboRegion.SelectedIndices.Count>0) {
-				comboClinic.SelectedIndex=-1;
+				comboClinic.IsAllSelected=true;
 			}
 		}
 
 		private void butAll_Click(object sender, EventArgs e) {
-			comboClinic.SelectedIndex=-1;
-			comboRegion.SelectedIndex=-1;
+			comboClinic.IsAllSelected=true;
+			comboRegion.IsAllSelected=true;
 		}
 
 		private void butAllDates_Click(object sender, EventArgs e) {

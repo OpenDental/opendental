@@ -54,6 +54,7 @@ namespace OpenDental {
 			this.butReplacements = new OpenDental.UI.Button();
 			this.textClaimIdentifier = new System.Windows.Forms.TextBox();
 			this.tabAdvanced = new OpenDental.UI.TabPage();
+			this.checkDatabaseGlobalVariablesDontSet = new OpenDental.UI.CheckBox();
 			this.checkEnterpriseCommlogOmitDefaults = new OpenDental.UI.CheckBox();
 			this.checkEnableEmailAddressAutoComplete = new OpenDental.UI.CheckBox();
 			this.checkUpdateAlterLargeTablesDirectly = new OpenDental.UI.CheckBox();
@@ -158,7 +159,7 @@ namespace OpenDental {
 			this.tabControlMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControlMain.Location = new System.Drawing.Point(6, 6);
 			this.tabControlMain.Name = "tabControlMain";
-			this.tabControlMain.Size = new System.Drawing.Size(502, 636);
+			this.tabControlMain.Size = new System.Drawing.Size(502, 648);
 			this.tabControlMain.TabIndex = 276;
 			// 
 			// tabAccount
@@ -192,7 +193,7 @@ namespace OpenDental {
 			this.tabAccount.Location = new System.Drawing.Point(2, 21);
 			this.tabAccount.Name = "tabAccount";
 			this.tabAccount.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAccount.Size = new System.Drawing.Size(498, 613);
+			this.tabAccount.Size = new System.Drawing.Size(498, 625);
 			this.tabAccount.TabIndex = 2;
 			this.tabAccount.Text = "Account";
 			// 
@@ -442,6 +443,7 @@ namespace OpenDental {
 			// tabAdvanced
 			// 
 			this.tabAdvanced.BackColor = System.Drawing.SystemColors.Window;
+			this.tabAdvanced.Controls.Add(this.checkDatabaseGlobalVariablesDontSet);
 			this.tabAdvanced.Controls.Add(this.checkEnterpriseCommlogOmitDefaults);
 			this.tabAdvanced.Controls.Add(this.checkEnableEmailAddressAutoComplete);
 			this.tabAdvanced.Controls.Add(this.checkUpdateAlterLargeTablesDirectly);
@@ -465,9 +467,18 @@ namespace OpenDental {
 			this.tabAdvanced.Location = new System.Drawing.Point(2, 21);
 			this.tabAdvanced.Name = "tabAdvanced";
 			this.tabAdvanced.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAdvanced.Size = new System.Drawing.Size(498, 613);
+			this.tabAdvanced.Size = new System.Drawing.Size(498, 625);
 			this.tabAdvanced.TabIndex = 4;
 			this.tabAdvanced.Text = "Advanced";
+			// 
+			// checkDisableSettingDatabaseGlobalVariables
+			// 
+			this.checkDatabaseGlobalVariablesDontSet.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkDatabaseGlobalVariablesDontSet.Location = new System.Drawing.Point(12, 605);
+			this.checkDatabaseGlobalVariablesDontSet.Name = "checkDisableSettingDatabaseGlobalVariables";
+			this.checkDatabaseGlobalVariablesDontSet.Size = new System.Drawing.Size(461, 17);
+			this.checkDatabaseGlobalVariablesDontSet.TabIndex = 293;
+			this.checkDatabaseGlobalVariablesDontSet.Text = "Disable setting SQL global variables (Used for hosted databases)";
 			// 
 			// checkEnterpriseCommlogOmitDefaults
 			// 
@@ -519,7 +530,6 @@ namespace OpenDental {
 			// 
 			// checkEnterpriseAllowRefresh
 			// 
-			this.checkEnterpriseAllowRefresh.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkEnterpriseAllowRefresh.Location = new System.Drawing.Point(6, 170);
 			this.checkEnterpriseAllowRefresh.Name = "checkEnterpriseAllowRefresh";
 			this.checkEnterpriseAllowRefresh.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -549,8 +559,7 @@ namespace OpenDental {
 			// 
 			// checkMatchExactPhoneNum
 			// 
-			this.checkMatchExactPhoneNum.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 146);
+			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 150);
 			this.checkMatchExactPhoneNum.Name = "checkMatchExactPhoneNum";
 			this.checkMatchExactPhoneNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkMatchExactPhoneNum.Size = new System.Drawing.Size(353, 18);
@@ -859,7 +868,7 @@ namespace OpenDental {
 			this.tabAppts.Location = new System.Drawing.Point(2, 21);
 			this.tabAppts.Name = "tabAppts";
 			this.tabAppts.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAppts.Size = new System.Drawing.Size(498, 613);
+			this.tabAppts.Size = new System.Drawing.Size(498, 625);
 			this.tabAppts.TabIndex = 0;
 			this.tabAppts.Text = "Appts";
 			// 
@@ -920,7 +929,7 @@ namespace OpenDental {
 			this.tabFamily.Location = new System.Drawing.Point(2, 21);
 			this.tabFamily.Name = "tabFamily";
 			this.tabFamily.Padding = new System.Windows.Forms.Padding(3);
-			this.tabFamily.Size = new System.Drawing.Size(498, 613);
+			this.tabFamily.Size = new System.Drawing.Size(498, 625);
 			this.tabFamily.TabIndex = 1;
 			this.tabFamily.Text = "Family";
 			// 
@@ -1024,7 +1033,7 @@ namespace OpenDental {
 			this.tabReport.Location = new System.Drawing.Point(2, 21);
 			this.tabReport.Name = "tabReport";
 			this.tabReport.Padding = new System.Windows.Forms.Padding(3);
-			this.tabReport.Size = new System.Drawing.Size(498, 613);
+			this.tabReport.Size = new System.Drawing.Size(498, 625);
 			this.tabReport.TabIndex = 7;
 			this.tabReport.Text = "Reports";
 			// 
@@ -1187,7 +1196,7 @@ namespace OpenDental {
 			this.tabManage.Location = new System.Drawing.Point(2, 21);
 			this.tabManage.Name = "tabManage";
 			this.tabManage.Padding = new System.Windows.Forms.Padding(3);
-			this.tabManage.Size = new System.Drawing.Size(498, 613);
+			this.tabManage.Size = new System.Drawing.Size(498, 625);
 			this.tabManage.TabIndex = 8;
 			this.tabManage.Text = "Manage";
 			// 
@@ -1230,7 +1239,7 @@ namespace OpenDental {
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(433, 648);
+			this.butSave.Location = new System.Drawing.Point(433, 664);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
@@ -1239,7 +1248,7 @@ namespace OpenDental {
 			// 
 			// FormEnterpriseSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(514, 684);
+			this.ClientSize = new System.Drawing.Size(514, 696);
 			this.Controls.Add(this.tabControlMain);
 			this.Controls.Add(this.butSave);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1381,5 +1390,6 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkEnterpriseCommlogOmitDefaults;
 		private OpenDental.UI.CheckBox checkHygProcUsePriProvFee;
 		private OpenDental.UI.CheckBox checkRefresh;
+		private UI.CheckBox checkDatabaseGlobalVariablesDontSet;
 	}
 }

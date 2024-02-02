@@ -46,7 +46,7 @@ namespace OpenDental {
 			//Users who want to install multiple on one computer can use the Service Manager instead.
 			//Do nothing on error.  The Install button will simply be visible.
 			ODException.SwallowAnyException(() => {
-				if(PrefC.IsCloudMode || ServicesHelper.GetServicesByExe("OpenDentalEConnector.exe").Count>0) {
+				if(ServicesHelper.GetServicesByExe("OpenDentalEConnector.exe").Count>0) {
 					butInstallEConnector.Enabled=false;
 				}
 			});

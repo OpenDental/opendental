@@ -89,9 +89,6 @@ namespace OpenDental {
 			textSyncCode.Text=PrefC.GetString(PrefName.CentralManagerSyncCode);
 			textAuditEntries.Text=PrefC.GetString(PrefName.AuditTrailEntriesDisplayed);
 			checkSubmitExceptions.Checked=PrefC.GetBool(PrefName.SendUnhandledExceptionsToHQ);
-			if(PrefC.IsCloudMode) {
-				textWebServiceServerName.ReadOnly=true;
-			}
 			if(PrefC.GetString(PrefName.PopupsDisableTimeSpan)!="") {
 				TimeSpan timeSpanPopupsDisable=TimeSpan.Parse(PrefC.GetString(PrefName.PopupsDisableTimeSpan),CultureInfo.InvariantCulture);
 				textPopupsDisableDays.Text=timeSpanPopupsDisable.Days.ToString("0");

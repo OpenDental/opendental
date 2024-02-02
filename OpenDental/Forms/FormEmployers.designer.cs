@@ -45,7 +45,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(349,560);
+			this.butOK.Location = new System.Drawing.Point(258, 532);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(79,26);
 			this.butOK.TabIndex = 1;

@@ -515,12 +515,12 @@ namespace OpenDentBusiness {
 
 		public static void SetSqlMode() {
 			try {
-				if(PrefC.IsCloudMode) {
+				if(PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet)) {
 					return;
 				}
 			}
 			catch(Exception ex) {
-				ex.DoNothing();//This method might get called before the DatabaseMode preference is added.
+				ex.DoNothing();//This method might get called before the DatabaseGlobalVariablesDontSet preference is added.
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod());

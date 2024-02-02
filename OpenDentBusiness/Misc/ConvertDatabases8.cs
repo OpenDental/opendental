@@ -1045,5 +1045,13 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End E50054
 		}
+
+		private static void To23_3_28() {
+			string command="ALTER TABLE payment ADD INDEX (ProcessStatus)";
+			Db.NonQ(command);
+			long databaseMode=Db.GetLong("SELECT ValueString FROM preference WHERE PrefName='DatabaseMode'");
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('DatabaseGlobalVariablesDontSet','"+POut.Long(databaseMode)+"')";
+			Db.NonQ(command);
+		}
 	}
 }

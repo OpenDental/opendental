@@ -729,6 +729,9 @@ namespace OpenDentBusiness {
 		CustomersHQServer,
 		CustomizedForPracticeWeb,
 		DatabaseConvertedForMySql41,
+		///<summary>Boolean, false by default. When enabled, sql mode and replication status will not be changed. Used for Cloud Hosted Databases.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		DatabaseGlobalVariablesDontSet,
 		///<summary>String. Stores the obfuscated DatabaseIntegrites whitelist from the last successful call to HQ.</summary>
 		[PrefName(ValueType=PrefValueType.STRING)]
 		DatabaseIntegritiesWhiteList, 
@@ -736,7 +739,8 @@ namespace OpenDentBusiness {
 		DatabaseMaintenanceDisableOptimize,
 		///<summary>bool. Set to false by default. If true, database maintenance will skip table checks.</summary>
 		DatabaseMaintenanceSkipCheckTable,
-		///<summary>Uses <see cref="DatabaseModeEnum"/>. Defaults to 'Normal'.</summary>
+		///<summary>Deprecated. Was never used. Uses <see cref="DatabaseModeEnum"/>. Defaults to 'Normal'.</summary>
+		[Obsolete()]
 		DatabaseMode,
 		DataBaseVersion,
 		DateDepositsStarted,

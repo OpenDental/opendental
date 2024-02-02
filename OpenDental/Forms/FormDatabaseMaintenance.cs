@@ -81,7 +81,7 @@ namespace OpenDental {
 				butClearUpdateInProgress.Enabled=false;
 			}
 			try {
-				_isUsingReplication=PrefC.IsCloudMode || ReplicationServers.IsUsingReplication();
+				_isUsingReplication=PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet) || ReplicationServers.IsUsingReplication();
 			}
 			catch {
 				_hasReplicationPermission=false;
@@ -948,7 +948,7 @@ namespace OpenDental {
 					" At least one dbm method is not safe to run when replication is enabled. Unsafe methods will be skipped.");
 				return;
 			}
-			if(PrefC.IsCloudMode) {
+			if(PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet)) {
 				string strMsg="Replication might be enabled. Running unsafe replication methods may cause database damage. Additional steps must be taken before running unsafe database methods.";
 				string strCheckBoxMsg="I have taken the special published process provided by the software support team.";
 				InputBoxParam inputBoxParam=new InputBoxParam(InputBoxType.CheckBox,Lan.g(this,strMsg),text:strCheckBoxMsg);

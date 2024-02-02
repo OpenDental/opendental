@@ -97,6 +97,7 @@ namespace OpenDental {
 			checkUsePhoneNumTable.Checked=_doUsePhonenumTable;
 			checkEnableEmailAddressAutoComplete.Checked=PrefC.GetBool(PrefName.EnableEmailAddressAutoComplete);
 			checkEnterpriseCommlogOmitDefaults.Checked=PrefC.GetBool(PrefName.EnterpriseCommlogOmitDefaults);
+			checkDatabaseGlobalVariablesDontSet.Checked=PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet);
 			#endregion Advanced Tab
 			#region Appts Tab
 			checkApptsRequireProcs.Checked=PrefC.GetBool(PrefName.ApptsRequireProc);
@@ -292,6 +293,7 @@ namespace OpenDental {
 				| Prefs.UpdateBool(PrefName.EraShowStatusAndClinic,checkEra835sShowStatusAndClinic.Checked)
 				| Prefs.UpdateBool(PrefName.EnterpriseCommlogOmitDefaults,checkEnterpriseCommlogOmitDefaults.Checked)
 				| Prefs.UpdateBool(PrefName.EnterpriseManualRefreshMainTaskLists,checkRefresh.Checked)
+				| Prefs.UpdateBool(PrefName.DatabaseGlobalVariablesDontSet,checkDatabaseGlobalVariablesDontSet.Checked)
 			)
 			{
 				hasChanges=true;
