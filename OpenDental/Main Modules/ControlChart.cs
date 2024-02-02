@@ -9482,7 +9482,7 @@ namespace OpenDental {
 			List<ClaimProc> listClaimProcs=new List<ClaimProc>();
 			List<ClaimProcHist> listClaimProcHistsLoop=new List<ClaimProcHist>();
 			//If proc has selected teeth, we wont be showing the edit form, so set status back to what the user picked. 
-			if(IsToothSelectionValidForTxArea(procedure)) { 
+			if(IsToothSelectionValidForTxArea(procedure) || _procStatNew==ProcStat.EO) {//EO procs can't be added to an appointment in Appointment Edit Window, so skip this check
 				//If the edit form is to be shown, use Deleted as the procStatus when inserting. Otherwise insert with the users chosen value.
 				procedure.ProcStatus=_procStatNew;
 			}
