@@ -133,11 +133,17 @@ namespace OpenDental {
 			Application.ThreadException+=new ThreadExceptionEventHandler((object s,ThreadExceptionEventArgs e) => {
 				actionUnhandled(e.Exception,"ProgramEntry");
 			});
-            //OpenDentalCloud.dll references Dropbox.Api.dll which references Newtonsoft.Json.dll version 7.0.0.0. Sometimes it also says it can't find 
-            //9.0.0.0.
-            if (ODSMS.RECEIVE_SMS)
-            {
-                OpenDental.Main_Modules.AsyncReceiveSMS.receiveSMS();
+			//OpenDentalCloud.dll references Dropbox.Api.dll which references Newtonsoft.Json.dll version 7.0.0.0. Sometimes it also says it can't find 
+			//9.0.0.0.
+
+			if (ODSMS.USE_ODSMS)  // Check The module is enabled
+			{
+
+                if (ODSMS.RECEIVE_SMS) // True if this is the computer that actually does the work
+				{
+					OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
+                    OpenDental.Main_Modules.AsyncSMSHandling.smsHourlyTasks();
+                }
             }
 
             ODInitialize.FixPackageAssembly("Newtonsoft.Json",ODFileUtils.CombinePaths(AppDomain.CurrentDomain.BaseDirectory,"Newtonsoft.Json.dll"));

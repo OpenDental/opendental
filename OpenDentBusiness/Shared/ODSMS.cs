@@ -3,14 +3,17 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Shapes;
+using System.Net.Http;
 
 namespace OpenDental
 {
     public static class ODSMS
     {
+        public static bool USE_ODSMS = true; // Set to false to disable ODSMS
         public static string AUTH;  // username/password for diafaan
         public static string URL;   // URL for diafaan
         public static bool RECEIVE_SMS = false;   // should we receive text on this computer?
+        public static HttpClient sharedClient = null;
 
         static ODSMS()
         {
@@ -40,6 +43,8 @@ namespace OpenDental
                 {
                     if (line.StartsWith("AUTH:"))
                         AUTH = line.Replace("AUTH:", "");
+                    else if (line.StartsWith("DISABLE:"))
+                        USE_ODSMS = false;
                     else if (line.StartsWith("URL:"))
                         URL = line.Replace("URL:", "");
                     if (line.StartsWith("RECEIVER:"))
@@ -56,6 +61,15 @@ namespace OpenDental
                 EventLog.WriteEntry("ODSMS", "odsms.txt config file not found - stuff is about to break", EventLogEntryType.Error, 101, 1, new byte[10]);
                 throw;
             }
+
+            if (AUTH == null || URL == null)
+            {
+                throw new ArgumentNullException("AUTH or URL", "One or both of AUTH or URL was not set in odsms.txt");
+            }
+
+            sharedClient = new HttpClient();
+            sharedClient.BaseAddress = new Uri(URL);
+
             if (RECEIVE_SMS)
             {
                 EventLog.WriteEntry("ODSMS", "Name matches, enabling SMS reception", EventLogEntryType.Information, 101, 1, new byte[10]);
@@ -67,4 +81,5 @@ namespace OpenDental
             EventLog.WriteEntry("ODSMS", "Successfully loaded odsms.txt config file", EventLogEntryType.Information, 101, 1, new byte[10]);
         }
     }
+
 }
