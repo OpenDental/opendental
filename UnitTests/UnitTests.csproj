@@ -209,51 +209,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PdmpPropertyTest.cs" />
-    <Compile Include="UI Testing\FormEscalationViewTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormEscalationViewTests.cs" />
     <Compile Include="UI Testing\FormEscalationViewTests.Designer.cs">
       <DependentUpon>FormEscalationViewTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormSplitContainerTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormSplitContainerTests.cs" />
     <Compile Include="UI Testing\FormSplitContainerTests.Designer.cs">
       <DependentUpon>FormSplitContainerTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormTabControlTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormTabControlTests.cs" />
     <Compile Include="UI Testing\FormTabControlTests.Designer.cs">
       <DependentUpon>FormTabControlTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormCheckBoxTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormCheckBoxTests.cs" />
     <Compile Include="UI Testing\FormCheckBoxTests.Designer.cs">
       <DependentUpon>FormCheckBoxTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormToothChartTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormToothChartTests.cs" />
     <Compile Include="UI Testing\FormToothChartTests.Designer.cs">
       <DependentUpon>FormToothChartTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormLayoutManagerTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormLayoutManagerTests.cs" />
     <Compile Include="UI Testing\FormLayoutManagerTests.Designer.cs">
       <DependentUpon>FormLayoutManagerTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormUIManagerTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormUIManagerTests.cs" />
     <Compile Include="UI Testing\FormUIManagerTests.Designer.cs">
       <DependentUpon>FormUIManagerTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormWpfConverter.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormWpfConverter.cs" />
     <Compile Include="UI Testing\FormWpfConverter.Designer.cs">
       <DependentUpon>FormWpfConverter.cs</DependentUpon>
     </Compile>
@@ -265,51 +249,35 @@
     <Compile Include="UnitTests\CentralManagerTests.cs" />
     <Compile Include="UnitTests\LimitedBetaFeatureTests.cs" />
     <Compile Include="UnitTests\POutTests.cs" />
-    <Compile Include="UI Testing\FormTextBoxTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormTextBoxTests.cs" />
     <Compile Include="UI Testing\FormTextBoxTests.Designer.cs">
       <DependentUpon>FormTextBoxTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormMonthCalendarTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormMonthCalendarTests.cs" />
     <Compile Include="UI Testing\FormMonthCalendarTests.Designer.cs">
       <DependentUpon>FormMonthCalendarTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormImageSelectorTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormImageSelectorTests.cs" />
     <Compile Include="UI Testing\FormImageSelectorTests.Designer.cs">
       <DependentUpon>FormImageSelectorTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\Form2dDrawingTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\Form2dDrawingTests.cs" />
     <Compile Include="UI Testing\Form2dDrawingTests.Designer.cs">
       <DependentUpon>Form2dDrawingTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormDatePickerTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormDatePickerTests.cs" />
     <Compile Include="UI Testing\FormDatePickerTests.Designer.cs">
       <DependentUpon>FormDatePickerTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormGroupBoxTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormGroupBoxTests.cs" />
     <Compile Include="UI Testing\FormGroupBoxTests.Designer.cs">
       <DependentUpon>FormGroupBoxTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormProgressTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormProgressTests.cs" />
     <Compile Include="UI Testing\FormProgressTests.Designer.cs">
       <DependentUpon>FormProgressTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormSandboxJordan.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormSandboxJordan.cs" />
     <Compile Include="UI Testing\FormSandboxJordan.Designer.cs">
       <DependentUpon>FormSandboxJordan.cs</DependentUpon>
     </Compile>
@@ -319,33 +287,23 @@
     <Compile Include="UI Testing\FormApptLayoutTests.Designer.cs">
       <DependentUpon>FormApptLayoutTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormButtonTest.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormButtonTest.cs" />
     <Compile Include="UI Testing\FormButtonTest.Designer.cs">
       <DependentUpon>FormButtonTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormApptProvSliderTest.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormApptProvSliderTest.cs" />
     <Compile Include="UI Testing\FormApptProvSliderTest.Designer.cs">
       <DependentUpon>FormApptProvSliderTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormComboTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormComboTests.cs" />
     <Compile Include="UI Testing\FormComboTests.Designer.cs">
       <DependentUpon>FormComboTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\Form4kTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\Form4kTests.cs" />
     <Compile Include="UI Testing\Form4kTests.Designer.cs">
       <DependentUpon>Form4kTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormGridTest.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="UI Testing\FormGridTest.cs" />
     <Compile Include="UI Testing\FormGridTest.Designer.cs">
       <DependentUpon>FormGridTest.cs</DependentUpon>
     </Compile>
