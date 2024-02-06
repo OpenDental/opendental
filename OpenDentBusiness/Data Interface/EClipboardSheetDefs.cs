@@ -180,7 +180,9 @@ namespace OpenDentBusiness{
 			if(listSheetsInTerminal!=null && listSheetsInTerminal.Count>0) {
 				//We now have the sheets to ignore from the newly adding sheet defs, now check the ones that exist in the terminal already.
 				//If the office is using eClipboard default clinic settings for all clinics, use 0 regardless of what clinic their appointment is at.
-				clinicNum=PrefC.GetBool(PrefName.EClipboardUseDefaults)?0:clinicNum;
+				if(clinicNum>0) {
+					clinicNum=ClinicPrefs.GetBool(PrefName.EClipboardUseDefaults, clinicNum)?0:clinicNum;
+				}
 				//Fetch the EClipboardSheetDefs that already exist, for the clinic the patient is checking in to.
 				List<EClipboardSheetDef> listEClipboardSheetDefsForSheetsInTerminal=GetManyEClipboardSheetDefsForOnceRuleAtClinic(listSheetsInTerminal.Select(x=>x.SheetDefNum).ToList(), clinicNum);
 				//Loop through existing sheets, concatenating their SheetsToIgnore fields.
