@@ -9482,7 +9482,7 @@ namespace OpenDental {
 			List<ClaimProc> listClaimProcs=new List<ClaimProc>();
 			List<ClaimProcHist> listClaimProcHistsLoop=new List<ClaimProcHist>();
 			//If proc has selected teeth, we wont be showing the edit form, so set status back to what the user picked. 
-			if(IsToothSelectionValidForTxArea(procedure)) { 
+			if(IsToothSelectionValidForTxArea(procedure) || _procStatNew==ProcStat.EO) {//EO procs can't be added to an appointment in Appointment Edit Window, so skip this check
 				//If the edit form is to be shown, use Deleted as the procStatus when inserting. Otherwise insert with the users chosen value.
 				procedure.ProcStatus=_procStatNew;
 			}
@@ -10359,6 +10359,15 @@ namespace OpenDental {
 					for(int i=0;i<_toothChartRelay.SelectedTeeth.Count;i++) {
 						List<Procedure> listProceduresTooth=_listProceduresCharted.FindAll(x => x.ToothNum==_toothChartRelay.SelectedTeeth[i] && x.ToothRange=="");
 						ProcMultiVisits.CreateGroup(listProceduresTooth);
+					}
+					if(_toothChartRelay.SelectedTeeth.Count==0){
+						List<Procedure> listProceduresTeeth=_listProceduresCharted.FindAll(x => !string.IsNullOrEmpty(x.ToothNum) && x.ToothRange=="");
+						List<string> listDistinctToothNumbers=listProceduresTeeth.Select(x => x.ToothNum).ToList();
+						listDistinctToothNumbers=listDistinctToothNumbers.Distinct().ToList();
+						for(int i=0;i<listDistinctToothNumbers.Count;i++) {
+							List<Procedure> listProceduresTeethMatches=listProceduresTeeth.FindAll(x => x.ToothNum==listDistinctToothNumbers[i]).ToList();
+							ProcMultiVisits.CreateGroup(listProceduresTeethMatches);
+						}
 					}
 					//Add any leftover procedures to it's own group
 					List<Procedure> listProceduresRanged=_listProceduresCharted.FindAll(x => x.ToothNum=="");

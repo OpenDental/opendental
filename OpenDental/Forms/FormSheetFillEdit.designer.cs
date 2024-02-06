@@ -369,6 +369,7 @@ namespace OpenDental{
 			this.butReduceFontSize.Name = "butReduceFontSize";
 			this.butReduceFontSize.Size = new System.Drawing.Size(98, 24);
 			this.butReduceFontSize.TabIndex = 108;
+			this.butReduceFontSize.TabStop = false;
 			this.butReduceFontSize.Text = "Reduce Font Size";
 			this.butReduceFontSize.UseVisualStyleBackColor = true;
 			this.butReduceFontSize.Click += new System.EventHandler(this.butReduceFontSize_Click);
@@ -381,6 +382,7 @@ namespace OpenDental{
 			this.butFontAbout.Name = "butFontAbout";
 			this.butFontAbout.Size = new System.Drawing.Size(24, 24);
 			this.butFontAbout.TabIndex = 109;
+			this.butFontAbout.TabStop = false;
 			this.butFontAbout.Text = "?";
 			this.butFontAbout.UseVisualStyleBackColor = true;
 			this.butFontAbout.Click += new System.EventHandler(this.butFontAbout_Click);

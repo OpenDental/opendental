@@ -294,6 +294,10 @@ namespace OpenDental{
 					SecurityLogs.MakeLogEntry(Permissions.RxEdit,_rxPat.PatNum,"FROM("+_rxPatOld.RxDate.ToShortDateString()+","+_rxPatOld.Drug+","
 						+_rxPatOld.ProvNum+","+_rxPatOld.Disp+","+_rxPatOld.Refills+")"+"\r\nTO("+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+","
 						+_rxPat.ProvNum+","+_rxPat.Disp+","+_rxPat.Refills+")",_rxPat.RxNum,_rxPatOld.DateTStamp);
+					if(_rxPat.SendStatus!=_rxPatOld.SendStatus) {//Make an additional log entry only if the send status changed
+						SecurityLogs.MakeLogEntry(Permissions.RxEdit,_rxPat.PatNum,"Send Status of Rx "+_rxPat.Drug+" changed from "+_rxPatOld.SendStatus+" to "+_rxPat.SendStatus,
+							_rxPat.RxNum,_rxPatOld.DateTStamp);
+					}
 				}
 			}
 			//If there is not a link for the current PharmClinic combo, make one.

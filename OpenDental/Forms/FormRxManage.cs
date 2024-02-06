@@ -126,6 +126,13 @@ namespace OpenDental {
 				SheetFiller.FillFields(sheet);
 				SheetUtil.CalculateHeights(sheet);
 				SheetPrinting.PrintRx(sheet,listRxPats[0]);
+				if(listRxPats[0].SendStatus!=RxSendStatus.InElectQueue && listRxPats[0].SendStatus!=RxSendStatus.SentElect) {
+					if(listRxPats[0].SendStatus!=RxSendStatus.Printed) {
+						SecurityLogs.MakeLogEntry(Permissions.RxEdit,listRxPats[0].PatNum,"Send Status of Rx "+listRxPats[0].Drug+" changed from "+listRxPats[0].SendStatus+" to Printed",listRxPats[0].RxNum,listRxPats[0].DateTStamp);
+					}
+					listRxPats[0].SendStatus=RxSendStatus.Printed;
+					RxPats.Update(listRxPats[0]);
+				}
 				SecurityLogs.MakeLogEntry(Permissions.RxEdit,listRxPats[0].PatNum,"Printed as: "+listRxPats[0].RxDate.ToShortDateString()+","+listRxPats[0].Drug+",ProvNum:"+listRxPats[0].ProvNum+",Disp:"+listRxPats[0].Disp+",Refills:"+listRxPats[0].Refills,listRxPats[0].RxNum,listRxPats[0].DateTStamp);
 			}
 			else { //multiple rx selected
@@ -133,6 +140,14 @@ namespace OpenDental {
 				SheetPrinting.PrintMultiRx(listRxPats);
 				for(int i=0;i<listRxPats.Count;i++) {
 					SecurityLogs.MakeLogEntry(Permissions.RxEdit,listRxPats[i].PatNum,"Printed as: "+listRxPats[i].RxDate.ToShortDateString()+","+listRxPats[i].Drug+",ProvNum:"+listRxPats[i].ProvNum+",Disp:"+listRxPats[i].Disp+",Refills:"+listRxPats[i].Refills,listRxPats[i].RxNum,listRxPats[i].DateTStamp);
+					if(listRxPats[i].SendStatus==RxSendStatus.InElectQueue || listRxPats[i].SendStatus==RxSendStatus.SentElect) {
+						continue;
+					}
+					if(listRxPats[i].SendStatus!=RxSendStatus.Printed) {
+						SecurityLogs.MakeLogEntry(Permissions.RxEdit,listRxPats[i].PatNum,"Send Status of Rx "+listRxPats[i].Drug+" changed from "+listRxPats[i].SendStatus+" to Printed",listRxPats[i].RxNum,listRxPats[i].DateTStamp);
+					}
+					listRxPats[i].SendStatus=RxSendStatus.Printed;
+					RxPats.Update(listRxPats[i]);
 				}
 			}
 		}

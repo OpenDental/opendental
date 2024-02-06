@@ -54,6 +54,9 @@ namespace OpenDental {
 			this.butPrintPreview = new OpenDental.UI.Button();
 			this.textQuery = new OpenDental.ODcodeBox();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.radioLandscape = new System.Windows.Forms.RadioButton();
+			this.radioPortrait = new System.Windows.Forms.RadioButton();
+			this.labelPrintOrientation = new System.Windows.Forms.Label();
 			this.checkReportServer = new OpenDental.UI.CheckBox();
 			this.labelRowCount = new System.Windows.Forms.Label();
 			this._gridResults = new OpenDental.UI.GridOD();
@@ -280,6 +283,9 @@ namespace OpenDental {
 			// panel1
 			// 
 			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel1.Controls.Add(this.radioLandscape);
+			this.panel1.Controls.Add(this.radioPortrait);
+			this.panel1.Controls.Add(this.labelPrintOrientation);
 			this.panel1.Controls.Add(this.checkReportServer);
 			this.panel1.Controls.Add(this.butFavorite);
 			this.panel1.Controls.Add(this.butAdd);
@@ -291,6 +297,35 @@ namespace OpenDental {
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(591, 162);
 			this.panel1.TabIndex = 17;
+			// 
+			// radioLandscape
+			// 
+			this.radioLandscape.Location = new System.Drawing.Point(273, 108);
+			this.radioLandscape.Name = "radioLandscape";
+			this.radioLandscape.Size = new System.Drawing.Size(90, 20);
+			this.radioLandscape.TabIndex = 21;
+			this.radioLandscape.Text = "Landscape";
+			this.radioLandscape.UseVisualStyleBackColor = true;
+			// 
+			// radioPortrait
+			// 
+			this.radioPortrait.Checked = true;
+			this.radioPortrait.Location = new System.Drawing.Point(200, 108);
+			this.radioPortrait.Name = "radioPortrait";
+			this.radioPortrait.Size = new System.Drawing.Size(67, 20);
+			this.radioPortrait.TabIndex = 20;
+			this.radioPortrait.TabStop = true;
+			this.radioPortrait.Text = "Portrait";
+			this.radioPortrait.UseVisualStyleBackColor = true;
+			// 
+			// labelPrintOrientation
+			// 
+			this.labelPrintOrientation.Location = new System.Drawing.Point(197, 89);
+			this.labelPrintOrientation.Name = "labelPrintOrientation";
+			this.labelPrintOrientation.Size = new System.Drawing.Size(113, 18);
+			this.labelPrintOrientation.TabIndex = 19;
+			this.labelPrintOrientation.Text = "Print Orientation";
+			this.labelPrintOrientation.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// checkReportServer
 			// 
@@ -411,5 +446,9 @@ namespace OpenDental {
 		private UI.SplitContainer splitContainer;
 		private UI.SplitterPanel splitterPanel1;
 		private UI.SplitterPanel splitterPanel2;
+		private System.Windows.Forms.Label labelPrintOrientation;
+		private System.Windows.Forms.RadioButton radioPortrait;
+		private System.Windows.Forms.RadioButton radioLandscape;
+
 	}
 }
