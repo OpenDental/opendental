@@ -13,6 +13,7 @@ using System.Web;
 using System.Net.Http;
 using OpenDental;
 using System.Windows;
+using System.Threading.Tasks;
 
 
 namespace OpenDentBusiness
@@ -292,7 +293,38 @@ namespace OpenDentBusiness
 			Crud.SmsToMobileCrud.Update(smsToMobile, oldSmsToMobile);
 		}
 
-		async static void SmsGo(string url, string err, string authedpath)
+        public static async Task<int> getQueueSizeAsync()
+        {
+			int queueSizeInt = 0;
+            try
+            {
+                string checkStr = "http/request-server-status?" + ODSMS.AUTH;
+                HttpResponseMessage httpResponseMessage = await sharedClient.GetAsync(checkStr);
+                var text = await httpResponseMessage.Content.ReadAsStringAsync();
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(text);
+                XmlNode messagesInSendQueueNode = xmlDoc.SelectSingleNode("//MessagesInSendQueue");
+                if (messagesInSendQueueNode != null)
+                {
+                    string queueSize = messagesInSendQueueNode.InnerText;
+                    queueSizeInt = int.Parse(queueSize);
+                    Console.WriteLine("MessagesInSendQueue: " + queueSize);
+
+                }
+                else
+                {
+                    Console.WriteLine("The <MessagesInSendQueue> element was not found.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking Diafaan queue size: {ex.Message}");
+                EventLog.WriteEntry("ODSMS", "Something bad happened checking Diafaan status", EventLogEntryType.Error, 101, 1, new byte[10]);
+            }
+            return queueSizeInt;
+        }
+        async static void SmsGo(string url, string err, string authedpath)
 		{
 			if (sharedClient == null)
 			{
@@ -305,12 +337,21 @@ namespace OpenDentBusiness
 				response.EnsureSuccessStatusCode();
 				var res = await response.Content.ReadAsStringAsync();
 				if (res[0] != 'O') { throw new Exception(); } // OK
-				await System.Threading.Tasks.Task.Delay(120 * 1000);  // Corrin 2024-01-25.  This isn't ideal.  Wait 120 seconds is a long time normally, but probably not log enough for bulk sends
-				var responseUpdate = await sharedClient.GetAsync(authedpath + res.Substring(4));
+				var queueSize = await getQueueSizeAsync();
+
+                // Wait for 30 seconds + 20 seconds per message in the queue.  This should give enough time for the queue to clear
+                await System.Threading.Tasks.Task.Delay((30 + (queueSize * 20)) * 1000);
+				var message_id = res.Substring(4);
+
+                var responseUpdate = await sharedClient.GetAsync(authedpath + message_id);
 				responseUpdate.EnsureSuccessStatusCode();
 				var resUpdate = await responseUpdate.Content.ReadAsStringAsync();
-				Console.WriteLine(resUpdate);
-				if (resUpdate[11] != 'S') { throw new Exception(); } // Success str (not http codes because not http error)
+                Console.WriteLine($"Result from SMS send attempt: {resUpdate}");
+				if (!resUpdate.Contains("200 Success")) {  // Success str (not http codes because not http error)
+					// TODO: Add in an update to the comm log marking it as failed
+					throw new Exception(); 
+				} 
+				
 			}
 			catch
 			{
@@ -325,8 +366,7 @@ namespace OpenDentBusiness
 		{
 			Console.WriteLine("sending sms!");
 			EventLog.WriteEntry("ODSMS", "Sending SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
-			bool useODSMS = true;
-
+			
 			//No need to check MiddleTierRole; no call to db.
 			if (Plugins.HookMethod(null, "SmsToMobiles.SendSms_start", listMessages))
 			{
@@ -336,7 +376,7 @@ namespace OpenDentBusiness
 			{
 				throw new Exception("No messages to send.");
 			}
-			if (useODSMS)
+			if (ODSMS.USE_ODSMS)
 			{
 				foreach (SmsToMobile msg in listMessages)
 				{
@@ -348,16 +388,10 @@ namespace OpenDentBusiness
 					{
 						msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
 					}
-					string auth = OpenDental.ODSMS.AUTH;
-					string computername = "Computer Name; " + ODEnvironment.MachineName;
-					Console.WriteLine(computername);
-					EventLog.WriteEntry("ODSMS", computername, EventLogEntryType.Information, 101, 1, new byte[10]);
+					string auth = ODSMS.AUTH;
 					string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
 					EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
-
-
 					Console.WriteLine(send);
-					EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
 					// http://localhost:9710/http/send-message?username=admin&password=password&to=%6421467784&message-type=sms.automatic&message=Message+Text
 					SmsGo(send, msg.MobilePhoneNumber, "http/request-status-update?" + auth + "&message-id=");
 				}
