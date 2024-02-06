@@ -50,24 +50,26 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private DateTime GetDateStart() {
+			if(textDateStart.Text=="") {
+				return DateTime.MinValue.AddDays(1);//because we don't want to include 010101
+			}
+			return PIn.Date(textDateStart.Text);
+		}
+
+		private DateTime GetDateEnd() {
+			if(textDateEnd.Text=="") {
+				return DateTime.MaxValue;
+			}
+			return PIn.Date(textDateEnd.Text);
+		}
+
 		private void FillGrid(){
 			if(!textDateStart.IsValid() || !textDateEnd.IsValid()) {
 				return;
 			}
-			DateTime dateFrom;
-			DateTime dateTo;
-			if(textDateStart.Text=="") {
-				dateFrom=DateTime.MinValue.AddDays(1);//because we don't want to include 010101
-			}
-			else {
-				dateFrom=PIn.Date(textDateStart.Text);
-			}
-			if(textDateEnd.Text=="") {
-				dateTo=DateTime.MaxValue;
-			}
-			else {
-				dateTo=PIn.Date(textDateEnd.Text);
-			}
+			DateTime dateFrom=GetDateStart();
+			DateTime dateTo=GetDateEnd();
 			EnumEquipmentDisplayMode equipmentDisplayMode=EnumEquipmentDisplayMode.All;
 			if(radioPurchased.Checked){
 				equipmentDisplayMode=EnumEquipmentDisplayMode.Purchased;
@@ -184,7 +186,9 @@ namespace OpenDental {
 				}
 				g.DrawString(text,fontHeading,Brushes.Black,center-g.MeasureString(text,fontHeading).Width/2,yPos);
 				yPos+=(int)g.MeasureString(text,fontHeading).Height;
-				text=textDateStart.Text+" "+Lan.g(this,"to")+" "+textDateEnd.Text;
+				DateTime dateStart=GetDateStart();
+				DateTime dateEnd=GetDateEnd();
+				text=dateStart.ToShortDateString()+" "+Lan.g(this,"to")+" "+dateEnd.ToShortDateString();
 				g.DrawString(text,fontSubHeading,Brushes.Black,center-g.MeasureString(text,fontSubHeading).Width/2,yPos);
 				yPos+=20;
 				_isHeadingPrinted=true;

@@ -678,8 +678,7 @@ namespace OpenDental {
 			formBenefitFrequencies.ListBenefitsAll=_listBenefitsAll.Select(x=>x.Copy()).ToList();
 			formBenefitFrequencies.PlanNum=_planNum;
 			formBenefitFrequencies.PatPlanNum=_patPlanNum;
-			bool isCalendar=(MonthRenew==0);
-			formBenefitFrequencies.IsCalendar=isCalendar;
+			formBenefitFrequencies.IsCalendar=checkCalendarYear.Checked && PIn.Int(textMonth.Text,hasExceptions:false)==0;
 			formBenefitFrequencies.ShowDialog();
 			if(formBenefitFrequencies.DialogResult!=DialogResult.OK){
 				return;
