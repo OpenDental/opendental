@@ -238,6 +238,7 @@ namespace OpenDentBusiness.Eclaims
 
 		///<summary>Fills the missing data field on the queueItem that was passed in.  This contains all missing data on this claim.  Claim will not be allowed to be sent electronically unless this string comes back empty.</summary>
 		public static ClaimSendQueueItem GetMissingData(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem) {
+			//Middle Tier check is a necessary part of speed enhancements implemented in job E3915. 
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<ClaimSendQueueItem>(MethodBase.GetCurrentMethod(),clearinghouseClin,queueItem);
 			}

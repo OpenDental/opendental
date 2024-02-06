@@ -1053,5 +1053,10 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('DatabaseGlobalVariablesDontSet','"+POut.Long(databaseMode)+"')";
 			Db.NonQ(command);
 		}
+
+		private static void To23_3_30() {
+			string command="INSERT INTO preference(PrefName,ValueString) VALUES('WebServiceServerNameCanBeBlank','0')";
+			Db.NonQ(command);
+		}
 	}
 }

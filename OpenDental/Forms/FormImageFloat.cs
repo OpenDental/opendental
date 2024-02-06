@@ -1702,10 +1702,11 @@ namespace OpenDental {
 			IDataObject iDataObject=null;
 			NodeTypeAndKey nodeTypeAndKey=null;
 			if(ODBuild.IsWeb()) {
-				if(ODCloudClient.GetNodeTypeAndKey()!=null){
-					EnumImageNodeType enumImageNodeTypeCopied=(EnumImageNodeType)ODCloudClient.GetNodeTypeAndKey().nodeType;
-					long imagePriKey=ODCloudClient.GetNodeTypeAndKey().imagekey;
-					nodeTypeAndKey=new NodeTypeAndKey(enumImageNodeTypeCopied,imagePriKey);					
+				ODCloudClient.CloudNodeTypeAndKey cloudNodeTypeAndKey=ODCloudClient.GetNodeTypeAndKey();
+				if(cloudNodeTypeAndKey!=null){
+					EnumImageNodeType enumImageNodeTypeCopied=(EnumImageNodeType)cloudNodeTypeAndKey.nodeType;
+					long imagePriKey=cloudNodeTypeAndKey.imagekey;
+					nodeTypeAndKey=new NodeTypeAndKey(enumImageNodeTypeCopied,imagePriKey);
 				}
 			}
 			else{

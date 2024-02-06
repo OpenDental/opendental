@@ -54,6 +54,7 @@ namespace OpenDental {
 			checkImeCompositionCompatibility.Checked=PrefC.GetBool(PrefName.ImeCompositionCompatibility);
 			checkTitleBarShowSite.Checked=PrefC.GetBool(PrefName.TitleBarShowSite);
 			textWebServiceServerName.Text=PrefC.GetString(PrefName.WebServiceServerName);
+			checkWebServiceServerNameCanBeBlank.Checked=PrefC.GetBool(PrefName.WebServiceServerNameCanBeBlank);
 			if(PrefC.GetLong(PrefName.AlertCheckFrequencySeconds)==0) {
 				textAlertInterval.Text="";
 			}
@@ -169,6 +170,7 @@ namespace OpenDental {
 			hasChanged |=Prefs.UpdateLong(PrefName.ShowIDinTitleBar,comboShowID.SelectedIndex);
 			hasChanged |=Prefs.UpdateBool(PrefName.TitleBarShowSite, checkTitleBarShowSite.Checked);
 			hasChanged |=Prefs.UpdateString(PrefName.WebServiceServerName,textWebServiceServerName.Text);
+			hasChanged |=Prefs.UpdateBool(PrefName.WebServiceServerNameCanBeBlank, checkWebServiceServerNameCanBeBlank.Checked);
 			hasChanged |=Prefs.UpdateBool(PrefName.LocalTimeOverridesServerTime,checkTimeCardUseLocal.Checked);
 			hasChanged |=Prefs.UpdateBool(PrefName.PatientSelectUseFNameForPreferred,checkPrefFName.Checked);
 			hasChanged |=Prefs.UpdateBool(PrefName.PatientSelectUsesSearchButton,!checkRefresh.Checked);

@@ -2598,7 +2598,10 @@ namespace OpenDentBusiness {
 		///<summary>Enum. The communication type for Web Sched verifications to recalls. 0: None, 1: Text, 2: E-mail, 3: Text and E-mail</summary>
 		WebSchedVerifyRecallType,
 		WebServiceHQServerURL,
+		///<summary>Update Server: Version updates can only be performed from this computer, and the eConnector can only be installed on this computer.</summary>
 		WebServiceServerName,
+		///<summary>Allow WebServiceServerName to be blank so that updates can be performed from any computer. eConnector will not work.</summary>
+		WebServiceServerNameCanBeBlank,
 		///<summary>If enabled, allows users to right click on ODTextboxes or ODGrids to populate the context menu with any detected wiki links.</summary>
 		WikiDetectLinks,
 		///<summary>If enabled, allows users to create new wiki pages when following links from textboxes and grids. (Disable to prevent proliferation of misspelled wiki pages.)</summary>

@@ -528,7 +528,8 @@ namespace OpenDental {
 				//In addition to the service installing, there will also be a new OpenDentalServiceConfig.xml file that the service will use.  
 				//The config data is defaulted to the current connection settings in DataConnection. 
 				TryInstallOpenDentalService(isSilent);
-				UpgradeOrInstallEConnector(isSilent:true,updateServerName:updateServerName,doOverrideBlankUpdateServerName:true);
+				bool webServiceServerNameCanBeBlank=PrefC.GetBoolSilent(PrefName.WebServiceServerNameCanBeBlank,silentDefault:false);
+				UpgradeOrInstallEConnector(isSilent:true,updateServerName:updateServerName,doOverrideBlankUpdateServerName:!webServiceServerNameCanBeBlank);
 				TryInstallOpenDentalApiService(isSilent:true);
 			}
 			if(versionCurrent < versionDB) {

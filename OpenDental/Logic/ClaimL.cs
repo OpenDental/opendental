@@ -601,7 +601,7 @@ namespace OpenDental {
 				}
 				//This is done for PromptForSecondaryClaim(...).
 				//SendEclaimsToClearinghouse(...) already validates items in listClaimSendQueueItems, SetClaimItemIsValid(...) will just return in this case.
-				SetClaimItemIsValid(listClaimSendQueueItems[i],clearinghouse);
+				listClaimSendQueueItems[i]=SetClaimItemIsValid(listClaimSendQueueItems[i],clearinghouse);
 				if(!listClaimSendQueueItems[i].IsValid && listClaimSendQueueItems[i].CanSendElect) {
 					MsgBox.Show("ContrAccount","Not allowed to send e-claims with missing information.");
 					return listClaimSendQueueItemsRetVal;
@@ -639,14 +639,15 @@ namespace OpenDental {
 		}
 
 		///<summary>Sets the ClaimSendQueueItem.IsValid flag. Checks if the ClaimSendQueueItem passed in has any missing data.</summary>
-		public static void SetClaimItemIsValid(ClaimSendQueueItem claimSendQueueItem,Clearinghouse clearinghouseClin) {
+		public static ClaimSendQueueItem SetClaimItemIsValid(ClaimSendQueueItem claimSendQueueItem,Clearinghouse clearinghouseClin) {
 			if(claimSendQueueItem.IsValid) {
-				return;//no need to check. ClaimItem is valid already.
+				return claimSendQueueItem;//no need to check. ClaimItem is valid already.
 			}
 			claimSendQueueItem=Eclaims.GetMissingData(clearinghouseClin,claimSendQueueItem);
 			if(claimSendQueueItem.MissingData=="") {
 				claimSendQueueItem.IsValid=true;
 			}
+			return claimSendQueueItem;
 		}
 
 		///<summary>Returns ClaimIsValidState.True if given claim is valid.
