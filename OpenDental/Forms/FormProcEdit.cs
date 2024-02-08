@@ -1322,12 +1322,6 @@ namespace OpenDental {
 				MsgBox.Show(this,"Adjustments may only be added to completed procedures.");
 				return;
 			}
-			bool isTsiAdj=(TsiTransLogs.IsTransworldEnabled(_patient.ClinicNum)
-				&& Patients.IsGuarCollections(_patient.Guarantor)
-				&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"The guarantor of this family has been sent to TSI for a past due balance.  "
-					+"Is this an adjustment applied by the office?\r\n\r\n"
-					+"Yes - this is an adjustment applied by the office\r\n\r\n"
-					+"No - this adjustment is the result of a payment received from TSI"));
 			Adjustment adjustment=new Adjustment();
 			adjustment.PatNum=_patient.PatNum;
 			adjustment.ProvNum=comboProv.GetSelectedProvNum();
@@ -1336,7 +1330,7 @@ namespace OpenDental {
 			adjustment.ProcDate=_procedure.ProcDate;
 			adjustment.ProcNum=_procedure.ProcNum;
 			adjustment.ClinicNum=_procedure.ClinicNum;
-			using FormAdjust formAdjust=new FormAdjust(_patient,adjustment,isTsiAdj);
+			using FormAdjust formAdjust=new FormAdjust(_patient,adjustment);
 			formAdjust.IsNew=true;
 			if(formAdjust.ShowDialog()!=DialogResult.OK) {
 				return;
@@ -2276,56 +2270,12 @@ namespace OpenDental {
 			if(MessageBox.Show(Lan.g(this,"Delete Procedure?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
 				return;
 			}
-			if(_procedureOld.ProcStatus==ProcStat.TP || _procedureOld.ProcStatus==ProcStat.TPi) {
-				ClaimProc claimProcPreAuth=_listClaimProcs.Where(x=>x.ProcNum==_procedureOld.ProcNum && x.ClaimNum!=0 && x.Status==ClaimProcStatus.Preauth).FirstOrDefault();
-				if(claimProcPreAuth!=null && ClaimProcs.RefreshForClaim(claimProcPreAuth.ClaimNum).GroupBy(x=>x.ProcNum).Count()==1) {
-					MsgBox.Show(this,"Not allowed to delete the last procedure from a preauthorization. The entire preauthorization would have to be deleted.");
-					return;
-				}
-			}
-			if(_orthoProcLink!=null) {
-				MsgBox.Show(this,"Not allowed to delete a procedure that is linked to an ortho case. " +
-					"Detach the procedure from the ortho case or delete the ortho case first.");
-				return;
-			}
-			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<Appointment> listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(new List<Procedure>() { _procedure });
-				if(listAppointmentsEmpty.Count>0) {
-					MsgBox.Show("Not allowed to delete the last procedure from an appointment.");
-					return;
-				}
-			}
-			if(_procedure.AptNum!=0 || _procedure.PlannedAptNum!=0){//If the procedure is attached to an appointment
-				string res=AppointmentL.CheckRequiredProcForApptType(procedureArrayToDelete:_procedure);
-				if(res!=""){
-					MsgBox.Show(res);
-					return;
-				}
-			}
-			try {
-				Procedures.Delete(_procedure.ProcNum);//also deletes the claimProcs and adjustments. Might throw exception.
-				Recalls.Synch(_procedure.PatNum);//needs to be moved into Procedures.Delete
-			}
-			catch(Exception ex){
-				MessageBox.Show(ex.Message);
+			Result result=Procedures.DeleteProcedure(_procedure,_procedureOld);
+			if(result.IsFailure()) {
+				MsgBox.Show(this,result.Msg);
 				return;
 			}
 			_isEstimateRecompute=true;
-			EnumPermType permissions=EnumPermType.ProcDelete;
-			string tag="";
-			switch(_procedureOld.ProcStatus) {
-				case ProcStat.C:
-					permissions=EnumPermType.ProcCompleteStatusEdit;
-					tag=", "+Lan.g(this,"Deleted");
-					break;
-				case ProcStat.EO:
-				case ProcStat.EC:
-					permissions=EnumPermType.ProcExistingEdit;
-					tag=", "+Lan.g(this,"Deleted");
-					break;
-			}
-			SecurityLogs.MakeLogEntry(permissions,_procedureOld.PatNum,
-				ProcedureCodes.GetProcCode(_procedureOld.CodeNum).ProcCode+" ("+_procedureOld.ProcStatus+"), "+_procedureOld.ProcFee.ToString("c")+tag);
 			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 			Plugins.HookAddCode(this,"FormProcEdit.butDelete_Click_end",_procedure);

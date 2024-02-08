@@ -48,6 +48,7 @@ namespace OpenDental {
 			this.labelSubtractions = new System.Windows.Forms.Label();
 			this.listTypeNeg = new OpenDental.UI.ListBox();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
+			this.checkOnlyTsiExcludedAdjTypes = new OpenDental.UI.CheckBox();
 			this.radioIncludeAll = new System.Windows.Forms.RadioButton();
 			this.radioAllocatedOnly = new System.Windows.Forms.RadioButton();
 			this.radioExcludeAll = new System.Windows.Forms.RadioButton();
@@ -294,6 +295,7 @@ namespace OpenDental {
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Controls.Add(this.checkOnlyTsiExcludedAdjTypes);
 			this.groupBox3.Controls.Add(this.listTypePos);
 			this.groupBox3.Controls.Add(this.listTypeNeg);
 			this.groupBox3.Controls.Add(this.dateAdjustment);
@@ -307,6 +309,16 @@ namespace OpenDental {
 			this.groupBox3.Size = new System.Drawing.Size(853, 214);
 			this.groupBox3.TabIndex = 168;
 			this.groupBox3.Text = "Adjustment Info";
+			// 
+			// checkOnlyTsiExcludedAdjTypes
+			// 
+			this.checkOnlyTsiExcludedAdjTypes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkOnlyTsiExcludedAdjTypes.Location = new System.Drawing.Point(185, 21);
+			this.checkOnlyTsiExcludedAdjTypes.Name = "checkOnlyTsiExcludedAdjTypes";
+			this.checkOnlyTsiExcludedAdjTypes.Size = new System.Drawing.Size(214, 20);
+			this.checkOnlyTsiExcludedAdjTypes.TabIndex = 172;
+			this.checkOnlyTsiExcludedAdjTypes.Text = "Only TSI excluded adjustment types";
+			this.checkOnlyTsiExcludedAdjTypes.CheckedChanged += new System.EventHandler(this.checkOnlyTsiExcludedAdjTypes_Checked);
 			// 
 			// radioIncludeAll
 			// 
@@ -423,5 +435,6 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radioExcludeAll;
 		private OpenDental.UI.GroupBox groupCreditLogic;
 		private UI.Button butUpdate;
+		private UI.CheckBox checkOnlyTsiExcludedAdjTypes;
 	}
 }

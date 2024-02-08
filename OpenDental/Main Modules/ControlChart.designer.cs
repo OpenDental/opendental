@@ -643,6 +643,7 @@
 			this.tabControlProc.Size = new System.Drawing.Size(524, 259);
 			this.tabControlProc.TabIndex = 190;
 			this.tabControlProc.Selecting += new System.EventHandler<int>(this.tabControlProc_Selecting);
+			this.tabControlProc.Resize += new System.EventHandler(this.tabControlProc_Resize);
 			// 
 			// tabEnterTx
 			// 

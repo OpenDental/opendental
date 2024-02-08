@@ -822,7 +822,7 @@ namespace OpenDental{
 					List<Procedure> listProceduresGrid=gridProc.GetTags<Procedure>();
 					listProceduresGrid.RemoveAll(x => x.AptNum!=_appointment.AptNum && x.AptNum!=0);//Remove procs on other appts
 					List<Procedure> listProceduresForReqCheck=listProceduresSelected.FindAll(x => x.AptNum!=_appointment.AptNum && x.AptNum!=0);
-					string message=AppointmentL.CheckRequiredProcForApptType(listProceduresForReqCheck.ToArray());
+					string message=Appointments.CheckRequiredProcForApptType(listProceduresForReqCheck.ToArray());
 					if(message!=""){
 						MsgBox.Show(message);
 						return;

@@ -22,6 +22,13 @@ namespace OpenDental {
 		private readonly PaymentEdit.LoadData _loadData;
 		private Patient _patient;
 		private RigorousAdjustments _rigorousAdjustment;
+		private Program _program;
+		private Patient _patientGuar;
+		private List<Def> _listDefsAdjPosCats;
+		private List<Def> _listDefsAdjNegCats;
+		private List<ProgramProperty> _listProgramPropertiesExcludedAdjTypes;
+		private List<ProgramProperty> _listProgramPropertiesForClinicExcludedAdjTypes;
+		private List<long> _listExcludedAdjTypeNums;
 		#endregion
 		
 		///<summary>Optionally pass in a list of ProcNums to always display. Pass in a list of new adjustments that are not in the database which will always display. Any procedures associated to the adjustments passed in will always display as well.</summary>
@@ -33,6 +40,8 @@ namespace OpenDental {
 			_listProcNums=listProcNums??new List<long>();
 			_listAdjustments=listAdjustments??new List<Adjustment>();
 			_loadData=PaymentEdit.GetLoadData(patient,new Payment(),true,false);
+			_program=Programs.GetCur(ProgramName.Transworld);
+			_patientGuar=Patients.GetGuarForPat(_patient.PatNum);
 		}
 		
 		private void FormMultiAdj_Load(object sender,EventArgs e) {
@@ -44,7 +53,16 @@ namespace OpenDental {
 			}
 			dateAdjustment.Text=DateTime.Today.ToShortDateString();
 			_rigorousAdjustment=PrefC.GetEnum<RigorousAdjustments>(PrefName.RigorousAdjustments);
+			checkOnlyTsiExcludedAdjTypes.CheckedChanged-=checkOnlyTsiExcludedAdjTypes_Checked;	
+			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum)) { //Transworld program link is enabled and the patient is part of a family where the guarantor has been sent to TSI
+				checkOnlyTsiExcludedAdjTypes.Checked=true;
+			}
+			else {
+				checkOnlyTsiExcludedAdjTypes.Visible=false;
+				checkOnlyTsiExcludedAdjTypes.Checked=false;
+			}
 			FillListBoxAdjTypes();
+			checkOnlyTsiExcludedAdjTypes.CheckedChanged+=checkOnlyTsiExcludedAdjTypes_Checked;
 			FillComboProv();
 			if(PrefC.HasClinicsEnabled) {
 				//Select 'Inherit' by default which is the unassigned option and was carefully approved by Nathan and Allen.
@@ -164,8 +182,32 @@ namespace OpenDental {
 		}
 
 		private void FillListBoxAdjTypes() {
-			listTypePos.Items.AddList(Defs.GetPositiveAdjTypes(considerPermission:true),x => x.ItemName);
-			listTypeNeg.Items.AddList(Defs.GetNegativeAdjTypes(considerPermission:true),x => x.ItemName);
+			listTypePos.Items.Clear();
+			listTypeNeg.Items.Clear();
+			_listDefsAdjPosCats=Defs.GetPositiveAdjTypes(considerPermission:true);
+			_listDefsAdjNegCats=Defs.GetNegativeAdjTypes(considerPermission:true);
+			_listProgramPropertiesExcludedAdjTypes=ProgramProperties
+				.GetWhere(x => x.ProgramNum==_program.ProgramNum
+					&& _program.Enabled
+					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
+						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
+			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
+			_listProgramPropertiesForClinicExcludedAdjTypes=_listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==_patientGuar.ClinicNum);
+			if(!PrefC.HasClinicsEnabled || _listProgramPropertiesForClinicExcludedAdjTypes.Count==0){
+				_listProgramPropertiesForClinicExcludedAdjTypes=_listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==0);
+			}
+			_listExcludedAdjTypeNums=_listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
+			if(checkOnlyTsiExcludedAdjTypes.Checked) {
+				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x => _listExcludedAdjTypeNums.Contains(x.DefNum));
+				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => _listExcludedAdjTypeNums.Contains(x.DefNum));
+				listTypePos.Items.AddList(_listDefsAdjPosCats,x=>x.ItemName);
+				listTypeNeg.Items.AddList(_listDefsAdjNegCats,x=>x.ItemName);
+				return;
+			}
+			_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x => !_listExcludedAdjTypeNums.Contains(x.DefNum));
+			_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => !_listExcludedAdjTypeNums.Contains(x.DefNum));
+			listTypePos.Items.AddList(_listDefsAdjPosCats,x=>x.ItemName);
+			listTypeNeg.Items.AddList(_listDefsAdjNegCats,x=>x.ItemName);
 		}
 		#endregion
 
@@ -499,7 +541,7 @@ namespace OpenDental {
 						continue;
 					}
 					for(int k=0;k<listProcAdjs[i].ListAccountEntryAdjustments.Count;k++) {
-							sum+=listProcAdjs[i].ListAccountEntryAdjustments[k].AmountEnd;
+						sum+=listProcAdjs[i].ListAccountEntryAdjustments[k].AmountEnd;
 					}
 					if((listProcAdjs[i].AccountEntryProc.AmountEnd+sum) < 0) {
 						count++;
@@ -515,6 +557,20 @@ namespace OpenDental {
 						MsgBox.Show(count+ " " +Lan.g(this,"procedure(s) cannot have their adjustments updated due to negative remaining values.")+" "+Lan.g(this,"Please fix to save"));
 						return;
 					}
+				}
+			}
+			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum)) {
+				_listExcludedAdjTypeNums=_listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
+				List<Adjustment> listAdjustmentsPosExcluded=_listAdjustments.FindAll(x=>_listExcludedAdjTypeNums.Contains(x.AdjType));
+				List<Adjustment> listAdjustmentsNegExcluded=_listAdjustments.FindAll(x=>_listExcludedAdjTypeNums.Contains(x.AdjType));
+				string msgTxt="The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that will be synched with TSI."
+					+" This balance adjustment could result in a TSI charge for collection. Continue?";
+				if(listAdjustmentsPosExcluded.Count()>0 || listAdjustmentsNegExcluded.Count()>0) {
+					msgTxt="The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that is excluded from being synched with TSI."
+						+" This will not reduce the balance sent for collection by TSI. Continue?";
+				}
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,msgTxt)) {
+					return;
 				}
 			}
 			//Now we should be guaranteed to have adjustments.
@@ -634,6 +690,10 @@ namespace OpenDental {
 			FixedAmt,
 			PercentOfRemBal,
 			PercentOfFee,
+		}
+
+		private void checkOnlyTsiExcludedAdjTypes_Checked(object sender,EventArgs e) {
+			FillListBoxAdjTypes();
 		}
 	}
 }

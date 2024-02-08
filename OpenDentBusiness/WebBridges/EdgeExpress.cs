@@ -420,39 +420,42 @@ namespace OpenDentBusiness {
 
 			private static void AddUIParams(XmlWriter xmlWriter,string returnUrl) {
 				xmlWriter.WriteStartElement("HOSTPAYSETTING");
-					xmlWriter.WriteStartElement("POSDEVICE");
-					xmlWriter.WriteElementString("TYPE","KEYED");
-					xmlWriter.WriteEndElement();//POSDEVICE
-					xmlWriter.WriteStartElement("RETURNOPTION");
-					if(ODBuild.IsDebug()) {
-						xmlWriter.WriteElementString("RETURNURL",returnUrl); //use this line for debugging easier
-					}
-					else {
-						xmlWriter.WriteElementString("RETURNURL",returnUrl);
-					}
-					xmlWriter.WriteElementString("RETURNTARGET","_self");//without this line, the top level window will be redirected to RETURNURL
-					xmlWriter.WriteEndElement();//RETURNOPTION
-					xmlWriter.WriteElementString("DISABLEFRAMING","false");//allows us to put the page in an iframe.
-					xmlWriter.WriteStartElement("CUSTOMIZATION");
-					xmlWriter.WriteStartElement("PAGE");
-					xmlWriter.WriteStartElement("BILLINGFIRSTNAME");
-					xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
-					xmlWriter.WriteEndElement();//BILLINGFIRSTNAME
-					xmlWriter.WriteStartElement("BILLINGMIDDLENAME");
-					xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
-					xmlWriter.WriteEndElement();//BILLINGMIDDLENAME
-					xmlWriter.WriteStartElement("BILLINGLASTNAME");
-					xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
-					xmlWriter.WriteEndElement();//BILLINGLASTNAME
-					xmlWriter.WriteStartElement("BILLINGCOMPANY");
-					xmlWriter.WriteElementString("VISIBLE","false");
-					xmlWriter.WriteEndElement();//BILLINGCOMPANY
-					xmlWriter.WriteStartElement("BILLINGCUSTOMERTITLE");
-					xmlWriter.WriteElementString("VISIBLE","false");
-					xmlWriter.WriteEndElement();//BILLINGCUSTOMERTITLE
-					xmlWriter.WriteEndElement();//PAGE
-					xmlWriter.WriteEndElement();//CUSTOMIZATION
-					xmlWriter.WriteEndElement();//HOSTPAYSETTING
+				xmlWriter.WriteStartElement("POSDEVICE");
+				xmlWriter.WriteElementString("TYPE","KEYED");
+				xmlWriter.WriteEndElement();//POSDEVICE
+				xmlWriter.WriteStartElement("RETURNOPTION");
+				if(ODBuild.IsDebug()) {
+					xmlWriter.WriteElementString("RETURNURL",returnUrl); //use this line for debugging easier
+				}
+				else {
+					xmlWriter.WriteElementString("RETURNURL",returnUrl);
+				}
+				xmlWriter.WriteElementString("RETURNTARGET","_self");//without this line, the top level window will be redirected to RETURNURL
+				xmlWriter.WriteEndElement();//RETURNOPTION
+				xmlWriter.WriteElementString("DISABLEFRAMING","false");//allows us to put the page in an iframe.
+				xmlWriter.WriteStartElement("CUSTOMIZATION");
+				xmlWriter.WriteStartElement("PAGE");
+				xmlWriter.WriteStartElement("BILLINGFIRSTNAME");
+				xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
+				xmlWriter.WriteEndElement();//BILLINGFIRSTNAME
+				xmlWriter.WriteStartElement("BILLINGMIDDLENAME");
+				xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
+				xmlWriter.WriteEndElement();//BILLINGMIDDLENAME
+				xmlWriter.WriteStartElement("BILLINGLASTNAME");
+				xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
+				xmlWriter.WriteEndElement();//BILLINGLASTNAME
+				xmlWriter.WriteStartElement("BILLINGCOMPANY");
+				xmlWriter.WriteElementString("VISIBLE","false");
+				xmlWriter.WriteEndElement();//BILLINGCOMPANY
+				xmlWriter.WriteStartElement("BILLINGCUSTOMERTITLE");
+				xmlWriter.WriteElementString("VISIBLE","false");
+				xmlWriter.WriteEndElement();//BILLINGCUSTOMERTITLE
+				xmlWriter.WriteStartElement("ORDERINFO");
+				xmlWriter.WriteElementString("LABEL","Payment Information");
+				xmlWriter.WriteEndElement();//ORDERINFO
+				xmlWriter.WriteEndElement();//PAGE
+				xmlWriter.WriteEndElement();//CUSTOMIZATION
+				xmlWriter.WriteEndElement();//HOSTPAYSETTING
 			}
 
 			///<summary>Sets the expiration and inserts the response to the db.</summary>

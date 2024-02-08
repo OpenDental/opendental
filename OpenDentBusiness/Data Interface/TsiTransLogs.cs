@@ -150,7 +150,7 @@ namespace OpenDentBusiness{
 		}
 
 		/// <summary>Inserts a TsiTransLog for the adjustment if necessary.</summary>
-		public static void CheckAndInsertLogsIfAdjTypeExcluded(Adjustment adjustment,bool isFromTsi=false) {
+		public static void CheckAndInsertLogsIfAdjTypeExcluded(Adjustment adjustment) {
 			//No need to check MiddleTierRole; no call to db.
 			Program program=Programs.GetCur(ProgramName.Transworld);
 			if(program==null || !program.Enabled) {
@@ -175,15 +175,9 @@ namespace OpenDentBusiness{
 			else{
 				listProgramPropertiesForClinic=listProgramProperties.FindAll(x=>x.ClinicNum==0);
 			}
-			if(listProgramPropertiesForClinic.Count==0//should always be props for ClinicNum 0
-				|| listProgramPropertiesForClinic.All(x => PIn.Long(x.PropertyValue,false)!=adjustment.AdjType))
+			if(listProgramPropertiesForClinic.Count!=0//should always be props for ClinicNum 0
+				&& listProgramPropertiesForClinic.Any(x => PIn.Long(x.PropertyValue,false)==adjustment.AdjType))
 			{
-				if(!isFromTsi) {
-					return;//if this adjustment is not an excluded type and not from TSI, return
-				}
-				//if this adjustment is not an excluded type but is from TSI, use TsiTransType.None
-			}
-			else {
 				//If this adjustment is an excluded type, mark it excluded regardless of if the adjustment is from TSI.
 				//This means if an adjustment is created for a Collections patient using the "No - this adjustment is the result
 				//of a payment received from TSI" option and the adjustment is marked as an excluded type then the previous

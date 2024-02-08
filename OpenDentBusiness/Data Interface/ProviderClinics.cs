@@ -1,3 +1,4 @@
+using Health.Direct.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -124,6 +125,18 @@ namespace OpenDentBusiness{
 			}
 			string command=$"SELECT * FROM providerclinic WHERE ProvNum IN({String.Join(", ",listProvNums.Select(x=> POut.Long(x)))})";
 			command += includeUnsassigned ? $"AND providerclinic.ClinicNum IN (0,{POut.Long(clinicNum)})" : $"AND providerclinic.ClinicNum = {POut.Long(clinicNum)}"; 
+			return Crud.ProviderClinicCrud.SelectMany(command);
+		}
+
+		public static List<ProviderClinic> GetByProvNumsAndClinicNums(List<long> listProvNums, List<long> listClinicNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ProviderClinic>>(MethodBase.GetCurrentMethod(),listProvNums, listClinicNums);
+			}
+			if(listProvNums.IsNullOrEmpty()|| listClinicNums.IsNullOrEmpty()) {
+				return new List<ProviderClinic>();
+			}
+			string command=$"SELECT * FROM providerclinic WHERE ProvNum IN({String.Join(",",listProvNums.Select(x=> POut.Long(x)))}) "
+				+ $"AND ClinicNum IN ({String.Join(",",listClinicNums.Select(x=> POut.Long(x)))}) ";
 			return Crud.ProviderClinicCrud.SelectMany(command);
 		}
 

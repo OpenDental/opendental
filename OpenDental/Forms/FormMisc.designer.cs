@@ -78,7 +78,6 @@ namespace OpenDental {
 			this.labelTimeSpan = new System.Windows.Forms.Label();
 			this.textPopupsDisableDays = new System.Windows.Forms.TextBox();
 			this.labelDays = new System.Windows.Forms.Label();
-			this.checkWebServiceServerNameCanBeBlank = new OpenDental.UI.CheckBox();
 			this.groupBox6.SuspendLayout();
 			this.groupSelectPatient.SuspendLayout();
 			this.groupBoxPopups.SuspendLayout();
@@ -96,7 +95,7 @@ namespace OpenDental {
 			// 
 			// textAuditEntries
 			// 
-			this.textAuditEntries.Location = new System.Drawing.Point(899, 372);
+			this.textAuditEntries.Location = new System.Drawing.Point(898, 341);
 			this.textAuditEntries.MaxLength = 5;
 			this.textAuditEntries.MaxVal = 10000;
 			this.textAuditEntries.MinVal = 1;
@@ -107,7 +106,7 @@ namespace OpenDental {
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(547, 373);
+			this.label9.Location = new System.Drawing.Point(546, 342);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(350, 17);
 			this.label9.TabIndex = 224;
@@ -116,7 +115,7 @@ namespace OpenDental {
 			// 
 			// butClearCode
 			// 
-			this.butClearCode.Location = new System.Drawing.Point(979, 347);
+			this.butClearCode.Location = new System.Drawing.Point(978, 316);
 			this.butClearCode.Name = "butClearCode";
 			this.butClearCode.Size = new System.Drawing.Size(43, 21);
 			this.butClearCode.TabIndex = 222;
@@ -125,7 +124,7 @@ namespace OpenDental {
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(547, 348);
+			this.label8.Location = new System.Drawing.Point(546, 317);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(350, 17);
 			this.label8.TabIndex = 221;
@@ -134,7 +133,7 @@ namespace OpenDental {
 			// 
 			// textSyncCode
 			// 
-			this.textSyncCode.Location = new System.Drawing.Point(899, 347);
+			this.textSyncCode.Location = new System.Drawing.Point(898, 316);
 			this.textSyncCode.Name = "textSyncCode";
 			this.textSyncCode.ReadOnly = true;
 			this.textSyncCode.Size = new System.Drawing.Size(74, 20);
@@ -169,14 +168,14 @@ namespace OpenDental {
 			// 
 			// comboTrackClinic
 			// 
-			this.comboTrackClinic.Location = new System.Drawing.Point(843, 321);
+			this.comboTrackClinic.Location = new System.Drawing.Point(842, 290);
 			this.comboTrackClinic.Name = "comboTrackClinic";
 			this.comboTrackClinic.Size = new System.Drawing.Size(130, 21);
 			this.comboTrackClinic.TabIndex = 215;
 			// 
 			// labelTrackClinic
 			// 
-			this.labelTrackClinic.Location = new System.Drawing.Point(547, 324);
+			this.labelTrackClinic.Location = new System.Drawing.Point(546, 293);
 			this.labelTrackClinic.Name = "labelTrackClinic";
 			this.labelTrackClinic.Size = new System.Drawing.Size(294, 17);
 			this.labelTrackClinic.TabIndex = 216;
@@ -441,7 +440,7 @@ namespace OpenDental {
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(968, 465);
+			this.butCancel.Location = new System.Drawing.Point(968, 445);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 8;
@@ -451,7 +450,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(887, 465);
+			this.butOK.Location = new System.Drawing.Point(887, 445);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 7;
@@ -471,7 +470,7 @@ namespace OpenDental {
 			// checkSubmitExceptions
 			// 
 			this.checkSubmitExceptions.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkSubmitExceptions.Location = new System.Drawing.Point(547, 415);
+			this.checkSubmitExceptions.Location = new System.Drawing.Point(546, 384);
 			this.checkSubmitExceptions.Name = "checkSubmitExceptions";
 			this.checkSubmitExceptions.Size = new System.Drawing.Size(426, 17);
 			this.checkSubmitExceptions.TabIndex = 232;
@@ -538,7 +537,7 @@ namespace OpenDental {
 			// checkAuditTrailUseReportingServer
 			// 
 			this.checkAuditTrailUseReportingServer.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAuditTrailUseReportingServer.Location = new System.Drawing.Point(744, 392);
+			this.checkAuditTrailUseReportingServer.Location = new System.Drawing.Point(743, 361);
 			this.checkAuditTrailUseReportingServer.Name = "checkAuditTrailUseReportingServer";
 			this.checkAuditTrailUseReportingServer.Size = new System.Drawing.Size(229, 24);
 			this.checkAuditTrailUseReportingServer.TabIndex = 243;
@@ -589,20 +588,9 @@ namespace OpenDental {
 			this.labelDays.Text = "Default number of days until disabled";
 			this.labelDays.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// checkWebServiceServerNameCanBeBlank
-			// 
-			this.checkWebServiceServerNameCanBeBlank.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkWebServiceServerNameCanBeBlank.Location = new System.Drawing.Point(615, 283);
-			this.checkWebServiceServerNameCanBeBlank.Name = "checkWebServiceServerNameCanBeBlank";
-			this.checkWebServiceServerNameCanBeBlank.Size = new System.Drawing.Size(358, 30);
-			this.checkWebServiceServerNameCanBeBlank.TabIndex = 246;
-			this.checkWebServiceServerNameCanBeBlank.Text = "Allow box above to be blank so that updates can be performed from any computer. e" +
-    "Connector will not work.";
-			// 
 			// FormMisc
 			// 
-			this.ClientSize = new System.Drawing.Size(1055, 495);
-			this.Controls.Add(this.checkWebServiceServerNameCanBeBlank);
+			this.ClientSize = new System.Drawing.Size(1055, 475);
 			this.Controls.Add(this.groupBoxPopups);
 			this.Controls.Add(this.checkAuditTrailUseReportingServer);
 			this.Controls.Add(this.textInactiveAlert);
@@ -712,6 +700,5 @@ namespace OpenDental {
 		private Label labelTimeSpan;
 		private TextBox textPopupsDisableDays;
 		private Label labelDays;
-		private UI.CheckBox checkWebServiceServerNameCanBeBlank;
 	}
 }

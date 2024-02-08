@@ -74,6 +74,7 @@
 			this.label19 = new System.Windows.Forms.Label();
 			this.butDetachProc = new OpenDental.UI.Button();
 			this.butAttachProc = new OpenDental.UI.Button();
+			this.checkOnlyTsiExcludedAdjTypes = new OpenDental.UI.CheckBox();
 			this.groupProcedure.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -556,9 +557,20 @@
 			this.butAttachProc.Text = "Attach";
 			this.butAttachProc.Click += new System.EventHandler(this.butAttachProc_Click);
 			// 
+			// checkOnlyTsiExcludedAdjTypes
+			// 
+			this.checkOnlyTsiExcludedAdjTypes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkOnlyTsiExcludedAdjTypes.Location = new System.Drawing.Point(72, 174);
+			this.checkOnlyTsiExcludedAdjTypes.Name = "checkOnlyTsiExcludedAdjTypes";
+			this.checkOnlyTsiExcludedAdjTypes.Size = new System.Drawing.Size(214, 20);
+			this.checkOnlyTsiExcludedAdjTypes.TabIndex = 171;
+			this.checkOnlyTsiExcludedAdjTypes.Text = "Only TSI excluded adjustment types";
+			this.checkOnlyTsiExcludedAdjTypes.CheckedChanged += new System.EventHandler(this.checkOnlyTsiExcludedAdjTypes_Checked);
+			// 
 			// FormAdjust
 			// 
 			this.ClientSize = new System.Drawing.Size(731, 504);
+			this.Controls.Add(this.checkOnlyTsiExcludedAdjTypes);
 			this.Controls.Add(this.groupProcedure);
 			this.Controls.Add(this.butPickProv);
 			this.Controls.Add(this.comboProv);
@@ -645,5 +657,6 @@
 		private OpenDental.UI.Button butEditAnyway;
 		private System.Windows.Forms.Label labelEditAnyway;
 		private System.Windows.Forms.Label labelProcDisabled;
+		private UI.CheckBox checkOnlyTsiExcludedAdjTypes;
 	}
 }

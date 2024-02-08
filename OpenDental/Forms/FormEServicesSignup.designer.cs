@@ -122,6 +122,7 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesSignup";
 			this.Text = "eServices Signup";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEServicesSignup_FormClosing);
 			this.Load += new System.EventHandler(this.FormEServicesSignup_Load);
 			this.menuWebSchedVerifyTextTemplate.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).EndInit();

@@ -5443,7 +5443,7 @@ namespace OpenDentBusiness{
 			for(int i=0;i < listApptNums.Count;i++) {
 				long countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures).Count();
 				long countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts).Count();
-				if(countProcsForAppt>=countProcsAllForAppt) {
+				if(countProcsForAppt>=countProcsAllForAppt&&countProcsForAppt!=0) {
 					Appointment appointment=Appointments.GetOneApt(listApptNums[i]);
 					listAppointments.Add(appointment);
 				}
@@ -5564,6 +5564,67 @@ namespace OpenDentBusiness{
 				}
 				Delete(listAptNumsToDelete);
 			}
+		}
+
+		public static string CheckRequiredProcForApptType(params Procedure[] procedureArrayToDelete){
+			List<Procedure> listProceduresToDelete=procedureArrayToDelete.ToList();
+			List<long> listApptNums=listProceduresToDelete.Select(x => x.AptNum).Distinct().ToList();
+			listApptNums.AddRange(listProceduresToDelete.Select(x => x.PlannedAptNum).Distinct().ToList());
+			listApptNums.RemoveAll(x => x<=0);
+			List<Appointment> listAppointments=Appointments.GetMultApts(listApptNums);//Create a list of appointments to iterate through.
+			List<AppointmentType> listAppointmentTypes=AppointmentTypes.GetDeepCopy();
+			List<Procedure> listProceduresMultAppt=Procedures.GetProcsMultApts(listApptNums);//Will be needed for Procedures.GetProcsOneApt(...)
+			List<string> listAppointmentTypeNames=new List<string>();
+			List<string> listRequiredProcs=new List<string>();
+			string allOrSome=""; //Will be used for the warning message.
+			for(int a=0;a<listAppointments.Count();a++){
+				AppointmentType appointmentType=listAppointmentTypes.Find(x => x.AppointmentTypeNum==listAppointments[a].AppointmentTypeNum);
+				if(appointmentType==null || appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.None){//If the appt does not have an appttype, or appttype does not need any of the required proc codes to be attached.
+					continue;	
+				}
+				List<long> listProcNumsToDelete=listProceduresToDelete.FindAll(x => x.AptNum==listAppointments[a].AptNum || x.PlannedAptNum==listAppointments[a].AptNum).Select(y => y.ProcNum).ToList();
+				List<Procedure> listProceduresForAppt=Procedures.GetProcsOneApt(listAppointments[a].AptNum, listProceduresMultAppt);
+				listProceduresForAppt.RemoveAll(x => listProcNumsToDelete.Contains(x.ProcNum));//Remove the procs we intend to delete from the Procedures on Appointment grid to simulate if the procs are successfully deleted.
+				List<long> listCodeNumsRemaining=listProceduresForAppt.Select(x => x.CodeNum).ToList();
+				List<string> listStrProcCodesRemaining = new List<string>();
+				for(int p=0;p<listCodeNumsRemaining.Count();p++){
+					listStrProcCodesRemaining.Add(ProcedureCodes.GetProcCode(listCodeNumsRemaining[p]).ProcCode);
+				}
+				//All procs in grid, minus for other appts, minus selected is simulated result. Verify simulated result meets appointment type requirements and if not then show message.
+				bool isMissingRequiredProcs=false;
+				int requiredCodesAttached=0;
+				List<string> listProcCodesRequiredForApptType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();//Includes duplicates.
+				for(int t=0;t<listProcCodesRequiredForApptType.Count;t++) {
+					if(listStrProcCodesRemaining.Contains(listProcCodesRequiredForApptType[t])) {
+						requiredCodesAttached++;
+						listStrProcCodesRemaining.Remove(listProcCodesRequiredForApptType[t]);
+					}
+				}
+				if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All &&  requiredCodesAttached!=listProcCodesRequiredForApptType.Count) {
+					isMissingRequiredProcs=true;
+				}
+				if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.AtLeastOne && requiredCodesAttached==0) {
+					isMissingRequiredProcs=true;
+				}
+				//Gather Appointment Type Name(s) and Required Procedure(s) to use on message.
+				if(isMissingRequiredProcs && !listAppointmentTypeNames.Any(x => x==appointmentType.AppointmentTypeName)){
+					listAppointmentTypeNames.Add(appointmentType.AppointmentTypeName);
+					listRequiredProcs.AddRange(listProcCodesRequiredForApptType);
+					//Update allOrSome with the string that corresponds with its EnumRequiredProcCodesNeeded. It will be used on the warning message if there is just one appointment in the list.
+					allOrSome=(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All)?"all":"at least one";
+				}
+			}
+			if(listAppointmentTypeNames.Count==0){
+				return "";
+			}
+			//The Appointment Type(s) [name(s)] require(s) [at least one | all] of the following procedures to be attached: proc1, proc2.
+			if(listAppointmentTypeNames.Count>1){
+				allOrSome="all or some"; //Default to this general string if there is more than one appointment in the list as there could be a mix of appointment types.
+			}
+			string errorMessage=("Appointment Type(s)"+" \""+String.Join("\", \"",listAppointmentTypeNames)+"\" "+"requires "+allOrSome+" of the following procedures:"
+				+"\r\n"+String.Join(", ",listRequiredProcs)
+				+"\r\n\n"+"To delete these procedures change the Appointment Type to None.");
+			return errorMessage;
 		}
 		#endregion
 		

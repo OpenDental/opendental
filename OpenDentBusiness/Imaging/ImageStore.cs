@@ -497,7 +497,7 @@ namespace OpenDentBusiness {
 					image.Dispose();//releases file lock
 				}
 			}
-			else if(doc.FileName.EndsWith(".dcm")){
+			else if(doc.FileName.ToLower().EndsWith(".dcm")){
 				doc.ImgType=ImageType.Radiograph;
 				BitmapDicom bitmapDicom=DicomHelper.GetFromFile(pathImportFrom);
 				DicomHelper.CalculateWindowingOnImport(bitmapDicom);

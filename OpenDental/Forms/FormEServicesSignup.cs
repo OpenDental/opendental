@@ -88,5 +88,12 @@ namespace OpenDental {
 			webViewMain.ClearCache();
 		}
 
+		private void FormEServicesSignup_FormClosing(object sender,FormClosingEventArgs e) {
+			//WebView2 objects need to be disposed of before closing parent form.
+			//This prevents visual hangups when closing parent form.
+			if(webViewMain!=null) {
+				webViewMain.Dispose();
+			}
+		}
 	}
 }

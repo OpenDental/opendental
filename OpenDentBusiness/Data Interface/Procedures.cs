@@ -5400,6 +5400,65 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
+
+		///<summary>Checks permissions and preferences to validate the user can delete the procedure. If everything passes, this method will try and delete the method also. 
+		///Will return a result object with a msg that should be used to display to the user.</summary>
+		public static Result DeleteProcedure(Procedure procedure,Procedure procedureOld) {
+			Result result=new Result() { IsSuccess=false };
+			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForProc(procedure.ProcNum);
+			OrthoProcLink orthoProcLink=OrthoProcLinks.GetByProcNum(procedure.ProcNum);
+			if(procedureOld.ProcStatus==ProcStat.TP || procedureOld.ProcStatus==ProcStat.TPi) {
+				ClaimProc claimProcPreAuth=listClaimProcs.Where(x=>x.ProcNum==procedureOld.ProcNum && x.ClaimNum!=0 && x.Status==ClaimProcStatus.Preauth).FirstOrDefault();
+				if(claimProcPreAuth!=null && ClaimProcs.RefreshForClaim(claimProcPreAuth.ClaimNum).GroupBy(x=>x.ProcNum).Count()==1) {
+					result.Msg="Not allowed to delete the last procedure from a preauthorization. The entire preauthorization would have to be deleted.";
+					return result;
+				}
+			}
+			if(orthoProcLink!=null) {
+				result.Msg="Not allowed to delete a procedure that is linked to an ortho case. " +
+					"Detach the procedure from the ortho case or delete the ortho case first.";
+				return result;
+			}
+			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
+				List<Appointment> listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(new List<Procedure>() { procedure });
+				if(listAppointmentsEmpty.Count>0) {
+					result.Msg="Not allowed to delete the last procedure from an appointment.";
+					return result;
+				}
+			}
+			if(procedure.AptNum!=0 || procedure.PlannedAptNum!=0){//If the procedure is attached to an appointment
+				string res=Appointments.CheckRequiredProcForApptType(new List<Procedure>() { procedure }.ToArray());
+				if(res!=""){
+					result.Msg=res;
+					return result;
+				}
+			}
+			try {
+				Delete(procedure.ProcNum);//also deletes the claimProcs and adjustments. Might throw exception.
+				Recalls.Synch(procedure.PatNum);//needs to be moved into Procedures.Delete
+			}
+			catch(Exception ex){
+				result.Msg=ex.Message;
+				return result;
+			}
+			EnumPermType permissions=EnumPermType.ProcDelete;
+			string tag="";
+			switch(procedureOld.ProcStatus) {
+				case ProcStat.C:
+					permissions=EnumPermType.ProcCompleteStatusEdit;
+					tag=", Deleted";
+					break;
+				case ProcStat.EO:
+				case ProcStat.EC:
+					permissions=EnumPermType.ProcExistingEdit;
+					tag=", Deleted";
+					break;
+			}
+			SecurityLogs.MakeLogEntry(permissions,procedureOld.PatNum,
+				ProcedureCodes.GetProcCode(procedureOld.CodeNum).ProcCode+" ("+procedureOld.ProcStatus+"), "+procedureOld.ProcFee.ToString("c")+tag);
+			result.IsSuccess=true;
+			return result;
+		}
 		#endregion
 
 		//--------------------Taken from Procedure class--------------------------------------------------

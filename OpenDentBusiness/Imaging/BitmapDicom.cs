@@ -19,6 +19,7 @@ namespace OpenDentBusiness {
 		public int Width;
 		public int Height;
 		public ushort BitsAllocated;
+		public ushort BitsStored;
 		///<summary>Usually empty. Only used to temporarily store on import.</summary>
 		public int WindowingMin;
 		///<summary>Usually empty. Only used to temporarily store on import.</summary>
@@ -39,7 +40,7 @@ namespace OpenDentBusiness {
 				for(int i=0;i<bitmapDicom.ArrayDataRaw.Length;i++) {
 					byte byteVal=0;
 					float floatDataRaw=bitmapDicom.ArrayDataRaw[i];
-					if(bitmapDicom.BitsAllocated==16) {//12 bits stored
+					if(bitmapDicom.BitsAllocated==16) {//12 or  16 bits stored
 						floatDataRaw=floatDataRaw/16f;
 					}
 					if(floatDataRaw<windowingMin) {
@@ -74,6 +75,10 @@ namespace OpenDentBusiness {
 		public static void CalculateWindowingOnImport(BitmapDicom bitmapDicom){
 			if(bitmapDicom.BitsAllocated==8) {
 				bitmapDicom.WindowingMax=255;
+				return;
+			}
+			if(bitmapDicom.BitsStored==16) {
+				bitmapDicom.WindowingMax=4095;//2^12
 				return;
 			}
 			int[] histogram=new int[4096];
@@ -140,8 +145,8 @@ namespace OpenDentBusiness {
 			if(bitmapDicom.BitsAllocated!=16 && bitmapDicom.BitsAllocated!=8) {
 				return null;
 			}
-			ushort bitsStored=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0101),0);
-			if(bitsStored!=12 && bitsStored!=8){
+			bitmapDicom.BitsStored=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0101),0);
+			if(bitmapDicom.BitsStored!=12 && bitmapDicom.BitsStored!=8 && bitmapDicom.BitsStored!=16){
 				return null;
 			}
 			bitmapDicom.Height=dicomDataset.GetSingleValueOrDefault(new DicomTag(0x0028,0x0010),0);//rows
