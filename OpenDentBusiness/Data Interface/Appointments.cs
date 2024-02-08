@@ -5434,7 +5434,7 @@ namespace OpenDentBusiness{
 			for(int i=0;i < listApptNums.Count;i++) {
 				long countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures).Count();
 				long countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts).Count();
-				if(countProcsForAppt>=countProcsAllForAppt) {
+				if(countProcsForAppt>=countProcsAllForAppt&&countProcsForAppt!=0) {
 					Appointment appointment=Appointments.GetOneApt(listApptNums[i]);
 					listAppointments.Add(appointment);
 				}

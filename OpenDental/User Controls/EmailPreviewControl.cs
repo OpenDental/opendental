@@ -672,7 +672,9 @@ namespace OpenDental {
 						hasDangerousAttachment=true;
 						continue;
 					}
-					html=html.Replace("cid:"+contentId,fileName);
+					if(entity.ContentDisposition.ToLower().Contains("inline")) {
+						html=html.Replace("cid:"+contentId,fileName);
+					}
 					EmailAttach attachment=_listEmailAttachDisplayed.FirstOrDefault(x => x.DisplayedFileName.ToLower().Trim()==fileName.ToLower().Trim());
 					//The path and filename must be directly accessed from the EmailAttach object in question, otherwise subsequent code would have accessed
 					//an empty bodied message and never shown an image.
