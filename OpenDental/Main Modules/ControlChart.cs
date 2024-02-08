@@ -59,6 +59,8 @@ namespace OpenDental {
 		private int _chartScrollValue;
 		///<summary>Can be null if user has not set up any views.  Defaults to first in list when starting up.</summary>
 		private ChartView _chartViewDisplay;
+		/// <summary>The default 96 dpi width of the columnHeader stored within the listViewButtons control prior to applying any zoom adjustments.</summary>
+		private int _columnHeaderDefaultSize;
 		///<summary>The time that we started our last prog note search.</summary>
 		private DateTime _dateTimeLastSearch;
 		//private Family _family;
@@ -181,6 +183,8 @@ namespace OpenDental {
 			//no need to remove event handler... ContrChart always exists 1:1 per instance of the program.
 			ODEvent.Fired+=ErxBrowserClosed;
 			Logger.LogToPath("Ctor",LogPath.Startup,LogPhase.End);
+			_columnHeaderDefaultSize=listViewButtons.Width-10;//10 pixels leaves a buffer to prevent text from being cutoff on the right-hand side of the listView
+			columnHeader1.Width=LayoutManager.Scale(_columnHeaderDefaultSize);
 		}
 		#endregion Constructor
 
@@ -1955,6 +1959,14 @@ namespace OpenDental {
 			e.HasMorePages=false;
 		}
 		#endregion Methods - Event Handlers - Printing
+
+		#region Methods - Event Handlers - Resizing
+		private void tabControlProc_Resize(object sender,EventArgs e) {
+			//Couldn't get this to work if used listViewButtons_Resize.
+			//Hscroll was visible until clicked.
+			columnHeader1.Width=LayoutManager.Scale(_columnHeaderDefaultSize);
+		}
+		#endregion
 
 		#region Methods - Event Handlers - Tabs General
 		private void tabControlImages_Selecting(object sender,int e) {

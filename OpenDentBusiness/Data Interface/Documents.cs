@@ -535,6 +535,13 @@ namespace OpenDentBusiness {
 					if(listImageDefNums.Contains(prefixCategoryNum)) {
 						doc.DocCategory=prefixCategoryNum;
 					}
+					if(fileName.ToLower().EndsWith(".dcm")) {//DICOM images come with additional metadata we need to collect
+						doc.ImgType=ImageType.Radiograph;
+						BitmapDicom bitmapDicom=DicomHelper.GetFromFile(fileList[j]);
+						DicomHelper.CalculateWindowingOnImport(bitmapDicom);
+						doc.WindowingMin=bitmapDicom.WindowingMin;
+						doc.WindowingMax=bitmapDicom.WindowingMax;
+					}
 					doc.DateCreated=DateTime.Now;
 					DateTime datePrevious=doc.DateTStamp;
 					doc.Description=fileName;
