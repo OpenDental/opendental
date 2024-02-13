@@ -2210,10 +2210,10 @@ namespace OpenDental {
 			textQuickProcs.MouseDown+=textQuickCharge_MouseClick;
 			textQuickProcs.MouseCaptureChanged+=textQuickCharge_CaptureChange;
 			textQuickProcs.LostFocus+=textQuickCharge_FocusLost;
-			splitContainerAccountCommLog.SplitterDistance=splitContainerParent.Panel2.Height * 3/5;//Make Account grid slightly bigger than commlog
 			//This just makes the patient information grid show up or not.
 			_listDisplayFieldsPatInfo=DisplayFields.GetForCategory(DisplayFieldCategory.AccountPatientInformation);
 			LayoutPanels();//Only place that we call this outside of LayoutPanelsAndRefreshMainGrids() since no grid data has been loaded yet
+			splitContainerAccountCommLog.SplitterDistance=splitContainerParent.Panel2.Height * 3/5;//Make Account grid slightly bigger than commlog
 			checkShowFamilyComm.Checked=PrefC.GetBoolSilent(PrefName.ShowAccountFamilyCommEntries,true);
 			checkShowCompletePayPlans.Checked=PrefC.GetBool(PrefName.AccountShowCompletedPaymentPlans);
 			Plugins.HookAddCode(this,"ContrAccount.InitializeOnStartup_end");

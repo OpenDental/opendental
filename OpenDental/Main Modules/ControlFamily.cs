@@ -2112,7 +2112,7 @@ namespace OpenDental{
 				rowDiscount=new GridRow();
 				rowDiscount.Cells.Add(Lan.g("TableDiscountPlans","Plan Note"));
 				GridCell cellNote = new GridCell();
-				cellNote.Text=discountPlan.PlanNote;
+				cellNote.Text=StringTools.Truncate(discountPlan.PlanNote,1000,hasElipsis:true);
 				cellNote.Bold=YN.Yes;
 				cellNote.ColorText=Color.Red;
 				rowDiscount.Cells.Add(cellNote);
@@ -2121,7 +2121,7 @@ namespace OpenDental{
 				rowDiscount=new GridRow();
 				rowDiscount.Cells.Add(Lan.g("TableDiscountPlans","Subscriber Note"));
 				cellNote = new GridCell();
-				cellNote.Text=_discountPlanSub.SubNote;
+				cellNote.Text=StringTools.Truncate(_discountPlanSub.SubNote,1000,hasElipsis:true);
 				cellNote.Bold=YN.Yes;
 				cellNote.ColorText=Color.Red;
 				rowDiscount.Cells.Add(cellNote);
