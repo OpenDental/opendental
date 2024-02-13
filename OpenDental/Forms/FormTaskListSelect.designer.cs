@@ -49,7 +49,7 @@ namespace OpenDental {
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(350, 481);
+			this.butCancel.Location = new System.Drawing.Point(597, 481);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 5;
@@ -59,7 +59,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(350, 451);
+			this.butOK.Location = new System.Drawing.Point(597, 451);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 4;
@@ -120,7 +120,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(11, 150);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(325, 355);
+			this.gridMain.Size = new System.Drawing.Size(572, 355);
 			this.gridMain.TabIndex = 3;
 			this.gridMain.TitleVisible = false;
 			this.gridMain.WrapText = false;
@@ -130,7 +130,7 @@ namespace OpenDental {
 			// 
 			this.AcceptButton = this.butOK;
 			this.CancelButton = this.butCancel;
-			this.ClientSize = new System.Drawing.Size(437, 517);
+			this.ClientSize = new System.Drawing.Size(684, 517);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.checkIncludeAll);
 			this.Controls.Add(this.label1);
