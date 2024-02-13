@@ -79,6 +79,13 @@ namespace OpenDental {
 			comboEraAutomation.Items.AddListEnum(listEraAutomationModes);
 		}
 
+		private void FillComboEraWriteOff () {
+			List<EnumEraAutoPostWriteOff> listEraAutoPostWriteOffModes=typeof(EnumEraAutoPostWriteOff).GetEnumValues()
+				.AsEnumerable<EnumEraAutoPostWriteOff>()
+				.ToList();
+			comboEraWriteoff.Items.AddListEnum(listEraAutoPostWriteOffModes);
+		}
+
 		/// <summary>Fills the CHK, ACH, FWT, and ERADefault comboboxes. If no def is chosen yet "None" is put in there</summary>
 		private void FillEraPaymentTypeCombos(){
 			//Add each of the defs and set the default for each ERA combobox
@@ -122,7 +129,8 @@ namespace OpenDental {
 			comboDepositSoftware.SetSelectedEnum(PrefC.GetEnum<AccountingSoftware>(PrefName.AccountingSoftware));
 			checkRxHideProvsWithoutDEA.Checked=PrefC.GetBool(PrefName.RxHideProvsWithoutDEA);
 			checkAccountingInvoiceAttachmentsSaveInDatabase.Checked=PrefC.GetBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase);
-			checkEraAuto.Checked=PrefC.GetBool(PrefName.EraAutoPostWriteOff);
+			FillComboEraWriteOff();
+			comboEraWriteoff.SetSelectedEnum(PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff));
 			FillEraPaymentTypeCombos();
 		}
 
@@ -151,7 +159,7 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateLong(PrefName.EraAchPaymentType, comboAchPaymentType.GetSelectedDefNum());
 			Changed|=Prefs.UpdateLong(PrefName.EraFwtPaymentType, comboFwtPaymentType.GetSelectedDefNum());
 			Changed|=Prefs.UpdateLong(PrefName.EraDefaultPaymentType, comboEraDefaultPaymentType.GetSelectedDefNum());
-			Changed|=Prefs.UpdateBool(PrefName.EraAutoPostWriteOff,checkEraAuto.Checked);
+			Changed|=Prefs.UpdateInt(PrefName.EraAutoPostWriteOff,(int)comboEraWriteoff.GetSelected<EnumEraAutoPostWriteOff>());
 			return true;
 		}
 		#endregion Methods - Public

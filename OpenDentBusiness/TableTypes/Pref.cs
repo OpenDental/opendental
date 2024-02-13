@@ -1029,8 +1029,8 @@ namespace OpenDentBusiness {
 		///<summary>Enum:EraAutomationMode. 1 by default. 0=UseGlobal(not used in the preference table), 1=ReviewAll, 2=SemiAutomatic.</summary>
 		[PrefName(ValueType=PrefValueType.ENUM)]
 		EraAutomationBehavior,
-		///<summary>When true ERA Auto Processing will post writeoffs on non-primary claims.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
+		///<summary>Enum:EnumEraAutoPostWriteOff. 0 by default. 0=PriFromERA, 1=Always, 2=PriFromPlan</summary>
+		[PrefName(ValueType=PrefValueType.ENUM)]
 		EraAutoPostWriteOff,
 		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA CHK payments.</summary>
 		[PrefName(ValueType=PrefValueType.LONG)]
@@ -2864,6 +2864,18 @@ namespace OpenDentBusiness {
 		///<summary>3 - When ERAs are imported, they are fully processed without any input from a user.</summary>
 		[Description("Fully-automatic")]
 		FullyAutomatic,
+	}
+
+	public enum EnumEraAutoPostWriteOff {
+		///<summary>0 - only posts write-offs for primary</summary>
+		[Description("Primary from ERA")]
+		PriFromERA,
+		///<summary>1 - Always posts write-offs</summary>
+		[Description("Always")]
+		Always,
+		///<summary>2 - Uses the patplan ordinal to post write-off</summary>
+		[Description("Primary from Plan")]
+		PriFromPlan
 	}
 
 		///<summary>Indicates how the user prefers to print their Appt module.</summary>

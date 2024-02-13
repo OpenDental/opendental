@@ -11334,7 +11334,7 @@ HAVING cnt>1";
 							continue;//shouldn't happen
 						}
 						ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email message uids from the database..."));
-						Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgUidNums)})");
+						Db.NonQ($"DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN({string.Join(",",listMsgUidNums)})");
 					}
 					catch(Exception ex) {
 						ex.DoNothing();

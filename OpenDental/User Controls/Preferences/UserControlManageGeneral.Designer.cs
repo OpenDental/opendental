@@ -44,7 +44,10 @@ namespace OpenDental {
 			this.labelClaimsReceivedDays = new System.Windows.Forms.Label();
 			this.checkClaimPaymentBatchOnly = new OpenDental.UI.CheckBox();
 			this.groupBoxERA = new OpenDental.UI.GroupBox();
-			this.checkEraAuto = new OpenDental.UI.CheckBox();
+			this.labelWriteOffs = new System.Windows.Forms.Label();
+			this.comboEraWriteoff = new OpenDental.UI.ComboBox();
+			this.textEraNoAutoProcessCarcCodes = new System.Windows.Forms.TextBox();
+			this.labelEraNoAutoProcessCarcCodes = new System.Windows.Forms.Label();
 			this.labelERADefault = new System.Windows.Forms.Label();
 			this.comboEraDefaultPaymentType = new OpenDental.UI.ComboBox();
 			this.labelFWT = new System.Windows.Forms.Label();
@@ -260,7 +263,10 @@ namespace OpenDental {
 			// 
 			// groupBoxERA
 			// 
-			this.groupBoxERA.Controls.Add(this.checkEraAuto);
+			this.groupBoxERA.Controls.Add(this.labelWriteOffs);
+			this.groupBoxERA.Controls.Add(this.comboEraWriteoff);
+			this.groupBoxERA.Controls.Add(this.textEraNoAutoProcessCarcCodes);
+			this.groupBoxERA.Controls.Add(this.labelEraNoAutoProcessCarcCodes);
 			this.groupBoxERA.Controls.Add(this.labelERADefault);
 			this.groupBoxERA.Controls.Add(this.comboEraDefaultPaymentType);
 			this.groupBoxERA.Controls.Add(this.labelFWT);
@@ -280,20 +286,35 @@ namespace OpenDental {
 			this.groupBoxERA.TabIndex = 303;
 			this.groupBoxERA.Text = "ERA";
 			// 
-			// checkEraAuto
+			// labelWriteOffs
 			// 
-			this.checkEraAuto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkEraAuto.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEraAuto.Location = new System.Drawing.Point(19, 75);
-			this.checkEraAuto.Name = "checkEraAuto";
-			this.checkEraAuto.Size = new System.Drawing.Size(421, 17);
-			this.checkEraAuto.TabIndex = 310;
-			this.checkEraAuto.Text = "Auto-processing posts write-offs on non-primary claims";
+			this.labelWriteOffs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelWriteOffs.Location = new System.Drawing.Point(19, 76);
+			this.labelWriteOffs.Name = "labelWriteOffs";
+			this.labelWriteOffs.Size = new System.Drawing.Size(288, 17);
+			this.labelWriteOffs.TabIndex = 312;
+			this.labelWriteOffs.Text = "Auto-processing posts write-offs on non-primary claims";
+			this.labelWriteOffs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboEraWriteoff
+			// 
+			this.comboEraWriteoff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboEraWriteoff.Location = new System.Drawing.Point(310, 74);
+			this.comboEraWriteoff.Name = "comboEraWriteoff";
+			this.comboEraWriteoff.Size = new System.Drawing.Size(130, 21);
+			this.comboEraWriteoff.TabIndex = 301;
+			this.labelEraNoAutoProcessCarcCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelEraNoAutoProcessCarcCodes.Location = new System.Drawing.Point(6, 236);
+			this.labelEraNoAutoProcessCarcCodes.Name = "labelEraNoAutoProcessCarcCodes";
+			this.labelEraNoAutoProcessCarcCodes.Size = new System.Drawing.Size(254, 17);
+			this.labelEraNoAutoProcessCarcCodes.TabIndex = 311;
+			this.labelEraNoAutoProcessCarcCodes.Text = "Don\'t auto-process claims w/ these CARCs";
+			this.labelEraNoAutoProcessCarcCodes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelERADefault
 			// 
 			this.labelERADefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelERADefault.Location = new System.Drawing.Point(118, 206);
+			this.labelERADefault.Location = new System.Drawing.Point(118, 207);
 			this.labelERADefault.Name = "labelERADefault";
 			this.labelERADefault.Size = new System.Drawing.Size(189, 17);
 			this.labelERADefault.TabIndex = 309;
@@ -303,7 +324,7 @@ namespace OpenDental {
 			// comboEraDefaultPaymentType
 			// 
 			this.comboEraDefaultPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboEraDefaultPaymentType.Location = new System.Drawing.Point(310, 203);
+			this.comboEraDefaultPaymentType.Location = new System.Drawing.Point(310, 204);
 			this.comboEraDefaultPaymentType.Name = "comboEraDefaultPaymentType";
 			this.comboEraDefaultPaymentType.Size = new System.Drawing.Size(130, 21);
 			this.comboEraDefaultPaymentType.TabIndex = 308;
@@ -311,7 +332,7 @@ namespace OpenDental {
 			// labelFWT
 			// 
 			this.labelFWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelFWT.Location = new System.Drawing.Point(118, 179);
+			this.labelFWT.Location = new System.Drawing.Point(118, 181);
 			this.labelFWT.Name = "labelFWT";
 			this.labelFWT.Size = new System.Drawing.Size(189, 17);
 			this.labelFWT.TabIndex = 307;
@@ -321,7 +342,7 @@ namespace OpenDental {
 			// comboFwtPaymentType
 			// 
 			this.comboFwtPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboFwtPaymentType.Location = new System.Drawing.Point(310, 176);
+			this.comboFwtPaymentType.Location = new System.Drawing.Point(310, 178);
 			this.comboFwtPaymentType.Name = "comboFwtPaymentType";
 			this.comboFwtPaymentType.Size = new System.Drawing.Size(130, 21);
 			this.comboFwtPaymentType.TabIndex = 306;
@@ -329,7 +350,7 @@ namespace OpenDental {
 			// labelACH
 			// 
 			this.labelACH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelACH.Location = new System.Drawing.Point(118, 153);
+			this.labelACH.Location = new System.Drawing.Point(118, 155);
 			this.labelACH.Name = "labelACH";
 			this.labelACH.Size = new System.Drawing.Size(189, 17);
 			this.labelACH.TabIndex = 305;
@@ -339,7 +360,7 @@ namespace OpenDental {
 			// comboAchPaymentType
 			// 
 			this.comboAchPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboAchPaymentType.Location = new System.Drawing.Point(310, 150);
+			this.comboAchPaymentType.Location = new System.Drawing.Point(310, 152);
 			this.comboAchPaymentType.Name = "comboAchPaymentType";
 			this.comboAchPaymentType.Size = new System.Drawing.Size(130, 21);
 			this.comboAchPaymentType.TabIndex = 304;
@@ -347,7 +368,7 @@ namespace OpenDental {
 			// labelCHK
 			// 
 			this.labelCHK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelCHK.Location = new System.Drawing.Point(118, 127);
+			this.labelCHK.Location = new System.Drawing.Point(118, 129);
 			this.labelCHK.Name = "labelCHK";
 			this.labelCHK.Size = new System.Drawing.Size(189, 17);
 			this.labelCHK.TabIndex = 303;
@@ -357,7 +378,7 @@ namespace OpenDental {
 			// comboEraCheckPaymentType
 			// 
 			this.comboEraCheckPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboEraCheckPaymentType.Location = new System.Drawing.Point(310, 124);
+			this.comboEraCheckPaymentType.Location = new System.Drawing.Point(310, 126);
 			this.comboEraCheckPaymentType.Name = "comboEraCheckPaymentType";
 			this.comboEraCheckPaymentType.Size = new System.Drawing.Size(130, 21);
 			this.comboEraCheckPaymentType.TabIndex = 302;
@@ -385,7 +406,7 @@ namespace OpenDental {
 			// labelEraAutomation
 			// 
 			this.labelEraAutomation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelEraAutomation.Location = new System.Drawing.Point(118, 100);
+			this.labelEraAutomation.Location = new System.Drawing.Point(118, 103);
 			this.labelEraAutomation.Name = "labelEraAutomation";
 			this.labelEraAutomation.Size = new System.Drawing.Size(189, 17);
 			this.labelEraAutomation.TabIndex = 301;
@@ -395,7 +416,7 @@ namespace OpenDental {
 			// comboEraAutomation
 			// 
 			this.comboEraAutomation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboEraAutomation.Location = new System.Drawing.Point(310, 97);
+			this.comboEraAutomation.Location = new System.Drawing.Point(310, 100);
 			this.comboEraAutomation.Name = "comboEraAutomation";
 			this.comboEraAutomation.Size = new System.Drawing.Size(130, 21);
 			this.comboEraAutomation.TabIndex = 297;
@@ -468,6 +489,9 @@ namespace OpenDental {
 		private UI.ComboBox comboAchPaymentType;
 		private System.Windows.Forms.Label labelCHK;
 		private UI.ComboBox comboEraCheckPaymentType;
-		private UI.CheckBox checkEraAuto;
+		private UI.ComboBox comboEraWriteoff;
+		private System.Windows.Forms.Label labelWriteOffs;
+		private System.Windows.Forms.Label labelEraNoAutoProcessCarcCodes;
+		private System.Windows.Forms.TextBox textEraNoAutoProcessCarcCodes;
 	}
 }

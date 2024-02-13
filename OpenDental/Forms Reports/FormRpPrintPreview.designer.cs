@@ -62,7 +62,6 @@ namespace OpenDental {
 			// 
 			// FormRpPrintPreview
 			// 
-			this.AutoScroll = true;
 			this.ClientSize = new System.Drawing.Size(842, 746);
 			this.Controls.Add(this.butPrev);
 			this.Controls.Add(this.butNext);

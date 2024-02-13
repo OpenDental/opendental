@@ -1061,8 +1061,14 @@ namespace OpenDentBusiness{
 			cpByTotal.AllowedOverride=(double)(listNotDetachedPaidClaims.Sum(x => x.AllowedAmt));
 			cpByTotal.InsPayAmt=(double)(listNotDetachedPaidClaims.Sum(x => x.InsPaid));
 			cpByTotal.WriteOff=0;
-			bool isForPrimary=claimPaid.CodeClp02.In("1","19");//"Processed as Primary", "Processed as Primary, Forwarded to Additional Payer(s)"
-			bool canWriteOff=!isSupplementalPay && (isForPrimary || PrefC.GetBool(PrefName.EraAutoPostWriteOff));
+			bool isForPrimary=false;
+			if(PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff)==EnumEraAutoPostWriteOff.PriFromERA) {
+				isForPrimary=claimPaid.CodeClp02.In("1","19");//"Processed as Primary", "Processed as Primary, Forwarded to Additional Payer(s)"
+			}
+			else if(PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff)==EnumEraAutoPostWriteOff.PriFromPlan) {
+				isForPrimary=(claim.ClaimType=="P");
+			}
+			bool canWriteOff=!isSupplementalPay && (isForPrimary || PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff)==EnumEraAutoPostWriteOff.Always);
 			if(canWriteOff) {
 				cpByTotal.WriteOff=(double)(listNotDetachedPaidClaims.Sum(x => x.WriteoffAmt));
 			}

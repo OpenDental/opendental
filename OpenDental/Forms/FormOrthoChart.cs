@@ -95,7 +95,7 @@ namespace OpenDental {
 			FillDisplayFields();
 			_listOrthoChartRows=OrthoChartRows.GetAllForPatient(_patient.PatNum);
 			LogRefreshOrthoChartRowsInMemory();
-			if(_userNumLocked==_userodCurUser.UserNum){//we will usually have control
+			if(_isLockedByMe){//we will usually have control
 				OrthoChartRow orthoChartRowToday=_listOrthoChartRows.FirstOrDefault(x=>x.DateTimeService.Date==DateTime.Today.Date);
 				if(orthoChartRowToday==null
 					|| !orthoChartRowToday.ListOrthoCharts.Any(x => _listDisplayFieldNames.Contains(x.FieldName)))//Orthocharts fieldnames are not showing

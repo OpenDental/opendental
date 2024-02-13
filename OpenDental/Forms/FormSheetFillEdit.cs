@@ -834,28 +834,7 @@ namespace OpenDental {
 			SheetField sheetField=HitTest(pointSheet);
 			if(sheetField?.FieldType==SheetFieldType.CheckBox){
 				_tabCurrent=sheetField.TabOrder;
-				if(sheetField.FieldValue==""){
-					sheetField.FieldValue="X";
-					if(sheetField.RadioButtonValue!="" || sheetField.RadioButtonGroup!=""){
-						//this is a radioButton, so uncheck others in the group
-						for(int i=0;i<SheetCur.SheetFields.Count;i++){
-							if(sheetField==SheetCur.SheetFields[i]) {
-								continue;//skip self
-							}
-							if(sheetField.FieldName!=SheetCur.SheetFields[i].FieldName) {
-								continue;//not in this radio group
-							}
-							//If both checkbox field names are set to "misc" then we instead use the RadioButtonGroup as the actual radio button group name.
-							if(sheetField.FieldName=="misc" && sheetField.RadioButtonGroup!=SheetCur.SheetFields[i].RadioButtonGroup){
-								continue;
-							}
-							SheetCur.SheetFields[i].FieldValue="";
-						}
-					}
-				}
-				else{
-					sheetField.FieldValue="";
-				}
+				SetCheckBoxAndRadioGroupStates(sheetField);
 				ClearSigs();
 				panelMain.Invalidate();
 				return;
@@ -1281,11 +1260,9 @@ namespace OpenDental {
 					return;
 				}
 				//must be checkbox
-				if(sheetField.FieldValue=="") {
-					sheetField.FieldValue="X";
-				}
-				else{
-					sheetField.FieldValue="";
+				if(sheetField?.FieldType==SheetFieldType.CheckBox) {
+					SetCheckBoxAndRadioGroupStates(sheetField);
+					return;
 				}
 			}
 			//Enter key not supported for tabbing. Causes issues.
@@ -1944,6 +1921,32 @@ namespace OpenDental {
 				if(sheetComboBox.ComboOptions.Length > 0 && sheetComboBox.SelectedOption=="") {
 					sheetComboBox.SelectedOption=sheetComboBox.ComboOptions[0];
 				}
+			}
+		}
+
+		///<summary>Unchecks all other check or radio buttons within a group. Pass in the sheetfield that should be toggled.</summary>
+		private void SetCheckBoxAndRadioGroupStates(SheetField sheetField) {
+			if(sheetField.FieldValue=="") {
+				sheetField.FieldValue="X";
+				if(sheetField.RadioButtonValue!="" || sheetField.RadioButtonGroup!=""){
+					//this is a radioButton, so uncheck others in the group
+					for(int i=0;i<SheetCur.SheetFields.Count;i++){
+						if(sheetField==SheetCur.SheetFields[i]) {
+							continue;//skip self
+						}
+						if(sheetField.FieldName!=SheetCur.SheetFields[i].FieldName) {
+							continue;//not in this radio group
+						}
+						//If both checkbox field names are set to "misc" then we instead use the RadioButtonGroup as the actual radio button group name.
+						if(sheetField.FieldName=="misc" && sheetField.RadioButtonGroup!=SheetCur.SheetFields[i].RadioButtonGroup){
+							continue;
+						}
+						SheetCur.SheetFields[i].FieldValue="";
+					}
+				}
+			}
+			else{
+				sheetField.FieldValue="";
 			}
 		}
 

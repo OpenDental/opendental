@@ -438,9 +438,16 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		///<summary>Applies cropping, flip, and rotation to the bitmap and returns the resulting bitmap.</summary>
 		public static Bitmap GetBitmapOfDocument(Document document,Bitmap bitmapShowing,List<ImageDraw> listImageDraws){
-			Size size=CalcSizeFit(bitmapShowing.Width,bitmapShowing.Height,document.DegreesRotated);
-			Bitmap bitmap=new Bitmap(size.Width,size.Height);
+			Bitmap bitmap;
+			if(document.CropW > 0 && document.CropH > 0) {
+				bitmap=new Bitmap(document.CropW,document.CropH);
+			}
+			else {
+				Size size=CalcSizeFit(bitmapShowing.Width,bitmapShowing.Height,document.DegreesRotated);
+				bitmap=new Bitmap(size.Width,size.Height);
+			}
 			Graphics g=Graphics.FromImage(bitmap);
 			g.TranslateTransform(bitmap.Width/2,bitmap.Height/2);//Center of image
 			DrawDocument(g,document,bitmapShowing,listImageDraws);
@@ -448,6 +455,7 @@ namespace OpenDentBusiness {
 			return bitmap;
 		}
 
+		///<summary>Applies cropping, flip, and rotation to the bitmap and returns the resulting bitmap.</summary>
 		public static Bitmap GetBitmapOfDocumentFromDb(long docNum){
 			Document document=Documents.GetByNum(docNum);
 			Patient patient=Patients.GetPat(document.PatNum);

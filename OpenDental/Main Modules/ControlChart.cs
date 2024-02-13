@@ -9818,7 +9818,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(!ProcedureCodes.GetContainsKey(textProcCode.Text)) {
+			if(!ProcedureCodes.IsValidCode(textProcCode.Text)) {
 				MessageBox.Show(Lan.g(this,"Invalid code."));
 				//textProcCode.Text="";
 				textProcCode.SelectionStart=textProcCode.Text.Length;
@@ -11241,6 +11241,13 @@ namespace OpenDental {
 		}
 
 		private void FillGridOrthoHardware(){
+			if(IsPatientNull()) {
+				gridOrtho.BeginUpdate();
+				gridOrtho.ListGridRows.Clear();
+				gridOrtho.Columns.Clear();
+				gridOrtho.EndUpdate();
+				return;
+			}
 			Cursor=Cursors.WaitCursor;
 			gridOrtho.SelectionMode=GridSelectionMode.MultiExtended;
 			ContextMenu contextMenu=new ContextMenu();
@@ -11305,6 +11312,13 @@ namespace OpenDental {
 		}
 
 		private void FillGridOrthoChart(){
+			if(IsPatientNull()) {
+				gridOrtho.BeginUpdate();
+				gridOrtho.ListGridRows.Clear();
+				gridOrtho.Columns.Clear();
+				gridOrtho.EndUpdate();
+				return;
+			}
 			Cursor=Cursors.WaitCursor;
 			gridOrtho.SelectionMode=GridSelectionMode.None;
 			//Get all the corresponding fields from the OrthoChartTabLink table that are associated with the currently selected ortho tab.

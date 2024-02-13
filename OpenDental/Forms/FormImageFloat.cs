@@ -752,7 +752,10 @@ namespace OpenDental {
 				Document document=GetDocumentShowing(0);
 				xTitle=e.MarginBounds.X+e.MarginBounds.Width/2;
 				yTitle=e.MarginBounds.Top;
-				long defNumToothChart=Defs.GetImageCat(ImageCategorySpecial.T);//toothchart
+				//Job 20502 added this info for all patient images
+				//Job 35304 removed this info except for xrays because some people found it annoying
+				//Job 50474 added this info back for toothchart.
+				long defNumToothChart=Defs.GetImageCat(ImageCategorySpecial.T);
 				if(document.ImgType==ImageType.Radiograph || defNumToothChart==document.DocCategory) {
 					str=PatientCur.GetNameLF();
 					widthStr=(int)g.MeasureString(str,fontTitle).Width;
