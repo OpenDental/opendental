@@ -1,0 +1,20 @@
+<local:FrmODBase x:Class="OpenDental.FrmUserSetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="367" Height="195" 
+             Text="User Settings" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:CheckBox x:Name="checkToothChartUsesDiffColorByProv" Width="320" Height="17" Margin="16,49,0,0" Text="Chart graphics color distinguishes current provider
+" CheckAlign="MiddleRight" />
+		<ui:TextBox x:Name="textLogOffAfterMinutes" Width="29" Height="20" Margin="308,99,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
+		<ui:Label x:Name="labelAutoLogoff" Width="298" Height="32" Margin="9,93,0,0" Text="Automatic logoff time in minutes
+(Note: Edit in User Edit window inside Security Settings)" HAlign="Right" VAlign="Center" />
+		<ui:CheckBox x:Name="checkSuppressMessage" Width="327" Height="17" Margin="9,25,0,0" Text="Close/Log off message is suppressed" CheckAlign="MiddleRight" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

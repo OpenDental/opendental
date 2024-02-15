@@ -1,0 +1,15 @@
+<local:FrmODBase x:Class="OpenDental.FrmAuditOneType"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="905" Height="634" 
+             Text="" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="labelDisclaimer" Width="780" Height="18" Margin="8,3,0,0" ColorText="#FFB22222" Text="Changes made to this appointment before the update to 12.3 will not be reflected below, but can be found in the regular audit trail." VAlign="Center" />
+		<ui:Grid x:Name="grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8,22,8,10" SelectionMode="MultiExtended" Title="Audit Trail" TranslationName="TableAudit" />
+	</Grid>
+</local:FrmODBase>

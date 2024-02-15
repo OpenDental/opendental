@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="WpfControls.UI.TextVTime"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		d:DesignWidth="75" d:DesignHeight="20">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:TextBox.HorizontalAlignment" Value="Left"/>
+			<!--This is for anchoring, not for aligning the text within the box.-->
+			<Setter Property="local:TextBox.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<Canvas x:Name="canvasMain">
+		<TextBox x:Name="textBox" Width="{Binding ActualWidth, ElementName=canvasMain}" Height="{Binding ActualHeight, ElementName=canvasMain}" VerticalContentAlignment="Center"></TextBox>
+		<Canvas x:Name="canvasError" Width="{Binding ActualWidth, ElementName=canvasMain}" Height="{Binding ActualHeight, ElementName=canvasMain}">
+			<Ellipse Width="11" Height="11" Fill="Red" Canvas.Right="-12.5" Canvas.Top="4" Canvas.ZIndex="1"></Ellipse>
+			<Label Padding="0" Canvas.Right="-9" Canvas.Top="1" FontWeight="Bold" FontFamily="Segoe UI" Foreground="White" Canvas.ZIndex="2" VerticalAlignment="Top" HorizontalAlignment="Left" >!</Label>
+		</Canvas>
+	</Canvas>
+</UserControl>

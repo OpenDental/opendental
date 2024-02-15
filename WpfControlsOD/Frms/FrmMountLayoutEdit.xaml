@@ -1,0 +1,32 @@
+<local:FrmODBase x:Class="OpenDental.FrmMountLayoutEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="1230" Height="696" 
+             Text="Edit Mount Layout" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Panel x:Name="panelDrawing" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,209,2"/>
+		<ui:Panel x:Name="panelRight" HorizontalAlignment="Right" Width="208" VerticalAlignment="Stretch" Margin="0,0,0,0" ColorBack="#FFFCFDFE" ColorBorder="DarkGray" >
+			<ui:TextVInt x:Name="textVIntHeight" HorizontalAlignment="Right" Width="48" Height="20" Margin="0,46,25,0" TabIndexOD="1" MinVal="1" MaxVal="10000" />
+			<ui:Label x:Name="label4" HorizontalAlignment="Right" Width="52" Height="17" Margin="0,46,76,0" Text="Height" HAlign="Right" VAlign="Bottom" />
+			<ui:TextVInt x:Name="textVIntWidth" HorizontalAlignment="Right" Width="48" Height="20" Margin="0,25,25,0" TabIndexOD="0" MinVal="1" MaxVal="20000" />
+			<ui:Label x:Name="label3" HorizontalAlignment="Right" Width="52" Height="17" Margin="0,25,76,0" Text="Width" HAlign="Right" VAlign="Bottom" />
+			<ui:GroupBox x:Name="groupBox1" HorizontalAlignment="Right" Width="196" Height="140" Margin="0,290,7,0" Text="Item Order" >
+				<ui:Label x:Name="labelReorder" Width="190" Height="30" Margin="3,108,0,0" Text="This lets you reorder all items by clicking through them in sequence" />
+				<ui:Button x:Name="butReorder" Width="78" Height="24" Margin="9,79,0,0" Text="Reorder All" Click="butReorder_Click" />
+				<ui:Label x:Name="label7" Width="58" Height="18" Margin="76,52,0,0" Text="(higher #)" VAlign="Center" />
+				<ui:Label x:Name="label6" Width="58" Height="18" Margin="76,20,0,0" Text="(lower #)" VAlign="Center" />
+				<ui:Button x:Name="butUp" Width="65" Height="24" Margin="9,19,0,0" Text="_Up" Click="butUp_Click" BitmapFileName="up.gif" />
+				<ui:Button x:Name="butDown" Width="65" Height="24" Margin="9,49,0,0" Text="_Down" Click="butDown_Click" BitmapFileName="down.gif" />
+			</ui:GroupBox>
+			<ui:Button x:Name="butAdd" HorizontalAlignment="Right" Width="81" Height="24" Margin="0,251,109,0" Text="Add Item" Icon="Add" Click="butAdd_Click" />
+			<ui:Label x:Name="label5" HorizontalAlignment="Right" Width="122" VerticalAlignment="Bottom" Height="65" Margin="0,0,82,13" Text="Items get saved as they are added, not when clicking Save here" VAlign="Center" />
+			<ui:Label x:Name="labelWarning" HorizontalAlignment="Right" Width="202" Height="69" Margin="0,433,3,0" ColorText="#FFB22222" Text="Warning!  At least one item is not showing because it's outside the bounds of the Mount.  Consider enlarging your mount to find it." VAlign="Center" />
+			<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,5,13" Text="_Save" Click="butSave_Click" />
+		</ui:Panel>
+	</Grid>
+</local:FrmODBase>

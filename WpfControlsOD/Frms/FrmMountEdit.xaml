@@ -1,0 +1,38 @@
+<local:FrmODBase x:Class="OpenDental.FrmMountEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="617" Height="433" 
+             Text="Mount Information" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:CheckBox x:Name="checkTransparent" Width="158" Height="17" Margin="121,264,0,0" Text="Text BackG Transparent" CheckAlign="MiddleRight" Click="checkTransparent_Click" />
+		<ui:CheckBox x:Name="checkAdjModeAfterSeries" Width="144" Height="17" Margin="135,300,0,0" Text="Adj Mode After Series" CheckAlign="MiddleRight" />
+		<ui:CheckBox x:Name="checkFlipOnAcquire" Width="121" Height="17" Margin="158,282,0,0" Text="Flip on Acquire" CheckAlign="MiddleRight" />
+		<ui:Label x:Name="label10" HorizontalAlignment="Right" Width="240" Margin="0,221,75,164" Text="These colors are defaults for drawing, and they are also the only way to change color for mount items that are displaying text." VerticalAlignment="Stretch" />
+		<ui:Panel x:Name="butColorTextBack" HorizontalAlignment="Right" Width="30" Height="20" Margin="0,242,321,0" Click="butColorTextBack_Click" ColorBorder="#FF636363" />
+		<ui:Label x:Name="label9" HorizontalAlignment="Right" Width="125" Height="18" Margin="0,242,354,0" Text="Text Background Color" HAlign="Right" VAlign="Center" />
+		<ui:Panel x:Name="butColorFore" HorizontalAlignment="Right" Width="30" Height="20" Margin="0,220,321,0" Click="butColorFore_Click" ColorBorder="#FF636363" />
+		<ui:Label x:Name="label8" HorizontalAlignment="Right" Width="125" Height="18" Margin="0,221,354,0" Text="Text and Line Color" HAlign="Right" VAlign="Center" />
+		<ui:Panel x:Name="butColorBack" HorizontalAlignment="Right" Width="30" Height="20" Margin="0,198,321,0" Click="butColorBack_Click" ColorBorder="#FF636363" />
+		<ui:Label x:Name="labelColor" HorizontalAlignment="Right" Width="125" Margin="0,200,354,0" Text="Background Color" HAlign="Right" VAlign="Center" Height="18" />
+		<ui:Button x:Name="butLayout" Width="79" Height="24" Margin="266,168,0,0" Text="Edit Layout" Click="butLayout_Click" />
+		<ui:ComboBox x:Name="comboProv" Width="173" Height="21" Margin="266,71,0,0" />
+		<ui:Label x:Name="label7" Width="95" Height="18" Margin="170,75,0,0" Text="Provider" HAlign="Right" />
+		<ui:Label x:Name="label6" Width="271" VerticalAlignment="Bottom" Height="49" Margin="154,0,0,6" Text="This information is only for the mount.  The individual images on the mount have their own information windows." />
+		<ui:TextBox x:Name="textTime" Width="104" Height="20" Margin="266,48,0,0" TabIndexOD="133" />
+		<ui:Label x:Name="label4" Width="77" Height="18" Margin="188,53,0,0" Text="Time" HAlign="Right" />
+		<ui:TextVDate x:Name="textDate" Width="104" Height="20" Margin="266,25,0,0" TabIndexOD="130" />
+		<ui:Label x:Name="label5" Width="82" Height="18" Margin="183,30,0,0" Text="Date" HAlign="Right" />
+		<ui:Label x:Name="label3" Width="100" Height="18" Margin="12,10,0,0" Text="Category" />
+		<ui:ListBox x:Name="listCategory" Width="104" VerticalAlignment="Stretch" Margin="12,26,0,91" />
+		<ui:Label x:Name="label2" Width="82" Height="18" Margin="183,119,0,0" Text="Note" HAlign="Right" />
+		<ui:Label x:Name="label1" Width="82" Height="18" Margin="183,94,0,0" Text="Description" HAlign="Right" VAlign="Bottom" />
+		<ui:TextBox x:Name="textNote" Width="339" Height="44" Margin="266,118,0,0" IsMultiline="True" TabIndexOD="3" />
+		<ui:TextBox x:Name="textDescription" Width="339" Height="20" Margin="266,95,0,0" TabIndexOD="2" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

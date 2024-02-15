@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="WpfControls.UI.WarningIntegrity"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		 d:DesignWidth="100" d:DesignHeight="100">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:WarningIntegrity.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:WarningIntegrity.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<Grid>
+		<Canvas Name="canvas" x:FieldModifier="internal">
+			<Path Name="path" x:FieldModifier="internal" Fill="#ffc080" Stroke="Orange" StrokeThickness="1">
+				<Path.Data>
+					<PathGeometry>
+						<PathFigure StartPoint="41.75864,20.04203" IsClosed="True">
+							<QuadraticBezierSegment Point1="44,15.72081" Point2="49.9561,15.72081"/>
+							<QuadraticBezierSegment Point1="55,15.72081" Point2="58.11591,20.11267"/>
+							<LineSegment Point="90.88409,78.88733"/>
+							<QuadraticBezierSegment Point1="93,84" Point2="90.3261,88.34946"/>
+							<QuadraticBezierSegment Point1="87,93" Point2="82.33334,93.44444"/>
+							<LineSegment Point="16.66666,93.44444"/>
+							<QuadraticBezierSegment Point1="11,93" Point2="8.717807,88.37418"/>
+							<QuadraticBezierSegment Point1="6.5,84" Point2="8.241356,78.95797"/>
+						</PathFigure>
+					</PathGeometry>
+				</Path.Data>
+			</Path>
+			<TextBlock Text="!" Foreground="White" Canvas.Left="37" Canvas.Top="0" FontSize="80" FontWeight="Bold"/>
+		</Canvas>
+	</Grid>
+</UserControl>

@@ -1,0 +1,37 @@
+<local:FrmODBase x:Class="OpenDental.FrmSiteEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="508" Height="401" 
+             Text="Edit Site" MinMaxBoxes="False" >
+    <Grid Background="#FFFCFDFE" >
+        <ui:Button x:Name="butPickProvider" Width="20" Height="22" Margin="399,65,0,0" Text="..." Click="butPickProvider_Click" />
+        <ui:Button x:Name="butSiteLink" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,170,12" Text="Site Link" Click="butSiteLink_Click" />
+        <ui:Label x:Name="labelPriProv" Width="145" Height="14" Margin="19,70,0,0" Text="Provider" HAlign="Right" />
+        <ui:ComboBox x:Name="comboProv" Width="230" Height="21" Margin="165,66,0,0" />
+        <ui:Label x:Name="label2" Width="148" Height="17" Margin="16,40,0,0" Text="Place of Service" HAlign="Right" VAlign="Center" />
+        <ui:ComboBox x:Name="comboPlaceService" Width="254" Height="21" Margin="165,39,0,0" />
+        <ui:Button x:Name="butEditZip" Width="73" Height="22" Margin="346,188,0,0" Text="_Edit Zip" Click="butEditZip_Click" />
+        <ui:TextBox x:Name="textZip" Width="164" Height="20" Margin="165,189,0,0" TabIndexOD="9" Panel.ZIndex="1" />
+        <ui:ComboBox x:Name="comboZip" Width="178" Height="20" Margin="0,189,0,0" HorizontalAlignment="Center" />
+        <ui:TextBox x:Name="textState" Width="61" Height="20" Margin="165,165,0,0" TabIndexOD="8" />
+        <ui:Label x:Name="labelST" Width="145" Height="14" Margin="19,169,0,0" Text="ST" HAlign="Right" />
+        <ui:TextBox x:Name="textAddress" Width="254" Height="20" Margin="165,93,0,0" TabIndexOD="5" />
+        <ui:Label x:Name="labelAddress2" Width="145" Height="14" Margin="19,121,0,0" Text="Address2" HAlign="Right" />
+        <ui:Label x:Name="labelCity" Width="145" Height="14" Margin="19,145,0,0" Text="City" HAlign="Right" />
+        <ui:TextBox x:Name="textAddress2" Width="254" Height="20" Margin="165,117,0,0" TabIndexOD="6" />
+        <ui:Label x:Name="labelZip" Width="145" Height="14" Margin="19,193,0,0" Text="Zip" HAlign="Right" />
+        <ui:TextBox x:Name="textCity" Width="254" Height="20" Margin="165,141,0,0" TabIndexOD="7" />
+        <ui:Label x:Name="labelAddress" Width="145" Height="14" Margin="19,97,0,0" Text="Address" HAlign="Right" />
+        <ui:TextBox x:Name="textNote" Width="254" Height="144" Margin="165,214,0,0" IsMultiline="True" TabIndexOD="11" />
+        <ui:Label x:Name="label3" Width="144" Height="17" Margin="19,216,0,0" Text="Note" HAlign="Right" />
+        <ui:Button x:Name="butDelete" Width="81" VerticalAlignment="Bottom" Height="26" Margin="12,0,0,12" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+        <ui:TextBox x:Name="textDescription" Width="254" Height="20" Margin="165,15,0,0" TabIndexOD="0" />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+        <ui:Label x:Name="label1" Width="148" Height="17" Margin="16,15,0,0" Text="Description" HAlign="Right" VAlign="Center" />
+    </Grid>
+</local:FrmODBase>

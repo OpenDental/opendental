@@ -1,0 +1,34 @@
+<local:FrmODBase x:Class="OpenDental.FrmImageDrawEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="441" Height="346" 
+             Text="Edit Text" >
+    <Grid Background="#FFFCFDFE" >
+        <ui:CheckBox x:Name="checkTransparent" Width="166" Height="21" Margin="175,231,0,0" Text="Transparent" CheckAlign="MiddleLeft" Click="checkTransparent_Click" />
+        <ui:Label x:Name="label4" Width="106" Height="18" Margin="30,232,0,0" Text="Background Color" HAlign="Right" VAlign="Center" />
+        <ui:Panel x:Name="panelColorBack" Width="30" Height="24" Margin="137,230,0,0" ColorBorder="#FF636363" Click="butColorBack_Click"/>
+        <ui:GroupBox x:Name="groupBoxFont" Width="291" Height="89" Margin="30,106,0,0" Text="Font (decimals are allowed)" >
+            <ui:Button x:Name="butCalculateApparent" Width="106" Height="24" Margin="158,53,0,0" Text="Calculate Apparent" Click="butCalculateApparent_Click" />
+            <ui:TextVDouble x:Name="textFontSize" Width="42" Height="20" Margin="107,25,0,0" MinVal="1" MaxVal="100000000"/>
+            <ui:Button x:Name="butCalculateActual" Width="106" Height="24" Margin="158,23,0,0" Text="Calculate Actual" Click="butCalculateActual_Click" />
+            <ui:Label x:Name="label3" Width="90" Height="18" Margin="16,25,0,0" Text="Actual Size" HAlign="Right" VAlign="Center" />
+            <ui:Label x:Name="label7" Width="93" Height="36" Margin="13,46,0,0" Text="Apparent Size at Current Zoom" HAlign="Right" VAlign="Center" />
+            <ui:TextVDouble x:Name="textFontApparent" Width="42" Height="20" Margin="107,55,0,0" MinVal="1" MaxVal="100000000" />
+        </ui:GroupBox>
+        <ui:TextVInt x:Name="textLocY" Width="42" Height="20" Margin="137,79,0,0" MinVal="0" MaxVal="100000000" />
+        <ui:Label x:Name="label2" Width="81" Height="18" Margin="55,79,0,0" Text="Location Y" HAlign="Right" VAlign="Center" />
+        <ui:TextVInt x:Name="textLocX" Width="42" Height="20" Margin="137,53,0,0" MinVal="0" MaxVal="100000000" />
+        <ui:Label x:Name="label1" Width="81" Height="18" Margin="55,53,0,0" Text="Location X" HAlign="Right" VAlign="Center" />
+        <ui:Label x:Name="label5" Width="81" Height="18" Margin="55,204,0,0" Text="Text Color" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textDrawText" Width="281" Height="20" Margin="137,26,0,0" TabIndexOD="0" />
+        <ui:Panel x:Name="panelColor" Width="30" Height="24" Margin="137,201,0,0" RenderTransformOrigin="0.498,0.41" ColorBorder="#FF636363" Click="butColor_Click"/>
+        <ui:Label x:Name="label6" Width="81" Height="18" Margin="55,27,0,0" Text="Text" HAlign="Right" VAlign="Center" />
+        <ui:Button x:Name="butDelete" Width="75" VerticalAlignment="Bottom" Height="24" Margin="12,0,0,12" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,7,12" Text="_Save" Click="butSave_Click" />
+    </Grid>
+</local:FrmODBase>

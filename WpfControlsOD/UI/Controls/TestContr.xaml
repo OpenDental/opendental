@@ -1,0 +1,18 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfControls.UI"
+             xmlns:OpenDental="clr-namespace:OpenDental" x:Class="WpfControls.UI.TestContr"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="600">
+	<Grid x:Name="grid">
+		<Border x:Name="border" BorderBrush="DarkGray" BorderThickness="1" Background="White"/>
+		<Rectangle x:Name="rectangle1" Stroke="Black" StrokeThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Height="150" Margin="39,27,0,0"/>
+		<Rectangle x:Name="rectangle2" Stroke="Black" StrokeThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Height="150" Margin="39,227,0,0"/>
+		<Line x:Name="line1" X1="39" Y1="410" X2="189" Y2="410" Stroke="Red" StrokeThickness="20"/>
+		<local:Label FontSize="11.5" Margin="35,435,0,0" />
+		<Line x:Name="line2" X1="39" Y1="450" X2="189" Y2="450" Stroke="Red" StrokeThickness="4"/>
+	</Grid>
+</UserControl>

@@ -1,0 +1,16 @@
+<local:FrmODBase x:Class="OpenDental.FrmWikiRename"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="369" Height="117" 
+             Text="Page Title" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="label2" Width="101" Height="20" Margin="1,33,0,0" Text="Page Title" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textPageTitle" Width="216" Height="20" Margin="106,33,0,0" TabIndexOD="0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

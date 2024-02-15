@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SheetDef xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <IsNew>false</IsNew>
+  <Description>ERA</Description>
+  <SheetType>ERA</SheetType>
+  <FontSize>9</FontSize>
+  <FontName>Microsoft Sans Serif</FontName>
+  <Width>850</Width>
+  <Height>1100</Height>
+  <IsLandscape>false</IsLandscape>
+  <PageCount>1</PageCount>
+  <IsMultiPage>false</IsMultiPage>
+  <BypassGlobalLock>BypassAlways</BypassGlobalLock>
+  <SheetFieldDefs>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Payer ID:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>30</XPos>
+      <YPos>87</YPos>
+      <Width>100</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Contact Info:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>30</XPos>
+      <YPos>144</YPos>
+      <Width>100</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>,</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>249</XPos>
+      <YPos>125</YPos>
+      <Width>5</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Payment Method:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>402</XPos>
+      <YPos>144</YPos>
+      <Width>150</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Check#:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>402</XPos>
+      <YPos>125</YPos>
+      <Width>150</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayeeId</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>106</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Ins. Paid:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>402</XPos>
+      <YPos>87</YPos>
+      <Width>150</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>InsPaid</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>87</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>TransHandlingDesc</FieldName>
+      <FieldValue />
+      <FontSize>20</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>430</XPos>
+      <YPos>32</YPos>
+      <Width>395</Width>
+      <Height>30</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-65536</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PaymentMethod</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>144</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayerZip</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>282</XPos>
+      <YPos>125</YPos>
+      <Width>115</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayerState</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>256</XPos>
+      <YPos>125</YPos>
+      <Width>24</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayerName</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>132</XPos>
+      <YPos>68</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayerID</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>132</XPos>
+      <YPos>87</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayerContactInfo</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>132</XPos>
+      <YPos>144</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayerCity</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>132</XPos>
+      <YPos>125</YPos>
+      <Width>115</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayerAddress</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>132</XPos>
+      <YPos>106</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>PayeeName</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>68</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>DateEffective</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>726</XPos>
+      <YPos>166</YPos>
+      <Width>100</Width>
+      <Height>14</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>OutputText</FieldType>
+      <FieldName>Check#</FieldName>
+      <FieldValue />
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>554</XPos>
+      <YPos>125</YPos>
+      <Width>265</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>Grid</FieldType>
+      <FieldName>EraClaimsPaid</FieldName>
+      <FieldValue />
+      <FontSize>8.5</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>25</XPos>
+      <YPos>184</YPos>
+      <Width>800</Width>
+      <Height>217</Height>
+      <GrowthBehavior>DownGlobal</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Payer Address:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>30</XPos>
+      <YPos>106</YPos>
+      <Width>100</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Payee:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>402</XPos>
+      <YPos>68</YPos>
+      <Width>150</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Payee Id:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>402</XPos>
+      <YPos>106</YPos>
+      <Width>150</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Payer:</FieldValue>
+      <FontSize>9</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>false</FontIsBold>
+      <XPos>30</XPos>
+      <YPos>68</YPos>
+      <Width>100</Width>
+      <Height>17</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>Rectangle</FieldType>
+      <FieldName />
+      <FieldValue />
+      <FontSize>0</FontSize>
+      <FontName />
+      <FontIsBold>false</FontIsBold>
+      <XPos>25</XPos>
+      <YPos>64</YPos>
+      <Width>800</Width>
+      <Height>100</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>false</IsLocked>
+      <ItemColor>-16777216</ItemColor>
+      <Language />
+    </SheetFieldDef>
+    <SheetFieldDef>
+      <IsNew>false</IsNew>
+      <FieldType>StaticText</FieldType>
+      <FieldName />
+      <FieldValue>Electronic Remittance Advice -</FieldValue>
+      <FontSize>20</FontSize>
+      <FontName>Microsoft Sans Serif</FontName>
+      <FontIsBold>true</FontIsBold>
+      <XPos>25</XPos>
+      <YPos>32</YPos>
+      <Width>405</Width>
+      <Height>30</Height>
+      <GrowthBehavior>None</GrowthBehavior>
+      <RadioButtonValue />
+      <RadioButtonGroup />
+      <IsRequired>false</IsRequired>
+      <ImageData />
+      <TabOrder>0</TabOrder>
+      <ReportableName />
+      <TextAlign>Left</TextAlign>
+      <IsPaymentOption>false</IsPaymentOption>
+      <IsLocked>true</IsLocked>
+      <ItemColor>-65536</ItemColor>
+      <Language />
+    </SheetFieldDef>
+  </SheetFieldDefs>
+</SheetDef>

@@ -1,0 +1,207 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Reflection;
+
+namespace OpenDentBusiness{
+	///<summary></summary>
+	public class RefAttaches{
+		#region Get Methods
+		///<summary>For one patient</summary>
+		public static List<RefAttach> Refresh(long patNum) {
+			//No need to check MiddleTierRole; no call to db.
+			return RefreshFiltered(patNum,true,0);
+		}
+
+		///<summary></summary>
+		public static List<RefAttach> GetPatientData(long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RefAttach>>(MethodBase.GetCurrentMethod(),patNum);
+			}
+			string command="SELECT * FROM refattach "
+				+"WHERE PatNum = "+POut.Long(patNum)+" "
+				+"ORDER BY ItemOrder";
+			return Crud.RefAttachCrud.SelectMany(command);
+		}
+
+		///<summary>Gets all RefAttaches and orders them by RefAttachNum.</summary>
+		public static List<RefAttach> GetRefAttachesForApi(int limit,int offset,long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RefAttach>>(MethodBase.GetCurrentMethod(),limit,offset,patNum);
+			}
+			string command="SELECT * FROM refattach ";
+			if(patNum>0) {
+				command+="WHERE PatNum="+POut.Long(patNum)+" ";
+			}
+			command+="ORDER BY RefAttachNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.RefAttachCrud.SelectMany(command);
+		}
+
+		///<summary>For the ReferralsPatient window.  showAll is only used for the referred procs view.</summary>
+		public static List<RefAttach> RefreshFiltered(long patNum,bool showAll,long procNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RefAttach>>(MethodBase.GetCurrentMethod(),patNum,showAll,procNum);
+			}
+			//Inner join with referral table on ReferralNum to ignore invalid RefAttaches.  DBM removes these invalid rows anyway.
+			string command="SELECT refattach.* FROM refattach "
+				+"INNER JOIN referral ON refattach.ReferralNum=referral.ReferralNum "
+				+"WHERE refattach.PatNum = "+POut.Long(patNum)+" ";
+			if(procNum!=0) {//for procedure
+				if(!showAll) {//hide regular referrals
+					command+="AND refattach.ProcNum="+POut.Long(procNum)+" ";
+				}
+			}
+			command+="ORDER BY refattach.ItemOrder";
+			return Crud.RefAttachCrud.SelectMany(command);
+		}
+		
+		///<summary>For FormReferralProckTrack.</summary>
+		public static List<RefAttach> RefreshForReferralProcTrack(DateTime dateFrom,DateTime dateTo,bool complete) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RefAttach>>(MethodBase.GetCurrentMethod(),dateFrom,dateTo,complete);
+			}
+			//Inner join with referral table on ReferralNum to ignore invalid RefAttaches.  DBM removes these invalid rows anyway.
+			string command="SELECT refattach.* FROM refattach "
+				+"INNER JOIN referral ON refattach.ReferralNum=referral.ReferralNum "
+				+"INNER JOIN procedurelog ON refattach.ProcNum=procedurelog.ProcNum "
+				+"WHERE refattach.RefDate>="+POut.Date(dateFrom)+" "
+				+"AND refattach.RefDate<="+POut.Date(dateTo)+" ";
+			if(!complete) {
+				command+="AND refattach.DateProcComplete="+POut.Date(DateTime.MinValue)+" ";
+			}
+			command+="ORDER BY refattach.RefDate";
+			return Crud.RefAttachCrud.SelectMany(command);
+		}
+
+		///<summary>Returns a list of patient names that are attached to this referral. Used to display in the referral edit window.</summary>
+		public static List<string> GetPats(long refNum,ReferralType refType) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),refNum,refType);
+			}
+			string command="SELECT CONCAT(CONCAT(patient.LName,', '),patient.FName) "
+				+"FROM patient,refattach,referral " 
+				+"WHERE patient.PatNum=refattach.PatNum "
+				+"AND refattach.ReferralNum=referral.ReferralNum "
+				+"AND refattach.RefType="+POut.Int((int)refType)+" "
+				+"AND referral.ReferralNum="+POut.Long(refNum);
+			DataTable table=Db.GetTable(command);
+			List<string> listStrings=new List<string>();
+			for(int i=0;i<table.Rows.Count;i++){
+				listStrings.Add(table.Rows[i][0].ToString());	
+			}
+			return listStrings;
+		}
+
+		/// <summary>Gets the referral number for this patient.  If multiple, it returns the first one.  If none, it returns 0.  Does not consider referred To.</summary>
+		public static long GetReferralNum(long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),patNum);
+			}
+			string command="SELECT ReferralNum "
+				+"FROM refattach " 
+				+"WHERE refattach.PatNum ="+POut.Long(patNum)+" "
+				+"AND refattach.RefType="+POut.Int((int)ReferralType.RefFrom)+" "
+				+"ORDER BY ItemOrder ";
+			command=DbHelper.LimitOrderBy(command,1);
+			return PIn.Long(Db.GetScalar(command));
+		}
+
+		///<summary>Gets all RefAttaches for the patients in the list of PatNums.  Returns an empty list if no matches.</summary>
+		public static List<RefAttach> GetRefAttaches(List<long> listPatNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RefAttach>>(MethodBase.GetCurrentMethod(),listPatNums);
+			}
+			if(listPatNums.Count==0) {
+				return new List<RefAttach>();
+			}
+			//MySQL can handle duplicate values within the IN criteria more efficiently than removing them in a loop.
+			List<long> uniqueNums=new List<long>();
+			string command="SELECT * FROM refattach "
+				+"WHERE refattach.PatNum IN ("+String.Join<long>(",",listPatNums)+")";
+			return Crud.RefAttachCrud.SelectMany(command);
+		}
+
+		///<summary>Gets all the possible RefAttaches, for the patient, that are in the denominator of the summary of care measure.</summary>
+		public static List<RefAttach> GetRefAttachesForSummaryOfCareForPat(long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RefAttach>>(MethodBase.GetCurrentMethod(),patNum);
+			}
+			string command="SELECT * FROM refattach "
+				+"WHERE PatNum = "+POut.Long(patNum)+" "
+				+"AND RefType="+POut.Int((int)ReferralType.RefTo)+" "
+				+"AND IsTransitionOfCare=1 AND ProvNum!=0 "
+				+"ORDER BY ItemOrder";
+			return Crud.RefAttachCrud.SelectMany(command);
+		}
+
+		///<summary>Gets one RefAttach from the database using the primary key. Returns null if not found.</summary>
+		public static RefAttach GetOne(long refAttachNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<RefAttach>(MethodBase.GetCurrentMethod(),refAttachNum);
+			}
+			return Crud.RefAttachCrud.SelectOne(refAttachNum);
+		}
+
+		#endregion
+	
+		#region Insert
+		///<summary></summary>
+		public static long Insert(RefAttach attach) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				attach.RefAttachNum=Meth.GetLong(MethodBase.GetCurrentMethod(),attach);
+				return attach.RefAttachNum;
+			}
+			return Crud.RefAttachCrud.Insert(attach);
+		}
+		#endregion
+
+		#region Update
+		///<summary></summary>
+		public static void Update(RefAttach attach){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),attach);
+				return;
+			}
+			Crud.RefAttachCrud.Update(attach);
+		}
+		
+		///<summary></summary>
+		public static void Update(RefAttach attach,RefAttach attachOld) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),attach,attachOld);
+				return;
+			}
+			Crud.RefAttachCrud.Update(attach,attachOld);
+		}
+		#endregion
+
+		#region Delete
+		///<summary></summary>
+		public static void Delete(RefAttach attach){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),attach);
+				return;
+			}
+			string command="UPDATE refattach SET ItemOrder=ItemOrder-1 WHERE PatNum="+POut.Long(attach.PatNum)
+				+" AND ItemOrder > "+POut.Int(attach.ItemOrder);
+			Db.NonQ(command);
+			command= "DELETE FROM refattach "
+				+"WHERE refattachnum = "+POut.Long(attach.RefAttachNum);
+			Db.NonQ(command);
+		}
+		#endregion
+
+		#region Misc Methods
+		///<summary></summary>
+		public static bool IsReferralAttached(long referralNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),referralNum);
+			}
+			string command="SELECT COUNT(*) FROM refattach WHERE ReferralNum = '"+POut.Long(referralNum)+"'";
+			return (Db.GetCount(command)!="0");
+		}
+		#endregion
+	}
+}

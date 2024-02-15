@@ -1,0 +1,47 @@
+<local:FrmODBase x:Class="OpenDental.FrmCommItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             xmlns:oduiodb="clr-namespace:OpenDental.UI;assembly=OpenDentBusiness"
+             mc:Ignorable="d"
+             Width="755" Height="617" 
+             Text="Communication Item" >
+    <Grid Background="#FFFCFDFE" >
+        <ui:Label x:Name="labelDateTimeCreated" Width="120" Height="18" Margin="0,32,0,0" Text="Date/Time Created" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textDateTimeCreated" Width="205" Height="20" Margin="120,31,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+        <ui:Button x:Name="butCommlogHist" HorizontalAlignment="Right" Width="75" Height="21" Margin="0,216,262,0" Text="History" Click="butCommlogHist_Click" />
+        <ui:Button x:Name="butEditAutoNote" HorizontalAlignment="Right" Width="82" Height="21" Margin="0,216,174,0" Text="Edit Auto Note" Click="butEditAutoNote_Click" />
+        <ui:Button x:Name="butClearNote" HorizontalAlignment="Right" Width="75" Height="21" Margin="0,216,12,0" Text="Clear" Click="butClearNote_Click" />
+        <ui:Button x:Name="butUserPrefs" HorizontalAlignment="Right" Width="75" Height="21" Margin="0,7,12,0" Text="User Prefs" Click="butUserPrefs_Click" />
+        <ui:Button x:Name="butAutoNote" HorizontalAlignment="Right" Width="75" Height="21" Margin="0,216,93,0" Text="Auto Note" Click="butAutoNote_Click" />
+        <ui:Label x:Name="labelSavedManually" HorizontalAlignment="Right" Width="106" VerticalAlignment="Bottom" Height="16" Margin="0,0,97,17" ColorText="#FFC00000" Text="Saved" HAlign="Right" VAlign="Center" />
+        <ui:Button x:Name="butNowEnd" Width="48" Height="21" Margin="331,79,0,0" Text="Now" Click="butNowEnd_Click" />
+        <ui:TextBox x:Name="textDateTimeEnd" Width="205" Height="20" Margin="120,79,0,0" />
+        <ui:Label x:Name="labelDateTimeEnd" Width="81" Height="18" Margin="39,80,0,0" Text="End" HAlign="Right" VAlign="Center" />
+        <ui:Button x:Name="butNow" Width="48" Height="21" Margin="331,55,0,0" Text="Now" Click="butNow_Click" />
+        <WindowsFormsHost Width="364" VerticalAlignment="Bottom" Height="81" Margin="120,0,0,81" HorizontalAlignment="Left" >
+            <oduiodb:SignatureBoxWrapper x:Name="signatureBoxWrapper" />
+        </WindowsFormsHost>
+        <ui:TextBox x:Name="textCommlogNum" HorizontalAlignment="Right" Width="188" VerticalAlignment="Bottom" Height="20" Margin="0,0,12,43" ColorBack="#FFF0F0F0" ReadOnly="True" />
+        <ui:Label x:Name="labelCommlogNum" HorizontalAlignment="Right" Width="96" VerticalAlignment="Bottom" Height="16" Margin="0,0,201,45" Text="CommlogNum" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textUser" HorizontalAlignment="Right" Width="119" Height="20" Margin="0,7,93,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+        <ui:Label x:Name="label16" HorizontalAlignment="Right" Width="60" Height="16" Margin="0,9,214,0" Text="User" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textPatientName" Width="205" Height="20" Margin="120,7,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+        <ui:Label x:Name="label5" Width="78" Height="18" Margin="42,8,0,0" Text="Patient" HAlign="Right" VAlign="Center" />
+        <ui:TextRich x:Name="textNote" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="120,240,12,168" HasAutoNotes="True" QuickPasteType="CommLog" TextChanged="ClearSignature_Handler" />
+        <ui:ListBox x:Name="listSentOrReceived" Width="101" Height="48" Margin="392,125,0,0" />
+        <ui:Label x:Name="label4" Width="142" Height="16" Margin="396,107,0,0" Text="Sent or Received" VAlign="Bottom" />
+        <ui:ListBox x:Name="listMode" Width="125" Height="95" Margin="254,125,0,0" />
+        <ui:Label x:Name="label3" Width="82" Height="16" Margin="253,108,0,0" Text="Mode" VAlign="Bottom" />
+        <ui:TextBox x:Name="textDateTime" Width="205" Height="20" Margin="120,55,0,0" />
+        <ui:ListBox x:Name="listType" Width="120" Height="95" Margin="120,125,0,0" />
+        <ui:Label x:Name="label2" Width="82" Height="16" Margin="117,223,0,0" Text="Note" VAlign="Bottom" />
+        <ui:Button x:Name="butDelete" Width="75" VerticalAlignment="Bottom" Height="25" Margin="12,0,0,12" Text="_Delete" Icon="DeleteX" Click="butDelete_Click" />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="25" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+        <ui:Label x:Name="label6" Width="82" Height="16" Margin="118,107,0,0" Text="Type" VAlign="Bottom" />
+        <ui:Label x:Name="label1" Width="81" Height="18" Margin="39,56,0,0" Text="Date / Time" HAlign="Right" VAlign="Center" />
+    </Grid>
+</local:FrmODBase>

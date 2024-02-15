@@ -1,0 +1,1420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{118540CC-3536-4E8B-94D4-402CA48A4CB0}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>WpfControls</RootNamespace>
+    <AssemblyName>WpfControlsOD</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Win32Resource>
+    </Win32Resource>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bridges, Version=24.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Bridges.dll</HintPath>
+    </Reference>
+    <Reference Include="DpsPos">
+      <HintPath>..\Required dlls\DpsPos.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.CDRDATALib">
+      <HintPath>..\Required dlls\Interop.CDRDATALib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.CDRDicom">
+      <HintPath>..\Required dlls\Interop.CDRDicom.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.QBFC10">
+      <HintPath>..\Required dlls\Interop.QBFC10.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="NDde">
+      <HintPath>..\Required dlls\NDde.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHunspell">
+      <HintPath>..\Required dlls\NHunspell.dll</HintPath>
+    </Reference>
+    <Reference Include="ReachFramework" />
+    <Reference Include="Sparks3D, Version=22.4.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Sparks3D\Sparks3D.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="VBbridges, Version=22.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\VBbridges.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bridges\AaTemplate.cs" />
+    <Compile Include="Bridges\ActeonImagingSuite.cs" />
+    <Compile Include="Bridges\Adstra.cs" />
+    <Compile Include="Bridges\AiDental.cs" />
+    <Compile Include="Bridges\Apixia.cs" />
+    <Compile Include="Bridges\Apteryx.cs" />
+    <Compile Include="Bridges\ApteryxImage.cs" />
+    <Compile Include="Bridges\AudaxCeph.cs" />
+    <Compile Include="Bridges\Benco.cs" />
+    <Compile Include="Bridges\BioPAK.cs" />
+    <Compile Include="Bridges\CADI.cs" />
+    <Compile Include="Bridges\Camsight.cs" />
+    <Compile Include="Bridges\CaptureLink.cs" />
+    <Compile Include="Bridges\Carestream.cs" />
+    <Compile Include="Bridges\CDS.cs" />
+    <Compile Include="Bridges\Cerec.cs" />
+    <Compile Include="Bridges\CleaRay.cs" />
+    <Compile Include="Bridges\Cliniview.cs" />
+    <Compile Include="Bridges\ClioSoft.cs" />
+    <Compile Include="Bridges\DBSWin.cs" />
+    <Compile Include="Bridges\DemandForce.cs" />
+    <Compile Include="Bridges\DentalEye.cs" />
+    <Compile Include="Bridges\DentalIntel.cs" />
+    <Compile Include="Bridges\DentalStudio.cs" />
+    <Compile Include="Bridges\DentalTek.cs" />
+    <Compile Include="Bridges\DentalXChange.cs" />
+    <Compile Include="Bridges\DentForms.cs" />
+    <Compile Include="Bridges\DentX.cs" />
+    <Compile Include="Bridges\Dexis.cs" />
+    <Compile Include="Bridges\DexisIntegrator.cs" />
+    <Compile Include="Bridges\Digora.cs" />
+    <Compile Include="Bridges\DivvyPostcardService.cs" />
+    <Compile Include="Bridges\Dolphin.cs" />
+    <Compile Include="Bridges\DrCeph.cs" />
+    <Compile Include="Bridges\Dxis.cs" />
+    <Compile Include="Bridges\ECW.cs" />
+    <Compile Include="Bridges\EvaSoft.cs" />
+    <Compile Include="Bridges\Ewoo.cs" />
+    <Compile Include="Bridges\FloridaProbe.cs" />
+    <Compile Include="Bridges\Guru.cs" />
+    <Compile Include="Bridges\HandyDentist.cs" />
+    <Compile Include="Bridges\HdxWill.cs" />
+    <Compile Include="Bridges\Iap.cs" />
+    <Compile Include="Bridges\ICat.cs" />
+    <Compile Include="Bridges\iDixel.cs" />
+    <Compile Include="Bridges\ImageFX.cs" />
+    <Compile Include="Bridges\Irys.cs" />
+    <Compile Include="Bridges\JazzClassicCapture.cs" />
+    <Compile Include="Bridges\JazzClassicExamView.cs" />
+    <Compile Include="Bridges\JazzClassicPatientUpdate.cs" />
+    <Compile Include="Bridges\Lightyear.cs" />
+    <Compile Include="Bridges\MediaDent.cs" />
+    <Compile Include="Bridges\MeditLink.cs" />
+    <Compile Include="Bridges\Midway.cs" />
+    <Compile Include="Bridges\MiPACS.cs" />
+    <Compile Include="Bridges\NewTomNNT.cs" />
+    <Compile Include="Bridges\Office.cs" />
+    <Compile Include="Bridges\One2.cs" />
+    <Compile Include="Bridges\Orion.cs" />
+    <Compile Include="Bridges\OrthoCad.cs" />
+    <Compile Include="Bridges\OrthoInsight3d.cs" />
+    <Compile Include="Bridges\Oryx.cs" />
+    <Compile Include="Bridges\Owandy.cs" />
+    <Compile Include="Bridges\PandaPerio.cs" />
+    <Compile Include="Bridges\PandaPerioAdvanced.cs" />
+    <Compile Include="Bridges\PaperlessTechnology.cs" />
+    <Compile Include="Bridges\Patterson.cs" />
+    <Compile Include="Bridges\PayConnectTerminal.cs" />
+    <Compile Include="Bridges\PerioPal.cs" />
+    <Compile Include="Bridges\Planmeca.cs" />
+    <Compile Include="Bridges\PluginLoader.cs" />
+    <Compile Include="Bridges\PORTRAY.cs" />
+    <Compile Include="Bridges\PracticeBooster.cs" />
+    <Compile Include="Bridges\PracticeByNumbers.cs" />
+    <Compile Include="Bridges\PreXion.cs" />
+    <Compile Include="Bridges\Progeny.cs" />
+    <Compile Include="Bridges\QuickBooks.cs" />
+    <Compile Include="Bridges\RapidCall.cs" />
+    <Compile Include="Bridges\RayBridge.cs" />
+    <Compile Include="Bridges\RayMage.cs" />
+    <Compile Include="Bridges\Romexis.cs" />
+    <Compile Include="Bridges\Scanora.cs" />
+    <Compile Include="Bridges\Schick.cs" />
+    <Compile Include="Bridges\Shining3D.cs" />
+    <Compile Include="Bridges\Sirona.cs" />
+    <Compile Include="Bridges\SmartDent.cs" />
+    <Compile Include="Bridges\Sopro.cs" />
+    <Compile Include="Bridges\SOTACloud.cs" />
+    <Compile Include="Bridges\SteriSimple.cs" />
+    <Compile Include="Bridges\Tesia_statements.cs" />
+    <Compile Include="Bridges\ThreeShape.cs" />
+    <Compile Include="Bridges\TigerView.cs" />
+    <Compile Include="Bridges\Triana.cs" />
+    <Compile Include="Bridges\Trojan.cs" />
+    <Compile Include="Bridges\Trophy.cs" />
+    <Compile Include="Bridges\TrophyEnhanced.cs" />
+    <Compile Include="Bridges\Tscan.cs" />
+    <Compile Include="Bridges\Vipersoft.cs" />
+    <Compile Include="Bridges\VisionX.cs" />
+    <Compile Include="Bridges\Visora.cs" />
+    <Compile Include="Bridges\VistaDent.cs" />
+    <Compile Include="Bridges\VixWin.cs" />
+    <Compile Include="Bridges\VixWinBase36.cs" />
+    <Compile Include="Bridges\VixWinBase41.cs" />
+    <Compile Include="Bridges\VixWinNumbered.cs" />
+    <Compile Include="Bridges\VixWinOld.cs" />
+    <Compile Include="Bridges\XDR.cs" />
+    <Compile Include="Bridges\XVWeb.cs" />
+    <Compile Include="Bridges\ZImage.cs" />
+    <Compile Include="Frame\Dpi.cs" />
+    <Compile Include="Frame\FormFrame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frame\FormSnap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frame\FormSnap.Designer.cs">
+      <DependentUpon>FormSnap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frame\PanelSubclassBorder.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Frame\UIManager.cs" />
+    <Compile Include="Frms\FrmAuditOneType.xaml.cs">
+      <DependentUpon>FrmAuditOneType.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDatabaseIntegrity.xaml.cs">
+      <DependentUpon>FrmDatabaseIntegrity.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDocInfo.xaml.cs">
+      <DependentUpon>FrmDocInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmFamilyMemberSelect.xaml.cs">
+      <DependentUpon>FrmFamilyMemberSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmFamilyBalancerSetup.xaml.cs">
+      <DependentUpon>FrmFamilyBalancerSetup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmFriendlyException.xaml.cs">
+      <DependentUpon>FrmFriendlyException.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmGuardianEdit.xaml.cs">
+      <DependentUpon>FrmGuardianEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPatFieldPickItem.xaml.cs">
+      <DependentUpon>FrmPatFieldPickItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmImageDrawEdit.xaml.cs">
+      <DependentUpon>FrmImageDrawEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmImageScale.xaml.cs">
+      <DependentUpon>FrmImageScale.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmMessageReplacements.xaml.cs">
+      <DependentUpon>FrmMessageReplacements.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmMountAndAcquire.xaml.cs">
+      <DependentUpon>FrmMountAndAcquire.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmMountEdit.xaml.cs">
+      <DependentUpon>FrmMountEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmMountItemEdit.xaml.cs">
+      <DependentUpon>FrmMountItemEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmMountLayoutEdit.xaml.cs">
+      <DependentUpon>FrmMountLayoutEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPatientRaceEthnicity.xaml.cs">
+      <DependentUpon>FrmPatientRaceEthnicity.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPatientSelect.xaml.cs">
+      <DependentUpon>FrmPatientSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPrintPreview.xaml.cs">
+      <DependentUpon>FrmPrintPreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmCommItem.xaml.cs">
+      <DependentUpon>FrmCommItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmCommItemHistory.xaml.cs">
+      <DependentUpon>FrmCommItemHistory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmCommItemUserPrefs.xaml.cs">
+      <DependentUpon>FrmCommItemUserPrefs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmCommReferral.xaml.cs">
+      <DependentUpon>FrmCommReferral.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDocSign.xaml.cs">
+      <DependentUpon>FrmDocSign.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDocumentSize.xaml.cs">
+      <DependentUpon>FrmDocumentSize.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDocumentSizeMount.xaml.cs">
+      <DependentUpon>FrmDocumentSizeMount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmFaqPicker.xaml.cs">
+      <DependentUpon>FrmFaqPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmHelpBrowser.xaml.cs">
+      <DependentUpon>FrmHelpBrowser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmImageFilter.xaml.cs">
+      <DependentUpon>FrmImageFilter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAccountEdit.xaml.cs">
+      <DependentUpon>FrmAccountEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAlertCategoryEdit.xaml.cs">
+      <DependentUpon>FrmAlertCategoryEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmApptBreakRequired.xaml.cs">
+      <DependentUpon>FrmApptBreakRequired.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmApptFieldDefEdit.xaml.cs">
+      <DependentUpon>FrmApptFieldDefEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmApptFieldEdit.xaml.cs">
+      <DependentUpon>FrmApptFieldEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmApptFieldPickEdit.xaml.cs">
+      <DependentUpon>FrmApptFieldPickEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmApptLists.xaml.cs">
+      <DependentUpon>FrmApptLists.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmApptRuleEdit.xaml.cs">
+      <DependentUpon>FrmApptRuleEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmApptViewItemEdit.xaml.cs">
+      <DependentUpon>FrmApptViewItemEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAtoZFoldersCreate.xaml.cs">
+      <DependentUpon>FrmAtoZFoldersCreate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAutoCodeLessIntrusive.xaml.cs">
+      <DependentUpon>FrmAutoCodeLessIntrusive.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAutoNoteCompose.xaml.cs">
+      <DependentUpon>FrmAutoNoteCompose.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAutoNotePromptList.xaml.cs">
+      <DependentUpon>FrmAutoNotePromptList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAutoNotePromptPreview.xaml.cs">
+      <DependentUpon>FrmAutoNotePromptPreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAutoNotePromptText.xaml.cs">
+      <DependentUpon>FrmAutoNotePromptText.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmBackupReminder.xaml.cs">
+      <DependentUpon>FrmBackupReminder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmBencoSetup.xaml.cs">
+      <DependentUpon>FrmBencoSetup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmCountyEdit.xaml.cs">
+      <DependentUpon>FrmCountyEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDatePicker.xaml.cs">
+      <DependentUpon>FrmDatePicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDecimalSettings.xaml.cs">
+      <DependentUpon>FrmDecimalSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDiseaseEdit.xaml.cs">
+      <DependentUpon>FrmDiseaseEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDrugManufacturerEdit.xaml.cs">
+      <DependentUpon>FrmDrugManufacturerEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmDrugUnitEdit.xaml.cs">
+      <DependentUpon>FrmDrugUnitEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmEmailMasterTemplate.xaml.cs">
+      <DependentUpon>FrmEmailMasterTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmEmployerEdit.xaml.cs">
+      <DependentUpon>FrmEmployerEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmExternalLink.xaml.cs">
+      <DependentUpon>FrmExternalLink.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmFaqEdit.xaml.cs">
+      <DependentUpon>FrmFaqEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmFaqVersionPicker.xaml.cs">
+      <DependentUpon>FrmFaqVersionPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmFeeSchedEdit.xaml.cs">
+      <DependentUpon>FrmFeeSchedEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmGradingScaleItemEdit.xaml.cs">
+      <DependentUpon>FrmGradingScaleItemEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmInsFilingCodeSubtypeEdit.xaml.cs">
+      <DependentUpon>FrmInsFilingCodeSubtypeEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmInsPlanSelect.xaml.cs">
+      <DependentUpon>FrmInsPlanSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmInsSelectSubscr.xaml.cs">
+      <DependentUpon>FrmInsSelectSubscr.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmLogoffWarning.xaml.cs">
+      <DependentUpon>FrmLogoffWarning.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmOrthoChartAddDate.xaml.cs">
+      <DependentUpon>FrmOrthoChartAddDate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmOrthoChartTabEdit.xaml.cs">
+      <DependentUpon>FrmOrthoChartTabEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPatientEditEmail.xaml.cs">
+      <DependentUpon>FrmPatientEditEmail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPayPlansClose.xaml.cs">
+      <DependentUpon>FrmPayPlansClose.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmAccountingLock.xaml.cs">
+      <DependentUpon>FrmAccountingLock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPopupAudit.xaml.cs">
+      <DependentUpon>FrmPopupAudit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmPopupEdit.xaml.cs">
+      <DependentUpon>FrmPopupEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmProviderIdentEdit.xaml.cs">
+      <DependentUpon>FrmProviderIdentEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmProviderPick.xaml.cs">
+      <DependentUpon>FrmProviderPick.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmQuickPaste.xaml.cs">
+      <DependentUpon>FrmQuickPaste.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmQuickPasteCat.xaml.cs">
+      <DependentUpon>FrmQuickPasteCat.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmQuickPasteNoteEdit.xaml.cs">
+      <DependentUpon>FrmQuickPasteNoteEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmRecallMessageEdit.xaml.cs">
+      <DependentUpon>FrmRecallMessageEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmRefAttachEdit.xaml.cs">
+      <DependentUpon>FrmRefAttachEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmReferralEdit.xaml.cs">
+      <DependentUpon>FrmReferralEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmReferralSelect.xaml.cs">
+      <DependentUpon>FrmReferralSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmReferralsPatient.xaml.cs">
+      <DependentUpon>FrmReferralsPatient.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmSheetFieldGridType.xaml.cs">
+      <DependentUpon>FrmSheetFieldGridType.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmSheetPicker.xaml.cs">
+      <DependentUpon>FrmSheetPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmSheetSetup.xaml.cs">
+      <DependentUpon>FrmSheetSetup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmShortCodeOptIn.xaml.cs">
+      <DependentUpon>FrmShortCodeOptIn.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmSiteEdit.xaml.cs">
+      <DependentUpon>FrmSiteEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmSiteLinkEdit.xaml.cs">
+      <DependentUpon>FrmSiteLinkEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmSites.xaml.cs">
+      <DependentUpon>FrmSites.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmSupplyNeededEdit.xaml.cs">
+      <DependentUpon>FrmSupplyNeededEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmTaskFilter.xaml.cs">
+      <DependentUpon>FrmTaskFilter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmTestFilters.xaml.cs">
+      <DependentUpon>FrmTestFilters.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmTestCombos.xaml.cs">
+      <DependentUpon>FrmTestCombos.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmTestSplitters.xaml.cs">
+      <DependentUpon>FrmTestSplitters.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmUserGroupEdit.xaml.cs">
+      <DependentUpon>FrmUserGroupEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmUserGroupPicker.xaml.cs">
+      <DependentUpon>FrmUserGroupPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmUserPick.xaml.cs">
+      <DependentUpon>FrmUserPick.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmUserSetting.xaml.cs">
+      <DependentUpon>FrmUserSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmWikiListAdvancedSearch.xaml.cs">
+      <DependentUpon>FrmWikiListAdvancedSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmWikiRename.xaml.cs">
+      <DependentUpon>FrmWikiRename.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmWikiSetup.xaml.cs">
+      <DependentUpon>FrmWikiSetup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmWikiTableHeaders.xaml.cs">
+      <DependentUpon>FrmWikiTableHeaders.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmTestGrid.xaml.cs">
+      <DependentUpon>FrmTestGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmZipCodeEdit.xaml.cs">
+      <DependentUpon>FrmZipCodeEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmZipCodes.xaml.cs">
+      <DependentUpon>FrmZipCodes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmTestFocusTabbing.xaml.cs">
+      <DependentUpon>FrmTestFocusTabbing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmZipSelect.xaml.cs">
+      <DependentUpon>FrmZipSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmZoom.xaml.cs">
+      <DependentUpon>FrmZoom.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmMsgBoxCopyPaste.xaml.cs">
+      <DependentUpon>FrmMsgBoxCopyPaste.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\InputBox.xaml.cs">
+      <DependentUpon>InputBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Logic\CloudClientL.cs" />
+    <Compile Include="Logic\PatientL.cs" />
+    <Compile Include="Logic\ProgramL.cs" />
+    <Compile Include="Logic\ReferralL.cs" />
+    <Compile Include="Misc\DataValid.cs" />
+    <Compile Include="Misc\FilterControlsAndAction.cs" />
+    <Compile Include="Misc\FormLauncher.cs" />
+    <Compile Include="Misc\ImageTools.cs" />
+    <Compile Include="Misc\Lang.cs" />
+    <Compile Include="Misc\Printout.cs" />
+    <Compile Include="Logic\PrinterL.cs" />
+    <Compile Include="UI\ColorOD.cs" />
+    <Compile Include="UI\ColorODtemp.cs" />
+    <Compile Include="UI\Controls\DatePicker.xaml.cs">
+      <DependentUpon>DatePicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ImagingModule\UnmountedBar.xaml.cs">
+      <DependentUpon>UnmountedBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ImagingModule\WindowingSlider.xaml.cs">
+      <DependentUpon>WindowingSlider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ImagingModule\ZoomSlider.xaml.cs">
+      <DependentUpon>ZoomSlider.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ListView.xaml.cs">
+      <DependentUpon>ListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ImagingModule\ImageSelector.xaml.cs">
+      <DependentUpon>ImageSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ImagingModule\ImageSelectorTypes.cs" />
+    <Compile Include="UI\Controls\MonthCalendar.xaml.cs">
+      <DependentUpon>MonthCalendar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ComboClinic.xaml.cs">
+      <DependentUpon>ComboClinic.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ContextMenu.cs" />
+    <Compile Include="UI\Controls\PanelAutoScroll.cs" />
+    <Compile Include="UI\Controls\PictureBox.xaml.cs">
+      <DependentUpon>PictureBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TextPassword.xaml.cs">
+      <DependentUpon>TextPassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrities.cs" />
+    <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrity.cs" />
+    <Compile Include="UI\DatabaseIntegrity\WarningIntegrity.xaml.cs">
+      <DependentUpon>WarningIntegrity.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\RadioButton.xaml.cs">
+      <DependentUpon>RadioButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\Grid.xaml.cs">
+      <DependentUpon>Grid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\Panel.cs" />
+    <Compile Include="UI\Controls\SplitContainer.cs" />
+    <Compile Include="UI\Controls\Supplemental\GridCellOld.cs" />
+    <Compile Include="UI\Controls\Supplemental\GridColumnOld.cs" />
+    <Compile Include="UI\Controls\Supplemental\GridRowOld.cs" />
+    <Compile Include="UI\Controls\Supplemental\PopupHelper2.cs" />
+    <Compile Include="UI\Controls\Supplemental\WindowMonthCalendar.xaml.cs">
+      <DependentUpon>WindowMonthCalendar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\Supplemental\WindowComboPicker.xaml.cs">
+      <DependentUpon>WindowComboPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TextVTime.xaml.cs">
+      <DependentUpon>TextVTime.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\WebBrowser.xaml.cs">
+      <DependentUpon>WebBrowser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TreeView.xaml.cs">
+      <DependentUpon>TreeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TextRich.xaml.cs">
+      <DependentUpon>TextRich.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ToolTip.xaml.cs">
+      <DependentUpon>ToolTip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Graphics.cs" />
+    <Compile Include="UI\IconLibrary\DrawSvg.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Acquire.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ArrowsAll.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Copy.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Crop.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Export.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Flip.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Hand.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ImageSelectorDoc.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ImageSelectorFile.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ImageSelectorFolder.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ImageSelectorFolderWeb.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ImageSelectorMount.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ImageSelectorPhoto.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ImageSelectorXray.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Import.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Info.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Paste.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Print.cs" />
+    <Compile Include="UI\IconLibrary\Gen_RotateL.cs" />
+    <Compile Include="UI\IconLibrary\Gen_RotateR.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ScanMulti.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ScanPhoto.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ScanXray.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Video.cs" />
+    <Compile Include="UI\Progress\FrmProgressAuto.xaml.cs">
+      <DependentUpon>FrmProgressAuto.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Progress\ProgressWin.cs" />
+    <Compile Include="UI\ToothChart\Sparks3DInterface.cs" />
+    <Compile Include="UI\ToothChart\ToothChartRelay.cs" />
+    <Page Include="Frms\FrmAuditOneType.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDatabaseIntegrity.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDocInfo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmFamilyMemberSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmFamilyBalancerSetup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmFriendlyException.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmGuardianEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPatFieldPickItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmImageDrawEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmImageScale.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmMessageReplacements.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmMountAndAcquire.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmMountEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmMountItemEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmMountLayoutEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPatientRaceEthnicity.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPatientSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPrintPreview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmCommItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmCommItemHistory.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmCommItemUserPrefs.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmCommReferral.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDocSign.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDocumentSize.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDocumentSizeMount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmFaqPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmHelpBrowser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmImageFilter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAccountingLock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAccountEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAlertCategoryEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmApptBreakRequired.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmApptFieldDefEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmApptFieldEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmApptFieldPickEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmApptLists.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmApptRuleEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmApptViewItemEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAtoZFoldersCreate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAutoCodeLessIntrusive.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAutoNoteCompose.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAutoNotePromptList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAutoNotePromptPreview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmAutoNotePromptText.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Frms\FrmBackupReminder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmBencoSetup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmCountyEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDatePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDecimalSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDiseaseEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDrugManufacturerEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmDrugUnitEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmEmailMasterTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmEmployerEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Frms\FrmExternalLink.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmFaqEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmFaqVersionPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmFeeSchedEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmGradingScaleItemEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Frms\FrmInsFilingCodeSubtypeEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmInsPlanSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmInsSelectSubscr.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmLogoffWarning.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmOrthoChartAddDate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmOrthoChartTabEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPatientEditEmail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPayPlansClose.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPopupAudit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmPopupEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmProviderIdentEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmProviderPick.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmQuickPaste.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmQuickPasteCat.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmQuickPasteNoteEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmRecallMessageEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmRefAttachEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmReferralEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmReferralSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmReferralsPatient.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmSheetFieldGridType.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmSheetPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmSheetSetup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmShortCodeOptIn.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmSiteEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Frms\FrmSiteLinkEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmSites.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmSupplyNeededEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmTaskFilter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Frms\FrmTestFilters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmTestAllControls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmTestCombos.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmTestSplitters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmUserGroupEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmUserGroupPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmUserPick.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmUserSetting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmWikiListAdvancedSearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmWikiRename.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmWikiSetup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmWikiTableHeaders.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmTestGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmZipCodeEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmZipCodes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmTestFocusTabbing.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmZipSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmZoom.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmMsgBoxCopyPaste.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Frms\InputBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\TabControlDict.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="UI\Controls\DatePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ImagingModule\UnmountedBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ImagingModule\WindowingSlider.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ImagingModule\ZoomSlider.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ImagingModule\ImageSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\MonthCalendar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ComboClinic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\PictureBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextPassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\DatabaseIntegrity\WarningIntegrity.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\RadioButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\Grid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\Supplemental\WindowMonthCalendar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextVTime.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\WebBrowser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TreeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextRich.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextVInt.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextVDouble.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ToolBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\Menu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\CheckBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\Label.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\DataGridDict.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Controls\LinkLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TextVDate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\ToolBarButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Controls\TestContr.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Frame\FrmODBase.cs" />
+    <Compile Include="Frms\FrmTestAllControls.xaml.cs">
+      <DependentUpon>FrmTestAllControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ComboBox.xaml.cs">
+      <DependentUpon>ComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TabControl.cs" />
+    <Compile Include="UI\Controls\GroupBox.cs" />
+    <Compile Include="UI\Controls\TabPage.cs" />
+    <Compile Include="UI\Controls\TextVInt.xaml.cs">
+      <DependentUpon>TextVInt.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TextVDouble.xaml.cs">
+      <DependentUpon>TextVDouble.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialogs\FrmColorDialog.xaml.cs">
+      <DependentUpon>FrmColorDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\IconLibrary\Gen_Add.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ArrowLeft.cs" />
+    <Compile Include="UI\IconLibrary\Gen_ArrowRight.cs" />
+    <Compile Include="UI\IconLibrary\Gen_CommLog.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Complete.cs" />
+    <Compile Include="UI\IconLibrary\Gen_DeleteX.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Email.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Patient.cs" />
+    <Compile Include="UI\IconLibrary\Gen_PatSelect.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Recall.cs" />
+    <Compile Include="UI\IconLibrary\Gen_Text.cs" />
+    <Compile Include="UI\IconLibrary\IconLibrary.cs" />
+    <Compile Include="UI\IconLibrary\IconSelector.cs" />
+    <Compile Include="UI\Controls\ToolBar.xaml.cs">
+      <DependentUpon>ToolBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\Menu.xaml.cs">
+      <DependentUpon>Menu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\Supplemental\GridCell.cs" />
+    <Compile Include="UI\Controls\Supplemental\GridColumn.cs" />
+    <Compile Include="UI\Controls\Supplemental\GridRow.cs" />
+    <Compile Include="UI\Controls\CheckBox.xaml.cs">
+      <DependentUpon>CheckBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\Label.xaml.cs">
+      <DependentUpon>Label.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ListBox.xaml.cs">
+      <DependentUpon>ListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\LinkLabel.xaml.cs">
+      <DependentUpon>LinkLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\MenuItem.cs" />
+    <Compile Include="UI\Dialogs\MsgBox.cs" />
+    <Compile Include="UI\Controls\TextBox.xaml.cs">
+      <DependentUpon>TextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TextVDate.xaml.cs">
+      <DependentUpon>TextVDate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\Button.xaml.cs">
+      <DependentUpon>Button.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\ToolBarButton.xaml.cs">
+      <DependentUpon>ToolBarButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\TestContr.xaml.cs">
+      <DependentUpon>TestContr.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="UI\Controls\Supplemental\WindowComboPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Controls\ToolTip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Dialogs\FrmColorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Progress\FrmProgressAuto.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Frame\FormFrame.resx">
+      <DependentUpon>FormFrame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frame\FormSnap.resx">
+      <DependentUpon>FormSnap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\en_US_aff" />
+    <None Include="Resources\en_US_dic" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Unversioned\VirtualWeb\VirtualWeb.csproj">
+      <Project>{4ED3DF2F-E97E-4BC3-AE5F-AA31A11AF57F}</Project>
+      <Name>VirtualWeb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CDT\xCDT.csproj">
+      <Project>{76ba82e6-d8e1-45b1-8ed6-41d97b8d67ec}</Project>
+      <Name>xCDT</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenDentalHelp\OpenDentalHelp\OpenDentalHelp.csproj">
+      <Project>{98b2999c-8a9f-4795-b452-7f6231ed56b4}</Project>
+      <Name>OpenDentalHelp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
+      <Project>{18f7bc78-4b99-48d3-a1f1-0d13a63e3cf9}</Project>
+      <Name>xCodeBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
+      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
+      <Name>xDataConnectionBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
+      <Project>{3d0fc76e-803c-4de2-bdb1-47d63a4e2357}</Project>
+      <Name>OpenDentBusiness</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SparksToothChart\SparksToothChart.csproj">
+      <Project>{033b77f4-2e98-49a7-901f-5f388dedf83e}</Project>
+      <Name>SparksToothChart</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\editPencil.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\up.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\down.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ExternalLink.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Bullets_24x24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CursorDrag.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\printSmall.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Midway_Icon_22x22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\PracticeBooster.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

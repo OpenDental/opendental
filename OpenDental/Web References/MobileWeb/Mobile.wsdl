@@ -1,0 +1,1636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://opendental.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://opendental.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://opendental.com/">
+      <s:element name="ServiceExists">
+        <s:complexType />
+      </s:element>
+      <s:element name="ServiceExistsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ServiceExistsResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomerNum">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKeyFromDentalOffice" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCustomerNumResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetCustomerNumResult" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsPaidCustomer">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsPaidCustomerResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsPaidCustomerResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteObjects">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dOList" type="tns:ArrayOfDeletedObject" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDeletedObject">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DeletedObject" nillable="true" type="tns:DeletedObject" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DeletedObject">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="DeletedObjectNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="ObjectNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="ObjectType" type="tns:DeletedObjectType" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateTStamp" type="s:dateTime" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="TableBase" abstract="true">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsNew" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="DeletedObjectType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Appointment" />
+          <s:enumeration value="ScheduleProv" />
+          <s:enumeration value="RecallPatNum" />
+          <s:enumeration value="RxPat" />
+          <s:enumeration value="LabPanel" />
+          <s:enumeration value="LabResult" />
+          <s:enumeration value="DrugUnit" />
+          <s:enumeration value="Medication" />
+          <s:enumeration value="MedicationPat" />
+          <s:enumeration value="Allergy" />
+          <s:enumeration value="AllergyDef" />
+          <s:enumeration value="Disease" />
+          <s:enumeration value="DiseaseDef" />
+          <s:enumeration value="ICD9" />
+          <s:enumeration value="Provider" />
+          <s:enumeration value="Pharmacy" />
+          <s:enumeration value="Statement" />
+          <s:enumeration value="Document" />
+          <s:enumeration value="Recall" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="DeleteObjectsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="DeleteAllRecords">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteAllRecordsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchPatients">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="patientmList" type="tns:ArrayOfPatientm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfPatientm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Patientm" nillable="true" type="tns:Patientm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Patientm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="LName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="MiddleI" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Preferred" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatStatus" type="tns:PatientStatus" />
+              <s:element minOccurs="1" maxOccurs="1" name="Gender" type="tns:PatientGender" />
+              <s:element minOccurs="1" maxOccurs="1" name="Position" type="tns:PatientPosition" />
+              <s:element minOccurs="1" maxOccurs="1" name="Birthdate" type="s:dateTime" />
+              <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Zip" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="HmPhone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="WkPhone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="WirelessPhone" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="Guarantor" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="Age" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="AddrNote" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ClinicNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="InsEst" type="s:double" />
+              <s:element minOccurs="1" maxOccurs="1" name="BalTotal" type="s:double" />
+              <s:element minOccurs="1" maxOccurs="1" name="PreferContactMethod" type="tns:ContactMethod" />
+              <s:element minOccurs="0" maxOccurs="1" name="OnlinePassword" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:simpleType name="PatientStatus">
+        <s:restriction base="s:string">
+          <s:enumeration value="Patient" />
+          <s:enumeration value="NonPatient" />
+          <s:enumeration value="Inactive" />
+          <s:enumeration value="Archived" />
+          <s:enumeration value="Deleted" />
+          <s:enumeration value="Deceased" />
+          <s:enumeration value="Prospective" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="PatientGender">
+        <s:restriction base="s:string">
+          <s:enumeration value="Male" />
+          <s:enumeration value="Female" />
+          <s:enumeration value="Unknown" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="PatientPosition">
+        <s:restriction base="s:string">
+          <s:enumeration value="Single" />
+          <s:enumeration value="Married" />
+          <s:enumeration value="Child" />
+          <s:enumeration value="Widowed" />
+          <s:enumeration value="Divorced" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="ContactMethod">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="DoNotCall" />
+          <s:enumeration value="HmPhone" />
+          <s:enumeration value="WkPhone" />
+          <s:enumeration value="WirelessPh" />
+          <s:enumeration value="Email" />
+          <s:enumeration value="SeeNotes" />
+          <s:enumeration value="Mail" />
+          <s:enumeration value="TextMessage" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SynchPatientsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchAppointments">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appointmentList" type="tns:ArrayOfAppointmentm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAppointmentm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Appointmentm" nillable="true" type="tns:Appointmentm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Appointmentm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="AptNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="AptStatus" type="tns:ApptStatus" />
+              <s:element minOccurs="0" maxOccurs="1" name="Pattern" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="Confirmed" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="Op" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="Note" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProvNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProvHyg" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="AptDateTime" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsNewPatient" type="s:boolean" />
+              <s:element minOccurs="0" maxOccurs="1" name="ProcDescript" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ClinicNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsHygiene" type="s:boolean" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:simpleType name="ApptStatus">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="Scheduled" />
+          <s:enumeration value="Complete" />
+          <s:enumeration value="UnschedList" />
+          <s:enumeration value="ASAP" />
+          <s:enumeration value="Broken" />
+          <s:enumeration value="Planned" />
+          <s:enumeration value="PtNote" />
+          <s:enumeration value="PtNoteCompleted" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SynchAppointmentsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchPrescriptions">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="rxList" type="tns:ArrayOfRxPatm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfRxPatm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RxPatm" nillable="true" type="tns:RxPatm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RxPatm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="RxNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="RxDate" type="s:dateTime" />
+              <s:element minOccurs="0" maxOccurs="1" name="Drug" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Sig" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Disp" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Refills" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProvNum" type="s:long" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchPrescriptionsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchProviders">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="providerList" type="tns:ArrayOfProviderm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfProviderm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Providerm" nillable="true" type="tns:Providerm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Providerm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProvNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="Abbr" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsSecondary" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProvColor" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchProvidersResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchPharmacies">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pharmacyList" type="tns:ArrayOfPharmacym" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfPharmacym">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Pharmacym" nillable="true" type="tns:Pharmacym" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Pharmacym">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PharmacyNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="StoreName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Phone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Fax" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Zip" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Note" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchPharmaciesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetUserName">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserNameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserNameResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetMobileWebUserPassword">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetMobileWebUserPasswordResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SetPracticeTitle">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PracticeTitle" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetPracticeTitleResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SetPreference">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="prefm" type="tns:Prefm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Prefm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PrefNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="PrefmName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ValueString" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SetPreferenceResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetPatientPortalAddress">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPatientPortalAddressResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPatientPortalAddressResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SynchLabPanels">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="labPanelmList" type="tns:ArrayOfLabPanelm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfLabPanelm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="LabPanelm" nillable="true" type="tns:LabPanelm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="LabPanelm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="LabPanelNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="LabNameAddress" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="SpecimenCondition" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="SpecimenSource" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ServiceId" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ServiceName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="MedicalOrderNum" type="s:long" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchLabPanelsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchLabResults">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="labResultmList" type="tns:ArrayOfLabResultm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfLabResultm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="LabResultm" nillable="true" type="tns:LabResultm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="LabResultm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="LabResultNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="LabPanelNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateTimeTest" type="s:dateTime" />
+              <s:element minOccurs="0" maxOccurs="1" name="TestName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="TestID" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ObsValue" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ObsUnits" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ObsRange" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="AbnormalFlag" type="tns:LabAbnormalFlag" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:simpleType name="LabAbnormalFlag">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="Below" />
+          <s:enumeration value="Normal" />
+          <s:enumeration value="Above" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SynchLabResultsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchMedications">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="medicationmList" type="tns:ArrayOfMedicationm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfMedicationm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Medicationm" nillable="true" type="tns:Medicationm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Medicationm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="MedicationNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="MedName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="GenericNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="RxCui" type="s:long" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchMedicationsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchMedicationPats">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="medicationPatList" type="tns:ArrayOfMedicationPatm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfMedicationPatm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MedicationPatm" nillable="true" type="tns:MedicationPatm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MedicationPatm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="MedicationPatNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="MedicationNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="PatNote" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateStart" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateStop" type="s:dateTime" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchMedicationPatsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchAllergies">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="allergyList" type="tns:ArrayOfAllergym" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAllergym">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Allergym" nillable="true" type="tns:Allergym" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Allergym">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="AllergyNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="AllergyDefNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="Reaction" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="StatusIsActive" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateAdverseReaction" type="s:dateTime" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchAllergiesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchAllergyDefs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="allergyDefList" type="tns:ArrayOfAllergyDefm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAllergyDefm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AllergyDefm" nillable="true" type="tns:AllergyDefm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AllergyDefm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="AllergyDefNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="Snomed" type="tns:SnomedAllergy" />
+              <s:element minOccurs="1" maxOccurs="1" name="MedicationNum" type="s:long" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:simpleType name="SnomedAllergy">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="AllergyToSubstance" />
+          <s:enumeration value="DrugAllergy" />
+          <s:enumeration value="DrugIntolerance" />
+          <s:enumeration value="FoodAllergy" />
+          <s:enumeration value="FoodIntolerance" />
+          <s:enumeration value="AdverseReactions" />
+          <s:enumeration value="AdverseReactionsToDrug" />
+          <s:enumeration value="AdverseReactionsToFood" />
+          <s:enumeration value="AdverseReactionsToSubstance" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SynchAllergyDefsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchDiseases">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="diseaseList" type="tns:ArrayOfDiseasem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDiseasem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Diseasem" nillable="true" type="tns:Diseasem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Diseasem">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="DiseaseNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="DiseaseDefNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="PatNote" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ICD9Num" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProbStatus" type="tns:ProblemStatus" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateStart" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateStop" type="s:dateTime" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:simpleType name="ProblemStatus">
+        <s:restriction base="s:string">
+          <s:enumeration value="Active" />
+          <s:enumeration value="Resolved" />
+          <s:enumeration value="Inactive" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SynchDiseasesResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchDiseaseDefs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="diseaseDefList" type="tns:ArrayOfDiseaseDefm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDiseaseDefm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DiseaseDefm" nillable="true" type="tns:DiseaseDefm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DiseaseDefm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="DiseaseDefNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="DiseaseName" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchDiseaseDefsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchICD9s">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="icd9List" type="tns:ArrayOfICD9m" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfICD9m">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ICD9m" nillable="true" type="tns:ICD9m" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ICD9m">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="ICD9Num" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="ICD9Code" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchICD9sResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchStatements">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="statementList" type="tns:ArrayOfStatementm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfStatementm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Statementm" nillable="true" type="tns:Statementm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Statementm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="StatementNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateSent" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DocNum" type="s:long" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchStatementsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchDocuments">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="documentList" type="tns:ArrayOfDocumentm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfDocumentm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Documentm" nillable="true" type="tns:Documentm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Documentm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="DocNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="RawBase64" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchDocumentsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="SynchRecalls">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="recallList" type="tns:ArrayOfRecallm" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfRecallm">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Recallm" nillable="true" type="tns:Recallm" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Recallm">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TableBase">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="CustomerNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="RecallNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="PatNum" type="s:long" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateDue" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DatePrevious" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="RecallStatus" type="s:long" />
+              <s:element minOccurs="0" maxOccurs="1" name="Note" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsDisabled" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="DisableUntilBalance" type="s:double" />
+              <s:element minOccurs="1" maxOccurs="1" name="DisableUntilDate" type="s:dateTime" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="SynchRecallsResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="DeletePatientsRecords">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RegistrationKey" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="patNumList" type="tns:ArrayOfLong" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfLong">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="long" type="s:long" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="DeletePatientsRecordsResponse">
+        <s:complexType />
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ServiceExistsSoapIn">
+    <wsdl:part name="parameters" element="tns:ServiceExists" />
+  </wsdl:message>
+  <wsdl:message name="ServiceExistsSoapOut">
+    <wsdl:part name="parameters" element="tns:ServiceExistsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomerNumSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCustomerNum" />
+  </wsdl:message>
+  <wsdl:message name="GetCustomerNumSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCustomerNumResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsPaidCustomerSoapIn">
+    <wsdl:part name="parameters" element="tns:IsPaidCustomer" />
+  </wsdl:message>
+  <wsdl:message name="IsPaidCustomerSoapOut">
+    <wsdl:part name="parameters" element="tns:IsPaidCustomerResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteObjectsSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteObjects" />
+  </wsdl:message>
+  <wsdl:message name="DeleteObjectsSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteObjectsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteAllRecordsSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteAllRecords" />
+  </wsdl:message>
+  <wsdl:message name="DeleteAllRecordsSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteAllRecordsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchPatientsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchPatients" />
+  </wsdl:message>
+  <wsdl:message name="SynchPatientsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchPatientsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchAppointmentsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchAppointments" />
+  </wsdl:message>
+  <wsdl:message name="SynchAppointmentsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchAppointmentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchPrescriptionsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchPrescriptions" />
+  </wsdl:message>
+  <wsdl:message name="SynchPrescriptionsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchPrescriptionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchProvidersSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchProviders" />
+  </wsdl:message>
+  <wsdl:message name="SynchProvidersSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchProvidersResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchPharmaciesSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchPharmacies" />
+  </wsdl:message>
+  <wsdl:message name="SynchPharmaciesSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchPharmaciesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserNameSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserName" />
+  </wsdl:message>
+  <wsdl:message name="GetUserNameSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetMobileWebUserPasswordSoapIn">
+    <wsdl:part name="parameters" element="tns:SetMobileWebUserPassword" />
+  </wsdl:message>
+  <wsdl:message name="SetMobileWebUserPasswordSoapOut">
+    <wsdl:part name="parameters" element="tns:SetMobileWebUserPasswordResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetPracticeTitleSoapIn">
+    <wsdl:part name="parameters" element="tns:SetPracticeTitle" />
+  </wsdl:message>
+  <wsdl:message name="SetPracticeTitleSoapOut">
+    <wsdl:part name="parameters" element="tns:SetPracticeTitleResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetPreferenceSoapIn">
+    <wsdl:part name="parameters" element="tns:SetPreference" />
+  </wsdl:message>
+  <wsdl:message name="SetPreferenceSoapOut">
+    <wsdl:part name="parameters" element="tns:SetPreferenceResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientPortalAddressSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPatientPortalAddress" />
+  </wsdl:message>
+  <wsdl:message name="GetPatientPortalAddressSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPatientPortalAddressResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchLabPanelsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchLabPanels" />
+  </wsdl:message>
+  <wsdl:message name="SynchLabPanelsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchLabPanelsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchLabResultsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchLabResults" />
+  </wsdl:message>
+  <wsdl:message name="SynchLabResultsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchLabResultsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchMedicationsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchMedications" />
+  </wsdl:message>
+  <wsdl:message name="SynchMedicationsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchMedicationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchMedicationPatsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchMedicationPats" />
+  </wsdl:message>
+  <wsdl:message name="SynchMedicationPatsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchMedicationPatsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchAllergiesSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchAllergies" />
+  </wsdl:message>
+  <wsdl:message name="SynchAllergiesSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchAllergiesResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchAllergyDefsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchAllergyDefs" />
+  </wsdl:message>
+  <wsdl:message name="SynchAllergyDefsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchAllergyDefsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchDiseasesSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchDiseases" />
+  </wsdl:message>
+  <wsdl:message name="SynchDiseasesSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchDiseasesResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchDiseaseDefsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchDiseaseDefs" />
+  </wsdl:message>
+  <wsdl:message name="SynchDiseaseDefsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchDiseaseDefsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchICD9sSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchICD9s" />
+  </wsdl:message>
+  <wsdl:message name="SynchICD9sSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchICD9sResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchStatementsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchStatements" />
+  </wsdl:message>
+  <wsdl:message name="SynchStatementsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchStatementsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchDocumentsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchDocuments" />
+  </wsdl:message>
+  <wsdl:message name="SynchDocumentsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchDocumentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="SynchRecallsSoapIn">
+    <wsdl:part name="parameters" element="tns:SynchRecalls" />
+  </wsdl:message>
+  <wsdl:message name="SynchRecallsSoapOut">
+    <wsdl:part name="parameters" element="tns:SynchRecallsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeletePatientsRecordsSoapIn">
+    <wsdl:part name="parameters" element="tns:DeletePatientsRecords" />
+  </wsdl:message>
+  <wsdl:message name="DeletePatientsRecordsSoapOut">
+    <wsdl:part name="parameters" element="tns:DeletePatientsRecordsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="MobileSoap">
+    <wsdl:operation name="ServiceExists">
+      <wsdl:input message="tns:ServiceExistsSoapIn" />
+      <wsdl:output message="tns:ServiceExistsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerNum">
+      <wsdl:input message="tns:GetCustomerNumSoapIn" />
+      <wsdl:output message="tns:GetCustomerNumSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsPaidCustomer">
+      <wsdl:input message="tns:IsPaidCustomerSoapIn" />
+      <wsdl:output message="tns:IsPaidCustomerSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteObjects">
+      <wsdl:input message="tns:DeleteObjectsSoapIn" />
+      <wsdl:output message="tns:DeleteObjectsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteAllRecords">
+      <wsdl:input message="tns:DeleteAllRecordsSoapIn" />
+      <wsdl:output message="tns:DeleteAllRecordsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchPatients">
+      <wsdl:input message="tns:SynchPatientsSoapIn" />
+      <wsdl:output message="tns:SynchPatientsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchAppointments">
+      <wsdl:input message="tns:SynchAppointmentsSoapIn" />
+      <wsdl:output message="tns:SynchAppointmentsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchPrescriptions">
+      <wsdl:input message="tns:SynchPrescriptionsSoapIn" />
+      <wsdl:output message="tns:SynchPrescriptionsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchProviders">
+      <wsdl:input message="tns:SynchProvidersSoapIn" />
+      <wsdl:output message="tns:SynchProvidersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchPharmacies">
+      <wsdl:input message="tns:SynchPharmaciesSoapIn" />
+      <wsdl:output message="tns:SynchPharmaciesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserName">
+      <wsdl:input message="tns:GetUserNameSoapIn" />
+      <wsdl:output message="tns:GetUserNameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetMobileWebUserPassword">
+      <wsdl:input message="tns:SetMobileWebUserPasswordSoapIn" />
+      <wsdl:output message="tns:SetMobileWebUserPasswordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetPracticeTitle">
+      <wsdl:input message="tns:SetPracticeTitleSoapIn" />
+      <wsdl:output message="tns:SetPracticeTitleSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetPreference">
+      <wsdl:input message="tns:SetPreferenceSoapIn" />
+      <wsdl:output message="tns:SetPreferenceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientPortalAddress">
+      <wsdl:input message="tns:GetPatientPortalAddressSoapIn" />
+      <wsdl:output message="tns:GetPatientPortalAddressSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchLabPanels">
+      <wsdl:input message="tns:SynchLabPanelsSoapIn" />
+      <wsdl:output message="tns:SynchLabPanelsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchLabResults">
+      <wsdl:input message="tns:SynchLabResultsSoapIn" />
+      <wsdl:output message="tns:SynchLabResultsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchMedications">
+      <wsdl:input message="tns:SynchMedicationsSoapIn" />
+      <wsdl:output message="tns:SynchMedicationsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchMedicationPats">
+      <wsdl:input message="tns:SynchMedicationPatsSoapIn" />
+      <wsdl:output message="tns:SynchMedicationPatsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchAllergies">
+      <wsdl:input message="tns:SynchAllergiesSoapIn" />
+      <wsdl:output message="tns:SynchAllergiesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchAllergyDefs">
+      <wsdl:input message="tns:SynchAllergyDefsSoapIn" />
+      <wsdl:output message="tns:SynchAllergyDefsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchDiseases">
+      <wsdl:input message="tns:SynchDiseasesSoapIn" />
+      <wsdl:output message="tns:SynchDiseasesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchDiseaseDefs">
+      <wsdl:input message="tns:SynchDiseaseDefsSoapIn" />
+      <wsdl:output message="tns:SynchDiseaseDefsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchICD9s">
+      <wsdl:input message="tns:SynchICD9sSoapIn" />
+      <wsdl:output message="tns:SynchICD9sSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchStatements">
+      <wsdl:input message="tns:SynchStatementsSoapIn" />
+      <wsdl:output message="tns:SynchStatementsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchDocuments">
+      <wsdl:input message="tns:SynchDocumentsSoapIn" />
+      <wsdl:output message="tns:SynchDocumentsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SynchRecalls">
+      <wsdl:input message="tns:SynchRecallsSoapIn" />
+      <wsdl:output message="tns:SynchRecallsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeletePatientsRecords">
+      <wsdl:input message="tns:DeletePatientsRecordsSoapIn" />
+      <wsdl:output message="tns:DeletePatientsRecordsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MobileSoap" type="tns:MobileSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ServiceExists">
+      <soap:operation soapAction="http://opendental.com/ServiceExists" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerNum">
+      <soap:operation soapAction="http://opendental.com/GetCustomerNum" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsPaidCustomer">
+      <soap:operation soapAction="http://opendental.com/IsPaidCustomer" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteObjects">
+      <soap:operation soapAction="http://opendental.com/DeleteObjects" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteAllRecords">
+      <soap:operation soapAction="http://opendental.com/DeleteAllRecords" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchPatients">
+      <soap:operation soapAction="http://opendental.com/SynchPatients" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchAppointments">
+      <soap:operation soapAction="http://opendental.com/SynchAppointments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchPrescriptions">
+      <soap:operation soapAction="http://opendental.com/SynchPrescriptions" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchProviders">
+      <soap:operation soapAction="http://opendental.com/SynchProviders" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchPharmacies">
+      <soap:operation soapAction="http://opendental.com/SynchPharmacies" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserName">
+      <soap:operation soapAction="http://opendental.com/GetUserName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetMobileWebUserPassword">
+      <soap:operation soapAction="http://opendental.com/SetMobileWebUserPassword" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetPracticeTitle">
+      <soap:operation soapAction="http://opendental.com/SetPracticeTitle" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetPreference">
+      <soap:operation soapAction="http://opendental.com/SetPreference" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientPortalAddress">
+      <soap:operation soapAction="http://opendental.com/GetPatientPortalAddress" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchLabPanels">
+      <soap:operation soapAction="http://opendental.com/SynchLabPanels" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchLabResults">
+      <soap:operation soapAction="http://opendental.com/SynchLabResults" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchMedications">
+      <soap:operation soapAction="http://opendental.com/SynchMedications" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchMedicationPats">
+      <soap:operation soapAction="http://opendental.com/SynchMedicationPats" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchAllergies">
+      <soap:operation soapAction="http://opendental.com/SynchAllergies" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchAllergyDefs">
+      <soap:operation soapAction="http://opendental.com/SynchAllergyDefs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchDiseases">
+      <soap:operation soapAction="http://opendental.com/SynchDiseases" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchDiseaseDefs">
+      <soap:operation soapAction="http://opendental.com/SynchDiseaseDefs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchICD9s">
+      <soap:operation soapAction="http://opendental.com/SynchICD9s" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchStatements">
+      <soap:operation soapAction="http://opendental.com/SynchStatements" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchDocuments">
+      <soap:operation soapAction="http://opendental.com/SynchDocuments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchRecalls">
+      <soap:operation soapAction="http://opendental.com/SynchRecalls" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeletePatientsRecords">
+      <soap:operation soapAction="http://opendental.com/DeletePatientsRecords" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MobileSoap12" type="tns:MobileSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ServiceExists">
+      <soap12:operation soapAction="http://opendental.com/ServiceExists" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCustomerNum">
+      <soap12:operation soapAction="http://opendental.com/GetCustomerNum" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsPaidCustomer">
+      <soap12:operation soapAction="http://opendental.com/IsPaidCustomer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteObjects">
+      <soap12:operation soapAction="http://opendental.com/DeleteObjects" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteAllRecords">
+      <soap12:operation soapAction="http://opendental.com/DeleteAllRecords" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchPatients">
+      <soap12:operation soapAction="http://opendental.com/SynchPatients" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchAppointments">
+      <soap12:operation soapAction="http://opendental.com/SynchAppointments" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchPrescriptions">
+      <soap12:operation soapAction="http://opendental.com/SynchPrescriptions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchProviders">
+      <soap12:operation soapAction="http://opendental.com/SynchProviders" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchPharmacies">
+      <soap12:operation soapAction="http://opendental.com/SynchPharmacies" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserName">
+      <soap12:operation soapAction="http://opendental.com/GetUserName" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetMobileWebUserPassword">
+      <soap12:operation soapAction="http://opendental.com/SetMobileWebUserPassword" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetPracticeTitle">
+      <soap12:operation soapAction="http://opendental.com/SetPracticeTitle" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetPreference">
+      <soap12:operation soapAction="http://opendental.com/SetPreference" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPatientPortalAddress">
+      <soap12:operation soapAction="http://opendental.com/GetPatientPortalAddress" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchLabPanels">
+      <soap12:operation soapAction="http://opendental.com/SynchLabPanels" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchLabResults">
+      <soap12:operation soapAction="http://opendental.com/SynchLabResults" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchMedications">
+      <soap12:operation soapAction="http://opendental.com/SynchMedications" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchMedicationPats">
+      <soap12:operation soapAction="http://opendental.com/SynchMedicationPats" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchAllergies">
+      <soap12:operation soapAction="http://opendental.com/SynchAllergies" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchAllergyDefs">
+      <soap12:operation soapAction="http://opendental.com/SynchAllergyDefs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchDiseases">
+      <soap12:operation soapAction="http://opendental.com/SynchDiseases" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchDiseaseDefs">
+      <soap12:operation soapAction="http://opendental.com/SynchDiseaseDefs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchICD9s">
+      <soap12:operation soapAction="http://opendental.com/SynchICD9s" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchStatements">
+      <soap12:operation soapAction="http://opendental.com/SynchStatements" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchDocuments">
+      <soap12:operation soapAction="http://opendental.com/SynchDocuments" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SynchRecalls">
+      <soap12:operation soapAction="http://opendental.com/SynchRecalls" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeletePatientsRecords">
+      <soap12:operation soapAction="http://opendental.com/DeletePatientsRecords" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Mobile">
+    <wsdl:port name="MobileSoap" binding="tns:MobileSoap">
+      <soap:address location="http://localhost:2923/Mobile.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MobileSoap12" binding="tns:MobileSoap12">
+      <soap12:address location="http://localhost:2923/Mobile.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,28 @@
+<local:FrmODBase x:Class="OpenDental.FrmApptLists"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="666" Height="494" 
+             Text="Appointment Lists" MinMaxBoxes="False">
+    <Grid Background="#FFFCFDFE" >
+        <ui:Button x:Name="butInsVerify" Width="100" Height="26" Margin="28,386,0,0" Text="Ins Verify" Click="butInsVerify_Click" />
+        <ui:Label x:Name="label8" Width="479" Height="47" Margin="130,391,0,0" Text="A list of insurance verifications for upcoming appointments." />
+        <ui:Button x:Name="butRadOrders" Width="100" Height="26" Margin="28,332,0,0" Text="Radiology" Click="butRadOrders_Click" />
+        <ui:Label x:Name="label7" Width="479" Height="47" Margin="130,324,0,0" Text="A list of radiology orders associated to appointments that have not been marked as CPOE.  This list allows providers to quickly approve radiology orders which will help meet EHR measures." />
+        <ui:Button x:Name="butASAP" Width="100" Height="26" Margin="28,278,0,0" Text="ASAP" Click="butASAP_Click" />
+        <ui:Label x:Name="label4" Width="491" Height="54" Margin="130,269,0,0" Text="The short call list. A list of appointments and unscheduled recalls where the patient is available on short notice. To show this list, the &quot;ASAP&quot; checkbox must be checked on the appointment or on the Recalls for Patient." />
+        <ui:Button x:Name="butUnsched" Width="100" Height="26" Margin="28,224,0,0" Text="Unscheduled" Click="butUnsched_Click" />
+        <ui:Button x:Name="butPlanned" Width="100" Height="26" Margin="28,170,0,0" Text="Planned Tracker" Click="butPlanned_Click" />
+        <ui:Button x:Name="butConfirm" Width="100" Height="26" Margin="28,116,0,0" Text="Confirmations" Click="butConfirm_Click" />
+        <ui:Button x:Name="butRecall" Width="100" Height="26" Margin="28,62,0,0" Text="Recall" Click="butRecall_Click" />
+        <ui:Label x:Name="label6" Width="519" Height="31" Margin="27,19,0,0" Text="These lists may be used for calling patients, sending postcards, running reports, etc..  Make sure to make good Commlog entries for everything." VAlign="Bottom" />
+        <ui:Label x:Name="label5" Width="479" Height="48" Margin="130,216,0,0" Text="A short list of appointments that need to be followed up on.   Keep this list short by deleting any that don't get scheduled quickly.  You would then track them using the Planned Appointment Tracker." />
+        <ui:Label x:Name="label3" Width="479" Height="47" Margin="130,170,0,0" Text="Planned appointments are created in the Chart module.  Every patient should have one or be marked done.  This list is work that has been planned but never scheduled." />
+        <ui:Label x:Name="label2" Width="479" Height="31" Margin="130,114,0,0" Text="A list of scheduled appointments.  These patients need to be reminded about their appointments." />
+        <ui:Label x:Name="label1" Width="479" Height="34" Margin="130,67,0,0" Text="A list of due dates for patients who have previously been in for an exam or cleaning." />
+    </Grid>
+</local:FrmODBase>

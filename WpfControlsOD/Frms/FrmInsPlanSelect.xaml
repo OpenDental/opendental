@@ -1,0 +1,36 @@
+<local:FrmODBase x:Class="OpenDental.FrmInsPlanSelect"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="987" Height="696" 
+             Text="Insurance Plans" >
+	<Grid Background="#FFFCFDFE" >
+        <ui:GroupBox x:Name="groupBox1" Width="960" Height="61" Margin="12,12,0,0" Text="Filter" >
+            <ui:TextBox x:Name="textEmployer" Width="140" Height="20" Margin="84,14,0,0" />
+            <ui:Button x:Name="butGetAll" Width="75" Height="24" Margin="854,12,0,0" Text="Get All" Click="butGetAll_Click" />
+            <ui:TextBox x:Name="textPlanNum" Width="140" Height="20" Margin="540,36,0,0" />
+            <ui:Label x:Name="labelEmployer" Width="76" Height="17" Margin="6,16,0,0" Text="Employer" HAlign="Right" VAlign="Center" />
+            <ui:CheckBox x:Name="checkShowHidden" Width="93" Height="20" Margin="837,37,0,0" Text="Show Hidden" CheckAlign="MiddleRight" />
+            <ui:Label x:Name="labelInsPlanID" Width="81" Height="17" Margin="457,38,0,0" Text="Ins Plan ID" HAlign="Right" VAlign="Center" />
+            <ui:TextBox x:Name="textCarrier" Width="140" Height="20" Margin="311,15,0,0" />
+            <ui:Label x:Name="labelCarrier" Width="79" Height="17" Margin="230,17,0,0" Text="Carrier" HAlign="Right" VAlign="Center" />
+            <ui:GroupBox x:Name="groupBox2" Width="148" Height="44" Margin="688,12,0,0" Text="Order By" >
+                <ui:RadioButton x:Name="radioOrderCarrier" Width="65" Height="18" Margin="80,15,0,0" Text="Carrier" CheckAlign="MiddleLeft" />
+                <ui:RadioButton x:Name="radioOrderEmp" Width="77" Height="18" Margin="6,15,0,0" Text="Employer" CheckAlign="MiddleLeft" Checked="True" />
+            </ui:GroupBox>
+            <ui:TextBox x:Name="textGroupName" Width="140" Height="20" Margin="311,36,0,0" />
+            <ui:TextBox x:Name="textGroupNum" Width="140" Height="20" Margin="84,35,0,0" />
+            <ui:TextBox x:Name="textTrojanID" Width="140" Height="20" Margin="540,15,0,0" />
+            <ui:Label x:Name="labelGroupName" Width="78" Height="17" Margin="231,36,0,0" Text="Group Name" HAlign="Right" VAlign="Center" />
+            <ui:Label x:Name="labelTrojanID" Width="81" Height="17" Margin="457,18,0,0" Text="Trojan ID" HAlign="Right" VAlign="Center" />
+            <ui:Label x:Name="labelGroupNum" Width="76" Height="17" Margin="6,37,0,0" Text="Group Num" HAlign="Right" VAlign="Center" />
+        </ui:GroupBox>
+        <ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="11,79,15,39" HScrollVisible="True" SelectionMode="MultiExtended" Title="Insurance Plans" TranslationName="TableInsurancePlans" />
+		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="78" VerticalAlignment="Bottom" Height="24" Margin="0,0,15,8" Text="_OK" Click="butOK_Click" />
+		<ui:Button x:Name="butBlank" Width="87" VerticalAlignment="Bottom" Height="24" Margin="427,0,0,8" Text="Blank Plan" Click="butBlank_Click" />
+	</Grid>
+</local:FrmODBase>

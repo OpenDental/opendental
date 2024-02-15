@@ -1,0 +1,16 @@
+<local:FrmODBase x:Class="OpenDental.FrmPatientEditEmail"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="440" Height="168" 
+             Text="Edit Email Addresses" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="labelCharsRemaining" Width="260" VerticalAlignment="Bottom" Height="18" Margin="9,0,0,16" Text="Characters remaining: 100" VAlign="Center" />
+		<ui:TextBox x:Name="textEmail" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,12,42" IsMultiline="True" TabIndexOD="4" MaxLength="100" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

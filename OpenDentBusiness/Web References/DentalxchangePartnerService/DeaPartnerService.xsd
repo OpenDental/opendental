@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="dxci.common" elementFormDefault="qualified" targetNamespace="dxci.common" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Credentials" type="tns:Credentials" />
+  <xs:complexType name="Credentials">
+    <xs:sequence>
+      <xs:element name="Client" type="xs:string" />
+      <xs:element name="ServiceID" type="xs:string" />
+      <xs:element minOccurs="0" name="Username" type="xs:string" />
+      <xs:element minOccurs="0" name="Password" type="xs:string" />
+      <xs:element minOccurs="0" name="SecurityToken" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="Response" abstract="true">
+    <xs:sequence>
+      <xs:element name="Status" type="tns:Status" />
+      <xs:element minOccurs="0" name="Messages">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="Message" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Status">
+    <xs:sequence />
+    <xs:attribute name="code" type="xs:int" use="required" />
+    <xs:attribute name="description" type="xs:string" use="required" />
+  </xs:complexType>
+</xs:schema>

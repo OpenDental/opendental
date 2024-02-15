@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="dxci.dea" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" name="DeaPartnerService" targetNamespace="dxci.dea" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://prelive2.dentalxchange.com:443/dea/DeaPartnerService?xsd=1" namespace="dxci.dea" />
+    </xsd:schema>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://prelive2.dentalxchange.com:443/dea/DeaPartnerService?xsd=2" namespace="dxci.common" />
+    </xsd:schema>
+  </types>
+  <message name="openAttachment">
+    <part name="parameters" element="tns:openAttachment" />
+  </message>
+  <message name="openAttachmentResponse">
+    <part name="parameters" element="tns:openAttachmentResponse" />
+  </message>
+  <message name="submitAttachment">
+    <part name="parameters" element="tns:submitAttachment" />
+  </message>
+  <message name="submitAttachmentResponse">
+    <part name="parameters" element="tns:submitAttachmentResponse" />
+  </message>
+  <message name="sendCompleteAttachment">
+    <part name="parameters" element="tns:sendCompleteAttachment" />
+  </message>
+  <message name="sendCompleteAttachmentResponse">
+    <part name="parameters" element="tns:sendCompleteAttachmentResponse" />
+  </message>
+  <message name="addImage">
+    <part name="parameters" element="tns:addImage" />
+  </message>
+  <message name="addImageResponse">
+    <part name="parameters" element="tns:addImageResponse" />
+  </message>
+  <portType name="Dea">
+    <operation name="openAttachment">
+      <input message="tns:openAttachment" />
+      <output message="tns:openAttachmentResponse" />
+    </operation>
+    <operation name="submitAttachment">
+      <input message="tns:submitAttachment" />
+      <output message="tns:submitAttachmentResponse" />
+    </operation>
+    <operation name="sendCompleteAttachment">
+      <input message="tns:sendCompleteAttachment" />
+      <output message="tns:sendCompleteAttachmentResponse" />
+    </operation>
+    <operation name="addImage">
+      <input message="tns:addImage" />
+      <output message="tns:addImageResponse" />
+    </operation>
+  </portType>
+  <binding name="DeaPortBinding" type="tns:Dea">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="openAttachment">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="submitAttachment">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendCompleteAttachment">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="addImage">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="DeaPartnerService">
+    <port name="DeaPort" binding="tns:DeaPortBinding">
+      <soap:address location="https://prelive2.dentalxchange.com:443/dea/DeaPartnerService" />
+    </port>
+  </service>
+</definitions>

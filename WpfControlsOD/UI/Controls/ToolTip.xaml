@@ -1,0 +1,12 @@
+﻿<Window x:Class="WpfControls.UI.ToolTip"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfControls.UI"
+        mc:Ignorable="d"
+        Title="ToolTip" Height="Auto" Width="Auto" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="Manual" SizeToContent="WidthAndHeight">
+	<Border Background="LightYellow" BorderThickness="1" BorderBrush="DarkGray">
+		<TextBlock Name="textBlock" x:FieldModifier="internal" Margin="5,3,5,2" TextWrapping="Wrap" Text="This is example text. The window will resize to match."/>
+	</Border>
+</Window>
