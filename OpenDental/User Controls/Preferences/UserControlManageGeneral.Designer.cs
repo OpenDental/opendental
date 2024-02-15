@@ -46,8 +46,6 @@ namespace OpenDental {
 			this.groupBoxERA = new OpenDental.UI.GroupBox();
 			this.labelWriteOffs = new System.Windows.Forms.Label();
 			this.comboEraWriteoff = new OpenDental.UI.ComboBox();
-			this.textEraNoAutoProcessCarcCodes = new System.Windows.Forms.TextBox();
-			this.labelEraNoAutoProcessCarcCodes = new System.Windows.Forms.Label();
 			this.labelERADefault = new System.Windows.Forms.Label();
 			this.comboEraDefaultPaymentType = new OpenDental.UI.ComboBox();
 			this.labelFWT = new System.Windows.Forms.Label();
@@ -265,8 +263,6 @@ namespace OpenDental {
 			// 
 			this.groupBoxERA.Controls.Add(this.labelWriteOffs);
 			this.groupBoxERA.Controls.Add(this.comboEraWriteoff);
-			this.groupBoxERA.Controls.Add(this.textEraNoAutoProcessCarcCodes);
-			this.groupBoxERA.Controls.Add(this.labelEraNoAutoProcessCarcCodes);
 			this.groupBoxERA.Controls.Add(this.labelERADefault);
 			this.groupBoxERA.Controls.Add(this.comboEraDefaultPaymentType);
 			this.groupBoxERA.Controls.Add(this.labelFWT);
@@ -303,13 +299,7 @@ namespace OpenDental {
 			this.comboEraWriteoff.Name = "comboEraWriteoff";
 			this.comboEraWriteoff.Size = new System.Drawing.Size(130, 21);
 			this.comboEraWriteoff.TabIndex = 301;
-			this.labelEraNoAutoProcessCarcCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelEraNoAutoProcessCarcCodes.Location = new System.Drawing.Point(6, 236);
-			this.labelEraNoAutoProcessCarcCodes.Name = "labelEraNoAutoProcessCarcCodes";
-			this.labelEraNoAutoProcessCarcCodes.Size = new System.Drawing.Size(254, 17);
-			this.labelEraNoAutoProcessCarcCodes.TabIndex = 311;
-			this.labelEraNoAutoProcessCarcCodes.Text = "Don\'t auto-process claims w/ these CARCs";
-			this.labelEraNoAutoProcessCarcCodes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
 			// 
 			// labelERADefault
 			// 
@@ -491,7 +481,5 @@ namespace OpenDental {
 		private UI.ComboBox comboEraCheckPaymentType;
 		private UI.ComboBox comboEraWriteoff;
 		private System.Windows.Forms.Label labelWriteOffs;
-		private System.Windows.Forms.Label labelEraNoAutoProcessCarcCodes;
-		private System.Windows.Forms.TextBox textEraNoAutoProcessCarcCodes;
 	}
 }

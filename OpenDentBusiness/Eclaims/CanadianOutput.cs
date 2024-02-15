@@ -1184,6 +1184,35 @@ namespace OpenDentBusiness.Eclaims {
 						etransAck.CarrierNum=carrierA05.CarrierNum;
 					}
 					Etranss.Update(etransAck);
+					#region Transaction Type Not Supported
+					//Check to see if the response is a Claim Acknowledgement that indicates the ROT transaction type is not supported by the carrier.
+					//The 'original' etrans object should NOT be a Claim Acknowledgement transaction type associated with the ROT request we just sent.
+					//Claim Acknowledgement responses should be associated with the original claim that they are acknowledging.
+					//The carrier 'Canada Life' will always respond in this invalid fashion which causes the program to get stuck in an infinite loop.
+					CCDField[] ccdFieldsArrayErrorCodes=fieldInputter.GetFieldsById("G08");//Error Codes. Up to 10.
+					if(etrans.OfficeSequenceNumber==etranOriginal.OfficeSequenceNumber
+						&& responseFormatVersion=="04"
+						&& fieldA04.valuestr=="11"//Claim Acknowledgement
+						&& fieldInputter.GetFieldById("G05").valuestr=="R"//Rejected
+						&& ccdFieldsArrayErrorCodes.Length > 0)
+					{
+						//For now, only exit out of the retrieval process when there is a specific error code.
+						if(ccdFieldsArrayErrorCodes.Any(x => x.valuestr=="124")) {//Transaction Type not supported by the carrier.
+							string invalidTypeMsg="Invalid outstanding transaction response type returned.";
+							etransAck.Etype=EtransType.AckError;
+							etransAck.Note=invalidTypeMsg;
+							errorMsg=$"{invalidTypeMsg}"
+								+"\r\nThe invalid response was a Claim Acknowledgement transaction type associated with the Request for Outstanding Transaction."
+								+"\r\n  Status: 'R' - Rejected"
+								+"\r\n  Error: '124' - Transaction Type not supported by the carrier.";
+							Etranss.Update(etransAck);
+							etrans.Note="failed";
+							Etranss.Update(etrans);
+							//Throw an application exception like we would for "Invalid outstanding transaction response type returned" above.
+							throw new ApplicationException(errorMsg);
+						}
+					}
+					#endregion
 					if(!exit) {
 						Claim claim=null;
 						if(etransAck.ClaimNum!=0) {

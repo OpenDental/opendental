@@ -183,6 +183,10 @@ End of Checklist================================================================
 			if(webBrowserManual!=null) {
 				url=GetPageTopicFromUrl(webBrowserManual.GetUri().ToString());
 			}
+			if(url.Contains("preferences")) {
+				MsgBox.Show(this,"You cannot alter any Preference faqs. Preferences have a custom information table instead of faqs.");
+				return;
+			}
 			if(!string.IsNullOrWhiteSpace(url)) {
 				programVersion=FormatVersionNumber(webBrowserManual.GetUri().ToString());
 			}
@@ -245,12 +249,20 @@ End of Checklist================================================================
 		}
 
 		private void AddFAQ_Click(object sender,EventArgs e) {
+			string url="";
+			if(webBrowserManual!=null) {
+				url=webBrowserManual.GetUri().ToString();
+			}
+			if(url.Contains("preferences")) {
+				MsgBox.Show(this,"You cannot alter any Preference faqs. Preferences have a custom information table instead of faqs.");
+				return;
+			}
 			FrmFaqEdit frmFaqEdit=new FrmFaqEdit();
 			frmFaqEdit.FaqCur=new Faq();
 			frmFaqEdit.FaqCur.IsNew=true;
 			frmFaqEdit.IsQuickAdd=true;
-			frmFaqEdit.ManualPage=GetPageTopicFromUrl(webBrowserManual.GetUri().ToString());
-			frmFaqEdit.Version=FormatVersionNumber(webBrowserManual.GetUri().ToString());
+			frmFaqEdit.ManualPage=GetPageTopicFromUrl(url);
+			frmFaqEdit.Version=FormatVersionNumber(url);
 			frmFaqEdit.ShowDialog();
 		}
 	}

@@ -461,9 +461,9 @@ namespace OpenDental {
 			// 
 			// labelClaimCount
 			// 
-			this.labelClaimCount.Location = new System.Drawing.Point(186, 65);
+			this.labelClaimCount.Location = new System.Drawing.Point(166, 65);
 			this.labelClaimCount.Name = "labelClaimCount";
-			this.labelClaimCount.Size = new System.Drawing.Size(60, 24);
+			this.labelClaimCount.Size = new System.Drawing.Size(100, 24);
 			this.labelClaimCount.TabIndex = 250;
 			this.labelClaimCount.Text = "claims";
 			this.labelClaimCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
