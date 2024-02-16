@@ -170,5 +170,45 @@ namespace OpenDentBusiness {
 					,"Edited patient field "+patFieldCur.FieldName+"\r\n"
 					+"Old value"+": \""+patFieldOld.FieldValue+"\"  New value: \""+patFieldCur.FieldValue+"\"");
 		}
+
+		///<summary>Gets all PatFields for all patients in list.</summary>
+		public static List<PatField> GetPatFieldsForSuperFam(List<long> listPatNumsSuperFam) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PatField>>(MethodBase.GetCurrentMethod(),listPatNumsSuperFam);
+			}
+			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols)
+				.FindAll(x=>string.IsNullOrWhiteSpace(x.InternalName));//patfields have DisplayField.InternalName blank.
+			if(listDisplayFields.Count==0) {
+				return new List<PatField>();
+			}
+			string command="SELECT * FROM patfield WHERE ( ";
+			for(int i=0;i<listDisplayFields.Count;i++){
+				if(i>0){
+					command+="OR ";
+				}
+				command+="FieldName='"+POut.String(listDisplayFields[i].Description)+"' ";
+			}
+			command+=") AND PatNum IN("+string.Join(",",listPatNumsSuperFam)+")";
+			return Crud.PatFieldCrud.SelectMany(command);
+		}
+
+		///<summary>Abbreviations only exist for pick list items. The patFieldDefName passed in does not necessarily need to be a picklist.</summary>
+		public static string GetAbbrOrValue(PatField patField,string displayFieldName) {
+			//No need to check MiddleTierRole; no call to db.
+			if(patField==null) {
+				return "";//Common if this patient has no patField yet.
+			}
+			PatFieldDef patFieldDef=PatFieldDefs.GetFieldDefByFieldName(displayFieldName);
+			if(patFieldDef==null || patFieldDef.FieldType!=PatFieldType.PickList) {
+				return patField.FieldValue;
+			}
+			//It's a picklist
+			List<PatFieldPickItem> listPatFieldPickItems=PatFieldPickItems.GetWhere(x => x.PatFieldDefNum==patFieldDef.PatFieldDefNum);
+			PatFieldPickItem patFieldPickItem=listPatFieldPickItems.Find(x=>x.Name==patField.FieldValue);
+			if(patFieldPickItem!=null && !string.IsNullOrWhiteSpace(patFieldPickItem.Abbreviation)) {
+				return patFieldPickItem.Abbreviation;
+			}
+			return patField.FieldValue;
+		}
 	}
 }

@@ -47,14 +47,14 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listCategory.Location = new System.Drawing.Point(23, 34);
 			this.listCategory.Name = "listCategory";
-			this.listCategory.Size = new System.Drawing.Size(225, 251);
+			this.listCategory.Size = new System.Drawing.Size(225, 298);
 			this.listCategory.TabIndex = 57;
 			this.listCategory.DoubleClick += new System.EventHandler(this.listCategory_DoubleClick);
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(173, 303);
+			this.butOK.Location = new System.Drawing.Point(173, 350);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 56;
@@ -72,7 +72,7 @@ namespace OpenDental {
 			// 
 			// FormDisplayFieldCategories
 			// 
-			this.ClientSize = new System.Drawing.Size(271, 339);
+			this.ClientSize = new System.Drawing.Size(271, 386);
 			this.Controls.Add(this.listCategory);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);

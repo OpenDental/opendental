@@ -626,6 +626,12 @@ namespace OpenDentBusiness {
 					//list.Add(new DisplayField("Abbr",110,category));
 					break;
 				#endregion Statement Limited Custom SuperFamily
+				#region SuperFamily Grid Columns
+				case DisplayFieldCategory.SuperFamilyGridCols:
+					list.Add(new DisplayField("Name",280,category));
+					list.Add(new DisplayField("Stmt",50,category));
+					break;
+				#endregion SuperFamily Grid Columns
 				default:
 					break;
 			}
@@ -1128,6 +1134,18 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("Abbr",110,category));
 					break;
 				#endregion Statement Limited Custom SuperFamily
+				#region SuperFamily Grid Columns
+				case DisplayFieldCategory.SuperFamilyGridCols:
+					list.Add(new DisplayField("Name",280,category));
+					list.Add(new DisplayField("Stmt",50,category));
+					List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy();
+					for(int j=0;j<listPatFieldDefs.Count;j++) {
+						DisplayField displayField=new DisplayField("",100,DisplayFieldCategory.SuperFamilyGridCols);
+						displayField.Description=listPatFieldDefs[j].FieldName;
+						list.Add(displayField);
+					}
+					break;
+				#endregion SuperFamily Grid Columns
 				default:
 					break;
 			}
@@ -1185,7 +1203,7 @@ namespace OpenDentBusiness {
 				Insert(ListShowing[i]);
 			}
 		}
-		
+
 		///<summary>This class can be used to have a strongly-typed reference to display field internal names.</summary>
 		public class InternalNames {
 			public class ChartView {

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using Microsoft.Web.WebView2.Core;
 using OpenDentBusiness;
 using WpfControls.UI;
 
@@ -62,7 +63,7 @@ End of Checklist================================================================
 			if(!enableUI) {
 				//Locks web browser UI on the form.
 				webBrowserManual.IsEnabled=false;
-				webBrowserFAQ.IsEnabled=false;
+				webView2.IsEnabled=false;
 				toolBarMain.IsEnabled=false;
 			}
 		}
@@ -78,10 +79,11 @@ End of Checklist================================================================
 		public FrmHelpBrowser() {
 			InitializeComponent();
 			webBrowserManual.Navigated+=WebBrowserManual_Navigated;
-			webBrowserFAQ.Navigated+=WebBrowserFAQ_Navigated;
+			webView2.NavigationCompleted+=WebView2FAQ_NavigationCompleted;
 			//webBrowserManual.ScriptErrorsSuppressed=true;
 			//webBrowserFAQ.ScriptErrorsSuppressed=true;
 			Load+=FrmHelpBrowser_Load;
+			FormClosing+=FrmODBase_FormClosing;
 		}
 
 		private void FrmHelpBrowser_Load(object sender,EventArgs e) {
@@ -123,10 +125,10 @@ End of Checklist================================================================
 			ShowAndLoadFaq(e.Uri.ToString());
 		}
 
-		private void WebBrowserFAQ_Navigated(object sender,NavigationEventArgs e) {
+		private void WebView2FAQ_NavigationCompleted(object sender,CoreWebView2NavigationCompletedEventArgs e) {
 			//This event gets fired for every iframe in a page to load.  
 			//We only care about the webBrowserFAQ.Url because e.Url will be iframe urls in addition to the original one.
-			if(webBrowserFAQ.GetUri().Query.Contains("results=empty")) {
+			if(webView2.GetUri().Query.Contains("results=empty")) {
 				ToggleFaqPanel(true);
 			}
 			else {
@@ -136,13 +138,21 @@ End of Checklist================================================================
 
 		///<summary>Either shows or hides the FAQ panel depending on the URL passed in.
 		///If the URL is a manual page, then the panel will navigate (load) the corresponding FAQ page.</summary>
-		private void ShowAndLoadFaq(string url) {
+		private async void ShowAndLoadFaq(string url) {
 			if(!IsManualPageUrl(url)) {
 				ToggleFaqPanel(true);
 				return;
 			}
 			ToggleFaqPanel(false);
-			webBrowserFAQ.Navigate(ManualUrlToFaqUrl(url));
+			try {
+				await webView2.Init();
+			}
+			catch(Exception ex) {
+				FriendlyException.Show("Error loading window. Run in x86 for debug.",ex);
+				Close();
+				return;
+			}
+			webView2.Navigate(ManualUrlToFaqUrl(url));
 		}
 
 		private void ToggleFaqPanel(bool hideFaqPanel) {
@@ -266,6 +276,10 @@ End of Checklist================================================================
 			frmFaqEdit.ManualPage=GetPageTopicFromUrl(url);
 			frmFaqEdit.Version=FormatVersionNumber(url);
 			frmFaqEdit.ShowDialog();
+		}
+
+		private void FrmODBase_FormClosing(object sender,CancelEventArgs e) {
+			webView2.Dispose();
 		}
 	}
 }

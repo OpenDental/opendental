@@ -31,6 +31,7 @@ namespace OpenDental {
 			KeyDown+=FrmTestAllControls_KeyDown;
 			//monthCalendar.AllowClickingTopText=false;
 			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Patient,false);
+			FormClosing+=FrmODBase_FormClosing_1;
 		}
 
 		private void FrmTestAllControls_Shown(object sender,EventArgs e) {
@@ -85,10 +86,23 @@ namespace OpenDental {
 			FillTree();
 			//textBox5_Copy.Focus();
 			webBrowser.Navigate("https://www.opendental.com/");
+			InitializeWebView2Async();
 			Size sizeCanvas=new Size(1000,1000);
 			Size sizeImage=new Size(500,800);
 			//zoomSlider.SetValueInitialFit(sizeCanvas,sizeImage,0);
 			textBox3.Focus();
+		}
+
+		private async void InitializeWebView2Async() {
+			try {
+				await webView2.Init();
+			}
+			catch(Exception ex) {
+				FriendlyException.Show("Error loading window. Run in x86 for debug.",ex);
+				Close();
+				return;
+			}
+			webView2.Navigate("https://www.opendental.com/");
 		}
 
 		private void FillTree(){
@@ -521,6 +535,10 @@ Line2\par
 
 		private void butGetPW_Click(object sender,EventArgs e) {
 			MsgBox.Show(textPassword.Text);
+		}
+
+		private void FrmODBase_FormClosing_1(object sender,System.ComponentModel.CancelEventArgs e) {
+			webView2.Dispose();
 		}
 	}
 }

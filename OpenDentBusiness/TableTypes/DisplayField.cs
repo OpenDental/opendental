@@ -10,11 +10,11 @@ namespace OpenDentBusiness{
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long DisplayFieldNum;
-		///<summary>This is the internal name that OD uses to identify the field within this category.  This will be the default description if the user doesn't specify an alternate.  For Ortho chart, this column will be blank, "Signature", or "Provider".</summary>
+		///<summary>This is the internal name that OD uses to identify the field within this category. This will be the default description if the user doesn't specify an alternate in Description. For Ortho chart, this column will be "Signature", "Provider", or blank. For SuperFamilyGridCols, if this is a patfield column, then this will be blank.</summary>
 		public string InternalName;
 		///<summary>Order to display in the grid or list. Every entry must have a unique itemorder.</summary>
 		public int ItemOrder;
-		///<summary>Optional alternate description to display for field.  Can be in another language.  For Ortho, this is the 'key', since InternalName is blank.</summary>
+		///<summary>Optional alternate description to display for field. Can be in another language. For Ortho, this is the 'key', since InternalName is blank sometimes. For SuperFamilyGridCols, if this is a patfield column, then this will be the name of the patfield.FieldName.</summary>
 		public string Description;
 		///<summary>For grid columns, this lets user override the column width.  Especially useful for foreign languages.</summary>
 		public int ColumnWidth;
@@ -25,7 +25,7 @@ namespace OpenDentBusiness{
 		///<summary>Newline delimited string which contains the selectable options in combo box dropdowns.  Specifically for the Ortho chart.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string PickList;
-		///<summary>Only used in Ortho. Because ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
+		///<summary>Only used in Ortho because ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
 		public string DescriptionOverride;
 
 
@@ -119,6 +119,9 @@ namespace OpenDentBusiness{
 		///<summary>20 - Statement Limited Custom SuperFamily</summary>
 		[Description("Limited Custom Statement")]
 		LimitedCustomStatement,
+		///<summary>21 - SuperFamily Grid</summary>
+		[Description("SuperFamily Grid Columns")]
+		SuperFamilyGridCols,
 	}
 	
 

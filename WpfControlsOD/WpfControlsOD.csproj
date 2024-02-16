@@ -62,6 +62,13 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.865.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf">
+      <HintPath>..\Required dlls\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="NDde">
       <HintPath>..\Required dlls\NDde.dll</HintPath>
     </Reference>
@@ -593,6 +600,9 @@
     </Compile>
     <Compile Include="UI\Controls\TextPassword.xaml.cs">
       <DependentUpon>TextPassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Controls\WebView2.xaml.cs">
+      <DependentUpon>WebView2.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrities.cs" />
     <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrity.cs" />
@@ -1144,6 +1154,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Controls\WebView2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\DatabaseIntegrity\WarningIntegrity.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1349,6 +1363,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

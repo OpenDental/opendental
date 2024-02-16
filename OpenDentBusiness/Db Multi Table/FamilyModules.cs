@@ -29,6 +29,8 @@ namespace OpenDentBusiness {
 			data.ArrPatFields=PatFields.Refresh(patNum);
 			data.SuperFamilyMembers=Patients.GetBySuperFamily(data.Pat.SuperFamily);
 			data.SuperFamilyGuarantors=Patients.GetSuperFamilyGuarantors(data.Pat.SuperFamily);
+			List<long> listPatNumsSuperFam=data.SuperFamilyMembers.ConvertAll(x=>x.PatNum).Distinct().ToList();
+			data.ListPatFieldsSuperFam=PatFields.GetPatFieldsForSuperFam(listPatNumsSuperFam);
 			data.ListPatientsClones=PatientLinks.GetPatientsLinked(patNum);
 			List<long> listPatNums=data.ListPatientsClones.Select(x=>x.PatNum).ToList();
 			data.ListDefLinksSpecialty=DefLinks.GetForPatsAndType(listPatNums);
@@ -91,6 +93,8 @@ namespace OpenDentBusiness {
 			public List<Patient> ListPatientsClones;
 			public List<Patient> SuperFamilyMembers;
 			public List<Patient> SuperFamilyGuarantors;
+			///<summary>A list of PatFields for all guarantors in a superfamily, but only the ones that show in the superfamily grid.</summary>
+			public List<PatField> ListPatFieldsSuperFam;
 			public SerializableDictionary<Patient,Def> DictCloneSpecialities;
 			public Document PatPict;
 			///<summary>Is yes if we have retrieved the PatPict from the db. No if we have tried but PatPict is null. Unknown if we have not attempted

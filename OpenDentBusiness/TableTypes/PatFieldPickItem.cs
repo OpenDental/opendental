@@ -12,7 +12,7 @@ namespace OpenDentBusiness {
 		public long PatFieldDefNum;
 		/// <summary>Full text of PickList item.</summary>
 		public string Name;
-		/// <summary>Abbr to show when PickList item is displayed in cramped spaces like columns.</summary>
+		/// <summary>Abbr to show when PickList item is displayed in cramped spaces like columns. Only implemented in Superfamily grid so far.</summary>
 		public string Abbreviation;
 		/// <summary>False for normal PickList items. Even if true/hidden, this item will still show in all the various windows where patient fields show. A hidden item will not normally show when picking from list for a patient unless the patient has already been assigned this item.</summary>
 		public bool IsHidden;

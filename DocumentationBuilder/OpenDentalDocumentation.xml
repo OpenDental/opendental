@@ -1630,6 +1630,7 @@
         <EnumValue name="UnknownError">14.</EnumValue>
         <EnumValue name="ErrorAcknowledged">15.</EnumValue>
         <EnumValue name="ExpiredBatch">16.</EnumValue>
+        <EnumValue name="AccountNotFoundQS">17.</EnumValue>
       </Enumeration>
     </column>
     <column order="7" name="DateTimeEntry" type="datetime">

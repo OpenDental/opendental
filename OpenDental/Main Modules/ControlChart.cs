@@ -4609,6 +4609,9 @@ namespace OpenDental {
 		}
 
 		public void FunctionKeyPressContrChart(Keys keys) {
+			if(IsPatientNull()) {
+				return;
+			}
 			List<ChartView> listChartViews=ChartViews.GetDeepCopy();
 			switch(keys) {
 				case Keys.F1: 
@@ -11485,6 +11488,10 @@ namespace OpenDental {
 		}
 
 		private void gridOrtho_DoubleClick(object sender,EventArgs e) {
+			//Patient was nulled.
+			if(IsPatientNull()) {
+				return;
+			}
 			//this is not a CellDoubleClick. They can click in the area below the rows.
 			int idx=tabControlOrthoCategories.SelectedIndex;
 			if(idx==0){

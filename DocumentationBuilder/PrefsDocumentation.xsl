@@ -101,7 +101,7 @@
 				<div class="main">
 					<div class="header">
 						<h2>Preferences</h2>
-						<p>This table provides extra information regarding the preferences found in Open Dental. There are over 1,000 entries in this table, so it is recommended to use CTRL-F to quickly find the preference you are looking for.</p>
+						<p>This table provides information about each preference found in Open Dental. There are over 1,000 entries in this table, so it is recommended to use CTRL-F and to use keywords to quickly find the preference you are looking for.</p>
 					</div>
 					<table class="mainTable" width="1200px">
 						<theader>

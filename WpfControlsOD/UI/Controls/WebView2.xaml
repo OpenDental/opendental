@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="WpfControls.UI.WebView2"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		x:Name="userControl" Background="White"
+		d:DesignWidth="400" d:DesignHeight="400">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:WebView2.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:WebView2.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<UserControl.Template>
+		<ControlTemplate TargetType="UserControl">
+			<ContentPresenter/>
+		</ControlTemplate>
+	</UserControl.Template>
+	<Grid>
+		<wv2:WebView2 x:Name="webView2" x:FieldModifier="internal"/>
+	</Grid>
+</UserControl>

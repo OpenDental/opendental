@@ -97,7 +97,7 @@
     <div class="main">
       <div class="header">
         <h2>Preferences</h2>
-        <p>This table provides extra information regarding the preferences found in Open Dental. There are over 1,000 entries in this table, so it is recommended to use CTRL-F to quickly find the preference you are looking for.</p>
+        <p>This table provides information about each preference found in Open Dental. There are over 1,000 entries in this table, so it is recommended to use CTRL-F and to use keywords to quickly find the preference you are looking for.</p>
       </div>
       <table class="mainTable" width="1200px"><theader><tr bgcolor="#D0D1D2">
             <th width="296">Name</th>
@@ -210,7 +210,7 @@
           <tr bgcolor="#F1F4F8">
             <td>AdjustmentBlockNegativeExceedingPatPortion</td>
             <td>ENUM:EnumAdjustmentBlockOrWarn When a user tries to make a negative adjustment that exceeds a remaining patient portion. 0 = Warn, 1 = Block, 2 = Allow.</td>
-            <td>when adjustment amount exceeds remaining</td>
+            <td>when adjustment amount exceed remaining patient portion</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>AdjustmentsForceAttachToProc</td>
@@ -300,8 +300,7 @@
           <tr bgcolor="#F1F4F8">
             <td>AlertInactiveMinutes</td>
             <td>After this many minutes of inactivity, alerts will stop processing. Defaults to the same value as SignalInactiveMinutes.</td>
-            <td>
-            </td>
+            <td>Leave this blank to disable</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>AllergiesIndicateNone</td>
@@ -1601,8 +1600,7 @@
           <tr bgcolor="#F1F4F8">
             <td>CentralManagerSyncCode</td>
             <td>Blank by default.  Contains a key for the CEMT.  Each CEMT database contains a unique sync code.  Syncing from the CEMT will skip any databases without the correct sync code.</td>
-            <td>
-            </td>
+            <td>Indicates the Sync Code of the Central Enterprise Management Tool (CEMT) database this database is associated with. All database connections which are affected by a CEMT sync have a code listed here. If the code is cleared, CEMT users can sync from any database, but this is not recommended.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>CentralManagerUseDynamicMode</td>
@@ -1713,7 +1711,7 @@
             Number of days (default 1) to subtract from the current date when deciding which NO PAYMENT claims and
             $0 claimprocs to consider when using the This Claim Only button from the Edit Claim window or when creating a batch payment from Manage module.
             Used for filtering Outstanding Claims from FormClaimPayBatch list, and when finalizing from Edit Claim window.</td>
-            <td>for $0 payments, how many days that it should appear in the Outstanding Claims area of the &amp;lt;a href='https://www.opendental.com/manual/claimpaymentbatch.html' target='_blank'&amp;gt;Batch Insurance Payment&amp;lt;/a&amp;gt; window</td>
+            <td>Blank field hides $0 claim payments from the Outstanding Claims area of the &amp;lt;a href='https://www.opendental.com/manual/claimpaymentbatch.html' target='_blank'&amp;gt;Batch Insurance Payment&amp;lt;/a&amp;gt; window. When a number of days is entered, $0 claims show until the entered number of days has passed.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>ClaimPaymentPickStatementType</td>
@@ -1890,8 +1888,7 @@
           <tr bgcolor="#F1F4F8">
             <td>ClinicTrackLast</td>
             <td>String, "Workstation"(default), "User", "None". See FormMisc. Determines how recently viewed clinics should be tracked.</td>
-            <td>
-            </td>
+            <td>For Clinics only. Affects which clinic is selected in the Main Menu, Clinics when a user logs on to a workstation.&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;None: Select the user's default clinic.&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;Workstation: Select the clinic last selected on the workstation, if the user has access to it. If not, select the user's default clinic.&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;User: Select the clinic that was active the last time the user logged off.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>ClockEventAllowBreak</td>
@@ -3243,7 +3240,7 @@
           <tr bgcolor="#F1F4F8">
             <td>ImagesModuleUsesOld2020</td>
             <td>Use the old Images module, prior to the 2020 overhaul.  Required for Suni capture and Apteryx XVWeb bridge. False by default. The only interface for changing this is by enabling/disabling Suni and XVWeb bridges.  This might be used for certain troubleshooting, but only in a test environment, never for fixing customer issues.</td>
-            <td>not recommended</td>
+            <td>not recommended. Only used with Apteryx XV Web.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>ImageWindowingMax</td>
@@ -3269,8 +3266,7 @@
             <td>Boolean.  False by default.  When enabled a fix is enabled within ODTextBox (RichTextBox) for foreign users that use 
             a different language input methodology that requires the composition of symbols in order to display their language correctly.
             E.g. the Korean symbol '역' (dur) will not display correctly inside ODTextBoxes without this set to true.</td>
-            <td>
-            </td>
+            <td>Determines composition if users are typing in a foreign language that uses an IME keyboard (e.g. Korean, Arabic).  This will dsable Spell Check when checked.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>IncomeTransfersMadeUponClaimReceived</td>
@@ -4504,7 +4500,7 @@
             <td>PayPlansBillInAdvanceDays</td>
             <td>
             </td>
-            <td>usually 10 or 15, causes statements to be triggered to print, cannot be used with Payment Plans</td>
+            <td>usually 10 or 15, causes statements to be triggered to print, cannot be used with Dynamic Payment Plans</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>PayPlansExcludePastActivity</td>
@@ -4533,6 +4529,27 @@
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>PayPlanTermsAndConditions</td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr bgcolor="#F1F4F8">
+            <td>PaymentPortalMsgToPayEmailMessageTemplate</td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr bgcolor="#F1F4F8">
+            <td>PaymentPortalMsgToPaySubjectTemplate</td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr bgcolor="#F1F4F8">
+            <td>PaymentPortalMsgToPayTextMessageTemplate</td>
             <td>
             </td>
             <td>
@@ -4975,8 +4992,7 @@
           <tr bgcolor="#F1F4F8">
             <td>ProcessSigsIntervalInSecs</td>
             <td>Frequency at which signals are processed. Also used by HQ to determine triage label refresh frequency.</td>
-            <td>
-            </td>
+            <td> The interval, in seconds, that Open Dental will automatically refresh the Appointments module, task lists, and text notifications.  This is usually every 6 to 20 seconds.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>ProcGroupNoteDoesAggregate</td>
@@ -5906,8 +5922,7 @@
           <tr bgcolor="#F1F4F8">
             <td>SendUnhandledExceptionsToHQ</td>
             <td>Bool.  True by default.  When enabled and user is on support and on the most recent stable or on any beta version a BugSubmissions will be reported to HQ.</td>
-            <td>
-            </td>
+            <td>Unhandled Exception errors will automatically be sent to Open Dental headquarters.  This is done in the background securely and no PHI is sent. Errors are only sent for offices on the latest stable version or using any beta version.&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>ServicesHqDoNotConnect</td>
@@ -6215,8 +6230,7 @@
           <tr bgcolor="#F1F4F8">
             <td>ShowIDinTitleBar</td>
             <td>0=None, 1=PatNum, 2=ChartNumber, 3=Birthdate</td>
-            <td>
-            </td>
+            <td>None: No ID will show in Title Bar &amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;PatNum: Patient's primary key in patient table &amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;ChartNumber: Usually blank. Alternative and supplement to PatNum. Can be alphanumeric.  Usually set during conversion or when bridging to imaging software. &amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;Birthdate:Patient's date of birth</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>ShowIncomeTransferManager</td>
@@ -6265,8 +6279,7 @@
           <tr bgcolor="#F1F4F8">
             <td>SignalInactiveMinutes</td>
             <td>Used to stop signals after a period of inactivity.  A value of 0 disables this feature.  Default value of 0 to maintain backward compatibility</td>
-            <td>
-            </td>
+            <td>Leave blank to disable.  This setting is designed to limit the load on database from idle users. Enter the minutes of workstation inactivity that will cause Open Dental to stop sending automatic signals to refresh information.  If an office sets this and want users viewing the appointment book to stay updated despite an idle workstation, set the preference, 'Refresh every 60 Seconds' to true.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>SignalLastClearedDate</td>
@@ -6603,15 +6616,13 @@
           <tr bgcolor="#F1F4F8">
             <td>TitleBarClinicUseAbbr</td>
             <td>Boolean, false by default. When enabled, main title of FormOpenDental uses clinic abbr instead of description</td>
-            <td>
-            </td>
+            <td>Turn on clinics in the &amp;lt;a href='https://opendental.com/manual/showfeatures.html' target='_blank'&amp;gt;Show Features&amp;lt;/a&amp;gt; window</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>TitleBarShowSite</td>
             <td>
             </td>
-            <td>
-            </td>
+            <td>see &amp;lt;a href='https://opendental.com/manual/publichealth.html' target='_blank'&amp;gt;Public Health&amp;lt;/a&amp;gt;</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>TitleBarShowSpecialty</td>
@@ -7623,8 +7634,7 @@
             <td>WebServiceServerName</td>
             <td>
             </td>
-            <td>
-            </td>
+            <td>This is the name of the Update Server machine.  Version updates can only be performed from this computer, and the eConnector can only be installed on this computer.  For Middle Tier, this identifies which computer is running the middle tier.  If the server name exceeds 15 characters, users may receive an error when attempting check for updates or install services. If the server name exceeds 15 characters, only type the first 15 characters.</td>
           </tr>
           <tr bgcolor="#F1F4F8">
             <td>WebServiceServerNameCanBeBlank</td>

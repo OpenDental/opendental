@@ -32,6 +32,7 @@ namespace OpenDental{
 		private List <PatPlan> _listPatPlans;
 		private List<Patient> _listPatientsSuperFamilyGuarantors;
 		private List<Patient> _listPatientsSuperFamilyMembers;
+		private List<PatField> _listPatFieldsForSuperFam;
 		///<summary>All recalls for this entire family.</summary>
 		private List<Recall> _listRecalls;
 		///<summary>All the data necessary to load the module.</summary>
@@ -44,6 +45,7 @@ namespace OpenDental{
 		private Point _pointLastClicked;
 		private SortStrategy _sortStrategySuperFam;
 		private ToolBarOD toolBarMain;
+		private int _widthGridSuperFam;
 		#endregion Fields - Private
 
 		#region Constructor
@@ -1817,56 +1819,79 @@ namespace OpenDental{
 		private void FillGridSuperFam() {
 			gridSuperFam.BeginUpdate();
 			gridSuperFam.Columns.Clear();
-			GridColumn col=new GridColumn(Lan.g("gridSuperFam","Name"),280);
-			gridSuperFam.Columns.Add(col);
-			col=new GridColumn(Lan.g("gridSuperFam","Stmt"),280){ IsWidthDynamic=true };
-			gridSuperFam.Columns.Add(col);
+			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
+			for(int i=0;i<listDisplayFields.Count;i++) {
+				string displayName=listDisplayFields[i].Description;
+				if(string.IsNullOrWhiteSpace(displayName)) {
+					displayName=listDisplayFields[i].InternalName;
+				}
+				GridColumn gridColumn=new GridColumn(Lan.g("gridSuperFam",displayName),listDisplayFields[i].ColumnWidth);
+				if(listDisplayFields[i].InternalName!="Name") {
+					gridColumn.TextAlign=HorizontalAlignment.Center;
+				}
+				gridSuperFam.Columns.Add(gridColumn);
+			}
+			_widthGridSuperFam=listDisplayFields.Sum(x=>x.ColumnWidth)+LayoutManager.Scale(SystemInformation.VerticalScrollBarWidth);
+			gridSuperFam.Width=_widthGridSuperFam;
 			gridSuperFam.ListGridRows.Clear();
 			if(_patient==null) {
 				gridSuperFam.EndUpdate();
 				return;
 			}
-			GridRow row;
 			_listPatientsSuperFamilyGuarantors.Sort(sortPatientListBySuperFamily);
 			_listPatientsSuperFamilyMembers.Sort(sortPatientListBySuperFamily);
-			List<Patient> listPatientsSuperFamilyMembersNotMerged=_listPatientsSuperFamilyMembers.FindAll(x => !PatientLinks.WasPatientMerged(x.PatNum,_loadData.ListMergeLinks) || x.PatNum==_patient.PatNum);
-			string strSuperFam="";
 			//Loop through each family within the super family.
 			for(int i=0;i<_listPatientsSuperFamilyGuarantors.Count;i++) {
-				row=new GridRow();
-				//Make a string that displays all the names of the family members.
-				//Always start with the guarantor followed by the rest of the family.
-				strSuperFam=_listPatientsSuperFamilyGuarantors[i].GetNameLF();
-				for(int j=0;j<listPatientsSuperFamilyMembersNotMerged.Count;j++) {
-					if(listPatientsSuperFamilyMembersNotMerged[j].Guarantor!=_listPatientsSuperFamilyGuarantors[i].Guarantor) {
-						continue;//Not part of this family.
+				GridRow gridRow=new GridRow();
+				Patient patient=_listPatientsSuperFamilyGuarantors[i];
+				gridRow.Tag=patient;
+				//Loop through each displayField within the user-chosen displayField list.
+				for(int j=0;j<listDisplayFields.Count;j++) {
+					switch(listDisplayFields[j].InternalName) {
+						case "Name":
+							string strSuperFam=GetCellTextSuperFamName(patient);
+							gridRow.Cells.Add(strSuperFam);
+							if(i==0) {
+								gridRow.Cells[0].Bold=YN.Yes;
+								gridRow.Cells[0].ColorText=Color.OrangeRed;
+							}
+							break;
+						case "Stmt":
+							gridRow.Cells.Add(patient.HasSuperBilling ? "X" : "");
+							break;
+						case "": //Patfields
+							PatField patField=_listPatFieldsForSuperFam.Find(x=>x.PatNum==patient.PatNum && x.FieldName==listDisplayFields[j].Description);//Will frequently be null because many patients will have no PatField yet
+							string celltext=PatFields.GetAbbrOrValue(patField,listDisplayFields[j].Description);
+							gridRow.Cells.Add(celltext);
+							break;
 					}
-					if(listPatientsSuperFamilyMembersNotMerged[j].PatNum==_listPatientsSuperFamilyGuarantors[i].PatNum) {
-						continue;//Guarantor is already in the string.
-					}
-					strSuperFam+="\r\n   "+StringTools.Truncate(listPatientsSuperFamilyMembersNotMerged[j].GetNameLF(),40,true);
 				}
-				row.Cells.Add(strSuperFam);
-				row.Tag=_listPatientsSuperFamilyGuarantors[i].PatNum;
-				if(i==0) {
-					row.Cells[0].Bold=YN.Yes;
-					row.Cells[0].ColorText=Color.OrangeRed;
-				}
-				if(_listPatientsSuperFamilyGuarantors[i].HasSuperBilling) {
-					row.Cells.Add("X");
-				}
-				else {
-					row.Cells.Add("");
-				}
-				gridSuperFam.ListGridRows.Add(row);
+				gridSuperFam.ListGridRows.Add(gridRow);
 			}
 			gridSuperFam.EndUpdate();
 			for(int i=0;i<gridSuperFam.ListGridRows.Count;i++) {
-				if((long)gridSuperFam.ListGridRows[i].Tag==_patient.Guarantor) {
+				if(((Patient)gridSuperFam.ListGridRows[i].Tag).PatNum==_patient.Guarantor) {
 					gridSuperFam.SetSelected(i,true);
 					break;
 				}
 			}
+		}
+
+		private string GetCellTextSuperFamName(Patient patient) {
+			//Make a string that displays all the names of the family members.
+			//Always start with the guarantor followed by the rest of the family.
+			string strSuperFam = patient.GetNameLF();
+			List<Patient> listPatientsSuperFamilyMembersNotMerged = _listPatientsSuperFamilyMembers.FindAll(x=>!PatientLinks.WasPatientMerged(x.PatNum,_loadData.ListMergeLinks)||x.PatNum==_patient.PatNum);
+			for(int k = 0;k<listPatientsSuperFamilyMembersNotMerged.Count;k++) {
+				if(listPatientsSuperFamilyMembersNotMerged[k].Guarantor!=patient.Guarantor) {
+					continue;//Not part of this family.
+				}
+				if(listPatientsSuperFamilyMembersNotMerged[k].PatNum==patient.PatNum) {
+					continue;//Guarantor is already in the string.
+				}
+				strSuperFam+="\r\n   "+StringTools.Truncate(listPatientsSuperFamilyMembersNotMerged[k].GetNameLF(),40,true);
+			}
+			return strSuperFam;
 		}
 
 		private int sortPatientListBySuperFamily(Patient patient1,Patient patient2) {
@@ -2886,7 +2911,7 @@ namespace OpenDental{
 				_patientNote=null;
 				_discountPlanSub=null;
 				_family=null;
-				_listPatPlans=new List<PatPlan>(); 
+				_listPatPlans=new List<PatPlan>();
 				return;
 			}
 			if(_patient!=null && _discountPlanSub!=null && _loadData.ListPatPlans.Count>0) {
@@ -2915,6 +2940,7 @@ namespace OpenDental{
 			_arrayPatFields=_loadData.ArrPatFields;
 			_listPatientsSuperFamilyMembers=_loadData.SuperFamilyMembers;
 			_listPatientsSuperFamilyGuarantors=_loadData.SuperFamilyGuarantors;
+			_listPatFieldsForSuperFam=_loadData.ListPatFieldsSuperFam;
 			//Takes the preference string and converts it to an enum object
 			_sortStrategySuperFam=(SortStrategy)PrefC.GetInt(PrefName.SuperFamSortStrategy);
 		}
@@ -2936,6 +2962,11 @@ namespace OpenDental{
 				bool showPanelForPatientClone=PrefC.GetBool(PrefName.ShowFeaturePatientClone) && _loadData.ListPatientsClones!=null && _loadData.ListPatientsClones.Count > 1;
 				if(showPanelForSuperfamilies || showPanelForPatientClone) {
 					splitContainerSuperClones.Visible=true;
+					if(showPanelForSuperfamilies) {
+						List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
+						_widthGridSuperFam=listDisplayFields.Sum(x=>x.ColumnWidth)+LayoutManager.Scale(SystemInformation.VerticalScrollBarWidth);
+						LayoutManager.MoveWidth(splitContainerSuperClones,_widthGridSuperFam);
+					}
 					LayoutManager.MoveLocation(gridIns,new Point(splitContainerSuperClones.Right+2,gridIns.Top));
 					LayoutManager.MoveWidth(gridIns,Width-gridIns.Left);
 				}

@@ -128,24 +128,8 @@ namespace OpenDentBusiness {
 		}
 		#endregion Methods - Modify
 
-/*		//Only pull out the methods below as you need them.  Otherwise, leave them commented out.
 		#region Methods - Get
-		///<summary></summary>
-		public static List<PatFieldPickItem> Refresh(long patNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PatFieldPickItem>>(MethodBase.GetCurrentMethod(),patNum);
-			}
-			string command="SELECT * FROM patfieldpickitem WHERE PatNum = "+POut.Long(patNum);
-			return Crud.PatFieldPickItemCrud.SelectMany(command);
-		}
-
-		///<summary>Gets one PatFieldPickItem from the db.</summary>
-		public static PatFieldPickItem GetOne(long patFieldPickItemNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<PatFieldPickItem>(MethodBase.GetCurrentMethod(),patFieldPickItemNum);
-			}
-			return Crud.PatFieldPickItemCrud.SelectOne(patFieldPickItemNum);
-		}
-		#endregion Methods - Get*/
+		
+		#endregion Methods - Get
 	}
 }

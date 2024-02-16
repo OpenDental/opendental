@@ -143,6 +143,14 @@ namespace OpenDental {
 			if(!IsNew && PatFieldDefCur.FieldName!=_fieldNameOld) {
 				PatFields.UpdateFieldName(PatFieldDefCur.FieldName,_fieldNameOld);
 			}
+			//sync display fields.
+			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols).Where(x=>x.InternalName=="" && x.Description==_fieldNameOld).ToList();
+			if(listDisplayFields.Count>0) {
+				for(int i=0;i<listDisplayFields.Count;i++) {
+					listDisplayFields[i].Description=PatFieldDefCur.FieldName;
+				}
+				DataValid.SetInvalid(InvalidType.DisplayFields);
+			}
 			DialogResult=DialogResult.OK;
 		}
 

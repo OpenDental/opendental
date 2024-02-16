@@ -127,5 +127,6 @@
 			<ui:Label x:Name="label2" Width="127" Height="18" Margin="10,23,0,0" Text="Label in my groupBox" />
 		</ui:GroupBox>
 		<ui:Button x:Name="button2" Width="85" Height="48" Margin="155,55,0,0" Text="_Set 3 selected" Icon="CommLog" Click="button2_Click" />
+		<ui:WebView2 x:Name="webView2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="226" Height="124" Margin="1123,485,156,218"/>
 	</Grid>
 </local:FrmODBase>

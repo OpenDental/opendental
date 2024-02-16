@@ -160,6 +160,10 @@ namespace OpenDental {
 				if(textVTime!=null){
 					return textVTime.Text;
 				}
+				TextPassword textPassword=(TextPassword)_listControls.Find(x=>x.GetType()==typeof(TextPassword));
+				if(textPassword!=null){
+					return textPassword.Text;
+				}
 				return "";
 			}
 		}

@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="1096" Height="696" 
-             Text="Help" >
+             Width="1212" Height="719" 
+             Text="Help" StartMaximized="True">
 	<Grid Background="#FFFCFDFE" >
 		<ui:ToolBar x:Name="toolBarMain" Width="1096" Height="24" Margin="0,0,0,0" />
 		<ui:SplitContainer x:Name="splitContainer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,24,0,0" >
@@ -22,7 +22,7 @@
 			</ui:Panel>
 			<GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Background="Silver"/>
 			<ui:Panel x:Name="splitterPanel2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-				<ui:WebBrowser x:Name="webBrowserFAQ" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				<ui:WebView2 x:Name="webView2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 			</ui:Panel>
 		</ui:SplitContainer>
 	</Grid>

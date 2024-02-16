@@ -22,6 +22,16 @@
       </Enumeration>
     </column>
   </table>
+  <table name="carecreditwebresponse">
+    <summary></summary>
+    <column order="6" name="ProcessingStatus" type="varchar(255)">
+      <summary>Enum:CareCreditWebStatus Used to determine if the request is pending, needs action, or is completed.</summary>
+      <Enumeration name="CareCreditWebStatus">
+        <summary></summary>
+        <EnumValue name="AccountNotFoundQS">17.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="clearinghouse">
     <summary></summary>
     <column order="30" name="LocationID" type="varchar(255)">

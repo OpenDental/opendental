@@ -20,11 +20,15 @@ namespace OpenDentBusiness{
 			//E.g. there are several procedures attached to the payment plan and the down payment only covers one and a half (partial proc).
 			terms.PeriodPayment=(decimal)terms.DownPayment;
 			terms.APR=0;//downpayments should pay on principal only
+			DateTime downPaymentChargeDate=DateTime.Today;//The chargeDate for the downpayment.
+			if(terms.DateFirstPayment<downPaymentChargeDate) {//If Date of First Payment was backdated, we need to use that date for the Down Payment.
+				downPaymentChargeDate=terms.DateFirstPayment;
+			}
 			List<PayPlanCharge> listDownPayments=PayPlanEdit.GetListExpectedCharges(new List<PayPlanCharge>(),terms,family,listPayPlanLinks,payplan,true
 				,true,new List<PaySplit>());
 			listDownPayments.ForEach(x => {
 				x.Note="Down Payment";
-				x.ChargeDate=DateTime.Today.Date;
+				x.ChargeDate=downPaymentChargeDate;
 				x.Interest=0;
 			});
 			//Put the PeriodPayment back to the way it was upon entry.
