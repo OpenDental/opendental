@@ -2541,19 +2541,17 @@ namespace OpenDental {
 			if(SheetCur.SheetType!=SheetTypeEnum.PatientForm) {
 				return true;
 			}
-			for(int i=0;i<panelMain.Controls.Count;i++){
-				if(panelMain.Controls[i].Tag==null){
+			for(int i=0;i<SheetCur.SheetFields.Count;i++){
+				if(SheetCur.SheetFields[i]==null){
 					continue;
 				}
-				if(panelMain.Controls[i].GetType()==typeof(RichTextBox)) {
-					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
-					if(sheetField.FieldType!=SheetFieldType.InputField){
-						continue;
-					}
-					if(sheetField.FieldName=="State" && sheetField.FieldValue.Trim().Length!=2 && sheetField.FieldValue.Trim().Length>0) {
-						MessageBox.Show(Lan.g(this,"The State field must be exactly two characters in length."));
-						return false;
-					}
+				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField){
+					continue;
+				}
+				SheetField sheetField=SheetCur.SheetFields[i];
+				if(sheetField.FieldName=="State" && sheetField.FieldValue.Trim().Length!=2 && sheetField.FieldValue.Trim().Length>0) {
+					MessageBox.Show(Lan.g(this,"The State field must be exactly two characters in length."));
+					return false;
 				}
 			}
 			return true;
