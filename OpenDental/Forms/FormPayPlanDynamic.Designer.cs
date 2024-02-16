@@ -395,7 +395,7 @@ namespace OpenDental {
 			// 
 			this.radioTpAwaitComplete.Location = new System.Drawing.Point(7, 20);
 			this.radioTpAwaitComplete.Name = "radioTpAwaitComplete";
-			this.radioTpAwaitComplete.Size = new System.Drawing.Size(147, 32);
+			this.radioTpAwaitComplete.Size = new System.Drawing.Size(147, 35);
 			this.radioTpAwaitComplete.TabIndex = 0;
 			this.radioTpAwaitComplete.TabStop = true;
 			this.radioTpAwaitComplete.Text = "Await procedure completion";
@@ -455,7 +455,7 @@ namespace OpenDental {
 			// 
 			this.label16.Location = new System.Drawing.Point(190, 191);
 			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(124, 17);
+			this.label16.Size = new System.Drawing.Size(168, 17);
 			this.label16.TabIndex = 195;
 			this.label16.Text = "(sets payment amount)";
 			this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -506,7 +506,7 @@ namespace OpenDental {
 			// 
 			this.radioQuarterly.Location = new System.Drawing.Point(5, 87);
 			this.radioQuarterly.Name = "radioQuarterly";
-			this.radioQuarterly.Size = new System.Drawing.Size(104, 17);
+			this.radioQuarterly.Size = new System.Drawing.Size(104, 19);
 			this.radioQuarterly.TabIndex = 4;
 			this.radioQuarterly.TabStop = true;
 			this.radioQuarterly.Text = "Quarterly";
@@ -517,7 +517,7 @@ namespace OpenDental {
 			this.radioMonthly.Checked = true;
 			this.radioMonthly.Location = new System.Drawing.Point(5, 69);
 			this.radioMonthly.Name = "radioMonthly";
-			this.radioMonthly.Size = new System.Drawing.Size(104, 17);
+			this.radioMonthly.Size = new System.Drawing.Size(104, 19);
 			this.radioMonthly.TabIndex = 3;
 			this.radioMonthly.TabStop = true;
 			this.radioMonthly.Text = "Monthly";
@@ -527,7 +527,7 @@ namespace OpenDental {
 			// 
 			this.radioOrdinalWeekday.Location = new System.Drawing.Point(5, 51);
 			this.radioOrdinalWeekday.Name = "radioOrdinalWeekday";
-			this.radioOrdinalWeekday.Size = new System.Drawing.Size(174, 17);
+			this.radioOrdinalWeekday.Size = new System.Drawing.Size(174, 19);
 			this.radioOrdinalWeekday.TabIndex = 2;
 			this.radioOrdinalWeekday.TabStop = true;
 			this.radioOrdinalWeekday.Text = "Specific day of month";
@@ -537,7 +537,7 @@ namespace OpenDental {
 			// 
 			this.radioEveryOtherWeek.Location = new System.Drawing.Point(5, 33);
 			this.radioEveryOtherWeek.Name = "radioEveryOtherWeek";
-			this.radioEveryOtherWeek.Size = new System.Drawing.Size(156, 17);
+			this.radioEveryOtherWeek.Size = new System.Drawing.Size(156, 19);
 			this.radioEveryOtherWeek.TabIndex = 1;
 			this.radioEveryOtherWeek.TabStop = true;
 			this.radioEveryOtherWeek.Text = "Every other week";
@@ -547,7 +547,7 @@ namespace OpenDental {
 			// 
 			this.radioWeekly.Location = new System.Drawing.Point(5, 15);
 			this.radioWeekly.Name = "radioWeekly";
-			this.radioWeekly.Size = new System.Drawing.Size(104, 17);
+			this.radioWeekly.Size = new System.Drawing.Size(104, 19);
 			this.radioWeekly.TabIndex = 0;
 			this.radioWeekly.TabStop = true;
 			this.radioWeekly.Text = "Weekly";
@@ -610,11 +610,11 @@ namespace OpenDental {
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(3, 103);
+			this.label6.Location = new System.Drawing.Point(2, 103);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(138, 17);
+			this.label6.Size = new System.Drawing.Size(139, 17);
 			this.label6.TabIndex = 0;
-			this.label6.Text = "APR (for example 0 or 18)";
+			this.label6.Text = "APR (example 0 or 18)";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textDateFirstPay
@@ -1044,8 +1044,7 @@ namespace OpenDental {
 			this.labelOverchargedWarning.Name = "labelOverchargedWarning";
 			this.labelOverchargedWarning.Size = new System.Drawing.Size(662, 14);
 			this.labelOverchargedWarning.TabIndex = 201;
-			this.labelOverchargedWarning.Text = "Run the Dynamic Payment Plans Overcharged Report to see a breakdown of overcharge" +
-    "d production";
+			this.labelOverchargedWarning.Text = "Run the Dynamic Payment Plans Overcharged Report to see a breakdown of overcharged production";
 			this.labelOverchargedWarning.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			this.labelOverchargedWarning.Visible = false;
 			// 
