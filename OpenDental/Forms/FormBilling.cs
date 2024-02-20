@@ -312,14 +312,14 @@ namespace OpenDental {
 		}
 
 		private void butSend_Click(object sender,System.EventArgs e) {
-			if(ODBuild.IsWeb() && PrefC.GetEnum<BillingUseElectronicEnum>(PrefName.BillingUseElectronic).In(
+			if(ODEnvironment.IsCloudServer && PrefC.GetEnum<BillingUseElectronicEnum>(PrefName.BillingUseElectronic).In(
 					BillingUseElectronicEnum.ClaimX,
 					BillingUseElectronicEnum.EDS,
 					BillingUseElectronicEnum.POS
 				)) 
 			{
 				MsgBox.Show(this,$"Electronic statements using {PrefC.GetEnum<BillingUseElectronicEnum>(PrefName.BillingUseElectronic).GetDescription()} "
-					+"are not available while viewing through the web.");
+					+"are not available while using Open Dental Cloud.");
 				return;
 			}
 			_listStatementNumsSent=new List<long>();

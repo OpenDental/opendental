@@ -63,11 +63,15 @@ namespace CodeBase {
 			}
 		}
 
-		///<summary>Indicates if we are running on an OD Cloud server.</summary>
+		///<summary>Indicates if we are running on an OD Cloud server (Thinfinity or AppStream).</summary>
 		public static bool IsCloudServer {
 			get {
-				//Sometimes we connect to an OD Cloud db with a normal build to do things like updates.
-				return ODBuild.IsWeb() || Directory.Exists(@"C:\Program Files\Thinfinity\VirtualUI");
+				if(ODBuild.IsWeb() || ODCloudClient.IsAppStream) {
+					return true;
+				}
+				//Sometimes we connect to an OD Cloud db with a normal build to do things like updates or from the ODService or ODEConnector services.
+				FileInfo fileInfo=new FileInfo(@"C:\Scripts\RegKeyNum.txt");
+				return (fileInfo.Exists && fileInfo.Length>0);
 			}
 		}
 
@@ -83,10 +87,10 @@ namespace CodeBase {
 		}
 		#endregion
 
-		///<summary>Always client name.  If on RDP, gets client name, never server name. If Web mode, sends a request to the browser to get the computer name.</summary>
+		///<summary>Always client name.  If on RDP, gets client name, never server name. If Thinfinity or AppStream, sends a request to the CloudClient to get the computer name.</summary>
 		public static string MachineName {
 			get {
-				if(ODBuild.IsWeb()) {
+				if(IsCloudServer) {
 					return _machineName;
 				}
 				if(typeof(SystemInformation).GetProperty("TerminalServerSession").GetValue(null).ToString()!="True"){
@@ -115,19 +119,19 @@ namespace CodeBase {
 			}
 		}
 
-		///<summary>Only called from FormOpenDentalThreads.ODCloudMachineName thread once per minute. Does nothing for regular (!ODBuild.IsWeb) instances. For IsWeb, this will
-		///attempt to get the local computer name from the ODCloudClient.  If ODCloudClient isn't running or we get an error, machine name will be "UNKNOWN" and this will try again
-		///the next time it's called by the ODCloudMachineName thread.  Once the machine name is retrieved from ODCloudClient successfully (_machineName!="UNKNOWN") this will not
-		///attempt to retrieve the local computer name again while this instance is running.</summary>
+		///<summary>Only called from FormOpenDentalThreads.ODCloudMachineName thread once per minute. Does nothing for regular (not Thinfinity or AppStream) instances. For Thinfinity
+		///and AppStream, this will attempt to get the local computer name from the ODCloudClient.  If ODCloudClient isn't running or we get an error, machine name will be "UNKNOWN"
+		///and this will try again the next time it's called by the ODCloudMachineName thread.  Once the machine name is retrieved from ODCloudClient successfully
+		///(_machineName!="UNKNOWN") this will not attempt to retrieve the local computer name again while this instance is running.</summary>
 		public static void SetMachineName() {
-			if(!ODBuild.IsWeb()) {//only for IsWeb
+			if(!IsCloudServer) {//only for Thinfinity and AppStream
 				return;
 			}
 			if(!_machineName.IsNullOrEmpty() && _machineName.ToUpper()!=UNKNOWN_NAME.ToUpper()) {//_machineName is already set, no need to get from ODCloudClient
 				return;
 			}
 			try {
-				_machineName=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.GetComputerName,doShowProgressBar:false);
+				_machineName=ODCloudClient.GetComputerName();
 			}
 			catch(Exception ex) {
 				ex.DoNothing();

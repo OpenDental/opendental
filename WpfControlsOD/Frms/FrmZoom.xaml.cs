@@ -212,6 +212,12 @@ namespace OpenDental {
 					return;
 				}
 			}
+			if(zoom<100){
+				string msg=Lans.g(this,"Zoom levels below 100 are not recommended. Some text could be slightly cut off. Continue anyway?");
+				if(!MsgBox.Show(MsgBoxButtons.OKCancel,msg)){
+					return;
+				}
+			}
 			ComputerPrefs.LocalComputer.Zoom=zoom;
 			ComputerPrefs.Update(ComputerPrefs.LocalComputer);
 			IsDialogOK=true;

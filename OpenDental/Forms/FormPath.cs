@@ -82,7 +82,7 @@ namespace OpenDental{
 					ActiveControl=textLocalPath;//Focus on textLocalPath, since this is the only textbox the user can edit in this case.
 				}
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				textSftpUsername.UseSystemPasswordChar=true;
 				butOK.Enabled=false;
 				DisableMostControls();

@@ -85,8 +85,8 @@ namespace OpenDental{
 		}
 
 		private void butStart_Click(object sender,EventArgs e) {
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
 				return;
 			}
 			if(!SaveToDb()){
@@ -113,8 +113,8 @@ namespace OpenDental{
 		}
 
 		private void butViewLog_Click(object sender,EventArgs e) {
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
 				return;
 			}
 			Process.Start(_logfile);
@@ -129,7 +129,7 @@ namespace OpenDental{
 			if(program==null){
 				return;
 			}
-			if(!Programs.IsEnabledByHq(program,out _) || !program.Enabled || ODBuild.IsWeb()){
+			if(!Programs.IsEnabledByHq(program,out _) || !program.Enabled || ODEnvironment.IsCloudServer){
 				return;
 			}
 			//get current time and use delta from now on?
@@ -687,8 +687,8 @@ namespace OpenDental{
 				MessageBox.Show(err);
 				return false;
 			}
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
 				return false;
 			}
 			if(textProgDesc.Text==""){

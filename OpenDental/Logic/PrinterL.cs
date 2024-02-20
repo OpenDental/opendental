@@ -227,7 +227,7 @@ namespace OpenDental {
 			}
 			#endregion 2
 			#region 3 - Present the dialog
-			if(showPrompt && !ODBuild.IsWeb()) {
+			if(showPrompt && !ODEnvironment.IsCloudServer) {
 				PrintDialog printDialog=new PrintDialog();
 				printDialog.AllowSomePages=true;
 				printDialog.PrinterSettings=printerSettings;

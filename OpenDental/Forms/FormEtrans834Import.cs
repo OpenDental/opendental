@@ -27,7 +27,7 @@ namespace OpenDental {
 
 		private void FormEtrans834Import_Load(object sender,EventArgs e) {
 			textImportPath.Text=PrefC.GetString(PrefName.Ins834ImportPath);
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				//Not implemented yet for OD Cloud
 				textImportPath.Text="";
 				textImportPath.Enabled=false;

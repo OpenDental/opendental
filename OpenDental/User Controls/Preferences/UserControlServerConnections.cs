@@ -188,7 +188,7 @@ namespace OpenDental {
 
 		#region Methods - Public
 		public void FillServerConnections() {
-			if(ODBuild.IsWeb()) {//Web users can't change their database settings.
+			if(ODEnvironment.IsCloudServer) {//Web users can't change their database settings.
 				checkUseReadOnlyServer.Enabled=false;
 				groupBoxReadOnlyServerSetup.Enabled=false;
 			}

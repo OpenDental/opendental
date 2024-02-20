@@ -23,12 +23,12 @@ namespace OpenDental.Bridges {
 				return;
 			}
 			string path=Programs.GetProgramPath(programCur);
-			if(!File.Exists(path)) {
+			if(!ODEnvironment.IsCloudServer && !File.Exists(path)) {
 				MessageBox.Show($"{path} {Lan.g("RayBridge","could not be found.")}");
 				return;
 			}
 			string strFilePath=ProgramProperties.GetPropVal(programCur.ProgramNum,"Xml output file path");
-			if(!ODBuild.IsWeb() && File.Exists(strFilePath)) {//Will never exist for WEB version.
+			if(!ODEnvironment.IsCloudServer && File.Exists(strFilePath)) {//Will never exist for Thinfinity or AppStream version.
 				File.Delete(strFilePath);
 			}
 			string patientId;

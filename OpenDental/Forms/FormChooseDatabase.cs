@@ -33,7 +33,7 @@ namespace OpenDental {
 		private void FillForm() {
 			Logger.LogToPath("FillForm",LogPath.Startup,LogPhase.Start);
 			if(ChooseDatabaseInfo_.IsAccessedFromMainMenu) {
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					textUser.UseSystemPasswordChar=true;
 				}
 				comboComputerName.Enabled=false;

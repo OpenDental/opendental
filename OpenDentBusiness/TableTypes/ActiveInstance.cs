@@ -31,7 +31,9 @@ namespace OpenDentBusiness {
 		Direct,
 		///<summary>1 - MiddleTier</summary>
 		MiddleTier,
-		///<summary>2 - ODCloud</summary>
-		ODCloud,
+		///<summary>2 - Thinfinity</summary>
+		Thinfinity,
+		///<summary>3 - AppStream</summary>
+		AppStream,
 	}
 }

@@ -50,7 +50,7 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			if(ODBuild.IsWeb()){
+			if(ODEnvironment.IsCloudServer){
 				sigBoxWrapper.Enabled=false;
 			}
 			comboTerminal.Items.Clear();

@@ -610,8 +610,8 @@ namespace OpenDentBusiness {
 			strBuilderResultText=new StringBuilder();
 			amount=0;
 			receipt=new StringBuilder();
-			if(ODBuild.IsWeb()) {
-				MarkFailed(chargeData,Lans.g(_lanThis,"XCharge is not available while viewing through the web."),LogLevel.Error);
+			if(ODEnvironment.IsCloudServer) {
+				MarkFailed(chargeData,Lans.g(_lanThis,"XCharge is not available while using Open Dental Cloud."),LogLevel.Error);
 				return false;
 			}
 			long clinicNumCur=0;

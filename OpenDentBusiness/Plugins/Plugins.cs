@@ -67,7 +67,7 @@ namespace OpenDentBusiness {
 		///<summary>This is only for middle tier. See the similar method OpenDental.PluginLoader.LoadAllPlugins for the normal loading. Not sure why anyone would load a plugin in MT, but left this in place until we figure it out.  This MT version does not check any sort of plugin whitelist.</summary>
 		public static void LoadAllPlugins(Form host=null) {
 			//No need to check MiddleTierRole; no call to db.
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				return;//plugins not allowed in cloud mode
 			}
 			List<PluginContainer> listPluginContainers=new List<PluginContainer>();

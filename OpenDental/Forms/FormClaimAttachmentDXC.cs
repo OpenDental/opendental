@@ -166,7 +166,7 @@ namespace OpenDental {
 		private void timerMonitorClipboard_Tick(object sender,EventArgs e) {
 			timerMonitorClipboard.Stop();
 			bool hasRunningProcess;
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				hasRunningProcess=ODCloudClient.GetProcessesSnipTool();
 			}
 			else {
@@ -201,7 +201,7 @@ namespace OpenDental {
 		///<summary>100ms. Monitor the list of running processes for Snip & Sketch and Snipping Tool, for a short duration,
 		///and kill any matching processes.  Doesn't stop trying until the duration is over. </summary>
 		private void timerKillSnipToolProcesses_Tick(object sender,EventArgs e) {
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(ODCloudClient.GetProcessesSnipTool()) { 
 					ODCloudClient.KillProcesses(); 
 				}
@@ -269,7 +269,7 @@ namespace OpenDental {
 
 		///<summary>Attempts to start Snip & Sketch, then Snipping Tool if that fails. Returns true if either started, false if neither did.</summary>
 		public static bool StartSnipAndSketchOrSnippingTool() {
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				return ODCloudClient.StartSnipAndSketchOrSnippingTool(_snipSketchURI);
 			}
 			//Determine if the screensketch protocol is in the registry; if not, we assume Snip & Sketch is not installed.
@@ -319,7 +319,7 @@ namespace OpenDental {
 			//If we're in the middle of trying to kill Snip Tool processes, stop for now.
 			timerKillSnipToolProcesses.Stop();
 			_stopwatchKillSnipToolProcesses.Reset();
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(ODCloudClient.GetProcessesSnipTool()) {
 					ODCloudClient.KillProcesses();
 					Thread.Sleep(100);
@@ -343,7 +343,7 @@ namespace OpenDental {
 			butPasteImage.Enabled=false;
 			//Wait half a second before minimizing, otherwise Snip & Sketch can end up behind Open Dental
 			Thread.Sleep(500);
-			if(!ODBuild.IsWeb()) {
+			if(!ODEnvironment.IsCloudServer) {
 				WindowState=FormWindowState.Minimized;
 			}
 			//begin monitoring the clipboard for results
@@ -351,7 +351,7 @@ namespace OpenDental {
 		}
 
 		private void buttonSnipTool_Click(object sender,EventArgs e) {
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				ODProgress.ShowAction(()=>StartSnipping(),"Opening snipping tool...");
 			}
 			else {
@@ -386,7 +386,7 @@ namespace OpenDental {
 				_listImageAttachments.Add(imageAttachment);
 				FillGrid();
 				if(formClaimAttachmentItemEdit.DoNewSnip) {
-					if(ODBuild.IsWeb()) {
+					if(ODEnvironment.IsCloudServer) {
 						ODProgress.ShowAction(()=>StartSnipping(),"Opening snipping tool...");
 					}
 					else {

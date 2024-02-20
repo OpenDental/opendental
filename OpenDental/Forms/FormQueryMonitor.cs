@@ -235,8 +235,8 @@ namespace OpenDental {
 				MsgBox.Show(this,"No queries in the Query Feed to log.");
 				return;
 			}
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"Logging not supported for the Web version at this time.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"Logging not supported while using Open Dental Cloud.");
 				return;
 			}
 			if(!MsgBox.Show(MsgBoxButtons.YesNo,Lan.g(this,"Log all queries to a file?  Total query count")+$": {_dictionaryQueries.Count.ToString("N0")}")) {

@@ -16,7 +16,7 @@ namespace OpenDental {
 				bool isAllowed=DatabaseIntegrities.IsPluginAllowed("someplugin.dll");//to simulate loading a dll
 			}
 			//No need to check MiddleTierRole; no call to db.
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				return;//plugins not allowed in cloud mode
 			}
 			List<PluginContainer> listPluginContainers=new List<PluginContainer>();

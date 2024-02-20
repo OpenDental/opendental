@@ -374,8 +374,8 @@ namespace OpenDental {
 			if(!checkEnabled.Checked) {
 				return true;
 			}
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"HL7 is not supported in web mode.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"HL7 is not supported while using Open Dental Cloud.");
 				return false;
 			}
 			if(textHL7Server.Text=="") {

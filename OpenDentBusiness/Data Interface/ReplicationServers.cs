@@ -272,8 +272,8 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod());
 			}
-			//ODCloud does not use replication
-			if(ODBuild.IsWeb()) {
+			//Thinfinity and AppStream do not use replication
+			if(ODEnvironment.IsCloudServer) {
 				return false;
 			}
 			//For the majority of calling methods, they should treat the program as if replication is not being used. 

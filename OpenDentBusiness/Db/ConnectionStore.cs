@@ -24,7 +24,7 @@ namespace OpenDentBusiness {
 			ConnectionStoreBase.GetDentalOfficeReportServerFromPrefC=() => {
 				//Be aware that if PrefC cache is not already filled and/or DataConnection.SetDb() has not already been called, this will fail.
 				CentralConnectionBase cn=null;
-				if(ODBuild.IsWeb() && PrefC.ReportingServer.Server!="" && PrefC.ReportingServer.Database!=DataConnection.GetDatabaseName()) {
+				if(ODEnvironment.IsCloudServer && PrefC.ReportingServer.Server!="" && PrefC.ReportingServer.Database!=DataConnection.GetDatabaseName()) {
 					//Security safeguard to prevent Web users from connecting to another office's database.
 					throw new ODException("Report server database name must match current database.");
 				}
@@ -51,7 +51,7 @@ namespace OpenDentBusiness {
 			ConnectionStoreBase.GetDentalOfficeReadOnlyServerFromPrefC=() => {
 				//Be aware that if PrefC cache is not already filled and/or DataConnection.SetDb() has not already been called, this will fail.
 				CentralConnectionBase cn=null;
-				if(ODBuild.IsWeb() && PrefC.ReadOnlyServer.Server!="" && PrefC.ReadOnlyServer.Database!=DataConnection.GetDatabaseName()) {
+				if(ODEnvironment.IsCloudServer && PrefC.ReadOnlyServer.Server!="" && PrefC.ReadOnlyServer.Database!=DataConnection.GetDatabaseName()) {
 					//Security safeguard to prevent Web users from connecting to another office's database.
 					throw new ODException("Read-Only server database name must match current database.");
 				}

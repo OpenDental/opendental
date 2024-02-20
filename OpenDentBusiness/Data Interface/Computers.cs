@@ -91,8 +91,8 @@ namespace OpenDentBusiness{
 				Computer Cur=new Computer();
 				Cur.CompName=clientComputerName;
 				long computerNum = Computers.Insert(Cur);
-				//Never copy the printer rows for ODCloud
-				if(!ODBuild.IsWeb()) {
+				//Never copy the printer rows for Thinfinity or AppStream
+				if(ODEnvironment.IsCloudServer) {
 					if(clientComputerName.ToLower()!=hostComputerName.ToLower()) {
 						CopyPrinterRowsForComputer(computerNum,hostComputerName);//This computer is an RDP remote client. Copy the host computer's printer settings for the new computer.
 					}

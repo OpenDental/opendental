@@ -54,7 +54,7 @@ namespace OpenDental {
 				//Only show the show CEMT user check box if not manually typing user names and there are CEMT users present in the db.
 				checkShowCEMTUsers.Visible=Userods.HasUsersForCEMTNoCache();
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				timerShutdownInstance.Enabled=true;
 			}
 			FillListBox();

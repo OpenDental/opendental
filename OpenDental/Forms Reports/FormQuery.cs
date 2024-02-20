@@ -280,7 +280,7 @@ namespace OpenDental{
 		private void butPaste_Click(object sender, System.EventArgs e){
 			IDataObject iData;
 			try {
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					textQuery.Text=ODClipboard.GetText();
 					return;
 				}

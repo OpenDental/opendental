@@ -165,7 +165,7 @@ namespace CodeBase {
 			if(duplex!=Duplex.Default) {
 				_printDoc.PrinterSettings.Duplex=duplex;
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				//https://referencesource.microsoft.com/#System.Drawing/commonui/System/Drawing/Printing/PrintDocument.cs,3f3c2622b65be86a
 				//The PrintController property will create a PrintControllerWithStatusDialog if no print controller is explictly set.
 				_printDoc.PrintController=new StandardPrintController();//Default PrintController shows a dialog that locks up web.

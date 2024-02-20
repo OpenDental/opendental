@@ -1643,7 +1643,7 @@ namespace OpenDentBusiness{
 				return;
 			}
 			MicrosoftTokenHelper microsoftTokenHelper=new MicrosoftTokenHelper();
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				string strMicrosoftAuthCodesJSON=ODCloudClient.GetMicrosoftAccessToken(emailAddress.EmailUsername,emailAddress.RefreshToken);
 				if(!strMicrosoftAuthCodesJSON.IsNullOrEmpty()) { 
 					microsoftTokenHelper=JsonConvert.DeserializeObject<MicrosoftTokenHelper>(strMicrosoftAuthCodesJSON);

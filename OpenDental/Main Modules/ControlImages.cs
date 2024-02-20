@@ -2457,7 +2457,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				ToolbarScanWeb(scanType);
 				return;
 			}
@@ -2734,7 +2734,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				ToolbarScanMultiWeb();
 				return;
 			}

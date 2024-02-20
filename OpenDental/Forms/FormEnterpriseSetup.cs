@@ -26,7 +26,7 @@ namespace OpenDental {
 			catch(Exception ex) {
 				ex.DoNothing();//Suppress unhandled exceptions from hidden preferences, since they are read only.
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				tabControlMain.TabPages.Remove(tabReport);//Not supported in OD Cloud
 			}
 		}

@@ -31,9 +31,9 @@ namespace OpenDental.Bridges{
 			string info="/i /t:"+pat.LName+" "+pat.FName+" "+pat.PatNum.ToString()+" - "+PrefC.GetString(PrefName.PracticeTitle);
 			try{
 				Process process=ODFileUtils.ProcessStart(path,info);
-				//Don't wait for exit in WEB mode.  Since it opens a browser tab and then an unrelated process on the client,
+				//Don't wait for exit in Thinfinity or AppStream mode.  Since it opens a browser tab and then an unrelated process on the client,
 				//we probably don't have a valid process to wait for, and the resources from Open Dental aren't the same resources from Dxis.
-				if(!ODBuild.IsWeb()) {
+				if(!ODEnvironment.IsCloudServer) {
 					process.WaitForExit();//puts OD in sleep mode because the pano is so resource intensive.
 				}
 			}

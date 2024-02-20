@@ -83,7 +83,7 @@ namespace OpenDentBusiness{
 			}
 			DateTime dateTimeToCheck=DateTime.Now.AddMinutes(-4);
 			string command="SELECT COUNT(*) FROM activeinstance WHERE DateTRecorded > "+POut.DateT(dateTimeToCheck)
-				+" AND ConnectionType="+POut.Enum(ConnectionTypes.ODCloud);
+				+" AND ConnectionType="+POut.Enum(ConnectionTypes.Thinfinity);
 			if(excludeInstanceNum!=0) {
 				command+=" AND ActiveInstanceNum!="+POut.Long(excludeInstanceNum);
 			}
@@ -141,7 +141,10 @@ namespace OpenDentBusiness{
 			if(activeInstance==null) {
 				activeInstance=new ActiveInstance();
 				if(ODBuild.IsWeb()) {
-					activeInstance.ConnectionType=ConnectionTypes.ODCloud;
+					activeInstance.ConnectionType=ConnectionTypes.Thinfinity;
+				}
+				else if(PrefC.IsAppStream) {
+					activeInstance.ConnectionType=ConnectionTypes.AppStream;
 				}
 				else if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientDirect) {
 					activeInstance.ConnectionType=ConnectionTypes.Direct;
@@ -158,7 +161,7 @@ namespace OpenDentBusiness{
 			}
 			else {
 				activeInstance.DateTimeLastActive=Security.DateTimeLastActivity;
-				if(ODBuild.IsWeb() && (activeInstance.UserNum!=userNum || activeInstance.ComputerNum!=computerNum || activeInstance.ProcessId!=processId)) {
+				if(ODEnvironment.IsCloudServer && (activeInstance.UserNum!=userNum || activeInstance.ComputerNum!=computerNum || activeInstance.ProcessId!=processId)) {
 					//Cloud instances start with computer name UNKNOWN until the computer name can be retrieved from the browser by the ODCloudMachineName thread
 					activeInstance.UserNum=userNum;
 					activeInstance.ComputerNum=computerNum;

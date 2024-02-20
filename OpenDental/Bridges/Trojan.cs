@@ -24,7 +24,7 @@ namespace OpenDental.Bridges {
 		public static void StartupCheck(){
 			//Skip all if not using Trojan.
 			Program ProgramCur=Programs.GetCur(ProgramName.Trojan);
-			if(!Programs.IsEnabledByHq(ProgramCur,out _) || !ProgramCur.Enabled || ODBuild.IsWeb()) {
+			if(!Programs.IsEnabledByHq(ProgramCur,out _) || !ProgramCur.Enabled || ODEnvironment.IsCloudServer) {
 				return;
 			}
 			//Ensure that Trojan has a sane install.

@@ -186,7 +186,7 @@ namespace OpenDentBusiness {
 					return;
 				}
 				for(int i=_MIN_PORT;i<_MAX_PORT;i++) {
-					if(ODBuild.IsWeb()) {
+					if(ODEnvironment.IsCloudServer) {
 						try {
 							if(!ODCloudClient.ODCloudAuthGoogleListener($"http://{IPAddress.Loopback}:{i}/")) {
 								continue;
@@ -220,7 +220,7 @@ namespace OpenDentBusiness {
 			///Exchanges the auth code for tokens and returns them. The GoogleToken returned may contain an error message from WebServiceMainHQ.
 			///If you are done with the AuthorizationRequest after calling this, be sure to call CloseListener().</summary>
 			public GoogleToken MakeAccessTokenRequest(string emailAddress) {
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					if(!ODCloudClient.CheckIsListening()) {
 						throw new ODException("An attempt to request tokens was made before starting the HttpListener.");
 					}
@@ -236,7 +236,7 @@ namespace OpenDentBusiness {
 				BuildAuthorizationUrl(emailAddress);
 				Process.Start(_url);
 				string code="";
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					string GoogleAuthCodeResponseHtml=Properties.Resources.GoogleAuthCodeResponseHtml;
 					ODCloudClient.HttpListenerGetContext();
 					while(string.IsNullOrWhiteSpace(code)) {
@@ -256,7 +256,7 @@ namespace OpenDentBusiness {
 			///<summary>Closes the HttpListener if it is not null. If you close the listener but intend to use this AuthorizationRequest again,
 			///you must call StartListener() again.</summary>
 			public void CloseListener() {
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					ODCloudClient.CloseListener();
 				}
 				else {
@@ -338,7 +338,7 @@ namespace OpenDentBusiness {
 			///<summary>Returns the first Prefix of the HttpListener which should be our redirect URI.</summary>
 			private string GetRedirectUri() {
 				string redirectUri;
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					redirectUri = ODCloudClient.GetRedirectUri();
 				}
 				else {

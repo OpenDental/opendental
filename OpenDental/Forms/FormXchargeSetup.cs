@@ -40,8 +40,8 @@ namespace OpenDental{
 			if(_program==null) {
 				return;//should never happen
 			}
-			if(ODBuild.IsWeb()) {
-				linkLabel1.Text+="\r\n"+Lans.g(this,"X-Charge is not supported in web mode. Use EdgeExpress instead.");
+			if(ODEnvironment.IsCloudServer) {
+				linkLabel1.Text+="\r\n"+Lans.g(this,"X-Charge is not supported while using Open Dental Cloud. Use EdgeExpress instead.");
 			}
 			if(PrefC.HasClinicsEnabled) {
 				groupPaySettings.Text=Lan.g(this,"Clinic Payment Settings");

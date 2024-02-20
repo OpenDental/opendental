@@ -58,7 +58,7 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			if(ODBuild.IsWeb()){
+			if(ODEnvironment.IsCloudServer){
 				sigBoxWrapper.Enabled=false;
 			}
 			if(PIn.Bool(ProgramProperties.GetPropVal(_program.ProgramNum,"TerminalProcessingEnabled",_clinicNum))) {
@@ -521,7 +521,7 @@ namespace OpenDental {
 
 		///<summary>Processes a PayConnect payment via a credit card terminal.</summary>
 		private bool ProcessPaymentTerminal() {
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return false;
 				}

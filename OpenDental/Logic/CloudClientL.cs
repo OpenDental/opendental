@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CodeBase;
 using static CodeBase.ODCloudClient;
 
-namespace OpenDental
-{
+namespace OpenDental {
 	public class CloudClientL
 	{
 		///<summary>Prompt the user to launch, or download and install, the OpenDentalCloudClient</summary>
-		public static PromptSelections PromptODCloudClientInstall(bool isCheckingCloudClientResponseOnly=false) {
+		private static PromptSelections PromptODCloudClientInstall(bool isCheckingCloudClientResponseOnly=false) {
 			string response="false";
 			try {
 				response=SendToBrowserSynchronously("",BrowserAction.CheckODCloudClientViaBrowser,doShowProgressBar: false);
@@ -45,29 +41,46 @@ namespace OpenDental
 
 		///<summary>PromptODCloudClientInstall helper method for prompting the user to launch, or download and install, the OpenDentalCloudClient</summary>
 		public static bool IsCloudClientRunning() {
-			CloudClientL.PromptSelections promptSelections=CloudClientL.PromptODCloudClientInstall();
-			if(promptSelections==CloudClientL.PromptSelections.Cancel || promptSelections==CloudClientL.PromptSelections.Download) {
-				return false;
+			if(ODBuild.IsWeb()) {
+				PromptSelections promptSelections=PromptODCloudClientInstall();
+				if(promptSelections==PromptSelections.Cancel || promptSelections==PromptSelections.Download) {
+					return false;
+				}
+				if(promptSelections==PromptSelections.Launch) {
+					try {
+						string response=SendToBrowserSynchronously("",BrowserAction.RelaunchODCloudClientViaBrowser,timeoutSecs:6);
+					}
+					catch(Exception) {
+						MsgBox.Show("ODCloudClient","ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
+						return false;
+					}
+					if(PromptODCloudClientInstall(true)==PromptSelections.NoResponse) {
+						MsgBox.Show("ODCloudClient","ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
+						return false;
+					}
+				}
+				//close duplicate cloud client processes
+				TerminateDuplicateCloudClientProcesses();
+				return true;
 			}
-			if(promptSelections==CloudClientL.PromptSelections.Launch) {
+			else if(IsAppStream) {
+				string response=null;
 				try {
-					string response=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.RelaunchODCloudClientViaBrowser,timeoutSecs:6);
+					response=CheckIsRunning();
 				}
-				catch(Exception) {
-					MsgBox.Show("ODCloudClient","ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
+				catch(Exception ex) {
+					ex.DoNothing();
+				}
+				if(string.IsNullOrEmpty(response)) {
+					MsgBox.Show("ODCloudClient","The ODCloudClient did not respond, please ensure it is installed and running or some features of Open Dental will not be available.");
 					return false;
 				}
-				if(CloudClientL.PromptODCloudClientInstall(true)==CloudClientL.PromptSelections.NoResponse) {
-					MsgBox.Show("ODCloudClient","ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
-					return false;
-				}
+				return true;
 			}
-			//close duplicate cloud client processes
-			ODCloudClient.TerminateDuplicateCloudClientProcesses();
-			return true;
+			return false;
 		}
 
-		public enum PromptSelections {
+		private enum PromptSelections {
 			Launch,
 			Download,
 			ClientRunning,

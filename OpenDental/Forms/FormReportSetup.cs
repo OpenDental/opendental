@@ -52,7 +52,7 @@ namespace OpenDental {
 			checkOutstandingRpDateTab.Checked=PrefC.GetBool(PrefName.OutstandingInsReportDateFilterTab);
 			checkReportDisplayUnearnedTP.Checked=PrefC.GetBool(PrefName.ReportsDoShowHiddenTPPrepayments);
 			textIncompleteProcsExcludeCodes.Text=PrefC.GetString(PrefName.ReportsIncompleteProcsExcludeCodes);
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				tabControl1.TabPages.Remove(tabReportServer);//Web users can't change their database settings.
 			}
 			else {

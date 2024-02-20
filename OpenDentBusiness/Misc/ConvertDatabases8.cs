@@ -1058,5 +1058,23 @@ namespace OpenDentBusiness {
 			string command="INSERT INTO preference(PrefName,ValueString) VALUES('WebServiceServerNameCanBeBlank','0')";
 			Db.NonQ(command);
 		}
+
+		private static void To23_3_34() {
+			string command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudIsAppStream'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('CloudIsAppStream','0')";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudFileWatcherDirectory'";
+			if(Db.GetInt(command)==0) {
+				command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectory','"+POut.String(@"C:\ODCloudClientTransfer\Standard")+"')";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudFileWatcherDirectoryAPI'";
+			if(Db.GetInt(command)==0) {
+				command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectoryAPI','"+POut.String(@"C:\ODCloudClientTransfer\API")+"')";
+				Db.NonQ(command);
+			}
+		}
 	}
 }

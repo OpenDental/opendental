@@ -31,7 +31,7 @@ namespace OpenDental {
 			_listComputers=Computers.GetDeepCopy();
 			_listUserods=Userods.GetDeepCopy();
 			_listActiveInstances=ActiveInstances.GetAllResponsiveActiveInstances()
-				.Where(x => x.ConnectionType==ConnectionTypes.ODCloud)
+				.Where(x => x.ConnectionType==ConnectionTypes.Thinfinity)
 				.ToList();
 			_listCloudAddresses=CloudAddresses.GetAll();
 			string officeData=PayloadHelper.CreatePayload("",eServiceCode.Undefined);

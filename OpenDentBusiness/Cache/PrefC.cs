@@ -461,6 +461,20 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		public static bool IsAppStream {
+			get {
+				try {
+					bool isAppStream=PrefC.GetBool(PrefName.CloudIsAppStream);
+					ODCloudClient.IsAppStream=isAppStream;
+					return isAppStream;
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					return false;
+				}
+			}
+		}
+
 		///<summary>Returns true if the office has a report server set up.</summary>
 		public static bool HasReportServer {
 			get {

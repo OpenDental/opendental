@@ -56,7 +56,7 @@ namespace OpenDental.Bridges {
 			string communicationFile=ProgramProperties.GetPropValFromList(listProgramProperties,"Communication files folder path");//This path is the folder where all comm files will be stored. 
 			string fileName="Patient_"+ODEnvironment.MachineName+".txt";
 			if(communicationFile.Trim()=="") {
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					MsgBox.Show("DexisIntegrator","Communication files folder path must not be empty.");
 					return;
 				}

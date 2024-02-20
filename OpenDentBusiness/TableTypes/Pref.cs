@@ -677,6 +677,12 @@ namespace OpenDentBusiness {
 		CloudSessionLimitCap,
 		///<summary>Local preference. The maximum number of sessions of Open Dental Cloud allowed to be running simultaneously.</summary>
 		CloudSessionLimit,
+		///<summary>Hidden preference. False for cloud users using Thinfinity. Controls how Open Dental communicates with the ODCloudClient. Set to False to use the original HTTP system with Thinfinity. If altered a restart is required as this value is set to a static variable on startup</summary>
+		CloudIsAppStream,
+		///<summary>Hidden preference. The directory used for standard cloud client communication. If altered a restart is required as this value is set to a static variable on startup</summary>
+		CloudFileWatcherDirectory,
+		///<summary>Hidden preference. The directory used for API communication. If altered a restart is required as this value is set to a static variable on startup.</summary>
+		CloudFileWatcherDirectoryAPI,
 		///<summary>0=standard, 1=alternate icons on ModuleBar and a few on Main Toolbar.  This no longer affects any colors.</summary>
 		///<summary>Deprecated</summary>
 		ColorTheme,

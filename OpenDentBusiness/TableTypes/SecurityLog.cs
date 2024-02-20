@@ -11,7 +11,7 @@ namespace OpenDentBusiness{
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long SecurityLogNum;
-		///<summary>Enum:Permissions</summary>
+		///<summary>Enum:EnumPermType</summary>
 		public EnumPermType PermType;
 		///<summary>FK to userod.UserNum</summary>
 		public long UserNum;

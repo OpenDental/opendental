@@ -143,9 +143,9 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(67, 46);
+			this.label2.Location = new System.Drawing.Point(104, 44);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(80, 14);
+			this.label2.Size = new System.Drawing.Size(43, 18);
 			this.label2.TabIndex = 22;
 			this.label2.Text = "APR";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -356,9 +356,9 @@ namespace OpenDental {
 			// radioFinanceCharge
 			// 
 			this.radioFinanceCharge.Checked = true;
-			this.radioFinanceCharge.Location = new System.Drawing.Point(11, 44);
+			this.radioFinanceCharge.Location = new System.Drawing.Point(5, 44);
 			this.radioFinanceCharge.Name = "radioFinanceCharge";
-			this.radioFinanceCharge.Size = new System.Drawing.Size(100, 18);
+			this.radioFinanceCharge.Size = new System.Drawing.Size(110, 18);
 			this.radioFinanceCharge.TabIndex = 0;
 			this.radioFinanceCharge.TabStop = true;
 			this.radioFinanceCharge.Text = "Finance Charge";
@@ -378,9 +378,9 @@ namespace OpenDental {
 			// 
 			// radioBillingCharge
 			// 
-			this.radioBillingCharge.Location = new System.Drawing.Point(11, 10);
+			this.radioBillingCharge.Location = new System.Drawing.Point(5, 10);
 			this.radioBillingCharge.Name = "radioBillingCharge";
-			this.radioBillingCharge.Size = new System.Drawing.Size(95, 21);
+			this.radioBillingCharge.Size = new System.Drawing.Size(115, 21);
 			this.radioBillingCharge.TabIndex = 1;
 			this.radioBillingCharge.TabStop = true;
 			this.radioBillingCharge.Text = "Billing Charge";

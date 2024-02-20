@@ -178,7 +178,7 @@ namespace OpenDental {
 					node2.Nodes.Add(node3);
 					node3=SetNode(EnumPermType.UserQueryAdmin);
 					node2.Nodes.Add(node3);
-					if(!ODBuild.IsWeb()) {
+					if(!ODEnvironment.IsCloudServer) {
 						node3=SetNode(EnumPermType.CommandQuery);
 						node2.Nodes.Add(node3);
 					}

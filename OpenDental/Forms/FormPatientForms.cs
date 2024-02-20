@@ -196,7 +196,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Cannot open kiosk unless process signal interval is set. To set it, go to Setup > Miscellaneous.");
 				return;
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				//Thinfinity messes up window ordering so sometimes FormOpenDental is visible in Kiosk mode.
 				for(int i=0;i<Application.OpenForms.Count;i++) {
 					Application.OpenForms[i].Visible=false;
@@ -206,7 +206,7 @@ namespace OpenDental {
 			formTerminal.IsSimpleMode=true;
 			formTerminal.PatNum=PatNum;
 			formTerminal.ShowDialog();
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				for(int i=0;i<Application.OpenForms.Count;i++) {
 					Application.OpenForms[i].Visible=true;
 				}

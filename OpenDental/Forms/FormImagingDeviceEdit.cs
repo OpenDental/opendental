@@ -37,7 +37,7 @@ namespace OpenDentalImaging {
 		}
 
 		private void comboTwainName_DropDown(object sender,EventArgs e) {
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return;
 				}

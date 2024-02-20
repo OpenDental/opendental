@@ -382,10 +382,10 @@ namespace OpenDental{
 				MsgBox.Show(this,"Invalid Comm Bridge.");
 				return false;
 			}
-			if(ODBuild.IsWeb() 
+			if(ODEnvironment.IsCloudServer 
 				&& Clearinghouses.IsDisabledForWeb(comboFormat.GetSelected<ElectronicClaimFormat>(),comboCommBridge.GetSelected<EclaimsCommBridge>())) 
 			{
-				MsgBox.Show(this,"This clearinghouse is not available while viewing through the web.");
+				MsgBox.Show(this,"This clearinghouse is not available while using Open Dental Cloud.");
 				return false;
 			}
 			if(ClinicNum==0) {//HQ
@@ -511,7 +511,7 @@ namespace OpenDental{
 		private bool CheckOrCreateDirectory(string directoryName) {
 			bool isUsingODCloudClient=x837Controller.DoSendBatchToCloudClient(ClearinghouseCur);
 			bool didDirectoryExist=false;
-			if(isUsingODCloudClient && ODBuild.IsWeb()) {
+			if(isUsingODCloudClient && ODEnvironment.IsCloudServer) {
 				didDirectoryExist=ODCloudClient.CheckOrCreateWithODCloudClient(directoryName,ODCloudClient.CloudClientAction.CheckForDirectory)=="Success";
 			}
 			else {
@@ -521,7 +521,7 @@ namespace OpenDental{
 				return true;//Nothing to create.
 			}
 			try {
-				if(isUsingODCloudClient && ODBuild.IsWeb()) {
+				if(isUsingODCloudClient && ODEnvironment.IsCloudServer) {
 					ODCloudClient.CheckOrCreateWithODCloudClient(directoryName,ODCloudClient.CloudClientAction.CreateDirectory);
 				}
 				else {

@@ -523,7 +523,17 @@ namespace OpenDentBusiness.Eclaims {
 					continue;
 				}
 				string messageText=EtransMessageTexts.GetMessageText(ack.EtransMessageTextNum);
-				CCDFieldInputter messageData=new CCDFieldInputter(messageText);
+				if(messageText=="") {
+					continue;
+				}
+				CCDFieldInputter messageData=null;
+				try {
+					messageData=new CCDFieldInputter(messageText);
+				}
+				catch(Exception ex) {//Invalid message.
+					ex.DoNothing();
+					continue;
+				}
 				CCDField transRefNum=messageData.GetFieldById("G01");
 				if(transRefNum!=null && transRefNum.valuestr==claim.CanadaTransRefNum && listEtrans[i].DateTimeTrans>originalEtransDateTime) {
 					officeSequenceNumber=PIn.Int(messageData.GetFieldById("A02").valuestr);
@@ -533,7 +543,7 @@ namespace OpenDentBusiness.Eclaims {
 			return officeSequenceNumber;
 		}
 
-		///<summary></summary>
+		///<summary>Throws exceptions.</summary>
 		public static long SendClaimReversal(Clearinghouse clearinghouseClin,Claim claim,InsPlan plan,InsSub insSub,bool isAutomatic,PrintCCD printCCD) {
 			StringBuilder strb=new StringBuilder();
 			Carrier carrier=Carriers.GetCarrier(plan.CarrierNum);
@@ -570,6 +580,9 @@ namespace OpenDentBusiness.Eclaims {
 			//A02 office sequence number 6 N
 			//We are required to use the same office sequence number as the original claim.
 			etrans.OfficeSequenceNumber=GetOriginalOfficeSequenceNumber(claim,out DateTime originalEtransDateTime);
+			if(etrans.OfficeSequenceNumber==0) {
+				throw new ApplicationException(Lans.g("CanadianOutput","Original OfficeSequenceNumber not found."));
+			}
 			DateTime serverDate=MiscData.GetNowDateTime().Date;
 			if(originalEtransDateTime.Date!=serverDate) {
 				throw new ApplicationException(Lans.g("CanadianOutput","Claims can only be reversed on the day that they were sent. The claim can only be manually reversed."));

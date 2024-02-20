@@ -259,7 +259,7 @@ namespace OpenDental {
 		
 		private void listElectBilling_SelectedIndexChanged(object sender,EventArgs e) {
 			//In Web mode do not allow ClaimX or EDS to be selected, provide warning if they are.
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				string disabledBillingProvider="";
 				if(listElectBilling.SelectedIndex==3) {
 					disabledBillingProvider+="ClaimX";
@@ -268,7 +268,7 @@ namespace OpenDental {
 					disabledBillingProvider+="Electronic Dental Services";
 				}
 				if(!string.IsNullOrEmpty(disabledBillingProvider)) {
-					MsgBox.Show(this,disabledBillingProvider+" is not available while viewing through the web.");
+					MsgBox.Show(this,disabledBillingProvider+" is not available while using Open Dental Cloud.");
 					//Reset to previous default selection if pref wasn't set to ClaimX or EDS
 					int prefBillingtype=PrefC.GetInt(PrefName.BillingUseElectronic);
 					if(prefBillingtype>=0 && prefBillingtype<=2) {

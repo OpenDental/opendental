@@ -145,7 +145,7 @@ namespace OpenDentBusiness {
 			public static bool IsRCMRunning {
 				get {
 					bool isRCMRunning=false;
-					if(ODBuild.IsWeb()) {
+					if(ODEnvironment.IsCloudServer) {
 						isRCMRunning=ODCloudClient.IsProcessRunning("rcm");
 					}
 					else {

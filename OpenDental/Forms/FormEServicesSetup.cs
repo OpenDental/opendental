@@ -67,7 +67,7 @@ namespace OpenDental {
 		///<summary>Makes a web call to WebServiceMainHQ to get the corresponding EServiceSetupFull information and then attempts to fill each tab.
 		///If anything goes wrong within this method a message box will show to the user and then the window will auto close via Abort.</summary>
 		public static WebServiceMainHQProxy.EServiceSetup.SignupOut GetSignupOut(WebServiceMainHQProxy.EServiceSetup.SignupOut signupOut=null) {
-			if(!ODBuild.IsWeb() && MiscUtils.TryUpdateIeEmulation()) {
+			if(!ODEnvironment.IsCloudServer && MiscUtils.TryUpdateIeEmulation()) {
 				throw new Exception("Browser emulation version updated.\r\nYou must restart this application before accessing the Signup Portal.");
 			}
 			//Send light version of clinics to HQ to be used by signup portal below. Get back all args needed from HQ in order to perform the operations of this window.

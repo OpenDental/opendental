@@ -8,6 +8,9 @@ namespace CodeBase {
 	///<summary>This is a dummy class that exists solely so that UpdateFileCopier does not have to link to the real CodeBase.ODCloudClient so that
 	///UpdateFileCopier does not need a reference to Newtonsoft.Json.</summary>
 	public class ODCloudClient {
+		public static bool IsAppStream;
+		public static string FileWatcherDirectory;
+		public static string FileWatcherDirectoryAPI;
 		public static SendDataToBrowserDelegate SendDataToBrowser;
 		public delegate void SendDataToBrowserDelegate(string data,int browserAction,Action<string> onReceivedResponse = null);
 
@@ -17,8 +20,7 @@ namespace CodeBase {
 
 		}
 
-		public static void WriteFile(string exePath="",string extraArgs="",bool doOverwriteFile=true) 
-		{
+		public static void WriteFile(string exePath="",string extraArgs="",bool doOverwriteFile=true) {
 
 		}
 
@@ -26,16 +28,34 @@ namespace CodeBase {
 			return "";
 		}
 
+		public static string SendToODCloudClientSynchronously(ODCloudClientData cloudClientData,CloudClientAction cloudClientAction,int timeoutSecs=30
+			,bool doShowProgressBar=true) 
+		{
+			return "";
+		}
+
 		public static string[] GetClipboardFilesFromODCloudClient() {
 			return null;
 		}
 
-		public static string GetClipboardImageFromODCloudClient() {
+		public static string GetClipboardImageFromODCloudClient(bool doShowProgressBar=false) {
 			return null;
 		}
 
 		public static bool ClearClipboard() {
 			return false;
+		}
+
+		public static void SetClipboardText(string text) {
+		
+		}
+
+		public static string GetClipboardText() {
+			return "";
+		}
+
+		public static string GetComputerName() {
+			return "";
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>
@@ -48,6 +68,14 @@ namespace CodeBase {
 			GetClipboardText,
 			///<summary>Get the contents of the user's clipboard as an image.</summary>
 			GetClipboardImage,
+		}
+
+		public class ODCloudClientData {
+
+		}
+
+		public enum CloudClientAction {
+			GetClipboardText
 		}
 	}
 }

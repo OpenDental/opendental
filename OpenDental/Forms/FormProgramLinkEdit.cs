@@ -73,7 +73,7 @@ namespace OpenDental{
 		}
 
 		private bool CanEnableProgram() {
-			if(!ODBuild.IsWeb()) {
+			if(!ODEnvironment.IsCloudServer) {
 				return true;
 			}
 			if(Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(ProgramCur.ProgName)) {
@@ -349,8 +349,8 @@ namespace OpenDental{
 				return;
 			}
 			if(checkEnabled.Checked && textPluginDllName.Text!="") {
-				if(ODBuild.IsWeb()) {
-					MessageBox.Show(Lan.g(this,"Plugins are not allowed in Cloud mode."));
+				if(ODEnvironment.IsCloudServer) {
+					MessageBox.Show(Lan.g(this,"Plugins are not allowed while using Open Dental Cloud."));
 					return;
 				}
 				string dllPath=ODFileUtils.CombinePaths(Application.StartupPath,textPluginDllName.Text);

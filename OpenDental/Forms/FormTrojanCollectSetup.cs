@@ -25,8 +25,8 @@ namespace OpenDental {
 		}
 
 		private void FormTrojanCollectSetup_Load(object sender,EventArgs e) {
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"This program is not available in web mode.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"This program is not available while using Open Dental Cloud.");
 				Close();
 				return;
 			}

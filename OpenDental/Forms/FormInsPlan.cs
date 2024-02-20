@@ -1363,8 +1363,8 @@ namespace OpenDental {
 		}
 
 		private void butImportTrojan_Click(object sender,System.EventArgs e) {
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
 				return;//bridge is not yet available for web users.
 			}
 			//If SubCur is null, this button is not visible to click.
@@ -1492,8 +1492,8 @@ namespace OpenDental {
 		}
 
 		private void butIapFind_Click(object sender,System.EventArgs e) {
-			if(ODBuild.IsWeb()) {
-				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
+			if(ODEnvironment.IsCloudServer) {
+				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
 				return;
 			}
 			//If SubCur is null, this button is not visible to click.

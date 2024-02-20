@@ -905,7 +905,23 @@ namespace OpenDental{
 			Signalods.DateTSignalLastRefreshed=MiscData.GetNowDateTime();
 			Signalods.DateTApptSignalLastRefreshed=Signalods.DateTSignalLastRefreshed;
 			SetTimersAndThreads(true);//Safe to start timers since this method call is on the main thread.
-			if(ODBuild.IsWeb()) {
+			if(PrefC.IsAppStream) {
+				ODCloudClient.FileWatcherDirectory=PrefC.GetString(PrefName.CloudFileWatcherDirectory);
+				try {
+					if(!Directory.Exists(ODCloudClient.FileWatcherDirectory)) {
+						Directory.CreateDirectory(ODCloudClient.FileWatcherDirectory);
+					}
+					ODCloudClient.FileWatcherDirectoryAPI=PrefC.GetString(PrefName.CloudFileWatcherDirectoryAPI);
+					if(!Directory.Exists(ODCloudClient.FileWatcherDirectoryAPI)) {
+						Directory.CreateDirectory(ODCloudClient.FileWatcherDirectoryAPI);
+					}
+				}
+				catch(Exception e) {
+					ODCloudClient.DidLocateFileWatcherDirectory=false;
+					FriendlyException.Show(Lans.g(this,"Unable to communicate with the Cloud Client. Any features that use the Cloud Client will be unavailable."),e);
+				}
+			}
+			if(ODEnvironment.IsCloudServer) {
 				_menuItemCreateAtoZ.Available=false;
 				_menuItemServiceManager.Available=false;
 				_menuItemReplication.Available=false;
@@ -913,7 +929,7 @@ namespace OpenDental{
 				_menuItemEHR.Available=false;
 				_menuItemPrinter.Available=false;
 				//If the office needs to reset their office passowrd, we will prompt them until they change it.
-				if(PrefC.GetEnum<YN>(PrefName.CloudPasswordNeedsReset)!=YN.No) {
+				if(ODBuild.IsWeb() && PrefC.GetEnum<YN>(PrefName.CloudPasswordNeedsReset)!=YN.No) {
 					string message="You must reset the office password. ";
 					if(Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
 						if(MsgBox.Show(this,MsgBoxButtons.YesNo,message+"Do you want to open the Change Office Password window?")) {
@@ -6501,7 +6517,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Cannot open terminal unless process signal interval is set. To set it, go to Setup > Miscellaneous.");
 				return;
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				//Thinfinity messes up window ordering so sometimes FormOpenDental is visible in Kiosk mode.
 				for(int i=0;i<Application.OpenForms.Count;i++) {
 					Application.OpenForms[i].Visible=false;

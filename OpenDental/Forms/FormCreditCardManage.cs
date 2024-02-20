@@ -303,8 +303,8 @@ namespace OpenDental {
 				}
 			}
 			if(hasXCharge) {
-				if(ODBuild.IsWeb()) {
-					MsgBox.Show(this,"XCharge is not available while viewing through the web.");
+				if(ODEnvironment.IsCloudServer) {
+					MsgBox.Show(this,"XCharge is not available while using Open Dental Cloud.");
 					return;
 				}
 				Program program=Programs.GetCur(ProgramName.Xcharge);

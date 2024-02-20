@@ -95,7 +95,7 @@ namespace OpenDental{
 		}
 
 		private void butSetScanner_Click(object sender,EventArgs e) {
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(CloudClientL.IsCloudClientRunning()) {
 					ODCloudClient.SetDefaultScanner();
 				}

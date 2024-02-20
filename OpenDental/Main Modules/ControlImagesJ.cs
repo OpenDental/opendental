@@ -2869,7 +2869,7 @@ namespace OpenDental
 			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
 				return;
 			}	
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(CloudClientL.IsCloudClientRunning()) {
 					ToolbarScanWeb(scanType);
 				}
@@ -3061,7 +3061,7 @@ namespace OpenDental
 			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
 				return;
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(CloudClientL.IsCloudClientRunning()) {
 					ToolbarScanMultiWeb();
 				}

@@ -25,7 +25,7 @@ namespace OpenDental.Bridges{
 				return;
 			}
 			//Make sure the program is running
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				try {
 					ODFileUtils.ProcessStart(path,tryLaunch:true);
 				}
@@ -52,7 +52,7 @@ namespace OpenDental.Bridges{
 					return;
 				}
 				DrCephArgs cephArgs=form.Args;
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					string patArgs=JsonConvert.SerializeObject(cephArgs);
 					ODCloudClient.SendToDrCeph(patArgs);
 				}

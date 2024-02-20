@@ -32,7 +32,7 @@ namespace OpenDental {
 		}
 
 		private void FormUpdate_Load(object sender, System.EventArgs e) {
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				MsgBox.Show(this,"Updates are not allowed manually from within the program. Please call support.");
 				Close();
 				return;

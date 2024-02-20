@@ -317,7 +317,7 @@ namespace OpenDental{
 				return;
 			}
 			MicrosoftTokenHelper microsoftTokenHelper;
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return;
 				}
@@ -344,7 +344,7 @@ namespace OpenDental{
 		///<summary>Requests authorization for Open Dental to send emails and access the inbox for a gmail address.
 		///Google sends us access and refresh tokens that we store in the database.</summary>
 		private void butAuthGoogle_Click(object sender,EventArgs e) {
-			if(ODBuild.IsWeb() && !CloudClientL.IsCloudClientRunning()) {
+			if(ODEnvironment.IsCloudServer && !CloudClientL.IsCloudClientRunning()) {
 			return;
 			}
 			Google.AuthorizationRequest authorizationRequest=new Google.AuthorizationRequest();
@@ -415,7 +415,7 @@ namespace OpenDental{
 
 		private void butAuthMicrosoft_Click(object sender,EventArgs e) {
 			MicrosoftTokenHelper microsoftToken=new MicrosoftTokenHelper();
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return; 
 				}

@@ -43,8 +43,8 @@ namespace OpenDental{
 				}
 				return;
 			}
-			if(ODBuild.IsWeb() && Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
-				MsgBox.Show("ProgramLinks","Bridge is not available while viewing through the web.");
+			if(ODEnvironment.IsCloudServer && Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
+				MsgBox.Show("ProgramLinks","Bridge is not available while using Open Dental Cloud.");
 				return;//bridge is not available for web users at this time. 
 			}
 			if(program.ProgName==ProgramName.ActeonImagingSuite.ToString()) {

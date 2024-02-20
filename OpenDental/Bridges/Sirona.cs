@@ -117,7 +117,7 @@ namespace OpenDental.Bridges {
 						line.Append(pat.ChartNumber);
 					}
 					line.Append(nTerm);
-					if(ODBuild.IsWeb()) {
+					if(ODEnvironment.IsCloudServer) {
 						line.Append(ODEnvironment.MachineName);//Will be replaced on the client side
 					}
 					else {
@@ -137,7 +137,7 @@ namespace OpenDental.Bridges {
 					line.Append("\r\n");
 					listIniLines.Add(line.ToString());
 					#endregion
-					if(!ODBuild.IsWeb()) {
+					if(!ODEnvironment.IsCloudServer) {
 						OpenDentBusiness.Shared.Sirona.WriteToSendBoxFile(path,listIniLines);
 					}
 				}
@@ -148,7 +148,7 @@ namespace OpenDental.Bridges {
 			}//if patient is loaded
 			//Start Sidexis.exe whether patient loaded or not.
 			try {
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					ODCloudClient.SendToSirona(path,listIniLines);
 				}
 				else {

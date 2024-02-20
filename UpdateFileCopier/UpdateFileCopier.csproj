@@ -122,6 +122,9 @@
     <Compile Include="..\CodeBase\Utilities\ODClipboard.cs">
       <Link>ODClipboard.cs</Link>
     </Compile>
+    <Compile Include="..\CodeBase\Utilities\ODEnvironment.cs">
+      <Link>ODEnvironment.cs</Link>
+    </Compile>
     <Compile Include="..\CodeBase\Utilities\ODException.cs">
       <Link>ODException.cs</Link>
     </Compile>

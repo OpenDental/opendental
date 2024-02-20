@@ -73,7 +73,7 @@ namespace OpenDental {
 			}
 			textSupplementalBackupCopyNetworkPath.Text=PrefC.GetString(PrefName.SupplementalBackupNetworkPath);
 			#endregion Supplemental Tab
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				//OD Cloud users cannot use this tool because they're InnoDb.
 				tabControl1.TabPages.Remove(tabPageBackup);
 				//We don't want to allow the user to connect to another server.

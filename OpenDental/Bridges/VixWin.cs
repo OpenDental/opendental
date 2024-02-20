@@ -33,7 +33,7 @@ namespace OpenDental.Bridges {
 			}
 			info+=" -N "+pat.FName.Replace(" ","")+"^"+pat.LName.Replace(" ","");//no spaces allowed
 			if(ppImagePath!="") {//optional image path
-				if(!ODBuild.IsWeb() && !Directory.Exists(ppImagePath)) {
+				if(!ODEnvironment.IsCloudServer && !Directory.Exists(ppImagePath)) {
 					MessageBox.Show("Unable to find image path "+ppImagePath);
 					return;
 				}

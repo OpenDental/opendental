@@ -202,7 +202,7 @@ namespace OpenDental {
 				row.Tag=new Action(EtransFix);
 				gridTools.ListGridRows.Add(row);
 			}
-			if(!ODBuild.IsWeb()) {
+			if(!ODEnvironment.IsCloudServer) {
 				//If the office converted their db to MyISAM, their backups would stop working.
 				row=new GridRow(Lan.g(this,"InnoDB"),Lan.g(this,"Converts database storage engine to/from InnoDb."));
 				row.Tag=new Action(InnoDBFix);

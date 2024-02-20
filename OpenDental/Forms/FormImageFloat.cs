@@ -1289,7 +1289,7 @@ namespace OpenDental {
 							fileName=Path.GetDirectoryName(fileName)+"\\"+Path.GetFileNameWithoutExtension(fileName)+random.Next(9)+Path.GetExtension(fileName);
 						}
 						File.Copy(filePathSource,fileName);
-						if(ODBuild.IsWeb()){//File path/name will not exist. Still copy the Bitmap so that it can be pasted on local computer.
+						if(ODEnvironment.IsCloudServer){//File path/name will not exist. Still copy the Bitmap so that it can be pasted on local computer.
 							bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
 						}
 					}
@@ -1331,7 +1331,7 @@ namespace OpenDental {
 				stringArray[0]=fileName;
 				dataObject.SetData(DataFormats.FileDrop,stringArray);
 			}
-			if(ODBuild.IsWeb()){
+			if(ODEnvironment.IsCloudServer){
 				int nodeType=(int)nodeTypeAndKey.NodeType;
 				ODCloudClient.CopyToClipboard(bitmapCopy,fileName,nodeType,nodeTypeAndKey.PriKey);
 			}
@@ -1704,7 +1704,7 @@ namespace OpenDental {
 			}
 			IDataObject iDataObject=null;
 			NodeTypeAndKey nodeTypeAndKey=null;
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				ODCloudClient.CloudNodeTypeAndKey cloudNodeTypeAndKey=ODCloudClient.GetNodeTypeAndKey();
 				if(cloudNodeTypeAndKey!=null){
 					EnumImageNodeType enumImageNodeTypeCopied=(EnumImageNodeType)cloudNodeTypeAndKey.nodeType;

@@ -176,7 +176,7 @@ namespace OpenDental {
 		private void butPaste_Click(object sender,System.EventArgs e) {
 			IDataObject iDataObject;
 			try {
-				if(ODBuild.IsWeb()) {
+				if(ODEnvironment.IsCloudServer) {
 					textQuery.Text=ODClipboard.GetText();
 					return;
 				}
@@ -315,7 +315,7 @@ namespace OpenDental {
 			else{
 				saveFileDialog2.FileName=_userQuery.FileName;
 			}
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) { 
 					return;
 				}
