@@ -26,7 +26,6 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInsVerificationList));
 			this.tabControl1 = new OpenDental.UI.TabControl();
 			this.tabVerify = new OpenDental.UI.TabPage();
-			this.butClose = new OpenDental.UI.Button();
 			this.tabControlVerificationList = new OpenDental.UI.TabControl();
 			this.tabCurrent = new OpenDental.UI.TabPage();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -82,6 +81,7 @@ namespace OpenDental{
 			this.labelToUserMedicaid = new System.Windows.Forms.Label();
 			this.butAssignUserPickMedicaid = new OpenDental.UI.Button();
 			this.gridAssignMedicaid = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupVerificationFilters = new OpenDental.UI.GroupBox();
 			this.labelMedicaid = new System.Windows.Forms.Label();
 			this.labelStandard = new System.Windows.Forms.Label();
@@ -135,7 +135,6 @@ namespace OpenDental{
 			// tabVerify
 			// 
 			this.tabVerify.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
-			this.tabVerify.Controls.Add(this.butClose);
 			this.tabVerify.Controls.Add(this.tabControlVerificationList);
 			this.tabVerify.Controls.Add(this.butVerifyPat);
 			this.tabVerify.Controls.Add(this.textPatBirthdate);
@@ -153,16 +152,6 @@ namespace OpenDental{
 			this.tabVerify.Size = new System.Drawing.Size(967, 510);
 			this.tabVerify.TabIndex = 0;
 			this.tabVerify.Text = "Verification List";
-			// 
-			// butClose
-			// 
-			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butClose.Location = new System.Drawing.Point(882, 480);
-			this.butClose.Name = "butClose";
-			this.butClose.Size = new System.Drawing.Size(75, 24);
-			this.butClose.TabIndex = 2;
-			this.butClose.Text = "&Close";
-			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// tabControlVerificationList
 			// 
@@ -703,6 +692,16 @@ namespace OpenDental{
 			this.gridAssignMedicaid.Title = "Insurance Verification Assignment List";
 			this.gridAssignMedicaid.TranslationName = "TableInsVerifyAssign";
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(882, 628);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// groupVerificationFilters
 			// 
 			this.groupVerificationFilters.Controls.Add(this.labelMedicaid);
@@ -948,6 +947,7 @@ namespace OpenDental{
 			// FormInsVerificationList
 			// 
 			this.ClientSize = new System.Drawing.Size(974, 661);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.groupVerificationFilters);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
