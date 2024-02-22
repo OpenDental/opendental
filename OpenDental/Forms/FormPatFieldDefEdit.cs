@@ -121,11 +121,6 @@ namespace OpenDental {
 					textName.Text=_fieldNameOld;
 					return;
 				}
-				if(!PrefC.GetBool(PrefName.DisplayRenamedPatFields)
-					&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"Changing the field name will cause existing information for this field to be hidden.  Continue?")) {
-					textName.Text=_fieldNameOld;
-					return;
-				}
 				if(PatFieldDefs.GetExists(x => x.FieldName==textName.Text)) {
 					MsgBox.Show(this,"Field name currently being used.");
 					return;

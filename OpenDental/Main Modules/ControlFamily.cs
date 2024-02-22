@@ -1843,13 +1843,13 @@ namespace OpenDental{
 			//Loop through each family within the super family.
 			for(int i=0;i<_listPatientsSuperFamilyGuarantors.Count;i++) {
 				GridRow gridRow=new GridRow();
-				Patient patient=_listPatientsSuperFamilyGuarantors[i];
-				gridRow.Tag=patient;
+				Patient patientGuar=_listPatientsSuperFamilyGuarantors[i];
+				gridRow.Tag=patientGuar;
 				//Loop through each displayField within the user-chosen displayField list.
 				for(int j=0;j<listDisplayFields.Count;j++) {
 					switch(listDisplayFields[j].InternalName) {
 						case "Name":
-							string strSuperFam=GetCellTextSuperFamName(patient);
+							string strSuperFam=GetCellTextSuperFamName(patientGuar);
 							gridRow.Cells.Add(strSuperFam);
 							if(i==0) {
 								gridRow.Cells[0].Bold=YN.Yes;
@@ -1857,10 +1857,10 @@ namespace OpenDental{
 							}
 							break;
 						case "Stmt":
-							gridRow.Cells.Add(patient.HasSuperBilling ? "X" : "");
+							gridRow.Cells.Add(patientGuar.HasSuperBilling ? "X" : "");
 							break;
 						case "": //Patfields
-							PatField patField=_listPatFieldsForSuperFam.Find(x=>x.PatNum==patient.PatNum && x.FieldName==listDisplayFields[j].Description);//Will frequently be null because many patients will have no PatField yet
+							PatField patField=_listPatFieldsForSuperFam.Find(x=>x.PatNum==patientGuar.PatNum && x.FieldName==listDisplayFields[j].Description);//Will frequently be null because many patients will have no PatField yet
 							string celltext=PatFields.GetAbbrOrValue(patField,listDisplayFields[j].Description);
 							gridRow.Cells.Add(celltext);
 							break;
@@ -1877,21 +1877,29 @@ namespace OpenDental{
 			}
 		}
 
-		private string GetCellTextSuperFamName(Patient patient) {
+		private string GetCellTextSuperFamName(Patient patientGuar) {
 			//Make a string that displays all the names of the family members.
 			//Always start with the guarantor followed by the rest of the family.
-			string strSuperFam = patient.GetNameLF();
-			List<Patient> listPatientsSuperFamilyMembersNotMerged = _listPatientsSuperFamilyMembers.FindAll(x=>!PatientLinks.WasPatientMerged(x.PatNum,_loadData.ListMergeLinks)||x.PatNum==_patient.PatNum);
-			for(int k = 0;k<listPatientsSuperFamilyMembersNotMerged.Count;k++) {
-				if(listPatientsSuperFamilyMembersNotMerged[k].Guarantor!=patient.Guarantor) {
-					continue;//Not part of this family.
-				}
-				if(listPatientsSuperFamilyMembersNotMerged[k].PatNum==patient.PatNum) {
-					continue;//Guarantor is already in the string.
-				}
-				strSuperFam+="\r\n   "+StringTools.Truncate(listPatientsSuperFamilyMembersNotMerged[k].GetNameLF(),40,true);
+			string stringReturn = patientGuar.GetNameLF();
+			if(_patient.PatNum!=patientGuar.PatNum) {
+				//If this family is not currently selected in the superfam grid.
+				return stringReturn;
 			}
-			return strSuperFam;
+			//From here down, we are adding family members to the string
+			//when the family is currently selected in the superfam grid.
+			for(int i = 0;i<_listPatientsSuperFamilyMembers.Count;i++) {
+				if(_listPatientsSuperFamilyMembers[i].Guarantor!=patientGuar.Guarantor) {
+					continue; //Not part of patientGuar's family.
+				}
+				if(_listPatientsSuperFamilyMembers[i].PatNum==patientGuar.PatNum) {
+					continue; //Guarantor is already in the string.
+				}
+				if(PatientLinks.WasPatientMerged(_listPatientsSuperFamilyMembers[i].PatNum,_loadData.ListMergeLinks)) {
+					continue; //Patient was merged into another patient, we only want the 'other' patient.
+				}
+				stringReturn+="\r\n   "+StringTools.Truncate(_listPatientsSuperFamilyMembers[i].GetNameLF(),40,true);
+			}
+			return stringReturn;
 		}
 
 		private int sortPatientListBySuperFamily(Patient patient1,Patient patient2) {
@@ -1904,6 +1912,16 @@ namespace OpenDental{
 			if(patient2.PatNum==patient2.SuperFamily) {
 				return 1;
 			}
+			//Sort Inactive patients to bottom of list.
+			if(patient1.PatStatus!=patient2.PatStatus) {
+				if(patient1.PatStatus==PatientStatus.Inactive) {
+					return 1;
+				}
+				if(patient2.PatStatus==PatientStatus.Inactive) {
+					return -1;
+				}
+			}
+			//The sorting below happens when they are both active or both inactive.
 			switch(_sortStrategySuperFam) {
 				case SortStrategy.NameAsc:
 					return patient1.GetNameLF().CompareTo(patient2.GetNameLF());

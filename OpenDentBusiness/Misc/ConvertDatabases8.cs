@@ -1020,6 +1020,24 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
+		private static void To23_3_34() {
+			string command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudIsAppStream'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('CloudIsAppStream','0')";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudFileWatcherDirectory'";
+			if(Db.GetInt(command)==0) {
+				command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectory','"+POut.String(@"C:\ODCloudClientTransfer\Standard")+"')";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudFileWatcherDirectoryAPI'";
+			if(Db.GetInt(command)==0) {
+				command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectoryAPI','"+POut.String(@"C:\ODCloudClientTransfer\API")+"')";
+				Db.NonQ(command);
+			}
+		}
+
 		private static void To24_1_1() {
 			string command;
 			DataTable table;
@@ -1136,12 +1154,21 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			#endregion S49090 - Benefit age limitations for fluoride and sealants, changed to use CodeGroups.
 			//I47180 - ODCloudClient for AWS AppStream 2.0
-			command="INSERT INTO preference(PrefName,ValueString) VALUES('CloudIsAppStream','0')";
-			Db.NonQ(command);
-			command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectory','"+POut.String(@"C:\ODCloudClientTransfer\Standard")+"')";
-			Db.NonQ(command);
-			command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectoryAPI','"+POut.String(@"C:\ODCloudClientTransfer\API")+"')";
-			Db.NonQ(command);
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudIsAppStream'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('CloudIsAppStream','0')";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudFileWatcherDirectory'";
+			if(Db.GetInt(command)==0) {
+				command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectory','"+POut.String(@"C:\ODCloudClientTransfer\Standard")+"')";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='CloudFileWatcherDirectoryAPI'";
+			if(Db.GetInt(command)==0) {
+				command=@"INSERT INTO preference(PrefName,ValueString) VALUES('CloudFileWatcherDirectoryAPI','"+POut.String(@"C:\ODCloudClientTransfer\API")+"')";
+				Db.NonQ(command);
+			}
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('FamilyBalancerChangedSinceNumDays','0')";
 			Db.NonQ(command);
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('FamilyBalancerChangedSinceUseLastDayRun','0')";

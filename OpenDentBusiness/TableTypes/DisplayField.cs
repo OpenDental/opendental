@@ -50,6 +50,12 @@ namespace OpenDentBusiness{
 			return InternalName+", "+ColumnWidth.ToString();
 		}
 
+		public string ToDescriptionString() {
+			if(string.IsNullOrWhiteSpace(Description)) {
+				return InternalName+", "+ColumnWidth.ToString();
+			}
+			return Description+", "+ColumnWidth.ToString();
+		}
 	}
 
 	///<summary></summary>

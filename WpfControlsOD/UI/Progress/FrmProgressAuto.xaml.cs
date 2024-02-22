@@ -32,6 +32,7 @@ namespace WpfControls.UI {
 		public string StopNotAllowedMessage;
 		public string MessageCancel;
 		public bool TestSleep;
+		public Action CancelAction { get; set; }
 
 		///<summary>The date and time of the most recent event that this form processed. Used for history.</summary>
 		private DateTime _dateTimeLastEvent;

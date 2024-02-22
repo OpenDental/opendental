@@ -100,6 +100,12 @@
     <DocumentationFile>bin\Release\OpenDental.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\Required dlls\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.IdentityStore">
+      <HintPath>..\Required dlls\AWSSDK.IdentityStore.dll</HintPath>
+    </Reference>
     <Reference Include="AxInterop.AcroPDFLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\AxInterop.AcroPDFLib.dll</HintPath>
@@ -607,6 +613,18 @@
     </Compile>
     <Compile Include="Forms\FormBenefitFrequencies.Designer.cs">
       <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCloudUserEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCloudUserEdit.Designer.cs">
+      <DependentUpon>FormCloudUserEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCloudUsers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCloudUsers.Designer.cs">
+      <DependentUpon>FormCloudUsers.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormEClipboardImageCaptureDefEdit.cs">
       <SubType>Form</SubType>
@@ -6987,6 +7005,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormBenefitFrequencies.resx">
       <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCloudUserEdit.resx">
+      <DependentUpon>FormCloudUserEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCloudUsers.resx">
+      <DependentUpon>FormCloudUsers.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEClipboardImageCaptureDefEdit.resx">
       <DependentUpon>FormEClipboardImageCaptureDefEdit.cs</DependentUpon>

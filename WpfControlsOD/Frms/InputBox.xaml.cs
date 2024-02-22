@@ -245,6 +245,7 @@ namespace OpenDental {
 				}
 				grid.Children.Add(_listLabels[i]);
 			}
+			bool isFocusSet=false;
 			for(int i=0;i<_listControls.Count;i++) {
 				Point point=new Point(_listControls[i].Margin.Left,_listControls[i].Margin.Top);
 				if(_listControls[i] is ComboBox || _listInputBoxParams[i].InputBoxType_==InputBoxType.TextBox){
@@ -254,6 +255,19 @@ namespace OpenDental {
 					_listControls[i].Width=double.NaN;
 				}
 				grid.Children.Add(_listControls[i]);
+				if(isFocusSet){
+					continue;
+				}
+				if(!_listControls[i].Name.Contains("text")) {
+					//There are about 6 different kinds of textboxes. 
+					//This feels a little hackey, but we control the names, so it will work.
+					continue;
+				}
+				int indexFirstTextbox=grid.Children.Count-1;
+				Dispatcher.BeginInvoke(DispatcherPriority.Background,new Action(() =>{
+					grid.Children[indexFirstTextbox].Focus();
+				}));
+				isFocusSet=true;
 			}
 		}
 

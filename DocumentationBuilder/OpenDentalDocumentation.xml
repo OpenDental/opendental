@@ -4460,13 +4460,13 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="InternalName" type="varchar(255)">
-      <summary>This is the internal name that OD uses to identify the field within this category.  This will be the default description if the user doesn't specify an alternate.  For Ortho chart, this column will be blank, "Signature", or "Provider".</summary>
+      <summary>This is the internal name that OD uses to identify the field within this category. This will be the default description if the user doesn't specify an alternate in Description. For Ortho chart, this column will be "Signature", "Provider", or blank. For SuperFamilyGridCols, if this is a patfield column, then this will be blank.</summary>
     </column>
     <column order="2" name="ItemOrder" type="int(11)">
       <summary>Order to display in the grid or list. Every entry must have a unique itemorder.</summary>
     </column>
     <column order="3" name="Description" type="varchar(255)">
-      <summary>Optional alternate description to display for field.  Can be in another language.  For Ortho, this is the 'key', since InternalName is blank.</summary>
+      <summary>Optional alternate description to display for field. Can be in another language. For Ortho, this is the 'key', since InternalName is blank sometimes. For SuperFamilyGridCols, if this is a patfield column, then this will be the name of the patfield.FieldName.</summary>
     </column>
     <column order="4" name="ColumnWidth" type="int(11)">
       <summary>For grid columns, this lets user override the column width.  Especially useful for foreign languages.</summary>
@@ -4496,6 +4496,7 @@
         <EnumValue name="ArManagerUnsentGrid">18 - A/R Manager Unsent Grid</EnumValue>
         <EnumValue name="ArManagerExcludedGrid">19 - A/R Manager Excluded Grid</EnumValue>
         <EnumValue name="LimitedCustomStatement">20 - Statement Limited Custom SuperFamily</EnumValue>
+        <EnumValue name="SuperFamilyGridCols">21 - SuperFamily Grid</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="ChartViewNum" type="bigint(20)" fk="chartview">
@@ -4505,7 +4506,7 @@
       <summary>Newline delimited string which contains the selectable options in combo box dropdowns.  Specifically for the Ortho chart.</summary>
     </column>
     <column order="8" name="DescriptionOverride" type="varchar(255)">
-      <summary>Only used in Ortho. Because ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
+      <summary>Only used in Ortho because ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
     </column>
   </table>
   <table name="displayreport">
@@ -10754,7 +10755,7 @@
       <summary>Full text of PickList item.</summary>
     </column>
     <column order="3" name="Abbreviation" type="varchar(255)">
-      <summary>Abbr to show when PickList item is displayed in cramped spaces like columns.</summary>
+      <summary>Abbr to show when PickList item is displayed in cramped spaces like columns. Only implemented in Superfamily grid so far.</summary>
     </column>
     <column order="4" name="IsHidden" type="tinyint(4)">
       <summary>False for normal PickList items. Even if true/hidden, this item will still show in all the various windows where patient fields show. A hidden item will not normally show when picking from list for a patient unless the patient has already been assigned this item.</summary>

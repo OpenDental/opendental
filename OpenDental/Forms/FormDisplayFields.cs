@@ -83,11 +83,7 @@ namespace OpenDental{
 			}
 			listAvailable.Items.Clear();
 			if(DisplayFieldCategoryCur==DisplayFieldCategory.SuperFamilyGridCols) {
-				//Can't use toString because that uses the InternalName, which will be blank for patfields
-				listAvailable.Items.AddList(_listDisplayFieldsAvail,x=>
-					string.IsNullOrWhiteSpace(x.Description)?x.InternalName:x.Description
-					+", "+x.ColumnWidth);
-				return;
+				listAvailable.Items.AddList(_listDisplayFieldsAvail,x=>x.ToDescriptionString());
 			}
 			listAvailable.Items.AddList(_listDisplayFieldsAvail,x=>x.ToString());
 		}

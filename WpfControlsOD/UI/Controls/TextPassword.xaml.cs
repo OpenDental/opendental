@@ -202,7 +202,7 @@ namespace WpfControls.UI{
 			//string name=Name;
 			//Debug.WriteLine("GOT KBFocus: nested textBox within "+name);
 			if(e.KeyboardDevice.IsKeyDown(Key.Tab)){
-				((System.Windows.Controls.TextBox)sender).SelectAll(); 
+				SelectAll();
 			}
 		}
 

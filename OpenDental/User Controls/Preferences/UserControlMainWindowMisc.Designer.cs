@@ -254,8 +254,8 @@ namespace OpenDental {
 			// 
 			this.textInactiveSignal.Location = new System.Drawing.Point(389, 51);
 			this.textInactiveSignal.MaxVal = 1000000;
-			this.textInactiveSignal.MinVal = 1;
 			this.textInactiveSignal.Name = "textInactiveSignal";
+			this.textInactiveSignal.ShowZero = false;
 			this.textInactiveSignal.Size = new System.Drawing.Size(74, 20);
 			this.textInactiveSignal.TabIndex = 201;
 			this.textInactiveSignal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;

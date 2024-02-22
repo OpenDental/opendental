@@ -215,7 +215,7 @@ namespace OpenDental
 
 		///<summary>Key down from FormOpenDental is passed in to allow some keys to work here.  As long as this module is open, all key down events are sent here.</summary>
 		public void ControlImagesJ_KeyDown(Keys keys){
-			if(!_formLauncherVideo.IsNullOrDisposed()){
+			if(_formLauncherVideo!=null && !_formLauncherVideo.IsNullOrDisposed()){
 				_formLauncherVideo.MethodGetVoid("Parent_KeyDown",keys);
 			}
 			FormImageFloat formImageFloat=GetFormImageFloatSelected();
@@ -1446,18 +1446,20 @@ namespace OpenDental
 				MsgBox.Show(this,"This is intended to be used in the middle of a series of image acquisitions. It will unmount the prior image and then re-acquire.");
 				return;
 			}
-			if(idx==0){
+			MountItem mountItem=formImageFloat.GetListMountItems()[idx];
+			if(idx==0 && !mountItem.TextShowing.IsNullOrEmpty()){//mounts wihout text are 0 indexed
 				MsgBox.Show(this,"There is no previous image to retake.");
 				return;
 			}
 			Document document=formImageFloat.GetDocumentShowing(idx);
 			if(document==null){
 				//this is normal. Retake the previous
-				idx--;
+				if(idx!=0) {//mounts wihout text are 0 indexed
+					idx--;
+				}
 				//Test for the previous item being a text(mountItem.ItemOrder=0) or unmounted(mountItem.ItemOrder=-1)
 				//This has nothing to do with idx
-				MountItem mountItem=formImageFloat.GetListMountItems()[idx];
-				if(mountItem.ItemOrder==0//text
+				if(!mountItem.TextShowing.IsNullOrEmpty()//text
 					|| mountItem.ItemOrder==-1)//unmounted
 				{
 					MsgBox.Show(this,"There is no previous image to retake.");
@@ -1465,6 +1467,10 @@ namespace OpenDental
 				}
 				formImageFloat.SetIdxSelectedInMount(idx);
 				document=formImageFloat.GetDocumentShowing(idx);
+				if(document==null) {
+					MsgBox.Show(this,"There is no previous image to retake.");
+					return;
+				}
 			}
 			else{
 				//this means they clicked on the one that they want to retake
@@ -2995,7 +3001,7 @@ namespace OpenDental
 			_deviceController.HandleWindow=Handle;
 			_deviceController.ShowTwainUI=imagingDevice.ShowTwainUI;
 			_deviceController.TwainName=imagingDevice.TwainName;
-			if(ODBuild.IsThinfinity()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return;
 				}
@@ -3009,43 +3015,73 @@ namespace OpenDental
 						return;
 					}
 					GlobalFormOpenDental.LockODForMountAcquire(isEnabled:false);
-					ODThread thread=new ODThread(o=> {
-						try{
+					ProgressWin progressWin=new ProgressWin();
+					progressWin.ActionMain=() => {
+						while(true) {
+							ODCloudClient.TwainAcquireBitmapStart(_deviceController.TwainName,doThrowException: true,doShowProgressBar: false);
+							Bitmap bitmap=null;
+							string statusBitmap="ScanNotReady";
 							while(true) {
-								Bitmap bitmap=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName,doThrowException:true,timeoutSecs:60);
-								if(bitmap==null) {
-									break; //Cancel the scanning task
-								}
-								if(!(bool)this.Invoke((Func<bool>)(()=>PlaceAcquiredBitmapInUI(bitmap)))) {
+								statusBitmap=ODCloudClient.CheckBitmapIsAcquired();
+								if(statusBitmap.IsNullOrEmpty()) {
+									//If they press cancel on the twain driver they will break here, bitmapStatus will be ""
 									break;
 								}
-								if(!IsMountShowing()) {//single
+								if(statusBitmap=="ScanReady") {
+									bitmap=ODCloudClient.TwainGetAcquiredBitmap();
+									//Scan was successful and retrieving the bitmap
 									break;
 								}
+								if(statusBitmap!="ScanNotReady") {
+									//Scan had an error and was not successful retrieving the bitmap
+									break;
+								}
+								Thread.Sleep(100);
 							}
-							if(!IsMountShowing()) {
-								return;
+							if(statusBitmap!="ScanReady" && statusBitmap!="ScanNotReady" && !statusBitmap.IsNullOrEmpty()) {
+								Exception exception = new Exception(statusBitmap);
+								throw exception;
 							}
-							if(GetMountShowing().AdjModeAfterSeries) {
-								this.Invoke(()=> {
-									SetCropPanAdj(EnumCropPanAdj.Adj);
-									LayoutControls();
-								});
+							if(bitmap==null) {
+								break; //Cancel the scanning task
+							}
+							statusBitmap="";
+							if(!(bool)this.Invoke((Func<bool>)(()=>PlaceAcquiredBitmapInUI(bitmap)))) {
+								break;
+							}
+							if(!IsMountShowing()) {//single
+								break;
 							}
 						}
-						catch(Exception ex){
-							this.Invoke(()=>{
-								MessageBox.Show(this, "An error occurred: " + ex.Message);
+						if(!IsMountShowing()) {
+							return;
+						}
+						if(GetMountShowing().AdjModeAfterSeries) {
+							this.Invoke(()=> {
+								SetCropPanAdj(EnumCropPanAdj.Adj);
+								LayoutControls();
 							});
 						}
-						finally{
-							this.Invoke(()=>{
-								GlobalFormOpenDental.LockODForMountAcquire(isEnabled:true);
-								LayoutControls();//To refresh the mount after acquiring images.
-							});
+					};
+					progressWin.ActionCancel=ODCloudClient.TwainCloseScanner;
+					progressWin.StartingMessage=Lan.g(this,"Getting Scanned Image(s)")+"...";
+					try{
+						progressWin.ShowDialog();
+					}
+					catch(Exception ex){
+						if(!ex.Message.Contains("Thread was being aborted.")){
+							MessageBox.Show(this, "An error occurred: " + ex.Message);
 						}
-					});
-					thread.Start();
+					}
+					finally{
+						ODCloudClient.TwainCloseScanner();
+						GlobalFormOpenDental.LockODForMountAcquire(isEnabled:true);
+						LayoutControls();//To refresh the mount after acquiring images.
+					}
+					if(progressWin.IsCancelled) {
+						GlobalFormOpenDental.LockODForMountAcquire(isEnabled:true);
+						LayoutControls();//To refresh the mount after acquiring images.
+					}
 				}
 				return;
 			}

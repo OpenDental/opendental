@@ -36,13 +36,13 @@ namespace OpenDental {
 			datePickerIncomeTransferDate.MaxDate=DateTime.Now;//Users can only pick dates in the past.
 			datePickerAsOfDate.Value=DateTime.Now;
 			datePickerChangedSinceDate.Value=DateTime.Now.AddDays(-14);//Designed for bi-weekly usage.
+			_familyBalancer=new FamilyBalancer();
 		}
 
 		private void FormFamilyBalancer_Load(object sender,EventArgs e) {
 			if(PatNum > 0) {
 				this.Text+=" - "+Lan.g(this,"Single Family Mode");
 			}
-			_familyBalancer=new FamilyBalancer();
 			_familyBalancer.PatNum=PatNum;
 			comboOverpayPayType.Items.AddDefs(Defs.GetDefsForCategory(DefCat.PaymentTypes,true));
 		}

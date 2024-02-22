@@ -1284,7 +1284,7 @@ namespace OpenDental {
 				return; 
 			}
 			SheetField sheetField=(SheetField)textBox.Tag;
-			sheetField.FieldValue=textBox.Text.Trim();
+			sheetField.FieldValue=textBox.Text;
 			//int scroll=panelScroll.VerticalScroll.Value;
 			if(sheetField.GrowthBehavior!=GrowthBehaviorEnum.None){
 				ResizeTextBox(textBox,sheetField,sheetField.FieldValue);

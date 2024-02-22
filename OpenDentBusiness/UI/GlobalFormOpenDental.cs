@@ -12,7 +12,7 @@ namespace OpenDentBusiness {
 		public static event EventHandler<bool> EventRefreshCurrentModule;
 		public static event EventHandler<bool> EventLockODForMountAcquire;
 
-		///<summary>Only used on one spot.</summary>
+		///<summary></summary>
 		public static void LockODForMountAcquire(bool isEnabled){
 			EventLockODForMountAcquire?.Invoke(null,isEnabled);
 		}

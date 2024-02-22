@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using CodeBase;
 using OpenDental.UI;
 using OpenDentBusiness;
 
@@ -123,6 +124,7 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+			ListDefsSelected=ListTools.FromSingle((Def)gridMain.ListGridRows[e.Row].Tag);
 			DialogResult=DialogResult.OK;
 		}
 

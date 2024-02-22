@@ -1136,6 +1136,11 @@ namespace OpenDental {
 			DataTable table=_dataSetMain.Tables["account"];
 			int indexSelected = gridAccount.GetSelectedIndex();
 			long payPlanChargeNum=PIn.Long(table.Rows[indexSelected]["PayPlanChargeNum"].ToString());
+			List<PaySplit> listPaySplits=PaySplits.GetForPayPlanCharges(new List<long>{ payPlanChargeNum });
+			if(listPaySplits.Count>0) {
+				MsgBox.Show(Lan.g(this,"Charges with payments attached cannot be edited."));
+				return;
+			}
 			PayPlanCharge payPlanCharge = PayPlanCharges.GetOne(payPlanChargeNum);
 			PayPlan payPlan = PayPlans.GetOne(payPlanCharge.PayPlanNum);
 			using FormPayPlanChargeEdit formPayPlanChargeEdit = new FormPayPlanChargeEdit(payPlanCharge, payPlan);
@@ -1634,9 +1639,15 @@ namespace OpenDental {
 				patNumStatement=_patient.SuperFamily;
 				superFamNum=_patient.SuperFamily;
 			}
-			else if(listPatNums.Count==1 && listPatNums[0]==_patient.Guarantor) {
-				//This is NOT a super family statement. Therefore, if the patient is the guarantor this is a patient statement.
-				limitedCustomFamily=EnumLimitedCustomFamily.Patient;
+			else if(listPatNums.Count==1) {
+				if(listPatNums[0]==_patient.Guarantor) {
+					//This is NOT a super family statement. Therefore, if the patient is the guarantor this is a patient statement.
+					limitedCustomFamily=EnumLimitedCustomFamily.Patient;
+				}
+				else if(listPatNums[0]==_patient.PatNum) {
+					//Use patient name on statement.
+					patNumStatement=_patient.PatNum;
+				}
 			}
 			statementLimited=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums,superFamily:superFamNum,limitedCustomFamily:limitedCustomFamily);
 			//All printing and emailing will be done from within the form:

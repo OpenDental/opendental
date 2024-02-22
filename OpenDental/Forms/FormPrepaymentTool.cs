@@ -359,6 +359,7 @@ namespace OpenDental {
 			commlogPrepayment.PatNum=_patient.PatNum;
 			commlogPrepayment.SentOrReceived=CommSentOrReceived.Received;
 			commlogPrepayment.CommDateTime=DateTime.Now;
+			commlogPrepayment.DateTimeEnd=DateTime.Now;
 			commlogPrepayment.CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.FIN);
 			commlogPrepayment.Mode_=CommItemMode.None;
 			commlogPrepayment.Note="";//Appended to below.

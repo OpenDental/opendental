@@ -19,7 +19,7 @@ namespace OpenDentBusiness{
 		public int NewerDays;
 		///<summary>FK to usergroup.UserGroupNum.  The user group for which this permission is granted.  If not authorized, then this groupPermission will have been deleted.</summary>
 		public long UserGroupNum;
-		///<summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+		///<summary>Enum:EnumPermType Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
 		public EnumPermType PermType;
 		///<summary>Generic foreign key to any other table.  Typically used in combination with PermType to give permission to specific things.</summary>
 		public long FKey;

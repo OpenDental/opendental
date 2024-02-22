@@ -71,6 +71,16 @@
       </Enumeration>
     </column>
   </table>
+  <table name="displayfield">
+    <summary></summary>
+    <column order="5" name="Category" type="int(11)">
+      <summary>Enum:DisplayFieldCategory If category is 0, then this is attached to a ChartView.</summary>
+      <Enumeration name="DisplayFieldCategory">
+        <summary></summary>
+        <EnumValue name="SuperFamilyGridCols">21 - SuperFamily Grid</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="document">
     <summary></summary>
     <column order="27" name="OcrResponseData" type="text">
@@ -288,7 +298,7 @@
       <summary>Full text of PickList item.</summary>
     </column>
     <column order="3" name="Abbreviation" type="varchar(255)">
-      <summary>Abbr to show when PickList item is displayed in cramped spaces like columns.</summary>
+      <summary>Abbr to show when PickList item is displayed in cramped spaces like columns. Only implemented in Superfamily grid so far.</summary>
     </column>
     <column order="4" name="IsHidden" type="tinyint(4)">
       <summary>False for normal PickList items. Even if true/hidden, this item will still show in all the various windows where patient fields show. A hidden item will not normally show when picking from list for a patient unless the patient has already been assigned this item.</summary>

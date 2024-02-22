@@ -181,14 +181,17 @@ namespace OpenDentBusiness {
 			if(listDisplayFields.Count==0) {
 				return new List<PatField>();
 			}
-			string command="SELECT * FROM patfield WHERE ( ";
-			for(int i=0;i<listDisplayFields.Count;i++){
-				if(i>0){
-					command+="OR ";
+			string command="SELECT * FROM patfield WHERE (";
+			for(int i=0;i<listDisplayFields.Count;i++) {
+				if(i>0) {
+					command+=" OR ";
 				}
-				command+="FieldName='"+POut.String(listDisplayFields[i].Description)+"' ";
+				command+="FieldName='"+POut.String(listDisplayFields[i].Description)+"'";
 			}
-			command+=") AND PatNum IN("+string.Join(",",listPatNumsSuperFam)+")";
+			if(listPatNumsSuperFam.Count>0) {
+				command+=") AND PatNum IN("+string.Join(",",listPatNumsSuperFam);
+			}
+			command+=")";
 			return Crud.PatFieldCrud.SelectMany(command);
 		}
 

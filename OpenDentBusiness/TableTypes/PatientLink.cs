@@ -35,7 +35,7 @@ namespace OpenDentBusiness {
 		Merge,
 		///<summary>2 - A clone has been made of the From patient.  PatNumFrom is the original or master and PatNumTo is the clone.</summary>
 		Clone,
-		///<summary>3 - The PatFromTo column will hold the ID for PaySimple.  This should not be used in OpenDental to get a patient.</summary>
+		///<summary>3 - The PatNumFrom column will hold the ID for PaySimple.  This should not be used in OpenDental to get a patient.</summary>
 		PaySimple,
 	}
 }

@@ -55,8 +55,10 @@ namespace CodeBase {
 			string extraFileType="",bool doWaitForResponse=false,string createDirIfNeeded="",bool tryLaunch=false,bool doStartWithoutExtraFile=false) 
 		{
 			if(exePath.StartsWith("http://") || exePath.StartsWith("https://")) {
-				Process.Start(exePath);//No need to go to ODCloudClient if we can simply launch a browser tab.
-				return;
+				if(!ODCloudClient.IsAppStream){
+					Process.Start(exePath);//If using Thinfinity, we can simply launch a browser tab.
+					return;
+				}
 			}
 			CloudClientAction action=CloudClientAction.LaunchFile;
 			string processName="";
@@ -528,7 +530,7 @@ namespace CodeBase {
 					try {
 						_response=File.ReadAllText(_responseFilePath);
 						_hasReceivedResponse=true;
-                    }
+					}
 					catch(Exception ex) {
 						ex.DoNothing();
 						Thread.Sleep(100);
@@ -843,6 +845,58 @@ namespace CodeBase {
 			return false;
 		}
 
+		public static void TwainAcquireBitmapStart(string twainName,bool doThrowException,bool doShowProgressBar) {
+			ODCloudClientData cloudClientData=new ODCloudClientData(){
+				OtherData=twainName
+			};
+			SendToODCloudClient(cloudClientData,CloudClientAction.TwainAcquireBitmapStart);
+		}
+
+		public static string CheckBitmapIsAcquired(){
+			string bitmapStatus;
+			try{
+				bitmapStatus=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.CheckBitmapIsAcquired,timeoutSecs:30,doShowProgressBar:false);
+			}
+			catch(Exception){
+				bitmapStatus="";
+			}
+			return bitmapStatus;
+		}
+
+		public static Bitmap TwainGetAcquiredBitmap(bool doShowProgressBar=false){
+			string resultData;
+			try{
+				resultData=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.TwainGetAcquiredBitmap,timeoutSecs:2000,doShowProgressBar:doShowProgressBar);
+			}
+			catch(Exception ex){
+				if(!string.IsNullOrEmpty(ex.Message)){
+					//Message is empty if the user cancelled
+					ODMessageBox.Show(ex.Message);
+				}
+				return null;
+			}
+			if(resultData.IsNullOrEmpty()){
+				return null;
+			}
+			byte[] byteArray = Convert.FromBase64String(resultData);
+      using MemoryStream memoryStream = new MemoryStream();
+      memoryStream.Write(byteArray, 0, byteArray.Length);
+      Bitmap bitmap = (Bitmap)Bitmap.FromStream(memoryStream);
+      memoryStream.Flush();
+      byteArray = null;
+      resultData = null;
+			return bitmap;
+		}
+
+		public static void TwainCloseScanner(){
+			try{
+				SendToODCloudClient(new ODCloudClientData(),CloudClientAction.TwainCloseScanner);
+			}
+			catch(Exception ex){
+				ODMessageBox.Show(ex.Message);
+			}
+		}
+
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
 		public class ODBrowserData {
 			public string ElementId;
@@ -1059,6 +1113,14 @@ namespace CodeBase {
 			SetClipboardText,
 			///<summary>Gets the clipboard text from the OpenDentalCloudClient.  Used for AppStream, since there is no browser to get it from.</summary>
 			GetClipboardText,
+			///<summary>Open Scanner UI and start monitering for user input</summary>
+			TwainAcquireBitmapStart,
+			///<summary>Checked if bitmap is acquired or for error messages.</summary>
+			CheckBitmapIsAcquired,
+			///<summary>Bitmap is ready, retrieve the bitmap</summary>
+			TwainGetAcquiredBitmap,
+			///<summary>Close twain source</summary>
+			TwainCloseScanner,
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

@@ -100,6 +100,8 @@ Use wait cursors for everything else:
 	public class ProgressWin{
 		///<summary>This action can include computations, db calls, etc.  It can read from UI elements, but should not write to them because it's on a different thread.</summary>
 		public Action ActionMain=null;
+		///<summary>Only used in one spot.</summary>
+		public Action ActionCancel=null;
 		///<summary>Indicates that the progress form is in "history" mode which will show a text box with all messages it takes action on and then will stay open, forcing the user to click Close.</summary>
 		public bool HasHistory=false;
 		///<summary>Used with HasHistory and HistoryMsg.  Set to true to close a progress even though it does have history.</summary>
@@ -142,6 +144,8 @@ Use wait cursors for everything else:
 			frmProgressAuto.StopNotAllowedMessage=StopNotAllowedMessage;
 			frmProgressAuto.MessageCancel=MessageCancel;
 			frmProgressAuto.TestSleep=TestSleep;
+			//Set the CancelAction callback to be executed when the cancel button is clicked
+			frmProgressAuto.CancelAction=ActionCancel;
 			frmProgressAuto.ShowDialog();
 			if(frmProgressAuto.ExceptionGenerated!=null){
 				//leave both of the below false
@@ -163,7 +167,7 @@ Use wait cursors for everything else:
 				exceptionDispatchInfo2.Throw();
 			}
 		}
-		
+
 
 	}
 }
