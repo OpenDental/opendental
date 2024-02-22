@@ -224,7 +224,7 @@ namespace OpenDental {
 						radioYes.Visible=true;
 						radioNo.Visible=true;
 						labelYesNo.Visible=true;
-						labelMedical.Text="Allergies";
+						labelMedical.Text=Lans.g("FormSheetFieldCheckBox","Allergies");
 						FillListMedical(MedicalListType.allergy);
 						butAddAllergy.Visible=true;
 						//Only show mobile override option if field name is an allergy and the form it's on is mobile allowed sheet
@@ -239,7 +239,7 @@ namespace OpenDental {
 						radioYes.Visible=true;
 						radioNo.Visible=true;
 						labelYesNo.Visible=true;
-						labelMedical.Text="Problems";
+						labelMedical.Text=Lans.g("FormSheetFieldCheckBox","Problems");
 						FillListMedical(MedicalListType.problem);
 						butAddProblem.Location=butAddAllergy.Location;
 						butAddProblem.Visible=true;

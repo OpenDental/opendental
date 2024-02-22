@@ -8171,11 +8171,6 @@ namespace OpenDental {
 			if(procStat==ProcStat.C && dateLimit<dateComplete && dateLimit>=dateTP) {//Procedure is C and the slider date is after or equal to the TP date, but before the completion date
 				dataRow["ProcStatus"]=POut.Int((int)ProcStat.TP);//Pretend the row is TP for the tooth chart
 			}
-			else if(procStat==ProcStat.TP && dateLimit>=dateScheduled.Date //Procedure is TP and the slider date is after or equal to the Scheduled date
-				&& dateScheduled.Year>1880 && dateLimit!=DateTime.Today) //If the slider is at today, then we want to show what things are like at the current time.
-			{
-				dataRow["ProcStatus"]=POut.Int((int)ProcStat.C);//Pretend the row is C for the tooth chart
-			}
 			return true;
 		}
 

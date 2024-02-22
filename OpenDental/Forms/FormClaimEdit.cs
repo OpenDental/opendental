@@ -122,6 +122,12 @@ namespace OpenDental{
 		}
 
 		private void FormClaimEdit_Shown(object sender,EventArgs e) {
+			List<ClaimProc> listClaimProcsForClaim=_listClaimProcsForClaim.ToList();
+			EnumAutomationTrigger automationTrigger=EnumAutomationTrigger.ClaimOpen;
+			if(IsNew) {
+				automationTrigger=EnumAutomationTrigger.ClaimCreate;
+			}
+			AutomationL.Trigger(automationTrigger,null,_claim.PatNum,triggerObj:listClaimProcsForClaim);
 			if(!_isForOrthoAutoPay) {
 				return;
 			}
@@ -368,12 +374,6 @@ namespace OpenDental{
 				fillGridSentAttachments();
 				tabControlAttach.SelectedTab=tabDXC;
 			}
-			List<ClaimProc> listClaimProcsForClaim=_listClaimProcsForClaim.ToList();
-			EnumAutomationTrigger automationTrigger=EnumAutomationTrigger.ClaimOpen;
-			if(IsNew) {
-				automationTrigger=EnumAutomationTrigger.ClaimCreate;
-			}
-			AutomationL.Trigger(automationTrigger,null,_claim.PatNum,triggerObj:listClaimProcsForClaim);
 		}
 
 		private void SetBounds(){
