@@ -1290,7 +1290,7 @@ namespace OpenDental {
 		private void TextBox_LostFocus(object sender,EventArgs e) {
 			System.Windows.Forms.TextBox textBox=(System.Windows.Forms.TextBox)sender;
 			SheetField sheetField=(SheetField)textBox.Tag;
-			sheetField.FieldValue=textBox.Text.Trim();
+			sheetField.FieldValue=textBox.Text;
 			//int scroll=panelScroll.VerticalScroll.Value;
 			if(sheetField.GrowthBehavior!=GrowthBehaviorEnum.None){
 				ResizeTextBox(textBox,sheetField,sheetField.FieldValue);

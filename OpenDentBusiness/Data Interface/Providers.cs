@@ -947,7 +947,6 @@ namespace OpenDentBusiness{
 			}
 			string[] provNumForeignKeys=new string[] { //add any new FKs to this list.
 				"adjustment.ProvNum",
-				"anestheticrecord.ProvNum",
 				"appointment.ProvNum",
 				"appointment.ProvHyg",
 				"apptviewitem.ProvNum",
