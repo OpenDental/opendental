@@ -30,8 +30,6 @@ namespace OpenDentBusiness {
 				string[] stringArrayPatNumForeignKeys=new string[]{
 					"adjustment.PatNum",
 					"allergy.PatNum",
-					"anestheticrecord.PatNum",
-					"anesthvsdata.PatNum",
 					"appointment.PatNum",
 					"apptgeneralmessagesent.PatNum",
 					"apptremindersent.PatNum",
@@ -42,6 +40,7 @@ namespace OpenDentBusiness {
 					"claimproc.PatNum",
 					"clinicerx.PatNum",
 					"commlog.PatNum",
+					"commloghist.PatNum",
 					"commoptout.PatNum",
 					"confirmationrequest.PatNum",
 					"creditcard.PatNum",
@@ -56,7 +55,7 @@ namespace OpenDentBusiness {
 					"ehrcareplan.PatNum",
 					"ehrlab.PatNum",
 					"ehrmeasureevent.PatNum",
-					"ehrnotperformed.PatNum",				
+					"ehrnotperformed.PatNum",
 					//"ehrpatient.PatNum",  //This is handled below.  We do not want to change patnum here because there can only be one entry per patient.
 					"ehrprovkey.PatNum",
 					"ehrquarterlykey.PatNum",
@@ -136,7 +135,6 @@ namespace OpenDentBusiness {
 					"registrationkey.PatNum",
 					"repeatcharge.PatNum",
 					"reqstudent.PatNum",
-					"reseller.PatNum",
 					"rxpat.PatNum",
 					//"screen.ScreenPatNum", //IS NOT a PatNum so it is should not be merged.  FKey to screenpat.ScreenPatNum.
 					"screenpat.PatNum",
