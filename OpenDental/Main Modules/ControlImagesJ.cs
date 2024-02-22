@@ -2484,7 +2484,7 @@ namespace OpenDental
 			_deviceController.HandleWindow=Handle;
 			_deviceController.ShowTwainUI=imagingDevice.ShowTwainUI;
 			_deviceController.TwainName=imagingDevice.TwainName;
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return;
 				}
@@ -2498,43 +2498,71 @@ namespace OpenDental
 						return;
 					}
 					LockODForMountAcquire(true);
-					ODThread thread=new ODThread(o=> {
-						try{
-							while(true) {
-								Bitmap bitmap=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName,doThrowException:true,timeoutSecs:60);
-								if(bitmap==null) {
-									break; //Cancel the scanning task
-								}
-								if(!(bool)this.Invoke((Func<bool>)(()=>PlaceAcquiredBitmapInUI(bitmap)))) {
+					ProgressOD progressOD=new ProgressOD();
+					progressOD.ActionMain = () => {
+						while (true) {
+							ODCloudClient.TwainAcquireBitmapStart(_deviceController.TwainName, doThrowException: true, doShowProgressBar: false);
+							Bitmap bitmap = null;
+							string statusBitmap = "ScanNotReady";
+							while (true) {
+								statusBitmap = ODCloudClient.CheckBitmapIsAcquired();
+								if (statusBitmap.IsNullOrEmpty()) {
+									//If they press cancel on the twain driver they will break here, bitmapStatus will be ""
 									break;
 								}
-								if(!IsMountShowing()) {//single
+								if (statusBitmap == "ScanReady") {
+									bitmap = ODCloudClient.TwainGetAcquiredBitmap();
+									//Scan was successful and retrieving the bitmap
 									break;
 								}
+								if (statusBitmap != "ScanNotReady") {
+									//Scan had an error and was not successful retrieving the bitmap
+									break;
+								}
+								Thread.Sleep(100);
 							}
-							if(!IsMountShowing()) {
-								return;
+							if (statusBitmap != "ScanReady" && statusBitmap != "ScanNotReady" && !statusBitmap.IsNullOrEmpty()) {
+								Exception exception = new Exception(statusBitmap);
+								throw exception;
 							}
-							if(GetMountShowing().AdjModeAfterSeries) {
-								this.Invoke(()=> {
-									SetCropPanAdj(EnumCropPanAdj.Adj);
-									LayoutControls();
-								});
+							if (bitmap == null) {
+								break; //Cancel the scanning task
+							}
+							statusBitmap = "";
+							if(!(bool)this.Invoke((Func<bool>)(()=>PlaceAcquiredBitmapInUI(bitmap)))) {
+								break;
+							}
+							if(!IsMountShowing()) {//single
+								break;
 							}
 						}
-						catch(Exception ex){
-							this.Invoke(()=>{
-								MessageBox.Show(this, "An error occurred: " + ex.Message);
+						if(!IsMountShowing()) {
+							return;
+						}
+						if(GetMountShowing().AdjModeAfterSeries) {
+							this.Invoke(()=> {
+								SetCropPanAdj(EnumCropPanAdj.Adj);
+								LayoutControls();
 							});
 						}
-						finally{
-							this.Invoke(()=>{
-								LockODForMountAcquire(false);
-								LayoutControls();//To refresh the mount after acquiring images.
-							});
+					};
+					try{
+						progressOD.ShowDialogProgress();
+          }
+					catch(Exception ex){
+						if (!ex.Message.Contains("Thread was being aborted.")) {
+							MessageBox.Show(this, "An error occurred: " + ex.Message);
 						}
-					});
-					thread.Start();
+					}
+					finally{
+						ODCloudClient.TwainCloseScanner();
+						LockODForMountAcquire(false);
+						LayoutControls();//To refresh the mount after acquiring images.
+					}
+					if(progressOD.IsCancelled) {
+						LockODForMountAcquire(false);
+						LayoutControls();//To refresh the mount after acquiring images.
+					}
 				}
 				return;
 			}

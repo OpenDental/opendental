@@ -1030,7 +1030,15 @@ namespace OpenDental{
 			if(_isClickLocked) {
 				return;
 			}
-			gridProc.SetAll(true);
+			List<Procedure> listProcedures=gridProc.ListGridRows.Select(x=>(Procedure)x.Tag).ToList();
+			for(int i=0;i<listProcedures.Count;i++) {
+				if(DisableDetachingOfCompletedProcFromCompletedAppt(listProcedures[i],_appointment,out string msg)
+					|| DisableDetachingOfAttachedToAPlannedApt(listProcedures[i],out msg))
+				{
+					continue;
+				}
+				gridProc.SetSelected(i,true);
+			}
 			CalculatePatternFromProcs();
 			//SetTimeSliderColors();
 			CalcPatientFeeThisAppt();

@@ -234,7 +234,12 @@ namespace OpenDentBusiness {
 				_codeVerifier=RandomDataBase64Url(32);
 				_codeChallenge=Base64urlencodeNoPadding(Sha256(_codeVerifier));
 				BuildAuthorizationUrl(emailAddress);
-				Process.Start(_url);
+				if(ODCloudClient.IsAppStream) {
+					ODCloudClient.LaunchFileWithODCloudClient(_url);
+				}
+				else{
+					Process.Start(_url);
+				}
 				string code="";
 				if(ODEnvironment.IsCloudServer) {
 					string GoogleAuthCodeResponseHtml=Properties.Resources.GoogleAuthCodeResponseHtml;

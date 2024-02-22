@@ -921,6 +921,9 @@ namespace OpenDental{
 					FriendlyException.Show(Lans.g(this,"Unable to communicate with the Cloud Client. Any features that use the Cloud Client will be unavailable."),e);
 				}
 			}
+			if(ODBuild.IsWeb() || !PrefC.IsAppStream) {
+				_menuItemCloudUsers.Available=false;
+			}
 			if(ODEnvironment.IsCloudServer) {
 				_menuItemCreateAtoZ.Available=false;
 				_menuItemServiceManager.Available=false;
@@ -5057,6 +5060,14 @@ namespace OpenDental{
 		private void menuItemCloudManagement_Click(object sender,EventArgs e) {
 			using FormCloudManagement formCloudManagement=new FormCloudManagement();
 			formCloudManagement.ShowDialog();
+		}
+
+		private void menuItemCloudUsers_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+				return;
+			}
+			using FormCloudUsers formCloudUsers=new FormCloudUsers();
+			formCloudUsers.ShowDialog();
 		}
 
 		private void menuItemCodeGroups_Click(object sender,EventArgs e) {

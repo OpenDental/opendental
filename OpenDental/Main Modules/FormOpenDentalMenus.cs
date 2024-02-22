@@ -17,6 +17,7 @@ namespace OpenDental{
 		private MenuItemOD _menuItemCareCreditTransactions;
 		private MenuItemOD _menuItemClinicsMain;
 		private MenuItemOD _menuItemClinics;
+		private MenuItemOD _menuItemCloudUsers;
 		private MenuItemOD _menuItemCounties;
 		///<summary>Not available if in Unix.</summary>
 		private MenuItemOD _menuItemCreateAtoZ;
@@ -190,6 +191,8 @@ namespace OpenDental{
 			if(ODBuild.IsWeb()) {
 				menuItemSetup.Add("Cloud Management",menuItemCloudManagement_Click);
 			}
+			_menuItemCloudUsers=new MenuItemOD("Cloud Users",menuItemCloudUsers_Click);
+			menuItemSetup.Add(_menuItemCloudUsers);
 			menuItemSetup.Add("Code Groups",menuItemCodeGroups_Click);
 			menuItemSetup.Add("Data Paths",menuItemDataPath_Click);
 			menuItemSetup.Add("Definitions",menuItemDefinitions_Click);
