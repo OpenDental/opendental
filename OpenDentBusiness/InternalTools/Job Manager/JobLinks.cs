@@ -1,3 +1,4 @@
+using CodeBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -108,6 +109,21 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT * FROM joblink WHERE LinkType="+POut.Int((int)linkType)+" "
 				+"AND FKey IN ("+string.Join(",",listFkeys.Select(x => POut.Long(x)))+")";
+			return Crud.JobLinkCrud.SelectMany(command);
+		}
+
+		public static List<JobLink> GetListForJobsByType(List<Job> listJobs,JobLinkType linkType) {
+			if(listJobs.IsNullOrEmpty()) {
+				return new List<JobLink>();
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<JobLink>>(MethodBase.GetCurrentMethod(),listJobs,linkType);
+			}
+			string command=$@"
+				SELECT *
+				FROM joblink
+				WHERE LinkType={POut.Enum(JobLinkType.JobTeam)}
+				AND JobNum IN({POut.String(string.Join(",",listJobs.Select(x => x.JobNum)))})";
 			return Crud.JobLinkCrud.SelectMany(command);
 		}
 

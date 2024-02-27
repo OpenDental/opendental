@@ -2790,6 +2790,9 @@ namespace OpenDentBusiness {
 			//if patient was re-activated, then re-enable any recalls
 			else if(patNew.PatStatus!=patOld.PatStatus && patNew.PatStatus==PatientStatus.Patient) {//if changed patstatus, and new status is Patient
 				List<Recall> recalls=Recalls.GetList(patNew.PatNum);
+				if(recalls.Count==0) {
+					return; //This patient does not have any recalls to 're-activate'.
+				}
 				for(int i=0;i<recalls.Count;i++) {
 					if(recalls[i].IsDisabled) {
 						recalls[i].IsDisabled=false;

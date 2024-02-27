@@ -1658,20 +1658,18 @@ namespace OpenDental
 				MsgBox.Show(this,"This is intended to be used in the middle of a series of image acquisitions. It will unmount the prior image and then re-acquire.");
 				return;
 			}
-			MountItem mountItem=formImageFloat.GetListMountItems()[idx];
-			if(idx==0 && !mountItem.TextShowing.IsNullOrEmpty()){//mounts wihout text are 0 indexed
+			if(idx==0){
 				MsgBox.Show(this,"There is no previous image to retake.");
 				return;
 			}
 			Document document=formImageFloat.GetDocumentShowing(idx);
 			if(document==null){
 				//this is normal. Retake the previous
-				if(idx!=0) {//mounts wihout text are 0 indexed
-					idx--;
-				}
+				idx--;
 				//Test for the previous item being a text(mountItem.ItemOrder=0) or unmounted(mountItem.ItemOrder=-1)
 				//This has nothing to do with idx
-				if(!mountItem.TextShowing.IsNullOrEmpty()//text
+				MountItem mountItem=formImageFloat.GetListMountItems()[idx];
+				if(mountItem.ItemOrder==0//text
 					|| mountItem.ItemOrder==-1)//unmounted
 				{
 					MsgBox.Show(this,"There is no previous image to retake.");
@@ -1679,10 +1677,6 @@ namespace OpenDental
 				}
 				formImageFloat.SetIdxSelectedInMount(idx);
 				document=formImageFloat.GetDocumentShowing(idx);
-				if(document==null) {
-					MsgBox.Show(this,"There is no previous image to retake.");
-					return;
-				}
 			}
 			else{
 				//this means they clicked on the one that they want to retake

@@ -2630,6 +2630,12 @@
     <Compile Include="Forms\InputBox.designer.cs">
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Job Manager\FormTeamSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Job Manager\FormTeamSummary.Designer.cs">
+      <DependentUpon>FormTeamSummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="InternalTools\Job Manager\FormCodeReviewReport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2728,6 +2734,12 @@
     </Compile>
     <Compile Include="InternalTools\Job Manager\UserControlSprintManager.Designer.cs">
       <DependentUpon>UserControlSprintManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Job Manager\UserControlTeamReport.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Job Manager\UserControlTeamReport.Designer.cs">
+      <DependentUpon>UserControlTeamReport.cs</DependentUpon>
     </Compile>
     <Compile Include="InternalTools\Phones\FormMapAreaContainerEdit.cs">
       <SubType>Form</SubType>
@@ -8080,6 +8092,9 @@
     <EmbeddedResource Include="Forms\FormCareCreditTransactions.resx">
       <DependentUpon>FormCareCreditTransactions.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Job Manager\FormTeamSummary.resx">
+      <DependentUpon>FormTeamSummary.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\FormCodeReviewReport.resx">
       <DependentUpon>FormCodeReviewReport.cs</DependentUpon>
     </EmbeddedResource>
@@ -8125,6 +8140,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlSprintManager.resx">
       <DependentUpon>UserControlSprintManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Job Manager\UserControlTeamReport.resx">
+      <DependentUpon>UserControlTeamReport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\FormMapAreaContainerEdit.resx">
       <DependentUpon>FormMapAreaContainerEdit.cs</DependentUpon>

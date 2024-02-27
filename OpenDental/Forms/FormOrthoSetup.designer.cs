@@ -246,7 +246,7 @@ namespace OpenDental{
 			this.label29.Name = "label29";
 			this.label29.Size = new System.Drawing.Size(209, 31);
 			this.label29.TabIndex = 223;
-			this.label29.Text = "Current Procedures to Consider for Patients\' Date Placement";
+			this.label29.Text = "Current Procedures to Consider for Patient's Date of Placement";
 			this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// butPlacementProcsEdit

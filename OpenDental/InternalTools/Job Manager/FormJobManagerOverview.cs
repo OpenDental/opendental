@@ -77,12 +77,21 @@ namespace OpenDental {
 		#region Menu Clicks
 		private void butSprintManager_Click(object sender,EventArgs e) {
 			panelJobsReport.Visible=false;
+			panelJobTeamReport.Visible=false;
 			panelSprintManager.Visible=true;
 		}
 
 		private void butJobsReport_Click(object sender,EventArgs e) {
 			panelJobsReport.Visible=true;
+			panelJobTeamReport.Visible=false;
 			panelSprintManager.Visible=false;
+
+		}
+
+		private void butJobTeamReport_Click(object sender,EventArgs e) {
+			panelJobsReport.Visible=false;
+			panelSprintManager.Visible=false;
+			panelJobTeamReport.Visible=true;
 		}
 		#endregion
 

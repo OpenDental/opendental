@@ -1104,7 +1104,9 @@ namespace OpenDentBusiness {
 				return period;
 			}
 			//If no charges have been issued for the payment plan yet, then the period should always be 0.
-			if(PayPlanCharges.GetForPayPlan(payPlanNum).IsNullOrEmpty()) {
+			//If there is a downpayment on the plan then the downpayment charge will be in the database. We need to ingore that charge.
+			List<PayPlanCharge> listPayPlanChargesInDB=PayPlanCharges.GetForPayPlan(payPlanNum).FindAll(x=>!x.Note.Contains("Down Payment"));//This is the only way to know if a charge is a downpayment as of 2/21/2024.
+			if(listPayPlanChargesInDB.IsNullOrEmpty()) {
 				return period;
 			}
 			if(frequency==PayPlanFrequency.Weekly) {
@@ -1988,9 +1990,9 @@ namespace OpenDentBusiness {
 			if(payPlan.IsNew) {
 				listPayPlanChargesDownPayment=GetDownPaymentCharges(payPlan,payPlanTerms,listPayPlanLink);
 			}
-			if(payPlan.IsNew && payPlanTerms.DateFirstPayment.Date==DateTime_.Today) {
-				//immediately call the code to run the "service" on this payment plan in case they created a plan who's first charge is today. 
-				List<PayPlanCharge> listPayPlanCharges=GetListExpectedCharges(listPayPlanChargesDB,payPlanTerms,family,listPayPlanLink,payPlan,true
+			if(payPlan.IsNew && payPlanTerms.DateFirstPayment.Date<=DateTime_.Today) {
+				//immediately call the code to run the "service" on this payment plan in case they created a plan who's first charge is today or in the past. 
+				List<PayPlanCharge> listPayPlanCharges=GetListExpectedCharges(listPayPlanChargesDB,payPlanTerms,family,listPayPlanLink,payPlan,false
 					,listPaySplits:dynamicPaymentPlanModuleData.ListPaySplits,listExpectedChargesDownPayment:listPayPlanChargesDownPayment)
 					.FindAll(x => x.ChargeDate <= DateTime_.Today);
 				if(listPayPlanCharges.Count > 0) {

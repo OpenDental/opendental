@@ -208,9 +208,10 @@ namespace OpenDental{
 			// 
 			// labelProcessQSBatches
 			// 
-			this.labelProcessQSBatches.Location = new System.Drawing.Point(462, 431);
+			this.labelProcessQSBatches.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.labelProcessQSBatches.Location = new System.Drawing.Point(462, 461);
 			this.labelProcessQSBatches.Name = "labelProcessQSBatches";
-			this.labelProcessQSBatches.Size = new System.Drawing.Size(367, 16);
+			this.labelProcessQSBatches.Size = new System.Drawing.Size(367, 24);
 			this.labelProcessQSBatches.TabIndex = 149;
 			this.labelProcessQSBatches.Text = "Only reprocesses expired batches";
 			this.labelProcessQSBatches.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
