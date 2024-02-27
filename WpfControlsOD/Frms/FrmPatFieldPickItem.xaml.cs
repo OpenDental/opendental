@@ -35,9 +35,13 @@ namespace OpenDental {
 			}
 			//if List item is currently in-use on any patients, block deletion.
 			string PatFieldName=PatFieldDefs.GetFieldName(PatFieldPickItemCur.PatFieldDefNum);
-			int InUse=PatFields.PickListItemInUseCount(PatFieldPickItemCur.Name,PatFieldName);
-			if(InUse>0) {
-				string message=Lang.g(this,"Cannot delete this item because it's currently associated with a number of patients:")+" "+InUse;
+			List<long> listPatNumsUsingPickItem=PatFields.GetPatNumsUsingPickItem(PatFieldPickItemCur.Name,PatFieldName);
+			if(listPatNumsUsingPickItem.Count>0) {
+				string message=Lang.g(this,"Cannot delete this item because it's currently associated with the following patients:");
+				List<Patient> listPatients=Patients.GetLimForPats(listPatNumsUsingPickItem);
+				for(int i = 0;i<listPatNumsUsingPickItem.Count;i++) {
+					message+="\r\n  "+listPatients.Find(x=>x.PatNum==listPatNumsUsingPickItem[i]).GetNameFL();
+				}
 				MsgBox.Show(this,message);
 				return;
 			}
@@ -62,7 +66,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"That name already exists in this picklist, please choose a different name.");
 				return;
 			}
-			if(PatFieldPickItemCur.Abbreviation!=textAbbreviation.Text && listPatFieldPickItems.Exists(x=>x.Abbreviation==textAbbreviation.Text)) {
+			if(textAbbreviation.Text!="" && PatFieldPickItemCur.Abbreviation!=textAbbreviation.Text && listPatFieldPickItems.Exists(x=>x.Abbreviation==textAbbreviation.Text)) {
 				MsgBox.Show(this,"That abbreviation already exists in this picklist, please choose a different abbreviation.");
 				return;
 			}

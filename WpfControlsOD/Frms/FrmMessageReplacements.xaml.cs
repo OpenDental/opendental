@@ -178,7 +178,7 @@ namespace OpenDental {
 			listReplacementFields.Add(new ReplacementField("[APR]","Annual Percentage Rate.",MessageReplaceType.PaymentPlan,isAllowPhi,listMessageReplaceTypesSupported));
 			listReplacementFields.Add(new ReplacementField("[PaymentAmt]","The amount of each payment plan charge.",MessageReplaceType.PaymentPlan,isAllowPhi,listMessageReplaceTypesSupported));
 			listReplacementFields.Add(new ReplacementField("[ChargeFrequency]","The frequency of charges being issued.",MessageReplaceType.PaymentPlan,isAllowPhi,listMessageReplaceTypesSupported));
-			listReplacementFields.Add(new ReplacementField("[NumOfPayments]","The total number of payments.",MessageReplaceType.PaymentPlan,isAllowPhi,listMessageReplaceTypesSupported));
+			listReplacementFields.Add(new ReplacementField("[NumOfPayments]","Total number of payments in an Old Payment Plan. Displays 0 for Payment Plans, formerly Dynamic Payment Plans.",MessageReplaceType.PaymentPlan,isAllowPhi,listMessageReplaceTypesSupported));
 			#endregion
 			#region Miscellaneous Replacement Rows
 			//misc replacement rows

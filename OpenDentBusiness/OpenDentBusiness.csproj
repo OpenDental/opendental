@@ -568,6 +568,8 @@
     <Compile Include="InternalTools\Job Manager\Crud\MobileBugCrud.cs" />
     <Compile Include="InternalTools\Job Manager\Crud\MobileReleaseBuildCrud.cs" />
     <Compile Include="InternalTools\Job Manager\Crud\MobileReleaseCrud.cs" />
+    <Compile Include="InternalTools\Job Manager\HelperClasses\TeamReportJob.cs" />
+    <Compile Include="InternalTools\Job Manager\HelperClasses\TeamReportUser.cs" />
     <Compile Include="InternalTools\Job Manager\JobActiveLinks.cs" />
     <Compile Include="Data Interface\LoginAttempts.cs" />
     <Compile Include="Data Interface\OrthoCases.cs" />

@@ -27,6 +27,7 @@ namespace OpenDental {
 			this.butSave = new OpenDental.UI.Button();
 			this.tabControl1 = new OpenDental.UI.TabControl();
 			this.tabPageDefault = new OpenDental.UI.TabPage();
+			this.panelMain = new OpenDental.UI.PanelOD();
 			this.tabControl1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -61,9 +62,21 @@ namespace OpenDental {
 			this.tabPageDefault.TabIndex = 0;
 			this.tabPageDefault.Text = "Default";
 			// 
+			// panelMain
+			// 
+			this.panelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.panelMain.Location = new System.Drawing.Point(2, 21);
+			this.panelMain.Name = "panelMain";
+			this.panelMain.Size = new System.Drawing.Size(663, 538);
+			this.panelMain.TabIndex = 0;
+			this.panelMain.Visible = false;
+			// 
 			// FormApptReminderRuleAggEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(668, 603);
+			this.Controls.Add(this.panelMain);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.butSave);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -80,5 +93,6 @@ namespace OpenDental {
 		private OpenDental.UI.Button butSave;
 		private OpenDental.UI.TabControl tabControl1;
 		private OpenDental.UI.TabPage tabPageDefault;
+		private UI.PanelOD panelMain;
 	}
 }

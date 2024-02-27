@@ -1852,16 +1852,15 @@ namespace OpenDental{
 							string strSuperFam=GetCellTextSuperFamName(patientGuar);
 							gridRow.Cells.Add(strSuperFam);
 							if(i==0) {
-								gridRow.Cells[0].Bold=YN.Yes;
-								gridRow.Cells[0].ColorText=Color.OrangeRed;
+								gridRow.Cells[j].Bold=YN.Yes;
+								gridRow.Cells[j].ColorText=Color.OrangeRed;
 							}
 							break;
 						case "Stmt":
 							gridRow.Cells.Add(patientGuar.HasSuperBilling ? "X" : "");
 							break;
 						case "": //Patfields
-							PatField patField=_listPatFieldsForSuperFam.Find(x=>x.PatNum==patientGuar.PatNum && x.FieldName==listDisplayFields[j].Description);//Will frequently be null because many patients will have no PatField yet
-							string celltext=PatFields.GetAbbrOrValue(patField,listDisplayFields[j].Description);
+							string celltext=GetCellTextSuperFamPatField(patientGuar,listDisplayFields[j].Description);
 							gridRow.Cells.Add(celltext);
 							break;
 					}
@@ -1875,6 +1874,26 @@ namespace OpenDental{
 					break;
 				}
 			}
+		}
+
+		private string GetCellTextSuperFamPatField(Patient patientGuar, string description) {
+			PatField patField=_listPatFieldsForSuperFam.Find(x=>x.PatNum==patientGuar.PatNum && x.FieldName==description);//Will frequently be null because many patients will have no PatField yet
+			string celltext=PatFields.GetAbbrOrValue(patField,description);//GetAbbrOrValue returns "" if patField is null.
+			if(patField==null) {//If patField is null here we aren't going to get any more info, so return.
+				return celltext;
+			}
+			PatFieldDef patFieldDef=PatFieldDefs.GetFieldDefByFieldName(patField.FieldName);
+			switch(patFieldDef.FieldType) {
+				case PatFieldType.Checkbox:
+					celltext=patField.FieldValue=="1" ? "X" : "";
+					break;
+				case PatFieldType.Currency:
+					if(Decimal.TryParse(celltext,out decimal result)) {
+						celltext=string.Format("{0:C}",result);
+					}
+					break;
+			}
+			return celltext;
 		}
 
 		private string GetCellTextSuperFamName(Patient patientGuar) {

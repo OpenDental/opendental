@@ -107,7 +107,7 @@ namespace OpenDental{
 			_listPatFieldDefs[idx-1].ItemOrder++;
 			PatFieldDefs.Update(_listPatFieldDefs[idx]);
 			PatFieldDefs.Update(_listPatFieldDefs[idx-1]);
-			Cache.ClearCaches(InvalidType.PatFields);
+			DataValid.SetInvalid(InvalidType.PatFields);
 			_hasChanged=true;
 			FillGrid();
 			gridMain.SetSelected(idx-1);
@@ -126,7 +126,7 @@ namespace OpenDental{
 			_listPatFieldDefs[idx+1].ItemOrder--;
 			PatFieldDefs.Update(_listPatFieldDefs[idx]);
 			PatFieldDefs.Update(_listPatFieldDefs[idx+1]);
-			Cache.ClearCaches(InvalidType.PatFields);
+			DataValid.SetInvalid(InvalidType.PatFields);
 			_hasChanged=true;
 			FillGrid();
 			gridMain.SetSelected(idx+1);
@@ -144,7 +144,7 @@ namespace OpenDental{
 				PatFieldDefs.Delete(formPatFieldDefEdit.PatFieldDefCur);
 				return;
 			}
-			Cache.ClearCaches(InvalidType.PatFields);
+			DataValid.SetInvalid(InvalidType.PatFields);
 			_hasChanged=true;
 			FillGrid();
 		}

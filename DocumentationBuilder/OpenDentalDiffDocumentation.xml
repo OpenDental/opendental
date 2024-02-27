@@ -1,17 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <?xml-stylesheet type='text/xsl' href='OpenDentalDiffDocumentation.xsl'?>
 <database version="24.1.0.0">
-  <table name="activeinstance">
-    <summary></summary>
-    <column order="6" name="ConnectionType" type="tinyint(4)">
-      <summary>Enum:ConnectionTypes Used to distinguish the connection type.</summary>
-      <Enumeration name="ConnectionTypes">
-        <summary></summary>
-        <EnumValue name="Thinfinity">2 - Thinfinity</EnumValue>
-        <EnumValue name="AppStream">3 - AppStream</EnumValue>
-      </Enumeration>
-    </column>
-  </table>
   <table name="apptreminderrule">
     <summary></summary>
     <column order="1" name="TypeCur" type="tinyint(4)">
@@ -331,15 +320,6 @@
         <summary>This helps us determine how to handle messages.</summary>
         <EnumValue name="MsgToPay">27. Used for Payment Portal Msg-To-Pay messages.
             Short Code Supported: NO</EnumValue>
-      </Enumeration>
-    </column>
-  </table>
-  <table name="activeinstance">
-    <summary></summary>
-    <column order="6" name="ConnectionType" type="tinyint(4)">
-      <summary>Enum:ConnectionTypes Used to distinguish the connection type.</summary>
-      <Enumeration name="ConnectionTypes">
-        <summary></summary>
       </Enumeration>
     </column>
   </table>

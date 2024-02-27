@@ -76,15 +76,15 @@ namespace OpenDentBusiness {
 			return Db.GetCount(command)!="0";
 		}
 
-		///<summary>Returns whether there are more than 0 PatFields with the given field name.</summary>
-		public static int PickListItemInUseCount(string patFieldPickItemName, string patFieldName) {
+		///<summary>Returns list of patnums where the pickitem is still in use.</summary>
+		public static List<long> GetPatNumsUsingPickItem(string patFieldPickItemName, string patFieldName) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetInt(MethodBase.GetCurrentMethod(),patFieldPickItemName, patFieldName);
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),patFieldPickItemName, patFieldName);
 			}
-			string command="SELECT COUNT(*) FROM patfield "
+			string command="SELECT * FROM patfield "
 				+"WHERE FieldName='"+POut.String(patFieldName)+"' "
 				+"AND FieldValue='"+POut.String(patFieldPickItemName)+"'";
-			return PIn.Int(Db.GetCount(command));
+			return Crud.PatFieldCrud.SelectMany(command).ConvertAll(x=>x.PatNum);
 		}
 
 		///<summary>Get all PatFields for the given fieldName which belong to patients who have a corresponding entry in the RegistrationKey table. DO NOT REMOVE! Used by OD WebApps solution.</summary>

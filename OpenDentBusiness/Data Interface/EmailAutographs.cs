@@ -35,6 +35,10 @@ namespace OpenDentBusiness{
 			return _emailAutographCache.GetDeepCopy(isShort);
 		}
 
+		public static EmailAutograph GetFirstOrDefault(Func<EmailAutograph,bool> match,bool isShort=false) {
+			return _emailAutographCache.GetFirstOrDefault(match,isShort);
+		}
+
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
 		public static DataTable RefreshCache() {
 			return GetTableFromCache(true);
@@ -79,6 +83,13 @@ namespace OpenDentBusiness{
 				}
 			}
 			return null;
+		}
+
+		///<summary>Gets the first autograph that matches the EmailAddress.SenderAddress if it has one, otherwise
+		///the first that matches EmailAddress.EmailUserName. Returns null if neither yield a match.</summary>
+		public static EmailAutograph GetFirstOrDefaultForEmailAddress(EmailAddress emailAddress) {
+			string addressToMatch=emailAddress.GetFrom();
+			return GetFirstOrDefault(x => emailAddress.GetFrom()==x.EmailAddress);
 		}
 	
 		/////<summary>Gets one EmailAutograph from the db.</summary>

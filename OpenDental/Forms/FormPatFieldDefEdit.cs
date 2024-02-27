@@ -87,8 +87,8 @@ namespace OpenDental {
 				string message="";
 				List<PatFieldPickItem> listPatFieldPickItems=PatFieldPickItems.GetWhere(x=>x.PatFieldDefNum==PatFieldDefCur.PatFieldDefNum);
 				for(int i=0;i<listPatFieldPickItems.Count;i++) {
-					int inUse=PatFields.PickListItemInUseCount(listPatFieldPickItems[i].Name,PatFieldDefCur.FieldName);
-					if(inUse>0) {
+					List<long> listPatNumsUsingPickItem=PatFields.GetPatNumsUsingPickItem(listPatFieldPickItems[i].Name,PatFieldDefCur.FieldName);
+					if(listPatNumsUsingPickItem.Count>0) {
 						message+="\r\n"+listPatFieldPickItems[i].Name;
 					}
 				}

@@ -479,7 +479,7 @@ namespace OpenDental {
 			msg+=Lan.g("ContrAccount","Would you like to:");
 			string strChangeStatus=Lan.g("ContrAccount","Change the claim status to 'Waiting to send'");
 			string strSendClaims=Lan.g("ContrAccount","Send secondary claim(s) now");
-			string strPrintClaims=Lan.g("ContrAccount","Print secondary claims(s) now");
+			string strPrintClaims=Lan.g("ContrAccount","Print secondary claim(s) now");
 			string strDoNothing=Lan.g("ContrAccount","Do nothing");
 			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
 			InputBoxParam inputBoxParam=new InputBoxParam();

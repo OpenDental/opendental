@@ -13,6 +13,7 @@ using CodeBase;
 using DataConnectionBase;
 using Microsoft.Graph.ExternalConnectors;
 using OpenDentBusiness.AutoComm;
+using OpenDentBusiness.HL7;
 
 namespace OpenDentBusiness {
 	
@@ -2787,6 +2788,9 @@ namespace OpenDentBusiness {
 			//if patient was re-activated, then re-enable any recalls
 			else if(patNew.PatStatus!=patOld.PatStatus && patNew.PatStatus==PatientStatus.Patient) {//if changed patstatus, and new status is Patient
 				List<Recall> recalls=Recalls.GetList(patNew.PatNum);
+				if(recalls.Count==0) {
+					return; //This patient does not have any recalls to 're-activate'.
+				}
 				for(int i=0;i<recalls.Count;i++) {
 					if(recalls[i].IsDisabled) {
 						recalls[i].IsDisabled=false;
@@ -5094,6 +5098,352 @@ namespace OpenDentBusiness {
 			return new DateSpan(birthdate,dateCompare).YearsDiff<minorAge;
 		}
 
+		public static List<PatientStatus> GetPatientStatuses(Patient patient) {
+			List<PatientStatus> listPatientStatuses=new List<PatientStatus>();
+			string[] stringArrayNames=Enum.GetNames(typeof(PatientStatus));
+			for(int i=0;i<stringArrayNames.Length;i++) {
+				if((PatientStatus)i==PatientStatus.Deleted && patient.PatStatus!=PatientStatus.Deleted) {
+					continue;//Only display 'Deleted' if patient is 'Deleted'.  Shouldn't happen, but has been observed.
+				}
+				listPatientStatuses.Add((PatientStatus)i);
+			}
+			return listPatientStatuses;
+		}
+
+		public static List<string> GetRelationships(Family family,List<Guardian> listGuardians) {
+			List<string> listRelationships=new List<string>();
+			for(int i=0;i<listGuardians.Count;i++){
+				listRelationships.Add(family.GetNameInFamFirst(listGuardians[i].PatNumGuardian)+" "
+					+Guardians.GetGuardianRelationshipStr(listGuardians[i].Relationship));
+			}
+			return listRelationships;
+		}
+
+		public static List<string> GetLanguages(Patient patient) {
+			List<string> listLanguages=new List<string>();
+			if(PrefC.GetString(PrefName.LanguagesUsedByPatients)!="") {
+				string[] stringArrayLanguages=PrefC.GetString(PrefName.LanguagesUsedByPatients).Split(',');
+				for(int i=0;i<stringArrayLanguages.Length;i++) {
+					if(stringArrayLanguages[i]=="") {
+						continue;
+					}
+					listLanguages.Add(stringArrayLanguages[i]);
+				}
+			}
+			if(!string.IsNullOrWhiteSpace(patient.Language) && !listLanguages.Contains(patient.Language)) {
+				listLanguages.Add(patient.Language);
+			}
+			return listLanguages;
+		}
+
+		public static List<string> GetMultiRaces() {
+			List<string> listRaces=new List<string>();
+			listRaces.Add("None");
+			listRaces.Add("AfricanAmerican");
+			listRaces.Add("AmericanIndian");
+			listRaces.Add("Asian");
+			listRaces.Add("DeclinedToSpecify");
+			listRaces.Add("HawaiiOrPacIsland");
+			listRaces.Add("Other");
+			listRaces.Add("White");
+			return listRaces;
+		}
+
+		public static List<string> GetEthinicities() {
+			List<string> listEthnicities=new List<string>();
+			listEthnicities.Add("None");
+			listEthnicities.Add("DeclinedToSpecify");
+			listEthnicities.Add("Not Hispanic");
+			listEthnicities.Add("Hispanic");
+			return listEthnicities;
+		}
+
+		public static Result ValidatePatientEdit(Patient patient,EhrPatient ehrPatient,Patient patientOld,bool isNew,string site) {
+			Result result=new Result() { IsSuccess=false };
+			DateTime dateTimeDeceased=DateTime.MinValue;
+			if(string.IsNullOrEmpty(patient.LName)){
+				result.Msg="Last Name must be entered.";
+				return result;
+			}
+			//see if chartNum is a duplicate
+			if(!string.IsNullOrEmpty(patient.ChartNumber)){
+				//the patNum will be 0 for new
+				string usedBy=Patients.ChartNumUsedBy(patient.ChartNumber,patient.PatNum);
+				if(!string.IsNullOrEmpty(usedBy)){
+					result.Msg="This chart number is already in use by:";
+					result.Msg2=" "+usedBy;
+					return result;
+				}
+			}
+			if(!string.IsNullOrEmpty(patient.County) && !Counties.DoesExist(patient.County)){
+				result.Msg="County name invalid. The County entered is not present in the list of Counties. Please add the new County.";
+				return result;
+			}
+			if(ehrPatient.SexualOrientation==EnumTools.GetAttributeOrDefault<EhrAttribute>(SexOrientation.AdditionalOrientation).Snomed 
+				&& string.IsNullOrEmpty(ehrPatient.SexualOrientationNote.Trim())) 
+			{
+				result.Msg="Sexual orientation must be specified.";
+				return result;
+			}
+			if(ehrPatient.GenderIdentity==EnumTools.GetAttributeOrDefault<EhrAttribute>(GenderId.AdditionalGenderCategory).Snomed 
+				&& string.IsNullOrEmpty(ehrPatient.GenderIdentityNote.Trim())) 
+			{
+				result.Msg="Gender identity must be specified.";
+				return result;
+			}
+			if(!string.IsNullOrEmpty(site) && site!=Sites.GetDescription(patient.SiteNum) && Sites.FindMatchSiteNum(site)==-1) {
+				result.Msg="Invalid Site description.";
+				return result;
+			}
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				if(patient.CanadianEligibilityCode==1//FT student
+					&& string.IsNullOrEmpty(patient.SchoolName) && patient.Birthdate.AddYears(18)<=DateTime.Today)
+				{
+					result.Msg="School should be entered if full-time student and patient is 18 or older.";
+					return result;
+				}
+			}
+			//Don't allow changing status from Archived if this is a merged patient.
+			if(patientOld.PatStatus!=patient.PatStatus && patientOld.PatStatus==PatientStatus.Archived && 
+				PatientLinks.WasPatientMerged(patientOld.PatNum)) 
+			{
+				result.Msg="Not allowed to change the status of a merged patient.";
+				return result;
+			}
+			if(isNew && PrefC.HasClinicsEnabled) {
+				if(!PrefC.GetBool(PrefName.ClinicAllowPatientsAtHeadquarters) && patient.ClinicNum==0) {
+					result.Msg="Current settings for clinics do not allow patients to be added to the 'Unassigned' clinic. Please select a clinic.";
+					return result;
+				}
+			}
+			result.IsSuccess=true;
+			return result;
+		}
+
+		public static Result SavePatientEdit(Userod userod,Patient patient,Patient patientOld,PatientNote patientNote,EhrPatient ehrPatient,Family family,bool isNew,bool restrictSched,
+			bool arriveEarlySame,bool addressSame,bool addressSameSuperFamily,bool billProvSame,bool notesSame,bool emailPhoneSame,DefLink defLink,long specialtyDefNum) {
+			Result result=new Result();
+			Update(patient,patientOld);
+			PatientNotes.Update(patientNote,patient.Guarantor);
+			EhrPatients.Update(ehrPatient);
+			string strPatPriProvDesc=Providers.GetLongDesc(patient.PriProv);
+			InsertPrimaryProviderChangeSecurityLogEntry(patientOld,patient);
+			bool isApptSchedRestricted=PatRestrictions.IsRestricted(patient.PatNum,PatRestrict.ApptSchedule);
+			if(restrictSched) {
+				PatRestrictions.Upsert(patient.PatNum,PatRestrict.ApptSchedule);//will only insert if one does not already exist in the db.
+			}
+			else {
+				PatRestrictions.RemovePatRestriction(patient.PatNum,PatRestrict.ApptSchedule);
+			}
+			PatRestrictions.InsertPatRestrictApptChangeSecurityLog(patient.PatNum,isApptSchedRestricted,PatRestrictions.IsRestricted(patient.PatNum,PatRestrict.ApptSchedule));
+			#region 'Same' Checkboxes
+			bool isAuthArchivedEdit=Security.IsAuthorized(EnumPermType.ArchivedPatientEdit,MiscData.GetNowDateTime(),true,true,userod);
+			if(arriveEarlySame){
+				UpdateArriveEarlyForFam(patient,isAuthArchivedEdit);
+			}
+			//Only family checked.
+			if(addressSame && !addressSameSuperFamily){
+				//might want to include a mechanism for comparing fields to be overwritten
+				UpdateAddressForFam(patient,false,isAuthArchivedEdit);
+			}
+			//SuperFamily is checked, family could be checked or unchecked.
+			else if(addressSameSuperFamily) {
+				UpdateAddressForFam(patient,true,isAuthArchivedEdit);
+			}
+			if(billProvSame) {
+				List<Patient> listPatientsForPriProvEdit=family.ListPats.ToList().FindAll(x => x.PatNum!=patient.PatNum && x.PriProv!=patient.PriProv);
+				if(!isAuthArchivedEdit) {//Remove Archived patients if not allowed to edit so we don't create a log for them.
+					listPatientsForPriProvEdit.RemoveAll(x => x.PatStatus==PatientStatus.Archived);
+				}
+				//true if any family member has a different PriProv and the user is authorized for PriProvEdit
+				bool isChangePriProvs=(listPatientsForPriProvEdit.Count>0 && Security.IsAuthorized(EnumPermType.PatPriProvEdit,DateTime.MinValue,true,true));
+				UpdateBillingProviderForFam(patient,isChangePriProvs,isAuthArchivedEdit);//if user is not authorized this will not update PriProvs for fam
+			}
+			if(notesSame){
+				UpdateNotesForFam(patient,isAuthArchivedEdit);
+			}
+			if(emailPhoneSame) {
+				UpdateEmailPhoneForFam(patient,isAuthArchivedEdit);
+			}
+			#endregion 'Same' Checkboxes
+			if(patient.BillingType!=patientOld.BillingType) {
+				InsertBillTypeChangeSecurityLogEntry(patientOld,patient);
+			}
+			//If this patient is also a referral source,
+			//keep address info synched:
+			Referral referral=Referrals.GetFirstOrDefault(x => x.PatNum==patient.PatNum);
+			if(referral!=null) {
+				referral.LName=patient.LName;
+				referral.FName=patient.FName;
+				referral.MName=patient.MiddleI;
+				referral.Address=patient.Address;
+				referral.Address2=patient.Address2;
+				referral.City=patient.City;
+				referral.ST=patient.State;
+				referral.SSN=patient.SSN;
+				referral.Zip=patient.Zip;
+				referral.Telephone=TelephoneNumbers.FormatNumbersExactTen(patient.HmPhone);
+				referral.EMail=patient.Email;
+				Referrals.Update(referral);
+				Referrals.RefreshCache();
+			}
+			//if patient is inactive, deceased, etc., then disable any recalls
+			UpdateRecalls(patient,patientOld,"Edit Patient Window");
+			//If there is an existing HL7 def enabled, send an ADT message if there is an outbound ADT message defined
+			if(HL7Defs.IsExistingHL7Enabled()) {
+				//new patients get the A04 ADT, updating existing patients we send an A08
+				MessageHL7 messageHL7=null;
+				if(isNew) {
+					messageHL7=MessageConstructor.GenerateADT(patient,GetPat(patient.Guarantor),EventTypeHL7.A04);
+				}
+				else {
+					messageHL7=MessageConstructor.GenerateADT(patient,GetPat(patient.Guarantor),EventTypeHL7.A08);
+				}
+				//Will be null if there is no outbound ADT message defined, so do nothing
+				if(messageHL7!=null) {
+					HL7Msg hl7Msg=new HL7Msg();
+					hl7Msg.AptNum=0;
+					hl7Msg.HL7Status=HL7MessageStatus.OutPending;//it will be marked outSent by the HL7 service.
+					hl7Msg.MsgText=messageHL7.ToString();
+					hl7Msg.PatNum=patient.PatNum;
+					HL7Msgs.Insert(hl7Msg);
+					if(ODBuild.IsDebug()) {
+						result.Msg=messageHL7.ToString();
+					}
+				}
+			}
+			if(HieClinics.IsEnabled()) {
+				HieQueues.Insert(new HieQueue(patient.PatNum));
+			}
+			if(defLink!=null) {
+				if(specialtyDefNum==0) {
+					DefLinks.Delete(defLink.DefLinkNum);
+				}
+				else {
+					defLink.DefNum=specialtyDefNum;
+					DefLinks.Update(defLink);
+				}
+			}
+			else if(specialtyDefNum!=0){//if the patient does not have a specialty and "Unspecified" is not selected. 
+				DefLink defLinkNew=new DefLink();
+				defLinkNew.DefNum=specialtyDefNum;
+				defLinkNew.FKey=patient.PatNum;
+				defLinkNew.LinkType=DefLinkType.Patient;
+				DefLinks.Insert(defLinkNew);
+			}
+			if(!isNew) {
+				InsertAddressChangeSecurityLogEntry(patientOld,patient);
+				ODEvent.Fire(ODEventType.Patient,patient);
+			}
+			result.IsSuccess=true;
+			return result;
+		}
+
+		
+		///<summary>Determines if the user should be given the opportunity to send a text message to the patient when changes have been made to texting settings.</summary>
+		public static bool DoPromptForSms(Patient patient,Patient patientOld) {
+			if(!Clinics.IsTextingEnabled(patient.ClinicNum)) {
+				return false;//Office doesn't use texting.
+			}
+			if(!ClinicPrefs.GetBool(PrefName.ShortCodeOptInOnApptComplete,patient.ClinicNum)) {
+				return false;//Office has turned off this prompt.
+			}
+			if(patient.TxtMsgOk!=YN.Yes || string.IsNullOrWhiteSpace(PhoneNumbers.RemoveNonDigitsAndTrimStart(patient.WirelessPhone))) {
+				return false;//Not set to YES or no phone number, so no need to send a test message.
+			}
+			string phoneOldNormalized=PhoneNumbers.RemoveNonDigitsAndTrimStart(patientOld.WirelessPhone);
+			string phoneNewNormalized=PhoneNumbers.RemoveNonDigitsAndTrimStart(patient.WirelessPhone);
+			if(phoneOldNormalized==phoneNewNormalized && patientOld.TxtMsgOk==YN.Yes) {
+				return false;//Phone number hasn't changed and TxtMsgOK was already YES => No changes, no need to prompt.
+			}
+			return true;
+		}
+
+		public static Result SetDefaultRelationships(Patient patient,Family family,PatientPosition patientPositionCur) {
+			Result result=new Result() { IsSuccess=false };
+			List<Patient> listPatientsAdults=new List<Patient>();
+			List<Patient> listPatientsChildren=new List<Patient>();
+			PatientPosition patientPosition;
+			for(int p=0;p<family.ListPats.Length;p++){
+				if(family.ListPats[p].PatNum==patient.PatNum) {
+					patientPosition=patientPositionCur;
+				}
+				else {
+					patientPosition=family.ListPats[p].Position;
+				}
+				if(patientPosition==PatientPosition.Child){
+					listPatientsChildren.Add(family.ListPats[p]);
+				}
+				else{
+					listPatientsAdults.Add(family.ListPats[p]);
+				}
+			}
+			Patient patientEldestMaleAdult=null;
+			Patient patientEldestFemaleAdult=null;
+			for(int i=0;i<listPatientsAdults.Count;i++) {
+				if(listPatientsAdults[i].Gender==PatientGender.Male 
+					&& (patientEldestMaleAdult==null || listPatientsAdults[i].Age>patientEldestMaleAdult.Age)) 
+				{
+						patientEldestMaleAdult=listPatientsAdults[i];
+				}
+				if(listPatientsAdults[i].Gender==PatientGender.Female
+					&& (patientEldestFemaleAdult==null || listPatientsAdults[i].Age>patientEldestFemaleAdult.Age)) 
+				{
+					patientEldestFemaleAdult=listPatientsAdults[i];
+				}
+				//Do not do anything for the other genders.
+			}
+			if(listPatientsAdults.Count<1) {
+				result.Msg="No adults found.\r\nFamily relationships will not be changed.";
+				return result;
+			}
+			if(listPatientsChildren.Count<1) {
+				result.Msg="No children found.\r\nFamily relationships will not be changed.";
+				return result;
+			}
+			if(patientEldestFemaleAdult==null && patientEldestMaleAdult==null) {
+				result.Msg="No male or female adults found.\r\nFamily relationships will not be changed.";
+				return result;
+			}
+			if(Guardians.ExistForFamily(patient.Guarantor)) {
+				//delete all guardians for the family, original family relationships are saved on load so this can be undone if the user presses cancel.
+				Guardians.DeleteForFamily(patient.Guarantor);
+			}
+			for(int i=0;i<listPatientsChildren.Count;i++) {
+				if(patientEldestFemaleAdult!=null) {
+					//Create Parent=>Child relationship
+					Guardian guardianMother=new Guardian();
+					guardianMother.PatNumChild=patientEldestFemaleAdult.PatNum;
+					guardianMother.PatNumGuardian=listPatientsChildren[i].PatNum;
+					guardianMother.Relationship=GuardianRelationship.Child;
+					Guardians.Insert(guardianMother);
+					//Create Child=>Parent relationship
+					Guardian guardianChild=new Guardian();
+					guardianChild.PatNumChild=listPatientsChildren[i].PatNum;
+					guardianChild.PatNumGuardian=patientEldestFemaleAdult.PatNum;
+					guardianChild.Relationship=GuardianRelationship.Mother;
+					guardianChild.IsGuardian=true;
+					Guardians.Insert(guardianChild);
+				}
+				if(patientEldestMaleAdult!=null) {
+					//Create Parent=>Child relationship
+					Guardian guardianFather=new Guardian();
+					guardianFather.PatNumChild=patientEldestMaleAdult.PatNum;
+					guardianFather.PatNumGuardian=listPatientsChildren[i].PatNum;
+					guardianFather.Relationship=GuardianRelationship.Child;
+					Guardians.Insert(guardianFather);
+					//Create Child=>Parent relationship
+					Guardian guardianChild=new Guardian();
+					guardianChild.PatNumChild=listPatientsChildren[i].PatNum;
+					guardianChild.PatNumGuardian=patientEldestMaleAdult.PatNum;
+					guardianChild.Relationship=GuardianRelationship.Father;
+					guardianChild.IsGuardian=true;
+					Guardians.Insert(guardianChild);
+				}
+			}
+			result.IsSuccess=true;
+			return result;
+		}
 	}
 
 	///<summary>A helper class to keep track of changes made to clone demographics when synching.</summary>

@@ -166,22 +166,25 @@ namespace OpenDental{
 				checkIsClaimExportAllowed.Enabled=true;
 				checkIsClaimExportAllowed.Checked=ClearinghouseCur.IsClaimExportAllowed;
 			}
-			//Uncheck and disable if not ClaimConnect as this checkbox only applies to ClaimConnect.
-			checkSaveDXCSoap.Checked=PrefC.GetBool(PrefName.SaveDXCSOAPAsXML);
 			if(ClearinghouseCur.CommBridge.In(EclaimsCommBridge.EDS,EclaimsCommBridge.ClaimConnect)) {
 				checkAllowAttachSend.Enabled=true;
-				checkSaveAttachments.Checked=PrefC.GetBool(PrefName.SaveEDSAttachments);
 				checkAllowAttachSend.Checked=ClearinghouseCur.IsAttachmentSendAllowed;
-			 if(ClearinghouseCur.CommBridge==EclaimsCommBridge.ClaimConnect) {
-					checkSaveAttachments.Visible=true;
-					checkSaveDXCSoap.Visible=true;
+				if(ClearinghouseCur.CommBridge==EclaimsCommBridge.ClaimConnect) {
 					checkSaveAttachments.Checked=PrefC.GetBool(PrefName.SaveDXCAttachments);
+					checkSaveDXCSoap.Visible=true;
+					checkSaveDXCSoap.Checked=PrefC.GetBool(PrefName.SaveDXCSOAPAsXML);
+				}
+				else {//EDS
+					checkSaveAttachments.Checked=PrefC.GetBool(PrefName.SaveEDSAttachments);
+					checkSaveDXCSoap.Visible=false;
 				}
 			}
 			else {
-				checkAllowAttachSend.Enabled=true;
-				checkAllowAttachSend.Checked=ClearinghouseCur.IsAttachmentSendAllowed;
-				checkSaveDXCSoap.Visible=true;
+				checkAllowAttachSend.Checked=false;
+				checkAllowAttachSend.Enabled=false;
+				//Uncheck and disable if not ClaimConnect as this checkbox only applies to ClaimConnect.
+				checkSaveDXCSoap.Checked=false;
+				checkSaveDXCSoap.Visible=false;
 			}
 			//Invisible by default, so only need to check if we should make visible on load, rest of checks are handled by CheckChanged event.
 			if(checkAllowAttachSend.Checked) {

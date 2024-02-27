@@ -1280,5 +1280,12 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End of MsgToPay convert
 		}//End of 24_1_1() method
+
+		private static void To24_1_4() {
+			string command;
+			DataTable table;
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('MsgToPaySendThreadFrequency','5')";
+			Db.NonQ(command);
+		}//End of 24_1_4() method
 	}
 }

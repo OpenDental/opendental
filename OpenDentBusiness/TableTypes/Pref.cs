@@ -1486,6 +1486,8 @@ namespace OpenDentBusiness {
 		MobileExcludeApptsBeforeDate,
 		MobileUserName,
 		MobileWebClinicsSignedUp,
+		///<summary>Int. Adjusts RunInterval of MsgToPay in seconds.</summary>
+		MsgToPaySendThreadFrequency,
 		//MobileSyncLastFileNumber,
 		//MobileSyncPath,
 		///<summary>The major and minor version of the current MySQL connection.  Gets updated on startup when a new version is detected.</summary>

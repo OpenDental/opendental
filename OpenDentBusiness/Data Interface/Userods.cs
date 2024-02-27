@@ -131,6 +131,21 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		public static List<Userod> GetListByJobTeams(List<JobTeam> listJobTeams) {
+			if(listJobTeams.IsNullOrEmpty()) {
+				return new List<Userod>();
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Userod>>(MethodBase.GetCurrentMethod(),listJobTeams);
+			}
+			string command=@$"
+				SELECT userod.*
+				FROM userod
+				INNER JOIN jobteamuser ON userod.UserNum=jobteamuser.UserNumEngineer
+				WHERE userod.IsHidden = 0
+				AND jobteamuser.JobTeamNum IN({POut.String(string.Join(",",listJobTeams.Select(x => x.JobTeamNum).ToList()))})";
+			return UserodCrud.SelectMany(command);
+		}
 		#endregion
 
 		#region Misc Methods

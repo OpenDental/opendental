@@ -991,9 +991,12 @@ namespace OpenDentBusiness.Eclaims {
 			///<summary>Takes the user's image they want to send with their claim and converts it to a base64 byte representation.
 			///ClaimConnect requires the image to be in this format.</summary>
 			private static byte[] ConvertImageToBytes(Image image) {
-				using MemoryStream m=new MemoryStream();
-				image.Save(m,System.Drawing.Imaging.ImageFormat.Jpeg);
-				return m.ToArray();
+				using MemoryStream memoryStream=new MemoryStream();
+				using Bitmap bitmap=new Bitmap(image);
+				//Save creates a system ref to the resources, preventing proper disposal of image,
+				//so we use a second image
+				bitmap.Save(memoryStream,System.Drawing.Imaging.ImageFormat.Jpeg);
+				return memoryStream.ToArray();
 			}
 		}
 

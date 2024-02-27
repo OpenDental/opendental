@@ -51,7 +51,6 @@ namespace OpenDental{
 		}
 
 		private void FillGrids(){
-			_listDisplayFieldsAvail=DisplayFields.GetAllAvailableList(DisplayFieldCategoryCur);//This one needs to be called repeatedly.
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col;
@@ -72,18 +71,11 @@ namespace OpenDental{
 			}
 			gridMain.EndUpdate();
 			//Remove items from AvailList that are in the ListShowing.
-			for(int i=0;i<_listDisplayFieldsShowing.Count;i++){
-				for(int j=0;j<_listDisplayFieldsAvail.Count;j++) {
-					//Only removing one item from AvailList per iteration of i, so RemoveAt() is safe without going backwards.
-					if(_listDisplayFieldsShowing[i].InternalName==_listDisplayFieldsAvail[j].InternalName) {
-						_listDisplayFieldsAvail.RemoveAt(j);
-						break;
-					}
-				}
-			}
+			_listDisplayFieldsAvail=DisplayFields.GetAllAvailableList(DisplayFieldCategoryCur).Except(_listDisplayFieldsShowing, new DisplayFieldComparer()).ToList();
 			listAvailable.Items.Clear();
 			if(DisplayFieldCategoryCur==DisplayFieldCategory.SuperFamilyGridCols) {
 				listAvailable.Items.AddList(_listDisplayFieldsAvail,x=>x.ToDescriptionString());
+				return;
 			}
 			listAvailable.Items.AddList(_listDisplayFieldsAvail,x=>x.ToString());
 		}
@@ -186,5 +178,19 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		public class DisplayFieldComparer : IEqualityComparer<DisplayField> {
+			public int GetHashCode(DisplayField displayField) {
+				string hash=displayField.InternalName;
+				return hash.GetHashCode();
+			}
+
+			public bool Equals(DisplayField displayFieldA, DisplayField displayFieldB) {
+				bool retVal=displayFieldA.InternalName==displayFieldB.InternalName;
+				if(displayFieldA.InternalName=="" || displayFieldB.InternalName=="") {
+					retVal=retVal && displayFieldA.Description==displayFieldB.Description;
+				}
+				return retVal;
+			}
+		}
 	}
 }

@@ -982,7 +982,7 @@ namespace OpenDental {
 			JobManagerCore.AddTestingJobsToList(textVersionText.Text);
 			//Get a list of all jobs that should be tested.
 			List<Job> listTestingJobs=JobManagerCore.ListJobsAll.FindAll(x => !x.Category.In(
-			JobCategory.Query,JobCategory.Research,JobCategory.Conversion,JobCategory.UnresolvedIssue,JobCategory.MarketingDesign)
+			JobCategory.Query,JobCategory.Research,JobCategory.Conversion,JobCategory.UnresolvedIssue,JobCategory.MarketingDesign,JobCategory.Project)
 					&& x.PhaseCur.In(JobPhase.Complete,JobPhase.Documentation)
 					&& (string.IsNullOrEmpty(textVersionText.Text) ? true : x.JobVersion.ToLower().Contains(textVersionText.Text.ToLower()))
 					&& (string.IsNullOrEmpty(textSearch.Text) ? true : x.ToString().ToLower().Contains(textSearch.Text.ToLower())))
