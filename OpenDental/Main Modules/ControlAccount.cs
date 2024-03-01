@@ -1422,7 +1422,11 @@ namespace OpenDental {
 			List<long> listPayPlanChargeNums=gridAccount.SelectedIndices
 				.Where(x => table.Rows[x]["PayPlanChargeNum"].ToString()!="0")
 				.Select(x => PIn.Long(table.Rows[x]["PayPlanChargeNum"].ToString())).ToList();//Debits attached to insurance payplans do not get shown in the account module.
-			Statement statement=Statements.CreateLimitedStatement(listPatNums,_patient.Guarantor,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
+			long patNumStatement=_patient.Guarantor;
+			if(listPatNums.Count==1) {//If only one patient is selected
+				patNumStatement=_patient.PatNum; //Use the patient's info on statement instead of the guarantor's.
+			}
+			Statement statement=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
 			//All printing and emailing will be done from within the form:
 			using FormStatementOptions formStatementOptions=new FormStatementOptions();
 			formStatementOptions.StatementCur=statement;
