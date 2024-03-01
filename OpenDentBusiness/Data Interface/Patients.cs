@@ -40,7 +40,6 @@ namespace OpenDentBusiness {
 					"claimproc.PatNum",
 					"clinicerx.PatNum",
 					"commlog.PatNum",
-					"commloghist.PatNum",
 					"commoptout.PatNum",
 					"confirmationrequest.PatNum",
 					"creditcard.PatNum",

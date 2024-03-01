@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeBase;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,10 +25,11 @@ namespace OpenDentBusiness {
 		private int _expMonth;
 		private int _expYear;
 
-		public MagstripCardParser(string trackString) {
+		/// <summary>Can explicitly specify which track to parse if the trackString passed in only contains data for that track.</summary>
+		public MagstripCardParser(string trackString,EnumMagstripCardParseTrack enumMagstripCardParseTrack=EnumMagstripCardParseTrack.All) {
 			_inputStripeStr=trackString;
 			_needsParsing=true;
-			Parse();
+			Parse(enumMagstripCardParseTrack);
 		}
 
 		#region Properties
@@ -84,7 +86,7 @@ namespace OpenDentBusiness {
 		}
 		#endregion
 
-		protected void Parse() {
+		protected void Parse(EnumMagstripCardParseTrack enumMagstripCardParseTrack=EnumMagstripCardParseTrack.All) {
 			if(!_needsParsing) {
 				return;
 			}
@@ -98,14 +100,25 @@ namespace OpenDentBusiness {
 				//Determine the presence of special characters
 				string[] tracks=_inputStripeStr.Split(new char[] { TRACK_SEPARATOR },StringSplitOptions.RemoveEmptyEntries);
 				if(tracks.Length>0) {
-					_hasTrack1=true;
-					_track1Data=tracks[0];
+					//Explicitly set the track data based on the enum value passed in. If set to anything but All, we expect 1 and only 1 track to be present in trackString.
+					if(enumMagstripCardParseTrack.In(EnumMagstripCardParseTrack.All,EnumMagstripCardParseTrack.TrackOne)) {
+						_hasTrack1=true;
+						_track1Data=tracks[0];
+					}
+					else if(enumMagstripCardParseTrack==EnumMagstripCardParseTrack.TrackTwo) {
+						_hasTrack2=true;
+						_track2Data=tracks[0];
+					}
+					else if(enumMagstripCardParseTrack==EnumMagstripCardParseTrack.TrackThree) {
+						_hasTrack3=true;
+						_track3Data=tracks[0];
+					}
 				}
-				if(tracks.Length>1) {
+				if(tracks.Length>1 && enumMagstripCardParseTrack==EnumMagstripCardParseTrack.All) {
 					_hasTrack2=true;
 					_track2Data=tracks[1];
 				}
-				if(tracks.Length>2) {
+				if(tracks.Length>2 && enumMagstripCardParseTrack==EnumMagstripCardParseTrack.All) {
 					_hasTrack3=true;
 					_track3Data=tracks[2];
 				}
@@ -242,6 +255,18 @@ namespace OpenDentBusiness {
 		public MagstripCardParseException(string msg,Exception cause)
 			: base(msg,cause) {
 		}
+	}
+
+	/// <summary>Represents the track(s) contained in the trackString passed into the MagstripCardParser.</summary>
+	public enum EnumMagstripCardParseTrack {
+		/// <summary>0</summary>
+		All,
+		/// <summary>1</summary>
+		TrackOne,
+		/// <summary>2</summary>
+		TrackTwo,
+		/// <summary>3</summary>
+		TrackThree
 	}
 
 }
