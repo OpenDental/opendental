@@ -939,7 +939,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			if(benefitInd!=null) {
-				if(maxInd <= 0) {//then patient has used up all of their annual max, so no coverage.
+				if(benefitInd.MonetaryAmt != -1 && maxInd <= 0) {//then patient has used up all of their annual max, so no coverage.
 					if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 						note+=Lans.g("Benefits","Over lifetime max");
 					}
@@ -952,13 +952,13 @@ namespace OpenDentBusiness {
 				}
 			}
 			double retVal=insEstTotal;
-			if(benefitInd!=null){
+			if(benefitInd!=null && benefitInd.MonetaryAmt != -1){
 				if(maxInd < insEstTotal) {//if there's not enough left in the individual annual max to cover this proc.
 					retVal=maxInd;//insurance will only cover up to the remaining annual max
 				}
 			}
 			double insRemainingOverride=insEstTotalOverride;  //insEstTotalOverride or the amount ind remaining.  Same concept as retVal but never returned.
-			if(benefitInd!=null) {
+			if(benefitInd!=null && benefitInd.MonetaryAmt != -1) {
 				if(maxInd < insEstTotalOverride) {//if there's not enough left in the individual annual max to cover this proc.
 					insRemainingOverride=maxInd;//insurance will only cover up to the remaining annual max
 				}
@@ -1094,7 +1094,7 @@ namespace OpenDentBusiness {
 			}
 			//if the family max has all been used up on other procs 
 			if(maxFam<=0) {
-				if(benefitInd==null) {
+				if(benefitInd==null || benefitInd.MonetaryAmt == -1) {
 					note+=Lans.g("Benefits","Over family max");
 				}
 				else{//and there is an individual max.
@@ -1121,11 +1121,11 @@ namespace OpenDentBusiness {
 				}
 				return retVal;
 			}*/
-			if((benefitInd==null) || (maxFam < maxInd)) {//restrict by maxFam
+			if((benefitInd==null) || (benefitInd.MonetaryAmt==-1) || (maxFam < maxInd)) {//restrict by maxFam
 				if(insEstTotalOverride==-1) {//No insEstTotalOverride used, use normal insEstTotal
 					if(maxFam < retVal) {//if there's not enough left in the annual max to cover this proc.
 						//example. retVal=$70.  But 2970 of 3000 family max has been used.  maxFam=30.  We need to return 30.
-						if(benefitInd==null) {
+						if(benefitInd==null || benefitInd.MonetaryAmt==-1) {
 							note+=Lans.g("Benefits","Over family max");
 						}
 						else {//both ind and fam
@@ -1145,7 +1145,7 @@ namespace OpenDentBusiness {
 					//First calculate the note using override
 					if(maxFam < insRemainingOverride) {//if there's not enough left in the annual max to cover this proc.
 						//example. insRemainingOverride=$70.  But 2970 of 3000 family max has been used.  maxFam=30.
-						if(benefitInd==null) {
+						if(benefitInd==null || benefitInd.MonetaryAmt==-1) {
 							note+=Lans.g("Benefits","Over family max");
 						}
 						else {//both ind and fam
@@ -1167,7 +1167,7 @@ namespace OpenDentBusiness {
 			}
 			if(insEstTotalOverride==-1) {//No insEstTotalOverride used, use normal insEstTotal
 				if(retVal < insEstTotal) {//must have been an individual restriction
-					if(benefitInd==null) {//js I don't understand this situation. It will probably not happen, but this is safe.
+					if(benefitInd==null || benefitInd.MonetaryAmt == -1) {//js I don't understand this situation. It will probably not happen, but this is safe.
 						note+=Lans.g("Benefits","Over annual max");
 					}
 					else {
@@ -1184,7 +1184,7 @@ namespace OpenDentBusiness {
 			}
 			//If there is an override, calculate max note from it instead.  Must have been an individual restriction.
 			else if(insRemainingOverride < insEstTotalOverride) {
-				if(benefitInd==null) {//js I don't understand this situation. It will probably not happen, but this is safe.
+				if(benefitInd==null || benefitInd.MonetaryAmt==-1) {//js I don't understand this situation. It will probably not happen, but this is safe.
 					note+=Lans.g("Benefits","Over annual max");
 				}
 				else {

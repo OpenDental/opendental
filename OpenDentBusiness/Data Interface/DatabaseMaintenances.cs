@@ -2825,6 +2825,16 @@ namespace OpenDentBusiness {
 					//This is just estimate info, regardless of the claimproc status, so totally safe.
 					command="UPDATE claimproc SET InsPayEst=0 WHERE NoBillIns=1 AND IsOverpay=0 AND InsPayEst !=0";
 					long numberFixed=Db.NonQ(command);
+					for(int i=0;i<listClaimProcs.Count;i++) {
+						ClaimProc claimProcOld=listClaimProcs[i];
+						if(ClaimProcs.IsClaimProcHashValid(claimProcOld)) { //Only rehash claimprocs that were already valid.
+							//Since the query updated each of the claimprocs to have an InsPayEst of 0, we're going to make a copy of the current one and set it's InsPayEst to 0 before hashing.
+							ClaimProc claimProc=claimProcOld.Copy();
+							claimProc.InsPayEst=0;
+							claimProc.SecurityHash=ClaimProcs.HashFields(claimProc);
+							Crud.ClaimProcCrud.Update(claimProc);
+						}
+					}
 					listClaimProcs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
 						DbmLogActionType.Update,methodName,"Updated InsPayEst from "+x.InsPayEst+" to 0 from ClaimProcEstNoBillIns.")));
 					if(numberFixed>0 || verbose) {
@@ -2857,6 +2867,16 @@ namespace OpenDentBusiness {
 					//The InsPayAmt is already being ignored due to the status of the claimproc.  So changing its value is harmless.
 					command=@"UPDATE claimproc SET InsPayAmt=0 WHERE InsPayAmt > 0 AND ClaimNum=0 AND Status=6";
 					long numberFixed=Db.NonQ(command);
+					for(int i=0;i<listClaimProcs.Count;i++) {
+						ClaimProc claimProcOld=listClaimProcs[i];
+						if(ClaimProcs.IsClaimProcHashValid(claimProcOld)) { //Only rehash claimprocs that were already valid.
+							//Since the query updated each of the claimprocs to have an InsPayAmt of 0, we're going to make a copy of the current one and set it's InsPayAmt to 0 before hashing.
+							ClaimProc claimProc=claimProcOld.Copy();
+							claimProc.InsPayAmt=0;
+							claimProc.SecurityHash=ClaimProcs.HashFields(claimProc);
+							Crud.ClaimProcCrud.Update(claimProc);
+						}
+					}
 					listClaimProcs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
 						DbmLogActionType.Update,methodName,"Updated InsPayAmt from "+x.InsPayEst+" to 0 from ClaimProcEstWithInsPaidAmt.")));
 					if(numberFixed>0 || verbose) {
@@ -3075,38 +3095,48 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
-			string command=@$"SELECT ClaimProcNum 
+			string command=@$"SELECT * 
 				FROM claimproc 
 				WHERE Status={POut.Int((int)ClaimProcStatus.NotReceived)}
 				AND ClaimNum=0
 				AND InsPayAmt=0 
 				AND WriteOff=0";
-			List<long> listClaimProcNums=Db.GetListLong(command);
+			List<ClaimProc> listClaimProcs=ClaimProcCrud.SelectMany(command);
 			string log="";
-			if(listClaimProcNums.Count==0 && !verbose) {
+			if(listClaimProcs.Count==0 && !verbose) {
 				return log;
 			}
 			switch(modeCur) {
 				case DbmMode.Check:
 					log+=Lans.g("FormDatabaseMaintenance",$"ClaimProcs with status")+
 						" '"+ClaimProcStatus.NotReceived.GetDescription()+"' "+
-						Lans.g("FormDatabaseMaintenance","found where no claim is attached:")+" "+POut.Long(listClaimProcNums.Count)+"\r\n";
+						Lans.g("FormDatabaseMaintenance","found where no claim is attached:")+" "+POut.Long(listClaimProcs.Count)+"\r\n";
 					break;
 				case DbmMode.Fix:
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
-					if(listClaimProcNums.Count>0) {
+					if(listClaimProcs.Count>0) {
 						command=$"UPDATE claimproc SET Status={POut.Enum(ClaimProcStatus.Estimate)} "+
-							$"WHERE ClaimProcNum IN("+string.Join(",",listClaimProcNums)+")";
+							$"WHERE ClaimProcNum IN("+string.Join(",",listClaimProcs.Select(x=>x.ClaimProcNum))+")";
 						Db.NonQ(command);
-						listClaimProcNums.ForEach(x=>listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.ClaimProc,
+						for(int i=0;i<listClaimProcs.Count;i++) {
+							ClaimProc claimProcOld=listClaimProcs[i];
+							if(ClaimProcs.IsClaimProcHashValid(claimProcOld)) { //Only rehash claimprocs that were already valid.
+								//Since the query updated each of the claimprocs to have a Status of Estimate, we're going to make a copy of the current one and set it's Status to Estimate before hashing.
+								ClaimProc claimProc=claimProcOld.Copy();
+								claimProc.Status=ClaimProcStatus.Estimate;
+								claimProc.SecurityHash=ClaimProcs.HashFields(claimProc);
+								Crud.ClaimProcCrud.Update(claimProc);
+							}
+						}
+						listClaimProcs.ForEach(x=>listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
 							DbmLogActionType.Update,methodName,$"Updated status of ClaimProc from '{ClaimProcStatus.NotReceived.GetDescription()}' to " +
 							$"'{ClaimProcStatus.Estimate.GetDescription()}' because no claim was attached.")));
 					}
-					if(listClaimProcNums.Count>0 || verbose) {
+					if(listClaimProcs.Count>0 || verbose) {
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);
 						log+=Lans.g("FormDatabaseMaintenance","ClaimProcs with invalid claims set to")+" "+ClaimProcStatus.Estimate.GetDescription()+
-							": "+POut.Long(listClaimProcNums.Count)+"\r\n";
+							": "+POut.Long(listClaimProcs.Count)+"\r\n";
 					}
 					break;
 			}

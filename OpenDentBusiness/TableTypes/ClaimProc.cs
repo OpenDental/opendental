@@ -117,6 +117,8 @@ namespace OpenDentBusiness{
 		public string ClaimAdjReasonCodes;
 		///<summary>Bool, defaults to false. When true, indicates that a claimproc represents an insurance overpayment OR underpayment./summary>
 		public bool IsOverpay;
+		///<summary>Holds the salted hash of the following claimproc fields: ClaimNum, Status, InsPayEst, InsPayAmt. </summary>
+		public string SecurityHash;
 
 		///<summary>Returns a copy of this ClaimProc.</summary>
 		public ClaimProc Copy(){

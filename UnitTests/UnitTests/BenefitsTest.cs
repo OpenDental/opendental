@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CodeBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenDentBusiness;
 using UnitTestsCore;
@@ -1235,6 +1236,194 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(0,listClaimProcs.First().InsPayEst); // Should be aged out.
+		}
+
+		/// <summary>Asserts that GetLimitationByCode returns accurate estimates when there is a family annual max and no individual annual max.</summary>
+		[TestMethod]
+		public void Benefits_GetLimitationByCode_FamilyMaxSet_IndividualMaxNotSet_InsEstOverrideNotSet() {
+			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
+			string name="Test";
+			Patient patient=PatientT.CreatePatient(name);
+			Carrier carrier=CarrierT.CreateCarrier(name);
+			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
+			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
+			string procCodePartCovered="D1111";
+			string procCodeNotCovered="D2222";
+			double insEstTotal=60;
+			double insEstTotal2=25;
+			int patientAge=19;
+			//Family Annual Max.
+			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,50);
+			//Individual Annual Max is not set.
+			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
+			//Age Limitation Fluoride
+			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
+			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
+			//Create 1 procedure that will only be partially covered
+			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
+			//Create 1 procedure that will be over family max
+			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
+			string note="";
+			LimitationTypeMet limitationTypeMet;
+			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
+			//Only $50 of the $100 procedure will be covered since $50 is our family max
+			Assert.AreEqual(50,coveredAmt);
+			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
+			ClaimProcHist claimProcHist=new ClaimProcHist();
+			claimProcHist.ProcDate=DateTime.Now;
+			claimProcHist.Status=ClaimProcStatus.Estimate;
+			claimProcHist.PatNum=patient.PatNum;
+			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
+			claimProcHist.Amount=insEstTotal;
+			claimProcHist.InsSubNum=insSub.InsSubNum;
+			claimProcHist.PlanNum=insPlan.PlanNum;
+			claimProcHist.StrProcCode=procCodePartCovered;
+			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
+			//$0 will be covered since we have already exceeded our annual max.
+			Assert.AreEqual(0,coveredAmt);
+		}
+		
+		/// <summary>Asserts that GetLimitationByCode returns accurate estimates when there is a family annual max and no individual annual max, even when there is an InsEstOverride that is greater than the InsEstTotal.</summary>
+		[TestMethod]
+		public void Benefits_GetLimitationByCode_FamilyMaxSet_IndividualMaxNotSet_InsEstOverrideGreaterThanInsEstTotal() {
+			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
+			string name="Test";
+			Patient patient=PatientT.CreatePatient(name);
+			Carrier carrier=CarrierT.CreateCarrier(name);
+			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
+			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
+			string procCodePartCovered="D1111";
+			string procCodeNotCovered="D2222";
+			double insEstTotal=60;
+			double insEstTotal2=25;
+			double insEstOverride=100;
+			double insEstOverride2=50;
+			int patientAge=19;
+			//Family Annual Max.
+			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,50);
+			//Individual Annual Max is not set.
+			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
+			//Age Limitation Fluoride
+			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
+			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
+			//Create 1 procedure that will only be partially covered
+			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
+			//Create 1 procedure that will be over family max
+			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
+			string note="";
+			LimitationTypeMet limitationTypeMet;
+			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,insEstOverride,out limitationTypeMet);
+			//Only $50 of the $100 procedure will be covered since $50 is our family max
+			Assert.AreEqual(50,coveredAmt);
+			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
+			ClaimProcHist claimProcHist=new ClaimProcHist();
+			claimProcHist.ProcDate=DateTime.Now;
+			claimProcHist.Status=ClaimProcStatus.Estimate;
+			claimProcHist.PatNum=patient.PatNum;
+			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
+			claimProcHist.Amount=insEstTotal;
+			claimProcHist.InsSubNum=insSub.InsSubNum;
+			claimProcHist.PlanNum=insPlan.PlanNum;
+			claimProcHist.StrProcCode=procCodePartCovered;
+			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,insEstOverride2,out limitationTypeMet);
+			//$0 will be covered since we have already exceeded our annual max.
+			Assert.AreEqual(0,coveredAmt);
+		}
+		
+		/// <summary>Asserts that GetLimitationByCode returns accurate estimates when there is a family annual max and no individual annual max, even when there is an InsEstOverride that is less than the InsEstTotal.</summary>
+		[TestMethod]
+		public void Benefits_GetLimitationByCode_FamilyMaxSet_IndividualMaxNotSet_InsEstOverrideLessThanInsEstTotal() {
+			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
+			string name="Test";
+			Patient patient=PatientT.CreatePatient(name);
+			Carrier carrier=CarrierT.CreateCarrier(name);
+			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
+			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
+			string procCodePartCovered="D1111";
+			string procCodeNotCovered="D2222";
+			double insEstTotal=60;
+			double insEstTotal2=25;
+			double insEstOverride=30;
+			double insEstOverride2=15;
+			int patientAge=19;
+			//Family Annual Max.
+			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,50);
+			//Individual Annual Max is not set.
+			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
+			//Age Limitation Fluoride
+			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
+			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
+			//Create 1 procedure that will only be partially covered
+			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
+			//Create 1 procedure that will be over family max
+			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
+			string note="";
+			LimitationTypeMet limitationTypeMet;
+			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,insEstOverride,out limitationTypeMet);
+			//Only $50 of the $100 procedure will be covered since $50 is our family max
+			Assert.AreEqual(50,coveredAmt);
+			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
+			ClaimProcHist claimProcHist=new ClaimProcHist();
+			claimProcHist.ProcDate=DateTime.Now;
+			claimProcHist.Status=ClaimProcStatus.Estimate;
+			claimProcHist.PatNum=patient.PatNum;
+			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
+			claimProcHist.Amount=insEstTotal;
+			claimProcHist.InsSubNum=insSub.InsSubNum;
+			claimProcHist.PlanNum=insPlan.PlanNum;
+			claimProcHist.StrProcCode=procCodePartCovered;
+			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,insEstOverride2,out limitationTypeMet);
+			//$0 will be covered since we have already exceeded our annual max.
+			Assert.AreEqual(0,coveredAmt);
+		}
+		
+		/// <summary>Asserts that the InsEstTotal is returned by GetLimitationsByCode when there are no benefits present to reduce it by (no Annual Maxes).</summary>
+		[TestMethod]
+		public void Benefits_GetLimitationByCode_FamilyMaxNotSet_IndividualMaxNotSet_InsEstOverrideNotSet() {
+			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
+			string name="Test";
+			Patient patient=PatientT.CreatePatient(name);
+			Carrier carrier=CarrierT.CreateCarrier(name);
+			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
+			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
+			string procCodePartCovered="D1111";
+			string procCodeNotCovered="D2222";
+			double insEstTotal=60;
+			double insEstTotal2=25;
+			int patientAge=19;
+			//Family Annual Max.
+			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,-1);
+			//Individual Annual Max is not set.
+			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
+			//Age Limitation Fluoride
+			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
+			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
+			//Create 1 procedure that will only be partially covered
+			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
+			//Create 1 procedure that will be over family max
+			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
+			string note="";
+			LimitationTypeMet limitationTypeMet;
+			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
+			//Only $60 of the $100 procedure will be covered since $60 is the InsEstTotal and it should not have been reduced at all
+			Assert.AreEqual(60,coveredAmt);
+			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
+			ClaimProcHist claimProcHist=new ClaimProcHist();
+			claimProcHist.ProcDate=DateTime.Now;
+			claimProcHist.Status=ClaimProcStatus.Estimate;
+			claimProcHist.PatNum=patient.PatNum;
+			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
+			claimProcHist.Amount=insEstTotal;
+			claimProcHist.InsSubNum=insSub.InsSubNum;
+			claimProcHist.PlanNum=insPlan.PlanNum;
+			claimProcHist.StrProcCode=procCodePartCovered;
+			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
+			//$25 will be covered since $25 is the InsEstTotal and it should not have been reduced at all.
+			Assert.AreEqual(25,coveredAmt);
 		}
 	}
 }

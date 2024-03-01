@@ -42,6 +42,7 @@ namespace OpenDental {
 		private void FormFamilyBalancer_Load(object sender,EventArgs e) {
 			if(PatNum > 0) {
 				this.Text+=" - "+Lan.g(this,"Single Family Mode");
+				butConfigureAuto.Visible=false;
 			}
 			_familyBalancer.PatNum=PatNum;
 			comboOverpayPayType.Items.AddDefs(Defs.GetDefsForCategory(DefCat.PaymentTypes,true));

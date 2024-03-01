@@ -227,11 +227,16 @@ namespace OpenDental{
 				return;
 			}
 			if(!checkPatientTypes.Checked && listPatientTypes.SelectedIndices.Count==0
-				&& !checkInsuranceTypes.Checked && listInsuranceTypes.SelectedIndices.Count==0
-				&& !checkAllClaimPayGroups.Checked && listClaimPayGroups.SelectedIndices.Count==0)
+				&& !checkInsuranceTypes.Checked && listInsuranceTypes.SelectedIndices.Count==0)
 			{
-				MsgBox.Show(this,"At least one type or group must be selected.");
+				MsgBox.Show(this,"At least one payment type must be selected.");
 				return;
+			}
+			if(checkInsuranceTypes.Checked || listInsuranceTypes.SelectedIndices.Count!=0) {
+				if(!checkAllClaimPayGroups.Checked && listClaimPayGroups.SelectedIndices.Count==0) {
+					MsgBox.Show(this,"At least one claim payment group must be selected when any insurance payment types are selected.");
+					return;
+				}
 			}
 			ReportComplex report=new ReportComplex(true,false);
 			List<long> listProvNums=new List<long>();

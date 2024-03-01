@@ -2896,6 +2896,7 @@ namespace OpenDental {
 			ProgramL.LoadToolBar(toolBarMain,EnumToolBar.ApptModule);
 			toolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrAppt.LayoutToolBar_end",_patient);
+			UpdateToolbarButtons();
 		}
 		#endregion Methods - Public Initialize
 
@@ -3239,7 +3240,9 @@ namespace OpenDental {
 			_patient=Patients.GetPat(patNum);
 			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Appointments)) {
 				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(_patient.PatNum);
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,listAppointments,new List<PayPlan>(),new List<PaySplit>());
+				List<Claim> listClaims=Claims.GetForPat(_patient.PatNum);
+				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
+				bool areHashesValid=Patients.AreAllHashesValid(_patient,listAppointments,new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
 				if(!areHashesValid) {
 					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Appointments); //Add to cached list for next time
 					//show popup
@@ -3541,33 +3544,7 @@ namespace OpenDental {
 			for(int i=0;i<listDefs.Count;i++) {
 				this.listConfirmed.Items.Add(listDefs[i].ItemValue);
 			}
-			DataRow dataRow=contrApptPanel.GetDataRowForSelected();
-			if(dataRow!=null) {
-				toolBarMain.Buttons["Unsched"].Enabled=true;
-				toolBarMain.Buttons["Break"].Enabled=true;
-				toolBarMain.Buttons["Complete"].Enabled=true;
-				toolBarMain.Buttons["Delete"].Enabled=true;
-				string confirmed=dataRow["Confirmed"].ToString();
-				listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(confirmed));//could be -1
-				if(!Security.IsAuthorized(EnumPermType.ApptConfirmStatusEdit,true)) {//Suppress message because it would be very annoying to users.
-					listConfirmed.Enabled=false;
-				}
-				else {
-					listConfirmed.Enabled=true;
-				}
-			}
-			else {//even if an appt on the pinboard is selected, these are all grayed out
-				toolBarMain.Buttons["Unsched"].Enabled=false;
-				toolBarMain.Buttons["Break"].Enabled=false;
-				toolBarMain.Buttons["Complete"].Enabled=false;
-				toolBarMain.Buttons["Delete"].Enabled=false;
-				listConfirmed.Enabled=false;
-				if(pinBoard.SelectedIndex!=-1){
-					dataRow=pinBoard.ListPinBoardItems[pinBoard.SelectedIndex].DataRowAppt;
-					listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(dataRow["Confirmed"].ToString()));//could be -1
-				}
-			}
-			toolBarMain.Invalidate();
+			UpdateToolbarButtons();
 		}
 
 		///<summary>Redraws screen based on data already gathered.  RefreshModuleDataPeriod will have already retrieved the data from the db.</summary>
@@ -3646,6 +3623,37 @@ namespace OpenDental {
 			}
 			Signalods.DateTApptSignalLastRefreshed=MiscData.GetNowDateTime();
 			//GC.Collect();	
+		}
+
+		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
+		private void UpdateToolbarButtons() {
+			DataRow dataRow=contrApptPanel.GetDataRowForSelected();
+			if(dataRow!=null) {
+				toolBarMain.Buttons["Unsched"].Enabled=true;
+				toolBarMain.Buttons["Break"].Enabled=true;
+				toolBarMain.Buttons["Complete"].Enabled=true;
+				toolBarMain.Buttons["Delete"].Enabled=true;
+				string confirmed=dataRow["Confirmed"].ToString();
+				listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(confirmed));//could be -1
+				if(!Security.IsAuthorized(EnumPermType.ApptConfirmStatusEdit,true)) {//Suppress message because it would be very annoying to users.
+					listConfirmed.Enabled=false;
+				}
+				else {
+					listConfirmed.Enabled=true;
+				}
+			}
+			else {//even if an appt on the pinboard is selected, these are all grayed out
+				toolBarMain.Buttons["Unsched"].Enabled=false;
+				toolBarMain.Buttons["Break"].Enabled=false;
+				toolBarMain.Buttons["Complete"].Enabled=false;
+				toolBarMain.Buttons["Delete"].Enabled=false;
+				listConfirmed.Enabled=false;
+				if(pinBoard.SelectedIndex!=-1) {
+					dataRow=pinBoard.ListPinBoardItems[pinBoard.SelectedIndex].DataRowAppt;
+					listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(dataRow["Confirmed"].ToString()));//could be -1
+				}
+			}
+			toolBarMain.Invalidate();
 		}
 		#endregion Methods - Private Refresh Screen
 

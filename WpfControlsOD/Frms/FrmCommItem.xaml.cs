@@ -148,6 +148,9 @@ namespace OpenDental {
 					butCommlogHist.Visible=false;
 				}
 			}
+			else{//Always hide the button since it's not HQ
+				butCommlogHist.Visible=false;
+			}
 		}
 
 		private bool SyncCommlogWithUI(bool showMsg) {

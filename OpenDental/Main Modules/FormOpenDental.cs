@@ -2125,6 +2125,7 @@ namespace OpenDental{
 			ProgramL.LoadToolBar(ToolBarMain,EnumToolBar.MainToolbar);
 			Plugins.HookAddCode(this,"FormOpenDental.LayoutToolBar_end");
 			ToolBarMain.Invalidate();
+			UpdateToolbarButtons();
 		}
 
 		///<summary>Starts a thread that repeatedly gets a random patient and selects each module. Goes until the program is closed.</summary>
@@ -2151,6 +2152,39 @@ namespace OpenDental{
 			});
 			threadLoad.Name="LoadSimulation";
 			threadLoad.Start();
+		}
+
+		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
+		private void UpdateToolbarButtons() {
+			if(PatNumCur==0) {//Only on startup or log out / log in.
+				if(!Programs.UsingEcwTightMode()) {//eCW tight only gets Patient Select and Popups toolbar buttons
+					//We need a drafts folder the user can view saved emails in before we allow the user to save email without a patient selected.
+					ToolBarMain.Buttons["Email"].Enabled=false;
+					ToolBarMain.Buttons["WebMail"].Enabled=false;
+					ToolBarMain.Buttons["Commlog"].Enabled=false;
+					ToolBarMain.Buttons["Letter"].Enabled=false;
+					ToolBarMain.Buttons["Form"].Enabled=false;
+					ToolBarMain.Buttons["Tasklist"].Enabled=true;
+					ToolBarMain.Buttons["Label"].Enabled=false;
+				}
+				ToolBarMain.Buttons["Popups"].Enabled=false;
+			}
+			else {
+				if(!Programs.UsingEcwTightMode()) {//eCW tight only gets Patient Select and Popups toolbar buttons
+					ToolBarMain.Buttons["Commlog"].Enabled=true;
+					ToolBarMain.Buttons["Email"].Enabled=true;
+					if(_toolBarButtonText!=null) {
+						_toolBarButtonText.Enabled=Programs.IsEnabled(ProgramName.CallFire)||SmsPhones.IsIntegratedTextingEnabled();
+					}
+					ToolBarMain.Buttons["WebMail"].Enabled=true;
+					ToolBarMain.Buttons["Letter"].Enabled=true;
+					ToolBarMain.Buttons["Form"].Enabled=true;
+					ToolBarMain.Buttons["Tasklist"].Enabled=true;
+					ToolBarMain.Buttons["Label"].Enabled=true;
+				}
+				ToolBarMain.Buttons["Popups"].Enabled=true;
+			}
+			ToolBarMain.Invalidate();
 		}
 
 		#endregion Methods - Private
@@ -2400,34 +2434,8 @@ namespace OpenDental{
 			if(ToolBarMain.Buttons==null || ToolBarMain.Buttons.Count<2){//on startup.  js Not sure why it's checking count.
 				return;
 			}
-			if(PatNumCur==0) {//Only on startup, I think.
-				if(!Programs.UsingEcwTightMode()) {//eCW tight only gets Patient Select and Popups toolbar buttons
-					//We need a drafts folder the user can view saved emails in before we allow the user to save email without a patient selected.
-					ToolBarMain.Buttons["Email"].Enabled=false;
-					ToolBarMain.Buttons["WebMail"].Enabled=false;
-					ToolBarMain.Buttons["Commlog"].Enabled=false;
-					ToolBarMain.Buttons["Letter"].Enabled=false;
-					ToolBarMain.Buttons["Form"].Enabled=false;
-					ToolBarMain.Buttons["Tasklist"].Enabled=true;
-					ToolBarMain.Buttons["Label"].Enabled=false;
-				}
-				ToolBarMain.Buttons["Popups"].Enabled=false;
-			}
-			else {
-				if(!Programs.UsingEcwTightMode()) {//eCW tight only gets Patient Select and Popups toolbar buttons
-					ToolBarMain.Buttons["Commlog"].Enabled=true;
-					ToolBarMain.Buttons["Email"].Enabled=true;
-					if(_toolBarButtonText!=null) {
-						_toolBarButtonText.Enabled=Programs.IsEnabled(ProgramName.CallFire)||SmsPhones.IsIntegratedTextingEnabled();
-					}
-					ToolBarMain.Buttons["WebMail"].Enabled=true;
-					ToolBarMain.Buttons["Letter"].Enabled=true;
-					ToolBarMain.Buttons["Form"].Enabled=true;
-					ToolBarMain.Buttons["Tasklist"].Enabled=true;
-					ToolBarMain.Buttons["Label"].Enabled=true;
-				}
-				ToolBarMain.Buttons["Popups"].Enabled=true;
-			}
+			//Enables / disables toolbar buttons.
+			UpdateToolbarButtons();
 			ToolBarMain.Invalidate();
 			if(_listPopupEvents==null){
 				_listPopupEvents=new List<PopupEvent>();

@@ -2771,52 +2771,11 @@ namespace OpenDental.InternalTools.Job_Manager {
 			//Save Commits are for the Head Only!
 			textVersion.Text=VersionReleases.GetPossibleHeadRelease();
 			_jobCur.JobVersion=textVersion.Text;
-			string description = "";
-			description=_jobCur.Category.ToString().Substring(0,1)+_jobCur.JobNum+" - (Save Commit) "+_jobCur.Title;
-			string reviewers = String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.SaveCommit).Select(x => Userods.GetName(x.ReviewerNum)).Distinct().ToList());
-			string logMsg = "";
-			logMsg=POut.String(description)+"\r\nCommitted to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
-			using FormCommitPrompt FormCP=new FormCommitPrompt(0,logMsg);
-			FormCP.ShowDialog();
-			int commitVal=FormCP.GetCommitValue();
-			string pathCommit = "";
-			string pathCommitInternal = "";
-			switch(System.Environment.MachineName) {
-				default:
-					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
-					pathCommitInternal=@"C:\development\Shared Projects Subversion";
-					break;
-				case "JORDANS":
-					pathCommit=@"E:\Documents\OPEN DENTAL SUBVERSION";
-					pathCommitInternal=@"E:\development\Shared Projects Subversion";
-					break;
-				case "CAMERON":
-				case "JASON":
-				case "DEREK":
-				case "RYAN":
-				case "RYAN1":
-				case "MICHAEL":
-				case "TRAVIS":
-					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
-					pathCommitInternal=@"C:\development\Shared Projects Subversion";
-					break;
-			}
-			Process process = new Process();
-			string arguments = "/command:commit /path:\""+pathCommit+"\" /logmsg:\""+logMsg+"\"";
-			ProcessStartInfo startInfo = new ProcessStartInfo("TortoiseProc.exe",arguments);
-			if(FormCP.DialogResult==DialogResult.OK && (commitVal==1 || commitVal==3)) {//Public Repo or Both
-				process.StartInfo=startInfo;
-				process.Start();
-				process.WaitForExit();
-			}
-			if(FormCP.DialogResult==DialogResult.OK && (commitVal==2 || commitVal==3)) {//Internal Repo or Both
-				process=new Process();
-				arguments="/command:commit /path:\""+pathCommitInternal+"\" /logmsg:\""+logMsg+"\"";
-				startInfo=new ProcessStartInfo("TortoiseProc.exe",arguments);
-				process.StartInfo=startInfo;
-				process.Start();
-				process.WaitForExit();
-			}
+			string description=_jobCur.Category.ToString().Substring(0,1)+_jobCur.JobNum+" - (Save Commit) "+_jobCur.Title;
+			string reviewers=String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.SaveCommit).Select(x => Userods.GetName(x.ReviewerNum)).Distinct().ToList());
+			string logMsg=POut.String(description)+"\r\nCommitted to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
+			using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(logMsg);
+			msgBoxCopyPaste.ShowDialog();
 			//Set all the save commit reviews to save committed.
 			_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.SaveCommit).ToList().ForEach(x => x.ReviewStatus=JobReviewStatus.SaveCommitted);
 			JobLogs.MakeLogEntryForSaveCommit(_jobCur);
@@ -2848,8 +2807,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 				if(FormVP.DialogResult!=DialogResult.OK || string.IsNullOrEmpty(FormVP.VersionText)) {
 					return;
 				}
-				isHeadOnlyCommit = FormVP.IsHeadOnly;
-				isUnversioned = FormVP.IsUnversioned;
+				isHeadOnlyCommit=FormVP.IsHeadOnly;
+				isUnversioned=FormVP.IsUnversioned;
 				if(!isHeadOnlyCommit && !isUnversioned && !_jobCur.ListJobLinks.Any(x => x.LinkType==JobLinkType.Bug || x.LinkType==JobLinkType.MobileBug)) {
 					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"All backported jobs must have a bug attached. Would you like to add one?")) {
 						return;
@@ -2879,7 +2838,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				InputBoxParam inputBoxParam=new InputBoxParam();
 				inputBoxParam.InputBoxType_=InputBoxType.TextBoxMultiLine;
 				inputBoxParam.LabelText="Please add a brief description of the job for documentation (including simple step by step usage instructions)."; 
-				InputBox inBoxDocumentation = new InputBox(inputBoxParam);
+				InputBox inBoxDocumentation=new InputBox(inputBoxParam);
 				inBoxDocumentation.Text="Documentation Summary";
 				inBoxDocumentation.ShowDialog();
 				if(inBoxDocumentation.IsDialogCancel || string.IsNullOrEmpty(inBoxDocumentation.StringResult)) {
@@ -2887,7 +2846,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				}
 				textEditorDocumentation.MainText=Security.CurUser.UserName+" - "+DateTime.Now.ToString()+"\r\n"+inBoxDocumentation.StringResult;
 			}
-			InputBox inBoxTesting = new InputBox("Please choose a new priority for testing.",_listPrioritiesAll.Select(x => x.ItemName).ToList()
+			InputBox inBoxTesting=new InputBox("Please choose a new priority for testing.",_listPrioritiesAll.Select(x => x.ItemName).ToList()
 				,_listPrioritiesAll.FindIndex(x => x.ItemValue.Contains("JobDefault")));
 			inBoxTesting.Text="Testing Priority";
 			inBoxTesting.ShowDialog();
@@ -2898,7 +2857,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				_jobCur.PriorityTesting=_listPrioritiesAll[inBoxTesting.SelectedIndex].DefNum;
 			}
 			comboPriorityTesting.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.PriorityTesting)?.ItemOrder??0;
-			string description = "";
+			string description="";
 			if(_jobCur.Category==JobCategory.Bug) {
 				JobLink jobLink=_jobCur.ListJobLinks.First(x => x.LinkType==JobLinkType.Bug || x.LinkType==JobLinkType.MobileBug);
 				string bugDescription="";
@@ -2913,59 +2872,16 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else {
 				description=_jobCur.Category.ToString().Substring(0,1)+_jobCur.JobNum+" - "+_jobCur.Title;
 			}
-			string reviewers = String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.Done || x.ReviewStatus==JobReviewStatus.NeedsAdditionalReview).Select(x => Userods.GetName(x.ReviewerNum)).ToList());
-			string logMsg = "";
+			string reviewers=String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.Done || x.ReviewStatus==JobReviewStatus.NeedsAdditionalReview).Select(x => Userods.GetName(x.ReviewerNum)).ToList());
+			string logMsg="";
 			if(isHeadOnlyCommit) {
 				logMsg=POut.String(description)+"\r\nCommitted to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
 			}
 			else {
 				logMsg=POut.String(description)+"\r\nBackported to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
 			}
-			int repository=0;
-			if(_jobCur.Category==JobCategory.Conversion) {
-				repository=2;//Internal Repo
-			}
-			using FormCommitPrompt FormCP=new FormCommitPrompt(repository,logMsg);
-			FormCP.ShowDialog();
-			int commitVal=FormCP.GetCommitValue();
-			string pathCommit = "";
-			string pathCommitInternal = "";
-			switch(System.Environment.MachineName) {
-				default:
-					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
-					pathCommitInternal=@"C:\development\Shared Projects Subversion";
-					break;
-				case "JORDANS":
-					pathCommit=@"E:\Documents\OPEN DENTAL SUBVERSION";
-					pathCommitInternal=@"E:\development\Shared Projects Subversion";
-					break;
-				case "CAMERON":
-				case "JASON":
-				case "DEREK":
-				case "RYAN":
-				case "RYAN1":
-				case "MICHAEL":
-				case "TRAVIS":
-					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
-					pathCommitInternal=@"C:\development\Shared Projects Subversion";
-					break;
-			}
-			Process process = new Process();
-			string arguments = "/command:commit /path:\""+pathCommit+"\" /logmsg:\""+logMsg+"\"";
-			ProcessStartInfo startInfo = new ProcessStartInfo("TortoiseProc.exe",arguments);
-			if(FormCP.DialogResult==DialogResult.OK && (commitVal==1 || commitVal==3)) {//Public Repo or Both
-				process.StartInfo=startInfo;
-				process.Start();
-				process.WaitForExit();
-			}
-			if(FormCP.DialogResult==DialogResult.OK && (commitVal==2 || commitVal==3)) {//Internal Repo or Both
-				process=new Process();
-				arguments="/command:commit /path:\""+pathCommitInternal+"\" /logmsg:\""+logMsg+"\"";
-				startInfo=new ProcessStartInfo("TortoiseProc.exe",arguments);
-				process.StartInfo=startInfo;
-				process.Start();
-				process.WaitForExit();
-			}
+			using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(logMsg);
+			msgBoxCopyPaste.ShowDialog();
 			_jobCur.Priority=_listPrioritiesAll.FirstOrDefault(x => x.ItemValue.Contains("DocumentationDefault")).DefNum;
 			comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
 			IsChanged=true;

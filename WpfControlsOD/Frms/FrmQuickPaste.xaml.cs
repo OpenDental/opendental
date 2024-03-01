@@ -55,7 +55,7 @@ namespace OpenDental {
 				butEditNote.Text="View";
 			}
 			if(IsSelectionMode) {
-				butSave.Text="OK";
+				butSave.Text="_OK";
 			}
 			else{
 				butDate.Visible=false;
@@ -328,6 +328,12 @@ namespace OpenDental {
 		}
 
 		private void FrmQuickPaste_PreviewKeyDown(object sender,KeyEventArgs e) {
+			if(IsSelectionMode){
+				if(butSave.IsAltKey(Key.O,e)){
+					butSave_Click(this,new EventArgs());
+				}
+				return;
+			}
 			if(butSave.IsAltKey(Key.S,e)) {
 				butSave_Click(this,new EventArgs());
 			}

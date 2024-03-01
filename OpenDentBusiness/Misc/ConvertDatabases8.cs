@@ -1038,6 +1038,15 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static void To23_3_38() {
+			string command;
+			DataTable table;
+			command="ALTER TABLE claim ADD SecurityHash varchar(255) NOT NULL";
+			Db.NonQ(command);
+			LargeTableHelper.AlterTable("claimproc","ClaimProcNum",new LargeTableHelper.ColNameAndDef("SecurityHash","varchar(255) NOT NULL"));
+			Misc.SecurityHash.UpdateHashing();
+		}//End of 23_3_38() method
+
 		private static void To24_1_1() {
 			string command;
 			DataTable table;
@@ -1287,5 +1296,17 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('MsgToPaySendThreadFrequency','5')";
 			Db.NonQ(command);
 		}//End of 24_1_4() method
+
+		private static void To24_1_5() {
+			string command;
+			DataTable table;
+			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","SecurityHash")) {
+				command="ALTER TABLE claim ADD SecurityHash varchar(255) NOT NULL";
+				Db.NonQ(command);
+			}
+			LargeTableHelper.AlterTable("claimproc","ClaimProcNum",new LargeTableHelper.ColNameAndDef("SecurityHash","varchar(255) NOT NULL"));
+			Misc.SecurityHash.UpdateHashing();
+		}//End of 24_1_5() method
+
 	}
 }

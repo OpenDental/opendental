@@ -25,7 +25,7 @@ namespace OpenDentBusiness{
 		///<summary>Newline delimited string which contains the selectable options in combo box dropdowns.  Specifically for the Ortho chart.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string PickList;
-		///<summary>Only used in Ortho because ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
+		///<summary>Only used in Ortho and SuperFamilyGridCols (PatField). Ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
 		public string DescriptionOverride;
 
 

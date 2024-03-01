@@ -213,5 +213,12 @@ namespace OpenDentBusiness {
 			}
 			return patField.FieldValue;
 		}
+
+		public static PatField GetPatField(long patFieldNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<PatField>(MethodBase.GetCurrentMethod(),patFieldNum);
+			}
+			return Crud.PatFieldCrud.SelectOne(patFieldNum);
+		}
 	}
 }

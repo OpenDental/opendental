@@ -227,10 +227,10 @@ namespace OpenDental
 		///<summary>Layout the Main and Paint toolbars.</summary>
 		public void LayoutToolBars() {
 			toolBarMain.Clear();
-			toolBarMain.Add(Lan.g(this,"Print"),ToolBarPrint_Click,WpfControls.UI.EnumIcons.Print,tag:TB.Print);
-			toolBarMain.Add(Lan.g(this,"Delete"),ToolBarDelete_Click,WpfControls.UI.EnumIcons.DeleteX,tag:TB.Delete);
-			toolBarMain.Add(Lan.g(this,"Info"),ToolBarInfo_Click,WpfControls.UI.EnumIcons.Info,tag:TB.Info);
-			toolBarMain.Add(Lan.g(this,"Sign"),ToolBarSign_Click,tag:TB.Sign);
+			toolBarMain.Add(Lan.g(this,"Print"),ToolBarPrint_Click,WpfControls.UI.EnumIcons.Print,tag:TB.Print.ToString());
+			toolBarMain.Add(Lan.g(this,"Delete"),ToolBarDelete_Click,WpfControls.UI.EnumIcons.DeleteX,tag:TB.Delete.ToString());
+			toolBarMain.Add(Lan.g(this,"Info"),ToolBarInfo_Click,WpfControls.UI.EnumIcons.Info,tag:TB.Info.ToString());
+			toolBarMain.Add(Lan.g(this,"Sign"),ToolBarSign_Click,tag:TB.Sign.ToString());
 			toolBarMain.AddSeparator();
 			toolBarMain.Add(Lan.g(this,"Scan:"),null);
 			toolBarMain.Add("",ToolBarScanDoc_Click,WpfControls.UI.EnumIcons.ImageSelectorDoc,toolTipText:Lan.g(this,"Scan Document"));
@@ -248,8 +248,8 @@ namespace OpenDental
 			WpfControls.UI.ContextMenu contextMenuExport = new WpfControls.UI.ContextMenu();
 			contextMenuExport.Add(new WpfControls.UI.MenuItem(Lan.g(this,"Move to Patient..."),ToolBarMoveToPatient));
 			contextMenuExport.Add(new WpfControls.UI.MenuItem(Lan.g(this,"Export TIFF"),ToolBarExportTIFF));
-			toolBarMain.Add(Lan.g(this,"Export"),ToolBarExport_Click,WpfControls.UI.EnumIcons.Export,WpfControls.UI.ToolBarButtonStyle.DropDownButton,Lan.g(this,"Export to File"),contextMenuExport,TB.Export);
-			toolBarMain.Add(Lan.g(this,"Copy"),ToolBarCopy_Click,WpfControls.UI.EnumIcons.Copy,toolTipText:Lan.g(this,"Copy displayed image to clipboard"),tag:TB.Copy);
+			toolBarMain.Add(Lan.g(this,"Export"),ToolBarExport_Click,WpfControls.UI.EnumIcons.Export,WpfControls.UI.ToolBarButtonStyle.DropDownButton,Lan.g(this,"Export to File"),contextMenuExport,TB.Export.ToString());
+			toolBarMain.Add(Lan.g(this,"Copy"),ToolBarCopy_Click,WpfControls.UI.EnumIcons.Copy,toolTipText:Lan.g(this,"Copy displayed image to clipboard"),tag:TB.Copy.ToString());
 			toolBarMain.Add(Lan.g(this,"Paste"),ToolBarPaste_Click,WpfControls.UI.EnumIcons.Paste,toolTipText:Lan.g(this,"Paste From Clipboard"));
 			WpfControls.UI.ContextMenu contextMenuForms = new WpfControls.UI.ContextMenu();
 			string formDir=FileAtoZ.CombinePaths(ImageStore.GetPreferredAtoZpath(),"Forms");
@@ -319,6 +319,7 @@ namespace OpenDental
 			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"Unmount"),-1,Lan.g(this,"Move selected image to unmounted area"),TB.Unmount));
 			toolBarPaint.Invalidate();
 			#endregion toolbarPaint
+			UpdateToolbarButtons();
 		}
 
 		///<summary>Layout the Draw toolbar only.</summary>
@@ -487,7 +488,9 @@ namespace OpenDental
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,docNum));
 			}
 			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Imaging)) {
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>());
+				List<Claim> listClaims=Claims.GetForPat(_patient.PatNum);
+				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
+				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
 				if(!areHashesValid) {
 					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Imaging); //Add to cached list for next time
 					//show popup
@@ -2360,12 +2363,12 @@ namespace OpenDental
 			//bool print, bool delete, bool info, bool sign, bool export, bool copy, bool brightAndContrast, bool zoom, bool zoomOne, bool crop, bool pan, bool adj, bool size, bool flip, bool rotateL,bool rotateR, bool rotate180) {
 			//Some buttons don't show here because they are always enabled as long as there is a patient,
 			//including Scan, Import, Paste, Templates, Mounts
-			toolBarMain.SetEnabled(TB.Print,toolBarButtonState.Print);
-			toolBarMain.SetEnabled(TB.Delete,toolBarButtonState.Delete);
-			toolBarMain.SetEnabled(TB.Info,toolBarButtonState.Info);
-			toolBarMain.SetEnabled(TB.Sign,toolBarButtonState.Sign);
-			toolBarMain.SetEnabled(TB.Export,toolBarButtonState.Export);
-			toolBarMain.SetEnabled(TB.Copy,toolBarButtonState.Copy);
+			toolBarMain.SetEnabled(TB.Print.ToString(),toolBarButtonState.Print);
+			toolBarMain.SetEnabled(TB.Delete.ToString(),toolBarButtonState.Delete);
+			toolBarMain.SetEnabled(TB.Info.ToString(),toolBarButtonState.Info);
+			toolBarMain.SetEnabled(TB.Sign.ToString(),toolBarButtonState.Sign);
+			toolBarMain.SetEnabled(TB.Export.ToString(),toolBarButtonState.Export);
+			toolBarMain.SetEnabled(TB.Copy.ToString(),toolBarButtonState.Copy);
 			windowingSlider.IsEnabled=toolBarButtonState.BrightAndContrast;
 			windowingSlider.Draw();
 			zoomSlider.IsEnabled=toolBarButtonState.Zoom;
@@ -2698,14 +2701,7 @@ namespace OpenDental
 		}
 
 		private void RefreshModuleScreen() {
-			if(this.Enabled && _patient!=null) {
-				//Enable tools which must always be accessible when a valid patient is selected.
-				EnableToolBarsPatient(true);
-				DisableAllToolBarButtons();//Disable item specific tools until item chosen.
-			}
-			else {
-				EnableToolBarsPatient(false);//Disable entire menu (besides select patient).
-			}
+			UpdateToolbarButtons();
 			//ClearObjects();
 			for(int i=0;i<_listFormImageFloats.Count;i++){
 				_listFormImageFloats[i].Font=Font;
@@ -3235,6 +3231,17 @@ namespace OpenDental
 			}
 		}
 
+		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
+		private void UpdateToolbarButtons() {
+			if(this.Enabled && _patient!=null) {
+				//Enable tools which must always be accessible when a valid patient is selected.
+				EnableToolBarsPatient(true);
+				DisableAllToolBarButtons();//Disable item specific tools until item chosen.
+			}
+			else {
+				EnableToolBarsPatient(false);//Disable entire menu (besides select patient).
+			}
+		}
 		#endregion Methods - Private
 
 		#region Methods - Native

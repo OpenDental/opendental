@@ -95,12 +95,12 @@ The new way of doing it is a separate event for each button.
 			stackPanel.Children.Clear();
 		}
 
-		public void SetEnabled(object tag,bool boolVal){
+		public void SetEnabled(string tag,bool boolVal){
 			for(int i=0;i<stackPanel.Children.Count;i++){
 				if(stackPanel.Children[i].GetType()!=typeof(ToolBarButton)){
 					continue;
 				}
-				if(tag!=((ToolBarButton)stackPanel.Children[i]).Tag){
+				if(tag!=((ToolBarButton)stackPanel.Children[i]).Tag?.ToString()){
 					continue;
 				}
 				stackPanel.Children[i].IsEnabled=boolVal;

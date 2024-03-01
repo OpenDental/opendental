@@ -503,7 +503,7 @@ namespace OpenDental {
 			}
 			InputBox inputBox=new InputBox(listInputBoxParams);
 			inputBox.SetTitle(Lan.g("ContrAccount","Outstanding secondary claims"));
-			inputBox.SizeInitial=new System.Windows.Size(450,200);
+			inputBox.SizeInitial=new System.Windows.Size(450,220);
 			inputBox.ShowDialog();
 			if(inputBox.IsDialogCancel) {
 				return;
@@ -517,7 +517,12 @@ namespace OpenDental {
 			//See Claims.GetQueueList(...) below.
 			for(int i=0;i<listClaimsSecondary.Count;i++){
 				listClaimsSecondary[i].ClaimStatus="W";
-				Claims.Update(listClaimsSecondary[i]);
+				if(!PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary)) {
+					Claims.Update(listClaimsSecondary[i]);
+				}
+			}
+			if(PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary)) {
+				Claims.CalculateAndUpdateSecondaries(listClaimsSecondary);
 			}
 			if(radioButtonSelected==strSendClaims) {
 				//Most likely all of the procedures on the primary claim will have all of the procedures on 1 secondary claim. Expecially since most of time the 

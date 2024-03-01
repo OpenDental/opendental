@@ -116,6 +116,11 @@ namespace OpenDental {
 			if(response!=null && response.IFrameStatus.ToLower()=="success") {
 				//When adding a card the transaction status and reference ID fields will return null from PayConnect, therefore we cannot run GetStatus.
 				if(_isAddingCard) {
+					//When attempting to add a new card, PayConnect sometimes sends back data fromatted like track 2 of a magstrip. Example: ;1234123412341234=0305101193010877?. If this is the case we need to parse out the card number.
+					if(response.Response.CardToken.StartsWith(";") && response.Response.CardToken.EndsWith("?")) {
+						MagstripCardParser magstripCardParser=new MagstripCardParser(response.Response.CardToken,EnumMagstripCardParseTrack.TrackTwo);
+						response.Response.CardToken=magstripCardParser.AccountNumber;
+					}
 					_response.iFrameResponse=response;
 					_response.ResponseType=ResponseType.IFrame;
 				}

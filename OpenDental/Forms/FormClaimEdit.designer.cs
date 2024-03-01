@@ -361,6 +361,7 @@
 			this.groupBoxPendingPayment = new OpenDental.UI.GroupBox();
 			this.butInsuranceOverpaid = new OpenDental.UI.Button();
 			this.butInsuranceUnderpaid = new OpenDental.UI.Button();
+			this.warningIntegrity = new OpenDental.UI.WarningIntegrity();
 			this.groupFinalizePayment.SuspendLayout();
 			this.tabControlMain.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
@@ -1650,10 +1651,9 @@
 			this.textOrderingProviderOverride.Location = new System.Drawing.Point(6, 38);
 			this.textOrderingProviderOverride.Name = "textOrderingProviderOverride";
 			this.textOrderingProviderOverride.ReadOnly = true;
-			this.textOrderingProviderOverride.Size = new System.Drawing.Size(310, 21);
+			this.textOrderingProviderOverride.Size = new System.Drawing.Size(310, 20);
 			this.textOrderingProviderOverride.TabIndex = 0;
 			this.textOrderingProviderOverride.TabStop = false;
-			this.textOrderingProviderOverride.Text = "";
 			// 
 			// butPickOrderProvReferral
 			// 
@@ -3682,10 +3682,18 @@
 			this.butInsuranceUnderpaid.Text = "&Ins Underpaid";
 			this.butInsuranceUnderpaid.Click += new System.EventHandler(this.butInsuranceUnderpaid_Click);
 			// 
+			// warningIntegrity1
+			// 
+			this.warningIntegrity.Location = new System.Drawing.Point(2, 2);
+			this.warningIntegrity.Name = "warningIntegrity1";
+			this.warningIntegrity.Size = new System.Drawing.Size(18, 18);
+			this.warningIntegrity.TabIndex = 269;
+			// 
 			// FormClaimEdit
 			// 
 			this.AutoScroll = true;
 			this.ClientSize = new System.Drawing.Size(1156, 696);
+			this.Controls.Add(this.warningIntegrity);
 			this.Controls.Add(this.groupBoxPendingPayment);
 			this.Controls.Add(this.textPatResp);
 			this.Controls.Add(this.comboClaimStatus);
@@ -3784,6 +3792,7 @@
 			this.tabUB04.ResumeLayout(false);
 			this.panel4.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
+			this.groupBox4.PerformLayout();
 			this.groupDateOtherCondOrTreatment.ResumeLayout(false);
 			this.groupDateOtherCondOrTreatment.PerformLayout();
 			this.groupUb04.ResumeLayout(false);
@@ -4157,5 +4166,6 @@
 		private ODtextBox textEDSAttachmentID;
 		private System.Windows.Forms.Label label7;
 		private UI.GridOD gridEDSSent;
+		private UI.WarningIntegrity warningIntegrity;
 	}
 }

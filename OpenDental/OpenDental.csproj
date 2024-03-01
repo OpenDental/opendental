@@ -3432,12 +3432,6 @@
     <Compile Include="Forms\FormOrthoAutoClaims.designer.cs">
       <DependentUpon>FormOrthoAutoClaims.cs</DependentUpon>
     </Compile>
-    <Compile Include="InternalTools\Job Manager\FormCommitPrompt.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InternalTools\Job Manager\FormCommitPrompt.Designer.cs">
-      <DependentUpon>FormCommitPrompt.cs</DependentUpon>
-    </Compile>
     <Compile Include="InternalTools\Job Manager\FormVersionPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7927,9 +7921,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormOrthoAutoClaims.resx">
       <DependentUpon>FormOrthoAutoClaims.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InternalTools\Job Manager\FormCommitPrompt.resx">
-      <DependentUpon>FormCommitPrompt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\FormVersionPrompt.resx">
       <DependentUpon>FormVersionPrompt.cs</DependentUpon>

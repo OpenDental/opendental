@@ -100,6 +100,7 @@ namespace OpenDental {
 				}
 				return;
 			}
+			patField=PatFields.GetPatField(patField.PatFieldNum);
 			if(patFieldDef.FieldType==PatFieldType.Text) {
 				using FormPatFieldEdit formPatFieldEdit=new FormPatFieldEdit(patField);
 				formPatFieldEdit.IsLaunchedFromOrtho=isForOrtho;

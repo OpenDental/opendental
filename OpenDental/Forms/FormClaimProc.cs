@@ -128,6 +128,7 @@ namespace OpenDental {
 			if(_claimProc.IsTransfer) {
 				this.DisableAllExcept(new Control[]{butDelete});
 			}
+			warningIntegrity.SetTypeAndVisibility(EnumWarningIntegrityType.ClaimProc,ClaimProcs.IsClaimProcHashValid(_claimProc));
 			if(_claimProc.IsOverpay) {
 				if(Claims.GetClaim(_claimProc.ClaimNum)==null) {
 					MsgBox.Show(this,"Claim has been deleted by another user.");

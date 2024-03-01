@@ -107,6 +107,8 @@ namespace OpenDental{
 			_claim=claim;
 			_claimOld=claim.Copy();
 			_isForOrthoAutoPay=isForOrthoAutoPay;
+			//setting to empty list to prevent a UE claiming this was used while null
+			_listClaimProcsForClaim=new List<ClaimProc>();
 			InitializeComponent();// Required for Windows Form Designer support
 			InitializeLayoutManager();
 			SetBounds();
@@ -156,6 +158,7 @@ namespace OpenDental{
 			if(IsFromBatchWindow) {
 				groupFinalizePayment.Visible=false;
 			}
+			warningIntegrity.SetTypeAndVisibility(EnumWarningIntegrityType.Claim,Claims.IsClaimHashValid(_claim));
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				labelPredeterm.Text=Lan.g(this,"Predeterm Num");
 				labelPriorAuth.Visible=false;

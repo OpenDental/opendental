@@ -555,6 +555,7 @@ namespace OpenDental{
 			ProgramL.LoadToolBar(toolBarMain,EnumToolBar.FamilyModule);
 			toolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrFamily.LayoutToolBar_end",_patient);
+			UpdateToolbarButtons();
 		}
 
 		///<summary></summary>
@@ -573,7 +574,9 @@ namespace OpenDental{
 			RefreshModuleScreen();
 			ODEvent.Fire(ODEventType.ModuleSelected,_loadData);
 			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Family)) {
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>());
+				List<Claim> listClaims=Claims.GetForPat(_patient.PatNum);
+				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
+				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
 				if(!areHashesValid) {
 					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Family); //Add to cached list for next time
 					//show popup
@@ -1821,7 +1824,10 @@ namespace OpenDental{
 			gridSuperFam.Columns.Clear();
 			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
 			for(int i=0;i<listDisplayFields.Count;i++) {
-				string displayName=listDisplayFields[i].Description;
+				string displayName=listDisplayFields[i].DescriptionOverride;
+				if(string.IsNullOrWhiteSpace(displayName)) {
+					displayName=listDisplayFields[i].Description;
+				}
 				if(string.IsNullOrWhiteSpace(displayName)) {
 					displayName=listDisplayFields[i].InternalName;
 				}
@@ -2983,7 +2989,21 @@ namespace OpenDental{
 		}
 
 		private void RefreshModuleScreen() {
-			if(_patient!=null){//if there is a patient
+			UpdateToolbarButtons();
+			LayoutManager.LayoutControlBoundsAndFonts(splitContainerSuperClones);
+			FillPatientPicture();
+			FillPatientData();
+			FillFamilyData();
+			FillGridRecall();
+			FillInsData();
+			FillGridSuperFam();
+			FillGridPatientClones();
+			Plugins.HookAddCode(this,"ContrFamily.RefreshModuleScreen_end");
+		}
+
+		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
+		private void UpdateToolbarButtons() {
+			if(_patient!=null) {//if there is a patient
 				//ToolBarMain.Buttons["Recall"].Enabled=true;
 				toolBarMain.Buttons["Add"].Enabled=true;
 				toolBarMain.Buttons["Delete"].Enabled=true;
@@ -3117,17 +3137,9 @@ namespace OpenDental{
 						toolBarMain.Buttons["BreakClone"].Enabled=false;
 					}
 				}
-			}	
-			LayoutManager.LayoutControlBoundsAndFonts(splitContainerSuperClones);
-			FillPatientPicture();
-			FillPatientData();
-			FillFamilyData();
-			FillGridRecall();
-			FillInsData();
-			FillGridSuperFam();
-			FillGridPatientClones();
-			Plugins.HookAddCode(this,"ContrFamily.RefreshModuleScreen_end");
-		} 
+			}
+			toolBarMain.Invalidate();
+		}
 		#endregion Methods - Private - Other
 
 		#region Methods - Helpers - GridIns

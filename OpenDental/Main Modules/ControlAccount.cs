@@ -1479,7 +1479,11 @@ namespace OpenDental {
 			List<long> listPayPlanChargeNums=gridAccount.SelectedIndices
 				.Where(x => table.Rows[x]["PayPlanChargeNum"].ToString()!="0")
 				.Select(x => PIn.Long(table.Rows[x]["PayPlanChargeNum"].ToString())).ToList();//Debits attached to insurance payplans do not get shown in the account module.
-			Statement statement=Statements.CreateLimitedStatement(listPatNums,_patient.Guarantor,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
+			long patNumStatement=_patient.Guarantor;
+			if(listPatNums.Count==1) {//If only one patient is selected
+				patNumStatement=_patient.PatNum; //Use the patient's info on statement instead of the guarantor's.
+			}
+			Statement statement=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
 			//All printing and emailing will be done from within the form:
 			using FormStatementOptions formStatementOptions=new FormStatementOptions();
 			formStatementOptions.StatementCur=statement;
@@ -2346,6 +2350,7 @@ namespace OpenDental {
 			ProgramL.LoadToolBar(ToolBarMain,EnumToolBar.AccountModule);
 			ToolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrAccount.LayoutToolBar_end",_patient);
+			UpdateToolbarButtons();
 		}
 
 		///<summary></summary>
@@ -2388,7 +2393,9 @@ namespace OpenDental {
 				List<long> listPayNums=tableAccount.Select().Select(x => PIn.Long(x["PayNum"].ToString())).ToList();
 				listPayNums.RemoveAll(x => x==0); //remove all non payment PKs
 				List<PaySplit> listPaySplits=PaySplits.GetForPayments(listPayNums);
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),listPayPlans,listPaySplits);
+				List<Claim> listClaims=new List<Claim>(_loadData.ListClaims);
+				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
+				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),listPayPlans,listPaySplits,listClaims,listClaimProcs);
 				if(!areHashesValid) {
 					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Account); //Add to cached list for next time
 					//show popup
@@ -2715,47 +2722,7 @@ namespace OpenDental {
 		}
 
 		private void RefreshModuleScreen(bool isSelectingFamily) {
-			if(_patient==null){
-				tabControlAccount.Enabled=false;
-				ToolBarMain.Buttons["Payment"].Enabled=false;
-				ToolBarMain.Buttons["Adjustment"].Enabled=false;
-				ToolBarMain.Buttons["Insurance"].Enabled=false;
-				ToolBarMain.Buttons["PayPlan"].Enabled=false;
-				ToolBarMain.Buttons["InstallPlan"].Enabled=false;
-				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
-					ToolBarMain.Buttons["QuickProcs"].Enabled=false;
-				}
-				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
-					ToolBarMain.Buttons["RepeatCharge"].Enabled=false;
-				}
-				ToolBarMain.Buttons["Statement"].Enabled=false;
-				ToolBarMain.Invalidate();
-				textUrgFinNote.Enabled=false;
-				textFinNote.Enabled=false;
-				//butComm.Enabled=false;
-				tabControlShow.Enabled=false;
-				Plugins.HookAddCode(this,"ContrAccount.RefreshModuleScreen_null");
-			}
-			else{
-				tabControlAccount.Enabled=true;
-				ToolBarMain.Buttons["Payment"].Enabled=true;
-				ToolBarMain.Buttons["Adjustment"].Enabled=true;
-				ToolBarMain.Buttons["Insurance"].Enabled=true;
-				ToolBarMain.Buttons["PayPlan"].Enabled=true;
-				ToolBarMain.Buttons["InstallPlan"].Enabled=true;
-				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
-					ToolBarMain.Buttons["QuickProcs"].Enabled=true;
-				}
-				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
-					ToolBarMain.Buttons["RepeatCharge"].Enabled=true;
-				} 
-				ToolBarMain.Buttons["Statement"].Enabled=true;
-				ToolBarMain.Invalidate();
-				textUrgFinNote.Enabled=true;
-				textFinNote.Enabled=true;
-				//butComm.Enabled=true;
-				tabControlShow.Enabled=true;
-			}
+			UpdateToolbarButtons();
 			Logger.LogAction("FillPats",LogPath.AccountModule,() => FillPats(isSelectingFamily));
 			Logger.LogAction("FillMisc",LogPath.AccountModule,() => FillMisc());
 			Logger.LogAction("FillAging",LogPath.AccountModule,() => FillAging(isSelectingFamily));
@@ -2863,6 +2830,52 @@ namespace OpenDental {
 				gridOrthoCases.ListGridRows.Add(row);
 			}
 			gridOrthoCases.EndUpdate();
+		}
+
+		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
+		private void UpdateToolbarButtons() {
+			if(_patient==null) {
+				tabControlAccount.Enabled=false;
+				ToolBarMain.Buttons["Payment"].Enabled=false;
+				ToolBarMain.Buttons["Adjustment"].Enabled=false;
+				ToolBarMain.Buttons["Insurance"].Enabled=false;
+				ToolBarMain.Buttons["PayPlan"].Enabled=false;
+				ToolBarMain.Buttons["InstallPlan"].Enabled=false;
+				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
+					ToolBarMain.Buttons["QuickProcs"].Enabled=false;
+				}
+				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
+					ToolBarMain.Buttons["RepeatCharge"].Enabled=false;
+				}
+				ToolBarMain.Buttons["Statement"].Enabled=false;
+				ToolBarMain.Invalidate();
+				textUrgFinNote.Enabled=false;
+				textFinNote.Enabled=false;
+				//butComm.Enabled=false;
+				tabControlShow.Enabled=false;
+				Plugins.HookAddCode(this,"ContrAccount.RefreshModuleScreen_null");
+			}
+			else {
+				tabControlAccount.Enabled=true;
+				ToolBarMain.Buttons["Payment"].Enabled=true;
+				ToolBarMain.Buttons["Adjustment"].Enabled=true;
+				ToolBarMain.Buttons["Insurance"].Enabled=true;
+				ToolBarMain.Buttons["PayPlan"].Enabled=true;
+				ToolBarMain.Buttons["InstallPlan"].Enabled=true;
+				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
+					ToolBarMain.Buttons["QuickProcs"].Enabled=true;
+				}
+				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
+					ToolBarMain.Buttons["RepeatCharge"].Enabled=true;
+				}
+				ToolBarMain.Buttons["Statement"].Enabled=true;
+				ToolBarMain.Invalidate();
+				textUrgFinNote.Enabled=true;
+				textFinNote.Enabled=true;
+				//butComm.Enabled=true;
+				tabControlShow.Enabled=true;
+			}
+			ToolBarMain.Invalidate();
 		}
 		#endregion Methods - Private Refresh
 

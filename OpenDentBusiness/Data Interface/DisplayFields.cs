@@ -1138,7 +1138,7 @@ namespace OpenDentBusiness {
 				case DisplayFieldCategory.SuperFamilyGridCols:
 					list.Add(new DisplayField("Name",280,category));
 					list.Add(new DisplayField("Stmt",50,category));
-					List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy();
+					List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy().FindAll(x=>!x.IsHidden);
 					for(int j=0;j<listPatFieldDefs.Count;j++) {
 						DisplayField displayField=new DisplayField("",100,DisplayFieldCategory.SuperFamilyGridCols);
 						displayField.Description=listPatFieldDefs[j].FieldName;

@@ -482,6 +482,9 @@ namespace OpenDental {
 					}
 					appointment=Appointments.AssignFieldsForOperatory(appointment);
 					appointment.AptStatus=ApptStatus.Scheduled;
+					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentMove,appointment.PatNum,
+						appointment.ProcDescript+", from "+appointmentOld.AptDateTime.ToString()+", to "+appointment.AptDateTime.ToString(),
+						appointment.AptNum,appointmentOld.DateTStamp);
 					Appointments.Update(appointment,appointmentOld);
 					Appointments.TryAddPerVisitProcCodesToAppt(appointment,appointmentOld.AptStatus);
 				}
