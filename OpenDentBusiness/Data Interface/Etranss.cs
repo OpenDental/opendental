@@ -460,8 +460,16 @@ namespace OpenDentBusiness{
 			//future Canadian check will go here
 
 			//Change the claim back to W.
+			Claim claimOld=Claims.GetClaim(claimNum);
 			command="UPDATE claim SET ClaimStatus='W' WHERE ClaimNum="+POut.Long(claimNum);
 			Db.NonQ(command);
+			if(claimOld!=null && Claims.IsClaimHashValid(claimOld)) { //Should never be null. Only rehash claims that are already valid.
+				Claim claim=Claims.GetClaim(claimNum);
+				claim.SecurityHash=Claims.HashFields(claim);
+				if(claimOld.SecurityHash!=claim.SecurityHash) { //Only bother updating if the SecurityHash is different.
+					Crud.ClaimCrud.Update(claim);
+				}
+			}
 		}
 
 		///<summary>Deletes the etrans entry.  Mostly used when the etrans entry was created, but then the communication with the clearinghouse failed.

@@ -210,7 +210,9 @@ namespace OpenDental{
 			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_tpModuleData);
 			if(PatientCur!=null && DatabaseIntegrities.DoShowPopup(PatientCur.PatNum,EnumModuleType.TreatPlan)) {
 				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(PatientCur.PatNum);
-				bool areHashesValid=Patients.AreAllHashesValid(PatientCur,listAppointments,new List<PayPlan>(),new List<PaySplit>());
+				List<Claim> listClaims=_listClaims;
+				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){PatientCur.PatNum}); //The TP module only has ClaimProcs with a status of Estimate or CapEstimate.
+				bool areHashesValid=Patients.AreAllHashesValid(PatientCur,listAppointments,new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
 				if(!areHashesValid) {
 					DatabaseIntegrities.AddPatientModuleToCache(PatientCur.PatNum,EnumModuleType.TreatPlan); //Add to cached list for next time
 					//show popup

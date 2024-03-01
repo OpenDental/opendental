@@ -365,6 +365,7 @@ namespace OpenDentBusiness{
 			}
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 			claim.SecUserNumEntry=Security.CurUser.UserNum;
+			claim.SecurityHash=Claims.HashFields(claim);
 			return Crud.ClaimCrud.Insert(claim);
 		}
 
@@ -373,6 +374,10 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),claim);
 				return;
+			}
+			Claim claimOld=GetClaim(claim.ClaimNum);
+			if(IsClaimHashValid(claimOld)) { //Only rehash claims that are already valid.
+				claim.SecurityHash=HashFields(claim);
 			}
 			Crud.ClaimCrud.Update(claim);
 			//now, delete all attachments and recreate.
@@ -392,6 +397,9 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),claim,claimOld);
 				return;
+			}
+			if(IsClaimHashValid(claimOld)) { //Only rehash claims that are already valid.
+				claim.SecurityHash=HashFields(claim);
 			}
 			Crud.ClaimCrud.Update(claim,claimOld);
 		}
@@ -530,12 +538,20 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),claimNum);
 				return;
 			}
+			Claim claimOld=GetClaim(claimNum);
 			DateTime dateT=MiscData.GetNowDateTime();
 			string command="UPDATE claim SET ClaimStatus = 'S',"
 				+"DateSent="+POut.Date(dateT)+", "
 				+"DateSentOrig=(CASE WHEN DateSentOrig='0001-01-01' THEN "+POut.Date(dateT)+" ELSE DateSentOrig END) "
 				+"WHERE ClaimNum = "+POut.Long(claimNum);
 			Db.NonQ(command);
+			if(claimOld!=null && IsClaimHashValid(claimOld)) { //Should never be null. Only rehash claims that are already valid.
+				Claim claim=GetClaim(claimNum);
+				claim.SecurityHash=HashFields(claim);
+				if(claimOld.SecurityHash!=claim.SecurityHash) { //Only bother updating if the SecurityHash is different.
+					Crud.ClaimCrud.Update(claim);
+				}
+			}
 		}
 
 		///<summary>Used by the API. Sets the claim status to Sent and updates date fields. </summary>
@@ -544,11 +560,19 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),claimNum,dateSent,dateSentOrig);
 				return;
 			}
+			Claim claimOld=GetClaim(claimNum);
 			string command="UPDATE claim SET ClaimStatus = 'S',"
 				+"DateSent="+POut.Date(dateSent)+", "
 				+"DateSentOrig=(CASE WHEN DateSentOrig='0001-01-01' THEN "+POut.Date(dateSentOrig)+" ELSE DateSentOrig END) "
 				+"WHERE ClaimNum = "+POut.Long(claimNum);
 			Db.NonQ(command);
+			if(claimOld!=null && IsClaimHashValid(claimOld)) { //Should never be null. Only rehash claims that are already valid.
+				Claim claim=GetClaim(claimNum);
+				claim.SecurityHash=HashFields(claim);
+				if(claimOld.SecurityHash!=claim.SecurityHash) { //Only bother updating if the SecurityHash is different.
+					Crud.ClaimCrud.Update(claim);
+				}
+			}
 		}
 
 		public static bool IsClaimIdentifierInUse(string claimIdentifier,long claimNumExclude,string claimType) {
@@ -1821,6 +1845,36 @@ namespace OpenDentBusiness{
 			Claims.Update(claim);
 			return true;
 		}
+
+		///<summary>Returns the salted hash for the claim. Will return an empty string if the calling program is unable to use CDT.dll. </summary>
+		public static string HashFields(Claim claim) {
+			//No need to check MiddleTierRole; no call to db.
+			string unhashedText=claim.ClaimFee.ToString("F2")+claim.ClaimStatus+claim.InsPayEst.ToString("F2")+claim.InsPayAmt.ToString("F2");
+			try {
+				return CDT.Class1.CreateSaltedHash(unhashedText);
+			}
+			catch(Exception ex)  {
+				ex.DoNothing();
+				return ex.GetType().Name;
+			}
+		}
+
+		///<summary>Validates the hash string in claim.SecurityHash. Returns true if it matches the expected hash, otherwise false.</summary>
+		public static bool IsClaimHashValid(Claim claim) {
+			//No need to check MiddleTierRole; no call to db.
+			if(claim==null) {
+				return true;
+			}
+			DateTime dateHashStart=Misc.SecurityHash.DateStart;
+			if(claim.DateService < dateHashStart) { //Too old, isn't hashed.
+				return true;
+			}
+			if(claim.SecurityHash==HashFields(claim)) {
+				return true;
+			}
+			return false; 
+		}
+
 	}//end class Claims
 
 	///<summary>This is an odd class.  It holds data for the X12 (4010 only) generation process.  It replaces an older multi-dimensional array, so the names are funny, but helpful to prevent bugs.  Not an actual database table.</summary>

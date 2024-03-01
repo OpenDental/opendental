@@ -116,6 +116,7 @@
 			this.textDateCP = new OpenDental.ValidDate();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butSave = new OpenDental.UI.Button();
+			this.warningIntegrity = new OpenDental.UI.WarningIntegrity();
 			this.groupClaim.SuspendLayout();
 			this.panelClaimExtras.SuspendLayout();
 			this.panelEstimateInfo.SuspendLayout();
@@ -1055,9 +1056,17 @@
 			this.butSave.Text = "&Save";
 			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
+			// warningIntegrity
+			// 
+			this.warningIntegrity.Location = new System.Drawing.Point(1, 1);
+			this.warningIntegrity.Name = "warningIntegrity";
+			this.warningIntegrity.Size = new System.Drawing.Size(18, 18);
+			this.warningIntegrity.TabIndex = 193;
+			// 
 			// FormClaimProc
 			// 
 			this.ClientSize = new System.Drawing.Size(941, 658);
+			this.Controls.Add(this.warningIntegrity);
 			this.Controls.Add(this.comboPayTracker);
 			this.Controls.Add(this.label12);
 			this.Controls.Add(this.checkPayPlan);
@@ -1201,5 +1210,6 @@
 		private UI.Button butBlueBookLog;
 		private System.Windows.Forms.Label labelClaimAdjReasonCodes;
 		private System.Windows.Forms.TextBox textClaimAdjReasonCodes;
+		private UI.WarningIntegrity warningIntegrity;
 	}
 }

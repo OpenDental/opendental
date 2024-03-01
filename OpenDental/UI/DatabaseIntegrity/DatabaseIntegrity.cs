@@ -32,6 +32,8 @@ namespace OpenDental {
 		Module,
 		//from here down, alphabetical-------------------------------------------------
 		Appointment,
+		Claim,
+		ClaimProc,
 		Patient,
 		Payment,
 		PayPlan

@@ -78,6 +78,9 @@ namespace OpenDental {
 			if(!_isEditable) {
 				return;
 			}
+			if(gridMain.GetSelectedIndex()==-1){
+				return;
+			}
 			FrmGradingScaleItemEdit frmGradingScaleItemEdit=new FrmGradingScaleItemEdit(_listGradingScaleItems[gridMain.GetSelectedIndex()]);
 			frmGradingScaleItemEdit.ShowDialog();
 			FillGrid();

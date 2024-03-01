@@ -939,6 +939,7 @@ namespace OpenDentBusiness{
 			else {//In case someone tried to programmatically set the DateSuppReceived when they shouldn't have
 				claimProc.DateSuppReceived=DateTime.MinValue;
 			}
+			claimProc.SecurityHash=HashFields(claimProc);
 			return Crud.ClaimProcCrud.Insert(claimProc);
 		}
 
@@ -955,9 +956,16 @@ namespace OpenDentBusiness{
 				claimProc.DateSuppReceived=DateTime.MinValue;//db only field used by one customer and this is how they requested it.  PatNum #19191
 			}
 			if(claimProcOld==null) {
+				ClaimProc claimProcDb=ClaimProcs.GetOneClaimProc(claimProc.ClaimProcNum);
+				if(IsClaimProcHashValid(claimProcDb)) { //Only rehash claimprocs that are already valid.
+					claimProc.SecurityHash=HashFields(claimProc);
+				}
 				Crud.ClaimProcCrud.Update(claimProc);
 			}
 			else {
+				if(IsClaimProcHashValid(claimProcOld)) { //Only rehash claimprocs that are already valid.
+					claimProc.SecurityHash=HashFields(claimProc);
+				}
 				Crud.ClaimProcCrud.Update(claimProc,claimProcOld);
 			}
 		}
@@ -3277,6 +3285,36 @@ namespace OpenDentBusiness{
 			string command="DELETE FROM claimproc WHERE ClaimProcNum IN("+string.Join(",",listClaimProcNums)+")";
 			Db.NonQ(command);
 		}
+
+		///<summary>Returns the salted hash for the claimproc. Will return an empty string if the calling program is unable to use CDT.dll. </summary>
+		public static string HashFields(ClaimProc claimProc) {
+			//No need to check MiddleTierRole; no call to db.
+			string unhashedText=claimProc.ClaimNum.ToString()+((int)claimProc.Status).ToString()+claimProc.InsPayEst.ToString("F2")+claimProc.InsPayAmt.ToString("F2");
+			try {
+				return CDT.Class1.CreateSaltedHash(unhashedText);
+			}
+			catch(Exception ex)  {
+				ex.DoNothing();
+				return ex.GetType().Name;
+			}
+		}
+
+		///<summary>Validates the hash string in claimproc.SecurityHash. Returns true if it matches the expected hash, otherwise false.</summary>
+		public static bool IsClaimProcHashValid(ClaimProc claimProc) {
+			//No need to check MiddleTierRole; no call to db.
+			if(claimProc==null) {
+				return true;
+			}
+			DateTime dateHashStart=Misc.SecurityHash.DateStart;
+			if(claimProc.SecDateEntry < dateHashStart) { //Too old, isn't hashed.
+				return true;
+			}
+			if(claimProc.SecurityHash==HashFields(claimProc)) {
+				return true;
+			}
+			return false; 
+		}
+
 	}
 
 	///<summary>During the ClaimProc.ComputeBaseEst() and related sections, this holds historical payment information for one procedure or an adjustment to insurance benefits from patplan.</summary>

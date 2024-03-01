@@ -1885,6 +1885,9 @@ namespace OpenDental {
 		}
 
 		private void pd2_PrintPageDay(object sender,PrintPageEventArgs e) {
+			if(Plugins.HookMethod(this,"ControlChart.PrintPageDay_begin",Pd,e,gridProg)) {
+				return;
+			}
 			Rectangle rectangleBounds=new Rectangle(25,40,800,1000);//Some printers can handle up to 1042
 			Graphics g=e.Graphics;
 			string text;
@@ -5066,7 +5069,15 @@ namespace OpenDental {
 			}
 			if(Pd.Patient!=null && DatabaseIntegrities.DoShowPopup(Pd.PatNum,EnumModuleType.Chart)) {
 				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(Pd.PatNum);
-				bool areHashesValid=Patients.AreAllHashesValid(Pd.Patient,listAppointments,new List<PayPlan>(),new List<PaySplit>());
+				List<Claim> listClaims=Claims.GetForPat(Pd.PatNum);
+				List<ClaimProc> listClaimProcs;
+				if(Pd.ListClaimProcs!=null) {
+					listClaimProcs=new List<ClaimProc>(Pd.ListClaimProcs);
+				}
+				else {
+					listClaimProcs=ClaimProcs.Refresh(new List<long>(){Pd.PatNum});
+				}
+				bool areHashesValid=Patients.AreAllHashesValid(Pd.Patient,listAppointments,new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
 				if(!areHashesValid) {
 					DatabaseIntegrities.AddPatientModuleToCache(Pd.PatNum,EnumModuleType.Chart); //Add to cached list for next time
 					//show popup

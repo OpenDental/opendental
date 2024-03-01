@@ -509,7 +509,9 @@ namespace OpenDental
 				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,docNum));
 			}
 			if(_patCur!=null && DatabaseIntegrities.DoShowPopup(_patCur.PatNum,EnumModuleType.Imaging)) {
-				bool areHashesValid=Patients.AreAllHashesValid(_patCur,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>());
+				List<Claim> listClaims=Claims.GetForPat(_patCur.PatNum);
+				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patCur.PatNum});
+				bool areHashesValid=Patients.AreAllHashesValid(_patCur,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
 				if(!areHashesValid) {
 					DatabaseIntegrities.AddPatientModuleToCache(_patCur.PatNum,EnumModuleType.Imaging); //Add to cached list for next time
 					//show popup

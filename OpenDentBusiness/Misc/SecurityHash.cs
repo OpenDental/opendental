@@ -18,6 +18,8 @@ namespace OpenDentBusiness.Misc {
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
 		private static bool _arePayPlansUpdated=false;
+		private static bool _areClaimsUpdated=false;
+		private static bool _areClaimProcsUpdated=false;
 
 		///<summary>This method is allowed anywhere in the ConvertDatabase scripts.  It's specially written to never crash. It does not affect the schema. It can be called multiple times during a conversion and will only run once.  Updates the SecurityHash fields of all tables for which Open Dental is enforcing database integrity. First clears out all existing SecurityHashes, then creates new ones for recent entries. </summary>
 		public static void UpdateHashing() {
@@ -25,6 +27,8 @@ namespace OpenDentBusiness.Misc {
 			RunAppointment();
 			RunPatient();
 			RunPayPlan();
+			RunClaim();
+			RunClaimProc();
 			string updating="Updating database.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 		}
@@ -231,6 +235,111 @@ namespace OpenDentBusiness.Misc {
 				Db.NonQ(command);
 			}
 			_arePayPlansUpdated=true;
+		}
+
+		private static void RunClaim() {
+			if(_areClaimsUpdated) {
+				return;
+			}
+			//Check if columns are present
+			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","SecurityHash")
+			  || !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","ClaimFee")
+				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","ClaimStatus")
+				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","InsPayEst")
+				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","InsPayAmt"))
+			{
+				return;
+			}
+			string updating="Hashing claims.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
+			//Hash claims with a DateService after DateStart
+			string command="SELECT ClaimNum, ClaimFee, ClaimStatus, InsPayEst, InsPayAmt, SecurityHash FROM claim WHERE DateService >= "+POut.Date(DateStart);
+			DataTable table=Db.GetTable(command);
+			long claimNum;
+			string unhashedText="";
+			string hashedText="";
+			string hashedTextOld="";
+			for(int i=0;i<table.Rows.Count;i++) {
+				unhashedText="";
+				claimNum=PIn.Long(table.Rows[i]["ClaimNum"].ToString());
+				hashedTextOld=PIn.String(table.Rows[i]["SecurityHash"].ToString());
+				unhashedText+=PIn.Double(table.Rows[i]["ClaimFee"].ToString()).ToString("F2");
+				unhashedText+=PIn.String(table.Rows[i]["ClaimStatus"].ToString());
+				unhashedText+=PIn.Double(table.Rows[i]["InsPayEst"].ToString()).ToString("F2");
+				unhashedText+=PIn.Double(table.Rows[i]["InsPayAmt"].ToString()).ToString("F2");
+				try {
+					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					hashedText=ex.GetType().Name;
+				}
+				if(hashedTextOld!=hashedText) { //Only update SecurityHash if it's different.
+					command=$@"UPDATE claim SET SecurityHash='{POut.String(hashedText)}' WHERE ClaimNum={POut.Long(claimNum)}";
+					Db.NonQ(command);
+				}
+			}
+			_areClaimsUpdated=true;
+		}
+
+		private static void RunClaimProc() {
+			if(_areClaimProcsUpdated) {
+				return;
+			}
+			//Check if columns are present
+			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","SecurityHash")
+			  || !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","ClaimNum")
+				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","Status")
+				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","InsPayEst")
+				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","InsPayAmt"))
+			{
+				return;
+			}
+			string updating="Hashing claimprocs.";
+			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
+			//Threading because it can take too long and it doesn't matter if user starts working while it's still in progress.
+			//They might see integrity triangles until this completes.
+			//If they shut down before it completes, then those won't be fixed until the next time they run the hashing (their next update).
+			_areClaimProcsUpdated=true;
+			if(IsThreaded){
+				ThreadStart threadStart=new ThreadStart(ClaimProcWorker);
+				Thread thread=new Thread(threadStart);
+				thread.IsBackground=true;
+				thread.Start();
+			}
+			else{
+				ClaimProcWorker();
+			}
+		}
+
+		private static void ClaimProcWorker() {
+			//Hash claimprocs with a DateTEntry after DateStart
+			string command="SELECT ClaimProcNum, ClaimNum, Status, InsPayEst, InsPayAmt, SecurityHash FROM claimproc WHERE SecDateEntry >= "+POut.Date(DateStart);
+			DataTable table=Db.GetTable(command);
+			long claimProcNum;
+			string unhashedText="";
+			string hashedText="";
+			string hashedTextOld="";
+			for(int i=0;i<table.Rows.Count;i++) {
+				unhashedText="";
+				claimProcNum=PIn.Long(table.Rows[i]["ClaimProcNum"].ToString());
+				hashedTextOld=PIn.String(table.Rows[i]["SecurityHash"].ToString());
+				unhashedText+=PIn.Long(table.Rows[i]["ClaimNum"].ToString());
+				unhashedText+=PIn.Int(table.Rows[i]["Status"].ToString());
+				unhashedText+=PIn.Double(table.Rows[i]["InsPayEst"].ToString()).ToString("F2");
+				unhashedText+=PIn.Double(table.Rows[i]["InsPayAmt"].ToString()).ToString("F2");
+				try {
+					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					hashedText=ex.GetType().Name;
+				}
+				if(hashedTextOld!=hashedText) { //Only update SecurityHash if it's different.
+					command=$@"UPDATE claimproc SET SecurityHash='{POut.String(hashedText)}' WHERE ClaimProcNum={POut.Long(claimProcNum)}";
+					Db.NonQ(command);
+				}
+			}
 		}
 
 	}

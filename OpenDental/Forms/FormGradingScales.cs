@@ -50,6 +50,9 @@ namespace OpenDental {
 				DialogResult=DialogResult.OK;
 				return;
 			}
+			if(gridMain.GetSelectedIndex()==-1){
+				return;
+			}
 			using FormGradingScaleEdit formGradingScaleEdit=new FormGradingScaleEdit(_listGradingScales[gridMain.GetSelectedIndex()]);
 			formGradingScaleEdit.ShowDialog();
 			FillGrid();

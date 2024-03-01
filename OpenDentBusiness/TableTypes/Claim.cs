@@ -193,6 +193,8 @@ namespace OpenDentBusiness{
 		public DateOtherQualifier DateOtherQualifier;
 		///<summary>Used in 1500 Medical Claim Form field 20.  Place an 'X' the 'Yes' if true and the 'No' if false.</summary>
 		public bool IsOutsideLab;
+		///<summary>Holds the salted hash of the following claim fields: ClaimFee, ClaimStatus, InsPayEst, InsPayAmt.</summary>
+		public string SecurityHash;
 
 		///<summary>Not a data column.</summary>
 		[CrudColumn(IsNotDbColumn=true)]

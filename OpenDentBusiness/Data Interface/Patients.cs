@@ -41,7 +41,6 @@ namespace OpenDentBusiness {
 					"claimproc.PatNum",
 					"clinicerx.PatNum",
 					"commlog.PatNum",
-					"commloghist.PatNum",
 					"commoptout.PatNum",
 					"confirmationrequest.PatNum",
 					"creditcard.PatNum",
@@ -5049,7 +5048,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Checks all passed lists protected by SecurityHash columns. Returns false if a single row in any table is invalidly hashed. Limited to only 20 rows per table to reduce this process's impact on performance. Ignores rows occuring before SecurityHash.DateStart.</summary>
-		public static bool AreAllHashesValid(Patient patient,List<Appointment> listAppointments,List<PayPlan> listPayPlans,List<PaySplit> listPaySplits) {
+		public static bool AreAllHashesValid(Patient patient,List<Appointment> listAppointments,List<PayPlan> listPayPlans,List<PaySplit> listPaySplits,List<Claim> listClaims,List<ClaimProc> listClaimProcs) {
 			//No need to check MiddleTierRole; no call to db.
 			if(patient!=null && !IsPatientHashValid(patient)) {
 				return false;
@@ -5087,6 +5086,28 @@ namespace OpenDentBusiness {
 				}
 			}
 			#endregion PaySplits
+			#region Claims
+			listClaims.RemoveAll(x => x.DateService < Misc.SecurityHash.DateStart);
+			for(int i=0;i<listClaims.Count;i++) {
+				if(i==20) {
+					break;
+				}
+				if(!Claims.IsClaimHashValid(listClaims[i])) {
+					return false;
+				}
+			}
+			#endregion
+			#region ClaimProcs
+			listClaimProcs.RemoveAll(x => x.SecDateEntry < Misc.SecurityHash.DateStart);
+			for(int i=0;i<listClaimProcs.Count;i++) {
+				if(i==20) {
+					break;
+				}
+				if(!ClaimProcs.IsClaimProcHashValid(listClaimProcs[i])) {
+					return false;
+				}
+			}
+			#endregion ClaimProcs
 			return true;
 		}
 

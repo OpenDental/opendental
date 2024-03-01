@@ -348,6 +348,12 @@ namespace OpenDental{
 					"To set a new lock date for this report, go to Setup | Security | User Groups | Reports | Procedures Not Billed to Insurance, New Claims button.");
 				return;
 			}
+			else if(listProcNumsPastLockDate.Count>0 && !MsgBox.Show(this,MsgBoxButtons.OKCancel,POut.Int(listProcNumsPastLockDate.Count)
+				+"Claims will not be created because these procedure dates extend past the lock date for this report.\n" 
+				+ "To set a new lock date for this report, go to Setup | Security | User Groups | Reports | Procedures Not Billed to Insurance, New Claims button.")) 
+			{
+				return;
+			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Clicking OK will create up to "+POut.Int(claimCreatedCount)
 				+" claims and cannot be undone, except by manually going to each account.  "
 				+"Some claims may not be created if there are validation issues.\r\n"
