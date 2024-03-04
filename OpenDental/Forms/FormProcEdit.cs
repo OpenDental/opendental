@@ -2482,7 +2482,9 @@ namespace OpenDental {
 			}
 			//Recall synch---------------------------------------------------------------------------------------------------------------------------------
 			Recalls.Synch(_procedure.PatNum);
-			if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C) {
+			//We don't want this to happen in QuickAdd mode because the estimate claimprocs we use to calculate tax info aren't present yet.
+			//Quickadd procs will get their taxes calculated after this form closes.
+			if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C && !_isQuickAdd) {
 				List<string> listprocCodes=new List<string>();
 				listprocCodes.Add(ProcedureCodes.GetStringProcCode(_procedure.CodeNum));
 				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listprocCodes,_procedure.PatNum);

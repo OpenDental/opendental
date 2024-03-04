@@ -2371,6 +2371,9 @@
     <column order="82" name="IsOutsideLab" type="tinyint(4)">
       <summary>Used in 1500 Medical Claim Form field 20.  Place an 'X' the 'Yes' if true and the 'No' if false.</summary>
     </column>
+    <column order="83" name="SecurityHash" type="varchar(255)">
+      <summary>Holds the salted hash of the following claim fields: ClaimFee, ClaimStatus, InsPayEst, InsPayAmt.</summary>
+    </column>
   </table>
   <table name="claimattach">
     <summary>Keeps track of one image file attached to a claim.  Multiple files can be attached to a claim using this method.</summary>
@@ -2710,6 +2713,9 @@
     </column>
     <column order="47" name="IsOverpay" type="tinyint(4)">
       <summary></summary>
+    </column>
+    <column order="48" name="SecurityHash" type="varchar(255)">
+      <summary>Holds the salted hash of the following claimproc fields: ClaimNum, Status, InsPayEst, InsPayAmt. </summary>
     </column>
   </table>
   <table name="claimsnapshot">

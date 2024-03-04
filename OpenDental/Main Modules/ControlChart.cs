@@ -1425,6 +1425,10 @@ namespace OpenDental {
 			checkNotes.Checked=true;
 			chartCustViewChanged=true;//custom view will not reset the check boxes so we force it true.
 			//Fill progress notes with only desired rows to be printed, then print.
+			object[] objectArray={checkComm.Checked,checkAppt.Checked};
+			Plugins.HookAddCode(this,"ControlChart.menuItemPrintDay_Click_update",objectArray);
+			checkComm.Checked=(bool)objectArray[0];
+			checkAppt.Checked=(bool)objectArray[1];
 			FillProgNotes();
 			if(gridProg.ListGridRows.Count==0) {
 				MsgBox.Show(this,"No completed procedures or notes to print");
@@ -6098,6 +6102,9 @@ namespace OpenDental {
 
 		///<summary>Returns true if the 'Print Day for Hospital' menu item is applicable. This method returns true if there is at least one completed procedure with the same date as the row.</summary>
 		private bool CanPrintDay(DataRow dataRow,int rowIdx) {
+			if(Plugins.HookMethod(this,"ControlChart.CanPrintDay_begin")) {
+				return true;
+			}
 			if(PrefC.GetBool(PrefName.EasyHideHospitals)) {
 				return false;
 			}
@@ -7852,6 +7859,9 @@ namespace OpenDental {
 
 		/// <summary> Checks ProcStat passed to see if one of the check boxes on the form contains a check for the ps passed. For example if ps is TP and the checkShowTP.Checked is true it will return true.</summary>
 		private bool ProcStatDesired(ProcStat procStat,bool isLocked) {
+			if(Plugins.HookMethod(this,"ControlChart.ProcStatDesired_begin")) {
+				return true;
+			}
 			switch(procStat) {
 				case ProcStat.TP:
 					if(checkShowTP.Checked) {

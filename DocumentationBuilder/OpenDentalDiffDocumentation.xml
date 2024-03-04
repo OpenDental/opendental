@@ -67,6 +67,18 @@
       </Enumeration>
     </column>
   </table>
+  <table name="claim">
+    <summary></summary>
+    <column order="83" name="SecurityHash" type="varchar(255)">
+      <summary>Holds the salted hash of the following claim fields: ClaimFee, ClaimStatus, InsPayEst, InsPayAmt.</summary>
+    </column>
+  </table>
+  <table name="claimproc">
+    <summary></summary>
+    <column order="48" name="SecurityHash" type="varchar(255)">
+      <summary>Holds the salted hash of the following claimproc fields: ClaimNum, Status, InsPayEst, InsPayAmt. </summary>
+    </column>
+  </table>
   <table name="eserviceshortguid">
     <summary></summary>
     <column order="1" name="EServiceCode" type="varchar(255)">

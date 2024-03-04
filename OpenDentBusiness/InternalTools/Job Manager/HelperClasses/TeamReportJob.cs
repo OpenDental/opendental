@@ -324,10 +324,12 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 				{
 					return "";
 				}
-				DateTime oneMonthBeforeReportToDate=dateTimeFrom.AddDays(-30).Date;
-				if(_job.DateTimeEntry.Date <= oneMonthBeforeReportToDate && _dateTimeLastLog <= oneMonthBeforeReportToDate) {
+				//Use today's date if from date is in the future.
+				DateTime baseDate = (DateTime.Today < dateTimeFrom) ? DateTime.Today : dateTimeFrom; 
+				DateTime oneMonthBeforeBaseDate=baseDate.AddDays(-30).Date;
+				if(_job.DateTimeEntry.Date <= oneMonthBeforeBaseDate && _dateTimeLastLog <= oneMonthBeforeBaseDate) {
 					DateTime mostRecentDate=(_job.DateTimeEntry >= _dateTimeLastLog) ? _job.DateTimeEntry : _dateTimeLastLog;
-					TimeSpan difference=dateTimeFrom - mostRecentDate;
+					TimeSpan difference=baseDate - mostRecentDate;
 					int daysSinceLastLog=difference.Days;
 					listPrompts.Add($"{daysSinceLastLog} {_DAYS_NO_LOG}");
 				}
@@ -338,7 +340,7 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 				else if(_hoursLoggedInDateRange >= 15) {
 					listPrompts.Add("Many Hours Logged");
 				}
-				if(_job.HoursActualSingleReviewTime > _job.HoursEstimateSingleReviewTime && _job.Category!=JobCategory.Bug) {
+				if(_job.HoursActual > _job.HoursEstimate && _job.Category!=JobCategory.Bug) {
 					listPrompts.Add("Over Estimate");
 				}
 				return String.Join(" / ",listPrompts);

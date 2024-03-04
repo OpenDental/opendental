@@ -14,7 +14,7 @@
 		<ui:Label x:Name="labelNumber" Width="205" Height="33" Margin="196,35,0,0" Text="*Required" VAlign="Center" />
 		<ui:TextBox x:Name="textDescription" Width="199" Height="20" Margin="129,69,0,0" />
 		<ui:Label x:Name="labelGradeNumber" Width="125" Height="18" Margin="4,40,0,0" Text="Grade Number" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textGradeShowing" Width="61" Height="20" Margin="129,12,0,0" />
+		<ui:TextBox x:Name="textGradeShowing" Width="61" Height="20" Margin="129,12,0,0" TabIndexOD="1" />
 		<ui:Label x:Name="labelGradeShowing" Width="125" Height="18" Margin="4,12,0,0" Text="Grade Showing" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="labelDescription" Width="125" Height="18" Margin="4,69,0,0" Text="Description" HAlign="Right" VAlign="Center" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
