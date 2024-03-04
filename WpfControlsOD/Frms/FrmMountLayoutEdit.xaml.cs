@@ -70,6 +70,7 @@ namespace OpenDental {
 			textVIntHeight.Text=MountCur.Height.ToString();
 			FillItems();
 			ShowWarning();
+			textVIntWidth.SelectAll();
 		}
 
 		private void FormMountDefEdit_SizeChanged(object sender, EventArgs e){

@@ -99,7 +99,7 @@ namespace OpenDentBusiness {
 			List<DataRow> labRows=new List<DataRow>();//Canadian lab procs, which must be added in a loop at the very end.
 			List<Def> listMiscColorDefs=Defs.GetDefsForCategory(DefCat.MiscColors);
 			List<Def> listProgNoteColorDefs=Defs.GetDefsForCategory(DefCat.ProgNoteColors);
-			Family family=Patients.GetFamily(patNum);
+			Family family=Patients.GetFamily(patNum,doIncludeDeleted:true);
 			Dictionary<string,string> dictUserNames=Userods.GetUsers().ToDictionary(x => x.UserNum.ToString(),x => x.UserName);
 			if(componentsToLoad.ShowTreatPlan
 				|| componentsToLoad.ShowCompleted

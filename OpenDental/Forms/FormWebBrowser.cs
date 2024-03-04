@@ -44,6 +44,9 @@ namespace OpenDental {
 		///If html content and url specified, url will be used and given content ignored. postData and additionalHeaders will only be used if url is 
 		///passed in.</summary>
 		public FormWebBrowser(string url="",string htmlContent="",string postData=null,string additionalHeaders="",bool canWrapNewWindow=true):base() {
+			InitializeComponent();
+			InitializeLayoutManager();
+			Lan.F(this);
 			if(string.IsNullOrEmpty(url)) {
 				//this needs to be moved to load, and make htmlContent a public field.
 				if(!string.IsNullOrEmpty(htmlContent)) {

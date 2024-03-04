@@ -621,7 +621,7 @@ namespace OpenDental{
 			this.checkBillingEmailIncludeAutograph.Name = "checkIncludeAutograph";
 			this.checkBillingEmailIncludeAutograph.Size = new System.Drawing.Size(270, 18);
 			this.checkBillingEmailIncludeAutograph.TabIndex = 265;
-			this.checkBillingEmailIncludeAutograph.Text = "Include Autograph of send address";
+			this.checkBillingEmailIncludeAutograph.Text = "Include Email Autograph of sender address";
 			// 
 			// FormBillingDefaults
 			// 

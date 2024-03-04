@@ -3465,6 +3465,10 @@ namespace OpenDental {
 		private void DrawSigBox(SheetFieldDef sheetFieldDef,Graphics g,bool isSelected) {
 			Color colorOutline=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorGray);
 			Color colorText=_colorGray;
+			if(checkBlue.Checked){
+				colorOutline=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorBlue);
+				colorText=_colorBlue;
+			}
 			if(isSelected) {
 				colorOutline=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorRed,true);
 				colorText=_colorRed;

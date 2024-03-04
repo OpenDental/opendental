@@ -54,15 +54,15 @@ namespace OpenDentalImaging {
 				MsgBox.Show(this,"EzTwain4.dll not found.  Please run the setup file in your images folder.");
 				return;
 			}
-			EZTwain.GetSourceList();
 			comboTwainName.Items.Clear();
-			while(true){
-				StringBuilder stringBuilder=new StringBuilder();
-				bool hasName=EZTwain.GetNextSourceName(stringBuilder);
-				if(!hasName){
-					break;
-				}
+			if(!EZTwain.GetSourceList()) {
+				return;
+			}
+			StringBuilder stringBuilder=new StringBuilder();
+			stringBuilder.EnsureCapacity(64);
+			while(EZTwain.GetNextSourceName(stringBuilder)) {
 				comboTwainName.Items.Add(stringBuilder.ToString());
+				stringBuilder.EnsureCapacity(64);
 			}
 		}
 
