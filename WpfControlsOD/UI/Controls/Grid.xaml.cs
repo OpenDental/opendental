@@ -2183,7 +2183,8 @@ using WpfControls.UI;
 					for(int i=0;i<Columns.Count;i++){
 						if(Columns[i].IsWidthDynamic){
 							//example sum=1+2.5, width=350/3.5*2.5=250
-							Columns[i].State.Width=(int)(widthExtra/sumDynamic*Columns[i].DynamicWeight);
+							Columns[i].State.Width=Math.Max((int)(widthExtra/sumDynamic*Columns[i].DynamicWeight),20);
+							//The min width width of 20 is arbitrary, but no dynamic column should be narrower than that.
 						}
 					}
 				}

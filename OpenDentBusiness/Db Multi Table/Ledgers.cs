@@ -457,7 +457,7 @@ namespace OpenDentBusiness{
 			#region Discounts for Versions 2 and 3
 			if(payPlanVersionCur.In(PayPlanVersions.AgeCreditsAndDebits,PayPlanVersions.AgeCreditsOnly)) {
 				command+="UNION ALL "
-					+"SELECT 'Discount' TranType,pp.PayPlanNum PriKey,pp.PatNum,p.ProcDate TranDate,SUM(p.Discount+p.DiscountPlanAmt) TranAmount,0 PayPlanAmount,0 InsWoEst,0 InsPayEst"
+					+"SELECT 'Discount' TranType,pp.PayPlanNum PriKey,pp.PatNum,p.ProcDate TranDate,p.Discount+p.DiscountPlanAmt TranAmount,0 PayPlanAmount,0 InsWoEst,0 InsPayEst"
 					+(doIncludeProcNum?",p.ProcNum,0 PayNum":"")
 					+(isAgedByProc?",p.ProcNum AgedProcNum,p.ProcDate AgedProcDate":"")+" "
 					+"FROM payplan pp "

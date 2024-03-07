@@ -134,12 +134,16 @@ namespace OpenDental{
 				}
 				return;
 			}
+			long appointmentTypeNum=_appointment.AppointmentTypeNum;
 			if(PrefC.GetBool(PrefName.AppointmentTypeShowPrompt) && IsNew
 				&& !_appointment.AptStatus.In(ApptStatus.PtNote,ApptStatus.PtNoteCompleted)) {
 				using FormApptTypes formApptTypes=new FormApptTypes();
 				formApptTypes.IsSelectionMode=true;
 				formApptTypes.IsNoneAllowed=true;
 				formApptTypes.ShowDialog();
+				if(formApptTypes.AppointmentTypeSelected!=null) {
+					appointmentTypeNum=formApptTypes.AppointmentTypeSelected.AppointmentTypeNum;
+				}
 			}
 			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Appointment,Appointments.IsAppointmentHashValid(_appointment));
 			_isOnLoad=true;
@@ -412,7 +416,7 @@ namespace OpenDental{
 			comboApptType.Items.AddNone<AppointmentType>();
 			comboApptType.SelectedIndex=0;
 			comboApptType.Items.AddList(listAppointmentTypes,x=>x.AppointmentTypeName);
-			comboApptType.SetSelectedKey<AppointmentType>(_appointment.AppointmentTypeNum,x=>x.AppointmentTypeNum,x=>AppointmentTypes.GetName(x));
+			comboApptType.SetSelectedKey<AppointmentType>(appointmentTypeNum,x=>x.AppointmentTypeNum,x=>AppointmentTypes.GetName(x));
 			HasProcsChangedAndCancel=false;
 			FillProcedures();
 			if(IsNew && comboApptType.SelectedIndex!=0) {

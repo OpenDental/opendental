@@ -1141,7 +1141,6 @@ namespace OpenDental {
 			#endregion IsDropDown
 			CreateSQL();
 			FillSQLbox();
-			listConditions.Enabled=true;
 			TextBox.Clear();
 			TextDate.Clear();
 			TextValidAge.Clear();

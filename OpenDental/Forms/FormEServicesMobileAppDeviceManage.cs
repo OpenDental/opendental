@@ -20,15 +20,15 @@ namespace OpenDental {
 		private List<MobileAppDevice> _listMobileAppDevicesOld;
 		///<summary>List of mobile app devices.</summary>
 		private List<MobileAppDevice> _listMobileAppDevicesAll;
-		///<summary>List of MobileAppDeviceNums that will be deleted on save.</summary>
-		private List<long> _listMobileAppDeviceNums;
+		///<summary>List of MobileAppDevices that will be deleted on save.</summary>
+		private List<MobileAppDevice> _listMobileAppDevicesDelete;
 
 		public FormEServicesMobileAppDeviceManage() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 			_clinicPrefHelper=new ClinicPrefHelper(PrefName.ODTouchDeviceLimit);
-			_listMobileAppDeviceNums=new List<long>();
+			_listMobileAppDevicesDelete=new List<MobileAppDevice>();
 		}
 
 		private void FormEServicesMobileAppDeviceManage_Load(object sender,EventArgs e) {
@@ -73,13 +73,13 @@ namespace OpenDental {
 			}
 			//Rows
 			gridMobileAppDevices.ListGridRows.Clear();
-			List<MobileAppDevice> _listMobileAppDevices=_listMobileAppDevicesAll;
+			List<MobileAppDevice> listMobileAppDevices=_listMobileAppDevicesAll;
 			if(GetClinicNumEClipboardTab()>0) {
-				_listMobileAppDevices=_listMobileAppDevicesAll.FindAll(x=>x.ClinicNum==GetClinicNumEClipboardTab());
+				listMobileAppDevices=_listMobileAppDevicesAll.FindAll(x=>x.ClinicNum==GetClinicNumEClipboardTab());
 			}
-			for(int i=0;i<_listMobileAppDevices.Count;i++) {
+			for(int i=0;i<listMobileAppDevices.Count;i++) {
 				GridRow row=new GridRow();
-				MobileAppDevice mobileAppDevice=_listMobileAppDevices[i];
+				MobileAppDevice mobileAppDevice=listMobileAppDevices[i];
 				row.Cells.Add(mobileAppDevice.DeviceName+"\r\n("+mobileAppDevice.UniqueID+")");
 				string rowValue="";
 				if(mobileAppDevice.EclipboardLastAttempt.Year>1880) {
@@ -120,7 +120,7 @@ namespace OpenDental {
 							" Continue?")) {
 							return;
 						}
-						_listMobileAppDeviceNums.Add(gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
+						_listMobileAppDevicesDelete.Add(gridMobileAppDevices.SelectedTag<MobileAppDevice>());
 						_listMobileAppDevicesAll.RemoveAll(x => x.MobileAppDeviceNum==gridMobileAppDevices.SelectedTag<MobileAppDevice>().MobileAppDeviceNum);
 						FillGridMobileAppDevices();
 					}
@@ -224,7 +224,7 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
-			MobileAppDevices.DeleteMany(_listMobileAppDeviceNums);
+			MobileAppDevices.DeleteMany(_listMobileAppDevicesDelete);
 			_listMobileAppDevicesAll.ForEach(x => MobileAppDevices.Update(x));
 			DialogResult=DialogResult.OK;
 		}

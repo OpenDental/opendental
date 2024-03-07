@@ -383,13 +383,8 @@ namespace OpenDental {
 		}
 
 		private bool UpdateClaimSnapshotTrigger() {
-			for(int i=0;i<Enum.GetValues(typeof(ClaimSnapshotTrigger)).Length;i++) {
-				ClaimSnapshotTrigger claimSnapshotTrigger=(ClaimSnapshotTrigger)i;
-				if(claimSnapshotTrigger.GetDescription()==comboClaimSnapshotTrigger.Text) {
-					return Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,claimSnapshotTrigger.ToString());
-				}
-			}
-			return false;
+			ClaimSnapshotTrigger claimSnapshotTrigger=comboClaimSnapshotTrigger.GetSelected<ClaimSnapshotTrigger>();
+			return Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,claimSnapshotTrigger.ToString());
 		}
 
 		///<summary>Checks preferences that take user entry for errors, returns true if all entries are valid.</summary>

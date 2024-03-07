@@ -65,7 +65,11 @@ namespace OpenDental{
 			for(int i=0;i<_listDisplayFieldsShowing.Count;i++){
 				row=new GridRow();
 				row.Cells.Add(_listDisplayFieldsShowing[i].InternalName);
-				row.Cells.Add(_listDisplayFieldsShowing[i].Description);
+				string displayText=_listDisplayFieldsShowing[i].DescriptionOverride;
+				if(string.IsNullOrWhiteSpace(displayText)) {
+					displayText=_listDisplayFieldsShowing[i].Description;
+				}
+				row.Cells.Add(displayText);
 				row.Cells.Add(_listDisplayFieldsShowing[i].ColumnWidth.ToString());
 				gridMain.ListGridRows.Add(row);
 			}

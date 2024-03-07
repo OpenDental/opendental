@@ -44,7 +44,7 @@ namespace OpenDental {
 			this.butSave.Location = new System.Drawing.Point(584, 264);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 5;
+			this.butSave.TabIndex = 99;
 			this.butSave.Text = "Save";
 			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
@@ -54,14 +54,14 @@ namespace OpenDental {
 			this.textGroupName.MaxLength = 50;
 			this.textGroupName.Name = "textGroupName";
 			this.textGroupName.Size = new System.Drawing.Size(167, 20);
-			this.textGroupName.TabIndex = 0;
+			this.textGroupName.TabIndex = 1;
 			// 
 			// label1
 			// 
 			this.label1.Location = new System.Drawing.Point(12, 81);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(136, 14);
-			this.label1.TabIndex = 283;
+			this.label1.TabIndex = 0;
 			this.label1.Text = "Group Name";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -71,14 +71,14 @@ namespace OpenDental {
 			this.textProcCodes.Multiline = true;
 			this.textProcCodes.Name = "textProcCodes";
 			this.textProcCodes.Size = new System.Drawing.Size(410, 49);
-			this.textProcCodes.TabIndex = 2;
+			this.textProcCodes.TabIndex = 3;
 			// 
 			// label2
 			// 
 			this.label2.Location = new System.Drawing.Point(12, 166);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(136, 14);
-			this.label2.TabIndex = 285;
+			this.label2.TabIndex = 0;
 			this.label2.Text = "Proc Codes";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -88,7 +88,7 @@ namespace OpenDental {
 			this.checkShowInFreq.Location = new System.Drawing.Point(29, 51);
 			this.checkShowInFreq.Name = "checkShowInFreq";
 			this.checkShowInFreq.Size = new System.Drawing.Size(134, 20);
-			this.checkShowInFreq.TabIndex = 4;
+			this.checkShowInFreq.TabIndex = 6;
 			this.checkShowInFreq.Text = "Show In Frequencies";
 			this.checkShowInFreq.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkShowInFreq.UseVisualStyleBackColor = true;
@@ -98,7 +98,7 @@ namespace OpenDental {
 			this.comboCodeGroupFixed.Location = new System.Drawing.Point(149, 109);
 			this.comboCodeGroupFixed.Name = "comboCodeGroupFixed";
 			this.comboCodeGroupFixed.Size = new System.Drawing.Size(167, 21);
-			this.comboCodeGroupFixed.TabIndex = 1;
+			this.comboCodeGroupFixed.TabIndex = 2;
 			this.comboCodeGroupFixed.Text = "Code Group Fixed";
 			// 
 			// label3
@@ -106,7 +106,7 @@ namespace OpenDental {
 			this.label3.Location = new System.Drawing.Point(12, 113);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(136, 14);
-			this.label3.TabIndex = 288;
+			this.label3.TabIndex = 0;
 			this.label3.Text = "Fixed Group";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -117,7 +117,7 @@ namespace OpenDental {
 			this.butProcCodesAdd.Location = new System.Drawing.Point(565, 162);
 			this.butProcCodesAdd.Name = "butProcCodesAdd";
 			this.butProcCodesAdd.Size = new System.Drawing.Size(75, 24);
-			this.butProcCodesAdd.TabIndex = 3;
+			this.butProcCodesAdd.TabIndex = 4;
 			this.butProcCodesAdd.Text = "&Add";
 			this.butProcCodesAdd.Click += new System.EventHandler(this.butProcCodesAdd_Click);
 			// 
@@ -126,7 +126,7 @@ namespace OpenDental {
 			this.label4.Location = new System.Drawing.Point(146, 214);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(295, 14);
-			this.label4.TabIndex = 289;
+			this.label4.TabIndex = 0;
 			this.label4.Text = "Codes should be comma separated.";
 			// 
 			// label5
@@ -134,7 +134,7 @@ namespace OpenDental {
 			this.label5.Location = new System.Drawing.Point(322, 97);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(325, 59);
-			this.label5.TabIndex = 290;
+			this.label5.TabIndex = 0;
 			this.label5.Text = resources.GetString("label5.Text");
 			// 
 			// checkShowInAgeLim
@@ -143,7 +143,7 @@ namespace OpenDental {
 			this.checkShowInAgeLim.Location = new System.Drawing.Point(29, 28);
 			this.checkShowInAgeLim.Name = "checkShowInAgeLim";
 			this.checkShowInAgeLim.Size = new System.Drawing.Size(134, 20);
-			this.checkShowInAgeLim.TabIndex = 291;
+			this.checkShowInAgeLim.TabIndex = 5;
 			this.checkShowInAgeLim.Text = "Show In Age Limits";
 			this.checkShowInAgeLim.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkShowInAgeLim.UseVisualStyleBackColor = true;

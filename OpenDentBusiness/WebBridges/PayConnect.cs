@@ -179,7 +179,7 @@ namespace OpenDentBusiness {
 		}
 
 		public static string BuildReceiptString(PayConnectService.transType transType,string refNum,string nameOnCard,string cardNumber,
-			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum) 
+			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum,string cardType="") 
 		{
 			string result="";
 			cardNumber=cardNumber??""; //Prevents null reference exceptions when PayConnectPortal transactions don't have an associated card number
@@ -197,13 +197,19 @@ namespace OpenDentBusiness {
 			result+="Transaction #".PadRight(xright-xleft,'.')+refNum+Environment.NewLine;
 			result+="Name".PadRight(xright-xleft,'.')+nameOnCard+Environment.NewLine;
 			result+="Account".PadRight(xright-xleft,'.');
-			for(int i = 0;i<cardNumber.Length-4;i++) {
-				result+="*";
-			}
-			if(cardNumber.Length>=4) {
+			if(cardNumber.Length>4) {
+				for(int i = 0;i<cardNumber.Length-4;i++) {
+					result+="*";
+				}
 				result+=cardNumber.Substring(cardNumber.Length-4)+Environment.NewLine;//last 4 digits of card number only.
 			}
-			result+="Card Type".PadRight(xright-xleft,'.')+CreditCardUtils.GetCardType(cardNumber)+Environment.NewLine;
+			else {//Cardnumber is the last 4 digits
+				result+=cardNumber.PadLeft(16,'*')+Environment.NewLine;
+			}
+			if(cardType.IsNullOrEmpty()) {
+				cardType=CreditCardUtils.GetCardType(cardNumber);
+			}
+			result+="Card Type".PadRight(xright-xleft,'.')+cardType+Environment.NewLine;
 			result+="Entry".PadRight(xright-xleft,'.')+(String.IsNullOrEmpty(magData) ? "Manual" : "Swiped")+Environment.NewLine;
 			result+="Auth Code".PadRight(xright-xleft,'.')+authCode+Environment.NewLine;
 			result+="Result".PadRight(xright-xleft,'.')+statusDescription+Environment.NewLine;

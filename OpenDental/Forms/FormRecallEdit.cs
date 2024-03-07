@@ -124,7 +124,7 @@ namespace OpenDental{
 				return;
 			}
 			if(RecallCur.DatePrevious.Year>1880){
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This recall should not normally be deleted because the Previous Date has a value.  You should use the Disabled checkBox instead.  But if you are just deleting a duplicate, it's ok to continue.  Continue?")) {
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This recall should not normally be deleted because the Previous Date has a value.  You should use the Disabled check box instead.  But if you are just deleting a duplicate, it's ok to continue.  Recalls cannot be deleted unless all recall procedures have been deleted for this patient.  Continue?")) {
 					return;
 				}
 			}

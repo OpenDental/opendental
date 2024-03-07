@@ -29,7 +29,7 @@ namespace OpenDental {
 			_listPatFieldPickItems=PatFieldPickItems
 				.GetWhere(x=>x.PatFieldDefNum==patFieldDef.PatFieldDefNum)
 				.OrderBy(x=>x.ItemOrder).ToList();
-			_patFieldPickItem=_listPatFieldPickItems.Find(x=>x.Name==_patField.FieldValue);
+			_patFieldPickItem=_listPatFieldPickItems.Find(x=>x.Name==_patField.FieldValue); //This will be null if fieldValue & name weren't properly synched after a change of the fieldVal or a rename of the pickItem
 			listBoxPick.Items.AddList(_listPatFieldPickItems.FindAll(x=>!x.IsHidden),x=>x.Name);
 			if(!_patField.IsNew && _patFieldPickItem?.IsHidden==true) {
 				//this adds hidden item to list if patient already had it assigned.
@@ -49,6 +49,9 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
+			//If fieldValue & name weren't properly synched after a change of the fieldVal or a rename of the pickItem then we get a null _patFieldPickItem here.
+			//This makes sure to update the selected item to avoid database corruption and null reference errors. See jobNum 52130.
+			_patFieldPickItem??=(PatFieldPickItem)listBoxPick.SelectedItem;
 			// Value changed to blank, i.e. user hit clear then save.
 			if(listBoxPick.SelectedIndex==-1) {
 				//guaranteed to be not new.

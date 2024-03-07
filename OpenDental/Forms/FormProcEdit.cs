@@ -1572,43 +1572,8 @@ namespace OpenDental {
 			SetControlsUpperLeft();
 		}
 
-		///<summary>This method is called where a user is attempting to edit a procedure that is attached to a claim. There are two separate permissions 
-		///	that deal with this scenario and we need to consider if we need to check for one or both and why.</summary>
-		private bool HasPermissions(List<ClaimProc> listClaimProcs,List<Claim> listClaims) {
-			bool hasSentOrRecPreauth=false;
-			bool hasSentOrRecClaim=false;
-			DateTime dateOldestClaim=Procedures.GetOldestClaimDate(listClaimProcs,includePreAuth:false);
-			DateTime dateOldestPreAuth=Procedures.GetOldestPreAuth(listClaimProcs);
-			List<EnumPermType> listPermissionss=new List<EnumPermType>();
-			List<long> listClaimProcClaimNums=listClaimProcs.Select(x=>x.ClaimNum).ToList();
-			List<Claim> listClaimsSentOrReceived=listClaims.Where(x=>x.ClaimStatus=="R" || x.ClaimStatus=="S").ToList();
-			for(int i=0;i<listClaimsSentOrReceived.Count;i++) {
-				Claim claim=listClaimsSentOrReceived[i];
-				if(listClaimProcClaimNums.Contains(claim.ClaimNum)) {
-					hasSentOrRecPreauth|=claim.ClaimType=="PreAuth";
-					hasSentOrRecClaim|=claim.ClaimType!="PreAuth";
-				}
-			}
-			if(hasSentOrRecPreauth) {
-				listPermissionss.Add(EnumPermType.PreAuthSentEdit);
-			}
-			if(hasSentOrRecClaim) {
-				listPermissionss.Add(EnumPermType.ClaimSentEdit);
-			}
-			bool isAllowed=true;
-			for(int i=0;i<listPermissionss.Count();i++) {
-				if(listPermissionss[i]==EnumPermType.PreAuthSentEdit) {
-					isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestPreAuth);
-				}
-				else {
-					isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestClaim);
-				}
-			}
-			return isAllowed;
-		}
-
 		private void butEditAnyway_Click(object sender, System.EventArgs e) {
-			if(!HasPermissions(_loadData.ListClaimProcsForProc,_loadData.ListClaims)) {
+			if(!Procedures.HasPermissionsToEditProcWithClaim(_loadData.ListClaimProcsForProc,_loadData.ListClaims)) {
 				return;
 			}
 			if(_orthoProcLink!=null) {

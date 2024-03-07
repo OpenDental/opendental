@@ -2265,11 +2265,12 @@ namespace OpenDental {
 
 		/// <summary>Sends a task to the current user, opens the task, and opens a new tasknote for the user to edit.</summary>
 		private void SendToMeAndGoto_Clicked() {
+			Task task=gridMain.SelectedTag<Task>();
 			FormTaskEdit formTaskEditOpened=SendToMe_Clicked(openTask:false);
 			if(formTaskEditOpened==null) {
 				return;
 			}
-			Goto_Clicked();
+			Goto_Clicked(task);
 			formTaskEditOpened.Show();//We want to show any popups first before we open the task.
 			//If opened from another form and the user presses cancel on FormTaskNoteEdit, it will hide the task behind the parent form (this).  
 			//Calling activate makes sure if we cancel out, the topmost form will be FormTaskEdit.
@@ -2279,15 +2280,15 @@ namespace OpenDental {
 			Tasks.TaskEditCreateLog(EnumPermType.TaskNoteEdit,Lan.g(this,"Automatically added task note")+": Returned Call",Tasks.GetOne(formTaskEditOpened.TaskCur.TaskNum));
 		}
 
-		private void Goto_Clicked() {
+		private void Goto_Clicked(Task task=null) {
+			Task taskGoTo=task??gridMain.SelectedTag<Task>();
 			//not even allowed to get to this point unless a valid task
-			Task task=gridMain.SelectedTag<Task>();
-			if(task==null) {
+			if(taskGoTo==null) {
 				MsgBox.Show(this,"Please select a valid task.");
 				return;
 			}
-			TaskObjectTypeGoTo=task.ObjectType;
-			KeyNumGoTo=task.KeyNum;
+			TaskObjectTypeGoTo=taskGoTo.ObjectType;
+			KeyNumGoTo=taskGoTo.KeyNum;
 			FormOpenDental.S_TaskGoTo(TaskObjectTypeGoTo,KeyNumGoTo);
 		}
 

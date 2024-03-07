@@ -782,7 +782,7 @@ namespace OpenDental {
 				listBox.ColorSelectedBack=Color.Yellow;
 				return;
 			}
-			if(control is TextBox){
+			if(control is TextBox || control is RichTextBox){
 				control.Tag=msg;
 				if(msg==""){
 					control.BackColor=Color.White;

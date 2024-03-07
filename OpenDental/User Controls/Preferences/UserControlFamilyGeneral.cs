@@ -83,9 +83,7 @@ namespace OpenDental {
 			if(PIn.Enum<ClaimSnapshotTrigger>(PrefC.GetString(PrefName.ClaimSnapshotTriggerType),true) == ClaimSnapshotTrigger.ClaimCreate) {
 				groupBoxClaimSnapshot.Visible=false;
 			}
-			foreach(ClaimSnapshotTrigger trigger in Enum.GetValues(typeof(ClaimSnapshotTrigger))) {
-				comboClaimSnapshotTrigger.Items.Add(trigger.GetDescription());
-			}
+			comboClaimSnapshotTrigger.Items.AddEnums<ClaimSnapshotTrigger>();
 			comboClaimSnapshotTrigger.SelectedIndex=(int)PIn.Enum<ClaimSnapshotTrigger>(PrefC.GetString(PrefName.ClaimSnapshotTriggerType),true);
 			textClaimSnapshotRunTime.Text=PrefC.GetDateT(PrefName.ClaimSnapshotRunTime).ToShortTimeString();
 			checkPreferredReferrals.Checked=PrefC.GetBool(PrefName.ShowPreferedReferrals);
@@ -140,14 +138,8 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.PatientDOBMasked,checkPatientDOBMasked.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.SameForFamilyCheckboxesUnchecked,checkSameForFamily.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ShowPreferredPronounsForPats,checkPreferredPronouns.Checked);
-			foreach(ClaimSnapshotTrigger trigger in Enum.GetValues(typeof(ClaimSnapshotTrigger))) {
-				if(trigger.GetDescription()==comboClaimSnapshotTrigger.Text) {
-					if(Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,trigger.ToString())) {
-						Changed=true;
-					}
-					break;
-				}
-			}
+			ClaimSnapshotTrigger claimSnapshotTrigger=comboClaimSnapshotTrigger.GetSelected<ClaimSnapshotTrigger>();
+			Changed|=Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,claimSnapshotTrigger.ToString());
 			return true;
 		}
 		#endregion Methods - Public

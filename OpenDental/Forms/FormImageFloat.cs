@@ -762,8 +762,8 @@ namespace OpenDental {
 				//Job 20502 added this info for all patient images
 				//Job 35304 removed this info except for xrays because some people found it annoying
 				//Job 50474 added this info back for toothchart.
-				long defNumToothChart=Defs.GetImageCat(ImageCategorySpecial.T);
-				if(document.ImgType==ImageType.Radiograph || defNumToothChart==document.DocCategory) {
+				//Job 51614 removed this for Perio, Graphical Perio, and toothcharts. A new option for printing for these will be added in an enhancement.
+				if(document.ImgType==ImageType.Radiograph) {
 					str=PatientCur.GetNameLF();
 					widthStr=(int)g.MeasureString(str,fontTitle).Width;
 					g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
