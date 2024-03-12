@@ -291,12 +291,14 @@ namespace OpenDentBusiness{
 					//name of the guarantor.
 					patCur=listSelectedPatsInFam.First();
 				}
-				string famList="";//Leaving this blank by default will ensure the single patient reactivation email template will be used.
+				string famList="";//If famList is blank, the single patient reactivation email/postcard template will be used.
 				string strPatNums=patCur.PatNum.ToString();
 				string email=patCur.Email;
 				long emailPatNum=patCur.PatNum;
 				if(groupFamilies) {
-					famList=string.Join(", ",listSelectedPatsInFam.Select(x => x.FName));
+					if(listSelectedPatsInFam.Count>1) {
+						famList=string.Join(", ",listSelectedPatsInFam.Select(x => x.FName));//If famList is set, the family email/postcard template will be used.
+					}
 					strPatNums=string.Join(",",listSelectedPatsInFam.Select(x => x.PatNum));
 					email=guar.Email;//Use guarantor email for single selected patient when grouping by family.
 					emailPatNum=guar.PatNum;
