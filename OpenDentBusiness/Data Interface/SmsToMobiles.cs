@@ -339,8 +339,8 @@ namespace OpenDentBusiness
 				if (res[0] != 'O') { throw new Exception(); } // OK
 				var queueSize = await getQueueSizeAsync();
 
-                // Wait for 30 seconds + 20 seconds per message in the queue.  This should give enough time for the queue to clear
-                await System.Threading.Tasks.Task.Delay((30 + (queueSize * 20)) * 1000);
+                // Wait for 120 seconds + 20 seconds per message in the queue.  This should give enough time for the queue to clear
+                await System.Threading.Tasks.Task.Delay((120 + (queueSize * 20)) * 1000);
 				var message_id = res.Substring(4);
 
                 var responseUpdate = await sharedClient.GetAsync(authedpath + message_id);
@@ -388,7 +388,9 @@ namespace OpenDentBusiness
 					{
 						msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
 					}
-					string auth = ODSMS.AUTH;
+					// msg.MobilePhoneNumber = "6421467784"; // BUG: REMOVE SOON! 2024-02-06
+
+                    string auth = ODSMS.AUTH;
 					string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
 					EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
 					Console.WriteLine(send);

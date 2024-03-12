@@ -135,10 +135,10 @@ namespace OpenDental.Main_Modules
                 foreach (var sms in messagesToSend)
                 {
                     Console.WriteLine($"To: {sms.MobilePhoneNumber}, Message: {sms.MsgText}");
+
                     // Print any other relevant properties you want to check
                 }
-                // Really send them - disabled for now
-//                SmsToMobiles.SendSms(messagesToSend); // Assuming this method is async, you might need to await it
+                SmsToMobiles.SendSmsMany(messagesToSend);
             }
 
         }
@@ -149,19 +149,19 @@ namespace OpenDental.Main_Modules
             string from = "FROM patient AS p ";
             // Start with a WHERE TRUE to allow all subsequent conditions to use AND
             string where_true = "WHERE TRUE ";
-            string where_active = $"AND p.PatStatus NOT IN ({(int)PatientStatus.Archived}, {(int)PatientStatus.Deleted}) ";
+            string where_active = $"AND p.PatStatus IN ({(int)PatientStatus.Patient}) "; // Only text active patients
 
             // Filter for patients with a birthday today
             string where_birthday = $"AND MONTH(p.Birthdate) = MONTH(CURRENT_DATE()) " +
                                     $"AND DAY(p.Birthdate) = DAY(CURRENT_DATE()) ";
 
-            // Filter to exclude patients who have been contacted in the last 24 hours
+            // Filter to exclude patients who have been contacted in the last 72 hours
             string where_not_contacted = "AND NOT EXISTS (" +
                                          "SELECT 1 " +
                                          "FROM CommLog m " +
                                          "WHERE m.PatNum = p.PatNum " +
-                                         "AND m.Note LIKE '%Happy Birthday%' " +
-                                         "AND m.CommDateTime > DATE_SUB(NOW(), INTERVAL 24 HOUR)) ";
+                                         "AND m.Note LIKE '%Birthday%' " +
+                                         "AND m.CommDateTime > DATE_SUB(NOW(), INTERVAL 3 DAY)) ";
 
             string where_mobile_phone = "AND LENGTH(COALESCE(p.WirelessPhone,'')) > 7 ";
 
@@ -206,7 +206,15 @@ namespace OpenDental.Main_Modules
             log.CommDateTime = time;
             log.SentOrReceived = CommSentOrReceived.Received;
             log.CommType = Commlogs.GetTypeAuto(CommItemTypeAuto.TEXT);
-            log.UserNum = Security.CurUser.UserNum;
+            if (Security.CurUser != null)
+            {
+                log.UserNum = Security.CurUser.UserNum;
+            }
+            else
+            {
+                EventLog.WriteEntry("ODSMS", "Got logged out so can't check SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
+                return;
+            }
             var sms = new SmsFromMobile();
             sms.CommlogNum = Commlogs.Insert(log);
             sms.MobilePhoneNumber = msgFrom;
