@@ -340,6 +340,10 @@ namespace OpenDental{
 		private delegate void ToolBarClick();
 
 		private void menuConsent_Click(object sender,EventArgs e) {
+			if(PatientCur==null) {
+				MsgBox.Show("Please select a patient.");
+				return;
+			}
 			SheetDef sheetDef=(SheetDef)(((MenuItem)sender).Tag);
 			SheetDefs.GetFieldsAndParameters(sheetDef);
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,PatientCur.PatNum);

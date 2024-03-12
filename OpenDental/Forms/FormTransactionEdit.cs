@@ -22,11 +22,11 @@ namespace OpenDental{
 		public bool IsNew;
 
 		///<summary></summary>
-		public FormTransactionEdit(long transactionNum,long accountNum){
+		public FormTransactionEdit(Transaction transaction,long accountNum){
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_transaction=Transactions.GetTrans(transactionNum);
+			_transaction=transaction;
 			_accountOfOrigin=Accounts.GetAccount(accountNum);
 			//AccountNumOrigin=accountNumOrigin;
 		}

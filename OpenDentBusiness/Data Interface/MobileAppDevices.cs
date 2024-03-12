@@ -158,18 +158,20 @@ namespace OpenDentBusiness{
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
 
-		public static void DeleteMany(List<long> listMobileAppDeviceNums) {
-			if(listMobileAppDeviceNums.IsNullOrEmpty()) {
+		public static void DeleteMany(List<MobileAppDevice> listMobileAppDevices) {
+			if(listMobileAppDevices.IsNullOrEmpty()) {
 				return;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listMobileAppDeviceNums);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listMobileAppDevices);
 				return;
 			}
-			for(int i=0;i<listMobileAppDeviceNums.Count;i++) {
-				WebTypes.PushNotificationUtils.CI_IsAllowedChanged(listMobileAppDeviceNums[i],false); //deleting so always false
+			for(int i=0;i<listMobileAppDevices.Count;i++) {
+				if(listMobileAppDevices[i].IsEclipboardEnabled) {
+					WebTypes.PushNotificationUtils.CI_IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,false); //deleting so always false
+				}
 			}
-			Crud.MobileAppDeviceCrud.DeleteMany(listMobileAppDeviceNums);
+			Crud.MobileAppDeviceCrud.DeleteMany(listMobileAppDevices.Select(x => x.MobileAppDeviceNum).ToList());
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
 

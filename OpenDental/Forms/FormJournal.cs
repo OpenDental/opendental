@@ -189,7 +189,7 @@ namespace OpenDental{
 			Transaction transaction=new Transaction();
 			transaction.UserNum=Security.CurUser.UserNum;
 			Transactions.Insert(transaction);//we now have a TransactionNum, and datetimeEntry has been set
-			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transaction.TransactionNum,_account.AccountNum);
+			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transaction,_account.AccountNum);
 			formTransactionEdit.IsNew=true;
 			formTransactionEdit.ShowDialog();
 			if(formTransactionEdit.DialogResult==DialogResult.Cancel){
@@ -276,7 +276,13 @@ namespace OpenDental{
 				MsgBox.Show(this,"Cannot edit auto entries.");
 				return;
 			}
-			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transactionNum,_account.AccountNum);
+			Transaction transaction=Transactions.GetTrans(transactionNum);
+			if(transaction==null){
+				MsgBox.Show(this,"Cannot edit this transaction since it was removed by another user.");
+				FillGrid();
+				return;
+			}
+			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transaction,_account.AccountNum);
 			formTransactionEdit.ShowDialog();
 			if(formTransactionEdit.DialogResult==DialogResult.Cancel) {
 				return;

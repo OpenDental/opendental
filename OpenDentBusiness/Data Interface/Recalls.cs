@@ -1236,6 +1236,9 @@ namespace OpenDentBusiness {
 				+"OR ProcStatus = "+POut.Long((int)ProcStat.EO)+") "
 				+"GROUP BY RecallTypeNum";
 			DataTable tableDates=Db.GetTable(command);
+			if(tableDates.Rows.Count==0) {//This patient has no trigger procedures, so do not add/update their recalls.
+				return;
+			}
 			//Go through the type list and either update recalls, or create new recalls.
 			//Recalls that are no longer active because their type has no triggers will be ignored.
 			//It is assumed that there are no duplicate recall types for a patient.

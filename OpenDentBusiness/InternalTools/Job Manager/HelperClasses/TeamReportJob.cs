@@ -33,7 +33,7 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 						return -1;
 					}
 					//Replace all non-digit characters with blank string.
-					string priorityValue=Regex.Replace(_priority.ItemValue,@"\D","");
+					string priorityValue=Regex.Replace(_priority.ItemName,@"\D","");
 					return (int.TryParse(priorityValue,out int result)) ? result : -1;
 				}
 			}

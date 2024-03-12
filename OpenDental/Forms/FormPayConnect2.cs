@@ -268,7 +268,7 @@ namespace OpenDental {
 					wasSigned=true;
 				}
 			}
-			ReceiptStr=PayConnectTerminal.BuildReceiptString(_response,wasSigned,_clinicNum);
+			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData:"",_response.AuthCode,_response.Description,messages:null,_response.Amount,wasSigned,_clinicNum,_response.CardType);
 			return true;
 		}
 

@@ -667,7 +667,8 @@ namespace OpenDental
 				formImageFloat.Select();
 			}
 			else{
-				_listFormImageFloats.Insert(0,formImageFloat);//docked form must always be at idx 0			
+				_listFormImageFloats.Insert(0,formImageFloat);//docked form must always be at idx 0 
+				formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
 				//SelectTreeNode must come before show, because that will trigger Activated, then imageSelector.SetSelected
 				//But it must come after bounds are set for the zoom to be correct.
 				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
@@ -676,7 +677,6 @@ namespace OpenDental
 					return;
 				}
 				formImageFloat.Show(this);
-				formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
 			}
 			if(IsMountShowing()){
 				unmountedBar.SetObjects(formImageFloat.GetUmountedObjects());

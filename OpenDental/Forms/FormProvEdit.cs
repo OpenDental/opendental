@@ -133,8 +133,9 @@ namespace OpenDental{
 			else {
 				radioSSN.Checked=true;
 			}
+			_listClinicsForUser=Clinics.GetAllForUserod(Security.CurUser);
 			_listProviderClinicsOld=ProviderClinics.GetListForProvider(ProviderCur.ProvNum,
-				Clinics.GetForUserod(Security.CurUser,true).Select(x => x.ClinicNum)
+				_listClinicsForUser.Select(x => x.ClinicNum)
 				.Union(new List<long>() { 0 })//Always include 0 clinic, this is the default, NOT a headquarters only value.
 				.Distinct()
 				.ToList());
@@ -239,10 +240,9 @@ namespace OpenDental{
 			}
 			if(PrefC.HasClinicsEnabled) {
 				_listProviderClinicLinks=ProviderClinicLinks.GetForProvider(ProviderCur.ProvNum);
-				_listClinicsForUser=Clinics.GetForUserod(Security.CurUser);
 				//If there are no ProviderClinicLinks, then the provider is associated to all clinics.
 				bool doSelectAll=(_listProviderClinicLinks.Count==0 || _listClinicsForUser.All(x => _listProviderClinicLinks.Any(y => y.ClinicNum==x.ClinicNum)));
-				listBoxClinics.Items.AddList(_listClinicsForUser,x => x.Abbr);
+				listBoxClinics.Items.AddList(_listClinicsForUser.FindAll(x => !x.IsHidden),x => x.Abbr);
 				List<long> listClinicNumsForClinicLinks=_listProviderClinicLinks.Select(x => x.ClinicNum).ToList();;
 				for(int i=0; i<_listClinicsForUser.Count;i++) {
 					if(!doSelectAll && listClinicNumsForClinicLinks.Contains(_listClinicsForUser[i].ClinicNum)) {
@@ -668,7 +668,7 @@ namespace OpenDental{
 			ProviderClinics.Sync(_listProviderClinicsNew,_listProviderClinicsOld);
 			if(PrefC.HasClinicsEnabled) {
 				List<long> listClinicNumsSelectedLinks=listBoxClinics.GetListSelected<Clinic>().Select(x => x.ClinicNum).ToList();
-				List<Clinic> listClinicsAll=Clinics.GetDeepCopy(true);
+				List<Clinic> listClinicsAll=Clinics.GetDeepCopy();
 				List<long> listClinicNumsForUser=_listClinicsForUser.Select(x => x.ClinicNum).ToList();
 				bool canUserAccessAllClinics=(_listClinicsForUser.Count==listClinicsAll.Count);
 				if(checkAllClinics.Checked) {
