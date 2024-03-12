@@ -32,6 +32,7 @@ namespace OpenDental{
 			FillCategories();
 			FillButtons();
 			SetVisibility(); 
+			columnHeader1.Width=listViewButtons.Width-10;//listViewButtons has already been scaled at this point, scale the columnHeader.width slightly shorter to avoid a horizontal scrollbar
 		}
 
 		private void SetVisibility() {

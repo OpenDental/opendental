@@ -378,18 +378,27 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>This function is critical for measuring dynamic text fields on sheets when displaying or printing. Measures the size of a text string when displayed on screen.  This also differs from the regular MeasureString in that it will correctly measure trailing carriage returns as requiring additional lines.</summary>
-		public static int MeasureStringH(string text,Font font,int width,HorizontalAlignment align) {
-			if(!text.EndsWith("\n")) {
-				//Add an extra line of text so that we can calculate the top of that last fake line to figure out where the bottom of the last real line is.
-				text+="\n";
+		public static HeightAndChars MeasureStringH(string text,Font font,int width,int heightAvail,HorizontalAlignment align) {
+			Bitmap bitmap=new Bitmap(100,100);//only used for measurements.
+			bitmap.SetResolution(96,96);
+			Graphics g=Graphics.FromImage(bitmap);
+			SizeF sizeF=new SizeF(width,heightAvail);
+			StringFormat stringFormat=new StringFormat();
+			stringFormat.Trimming=StringTrimming.Word;
+			stringFormat.Alignment=StringAlignment.Near;
+			if(align==HorizontalAlignment.Center) {
+				stringFormat.Alignment=StringAlignment.Center;
 			}
-			text+="*";
-			//Assume height of font.Height+2 to force multi-line.
-			RichTextBox richTextBox=CreateTextBoxForSheetDisplay(text,font,width,font.Height+2,align,false);
-			int h=richTextBox.GetPositionFromCharIndex(richTextBox.Text.Length-1).Y;//The top of the fake line is the bottom of the last real line.
-			richTextBox.Font.Dispose();//This font was dynamically created when the textbox was created.
-			richTextBox.Dispose();
-			return h;
+			else if(align==HorizontalAlignment.Right) {
+				stringFormat.Alignment=StringAlignment.Far;
+			}
+			SizeF sizeFFit=g.MeasureString(text,font,sizeF,stringFormat,out int charactersFitted,out int linesFilled);//don't care about linesFilled
+			bitmap.Dispose();
+			g.Dispose();
+			HeightAndChars heightAndChars= new HeightAndChars();
+			heightAndChars.Chars=charactersFitted;
+			heightAndChars.Height=(int)Math.Floor(sizeFFit.Height);
+			return heightAndChars;
 		}
 
 		/// <summary>Returns whether a given RichTextBox is multiline or not. Considers single line textBoxes with GrowthBehavior to be multiline. Expects either a SheetField or a SheetDef, not both. </summary>
@@ -462,6 +471,14 @@ namespace OpenDentBusiness {
 			return text.Substring(listLines[lineIndex].FirstCharIndex,listLines[lineIndex+1].FirstCharIndex-listLines[lineIndex].FirstCharIndex);
 		}
 
+	}
+
+	/// <summary>Container class used to encapsulate the results of Graphics.MeasureString.</summary>
+	public class HeightAndChars{
+		/// <summary>The height of the text that will fit in the SizeF used by Graphics.MeasureString.</summary>
+		public int Height;
+		/// <summary>The number of characters that fit in the SizeF used by Graphics.MeasureString.</summary>
+		public int Chars;
 	}
 
 }

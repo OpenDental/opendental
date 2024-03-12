@@ -209,18 +209,23 @@ End of Checklist================================================================
 		///<summary>Helper method that inserts the specified html tag at the current cursor position. 
 		///If text is selected it will be wrapped in the specified tag.</summary>
 		private void HtmlTextHelper(string tagStart,string tagEnd,Func<string,string> innerTextAction=null,bool doInsertWhenNoSelection=true) {
+			int startIndex=textAnswer.SelectionStart;
 			if(textAnswer.SelectedText.Length>0) {//user has text highlighted
-				string selectedText=textAnswer.Text.Substring(textAnswer.SelectionStart,textAnswer.SelectionLength);
+				string selectedText=textAnswer.Text.Substring(startIndex,textAnswer.SelectionLength);
 				selectedText=(innerTextAction?.Invoke(selectedText)??selectedText);
 				string newText=tagStart+selectedText+tagEnd;
-				textAnswer.Text=textAnswer.Text.Substring(0,textAnswer.SelectionStart)+newText+textAnswer.Text.Substring(textAnswer.SelectionStart+textAnswer.SelectionLength);
+				textAnswer.Text=textAnswer.Text.Substring(0,startIndex)+newText+textAnswer.Text.Substring(startIndex+textAnswer.SelectionLength);
 				//Place cursor at the end of the current text.
-				textAnswer.SelectionStart=textAnswer.Text.Length;
+				textAnswer.SelectionStart=startIndex+newText.Length;
 			}
 			else if(doInsertWhenNoSelection) {//No text selected, insert tags at cursor position
-				textAnswer.Text=textAnswer.Text.Insert(textAnswer.SelectionStart,tagStart+tagEnd);
+				textAnswer.Text=textAnswer.Text.Insert(startIndex,tagStart+tagEnd);
 				//Be a bro and put the cursor between the html tags after inserting them
-				textAnswer.SelectionStart=textAnswer.Text.Length-tagEnd.Length;
+				textAnswer.SelectionStart=startIndex+tagStart.Length;
+			}
+			else {
+				//Warn the user for buttons that require selected text. Currently only possible when clicking butBullet.
+				MsgBox.Show(this, "Text must be highlighted to use this button.");
 			}
 			textAnswer.SelectionLength=0;
 			textAnswer.Focus();//.Select();
@@ -372,7 +377,7 @@ End of Checklist================================================================
 				return;
 			}
 			HtmlTextHelper("<ul>","</ul>",(selectedText) => {
-				string[] selectedLines=selectedText.Split("\n".ToCharArray(),StringSplitOptions.RemoveEmptyEntries);
+				string[] selectedLines=selectedText.Split("\r\n".ToCharArray(),StringSplitOptions.RemoveEmptyEntries);
 				return string.Join("",selectedLines.Select(x => $"<li>{x}</li>"));
 			},false);
 		}

@@ -259,23 +259,34 @@ namespace OpenDental {
 				listSelectedGridRows=gridMain.ListGridRows;
 			}
 			List<PayPlanCharge> listChargesToInsert=new List<PayPlanCharge>();
+			List<long> listPatNums=listSelectedGridRows.Select(x => (DataRow)x.Tag)
+				.Select(x => PIn.Long(x["PatNum"].ToString()))
+				.ToList();
+			long[] longArrPayPlanNums=listSelectedGridRows.Select(x => (DataRow)x.Tag)
+				.Select(y => PIn.Long(y["PayPlanNum"].ToString()))
+				.ToArray();
+			List<Family> listFamilies=Patients.GetFamilies(listPatNums);
+			List<PayPlan> listPayPlans=PayPlans.GetMany(longArrPayPlanNums);
 			for(int i = 0;i<listSelectedGridRows.Count;i++) {
 				DataRow dataRow=(DataRow)listSelectedGridRows[i].Tag;
+				PayPlan payPlan=listPayPlans.ToList().Find(x => x.PayPlanNum==PIn.Long(dataRow["PayPlanNum"].ToString()));
+				Family family=listFamilies.Find(x => x.ListPats.Select(x => x.PatNum).Contains(PIn.Long(dataRow["PatNum"].ToString())));
+				if(family==null || payPlan==null) {
+					continue;
+				}
 				//Create Negative PayPlan Charge that counters the debit
-				PayPlanCharge offSetCharge=new PayPlanCharge();
-				offSetCharge.PatNum=PIn.Long(dataRow["PatNum"].ToString());
-				offSetCharge.PayPlanNum=PIn.Long(dataRow["PayPlanNum"].ToString());
-				offSetCharge.ProvNum=PIn.Long(dataRow["ProvNum"].ToString());
-				offSetCharge.ClinicNum=PIn.Long(dataRow["ClinicNum"].ToString());
-				offSetCharge.Guarantor=PIn.Long(dataRow["Guarantor"].ToString());
-				offSetCharge.Principal=-PIn.Double(dataRow["amtOverCharged"].ToString());
-				offSetCharge.LinkType=PIn.Enum<PayPlanLinkType>(dataRow["LinkType"].ToString());
-				offSetCharge.FKey=PIn.Long(dataRow["FKey"].ToString());
-				offSetCharge.ChargeDate=DateTime.Now;
-				offSetCharge.ChargeType=PayPlanChargeType.Debit;
-				offSetCharge.IsOffset=true;
-				offSetCharge.Note="Offsetting overcharge.";
-				listChargesToInsert.Add(offSetCharge);
+				PayPlanCharge payPlanChargeOffset=PayPlanEdit.CreateDebitChargeDynamic(payPlan,
+					family,
+					PIn.Long(dataRow["ProvNum"].ToString()),
+					PIn.Long(dataRow["ClinicNum"].ToString()),
+					principalAmt:-PIn.Double(dataRow["amtOverCharged"].ToString()),
+					interestAmt:0,
+					dateCharge:DateTime.Now,
+					note:"Offsetting overcharge.",
+					PIn.Long(dataRow["FKey"].ToString()),
+					PIn.Enum<PayPlanLinkType>(dataRow["LinkType"].ToString())
+				);
+				listChargesToInsert.Add(payPlanChargeOffset);
 			}
 			PayPlanCharges.InsertMany(listChargesToInsert);
 			FillGrid();

@@ -559,7 +559,7 @@ namespace OpenDental {
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(75, 24);
 			this.butSend.TabIndex = 142;
-			this.butSend.Text = "&Send To...";
+			this.butSend.Text = "Send &To...";
 			this.butSend.Click += new System.EventHandler(this.butSend_Click);
 			// 
 			// labelReply

@@ -27,7 +27,11 @@ namespace OpenDental {
 			else if(EhrAmendmentCur!=null) {
 				contrImagesMain.ModuleSelectedAmendment(EhrAmendmentCur);
 			}
+			contrImagesMain.CloseClick+=ContrImagesMain_CloseClick;
 		}
 
+		private void ContrImagesMain_CloseClick(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
 	}
 }

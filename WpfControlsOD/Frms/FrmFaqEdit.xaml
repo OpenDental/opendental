@@ -8,38 +8,38 @@
              mc:Ignorable="d"
              Width="1184" Height="696" 
              Text="FAQ Edit" >
-	<Grid Background="#FFFCFDFE" >
-		<ui:Label x:Name="label2" Width="100" Height="14" Margin="716,22,0,0" Text="Preview" VAlign="Center" />
-		<ui:WebBrowser x:Name="webPreview" Width="453" Height="579" Margin="719,41,0,0" />
-		<ui:Button x:Name="butBullet" Width="25" Height="24" Margin="278,54,0,0" Text="" Click="butBullet_Click" BitmapFileName="bullets_24x24.png" />
-		<ui:Button x:Name="butSave" Width="75" Height="24" Margin="1097,658,0,0" Text="_Save" Click="butSave_Click" />
-		<ui:Button x:Name="butDelete" Width="75" Height="24" Margin="18,656,0,0" Text="Delete" Click="butDelete_Click" Icon="DeleteX" />
-		<ui:ListBox x:Name="listBoxLinkedPages" Width="186" Height="238" Margin="504,442,0,0" />
-		<ui:Label x:Name="label3" Width="142" Height="18" Margin="501,422,0,0" Text="Linked Manual Pages" VAlign="Center" />
-		<ui:Button x:Name="butLeft" Width="35" Height="24" Margin="447,571,0,0" Text="" Click="butLeft_Click" Icon="ArrowLeft" />
-		<ui:Button x:Name="butRight" Width="35" Height="24" Margin="447,529,0,0" Text="" Click="butRight_Click" Icon="ArrowRight" />
-		<ui:ListBox x:Name="listAvailableManualPages" Width="236" Height="238" Margin="194,442,0,0" />
-		<ui:TextBox x:Name="textLinkPage" Width="139" Height="20" Margin="291,417,0,0" />
-		<ui:Label x:Name="labelManualPageLink" Width="120" Height="20" Margin="170,417,0,0" Text="Filter Page Names" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textEmbeddedMediaURL" Width="446" Height="20" Margin="194,377,0,0" />
-		<ui:Label x:Name="labelEmbeddedMediaUrl" Width="176" Height="21" Margin="15,377,0,0" Text="Embedded Media URL (optional)" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textImagePath" Width="446" Height="20" Margin="194,349,0,0" />
-		<ui:Label x:Name="labelImagePath" Width="120" Height="21" Margin="70,348,0,0" Text="Image URL (optional)" HAlign="Right" VAlign="Center" />
-		<ui:CheckBox x:Name="checkSticky" Width="113" Height="17" Margin="95,326,0,0" Text="Stickied to Top" CheckAlign="MiddleRight" />
-		<ui:Button x:Name="butVersionPick" Width="27" Height="20" Margin="295,301,0,0" Text="..." Click="butVersionPick_Click" />
-		<ui:TextBox x:Name="textManualVersion" Width="100" Height="20" Margin="195,301,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
-		<ui:Label x:Name="label1" Width="108" Height="21" Margin="80,300,0,0" Text="Version" HAlign="Right" VAlign="Center" />
-		<ui:Button x:Name="buttonHyperlink" Width="25" Height="24" Margin="312,54,0,0" Text="" Click="butHyperlink_Click" BitmapFileName="ExternalLink.png" />
-		<ui:Button x:Name="buttonUnderline" Width="24" Height="24" Margin="248,54,0,0" Text="_U" Click="butUnderline_Click" />
-		<ui:Button x:Name="buttonItalics" Width="24" Height="24" Margin="221,54,0,0" Text="I" Click="butItalics_Click" FontStyle="Italic" />
-		<ui:Button x:Name="buttonBold" Width="24" Height="24" Margin="194,54,0,0" Text="B" Click="butBold_Click" FontWeight="Bold" />
-		<ui:TextRich x:Name="textAnswer" Width="361" Height="209" Margin="195,84,0,0" QuickPasteType="FAQ" />
-		<ui:Label x:Name="labelAnswerText" Width="115" Height="21" Margin="77,78,0,0" Text="Answer Content" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textQuestion" Width="365" Height="20" Margin="194,22,0,0" />
-		<ui:Label x:Name="labelQuestion" Width="100" Height="14" Margin="92,25,0,0" Text="Question Text" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelUserCreated" Width="56" Height="21" Margin="328,301,0,0" Text="Created" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textUserCreated" Width="100" Height="20" Margin="384,301,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
-		<ui:Label x:Name="labelUserEdited" Width="56" Height="21" Margin="484,301,0,0" Text="Edited" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textUserEdited" Width="100" Height="20" Margin="540,301,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
-	</Grid>
+    <Grid Background="#FFFCFDFE" >
+        <ui:Label x:Name="label2" Width="100" Height="14" Margin="716,22,0,0" Text="Preview" VAlign="Center" />
+        <ui:WebBrowser x:Name="webPreview" Width="453" Height="579" Margin="719,41,0,0" />
+        <ui:Button x:Name="butBullet" Width="55" Height="24" Margin="278,35,0,0" Text="List" Click="butBullet_Click" BitmapFileName="bullets_24x24.png" />
+        <ui:Button x:Name="butSave" Width="75" Height="24" Margin="1097,658,0,0" Text="_Save" Click="butSave_Click" />
+        <ui:Button x:Name="butDelete" Width="75" Height="24" Margin="18,656,0,0" Text="Delete" Click="butDelete_Click" Icon="DeleteX" />
+        <ui:ListBox x:Name="listBoxLinkedPages" Width="186" Height="99" Margin="505,539,0,0" />
+        <ui:Label x:Name="label3" Width="142" Height="18" Margin="502,519,0,0" Text="Linked Manual Pages" VAlign="Center" />
+        <ui:Button x:Name="butLeft" Width="35" Height="24" Margin="450,593,0,0" Text="" Click="butLeft_Click" Icon="ArrowLeft" />
+        <ui:Button x:Name="butRight" Width="35" Height="24" Margin="450,563,0,0" Text="" Click="butRight_Click" Icon="ArrowRight" />
+        <ui:ListBox x:Name="listAvailableManualPages" Width="236" Height="99" Margin="195,539,0,0" />
+        <ui:TextBox x:Name="textLinkPage" Width="139" Height="20" Margin="292,514,0,0" />
+        <ui:Label x:Name="labelManualPageLink" Width="120" Height="20" Margin="171,514,0,0" Text="Filter Page Names" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textEmbeddedMediaURL" Width="446" Height="20" Margin="195,485,0,0" />
+        <ui:Label x:Name="labelEmbeddedMediaUrl" Width="176" Height="21" Margin="16,485,0,0" Text="Embedded Media URL (optional)" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textImagePath" Width="446" Height="20" Margin="195,461,0,0" />
+        <ui:Label x:Name="labelImagePath" Width="120" Height="22" Margin="71,460,0,0" Text="Image URL (optional)" HAlign="Right" VAlign="Center" />
+        <ui:CheckBox x:Name="checkSticky" Width="113" Height="17" Margin="96,439,0,0" Text="Stickied to Top" CheckAlign="MiddleRight" />
+        <ui:Button x:Name="butVersionPick" Width="27" Height="20" Margin="296,416,0,0" Text="..." Click="butVersionPick_Click" />
+        <ui:TextBox x:Name="textManualVersion" Width="100" Height="20" Margin="196,416,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+        <ui:Label x:Name="label1" Width="108" Height="21" Margin="81,415,0,0" Text="Version" HAlign="Right" VAlign="Center" />
+        <ui:Button x:Name="buttonHyperlink" Width="64" Height="24" Margin="339,35,0,0" Text="a href" Click="butHyperlink_Click" BitmapFileName="ExternalLink.png" />
+        <ui:Button x:Name="buttonUnderline" Width="24" Height="24" Margin="248,35,0,0" Text="_U" Click="butUnderline_Click" />
+        <ui:Button x:Name="buttonItalics" Width="24" Height="24" Margin="221,35,0,0" Text="I" Click="butItalics_Click" FontStyle="Italic" />
+        <ui:Button x:Name="buttonBold" Width="24" Height="24" Margin="194,35,0,0" Text="B" Click="butBold_Click" FontWeight="Bold" />
+        <ui:TextBox x:Name="textAnswer" Width="495" Height="347" Margin="195,62,0,0" IsMultiline="True"/>
+        <ui:Label x:Name="labelAnswerText" Width="115" Height="21" Margin="77,56,0,0" Text="Answer Content" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textQuestion" Width="365" Height="20" Margin="194,11,0,0" />
+        <ui:Label x:Name="labelQuestion" Width="100" Height="14" Margin="92,14,0,0" Text="Question Text" HAlign="Right" VAlign="Center" />
+        <ui:Label x:Name="labelUserCreated" Width="56" Height="21" Margin="329,416,0,0" Text="Created" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textUserCreated" Width="100" Height="20" Margin="385,416,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+        <ui:Label x:Name="labelUserEdited" Width="56" Height="21" Margin="485,416,0,0" Text="Edited" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textUserEdited" Width="100" Height="20" Margin="0,416,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" HorizontalAlignment="Center" />
+    </Grid>
 </local:FrmODBase>

@@ -376,8 +376,7 @@ namespace OpenDental {
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(564, 16);
 			this.label3.TabIndex = 25;
-			this.label3.Text = "Items higher in the list are more general. Items lower in the list take preceden" +
-    "ce .";
+			this.label3.Text = "Items higher in the list are more general. Items lower in the list take precedence.";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// label4

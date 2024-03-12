@@ -490,13 +490,13 @@ namespace OpenDental{
 			
 			//todo: Check all parts of program to allow either trailing slash or not
 			if(checkIsClaimExportAllowed.Checked && textExportPath.Text!="") {
-				bool hasResult=CheckOrCreateDirectory(textExportPath.Text);
+				bool hasResult=CheckOrCreateDirectory(textExportPath.Text,pathName:"Export");
 				if(!hasResult) {
 					return false;
 				}
 			}
 			if(textResponsePath.Text!="") {//Clinic
-				bool hasResult=CheckOrCreateDirectory(textResponsePath.Text);
+				bool hasResult=CheckOrCreateDirectory(textResponsePath.Text,pathName:"Report");
 				if(!hasResult) {
 					return false;
 				}
@@ -519,7 +519,7 @@ namespace OpenDental{
 			return true;
 		}
 
-		private bool CheckOrCreateDirectory(string directoryName) {
+		private bool CheckOrCreateDirectory(string directoryName,string pathName) {
 			bool isUsingODCloudClient=x837Controller.DoSendBatchToCloudClient(ClearinghouseCur);
 			bool didDirectoryExist=false;
 			if(isUsingODCloudClient && ODEnvironment.IsCloudServer) {
@@ -528,7 +528,7 @@ namespace OpenDental{
 			else {
 				didDirectoryExist=Directory.Exists(directoryName);
 			}
-			if(didDirectoryExist || !MsgBox.Show(this,MsgBoxButtons.YesNo,"Export path does not exist. Attempt to create?")) {
+			if(didDirectoryExist || !MsgBox.Show(this,MsgBoxButtons.YesNo,pathName+" path does not exist. Attempt to create?")) {
 				return true;//Nothing to create.
 			}
 			try {

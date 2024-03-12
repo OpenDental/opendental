@@ -177,18 +177,18 @@ namespace OpenDental{
 			}
 		}
 
-		///<summary>Alters the passed in table to include a Care Credit Fee column before the Amount column. Fills the new column for each row with the MerchantFee, if necessary. 
+		///<summary>Alters the passed in table to include a CareCredit Fee column before the Amount column. Fills the new column for each row with the MerchantFee, if necessary. 
 		///For CareCredit, the negative of the MerchantFee is used.</summary>
 		private void AddCareCreditFeeColumn(DataTable table) {
 			if(table==null) {
 				return;
 			}
-			DataColumn col=table.Columns.Add("Care Credit Fee");
+			DataColumn col=table.Columns.Add("CareCredit Fee");
 			col.SetOrdinal(table.Columns["amt"].Ordinal);
 			for(int i=0;i<table.Rows.Count;i++) {
-				table.Rows[i]["Care Credit Fee"]=0;
+				table.Rows[i]["CareCredit Fee"]=0;
 				if(PIn.Long(table.Rows[i]["PaymentSource"].ToString())==(long)CreditCardSource.CareCredit) {
-					table.Rows[i]["Care Credit Fee"]=PIn.Decimal(table.Rows[i]["MerchantFee"].ToString())*-1;
+					table.Rows[i]["CareCredit Fee"]=PIn.Decimal(table.Rows[i]["MerchantFee"].ToString())*-1;
 					table.Rows[i]["afterFee"]=PIn.Decimal(table.Rows[i]["amt"].ToString())-PIn.Decimal(table.Rows[i]["MerchantFee"].ToString());
 				}
 			}
@@ -296,7 +296,7 @@ namespace OpenDental{
 			int lengthAmount=120;
 			int lengthPatientName=270;
 			//Both of these can be checked, meaning we'd need to borrow space for two columns instead of just one.
-			if(checkShowCareCreditFees.Checked) { //Need to borrow 95 pixels for the Care Credit Fee column.
+			if(checkShowCareCreditFees.Checked) { //Need to borrow 95 pixels for the CareCredit Fee column.
 				lengthAmount-=20;
 				lengthPatientName-=75;
 			}
@@ -401,7 +401,7 @@ namespace OpenDental{
 				queryObject.AddColumn("Check#",75,FieldValueType.String,font);
 				//If either of the "Show Fees" checkboxes is checked, we need to add the respective columns to the query object and to the base table, before the Amount column.
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddColumn("Care Credit Fee",95,FieldValueType.Number,font);
+					queryObject.AddColumn("CareCredit Fee",95,FieldValueType.Number,font);
 					AddCareCreditFeeColumn(tablePat);
 				}
 				if(checkShowPayConnectFees.Checked) {
@@ -412,7 +412,7 @@ namespace OpenDental{
 				//Summarize the total amts to include at the end of this query object, placing the summarized value under the Amount column.
 				queryObject.AddGroupSummaryField("Total Patient Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,20);
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddGroupSummaryField("Total Care Credit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,4);
+					queryObject.AddGroupSummaryField("Total CareCredit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,4);
 				}
 				if(checkShowPayConnectFees.Checked) {
 					queryObject.AddGroupSummaryField("Total PayConnect Fees:","Amount","PayConnect Fee",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,4);
@@ -435,7 +435,7 @@ namespace OpenDental{
 				queryObject.AddColumn("Check#",75,FieldValueType.String,font);
 				//If either of the "Show Fees" checkboxes is checked, we need to add the respective columns to the query object and to the base table, before the Amount column.
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddColumn("Care Credit Fee",95,FieldValueType.Number,font);
+					queryObject.AddColumn("CareCredit Fee",95,FieldValueType.Number,font);
 					AddCareCreditFeeColumn(tableOnlinePat);
 				}
 				if(checkShowPayConnectFees.Checked) {
@@ -447,7 +447,7 @@ namespace OpenDental{
 				queryObject.AddGroupSummaryField("Total Online Patient Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,20);
 				//If either of the "Show Fees" checkboxes is checked, summarize the totals of the fees to include at the end of this query object, placing the summarized value under the Amount column.
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddGroupSummaryField("Total Care Credit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,4);
+					queryObject.AddGroupSummaryField("Total CareCredit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,4);
 				}
 				if(checkShowPayConnectFees.Checked) {
 					queryObject.AddGroupSummaryField("Total PayConnect Fees:","Amount","PayConnect Fee",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,4);
@@ -460,7 +460,7 @@ namespace OpenDental{
 				queryObject.AddGroupSummaryField("Total All Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroupsAllPayments),Color.Black,fontBold,0,20);
 				//If either of the "Show Fees" checkboxes is checked, summarize the totals of the fees from both the Patient Payment and Online Patient Payment groups to include at the end of this query object.
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddGroupSummaryField("Total All Care Credit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsAllPatientPayments),Color.Black,fontBold,0,4);
+					queryObject.AddGroupSummaryField("Total All CareCredit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsAllPatientPayments),Color.Black,fontBold,0,4);
 				}
 				if(checkShowPayConnectFees.Checked) {
 					queryObject.AddGroupSummaryField("Total All PayConnect Fees:","Amount","PayConnect Fee",SummaryOperation.Sum,new List<int>(summaryGroupsAllPatientPayments),Color.Black,fontBold,0,4);

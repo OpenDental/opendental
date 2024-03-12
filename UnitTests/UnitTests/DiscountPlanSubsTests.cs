@@ -209,8 +209,169 @@ namespace UnitTests.DiscountPlanSubsTests {
 			Assert.AreEqual(true,buckets>index);
 			Assert.AreEqual(isInRange,true);
 			Assert.AreEqual(1,buckets);
+			Assert.AreEqual(new DateTime(2020,2,29),startDate);
+			Assert.AreEqual(new DateTime(2021,2,27),stopDate);
+		}
+
+		[TestMethod]
+		///<Summary></Summary>
+		public void DiscountPlanSubs_GetAnnualDateRangeSegmentForGivenDate_IsInRangeLeapYear4() {
+			//*****************************************************************
+			//Annual Range: 02/29/2020 - 02/27/2021
+			//DP Effective: 02/29/2020
+			//DP Term: MinVal
+			//*****************************************************************
+			Patient pat=PatientT.CreatePatient();
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
+			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:4);
+			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(pat.PatNum,discountPlan.DiscountPlanNum,dateEffective:new DateTime(2020,2,29));
+			DateTime refDate=new DateTime(2020,2,29);
+			bool isInRange=DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(refDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate);
+			int buckets=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,refDate).Count;
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,refDate);
+			Assert.AreEqual(true,buckets>index);
+			Assert.AreEqual(isInRange,true);
+			Assert.AreEqual(1,buckets);
+			Assert.AreEqual(new DateTime(2020,2,29),startDate);
+			Assert.AreEqual(new DateTime(2021,2,27),stopDate);
+		}
+
+		[TestMethod]
+		///<Summary></Summary>
+		public void DiscountPlanSubs_GetAnnualDateRangeSegmentForGivenDate_IsInRangeLeapYear5() {
+			//*****************************************************************
+			//Annual Range: 02/29/2020 - 02/27/2021
+			//DP Effective: 02/29/2020
+			//DP Term: MinVal
+			//*****************************************************************
+			Patient pat=PatientT.CreatePatient();
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
+			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:4);
+			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(pat.PatNum,discountPlan.DiscountPlanNum,dateEffective:new DateTime(2020,2,29));
+			DateTime refDate=new DateTime(2021,2,27);
+			bool isInRange=DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(refDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate);
+			int buckets=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,refDate).Count;
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,refDate);
+			Assert.AreEqual(true,buckets>index);
+			Assert.AreEqual(isInRange,true);
+			Assert.AreEqual(1,buckets);
+			Assert.AreEqual(new DateTime(2020,2,29),startDate);
+			Assert.AreEqual(new DateTime(2021,2,27),stopDate);
+		}
+
+		[TestMethod]
+		///<Summary></Summary>
+		public void DiscountPlanSubs_GetAnnualDateRangeSegmentForGivenDate_IsInRangeLeapYear6() {
+			//*****************************************************************
+			//Annual Range: 02/28/2021 - 02/27/2022
+			//DP Effective: 02/29/2020
+			//DP Term: MinVal
+			//*****************************************************************
+			Patient pat=PatientT.CreatePatient();
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
+			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:4);
+			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(pat.PatNum,discountPlan.DiscountPlanNum,dateEffective:new DateTime(2020,2,29));
+			DateTime refDate=new DateTime(2021,2,28);
+			bool isInRange=DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(refDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate);
+			int buckets=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,refDate).Count;
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,refDate);
+			Assert.AreEqual(true,buckets>index);
+			Assert.AreEqual(isInRange,true);
+			Assert.AreEqual(2,buckets);
 			Assert.AreEqual(new DateTime(2021,2,28),startDate);
 			Assert.AreEqual(new DateTime(2022,2,27),stopDate);
+		}
+
+		[TestMethod]
+		///<Summary></Summary>
+		public void DiscountPlanSubs_GetAnnualDateRangeSegmentForGivenDate_IsInRangeLeapYear7() {
+			//*****************************************************************
+			//Annual Range: 02/28/2024 - 02/27/2025
+			//DP Effective: 02/29/2020
+			//DP Term: MinVal
+			//*****************************************************************
+			Patient pat=PatientT.CreatePatient();
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
+			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:4);
+			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(pat.PatNum,discountPlan.DiscountPlanNum,dateEffective:new DateTime(2020,2,29));
+			DateTime refDate=new DateTime(2024,2,28);
+			bool isInRange=DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(refDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate);
+			int buckets=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,refDate).Count;
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,refDate);
+			Assert.AreEqual(true,buckets>index);
+			Assert.AreEqual(isInRange,true);
+			Assert.AreEqual(5,buckets);
+			Assert.AreEqual(new DateTime(2024,2,28),startDate);
+			Assert.AreEqual(new DateTime(2025,2,27),stopDate);
+		}
+
+		[TestMethod]
+		///<Summary></Summary>
+		public void DiscountPlanSubs_GetAnnualDateRangeSegmentForGivenDate_IsInRangeLeapYear8() {
+			//*****************************************************************
+			//Annual Range: 02/28/2024 - 02/27/2025
+			//DP Effective: 02/29/2020
+			//DP Term: MinVal
+			//*****************************************************************
+			Patient pat=PatientT.CreatePatient();
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
+			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:4);
+			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(pat.PatNum,discountPlan.DiscountPlanNum,dateEffective:new DateTime(2020,2,29));
+			DateTime refDate=new DateTime(2024,2,29);
+			bool isInRange=DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(refDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate);
+			int buckets=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,refDate).Count;
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,refDate);
+			Assert.AreEqual(true,buckets>index);
+			Assert.AreEqual(isInRange,true);
+			Assert.AreEqual(5,buckets);
+			Assert.AreEqual(new DateTime(2024,2,28),startDate);
+			Assert.AreEqual(new DateTime(2025,2,27),stopDate);
+		}
+
+		[TestMethod]
+		///<Summary></Summary>
+		public void DiscountPlanSubs_GetAnnualDateRangeSegmentForGivenDate_IsInRangeLeapYear9() {
+			//*****************************************************************
+			//Annual Range: 02/29/2024 - 02/27/2025
+			//DP Effective: 02/29/2024
+			//DP Term: MinVal
+			//*****************************************************************
+			Patient pat=PatientT.CreatePatient();
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
+			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:4);
+			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(pat.PatNum,discountPlan.DiscountPlanNum,dateEffective:new DateTime(2024,2,29));
+			DateTime refDate=new DateTime(2025,2,27);
+			bool isInRange=DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(refDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate);
+			int buckets=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,refDate).Count;
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,refDate);
+			Assert.AreEqual(true,buckets>index);
+			Assert.AreEqual(isInRange,true);
+			Assert.AreEqual(1,buckets);
+			Assert.AreEqual(new DateTime(2024,2,29),startDate);
+			Assert.AreEqual(new DateTime(2025,2,27),stopDate);
+		}
+
+		[TestMethod]
+		///<Summary></Summary>
+		public void DiscountPlanSubs_GetAnnualDateRangeSegmentForGivenDate_IsInRangeLeapYear10() {
+			//*****************************************************************
+			//Annual Range: 02/28/2025 - 02/27/2026
+			//DP Effective: 02/29/2024
+			//DP Term: MinVal
+			//*****************************************************************
+			Patient pat=PatientT.CreatePatient();
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
+			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:4);
+			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(pat.PatNum,discountPlan.DiscountPlanNum,dateEffective:new DateTime(2024,2,29));
+			DateTime refDate=new DateTime(2025,2,28);
+			bool isInRange=DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(refDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate);
+			int buckets=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,refDate).Count;
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,refDate);
+			Assert.AreEqual(true,buckets>index);
+			Assert.AreEqual(isInRange,true);
+			Assert.AreEqual(2,buckets);
+			Assert.AreEqual(new DateTime(2025,2,28),startDate);
+			Assert.AreEqual(new DateTime(2026,2,27),stopDate);
 		}
 
 		[TestMethod]

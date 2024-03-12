@@ -266,7 +266,7 @@ namespace OpenDental {
 
 		//~15ms with 8 TaskLists, about 1 frame @ 60fps
 		///<summary>Gets the changed preferences for the tree, then updates the database with the changes.</summary>
-		private void butOK_Click(object sender,EventArgs e) {
+		private void butSave_Click(object sender,EventArgs e) {
 			//Setup all the changed preferences
 			for(int i=0;i<treeSubscriptions.Nodes.Count;i++) {
 				SetBlockedPrefsRecursive(treeSubscriptions.Nodes[i]);

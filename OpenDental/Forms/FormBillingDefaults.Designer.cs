@@ -91,7 +91,7 @@ namespace OpenDental{
 			this.groupBox1.Controls.Add(this.textSmsTemplate);
 			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Location = new System.Drawing.Point(25, 557);
+			this.groupBox1.Location = new System.Drawing.Point(12, 557);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(850, 123);
 			this.groupBox1.TabIndex = 250;
@@ -171,7 +171,7 @@ namespace OpenDental{
 			this.textInvoiceNote.BackColor = System.Drawing.SystemColors.Window;
 			this.textInvoiceNote.DetectLinksEnabled = false;
 			this.textInvoiceNote.DetectUrls = false;
-			this.textInvoiceNote.Location = new System.Drawing.Point(34, 490);
+			this.textInvoiceNote.Location = new System.Drawing.Point(24, 490);
 			this.textInvoiceNote.Name = "textInvoiceNote";
 			this.textInvoiceNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Statement;
 			this.textInvoiceNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -181,7 +181,7 @@ namespace OpenDental{
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(33, 473);
+			this.label11.Location = new System.Drawing.Point(23, 473);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(152, 16);
 			this.label11.TabIndex = 250;
@@ -198,7 +198,7 @@ namespace OpenDental{
 			this.groupBox3.Controls.Add(this.label9);
 			this.groupBox3.Controls.Add(this.textBillingEmailSubject);
 			this.groupBox3.Controls.Add(this.label10);
-			this.groupBox3.Location = new System.Drawing.Point(24, 273);
+			this.groupBox3.Location = new System.Drawing.Point(12, 273);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(850, 200);
 			this.groupBox3.TabIndex = 248;
@@ -287,7 +287,7 @@ namespace OpenDental{
 			this.groupBoxBilling.Controls.Add(this.label3);
 			this.groupBoxBilling.Controls.Add(this.textVendorId);
 			this.groupBoxBilling.Controls.Add(this.label2);
-			this.groupBoxBilling.Location = new System.Drawing.Point(24, 131);
+			this.groupBoxBilling.Location = new System.Drawing.Point(12, 131);
 			this.groupBoxBilling.Name = "groupBoxBilling";
 			this.groupBoxBilling.Size = new System.Drawing.Size(850, 140);
 			this.groupBoxBilling.TabIndex = 247;
@@ -536,7 +536,7 @@ namespace OpenDental{
 			// label1
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label1.Location = new System.Drawing.Point(715, 9);
+			this.label1.Location = new System.Drawing.Point(702, 9);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(65, 14);
 			this.label1.TabIndex = 245;
@@ -546,7 +546,7 @@ namespace OpenDental{
 			// textDays
 			// 
 			this.textDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textDays.Location = new System.Drawing.Point(669, 7);
+			this.textDays.Location = new System.Drawing.Point(656, 7);
 			this.textDays.Name = "textDays";
 			this.textDays.Size = new System.Drawing.Size(44, 20);
 			this.textDays.TabIndex = 0;
@@ -562,7 +562,7 @@ namespace OpenDental{
 			// labelStartDate
 			// 
 			this.labelStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelStartDate.Location = new System.Drawing.Point(520, 9);
+			this.labelStartDate.Location = new System.Drawing.Point(507, 9);
 			this.labelStartDate.Name = "labelStartDate";
 			this.labelStartDate.Size = new System.Drawing.Size(147, 14);
 			this.labelStartDate.TabIndex = 221;
@@ -587,7 +587,7 @@ namespace OpenDental{
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(22, 31);
+			this.label4.Location = new System.Drawing.Point(23, 31);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(575, 32);
 			this.label4.TabIndex = 240;
@@ -599,7 +599,7 @@ namespace OpenDental{
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(799, 684);
+			this.butSave.Location = new System.Drawing.Point(798, 688);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
@@ -609,7 +609,7 @@ namespace OpenDental{
 			// checkBoxBillShowTransSinceZero
 			// 
 			this.checkBoxBillShowTransSinceZero.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkBoxBillShowTransSinceZero.Location = new System.Drawing.Point(592, 32);
+			this.checkBoxBillShowTransSinceZero.Location = new System.Drawing.Point(579, 32);
 			this.checkBoxBillShowTransSinceZero.Name = "checkBoxBillShowTransSinceZero";
 			this.checkBoxBillShowTransSinceZero.Size = new System.Drawing.Size(284, 18);
 			this.checkBoxBillShowTransSinceZero.TabIndex = 253;
@@ -625,7 +625,7 @@ namespace OpenDental{
 			// 
 			// FormBillingDefaults
 			// 
-			this.ClientSize = new System.Drawing.Size(877, 712);
+			this.ClientSize = new System.Drawing.Size(877, 716);
 			this.Controls.Add(this.butSave);
 			this.Controls.Add(this.checkBoxBillShowTransSinceZero);
 			this.Controls.Add(this.groupBox1);

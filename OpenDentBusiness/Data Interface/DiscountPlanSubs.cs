@@ -70,32 +70,23 @@ namespace OpenDentBusiness {
 			return isValid;
 		}
 
+		///<summary>Returns true if the reference point is within a date range. False otherwise. Sets startDate/stopDate.Year to the closest year of the referencePoint within the date range.</summary>
 		public static bool GetAnnualStartStopDates(DateTime referencePoint, ref DateTime startDate, ref DateTime stopDate) {
 			//No remoting role check; No call to db. Uses refs.
-			if(referencePoint < startDate || referencePoint > stopDate) {
+			if(referencePoint<startDate || referencePoint>stopDate) {//Outside of date range
 				return false;
 			}
-			if(startDate.Month < referencePoint.Month) {
-				startDate=startDate.AddYears(referencePoint.Year-startDate.Year);
-			}
-			else if(startDate.Month > referencePoint.Month) {
-				startDate=startDate.AddYears((referencePoint.Year-startDate.Year)-1);
-			}
-			else {
-				//compare days
-				if(startDate.Day < referencePoint.Day) {
-					startDate=startDate.AddYears(referencePoint.Year-startDate.Year);
-				}
-				else if(startDate.Day > referencePoint.Day && (startDate.Day!=29 && startDate.Month!=2)) {
-					startDate=startDate.AddYears((referencePoint.Year-startDate.Year)-1);
-				}
-				else {
-					if(startDate.Year < referencePoint.Year) {
-						startDate=startDate.AddYears(referencePoint.Year-startDate.Year);
+			if(startDate.AddYears(1)<=referencePoint) {
+				int yearsLimit=referencePoint.Year-startDate.Year;
+				for(int years=0;years<yearsLimit;years++) {
+					if(startDate>referencePoint) {
+						startDate=startDate.AddYears(-1);
+						break;
 					}
+					startDate=startDate.AddYears(1);
 				}
 			}
-			if(stopDate > startDate.AddYears(1)) {
+			if(stopDate>startDate.AddYears(1)) {
 				stopDate=startDate.AddYears(1).AddDays(-1);
 			}
 			return true;

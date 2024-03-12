@@ -4308,6 +4308,9 @@ namespace OpenDentBusiness {
 			Patient patCur=Patients.GetLim(procCur.PatNum);
 			PatientNote patNoteCur=PatientNotes.Refresh(patCur.PatNum,patCur.Guarantor);
 			DateTime firstOrthoProcDate=GetFirstOrthoProcDate(patNoteCur);
+			if(firstOrthoProcDate==DateTime.MinValue) {
+				firstOrthoProcDate=procCur.ProcDate;
+			}
 			DateSpan dateSpan=new DateSpan(firstOrthoProcDate,procCur.ProcDate);
 			int totalMonthsDiff=(dateSpan.YearsDiff*12)+dateSpan.MonthsDiff+(dateSpan.DaysDiff<15?0:1);
 			patNoteCur.OrthoMonthsTreatOverride=totalMonthsDiff; //Setting the patient notes OrthoMonthsTreatOverride will set the Tx Total Months.

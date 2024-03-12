@@ -142,7 +142,10 @@ namespace OpenDentBusiness{
 						break;
 					default:
 						using(Font font=new Font(field.FontName,field.FontSize,fontstyle)) {
-							calcH=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,field.TextAlign);
+							int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out int pageCount);
+							int textBoxHeight=bottomCurPage-field.YPos;
+							HeightAndChars heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
+							calcH=heightAndChars.Height;
 						}
 						break;
 				}
@@ -890,12 +893,13 @@ namespace OpenDentBusiness{
 				fontstyle=FontStyle.Bold;
 			}
 			Font font=new Font(field.FontName,field.FontSize,fontstyle);
-			string text=field.FieldValue.Replace("\r\n","\n");//The RichTextBox control converts \r\n to \n.  We need to mimic so we can substring() below.
+			int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out int pageCount);
+			int textBoxHeight=bottomCurPage-field.YPos;//the max height that the new text box can be in order to fit on the current page.
+			HeightAndChars heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
 			//adjust the height of the text box to accomodate PDFs if the field has a growth behavior other than None
-			int calcH=GraphicsHelper.MeasureStringH(text,font,field.Width,field.TextAlign);
 			//If "field.Height < calcH" is ever removed then MoveAllUpBelowThis() would need to be considered below.
-			if(field.GrowthBehavior!=GrowthBehaviorEnum.None && field.Height < calcH) {
-				int amtGrowth=calcH-field.Height;
+			if(field.GrowthBehavior!=GrowthBehaviorEnum.None && field.Height < heightAndChars.Height) {
+				int amtGrowth=heightAndChars.Height-field.Height;
 				field.Height+=amtGrowth;
 				if(field.GrowthBehavior==GrowthBehaviorEnum.DownLocal) {
 					MoveAllDownWhichIntersect(sheet,field,amtGrowth);
@@ -908,23 +912,19 @@ namespace OpenDentBusiness{
 			if(sheet.SheetType==SheetTypeEnum.MedLabResults) {
 				topMargin=120;
 			}
-			int pageCount;
-			int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out pageCount);
 			//recursion base case, the field now fits on the current page, break out of recursion
 			if(field.YPos+field.Height<=bottomCurPage) {
 				return;
 			}
 			//field extends beyond the bottom of the current page, so we will split the text box in between lines, not through the middle of text
 			//if the height of one line is greater than the printable height of the page, don't try to split between lines (only for huge fonts)
-			if(font.Height+2 > (sheet.HeightPage-60-topMargin) || text.Length==0) {
+			if(font.Height+2 > (sheet.HeightPage-60-topMargin) || field.FieldValue.Length==0) {
 				return;
 			}
-			int textBoxHeight=bottomCurPage-field.YPos;//the max height that the new text box can be in order to fit on the current page.
 			//figure out how many lines of text will fit on the current page
-			RichTextBox textboxClip=GraphicsHelper.CreateTextBoxForSheetDisplay(text,font,field.Width,textBoxHeight,field.TextAlign);
-			List <RichTextLineInfo> listClipTextLines=GraphicsHelper.GetTextSheetDisplayLines(textboxClip);
+			heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
 			//if no lines of text will fit on current page or textboxClip's height is smaller than one line, move the entire text box to the next page
-			if(listClipTextLines.Count==0 || textBoxHeight < (font.Height+2)) {
+			if(heightAndChars.Chars==0 || textBoxHeight < (font.Height+2)) {
 				int moveAmount=bottomCurPage+1-field.YPos;
 				field.Height+=moveAmount;
 				MoveAllDownWhichIntersect(sheet,field,moveAmount);
@@ -934,19 +934,14 @@ namespace OpenDentBusiness{
 				CalculateHeightsPageBreakForText(field,sheet);
 				return;
 			}
-			//prepare to split the text box into two text boxes, one with the lines that will fit on the current page, the other with all other lines
-			int fieldH=GraphicsHelper.MeasureStringH(textboxClip.Text,textboxClip.Font,textboxClip.Width,textboxClip.SelectionAlignment);
 			//get ready to copy text from the current field to a copy of the field that will be moved down.
-			//find the character in the text box that makes the text box taller than the calculated max line height and split the text box at that line
 			SheetField fieldNew;
 			fieldNew=field.Copy();
-			field.Height=fieldH;
-			fieldNew.Height-=fieldH;//reduce the size of the new text box by the height of the text removed
-			fieldNew.YPos+=fieldH;//move the new field down the amount of the removed text to maintain the distance between all fields below
-			fieldNew.FieldValue=text.Substring(textboxClip.Text.Length);
-			field.FieldValue=textboxClip.Text;
-			textboxClip.Font.Dispose();
-			textboxClip.Dispose();
+			field.Height=heightAndChars.Height;
+			fieldNew.Height-=heightAndChars.Height;//reduce the size of the new text box by the height of the text removed
+			fieldNew.YPos+=heightAndChars.Height;//move the new field down the amount of the removed text to maintain the distance between all fields below
+			fieldNew.FieldValue=field.FieldValue.Substring(heightAndChars.Chars);
+			field.FieldValue=field.FieldValue.Substring(0,heightAndChars.Chars);
 			int moveAmountNew=bottomCurPage+1-fieldNew.YPos;
 			fieldNew.Height+=moveAmountNew;
 			MoveAllDownWhichIntersect(sheet,fieldNew,moveAmountNew);

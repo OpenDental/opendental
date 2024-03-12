@@ -1291,6 +1291,66 @@ namespace OpenDentBusiness {
 			return false;
 		}
 		#endregion Xam Methods
+
+		///<summary>Will create a treatment plan PDF without any references to OpenDental. This method is only used for the API. 
+		///Returns a list of DocNums when successfully saved a document. Throws errors, surround with a Try / Catch.</summary>
+		public static List<long> CreateAndSaveTreatmentPlanPdfForApi(TreatPlan treatPlan) {
+			string errorMessage="";
+			List<long> listDocNums=new List<long>();
+			try {
+				Patient PatCur=Patients.GetPat(treatPlan.PatNum);
+				List<Def> listImageCatDefs=Defs.GetDefsForCategory(DefCat.ImageCats,true);
+				List<long> categories=listImageCatDefs.Where(x => x.ItemValue.Contains("R")).Select(x=>x.DefNum).ToList();
+				if(categories.Count==0) {
+					//we must save at least one document, pick first non-hidden image category.
+					Def imgCat=listImageCatDefs.FirstOrDefault(x => !x.IsHidden);
+					if(imgCat==null) {
+						throw new Exception("There are currently no image categories.");
+					}
+					categories.Add(imgCat.DefNum);
+				}
+				errorMessage=TryCreateTreatmentPlanPdfFile(treatPlan,out string tempFile);
+				if(!string.IsNullOrWhiteSpace(errorMessage)) {
+					throw new Exception(errorMessage);
+				}
+				string rawBase64="";
+				if(PrefC.AtoZfolderUsed!=DataStorageType.LocalAtoZ) {
+					//Convert the pdf into its raw bytes
+					rawBase64=Convert.ToBase64String(System.IO.File.ReadAllBytes(tempFile));
+				}
+				foreach(long docCategory in categories) {//usually only one, but do allow them to be saved once per image category.
+					Document docSave=new Document();
+					docSave.DocNum=Insert(docSave);
+					string fileName="TPArchive"+docSave.DocNum;
+					docSave.ImgType=ImageType.Document;
+					docSave.DateCreated=DateTime.Now;
+					docSave.PatNum=treatPlan.PatNum;
+					docSave.DocCategory=docCategory;
+					docSave.Description=fileName;//no extension.
+					docSave.RawBase64=rawBase64;//blank if using AtoZfolder
+					if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+						string filePath=ImageStore.GetPatientFolder(PatCur,ImageStore.GetPreferredAtoZpath());
+						while(File.Exists(filePath+"\\"+fileName+".pdf")) {
+							fileName+="x";
+						}
+						File.Copy(tempFile,filePath+"\\"+fileName+".pdf");
+					}
+					else if(CloudStorage.IsCloudStorage) {
+						//Upload file to patient's AtoZ folder
+						CloudStorage.Upload(ImageStore.GetPatientFolder(PatCur,"")
+							,fileName+".pdf"
+							,File.ReadAllBytes(tempFile));
+					}
+					docSave.FileName=fileName+".pdf";//file extension used for both DB images and AtoZ images
+					Update(docSave);
+					listDocNums.Add(docSave.DocNum);
+				}
+			}
+			catch(Exception ex) {
+				throw new Exception(ex.Message);
+			}
+			return listDocNums;
+		}
 	}
 
 	public class DocumentForApi {

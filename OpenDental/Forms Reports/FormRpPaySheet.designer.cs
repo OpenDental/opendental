@@ -265,7 +265,7 @@ namespace OpenDental {
 			this.checkShowCareCreditFees.Name = "checkShowCareCreditFees";
 			this.checkShowCareCreditFees.Size = new System.Drawing.Size(159, 18);
 			this.checkShowCareCreditFees.TabIndex = 62;
-			this.checkShowCareCreditFees.Text = "Show Care Credit fees";
+			this.checkShowCareCreditFees.Text = "Show CareCredit fees";
 			// 
 			// checkShowPayConnectFees
 			// 

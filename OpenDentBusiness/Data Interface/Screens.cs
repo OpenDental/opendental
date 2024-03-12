@@ -353,6 +353,8 @@ namespace OpenDentBusiness{
 						Procedure procOld=procedure.Copy();
 						procedure.ProcStatus=ProcStat.C;
 						procedure.DateEntryC=DateTime.Now;
+						procedure.ProcDate=DateTime.Now;
+						procedure.ProvNum=provNum;
 						Procedures.Update(procedure,procOld);
 					}
 					if(procedure!=null) {

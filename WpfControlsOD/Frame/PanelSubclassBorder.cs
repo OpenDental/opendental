@@ -92,6 +92,7 @@ namespace OpenDental {
 			if(disposing && (components != null)) {
 				components.Dispose();
 			}
+			timer.Tick-=Timer_Tick;
 			base.Dispose(disposing);
 		}
 

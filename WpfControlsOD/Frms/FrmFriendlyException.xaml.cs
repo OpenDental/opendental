@@ -68,8 +68,6 @@ namespace OpenDental {
 			labelQuery.Visible=false;
 			labelStackTrace.Visible=false;
 			labelDetails.Visible=false;
-			butCopyAll.Visible=false;
-			butPrintOD.Visible=false;
 			_formFrame.Size=new System.Drawing.Size(ScaleFormValue(1262),ScaleFormValue(_defaultDetailsHeight+16));//Stops height from being doubled when ResizeDetails() is called on UE.
 			_formFrame.CenterFormOnMonitor();
 		}
