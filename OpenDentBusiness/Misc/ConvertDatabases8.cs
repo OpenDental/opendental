@@ -187,6 +187,24 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
+
+		internal static void FixADA2024IsPreAuthLocation() {
+			//Change the alignment of the Preauthorization checkbox on the 2024 claim form.
+			string command="SELECT ClaimFormNum FROM claimform WHERE Description='ADA 2024'";
+			long claimFormNum2024 = Db.GetLong(command);
+			if(claimFormNum2024>0) {
+				//Only change if the XPos, YPos, and Width are the default values that we used when we created the claim form.
+				command="SELECT ClaimFormItemNum " +
+					"FROM claimformitem " +
+					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='IsPreAuth' " +
+					$"AND XPos=184 AND YPos=74 AND Width=0";//Default values
+				long claimFormItemNum = Db.GetLong(command);
+				if(claimFormItemNum>0) {
+					command=$"UPDATE claimformitem SET XPos=224, YPos=56 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
+					Db.NonQ(command);
+				}
+			}
+		}
 		#endregion
 
 		private static void To23_2_1() {
@@ -810,5 +828,9 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('WebSchedManualSendTriggered','')";
 			Db.NonQ(command);
 		}
+
+		private static void To23_2_67() {
+			FixADA2024IsPreAuthLocation();
+		}//End of 23_2_67() method
 	}
 }
