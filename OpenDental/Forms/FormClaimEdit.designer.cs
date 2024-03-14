@@ -984,8 +984,8 @@
 			// 
 			// tabControlAttach
 			// 
-			this.tabControlAttach.Controls.Add(this.tabNEA);
 			this.tabControlAttach.Controls.Add(this.tabDXC);
+			this.tabControlAttach.Controls.Add(this.tabNEA);
 			this.tabControlAttach.Controls.Add(this.tabEDS);
 			this.tabControlAttach.Controls.Add(this.tabCanadianAttachments);
 			this.tabControlAttach.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -1241,7 +1241,7 @@
 			this.tabDXC.Padding = new System.Windows.Forms.Padding(3);
 			this.tabDXC.Size = new System.Drawing.Size(667, 198);
 			this.tabDXC.TabIndex = 1;
-			this.tabDXC.Text = "DXC";
+			this.tabDXC.Text = "DentalXChange";
 			// 
 			// butDXCClaimAttachment
 			// 

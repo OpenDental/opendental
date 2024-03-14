@@ -765,15 +765,20 @@ namespace OpenDentBusiness{
 			List<long> listPayPlanNumWithTP=new List<long>();
 			listPayPlanNumWithTP=GetDynamicPayPlanNumsWithTP(listPayPlans.Where(x => x.IsDynamic).Select(x => x.PayPlanNum).ToList());
 			int count=0;
-			for(int i=0;i<listPayPlans.Count;i++) {
-				if(listPayPlans[i].IsDynamic) {
-					if(listPayPlans[i].DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete && listPayPlanNumWithTP.Contains(listPayPlans[i].PayPlanNum)) {
+			for(int i=0;i<table.Rows.Count;i++) {
+				long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
+				PayPlan payPlan=listPayPlans.Find(x => x.PayPlanNum==payPlanNum);
+				if(payPlan==null) {
+					continue;
+				}
+				if(payPlan.IsDynamic) {
+					if(payPlan.DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete && listPayPlanNumWithTP.Contains(payPlan.PayPlanNum)) {
 						continue;
 					}
 					double totalPaidAmt=0.00;
-					DynamicPaymentPlanModuleData dynamicPaymentPlanModuleData=PayPlanEdit.GetDynamicPaymentPlanModuleData(listPayPlans[i]);
-					PayPlanTerms payPlanTerms=PayPlanEdit.GetPayPlanTerms(listPayPlans[i],dynamicPaymentPlanModuleData.ListPayPlanLinks);
-					List<PayPlanCharge> listPayPlanChargesExpected=PayPlanEdit.GetPayPlanChargesForDynamicPaymentPlanSchedule(listPayPlans[i],payPlanTerms,
+					DynamicPaymentPlanModuleData dynamicPaymentPlanModuleData=PayPlanEdit.GetDynamicPaymentPlanModuleData(payPlan);
+					PayPlanTerms payPlanTerms=PayPlanEdit.GetPayPlanTerms(payPlan,dynamicPaymentPlanModuleData.ListPayPlanLinks);
+					List<PayPlanCharge> listPayPlanChargesExpected=PayPlanEdit.GetPayPlanChargesForDynamicPaymentPlanSchedule(payPlan,payPlanTerms,
 						dynamicPaymentPlanModuleData.ListPayPlanChargesDb,dynamicPaymentPlanModuleData.ListPayPlanLinks,dynamicPaymentPlanModuleData.ListPaySplits);
 					totalPaidAmt+=PIn.Double(table.Rows[i]["TotPay"].ToString());
 					totalPaidAmt+=PIn.Double(table.Rows[i]["InsPay"].ToString());
@@ -790,23 +795,27 @@ namespace OpenDentBusiness{
 					}
 					//"isLocked" here is passed into "isLocking" further down. We are not locking here because the user has not way to lock the dynamic payment plan from this UI.
 					PayPlanEdit.CloseOutDynamicPaymentPlan(payPlanTerms,dynamicPaymentPlanModuleData,false,dynamicPaymentPlanModuleData.PayPlan.PlanCategory);
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Payment Plan closed using Close Payment Plan tool."));
+					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,payPlan.PatNum,Lans.g("PayPlans","Payment Plan closed using Close Payment Plan tool."));
 					count++;
 				}
 				else {
-					if(listPayPlans[i].InsSubNum>0 && !canIncludeInsPaymentPlans) {
+					if(payPlan.InsSubNum>0 && !canIncludeInsPaymentPlans) {
 						continue;
 					}
-					if(listPayPlans[i].InsSubNum==0 && !canIncludeOldPaymentPlans) {
+					if(payPlan.InsSubNum==0 && !canIncludeOldPaymentPlans) {
 						continue;
 					}
-					listPayPlans[i].IsClosed=true;
-					PayPlans.Update(listPayPlans[i]);
+					payPlan.IsClosed=true;
+					if(payPlan.InsSubNum>0) {
+						//Manually closing ins payment plan will set the CompletedAmt to the total InsPay.
+						payPlan.CompletedAmt=PIn.Double(table.Rows[i]["InsPay"].ToString());
+					}
+					PayPlans.Update(payPlan);
 					string logMessage=Lans.g("PayPlans","Patient Payment Plan closed using Close Payment Plan tool.");
-					if(listPayPlans[i].InsSubNum>0) {
+					if(payPlan.InsSubNum>0) {
 						logMessage=Lans.g("PayPlans","Insurance Payment Plan closed using Close Payment Plan tool.");
 					}
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,listPayPlans[i].PatNum,logMessage);
+					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,payPlan.PatNum,logMessage);
 					count++;
 				}
 			}

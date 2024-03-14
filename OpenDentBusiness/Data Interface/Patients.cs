@@ -1435,14 +1435,15 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns a Family object for the supplied patNum.  Use Family.GetPatient to extract the desired patient from the family.</summary>
-		public static Family GetFamily(long patNum,bool doIncludeDeleted=false) {
+		public static Family GetFamily(long patNum) {
 			//No need to check MiddleTierRole; no call to db.
-			return ODMethodsT.Coalesce(GetFamilies(new List<long>() { patNum },doIncludeDeleted).FirstOrDefault(),new Family());
+			return ODMethodsT.Coalesce(GetFamilies(new List<long>() { patNum } ).FirstOrDefault(),new Family());
 		}
 
-		public static List<Family> GetFamilies(List<long> listPatNums,bool doIncludeDeleted=false) {
+		///<summary>Most modules pull this data when refreshing family info for patients.  It is essential that we include deleted patients to avoid concurrency issues.  Not including deleted patients will crash OD when switching between modules after a patient has been deleted by another workstation.</summary>
+		public static List<Family> GetFamilies(List<long> listPatNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Family>>(MethodBase.GetCurrentMethod(),listPatNums,doIncludeDeleted);
+				return Meth.GetObject<List<Family>>(MethodBase.GetCurrentMethod(),listPatNums);
 			}
 			if(listPatNums==null || listPatNums.Count < 1) {
 				return new List<OpenDentBusiness.Family>();
@@ -1450,14 +1451,8 @@ namespace OpenDentBusiness {
 			string command=@"SELECT DISTINCT f.*,CASE WHEN f.Guarantor != f.PatNum THEN 1 ELSE 0 END AS IsNotGuar 
 				FROM patient p
 				INNER JOIN patient f ON f.Guarantor=p.Guarantor
-				WHERE p.PatNum IN ("+string.Join(",",listPatNums.Select(x => POut.Long(x)))+@") ";
-			if(doIncludeDeleted) {//Include all statuses
-				//No PatStatus filtration needed.
-			}
-			else {//Do not include deleted patients.
-				command+="AND f.PatStatus != "+POut.Int((int)PatientStatus.Deleted)+" ";
-			}
-			command+=@"ORDER BY IsNotGuar, f.Birthdate";
+				WHERE p.PatNum IN ("+string.Join(",",listPatNums.Select(x => POut.Long(x)))+@")
+				ORDER BY IsNotGuar, f.Birthdate";
 			List<Family> listFamilies=new List<Family>();
 			List<Patient> listPatients=Crud.PatientCrud.SelectMany(command);
 			foreach(Patient patient in listPatients) {

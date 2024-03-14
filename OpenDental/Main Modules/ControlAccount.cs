@@ -16,6 +16,7 @@ using OpenDentBusiness.WebTypes;
 using System.Text;
 using OpenDentBusiness.WebTypes.Shared.XWeb;
 using PdfSharp.Pdf;
+using OpenDentBusiness.Eclaims;
 
 namespace OpenDental {
 
@@ -304,6 +305,18 @@ namespace OpenDental {
 			if(payment==null){
 				menuItemAddRefund.Enabled=false;
 				menuItemAddRefundWorkNotPerformed.Enabled=false;
+			}
+			//DentalXChange Snip Attachment-----------------------------------------------------------------------------------
+			menuItemSnipAttachment.Enabled=true;
+			//Are attachments allowed to be sent and is the office using ClaimConnect
+			Clearinghouse clearinghouse=Clearinghouses.GetDefaultDental();
+			if(clearinghouse==null || !clearinghouse.IsAttachmentSendAllowed || clearinghouse.CommBridge!=EclaimsCommBridge.ClaimConnect){
+				menuItemSnipAttachment.Enabled=false;
+			}
+			int countClaim=listIdxRowsSelected.Select(x => table.Rows[x]["ClaimNum"].ToString()).Count(y => y!="0");
+			//Must be exactly 1 claim selected.
+			if(countClaim!=1) {
+				menuItemSnipAttachment.Enabled=false;
 			}
 			// Edit PayPlan Charge --------------------------------------------------------------------------------------------
 			menuItemEditPayPlanCharge.Visible=false;
@@ -2023,6 +2036,36 @@ namespace OpenDental {
 			FormMessageToPayEdit formMessageToPayEdit=new FormMessageToPayEdit(_patient.PatNum);
 			formMessageToPayEdit.ShowDialog();
 			ModuleSelected(_patient.PatNum);
+		}
+
+		private void menuItemSnipAttachment_Click(object sender,EventArgs e) {
+			DataTable table=_dataSetMain.Tables["account"];
+			//Guaranteed to be exactly one claim selected (among possible other selections)
+			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
+			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
+			if(claimNum==0) {
+				return;
+			}
+			Claim claim=Claims.GetClaim(claimNum);
+			//Validation logic taken from FormClaimEdit.cs OpenAttachmentForm()
+			if(claim.ClaimStatus=="W") {
+				ClaimSendQueueItem[] claimSendQueueItemsArray=Claims.GetQueueList(claim.ClaimNum,claim.ClinicNum,0);
+				if(!claimSendQueueItemsArray[0].CanSendElect) {
+					MsgBox.Show(this,"Carrier is not set to Send Claims Electronically.");
+					return;
+				}
+				Clearinghouse clearinghouseHq=ClearinghouseL.GetClearinghouseHq(claimSendQueueItemsArray[0].ClearinghouseNum);
+				Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,Clinics.ClinicNum);
+				claimSendQueueItemsArray[0]=Eclaims.GetMissingData(clearinghouseClin,claimSendQueueItemsArray[0]);
+				if(claimSendQueueItemsArray[0].MissingData!="") {
+					MessageBox.Show("Cannot add attachments until missing data is fixed:"+"\r\n"+claimSendQueueItemsArray[0].MissingData);
+					return;
+				}
+			}
+			FormClaimAttachSnipDXC formClaimAttachSnipDXC=new FormClaimAttachSnipDXC();
+			formClaimAttachSnipDXC.Claim=claim;
+			formClaimAttachSnipDXC.Patient=_patient;
+			formClaimAttachSnipDXC.ShowDialog();
 		}
 		#endregion Methods - Event Handlers MenuItem
 

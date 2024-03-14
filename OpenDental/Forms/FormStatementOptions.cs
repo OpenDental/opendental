@@ -523,7 +523,7 @@ namespace OpenDental{
 			bool isLimitedCustom=checkSuperStatement.Checked || IsLimitedCustomStatement();
 			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(StatementCur);
 			try {
-				Documents.CreateAndSaveStatementPDF(StatementCur,sheetDef,isLimitedCustom,checkShowLName.Checked,checkExcludeTxfr.Checked,_listDefsImageCat,pdfFileName,sheet,dataSet,description);
+				dataSet=Documents.CreateAndSaveStatementPDF(StatementCur,sheetDef,isLimitedCustom,checkShowLName.Checked,checkExcludeTxfr.Checked,_listDefsImageCat,pdfFileName,sheet,dataSet,description);
 			}
 			catch {
 				MsgBox.Show(this,"Error saving document.");

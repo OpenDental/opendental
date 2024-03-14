@@ -154,7 +154,9 @@ namespace OpenDental {
 
 		/// <summary>Filters the list of providers by search terms and returns the filtered list. If used outside of FormProviderPick, make sure your list of providers isn't null before calling this method.</summary>
 		private List<Provider> GetFilteredProviderList(List<Provider> listProviders) {
-			if(string.IsNullOrWhiteSpace(textFilter.Text)) { 
+			string txtFilter="";
+			Dispatcher.Invoke(() => txtFilter=textFilter.Text);
+			if(string.IsNullOrWhiteSpace(txtFilter)) { 
 				return listProviders;	
 			}
 			List<Provider> listProvidersFiltered=new List<Provider>();
@@ -162,17 +164,17 @@ namespace OpenDental {
 				if(listProviders[i].FName==null || listProviders[i].LName==null || listProviders[i].Abbr==null) {
 					continue;
 				}
-				if(listProviders[i].FName.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim()) ||
-					listProviders[i].LName.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim()) ||
-					listProviders[i].Abbr.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim())) 
+				if(listProviders[i].FName.ToUpper().Trim().Contains(txtFilter.ToUpper().Trim()) ||
+					listProviders[i].LName.ToUpper().Trim().Contains(txtFilter.ToUpper().Trim()) ||
+					listProviders[i].Abbr.ToUpper().Trim().Contains(txtFilter.ToUpper().Trim())) 
 				{
 					listProvidersFiltered.Add(listProviders[i]);
 				}
 			}
 			listProvidersFiltered=listProvidersFiltered
-				.OrderByDescending(x=>x.FName.ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim()))
-				.ThenByDescending(x=>x.LName.ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim()))
-				.ThenByDescending(x=>x.Abbr.ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim())).ToList();
+				.OrderByDescending(x=>x.FName.ToUpper().Trim().StartsWith(txtFilter.ToUpper().Trim()))
+				.ThenByDescending(x=>x.LName.ToUpper().Trim().StartsWith(txtFilter.ToUpper().Trim()))
+				.ThenByDescending(x=>x.Abbr.ToUpper().Trim().StartsWith(txtFilter.ToUpper().Trim())).ToList();
 			return listProvidersFiltered;
 		}
 

@@ -328,9 +328,9 @@ namespace OpenDental{
 					}
 				}
 				if(listStringsInUse.Count>0){
-					string msg="You should not remove these fields because they are already in use by patients:\r\n";
+					string msg="You should not remove the following fields because they are already in use by patients:\r\n";
 					for(int i=0;i<listStringsInUse.Count;i++){
-						msg+=listStringsInUse+"\r\n";
+						msg+=listStringsInUse[i]+"\r\n";
 					}
 					msg+="Remove anyway?";
 					if(!MsgBox.Show(MsgBoxButtons.OKCancel,msg)){

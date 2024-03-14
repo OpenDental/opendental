@@ -1906,10 +1906,6 @@ namespace OpenDental{
 			//Make a string that displays all the names of the family members.
 			//Always start with the guarantor followed by the rest of the family.
 			string stringReturn = patientGuar.GetNameLF();
-			if(_patient.PatNum!=patientGuar.PatNum) {
-				//If this family is not currently selected in the superfam grid.
-				return stringReturn;
-			}
 			//From here down, we are adding family members to the string
 			//when the family is currently selected in the superfam grid.
 			for(int i = 0;i<_listPatientsSuperFamilyMembers.Count;i++) {

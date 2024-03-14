@@ -17,8 +17,8 @@
 			<RowDefinition Height="29"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
-		<local:Button x:Name="butCollapse" Width="86" Height="24" Text="Collapse All" Click="butCollapse_Click" />
-		<local:Button x:Name="butExpand" Width="86" Height="24" Text="Expand All" Click="butExpand_Click" Margin="89,0,0,0" />
+		<local:Button x:Name="butCollapse" Width="86" Height="24" Text="Collapse All" Click="butCollapse_Click" Margin="2,2,0,0"/>
+		<local:Button x:Name="butExpand" Width="86" Height="24" Text="Expand All" Click="butExpand_Click" Margin="91,2,0,0" />
 		<ScrollViewer Grid.Row="1" Name="scrollViewer" x:FieldModifier="internal" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
 			<StackPanel Name="stackPanel" x:FieldModifier="internal">
 				<d:TextBlock>ImageSelector</d:TextBlock>

@@ -69,16 +69,16 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(156, 371);
+			this.label2.Location = new System.Drawing.Point(156, 373);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(150, 18);
+			this.label2.Size = new System.Drawing.Size(150, 17);
 			this.label2.TabIndex = 249;
 			this.label2.Text = "Update Server";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(48, 486);
+			this.label9.Location = new System.Drawing.Point(47, 488);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(350, 17);
 			this.label9.TabIndex = 259;
@@ -87,9 +87,9 @@ namespace OpenDental {
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(95, 306);
+			this.label8.Location = new System.Drawing.Point(91, 307);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(257, 18);
+			this.label8.Size = new System.Drawing.Size(257, 17);
 			this.label8.TabIndex = 257;
 			this.label8.Text = "Sync code for CEMT";
 			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -122,7 +122,7 @@ namespace OpenDental {
 			// 
 			// labelTrackClinic
 			// 
-			this.labelTrackClinic.Location = new System.Drawing.Point(47, 433);
+			this.labelTrackClinic.Location = new System.Drawing.Point(48, 433);
 			this.labelTrackClinic.Name = "labelTrackClinic";
 			this.labelTrackClinic.Size = new System.Drawing.Size(294, 17);
 			this.labelTrackClinic.TabIndex = 252;
@@ -131,20 +131,20 @@ namespace OpenDental {
 			// 
 			// labelAlertCloudSessions
 			// 
-			this.labelAlertCloudSessions.Location = new System.Drawing.Point(34, 403);
+			this.labelAlertCloudSessions.Location = new System.Drawing.Point(33, 403);
 			this.labelAlertCloudSessions.Name = "labelAlertCloudSessions";
 			this.labelAlertCloudSessions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.labelAlertCloudSessions.Size = new System.Drawing.Size(365, 18);
+			this.labelAlertCloudSessions.Size = new System.Drawing.Size(365, 17);
 			this.labelAlertCloudSessions.TabIndex = 263;
 			this.labelAlertCloudSessions.Text = "Alert when within this value of the maximum allowed Cloud Sessions";
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.textLanguageAndRegion);
 			this.groupBox2.Controls.Add(this.label4);
 			this.groupBox2.Controls.Add(this.butLanguages);
 			this.groupBox2.Controls.Add(this.checkImeCompositionCompatibility);
 			this.groupBox2.Controls.Add(this.label6);
-			this.groupBox2.Controls.Add(this.textLanguageAndRegion);
 			this.groupBox2.Controls.Add(this.butPickLanguageAndRegion);
 			this.groupBox2.Location = new System.Drawing.Point(10, 192);
 			this.groupBox2.Name = "groupBox2";
@@ -154,7 +154,7 @@ namespace OpenDental {
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(51, 20);
+			this.label4.Location = new System.Drawing.Point(52, 20);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(322, 17);
 			this.label4.TabIndex = 64;
@@ -181,9 +181,9 @@ namespace OpenDental {
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(49, 48);
+			this.label6.Location = new System.Drawing.Point(50, 50);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(218, 19);
+			this.label6.Size = new System.Drawing.Size(218, 17);
 			this.label6.TabIndex = 205;
 			this.label6.Text = "Language and region used by program";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -207,14 +207,14 @@ namespace OpenDental {
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Controls.Add(this.label3);
 			this.groupBox1.Controls.Add(this.textSigInterval);
-			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.textInactiveSignal);
 			this.groupBox1.Controls.Add(this.textInactiveAlert);
+			this.groupBox1.Controls.Add(this.textAlertInterval);
+			this.groupBox1.Controls.Add(this.label3);
+			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.label11);
 			this.groupBox1.Controls.Add(this.label10);
-			this.groupBox1.Controls.Add(this.textAlertInterval);
 			this.groupBox1.Location = new System.Drawing.Point(10, 40);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(475, 137);
@@ -223,16 +223,16 @@ namespace OpenDental {
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(3, 23);
+			this.label3.Location = new System.Drawing.Point(2, 23);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(386, 18);
+			this.label3.Size = new System.Drawing.Size(386, 17);
 			this.label3.TabIndex = 56;
 			this.label3.Text = "Process signal interval in seconds.  Leave blank to disable autorefresh";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textSigInterval
 			// 
-			this.textSigInterval.Location = new System.Drawing.Point(390, 22);
+			this.textSigInterval.Location = new System.Drawing.Point(389, 20);
 			this.textSigInterval.MaxVal = 1000000;
 			this.textSigInterval.MinVal = 1;
 			this.textSigInterval.Name = "textSigInterval";
@@ -243,16 +243,16 @@ namespace OpenDental {
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(52, 54);
+			this.label5.Location = new System.Drawing.Point(51, 52);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(337, 18);
+			this.label5.Size = new System.Drawing.Size(337, 17);
 			this.label5.TabIndex = 200;
 			this.label5.Text = "Disable signal interval after this many minutes of user inactivity\r\n";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textInactiveSignal
 			// 
-			this.textInactiveSignal.Location = new System.Drawing.Point(389, 51);
+			this.textInactiveSignal.Location = new System.Drawing.Point(389, 49);
 			this.textInactiveSignal.MaxVal = 1000000;
 			this.textInactiveSignal.Name = "textInactiveSignal";
 			this.textInactiveSignal.ShowZero = false;
@@ -262,7 +262,7 @@ namespace OpenDental {
 			// 
 			// textInactiveAlert
 			// 
-			this.textInactiveAlert.Location = new System.Drawing.Point(389, 105);
+			this.textInactiveAlert.Location = new System.Drawing.Point(389, 107);
 			this.textInactiveAlert.MaxVal = 1000000;
 			this.textInactiveAlert.MinVal = 1;
 			this.textInactiveAlert.Name = "textInactiveAlert";
@@ -273,25 +273,25 @@ namespace OpenDental {
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(52, 77);
+			this.label11.Location = new System.Drawing.Point(51, 81);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(337, 18);
+			this.label11.Size = new System.Drawing.Size(337, 17);
 			this.label11.TabIndex = 237;
 			this.label11.Text = "Check alert interval in seconds.  Leave blank to disable";
 			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(52, 108);
+			this.label10.Location = new System.Drawing.Point(51, 110);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(337, 18);
+			this.label10.Size = new System.Drawing.Size(337, 17);
 			this.label10.TabIndex = 239;
 			this.label10.Text = "Disable alert interval after this many minutes of user inactivity\r\n";
 			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textAlertInterval
 			// 
-			this.textAlertInterval.Location = new System.Drawing.Point(389, 77);
+			this.textAlertInterval.Location = new System.Drawing.Point(389, 78);
 			this.textAlertInterval.MaxVal = 1000000;
 			this.textAlertInterval.MinVal = 1;
 			this.textAlertInterval.Name = "textAlertInterval";
@@ -367,23 +367,23 @@ namespace OpenDental {
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.White;
 			this.Controls.Add(this.textWebServiceServerName);
+			this.Controls.Add(this.textAuditEntries);
+			this.Controls.Add(this.textSyncCode);
+			this.Controls.Add(this.textNumDecimals);
+			this.Controls.Add(this.comboTrackClinic);
+			this.Controls.Add(this.textAlertCloudSessions);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.checkAuditTrailUseReportingServer);
 			this.Controls.Add(this.checkSubmitExceptions);
-			this.Controls.Add(this.textAuditEntries);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.butClearCode);
 			this.Controls.Add(this.label8);
-			this.Controls.Add(this.textSyncCode);
 			this.Controls.Add(this.butDecimal);
-			this.Controls.Add(this.textNumDecimals);
 			this.Controls.Add(this.label7);
-			this.Controls.Add(this.comboTrackClinic);
 			this.Controls.Add(this.labelTrackClinic);
 			this.Controls.Add(this.labelAlertCloudSessions);
-			this.Controls.Add(this.textAlertCloudSessions);
 			this.Name = "UserControlMainWindowMisc";
 			this.Size = new System.Drawing.Size(494, 660);
 			this.groupBox2.ResumeLayout(false);

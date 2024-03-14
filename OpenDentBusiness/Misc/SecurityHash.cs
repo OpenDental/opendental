@@ -1,4 +1,4 @@
-﻿/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
+/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
 using CodeBase;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2023,4,24);
+		public static DateTime DateStart=new DateTime(2024,3,14);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -21,7 +21,8 @@ namespace OpenDentBusiness.Misc {
 		private static bool _areClaimsUpdated=false;
 		private static bool _areClaimProcsUpdated=false;
 
-		///<summary>This method is allowed anywhere in the ConvertDatabase scripts.  It's specially written to never crash. It does not affect the schema. It can be called multiple times during a conversion and will only run once.  Updates the SecurityHash fields of all tables for which Open Dental is enforcing database integrity. First clears out all existing SecurityHashes, then creates new ones for recent entries. </summary>
+		///<summary>This method is NOT safe to invoke during database conversions. It is only to be called AFTER all conversions have taken place in order to avoid a rare table lockup. 
+		///Runs a hashing algorithm over all tables for which Open Dental is enforcing database integrity. Overwrites any existing SecurityHashes with new ones for recent entries. </summary>
 		public static void UpdateHashing() {
 			RunPaysplit();
 			RunAppointment();

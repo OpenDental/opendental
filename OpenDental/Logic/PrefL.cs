@@ -14,6 +14,7 @@ using MySql.Data.MySqlClient;
 using OpenDentBusiness;
 using OpenDental.UI;
 using System.Net;
+using OpenDentBusiness.Misc;
 
 namespace OpenDental {
 	public class PrefL {
@@ -471,7 +472,8 @@ namespace OpenDental {
 			//Push update to server if client version > server version and either the WebServiceServerName is blank or the current computer ID is the same as the WebServiceServerName
 			//At this point we know 100% it's going to be an upgrade
 			else if(versionStored<versionCurrent 
-				&& (updateServerName=="" || ODEnvironment.IdIsThisComputer(updateServerName.ToLower()))) {
+				&& (updateServerName=="" || ODEnvironment.IdIsThisComputer(updateServerName.ToLower()))) 
+			{
 				if(ODBuild.IsTrial() && PrefC.GetString(PrefName.RegistrationKey)!="") {//Allow databases with no reg key to continue.  Needed by our conversion department.
 					//Trial users should never be able to update a database, not even the ProgramVersion preference.
 					MsgBox.Show("PrefL","Trial versions cannot connect to live databases.  Please run the Setup.exe in the AtoZ folder to reinstall your original version.");
@@ -518,6 +520,7 @@ namespace OpenDental {
 					Environment.Exit(FormOpenDental.ExitCode);
 					return false;
 				}
+				SecurityHash.UpdateHashing();
 				Prefs.UpdateString(PrefName.ProgramVersion,versionCurrent.ToString());
 				UpdateHistory updateHistory=new UpdateHistory(versionCurrent.ToString());
 				UpdateHistories.Insert(updateHistory);

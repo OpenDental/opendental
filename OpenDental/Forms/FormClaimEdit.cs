@@ -1107,7 +1107,7 @@ namespace OpenDental{
 					for(int j=0;j<listClaimProcsForLab.Count;j++) {
 						//The following 'continue' logic does not skip adding the parent lab rows to gridProc.
 						//Instead it ensures that received or unreceived parent claimProcs show above their associated received or unreceived lab claimProcs.
-						if(_listClaimProcsForClaim[i].Status != listClaimProcsForLab[j].Status) {
+						if(_listClaimProcsForClaim[i].Status != listClaimProcsForLab[j].Status || _listClaimProcsForClaim[i].IsOverpay!=listClaimProcsForLab[j].IsOverpay) {
 							continue;
 						}	
 						//Needed for supplemental payments. When there are supplemental payments we want the associated supplemental lab payment to show under the supplemental parent claimProc, not received.
@@ -1650,6 +1650,10 @@ namespace OpenDental{
 				MessageBox.Show(Lan.g(this,"PreAuthorizations can only be entered by procedure."));
 				return;
 			}
+			if(_claim.ClaimStatus=="I") {
+				MsgBox.Show(this,"Cannot receive a claim with a status of 'Hold for In Process'.");
+				return;
+			}
 			if(DoConsolidateOrthoPayments()) {
 				InsPlan insPlan = InsPlans.GetPlan(_claim.PlanNum,_listInsPlans);
 				long orthoAutoCodeNum = InsPlans.GetOrthoAutoProc(insPlan);
@@ -1836,6 +1840,10 @@ namespace OpenDental{
 
 		private void butPayProc_Click(object sender, System.EventArgs e) {
 			if(_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(EnumPermType.InsPayCreate)){//date not checked here, but it will be checked when actually creating the check
+				return;
+			}
+			if(_claim.ClaimStatus=="I") {
+				MsgBox.Show(this,"Cannot receive a claim with a status of 'Hold for In Process'.");
 				return;
 			}
 			//this will work for regular claims and for preauths.
@@ -3145,10 +3153,11 @@ namespace OpenDental{
 					return;
 				}
 			}
-			if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
-				formClaimAttachment.Show();
-				DialogResult=DialogResult.Cancel;
-			}
+			formClaimAttachment.Show();
+			//if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
+			//	formClaimAttachment.Show();
+			//	DialogResult=DialogResult.Cancel;
+			//}
 		}
 
 		private void EditOverpay(bool isOverpaid) {

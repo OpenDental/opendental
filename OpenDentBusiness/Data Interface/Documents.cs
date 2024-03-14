@@ -1202,7 +1202,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Throws exception. Creates and Saves a PDF document for the given statement.</summary>
-		public static Document CreateAndSaveStatementPDF(Statement statement,SheetDef sheetDef,bool isLimitedCustom,bool showLName,bool excludeTxfr,List<Def> listDefsImageCat,string pdfFileName="",Sheet sheet=null,DataSet dataSet=null,string description="") {
+		public static DataSet CreateAndSaveStatementPDF(Statement statement,SheetDef sheetDef,bool isLimitedCustom,bool showLName,bool excludeTxfr,List<Def> listDefsImageCat,string pdfFileName="",Sheet sheet=null,DataSet dataSet=null,string description="") {
 			string tempPath;
 			if(statement==null || sheetDef==null) {
 				return null;
@@ -1266,7 +1266,7 @@ namespace OpenDentBusiness {
 			statement.DocNum=document.DocNum;//this signals the calling class that the pdf was created successfully.
 			Statements.AttachDoc(statement.StatementNum,document);
 			Statements.SyncStatementProdsForStatement(dataSet,statement.StatementNum,statement.DocNum);
-			return document;
+			return dataSet;
 		}
 
 		public static bool IsVC2015Installed(){

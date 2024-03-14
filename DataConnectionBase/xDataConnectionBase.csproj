@@ -90,6 +90,7 @@
     <Compile Include="DataConnectionEvent.cs" />
     <Compile Include="DbAdminMysql.cs" />
     <Compile Include="DbQueryObj.cs" />
+    <Compile Include="Interceptor.cs" />
     <Compile Include="QueryMonitor.cs" />
     <Compile Include="SIn.cs" />
     <Compile Include="SOut.cs" />

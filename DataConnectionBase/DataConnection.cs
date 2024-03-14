@@ -489,7 +489,8 @@ namespace DataConnectionBase {
 				+";Treat Tiny As Boolean=false"
 				+";Allow User Variables=true"
 				+";Convert Zero Datetime=true"//Convert all MySQL dates 0000-00-00 to 0001-01-01, since C# crashes for 0000-00-00 dates.
-				+";Default Command Timeout="+CommandTimeout;//one hour timeout on commands.  Prevents crash during conversions, etc.
+				+";Default Command Timeout="+CommandTimeout//one hour timeout on commands.  Prevents crash during conversions, etc.
+				+";commandinterceptors=DataConnectionBase.Interceptor,DataConnectionBase";
 			//+";Pooling=false";
 			if(String.IsNullOrEmpty(sslCa)) {
 				connectStr+=";SslMode=none";
