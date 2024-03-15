@@ -485,7 +485,7 @@ Usually blank</ControlText>
     <PrefName />
     <Category>AccountPayments</Category>
     <ControlName>checkPayPlanSaveSignedPdf</ControlName>
-    <ControlText>In eClipboard, save signed Payment Plans as PDF</ControlText>
+    <ControlText>In eClipboard and ODTouch, save signed Payment Plans as PDF</ControlText>
     <Details />
     <WidthWindow>0</WidthWindow>
     <HeightWindow>0</HeightWindow>

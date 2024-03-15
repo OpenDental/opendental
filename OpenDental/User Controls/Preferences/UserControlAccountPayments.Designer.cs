@@ -170,11 +170,11 @@ namespace OpenDental {
 			// 
 			this.checkPayPlanSaveSignedPdf.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkPayPlanSaveSignedPdf.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPayPlanSaveSignedPdf.Location = new System.Drawing.Point(122, 56);
+			this.checkPayPlanSaveSignedPdf.Location = new System.Drawing.Point(3, 56);
 			this.checkPayPlanSaveSignedPdf.Name = "checkPayPlanSaveSignedPdf";
-			this.checkPayPlanSaveSignedPdf.Size = new System.Drawing.Size(318, 17);
+			this.checkPayPlanSaveSignedPdf.Size = new System.Drawing.Size(437, 17);
 			this.checkPayPlanSaveSignedPdf.TabIndex = 312;
-			this.checkPayPlanSaveSignedPdf.Text = "In eClipboard, save signed Payment Plans as PDF";
+			this.checkPayPlanSaveSignedPdf.Text = "In eClipboard and ODTouch, save signed Payment Plans as PDF";
 			// 
 			// label39
 			// 

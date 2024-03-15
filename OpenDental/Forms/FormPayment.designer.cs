@@ -704,7 +704,7 @@
 			this.gridCharges.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridCharges.Location = new System.Drawing.Point(1, 22);
+			this.gridCharges.Location = new System.Drawing.Point(26, 18);
 			this.gridCharges.Name = "gridCharges";
 			this.gridCharges.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
 			this.gridCharges.Size = new System.Drawing.Size(602, 249);
@@ -987,7 +987,7 @@
 			// 
 			// labelTypeOutstandingFilter
 			// 
-			this.labelTypeOutstandingFilter.Location = new System.Drawing.Point(199, 14);
+			this.labelTypeOutstandingFilter.Location = new System.Drawing.Point(295, 14);
 			this.labelTypeOutstandingFilter.Name = "labelTypeOutstandingFilter";
 			this.labelTypeOutstandingFilter.Size = new System.Drawing.Size(60, 18);
 			this.labelTypeOutstandingFilter.TabIndex = 202;
@@ -1065,7 +1065,7 @@
 			// comboTypeOutstandingFilter
 			// 
 			this.comboTypeOutstandingFilter.BackColor = System.Drawing.SystemColors.Window;
-			this.comboTypeOutstandingFilter.Location = new System.Drawing.Point(199, 33);
+			this.comboTypeOutstandingFilter.Location = new System.Drawing.Point(292, 33);
 			this.comboTypeOutstandingFilter.Name = "comboTypeOutstandingFilter";
 			this.comboTypeOutstandingFilter.SelectionModeMulti = true;
 			this.comboTypeOutstandingFilter.Size = new System.Drawing.Size(100, 21);
@@ -1075,7 +1075,7 @@
 			// comboClinicOutstandingFilter
 			// 
 			this.comboClinicOutstandingFilter.BackColor = System.Drawing.SystemColors.Window;
-			this.comboClinicOutstandingFilter.Location = new System.Drawing.Point(302, 33);
+			this.comboClinicOutstandingFilter.Location = new System.Drawing.Point(199, 33);
 			this.comboClinicOutstandingFilter.Name = "comboClinicOutstandingFilter";
 			this.comboClinicOutstandingFilter.SelectionModeMulti = true;
 			this.comboClinicOutstandingFilter.Size = new System.Drawing.Size(90, 21);
@@ -1093,7 +1093,7 @@
 			// 
 			// labelClinicOutstandingFilter
 			// 
-			this.labelClinicOutstandingFilter.Location = new System.Drawing.Point(302, 14);
+			this.labelClinicOutstandingFilter.Location = new System.Drawing.Point(198, 14);
 			this.labelClinicOutstandingFilter.Name = "labelClinicOutstandingFilter";
 			this.labelClinicOutstandingFilter.Size = new System.Drawing.Size(60, 18);
 			this.labelClinicOutstandingFilter.TabIndex = 194;

@@ -508,7 +508,7 @@ namespace OpenDental {
 				}
 			}
 			else {
-				MsgBox.Show("CareCredit transaction could not be completed. This payment will not be associated to the CareCredit Transactions.");
+				MsgBox.Show("CareCredit transaction could not be completed or was sent to the patient. This payment will not be associated to the CareCredit Transactions.");
 				CareCreditWebResponses.ClearPayment(careCreditWebResponse.CareCreditWebResponseNum);
 				return;
 			}

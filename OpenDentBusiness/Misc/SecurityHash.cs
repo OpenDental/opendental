@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2024,3,14);
+		public static DateTime DateStart=new DateTime(2024,3,15);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -143,7 +143,6 @@ namespace OpenDentBusiness.Misc {
 			_areAppointmentsUpdated=true;
 		}
 
-		///<summary>Hashes ALL patients with an empty SecurityHash field. Does not use the DateStart like other table hashing methods. </summary>
 		private static void RunPatient() {
 			if(_arePatientsUpdated) {
 				return;
@@ -170,11 +169,9 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PatientWorker() {
-			//Get all ALL unhashed patients and any with duplicate SecurityHash values
-			string command="SELECT PatNum FROM patient LEFT JOIN (SELECT SecurityHash FROM patient GROUP BY SecurityHash HAVING COUNT(*)>1) "+
-				"patDup ON patDup.SecurityHash=patient.SecurityHash WHERE patient.SecurityHash='' OR patDup.SecurityHash IS NOT NULL";
+			//Update hashes for patients that have been added or changed since DateStart.
+			string command="SELECT PatNum FROM patient WHERE DateTStamp >= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
-			//Do not clear current hashes
 			long patNum;
 			string unhashedText="";
 			string hashedText="";
@@ -188,7 +185,6 @@ namespace OpenDentBusiness.Misc {
 					ex.DoNothing();
 					hashedText=ex.GetType().Name;
 				}
-				//This loop takes 7 minutes for 1M patients when run locally, but it's taking too long for customers.
 				command=$@"UPDATE patient SET SecurityHash='{POut.String(hashedText)}' WHERE PatNum={POut.Long(patNum)}";
 				Db.NonQ(command);
 			}

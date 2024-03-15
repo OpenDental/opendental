@@ -227,7 +227,7 @@ namespace OpenDental{
 			// 
 			// labelPatBirthdate
 			// 
-			this.labelPatBirthdate.Location = new System.Drawing.Point(489, 458);
+			this.labelPatBirthdate.Location = new System.Drawing.Point(494, 458);
 			this.labelPatBirthdate.Name = "labelPatBirthdate";
 			this.labelPatBirthdate.Size = new System.Drawing.Size(99, 20);
 			this.labelPatBirthdate.TabIndex = 228;
@@ -330,7 +330,7 @@ namespace OpenDental{
 			// 
 			// labelSubscriberID
 			// 
-			this.labelSubscriberID.Location = new System.Drawing.Point(6, 79);
+			this.labelSubscriberID.Location = new System.Drawing.Point(11, 79);
 			this.labelSubscriberID.Name = "labelSubscriberID";
 			this.labelSubscriberID.Size = new System.Drawing.Size(99, 20);
 			this.labelSubscriberID.TabIndex = 98;
@@ -339,7 +339,7 @@ namespace OpenDental{
 			// 
 			// labelSSN
 			// 
-			this.labelSSN.Location = new System.Drawing.Point(6, 57);
+			this.labelSSN.Location = new System.Drawing.Point(11, 57);
 			this.labelSSN.Name = "labelSSN";
 			this.labelSSN.Size = new System.Drawing.Size(99, 20);
 			this.labelSSN.TabIndex = 97;
@@ -348,7 +348,7 @@ namespace OpenDental{
 			// 
 			// labelBirthdate
 			// 
-			this.labelBirthdate.Location = new System.Drawing.Point(6, 35);
+			this.labelBirthdate.Location = new System.Drawing.Point(11, 35);
 			this.labelBirthdate.Name = "labelBirthdate";
 			this.labelBirthdate.Size = new System.Drawing.Size(99, 20);
 			this.labelBirthdate.TabIndex = 96;
@@ -357,7 +357,7 @@ namespace OpenDental{
 			// 
 			// labelName
 			// 
-			this.labelName.Location = new System.Drawing.Point(6, 13);
+			this.labelName.Location = new System.Drawing.Point(11, 13);
 			this.labelName.Name = "labelName";
 			this.labelName.Size = new System.Drawing.Size(99, 20);
 			this.labelName.TabIndex = 87;
@@ -386,7 +386,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanNote
 			// 
-			this.textInsPlanNote.Location = new System.Drawing.Point(249, 33);
+			this.textInsPlanNote.Location = new System.Drawing.Point(249, 37);
 			this.textInsPlanNote.Multiline = true;
 			this.textInsPlanNote.Name = "textInsPlanNote";
 			this.textInsPlanNote.ReadOnly = true;
@@ -396,7 +396,7 @@ namespace OpenDental{
 			// 
 			// textCarrierPhoneNumber
 			// 
-			this.textCarrierPhoneNumber.Location = new System.Drawing.Point(127, 33);
+			this.textCarrierPhoneNumber.Location = new System.Drawing.Point(127, 37);
 			this.textCarrierPhoneNumber.Name = "textCarrierPhoneNumber";
 			this.textCarrierPhoneNumber.ReadOnly = true;
 			this.textCarrierPhoneNumber.Size = new System.Drawing.Size(116, 20);
@@ -404,7 +404,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanGroupNumber
 			// 
-			this.textInsPlanGroupNumber.Location = new System.Drawing.Point(127, 99);
+			this.textInsPlanGroupNumber.Location = new System.Drawing.Point(127, 103);
 			this.textInsPlanGroupNumber.Name = "textInsPlanGroupNumber";
 			this.textInsPlanGroupNumber.ReadOnly = true;
 			this.textInsPlanGroupNumber.Size = new System.Drawing.Size(116, 20);
@@ -412,7 +412,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanGroupName
 			// 
-			this.textInsPlanGroupName.Location = new System.Drawing.Point(127, 77);
+			this.textInsPlanGroupName.Location = new System.Drawing.Point(127, 81);
 			this.textInsPlanGroupName.Name = "textInsPlanGroupName";
 			this.textInsPlanGroupName.ReadOnly = true;
 			this.textInsPlanGroupName.Size = new System.Drawing.Size(116, 20);
@@ -420,7 +420,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanEmployer
 			// 
-			this.textInsPlanEmployer.Location = new System.Drawing.Point(127, 55);
+			this.textInsPlanEmployer.Location = new System.Drawing.Point(127, 59);
 			this.textInsPlanEmployer.Name = "textInsPlanEmployer";
 			this.textInsPlanEmployer.ReadOnly = true;
 			this.textInsPlanEmployer.Size = new System.Drawing.Size(116, 20);
@@ -428,7 +428,7 @@ namespace OpenDental{
 			// 
 			// textCarrierName
 			// 
-			this.textCarrierName.Location = new System.Drawing.Point(127, 11);
+			this.textCarrierName.Location = new System.Drawing.Point(127, 15);
 			this.textCarrierName.Name = "textCarrierName";
 			this.textCarrierName.ReadOnly = true;
 			this.textCarrierName.Size = new System.Drawing.Size(116, 20);
@@ -436,7 +436,7 @@ namespace OpenDental{
 			// 
 			// labelPlanNote
 			// 
-			this.labelPlanNote.Location = new System.Drawing.Point(249, 11);
+			this.labelPlanNote.Location = new System.Drawing.Point(249, 15);
 			this.labelPlanNote.Name = "labelPlanNote";
 			this.labelPlanNote.Size = new System.Drawing.Size(225, 20);
 			this.labelPlanNote.TabIndex = 104;
@@ -445,7 +445,7 @@ namespace OpenDental{
 			// 
 			// labelCarrierPhone
 			// 
-			this.labelCarrierPhone.Location = new System.Drawing.Point(8, 33);
+			this.labelCarrierPhone.Location = new System.Drawing.Point(13, 37);
 			this.labelCarrierPhone.Name = "labelCarrierPhone";
 			this.labelCarrierPhone.Size = new System.Drawing.Size(113, 20);
 			this.labelCarrierPhone.TabIndex = 99;
@@ -454,7 +454,7 @@ namespace OpenDental{
 			// 
 			// labelGroupNumber
 			// 
-			this.labelGroupNumber.Location = new System.Drawing.Point(8, 99);
+			this.labelGroupNumber.Location = new System.Drawing.Point(13, 103);
 			this.labelGroupNumber.Name = "labelGroupNumber";
 			this.labelGroupNumber.Size = new System.Drawing.Size(113, 20);
 			this.labelGroupNumber.TabIndex = 98;
@@ -463,7 +463,7 @@ namespace OpenDental{
 			// 
 			// labelGroupName
 			// 
-			this.labelGroupName.Location = new System.Drawing.Point(8, 77);
+			this.labelGroupName.Location = new System.Drawing.Point(13, 81);
 			this.labelGroupName.Name = "labelGroupName";
 			this.labelGroupName.Size = new System.Drawing.Size(113, 20);
 			this.labelGroupName.TabIndex = 97;
@@ -472,7 +472,7 @@ namespace OpenDental{
 			// 
 			// labelEmployerName
 			// 
-			this.labelEmployerName.Location = new System.Drawing.Point(8, 55);
+			this.labelEmployerName.Location = new System.Drawing.Point(13, 59);
 			this.labelEmployerName.Name = "labelEmployerName";
 			this.labelEmployerName.Size = new System.Drawing.Size(113, 20);
 			this.labelEmployerName.TabIndex = 96;
@@ -481,7 +481,7 @@ namespace OpenDental{
 			// 
 			// labelCarrierName
 			// 
-			this.labelCarrierName.Location = new System.Drawing.Point(8, 12);
+			this.labelCarrierName.Location = new System.Drawing.Point(13, 16);
 			this.labelCarrierName.Name = "labelCarrierName";
 			this.labelCarrierName.Size = new System.Drawing.Size(113, 16);
 			this.labelCarrierName.TabIndex = 87;
