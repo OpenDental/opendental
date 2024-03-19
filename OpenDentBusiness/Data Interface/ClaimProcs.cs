@@ -1297,10 +1297,6 @@ namespace OpenDentBusiness{
 		///<summary>Gets claimprocs from the given list which are attached to the given claimNum and are not Canadian labs and are attached to a procedure.</summary>
 		public static List<ClaimProc> GetForClaimOverpay(List<ClaimProc> listClaimProcs,long claimNum) {
 			//No need to check MiddleTierRole; no call to db.
-			List<long> listLabProcNums=new List<long>();
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-				listLabProcNums=Procedures.GetCanadianLabFees(listClaimProcs.Select(x=>x.ProcNum).Where(x => x!=0).ToList()).Select(x => x.ProcNum).ToList();
-			}
 			List<ClaimProc> listClaimProcsRet=new List<ClaimProc>();
 			for(int i=0;i<listClaimProcs.Count;i++) {
 				if(listClaimProcs[i].ClaimNum!=claimNum) {
@@ -1308,11 +1304,6 @@ namespace OpenDentBusiness{
 				}
 				if(listClaimProcs[i].ProcNum==0) {
 					continue;//skip total payments
-				}
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA") //Canada
-					&& listLabProcNums.Contains(listClaimProcs[i].ProcNum)) //Current claimProc is associated to a lab.
-				{
-					continue;
 				}
 				listClaimProcsRet.Add(listClaimProcs[i]);
 			}

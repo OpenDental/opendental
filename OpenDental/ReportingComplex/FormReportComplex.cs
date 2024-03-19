@@ -1032,7 +1032,7 @@ namespace OpenDental.ReportingComplex {
 			saveFileDialog.DefaultExt="txt";
 			saveFileDialog.FileName=_myReport.ReportName;
 			if(ODBuild.IsWeb()) {
-				if(saveFileDialog.ShowDialog()!=DialogResult.OK) { 
+				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
 				if(saveFileDialog.FileName.IsNullOrEmpty()) {
@@ -1040,6 +1040,11 @@ namespace OpenDental.ReportingComplex {
 					return;
 				}
 				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog.FileName.Split('\\').Last());
+			}
+			else if(ODCloudClient.IsAppStream) {
+				//Don't show save file dialog in AppStream environment.
+				string fileName=_myReport.ReportName;
+				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
 			}
 			else {
 				//saveFileDialog2.Title=Lan.g(this,"Select Folder to Save File To");
@@ -1140,6 +1145,9 @@ namespace OpenDental.ReportingComplex {
 			}
 			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
+			}
+			else if(ODCloudClient.IsAppStream) {
+				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));

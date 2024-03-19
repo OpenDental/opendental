@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using CodeBase;
+using OpenDentBusiness;
+using System.IO;
 using static CodeBase.ODCloudClient;
 
 namespace OpenDental {
@@ -78,6 +80,25 @@ namespace OpenDental {
 				return true;
 			}
 			return false;
+		}
+
+		public static void ExportForCloud(string filePath,bool doPromptForName=true) {
+			if(doPromptForName) {
+				string fileName=Path.GetFileName(filePath);
+				InputBox inputBox=new InputBox("Enter file name:\r\nExample: \"PaymentsReport.xls\", \"ProcedureCode.xml\"",fileName);
+				inputBox.ShowDialog();
+				if(inputBox.DialogResult!=DialogResult.OK) {
+					return;
+				}
+				if(!inputBox.Text.IsNullOrEmpty()) {
+					if(Path.GetExtension(inputBox.Text).IsNullOrEmpty()) {
+						fileName+=".txt";
+					}
+					fileName=ODFileUtils.CleanFileName(inputBox.Text);
+					filePath=ODFileUtils.CombinePaths(filePath,fileName);
+				}
+			}
+			ODCloudClient.ExportForAppStream(filePath);
 		}
 
 		private enum PromptSelections {

@@ -304,44 +304,49 @@ namespace OpenDental {
 				return;
 			}
 			string filePath;
-			saveFileDialog2=new SaveFileDialog {
-				AddExtension=true,
-				Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*",
-				FilterIndex=0
-			};
-			if(_userQuery==null || _userQuery.FileName==null || _userQuery.FileName==""){//.FileName==null)
-				saveFileDialog2.FileName=textTitle.Text;
-			}
-			else{
-				saveFileDialog2.FileName=_userQuery.FileName;
-			}
-			if(ODEnvironment.IsCloudServer) {
-				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) { 
-					return;
-				}
-				if(saveFileDialog2.FileName.IsNullOrEmpty()) {
-					MsgBox.Show("Failed to save the file.");
-					return;
-				}
-				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog2.FileName.Split('\\').Last());
+			if(ODCloudClient.IsAppStream) {
+				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"ODUserQueryExport.xls");
 			}
 			else {
-				if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
-					try {
-						Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
-						saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-					}
-					catch {
-						//initialDirectory will be blank
-					}
+				saveFileDialog2=new SaveFileDialog {
+					AddExtension=true,
+					Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*",
+					FilterIndex=0
+				};
+				if(_userQuery==null || _userQuery.FileName==null || _userQuery.FileName==""){//.FileName==null)
+					saveFileDialog2.FileName=textTitle.Text;
 				}
-				else saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
+				else{
+					saveFileDialog2.FileName=_userQuery.FileName;
+				}
+				if(ODEnvironment.IsCloudServer) {
+					if(saveFileDialog2.ShowDialog()!=DialogResult.OK) { 
+						return;
+					}
+					if(saveFileDialog2.FileName.IsNullOrEmpty()) {
+						MsgBox.Show("Failed to save the file.");
+						return;
+					}
+					filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog2.FileName.Split('\\').Last());
+				}
+				else {
+					if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
+						try {
+							Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
+							saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+						}
+						catch {
+							//initialDirectory will be blank
+						}
+					}
+					else saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+					if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
+						saveFileDialog2.Dispose();
+						return;
+					}
+					filePath=saveFileDialog2.FileName;
 					saveFileDialog2.Dispose();
-					return;
 				}
-				filePath=saveFileDialog2.FileName;
-				saveFileDialog2.Dispose();
 			}
 			using StreamWriter streamWriter = new StreamWriter(filePath,false);
 			//new FileStream(,FileMode.Create,FileAccess.Write,FileShare.Read)))
@@ -390,6 +395,9 @@ namespace OpenDental {
 			streamWriter.Close();
 			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
+			}
+			else if(ODCloudClient.IsAppStream) {
+				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));

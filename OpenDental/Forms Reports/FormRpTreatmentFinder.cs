@@ -357,6 +357,9 @@ namespace OpenDental{
 				}
 				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog.FileName.Split('\\').Last());
 			}
+			else if(ODCloudClient.IsAppStream) {
+				//Do not show save dialog or export locally. File will be exported later.
+			}
 			else {
 				if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
 					try {
@@ -396,6 +399,9 @@ namespace OpenDental{
 			}
 			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
+			}
+			else if(ODCloudClient.IsAppStream) {
+				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));

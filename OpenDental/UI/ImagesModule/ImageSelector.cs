@@ -394,6 +394,17 @@ namespace OpenDental.UI{
 			LayoutManager.ZoomChanged+=LayoutManager_ZoomChanged;
 		}
 
+		///<summary>Similar to the LoadExpandedPrefs() method, but instead of looking at the user prefs we can pass in a specific list of categories to expand.</summary>
+		public void SetExpandedCategories(List<long> listDefNumsToExpand) {
+			CollapseAll();
+			for(int i=0;i<listDefNumsToExpand.Count;i++) {
+				if(!_listDefNumsExpanded.Contains(listDefNumsToExpand[i])) {
+					_listDefNumsExpanded.Add(listDefNumsToExpand[i]);
+				}	
+			}
+			ComputeRows();
+		}
+
 		public void SetSelected(EnumImageNodeType nodeType,long primaryKey){
 			NodeObjTag nodeObjTag=null;
 			if(nodeType==EnumImageNodeType.Category){

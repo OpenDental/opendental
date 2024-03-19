@@ -735,7 +735,7 @@ namespace OpenDental {
 		#endregion
 		#region ODCloudSetMachineName
 		
-		///<summary>For ODBuild.IsThinfinity and PrefC.IsAppStream only.  Begins a thread that will run once per minute attempting to set the ODEnvironment.MachineName by making a
+		///<summary>For ODBuild.IsWeb and PrefC.IsAppStream only.  Begins a thread that will run once per minute attempting to set the ODEnvironment.MachineName by making a
 		///call to the ODCloudClient. If ODCloudClient is not running or throws an exception, the machine name will be set to "UNKNOWN".  The next time this thread runs, if the
 		///machine name is "UNKNOWN" we will attempt to get the machine name from the ODCloudClient again.  If the machine name is successfully retrieved from the ODCloudClient
 		///(i.e. ODEnvironment.MachineName!="UNKNOWN") we will not attempt to get the name from the cloud client again while this session is active.</summary>

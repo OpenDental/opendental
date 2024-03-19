@@ -165,6 +165,10 @@ namespace OpenDentBusiness {
 			//The remaining imperfection will only be noticeable when a tall section of text spills down too close to the next element.
 			RectangleF rectangleActual=new RectangleF(rectangle.X,rectangle.Y,(rectangle.Width/0.96f),(rectangle.Height/0.96f));
 			StringFormat stringFormat=new StringFormat();
+			//The overload for DrawString that takes a StringFormat will cause the tabs '\t' to be ignored.
+			//In order for the tabs to not get ignored, we have to tell StringFormat how many pixels each tab should be.
+			//50.0f is the closest to our Fill Sheet Edit preview.
+			stringFormat.SetTabStops(0.0f,new float[] { 50.0f });
 			stringFormat.Alignment=StringAlignment.Near;
 			if(align==HorizontalAlignment.Center){
 				stringFormat.Alignment=StringAlignment.Center;

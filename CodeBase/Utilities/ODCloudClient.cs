@@ -897,6 +897,17 @@ namespace CodeBase {
 			}
 		}
 
+		public static void ExportForAppStream(string filePath) {
+			Byte[] bytes=File.ReadAllBytes(filePath);
+			string fileDataString=Convert.ToBase64String(bytes);
+			ODCloudClientData oDCloudClientData=new ODCloudClientData();
+			oDCloudClientData.FileData=fileDataString;
+			string fileName=Path.GetFileName(filePath);
+			oDCloudClientData.OtherData=fileName;
+			string response=SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.ExportFile);
+			MessageBox.Show(response);
+		}
+
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
 		public class ODBrowserData {
 			public string ElementId;
@@ -1121,6 +1132,8 @@ namespace CodeBase {
 			TwainGetAcquiredBitmap,
 			///<summary>Close twain source</summary>
 			TwainCloseScanner,
+			///<summary>Receive file from Cloud session and place it in downloads folder.</summary>
+			ExportFile,
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

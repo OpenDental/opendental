@@ -388,26 +388,24 @@ namespace OpenDental{
 			WebClient webClient=new WebClient();
 			//The VeriFone driver is necessary for PayConnect users to process payments on the VeriFone terminal.
 			string zipFileName=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),"VeriFoneUSBUARTDriver_Vx_1.0.0.52_B5.zip");
-			if(ODBuild.IsWeb()) {
-				try {
-					webClient.DownloadFile(@"http://www.opendental.com/download/drivers/VeriFoneUSBUARTDriver_Vx_1.0.0.52_B5.zip",zipFileName);
-				}
-				catch(Exception ex) {
-					Cursor=Cursors.Default;
-					MessageBox.Show(Lan.g(this,"Unable to download driver. Error message")+": "+ex.Message);
-					return;
-				}
-				//ODCloud, send the installer to the client computer instead of installing it here on the server computer.
-				Thinfinity.ThinfinityUtils.ExportForDownload(zipFileName);
-				MessageBox.Show(Lans.g(this,"Download complete. Run the Setup.exe file in the downloaded zip file."));
-				return;
-			}
 			try {
 				webClient.DownloadFile(@"http://www.opendental.com/download/drivers/VeriFoneUSBUARTDriver_Vx_1.0.0.52_B5.zip",zipFileName);
 			}
 			catch(Exception ex) {
 				Cursor=Cursors.Default;
 				MessageBox.Show(Lan.g(this,"Unable to download driver. Error message")+": "+ex.Message);
+				return;
+			}
+			if(ODEnvironment.IsCloudServer) {
+				//ODCloud, send the installer to the client computer instead of installing it here on the server computer.
+				if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(zipFileName,doPromptForName:false);
+				}
+				else {
+					Thinfinity.ThinfinityUtils.ExportForDownload(zipFileName);
+				}
+				Cursor=Cursors.Default;
+				MessageBox.Show(Lans.g(this,"Download complete. Run the Setup.exe file in the downloaded zip file."));
 				return;
 			}
 			MemoryStream memoryStream=new MemoryStream();

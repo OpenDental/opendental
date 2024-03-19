@@ -1066,8 +1066,8 @@ namespace OpenDental {
 			}
 			string filename="ProcCodes.xml";
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),filename); 
-			if(ODBuild.IsWeb()) {
-				//file download dialog will come up later, after file is created.
+			if(ODEnvironment.IsCloudServer) {
+				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
 			}
 			else {
 				using SaveFileDialog saveFileDialog=new SaveFileDialog();
@@ -1082,8 +1082,11 @@ namespace OpenDental {
 			TextWriter textWriter=new StreamWriter(filePath);
 			xmlSerializer.Serialize(textWriter,listProcedureCodes);
 			textWriter.Close();
-			if(ODBuild.IsWeb()) {
+			if(ODBuild.IsWeb()){
 				ThinfinityUtils.ExportForDownload(filePath);
+			}
+			else if(ODCloudClient.IsAppStream){
+				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MsgBox.Show(this,"Exported");

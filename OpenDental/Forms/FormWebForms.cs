@@ -183,26 +183,12 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.WaitCursor;
 			string strMessage=Lan.g(this,"Done");
-			List<string> listMsgsCEMT=new List<string>();
-			List<string> listMsgsWebForms=new List<string>();
-			List<string> listMsgsDownloadedWebForms=new List<string>();
-			if(WebFormL.TryRetrievePatientTransfersCEMT().IsFailure()) {
-				listMsgsCEMT=WebFormL.TryRetrievePatientTransfersCEMT().ListMsgs;
-				strMessage=Lan.g(this,"Retrieval process exited prematurely.");//User wants to cancel out of the CEMT patient transfer importing process.
-			}
-			else if(WebFormL.TryRetrieveWebForms(_webForms_Preference.CultureName,comboClinics.ListClinicNumsSelected,textBatchSize.Value).IsFailure()) {
-				listMsgsWebForms=WebFormL.TryRetrieveWebForms(_webForms_Preference.CultureName,comboClinics.ListClinicNumsSelected,textBatchSize.Value).ListMsgs;
-				strMessage=Lan.g(this,"Retrieval process exited prematurely.");//There was an error or the user wants to cancel out of the web forms retrieval process.
-			}
-			else if(WebFormL.TryRetrieveUnmatchedWebForms(comboClinics.ListClinicNumsSelected).IsFailure()) {
-				listMsgsDownloadedWebForms=WebFormL.TryRetrieveUnmatchedWebForms(comboClinics.ListClinicNumsSelected).ListMsgs;
+			Result result=RetrieveWebForms();
+			if(result.IsFailure()) {
 				strMessage=Lan.g(this,"Retrieval process exited prematurely.");
 			}
-			if(!listMsgsCEMT.IsNullOrEmpty()) {
-				strMessage+="\r\n\r\n"+string.Join("\r\n",listMsgsCEMT);
-			}
-			if(!listMsgsWebForms.IsNullOrEmpty()) {
-				strMessage+="\r\n\r\n"+string.Join("\r\n",listMsgsWebForms);
+			if(!result.ListMsgs.IsNullOrEmpty()) {
+				strMessage+="\r\n\r\n"+string.Join("\r\n",result.ListMsgs);
 			}
 			if(strMessage.Length <= 50) {
 				Cursor=Cursors.Default;
@@ -214,6 +200,32 @@ namespace OpenDental {
 			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strMessage);
 			msgBoxCopyPaste.ShowDialog();
 			FillGrid();
+		}
+
+		///<summary>Returns failed result if the user wants to cancel out of the retrieval process. Returns success result if the retrieval process completed.
+		///The lists of messages will be filled with any messages during the retrieval process regardless if the entire process completed or not.</summary>
+		private Result RetrieveWebForms() {
+			Result resultRet=new Result();
+			Result result=WebFormL.TryRetrievePatientTransfersCEMT();
+			resultRet.ListMsgs.AddRange(result.ListMsgs);
+			if(result.IsFailure()) {
+				resultRet.IsSuccess=false;
+				return resultRet;
+			}
+			result=WebFormL.TryRetrieveWebForms(_webForms_Preference.CultureName,comboClinics.ListClinicNumsSelected,textBatchSize.Value);
+			resultRet.ListMsgs.AddRange(result.ListMsgs);
+			if(result.IsFailure()) {
+				resultRet.IsSuccess=false;
+				return resultRet;
+			}
+			result=WebFormL.TryRetrieveUnmatchedWebForms(comboClinics.ListClinicNumsSelected);
+			resultRet.ListMsgs.AddRange(result.ListMsgs);
+			if(result.IsFailure()) {
+				resultRet.IsSuccess=false;
+				return resultRet;
+			}
+			resultRet.IsSuccess=true;
+			return resultRet;
 		}
 
 		private void butToday_Click(object sender,EventArgs e) {

@@ -22,7 +22,7 @@ namespace OpenDental {
 		private void FormChooseDatabase_Load(object sender,EventArgs e) {
 			Logger.LogToPath("Load",LogPath.Startup,LogPhase.Start);
 			FillForm();
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				//Don't let the user choose another office's database (this window should never show anyway because NoShowOnStartup should be true)
 				DisableAllExcept(butOK);
 			}
@@ -41,6 +41,8 @@ namespace OpenDental {
 				comboDatabase.Enabled=false;
 				comboDatabase.Text=DataConnection.GetDatabaseName();
 				checkConnectServer.Enabled=false;
+				textUser.ReadOnly=true;
+				textPassword.ReadOnly=true;
 				textURI.ReadOnly=true;
 			}
 			listType.Items.Add("MySql");

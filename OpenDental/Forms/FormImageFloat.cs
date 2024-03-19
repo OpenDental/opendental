@@ -1430,7 +1430,7 @@ namespace OpenDental {
 		}
 
 		public void ToolBarExport_Click(bool doExportAsTiff=false){
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				ToolBarExport_ClickWeb();
 				return;
 			}
@@ -4565,30 +4565,40 @@ namespace OpenDental {
 		}
 
 		private void ToolBarExport_ClickWeb(){
-			if(IsDocumentShowing()){
+			if(IsDocumentShowing()) {
 				if(!Security.IsAuthorized(EnumPermType.ImageExport,GetDocumentShowing(0).DateCreated)) {
 					return;
 				}	
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),GetDocumentShowing(0).FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),GetDocumentShowing(0).FileName);
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				ThinfinityUtils.ExportForDownload(tempFilePath);
-				MsgBox.Show(this,"Done.");
+				if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(tempFilePath);
+				}
+				else {
+					ThinfinityUtils.ExportForDownload(tempFilePath);
+					MsgBox.Show(this,"Done.");
+				}
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
 				SecurityLogs.MakeLogEntry(EnumPermType.ImageExport,PatientCur.PatNum,logText,GetDocumentShowing(0).DocNum,GetDocumentShowing(0).DateTStamp);
 				return;
 			}
-			if(IsMountItemSelected()){
+			if(IsMountItemSelected()) {
 				if(!Security.IsAuthorized(EnumPermType.ImageExport,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}	
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),_documentArrayShowing[_idxSelectedInMount].FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),_documentArrayShowing[_idxSelectedInMount].FileName);
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				ThinfinityUtils.ExportForDownload(tempFilePath);
-				MsgBox.Show(this,"Done.");
+				if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(tempFilePath);
+				}
+				else {
+					ThinfinityUtils.ExportForDownload(tempFilePath);
+					MsgBox.Show(this,"Done.");
+				}
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Exported: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
@@ -4607,9 +4617,15 @@ namespace OpenDental {
 				DrawMount(g);
 				g.Dispose();
 				bitmapExport.Save(tempFilePath);
-				ThinfinityUtils.ExportForDownload(tempFilePath);
-				bitmapExport.Dispose();
-				MsgBox.Show(this,"Done.");
+				if(ODCloudClient.IsAppStream){
+					CloudClientL.ExportForCloud(tempFilePath);
+					bitmapExport.Dispose();
+				}
+				else {
+					ThinfinityUtils.ExportForDownload(tempFilePath);
+					bitmapExport.Dispose();
+					MsgBox.Show(this,"Done.");
+				}
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
 				string logText="Mount Exported: "+_mountShowing.Description+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);

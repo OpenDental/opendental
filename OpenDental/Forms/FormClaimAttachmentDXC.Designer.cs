@@ -41,6 +41,7 @@
 			this.butSave = new OpenDental.UI.Button();
 			this.timerMonitorClipboard = new System.Windows.Forms.Timer(this.components);
 			this.timerKillSnipToolProcesses = new System.Windows.Forms.Timer(this.components);
+			this.labelSave = new System.Windows.Forms.Label();
 			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -181,9 +182,9 @@
 			// 
 			this.labelClaimAttachWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelClaimAttachWarning.ForeColor = System.Drawing.Color.DarkRed;
-			this.labelClaimAttachWarning.Location = new System.Drawing.Point(7, 365);
+			this.labelClaimAttachWarning.Location = new System.Drawing.Point(7, 359);
 			this.labelClaimAttachWarning.Name = "labelClaimAttachWarning";
-			this.labelClaimAttachWarning.Size = new System.Drawing.Size(411, 27);
+			this.labelClaimAttachWarning.Size = new System.Drawing.Size(355, 34);
 			this.labelClaimAttachWarning.TabIndex = 15;
 			this.labelClaimAttachWarning.Text = "No claim attachment image category definition found.  Images will be saved using " +
     "the first image category.";
@@ -209,9 +210,20 @@
 			// 
 			this.timerKillSnipToolProcesses.Tick += new System.EventHandler(this.timerKillSnipToolProcesses_Tick);
 			// 
+			// labelSave
+			// 
+			this.labelSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelSave.Location = new System.Drawing.Point(396, 368);
+			this.labelSave.Name = "labelSave";
+			this.labelSave.Size = new System.Drawing.Size(114, 18);
+			this.labelSave.TabIndex = 17;
+			this.labelSave.Text = "(sends attachment)";
+			this.labelSave.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// FormClaimAttachmentDXC
 			// 
 			this.ClientSize = new System.Drawing.Size(606, 399);
+			this.Controls.Add(this.labelSave);
 			this.Controls.Add(this.labelPasteImage);
 			this.Controls.Add(this.butPasteImage);
 			this.Controls.Add(this.labelClaimAttachWarning);
@@ -253,5 +265,6 @@
 		private System.Windows.Forms.Label labelPasteImage;
 		private System.Windows.Forms.Timer timerMonitorClipboard;
 		private System.Windows.Forms.Timer timerKillSnipToolProcesses;
+		private System.Windows.Forms.Label labelSave;
 	}
 }

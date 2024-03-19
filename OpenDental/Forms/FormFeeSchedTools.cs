@@ -541,8 +541,8 @@ namespace OpenDental {
 			}
 			string fileName="Fees"+feeSchedDesc+".txt";
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODBuild.IsWeb()) {
-				//file download dialog will come up later, after file is created.
+			if(ODEnvironment.IsCloudServer) {
+				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
 			}
 			else {
 				Cursor=Cursors.WaitCursor;
@@ -572,6 +572,9 @@ namespace OpenDental {
 			}
 			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
+			}
+			else if(ODCloudClient.IsAppStream) {
+				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				Cursor=Cursors.Default;

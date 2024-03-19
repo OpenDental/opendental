@@ -14,7 +14,7 @@ namespace OpenDentBusiness {
 				return Meth.GetObject<LoadData>(MethodBase.GetCurrentMethod(),patNum,doCreateSecLog);
 			}
 			LoadData data=new LoadData();
-			data.Fam=Patients.GetFamily(patNum,doIncludeDeleted:true);
+			data.Fam=Patients.GetFamily(patNum);
 			data.Pat=data.Fam.GetPatient(patNum);
 			data.ListPatPlans=PatPlans.Refresh(patNum);
 			if(!PatPlans.IsPatPlanListValid(data.ListPatPlans)) {//PatPlans had invalid references and need to be refreshed.

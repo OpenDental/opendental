@@ -1105,7 +1105,7 @@ namespace OpenDentBusiness {
 			command="ALTER TABLE claim ADD SecurityHash varchar(255) NOT NULL";
 			Db.NonQ(command);
 			LargeTableHelper.AlterTable("claimproc","ClaimProcNum",new LargeTableHelper.ColNameAndDef("SecurityHash","varchar(255) NOT NULL"));
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}//End of 23_3_38() method
 
 		private static void To23_3_40() {

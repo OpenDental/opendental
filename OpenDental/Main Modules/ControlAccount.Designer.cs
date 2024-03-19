@@ -107,6 +107,8 @@
 			this.menuItemAddAdj = new System.Windows.Forms.MenuItem();
 			this.menuItemAddRefund = new System.Windows.Forms.MenuItem();
 			this.menuItemDeletePayPlanCharge = new System.Windows.Forms.MenuItem();
+			this.menuItemSnipAttachment = new System.Windows.Forms.MenuItem();
+			this.menuItemSelectImage = new System.Windows.Forms.MenuItem();
 			this.menuItemAddRefundWorkNotPerformed = new System.Windows.Forms.MenuItem();
 			this.groupBoxIndDis = new OpenDental.DashIndividualDiscount();
 			this.groupBoxFamilyIns = new OpenDental.UI.GroupBox();
@@ -972,27 +974,41 @@
 			this.contextMenuAcctGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemAddAdj,
             this.menuItemAddRefund,
-            this.menuItemDeletePayPlanCharge});
+            this.menuItemDeletePayPlanCharge,
+            this.menuItemSnipAttachment,
+            this.menuItemSelectImage});
 			this.contextMenuAcctGrid.Popup += new System.EventHandler(this.contextMenuAcctGrid_Popup);
+			// 
+			// menuItemSnipAttachment
+			// 
+			this.menuItemSnipAttachment.Index = 1;
+			this.menuItemSnipAttachment.Text = "Snip Attachment for DentalXChange";
+			this.menuItemSnipAttachment.Click += new System.EventHandler(this.menuItemSnipAttachment_Click);
 			// 
 			// menuItemAddAdj
 			// 
-			this.menuItemAddAdj.Index = 0;
+			this.menuItemAddAdj.Index = 2;
 			this.menuItemAddAdj.Text = "Add Adjustment";
 			this.menuItemAddAdj.Click += new System.EventHandler(this.menuItemAddAdj_Click);
 			// 
 			// menuItemAddRefund
 			// 
-			this.menuItemAddRefund.Index = 1;
+			this.menuItemAddRefund.Index = 3;
 			this.menuItemAddRefund.Text = "Refund";
 			this.menuItemAddRefund.Click += new System.EventHandler(this.menuItemAddRefund_Click);
 			// 
 			// menuItemDeletePayPlanCharge
 			// 
-			this.menuItemDeletePayPlanCharge.Index = 2;
+			this.menuItemDeletePayPlanCharge.Index = 4;
 			this.menuItemDeletePayPlanCharge.Text = "Delete Charge";
 			this.menuItemDeletePayPlanCharge.Visible = false;
 			this.menuItemDeletePayPlanCharge.Click += new System.EventHandler(this.menuItemDeletePayPlanCharge_Click);
+			// 
+			// menuItemSelectImage
+			// 
+			this.menuItemSelectImage.Index = 0;
+			this.menuItemSelectImage.Text = "Select Attachment for DentalXChange";
+			this.menuItemSelectImage.Click += new System.EventHandler(this.menuItemSelectImage_Click);
 			// 
 			// menuItemAddRefundWorkNotPerformed
 			// 
@@ -1884,6 +1900,8 @@
 		private System.Windows.Forms.MenuItem menuInsPri;
 		private System.Windows.Forms.MenuItem menuInsSec;
 		private System.Windows.Forms.MenuItem menuItemAddAdj;
+		private System.Windows.Forms.MenuItem menuItemSnipAttachment;
+		private System.Windows.Forms.MenuItem menuItemSelectImage;
 		private System.Windows.Forms.MenuItem menuItemAddRefundWorkNotPerformed;		
 		private System.Windows.Forms.MenuItem menuItemAddRefund;
 		private System.Windows.Forms.MenuItem menuItemAddMultAdj;
