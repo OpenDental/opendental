@@ -26,7 +26,7 @@ namespace OpenDental.InternalTools.Phones {
 		}
 
 		///<summary>This is for the new FormMap that replaced old FormMapHQ.</summary>
-		public void SetEmployee2(CubicleClickedDetail cubicleClickedDetail) {
+		public void SetEmployee(CubicleClickedDetail cubicleClickedDetail) {
 			string employeeName;
 			string extension;
 			string status;
@@ -55,8 +55,8 @@ namespace OpenDental.InternalTools.Phones {
 
 		///<summary>Works for null</summary>
 		public void SetBitmap(Bitmap bitmap,EnumMapImageDisplayStatus mapImageDisplayStatus,long employeeNum){
-			odPictureBoxEmployee.Image?.Dispose();
-			odPictureBoxEmployee.Image=bitmap;
+			pictureBox.Image?.Dispose();
+			pictureBox.Image=bitmap;
 			MapImageDisplayStatus=mapImageDisplayStatus;
 			EmployeeNumImage=employeeNum;
 		}

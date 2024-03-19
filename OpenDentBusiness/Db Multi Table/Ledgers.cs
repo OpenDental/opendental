@@ -461,8 +461,9 @@ namespace OpenDentBusiness{
 					+(doIncludeProcNum?",p.ProcNum,0 PayNum":"")
 					+(isAgedByProc?",p.ProcNum AgedProcNum,p.ProcDate AgedProcDate":"")+" "
 					+"FROM payplan pp "
-					+"INNER JOIN procedurelog p ON p.PatNum=pp.PatNum AND p.ProcStatus=1  "
-					+"WHERE IsDynamic=1 AND DynamicPayPlanTPOption=2 AND (p.Discount!=0 OR p.DiscountPlanAmt!=0) "
+					+"INNER JOIN payplanlink ppl ON pp.PayPlanNum=ppl.PayPlanNum "
+					+"INNER JOIN procedurelog p ON ppl.FKey=p.ProcNum AND ppl.LinkType="+POut.Int((int)PayPlanLinkType.Procedure)+" AND p.ProcStatus="+POut.Int((int)ProcStat.TP)+" "
+					+"WHERE IsDynamic=1 AND DynamicPayPlanTPOption="+POut.Int((int)DynamicPayPlanTPOptions.TreatAsComplete)+" AND (p.Discount!=0 OR p.DiscountPlanAmt!=0) "
 					+(isAllPats?"":("AND pp.PatNum IN ("+familyPatNums+") "));
 			}
 			#endregion Discounts for Versions 2 and 3

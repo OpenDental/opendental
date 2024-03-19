@@ -82,7 +82,7 @@ namespace OpenDental {
 				return;
 			}
 			string fileName;
-			if(ODBuild.IsThinfinity()) {
+			if(ODEnvironment.IsCloudServer) {
 				//file download dialog will come up later, after file is created.
 				fileName="autonotes.json";
 			}

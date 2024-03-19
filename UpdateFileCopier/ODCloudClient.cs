@@ -58,6 +58,10 @@ namespace CodeBase {
 			return "";
 		}
 
+		public static void ExportForAppStream(string filePath,string fileName) {
+		
+		}
+
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>
 		public enum BrowserAction {
 			///<summary>Pass the data on to ODCloudClient</summary>

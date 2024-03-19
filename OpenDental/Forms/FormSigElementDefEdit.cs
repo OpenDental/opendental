@@ -121,7 +121,7 @@ namespace OpenDental{
 
 		private void butExport_Click(object sender,EventArgs e) {
 			#region Web Build
-			if(ODBuild.IsThinfinity()) {
+			if(ODEnvironment.IsCloudServer) {
 				string fileName=SigElementDefCur.SigText+".wav";
 				string tempPath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
 				try {
@@ -131,7 +131,12 @@ namespace OpenDental{
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				ThinfinityUtils.ExportForDownload(tempPath);
+				if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(tempPath);
+				}
+				else {
+					ThinfinityUtils.ExportForDownload(tempPath);
+				}
 				return;
 			}
 			#endregion Web Build

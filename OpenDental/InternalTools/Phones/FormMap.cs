@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+//using System.Threading.Tasks;//odb has a class called Task which conflicts.
 using System.Windows.Forms;
 using OpenDentBusiness;
 using CodeBase;
@@ -20,6 +22,8 @@ namespace OpenDental.InternalTools.Phones {
 		#endregion Fields - Public
 
 		#region Fields - Private
+		///<summary>Allows us to cancel an old webcam stream when we want to start a new one.</summary>
+		private CancellationTokenSource _cancellationTokenSource;
 		///<summary>Tracks when chat count box needs to be set red.</summary>
 		private int _chatRedCount=2;
 		///<summary>Tracks when chat time box needs to be set red.</summary>
@@ -54,7 +58,8 @@ namespace OpenDental.InternalTools.Phones {
 			Lan.F(this);
 			escalationView.FadeAlphaIncrement=20;
 			mapPanel.GoToPatient+=(sender,patNum)=>GoToPatient?.Invoke(sender,patNum);
-			mapPanel.CubicleClicked+=(sender,cubicleClickedDetail)=>MapPanel_CubicleClicked(cubicleClickedDetail);
+			//mapPanel.CubicleClicked+=(sender,cubicleClickedDetail)=> MapPanel_CubicleClicked(cubicleClickedDetail);
+			mapPanel.CubicleClicked+=async (sender,cubicleClickedDetail)=> await MapPanel_CubicleClicked(cubicleClickedDetail);
 		}
 		#endregion Constructor
 
@@ -457,8 +462,81 @@ namespace OpenDental.InternalTools.Phones {
 			return true;
 		}
 
-		public void MapPanel_CubicleClicked(CubicleClickedDetail cubicleClickedDetail) {
-			FillDetails(cubicleClickedDetail);
+		public async System.Threading.Tasks.Task MapPanel_CubicleClicked(CubicleClickedDetail cubicleClickedDetail) {
+			//set the text before the image, because the image can take time to load
+			userControlMapDetails1.SetEmployee(cubicleClickedDetail);
+			userControlMapDetails1.Visible=true;
+			//Application.DoEvents();//process the events first so the text on the control will be set
+			_cancellationTokenSource?.Cancel();//cancel any previous webcam loop
+			//Create a new CancellationTokenSource for the new loop
+			_cancellationTokenSource = new CancellationTokenSource();
+			CancellationToken cancellationToken = _cancellationTokenSource.Token;
+			long employeeNum=userControlMapDetails1.EmployeeNumCur;
+			if(employeeNum==-1){
+				//They clicked outside any cubicle, so they want to clear the employee and any webcam stream.
+				userControlMapDetails1.SetBitmap(null,EnumMapImageDisplayStatus.Empty,employeeNum);
+				return;
+			}
+			//First, look for a webcam image-----------------------------------------------------------------------------------------------------------
+			PersistentTcpClient persistentTcpClient=new PersistentTcpClient();
+			persistentTcpClient.UserName=Security.CurUser.UserName;
+			persistentTcpClient.Password=Security.PasswordTyped;
+			await persistentTcpClient.ConnectAsyncIfNeeded();
+			bool isConnected=true;
+			if(!persistentTcpClient.IsConnected()){
+				isConnected=false;
+			}
+			if(!persistentTcpClient.IsPWValid){
+				isConnected=false;
+			}
+			if(isConnected){
+				DateTime dateTimeStart=DateTime.Now;
+				try{
+					while(true) {
+						//While this thread was awaiting for 250ms,a different thread could have reacted to the user clicking on a different employee, no employee, or this same employee.
+						//Our semaphore will keep the server calls isolated, but will not prevent double/triple/etc while loops, each getting bitmaps.
+						//The cancellationToken ensures only one loop is running.
+						if(cancellationToken.IsCancellationRequested){
+							return;//some other thread will be filling bitmap, so we don't need to do anything.
+						}
+						//Video loop will always time out after 1 min. User can click on same cubicle again to restart video.
+						if(DateTime.Now>dateTimeStart.AddMinutes(1)){
+							//after minute is up, continue with code below to get stock image
+							break;
+						}
+						Bitmap bitmapWebcam = await persistentTcpClient.RequestBitmap(cubicleClickedDetail.EmployeeName);
+						//If initially or at any point in the loop, webcam images becomes unavailable, continue down to stock image.
+						if(bitmapWebcam==null) {
+							break;
+						}
+						userControlMapDetails1.SetBitmap(bitmapWebcam,EnumMapImageDisplayStatus.WebCam,employeeNum);
+						await System.Threading.Tasks.Task.Delay(250);//4 per second
+					}
+				}
+				catch{//TaskCanceledException
+					//The task might have an unanticipated exception.
+					//This does not follow our normall pattern, but it is the generally recommended pattern.
+					return;
+				}
+			}
+			//Then, look for a stock image-------------------------------------------------------------------------------------------------------------
+			if(userControlMapDetails1.MapImageDisplayStatus==EnumMapImageDisplayStatus.Stock//already showing stock
+				&& userControlMapDetails1.EmployeeNumImage==employeeNum)//for this employee
+			{
+				return;
+			}
+			Bitmap bitmap=null;
+			try {
+				bitmap=GetEmployeePicture(employeeNum);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();//Network error or file permission issue.
+			}
+			if(bitmap==null){
+				userControlMapDetails1.SetBitmap(null,EnumMapImageDisplayStatus.Empty,employeeNum);
+				return;
+			}
+			userControlMapDetails1.SetBitmap(bitmap,EnumMapImageDisplayStatus.Stock,employeeNum);
 		}
 
 		///<summary>Preserves _mapAreaContainer. Does not fill mapPanel.</summary>
@@ -476,78 +554,6 @@ namespace OpenDental.InternalTools.Phones {
 			}
 			comboRoom.SelectedIndex=selectedIndex;
 			this.Text="Call Center Status Map - "+_listMapAreaContainers[comboRoom.SelectedIndex].Description;
-		}
-
-		///<summary>Sets the detail control to the clicked on cubicle as long as there is an associated phone.</summary>
-		private void FillDetails(CubicleClickedDetail cubicleClickedDetail) {
-			//set the text before the image, because the image can take time to load
-			userControlMapDetails1.SetEmployee2(cubicleClickedDetail);
-			userControlMapDetails1.Visible=true;
-			Application.DoEvents();//process the events first so the text on the control will be set
-			FillDetailImage(cubicleClickedDetail.EmployeeNum);
-		}
-
-		private void FillDetailImage(long employeeNum){
-			//First, look for webcam image
-			Bitmap bitmap=GetWebCamImage(employeeNum);
-			if(bitmap!=null) {
-				userControlMapDetails1.SetBitmap(bitmap,EnumMapImageDisplayStatus.WebCam,employeeNum);
-				return;
-			}
-			//Then, look for a stock image
-			if(userControlMapDetails1.MapImageDisplayStatus==EnumMapImageDisplayStatus.Stock//already showing stock
-				&& userControlMapDetails1.EmployeeNumImage==employeeNum)//for this employee
-			{
-				return;
-			}
-			try {
-				bitmap=GetEmployeePicture(employeeNum);
-			}
-			catch(Exception ex) {
-				ex.DoNothing();//Network error or file permission issue.
-			}
-			if(bitmap!=null){
-				userControlMapDetails1.SetBitmap(bitmap,EnumMapImageDisplayStatus.Stock,employeeNum);
-				return;
-			}
-			userControlMapDetails1.SetBitmap(null,EnumMapImageDisplayStatus.Empty,employeeNum);
-		}
-
-		///<summary>This timer is always running.  4 times per second.</summary>
-		private void timerWebCam_Tick(object sender,EventArgs e) {
-			if(userControlMapDetails1.EmployeeNumCur<0){
-				return;
-			}
-			FillDetailImage(userControlMapDetails1.EmployeeNumCur);
-		}
-
-		///<summary>Returns null if not found</summary>
-		private Bitmap GetWebCamImage(long employeeNum) {
-			Employee employee=Employees.GetEmp(employeeNum);
-			if(employee==null) {
-				return null;
-			}
-			//employee.FName should look like FirstL
-			string filePathWebCam=@"\\10.10.11.126\HQVideo\"+employee.FName+@"\webcam.jpg";
-			if(ODBuild.IsDebug()) {
-				if(Environment.MachineName.ToLower()=="jordanhome"){
-					filePathWebCam=@"C:\HQVideo\"+employee.FName+@"\webcam.jpg";
-				}
-			}
-			if(!File.Exists(filePathWebCam)){
-				return null;
-			}
-			Bitmap bitmap=null;
-			try{
-				bitmap=(Bitmap)Image.FromFile(filePathWebCam);
-			}
-			catch{ }
-			Bitmap bitmapResized=null;
-			if(bitmap!=null){
-				bitmapResized=new Bitmap(bitmap);
-			}
-			bitmap?.Dispose();//to release file lock
-			return bitmapResized;
 		}
 
 		private Bitmap GetEmployeePicture(long employeeNum){

@@ -1337,5 +1337,14 @@ namespace OpenDentBusiness {
 		private static void To24_1_8() {
 			FixADA2024IsPreAuthLocation();
 		}//End of 24_1_8() method
+
+		private static void To24_1_11() {
+			string command="SELECT ValueString FROM preference WHERE PrefName='PaymentPortalMsgToPayTextMessageTemplate'";
+			string valueString=Db.GetScalar(command);
+			if(valueString=="Your balance with [ClinicName] is $[StatementBalance]. To make your payment, visit [MsgToPayURL].\r\n\r\nTo view your statement, go to [StatementURL].\"") {
+				command="UPDATE preference SET ValueString='Your balance with [ClinicName] is $[StatementBalance]. To make your payment, visit [MsgToPayURL].\r\n\r\nTo view your statement, go to [StatementURL].' WHERE PrefName='PaymentPortalMsgToPayTextMessageTemplate'";
+				Db.NonQ(command);
+			}
+		}//End of 24_1_11() method
 	}
 }

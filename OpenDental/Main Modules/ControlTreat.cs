@@ -3127,21 +3127,21 @@ namespace OpenDental{
 		}
 
 		private void ToolBarMainDiscount_Click() {
+			if(gridMain.SelectedIndices.Length==0) {
+				gridMain.SetAll(true);
+			}
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.TreatPlanDiscountAdjustmentType));
-			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,false)) {
-				return;
+			List<ProcTP> listSelectedProcTPS=gridMain.SelectedTags<ProcTP>();
+			for(int i=0;i<listSelectedProcTPS.Count();i++) {
+				if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,listSelectedProcTPS[i].DateTP,false)) {
+					return;
+				}
 			}
 			if(!new[] { TreatPlanStatus.Active,TreatPlanStatus.Inactive }.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)) {
 				MsgBox.Show(this,"You can only create discounts from a current TP, not a saved TP.");
 				return;
 			}
-			if(gridMain.SelectedIndices.Length==0) {
-				gridMain.SetAll(true);
-			}
-			List<Procedure> listProcedures=Procedures.GetManyProc(gridMain.SelectedIndices.ToList()
-				.FindAll(x => gridMain.ListGridRows[x].Tag!=null)
-				.Select(x => ((ProcTP)gridMain.ListGridRows[x].Tag).ProcNumOrig)
-				.ToList(),false);
+			List<Procedure> listProcedures=Procedures.GetManyProc(listSelectedProcTPS.Select(x => x.ProcNumOrig).ToList(),false);
 			if(listProcedures.Count<=0) {
 				MsgBox.Show(this,"There are no procedures selected in the treatment plan. Please add to, or select from, procedures attached to the treatment plan before applying a discount");
 				return;

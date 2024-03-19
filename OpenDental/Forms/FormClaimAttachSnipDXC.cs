@@ -35,6 +35,8 @@ namespace OpenDental {
 		}
 
 		private void FormClaimAttachmentItemEdit_Load(object sender,EventArgs e) {
+			//Jordan wants not visible out for now
+			checkIsXrayMirrored.Visible=false;
 			List<Def> listDefsClaimAttachments=GetImageCatDefs();
 			if(listDefsClaimAttachments.Count>0) {//At least one Claim Attachment image definition exists.
 				labelClaimAttachWarning.Visible=false;
@@ -88,10 +90,12 @@ namespace OpenDental {
 			}
 			catch(ODException ex) {
 				_textClaimStatus=ex.Message;
+				MsgBox.Show(_textClaimStatus);
 				return false;
 			}
 			catch(Exception ex) {
 				_textClaimStatus=ex.Message;
+				MsgBox.Show(_textClaimStatus);
 				return false;
 			}
 			if(progressOD.IsCancelled){
@@ -107,6 +111,7 @@ namespace OpenDental {
 				stringBuilder.AppendLine(validateClaimResponse.ValidationErrors[i]);
 			}
 			_textClaimStatus=stringBuilder.ToString();
+			MsgBox.Show(_textClaimStatus);
 			return false;
 		}
 
@@ -376,7 +381,7 @@ namespace OpenDental {
 			}
 			//The user must create an image attachment before sending.
 			if(_claimConnectImageAttachment==null) {
-				MsgBox.Show(this,"An image or narrative must be specified before continuing.");
+				MsgBox.Show(this,"An image must be specified before continuing.");
 				return false;
 			}
 			_claimConnectImageAttachment.ImageFileNameDisplay=textFileName.Text;

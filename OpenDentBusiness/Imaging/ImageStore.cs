@@ -1289,7 +1289,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Makes log entry for documents.  Supply beginning text, permission, document, and the DateTStamp that the document was previously last 
 		///edited.</summary>
-		public static void LogDocument(string logMsgStart,EnumPermType perm,Document doc, DateTime secDatePrevious) {
+		public static void LogDocument(string logMsgStart,EnumPermType perm,Document doc, DateTime secDatePrevious,long userNum=0) {
 			string logMsg=logMsgStart+doc.FileName;
 			if(doc.Description!="") {
 				string descriptDoc=doc.Description;
@@ -1300,7 +1300,11 @@ namespace OpenDentBusiness {
 			}
 			Def docCat=Defs.GetDef(DefCat.ImageCats,doc.DocCategory);
 			logMsg+=" "+Lans.g("ContrImages","with category")+" "+docCat.ItemName;
-			SecurityLogs.MakeLogEntry(perm,doc.PatNum,logMsg,doc.DocNum,secDatePrevious);
+			if(userNum==0) {
+				SecurityLogs.MakeLogEntry(perm,doc.PatNum,logMsg,doc.DocNum,secDatePrevious);
+				return;
+			}
+			SecurityLogs.MakeLogEntry(perm,doc.PatNum,logMsg,doc.DocNum,LogSources.None,secDatePrevious,userNum);
 		}
 
 	}

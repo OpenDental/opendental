@@ -210,7 +210,11 @@ namespace OpenDentBusiness {
 			TransferableAutoNotes transferableAutoNotes=new TransferableAutoNotes(listSerializableAutoNotes,listSerializableAutoNoteControls);
 			string json=JsonConvert.SerializeObject(transferableAutoNotes);
 			if(ODBuild.IsThinfinity()) {
-				ThinfinityUtils.ExportForDownload(path,json);
+			ThinfinityUtils.ExportForDownload(path,json);
+			}
+			else if(ODCloudClient.IsAppStream) {
+				File.WriteAllText(path,json);
+				ODCloudClient.ExportForAppStream(path,Path.GetFileName(path));
 			}
 			else {
 				File.WriteAllText(path,json);

@@ -25,7 +25,6 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormJobAdd));
 			this.butOK = new OpenDental.UI.Button();
-			this.butCancel = new OpenDental.UI.Button();
 			this.tabControlExtra = new System.Windows.Forms.TabControl();
 			this.tabConcept = new System.Windows.Forms.TabPage();
 			this.textConcept = new OpenDental.OdtextEditor();
@@ -74,23 +73,12 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(395, 2);
+			this.butOK.Location = new System.Drawing.Point(468, 2);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 22);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
-			// 
-			// butCancel
-			// 
-			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(476, 2);
-			this.butCancel.Name = "butCancel";
-			this.butCancel.Size = new System.Drawing.Size(67, 22);
-			this.butCancel.TabIndex = 2;
-			this.butCancel.Text = "&Cancel";
-			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// tabControlExtra
 			// 
@@ -304,7 +292,6 @@ namespace OpenDental{
 			// panel1
 			// 
 			this.panel1.Controls.Add(this.butOK);
-			this.panel1.Controls.Add(this.butCancel);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(3, 479);
 			this.panel1.Name = "panel1";
@@ -461,9 +448,9 @@ namespace OpenDental{
 			// 
 			// FormJobAdd
 			// 
-			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(559, 509);
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.EscClosesWindow = false;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormJobAdd";
 			this.Text = "Add Job";
@@ -489,7 +476,6 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
-		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TabControl tabControlExtra;
 		private System.Windows.Forms.TabPage tabConcept;
 		private System.Windows.Forms.TabPage tabCustomers;

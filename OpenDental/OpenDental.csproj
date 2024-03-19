@@ -644,6 +644,12 @@
     <Compile Include="Forms\FormEServicesMobileAppDeviceManage.Designer.cs">
       <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormImagePickerDXC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormImagePickerDXC.designer.cs">
+      <DependentUpon>FormImagePickerDXC.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormMessageToPayEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2553,6 +2559,7 @@
     <Compile Include="InternalTools\Phones\MapPanel.Designer.cs">
       <DependentUpon>MapPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Phones\PersistentTcpClient.cs" />
     <Compile Include="InternalTools\Phones\UserControlMapDetails.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -7032,6 +7039,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEServicesMobileAppDeviceManage.resx">
       <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormImagePickerDXC.resx">
+      <DependentUpon>FormImagePickerDXC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMessageToPayEdit.resx">
       <DependentUpon>FormMessageToPayEdit.cs</DependentUpon>

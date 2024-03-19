@@ -34,6 +34,28 @@ namespace OpenDentBusiness {
 				+" GROUP BY EmployeeNum ORDER BY TimeEntered1 ASC";
 			return Db.GetTable(command);
 		}
+
+		///<summary>Gets a list of ClockEvents that meets a set of criteria for the API.</summary>
+		public static List<ClockEvent> GetClockEventsForApi(int limit,int offset,long employeeNum,DateTime dateTStart,DateTime dateTEnd,int clockStatus,long clinicNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ClockEvent>>(MethodBase.GetCurrentMethod(),limit,offset,employeeNum,dateTStart,dateTEnd,clockStatus,clinicNum);
+			}
+			string command="SELECT * FROM clockevent "
+				+"WHERE TimeDisplayed1 >= "+POut.DateT(dateTStart)+" "
+				+"AND TimeDisplayed1 < "+POut.DateT(dateTEnd)+" ";
+			if(employeeNum>0) {
+				command+="AND EmployeeNum="+POut.Long(employeeNum)+" ";
+			}
+			if(clockStatus>-1) {
+				command+="AND ClockStatus="+POut.Long(clockStatus)+" ";
+			}
+			if(clinicNum>-1){
+				command+="AND ClinicNum="+POut.Long(clinicNum)+" ";
+			}
+			command+="ORDER BY ClockEventNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ClockEventCrud.SelectMany(command);
+		}
 		#endregion
 
 		///<summary></summary>
