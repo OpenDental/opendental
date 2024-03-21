@@ -200,7 +200,7 @@ namespace OpenDentBusiness {
 		///<summary>Gets the charges and links credits for the patient. Includes family account entries if listPatNums left null.</summary>
 		public static ConstructResults ConstructAndLinkChargeCredits(long patNum,List<long> listPatNums=null,bool isIncomeTxfr=false,LoadData loadData=null,
 			bool doIncludeTreatmentPlanned=false,bool doIncludeExplicitCreditsOnly=false,Payment payment=null,List<AccountEntry> listAccountEntriesPayFirst=null,
-			DateTime dateAsOf=default,bool hasInsOverpay=false)
+			DateTime dateAsOf=default,bool hasInsOverpay=false,bool hasOffsettingAdjustmets=true)
 		{
 			//No remoting role check; no call to db
 			return ConstructAndLinkChargeCredits(listPatNums,
@@ -213,13 +213,14 @@ namespace OpenDentBusiness {
 				doIncludeExplicitCreditsOnly:doIncludeExplicitCreditsOnly,
 				dateAsOf:dateAsOf,
 				doIncludeTreatmentPlanned:doIncludeTreatmentPlanned,
-				hasInsOverpay:hasInsOverpay);
+				hasInsOverpay:hasInsOverpay,
+				hasOffsettingAdjustmets:hasOffsettingAdjustmets);
 		}
 
 		///<summary>Gets the charges and links credits for the patient. Includes family account entries if listPatNums left null.</summary>
 		public static ConstructResults ConstructAndLinkChargeCredits(List<long> listPatNums,long patNum,List<PaySplit> listPaySplitsForPayment,Payment payment,
 			List<AccountEntry> listAccountEntriesPayFirst,bool isIncomeTxfr=false,bool isPreferCurPat=false,LoadData loadData=null,bool doIncludeExplicitCreditsOnly=false,
-			bool isAllocateUnearned=false,DateTime dateAsOf=default,bool doIncludeTreatmentPlanned=false,bool hasInsOverpay=false)
+			bool isAllocateUnearned=false,DateTime dateAsOf=default,bool doIncludeTreatmentPlanned=false,bool hasInsOverpay=false,bool hasOffsettingAdjustmets=true)
 		{
 			return ConstructAndLinkChargeCredits(patNum,
 				listPatNums,
@@ -236,13 +237,14 @@ namespace OpenDentBusiness {
 				payment?.ClinicNum??0,
 				payment?.PayAmt??0,
 				payment?.PayDate??DateTime.MinValue,
-				hasInsOverpay:hasInsOverpay);
+				hasInsOverpay,
+				hasOffsettingAdjustmets);
 		}
 
 		///<summary>Gets the charges and links credits for the patient. Includes family account entries if listPatNums left null.</summary>
 		public static ConstructResults ConstructAndLinkChargeCredits(long patNum,List<long> listPatNums,List<PaySplit> listPaySplitsForPayment,long payNum,
 			List<AccountEntry> listAccountEntriesPayFirst,bool isIncomeTxfr,bool isPreferCurPat,ConstructChargesData constructChargesData,bool doIncludeExplicitCreditsOnly,
-			bool isAllocateUnearned,DateTime dateAsOf,bool doIncludeTreatmentPlanned,long clinicNum,double payAmt,DateTime payDate,bool hasInsOverpay)
+			bool isAllocateUnearned,DateTime dateAsOf,bool doIncludeTreatmentPlanned,long clinicNum,double payAmt,DateTime payDate,bool hasInsOverpay,bool hasOffsettingAdjustmets)
 		{
 			//No remoting role check; no call to db
 			if(listPatNums==null) {
@@ -257,7 +259,7 @@ namespace OpenDentBusiness {
 			}
 			ConstructResults constructResults=GetConstructResults(constructChargesData,patNum,listPatNums,payNum,isIncomeTxfr,clinicNum,payAmt,payDate,dateAsOf);
 			ExplicitAndImplicitLinkingForConstructResults(ref constructResults,isIncomeTxfr,listPaySplitsForPayment,constructChargesData,doIncludeExplicitCreditsOnly,isAllocateUnearned,
-				listAccountEntriesPayFirst,patNum,isPreferCurPat,payNum,hasInsOverpay);
+				listAccountEntriesPayFirst,patNum,isPreferCurPat,payNum,hasInsOverpay,hasOffsettingAdjustmets);
 			return constructResults;
 		}
 
@@ -470,7 +472,7 @@ namespace OpenDentBusiness {
 		///The ListPaySplits field on the ConstructResults passed in can be manipulated when account entries to be 'paid first' are passed in.</summary>
 		public static void ExplicitAndImplicitLinkingForConstructResults(ref ConstructResults constructResults,bool isIncomeTxfr,List<PaySplit> listPaySplitsForPayment,
 			ConstructChargesData constructChargesData,bool doIncludeExplicitCreditsOnly,bool isAllocateUnearned,List<AccountEntry> listAccountEntriesPayFirst,long patNum,
-			bool isPreferCurPat,long payNum,bool hasInsOverpay)
+			bool isPreferCurPat,long payNum,bool hasInsOverpay,bool hasOffsettingAdjustmets)
 		{
 			#region Explicit Linking
 			//When executing an income transfer from within the payment window listSplitsCur can be filled with new splits.
@@ -490,7 +492,7 @@ namespace OpenDentBusiness {
 				.ThenBy(x => x.DatePay)
 				.ToList();
 			constructResults.ListAccountEntries=ExplicitlyLinkCredits(constructResults.ListAccountEntries,
-				listSplitsCurrentAndHistoric,hasInsOverpay:hasInsOverpay);
+				listSplitsCurrentAndHistoric,hasInsOverpay:hasInsOverpay,hasOffsettingAdjustmets:hasOffsettingAdjustmets);
 			#endregion
 			//If this payment is an income transfer, do NOT use unallocated income to pay off charges.
 			//However, allow partial implicit linking when running AllocateUnearned logic.
@@ -1109,7 +1111,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns a list of AccountEntries with manipulated amounts due to entities that are explicitly linked to them.
 		///An explicit link is a match between an entity itself (procedure, adjustment, etc) along with matching patient, provider, and clinic.</summary>
-		private static List<AccountEntry> ExplicitlyLinkCredits(List<AccountEntry> listAccountEntries,List<PaySplit> listSplitsCurrentAndHistoric,bool hasInsOverpay=false) {
+		private static List<AccountEntry> ExplicitlyLinkCredits(List<AccountEntry> listAccountEntries,List<PaySplit> listSplitsCurrentAndHistoric,bool hasInsOverpay=false,bool hasOffsettingAdjustmets=true) {
 			//No remoting role check; no call to db and private method
 			List<AccountEntry> listExplicitAccountCharges=listAccountEntries
 				.FindAll(x => x.GetType().In(typeof(Procedure),typeof(FauxAccountEntry),typeof(Adjustment)));
@@ -1372,7 +1374,7 @@ namespace OpenDentBusiness {
 			#endregion
 			#region Adjustments - Offset Unattached
 			//Positive and negative unattached adjustments should offset each other if the 'AdjustmentsOffsetEachOther' preference says so.
-			if(PrefC.GetBool(PrefName.AdjustmentsOffsetEachOther)) {
+			if(hasOffsettingAdjustmets && PrefC.GetBool(PrefName.AdjustmentsOffsetEachOther)) {
 				List<AccountEntry> listUnattachedAdjustmentEntries=listExplicitAccountCharges.FindAll(x => x.AdjNum > 0
 					&& x.PayPlanNum==0
 					&& x.ProcNum==0
@@ -2034,7 +2036,7 @@ namespace OpenDentBusiness {
 		{
 			ConstructResults constructResults=ConstructAndLinkChargeCredits(patCurNum,listPatNums,listPaySplitsForPayment,payment?.PayNum??0,listAccountEntriesPayFirst,isIncomeTxfr:isIncomeTxfr,
 				isPreferCurPat:isPatPrefer,constructChargesData:constructChargesData,doIncludeExplicitCreditsOnly:doIncludeExplicitCreditsOnly,false,DateTime.MinValue,false,
-				payment?.ClinicNum??0,payment?.PayAmt??0,payment?.PayDate??DateTime.MinValue,false);
+				payment?.ClinicNum??0,payment?.PayAmt??0,payment?.PayDate??DateTime.MinValue,false,true);
 			AutoSplit autoSplit=AutoSplitForPayment(constructResults,doAutoSplit,payPlanNum:payPlanNum,listAccountEntriesPayFirst:listAccountEntriesPayFirst);
 			return autoSplit;
 		}
@@ -2232,7 +2234,7 @@ namespace OpenDentBusiness {
 					listPayNumPaySplitsGroups[i].Payment.ClinicNum,listPayNumPaySplitsGroups[i].PayAmount,listPayNumPaySplitsGroups[i].Payment.PayDate,dateAsOf);
 				//Execute explicit and implicit linking logic so that the Account Entries have correct AmountEnd values.
 				ExplicitAndImplicitLinkingForConstructResults(ref constructResults,false,new List<PaySplit>(),constructChargesData,false,false,new List<AccountEntry>(),patNum,false,
-					listPayNumPaySplitsGroups[i].PayNum,false);
+					listPayNumPaySplitsGroups[i].PayNum,false,true);
 				//Execute auto-split logic for the amount of the current payment and act like the office has EnforceFully mode enabled so that everything is perfectly linked.
 				AutoSplit autoSplit=AutoSplitForPayment(constructResults,rigorousAccounting:(int)RigorousAccounting.EnforceFully);
 				if(autoSplit.ListPaySplitsSuggested.IsNullOrEmpty()) {

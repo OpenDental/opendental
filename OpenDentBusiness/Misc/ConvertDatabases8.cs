@@ -1073,6 +1073,14 @@ namespace OpenDentBusiness {
 			FixADA2024IsPreAuthLocation();
 		}//End of 23_3_40() method
 
+		private static void To23_3_42() {
+			string command;
+			//Start E52592
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('PayPlanRequireLockForAPR','1')";
+			Db.NonQ(command);
+			//End E52592
+		}//End of 23_3_42() method
+
 		private static void To24_1_1() {
 			string command;
 			DataTable table;
@@ -1346,5 +1354,17 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}//End of 24_1_11() method
+
+		private static void To24_1_12() {
+			string command;
+			//Start E52592
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='PayPlanRequireLockForAPR'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('PayPlanRequireLockForAPR','1')";
+				Db.NonQ(command);
+			}
+			//End E52592
+		}//End of 24_1_12() method
+
 	}
 }

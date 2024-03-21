@@ -1611,15 +1611,15 @@ namespace OpenDental{
 		}
 
 		///<summary>Offers the user, if necessary, the opportunity to send a text message to the patient when changes have been made to texting settings.</summary>
-		private void PromptForSmsIfNecessary(Patient patientOriginal,Patient patientNew) {
-			if(!Patients.DoPromptForSms(patientOriginal,patientNew)) {
+		private void PromptForSmsIfNecessary(Patient patientNew,Patient patientOld) {
+			if(!Patients.DoPromptForSms(patientNew,patientOld)) {
 				return;
 			}
 			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Texting settings have changed.  Would you like to send a message now?","Send a message?")) {
 				string message=PrefC.GetString(PrefName.ShortCodeOptInScript);
 				message=FrmShortCodeOptIn.FillInTextTemplate(message,patientNew);
 				FormOpenDental.S_TxtMsg_Click(patientNew.PatNum,message);
-			}	
+			}
 		}
 
 		private void butAuto_Click(object sender, System.EventArgs e) {
@@ -2954,7 +2954,7 @@ namespace OpenDental{
 			}
 			//The specialty could have changed so invalidate the cached specialty on the currently selected patient object in PatientL.cs
 			PatientL.InvalidateSelectedPatSpecialty();
-			PromptForSmsIfNecessary(patientOld,_patient);
+			PromptForSmsIfNecessary(_patient,patientOld);
 			Plugins.HookAddCode(this,"FormPatientEdit.butOK_Click_end",_patient,_patientOld);
 			DialogResult=DialogResult.OK;
 		}

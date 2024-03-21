@@ -1527,6 +1527,12 @@ using WpfControls.UI;
 			Point point=e.GetPosition(canvasMain);
 			_mouseDownRow=CanvasPointToRow(point.Y);
 			_mouseDownCol=CanvasPointToCol(point.X);
+			if(_mouseDownRow<0){
+				return;
+			}
+			if(_mouseDownCol<0){
+				return;
+			}
 			ContextMenu contextMenu=(ContextMenu)this.ContextMenu;
 			if(contextMenu is null){
 				contextMenu=new ContextMenu();

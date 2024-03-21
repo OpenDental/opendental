@@ -412,7 +412,7 @@ namespace OpenDental{
 				//Summarize the total amts to include at the end of this query object, placing the summarized value under the Amount column.
 				queryObject.AddGroupSummaryField("Total Patient Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,20);
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddGroupSummaryField("Total CareCredit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,4);
+					queryObject.AddGroupSummaryField("Total CareCredit Fees:","Amount","CareCredit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,4);
 				}
 				if(checkShowPayConnectFees.Checked) {
 					queryObject.AddGroupSummaryField("Total PayConnect Fees:","Amount","PayConnect Fee",SummaryOperation.Sum,new List<int>(summaryGroupsPatientPayments),Color.Black,fontBold,0,4);
@@ -447,7 +447,7 @@ namespace OpenDental{
 				queryObject.AddGroupSummaryField("Total Online Patient Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,20);
 				//If either of the "Show Fees" checkboxes is checked, summarize the totals of the fees to include at the end of this query object, placing the summarized value under the Amount column.
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddGroupSummaryField("Total CareCredit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,4);
+					queryObject.AddGroupSummaryField("Total CareCredit Fees:","Amount","CareCredit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,4);
 				}
 				if(checkShowPayConnectFees.Checked) {
 					queryObject.AddGroupSummaryField("Total PayConnect Fees:","Amount","PayConnect Fee",SummaryOperation.Sum,new List<int>(summaryGroupsOnlinePatientPayments),Color.Black,fontBold,0,4);
@@ -460,7 +460,7 @@ namespace OpenDental{
 				queryObject.AddGroupSummaryField("Total All Payments:","Amount","amt",SummaryOperation.Sum,new List<int>(summaryGroupsAllPayments),Color.Black,fontBold,0,20);
 				//If either of the "Show Fees" checkboxes is checked, summarize the totals of the fees from both the Patient Payment and Online Patient Payment groups to include at the end of this query object.
 				if(checkShowCareCreditFees.Checked) {
-					queryObject.AddGroupSummaryField("Total All CareCredit Fees:","Amount","Care Credit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsAllPatientPayments),Color.Black,fontBold,0,4);
+					queryObject.AddGroupSummaryField("Total All CareCredit Fees:","Amount","CareCredit Fee",SummaryOperation.Sum,new List<int>(summaryGroupsAllPatientPayments),Color.Black,fontBold,0,4);
 				}
 				if(checkShowPayConnectFees.Checked) {
 					queryObject.AddGroupSummaryField("Total All PayConnect Fees:","Amount","PayConnect Fee",SummaryOperation.Sum,new List<int>(summaryGroupsAllPatientPayments),Color.Black,fontBold,0,4);

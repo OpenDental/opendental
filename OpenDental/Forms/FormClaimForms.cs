@@ -181,14 +181,20 @@ namespace OpenDental{
 				return;
 			}
 			ClaimForm claimForm=(ClaimForm)gridCustom.ListGridRows[gridCustom.GetSelectedIndex()].Tag;
-			string filename = "ClaimForm"+claimForm.Description+".xml";
-			if(ODBuild.IsThinfinity()) {
+			string fileName = "ClaimForm"+claimForm.Description+".xml";
+			if(ODEnvironment.IsCloudServer) {
 				StringBuilder stringBuilder=new StringBuilder();
 				XmlWriter xmlWriter=XmlWriter.Create(stringBuilder);
 				XmlSerializer xmlSerializerWeb=new XmlSerializer(typeof(ClaimForm));
 				xmlSerializerWeb.Serialize(xmlWriter,claimForm);
 				xmlWriter.Close();
-				ThinfinityUtils.ExportForDownload(filename,stringBuilder.ToString());
+				if(ODCloudClient.IsAppStream) {
+					File.WriteAllText(fileName,stringBuilder.ToString());
+					CloudClientL.ExportForCloud(fileName,doPromptForName:false);
+				}
+				else {
+					ThinfinityUtils.ExportForDownload(fileName,stringBuilder.ToString());
+				}
 				return;
 			}
 			using SaveFileDialog saveFileDialog=new SaveFileDialog();
@@ -200,7 +206,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Export failed.  This could be due to lack of permissions in the designated folder.");
 				return;
 			}
-			saveFileDialog.FileName=filename;
+			saveFileDialog.FileName=fileName;
 			if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 				return;
 			}

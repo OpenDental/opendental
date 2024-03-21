@@ -1914,7 +1914,7 @@ namespace OpenDentBusiness{
 			if(claim==null) {
 				return true;
 			}
-			DateTime dateHashStart=Misc.SecurityHash.DateStart;
+			DateTime dateHashStart=Misc.SecurityHash.GetHashingDate();
 			if(claim.DateService < dateHashStart) { //Too old, isn't hashed.
 				return true;
 			}

@@ -309,15 +309,18 @@ namespace OpenDental {
 			//DentalXChange Attachments-----------------------------------------------------------------------------------
 			menuItemSnipAttachment.Enabled=true;
 			menuItemSelectImage.Enabled=true;
-			//Are attachments allowed to be sent and is the office using ClaimConnect
-			Clearinghouse clearinghouse=Clearinghouses.GetDefaultDental();
-			if(clearinghouse==null || !clearinghouse.IsAttachmentSendAllowed || clearinghouse.CommBridge!=EclaimsCommBridge.ClaimConnect){
+			Clearinghouse clearingHouse=new Clearinghouse();
+			int countClaim=listIdxRowsSelected.Select(x => table.Rows[x]["ClaimNum"].ToString()).Count(y => y!="0");
+			//Must be exactly 1 claim selected.
+			if(countClaim==1) {
+				clearingHouse=GetClearingHouseForClaim();
+			}
+			else{
 				menuItemSnipAttachment.Enabled=false;
 				menuItemSelectImage.Enabled=false;
 			}
-			int countClaim=listIdxRowsSelected.Select(x => table.Rows[x]["ClaimNum"].ToString()).Count(y => y!="0");
-			//Must be exactly 1 claim selected.
-			if(countClaim!=1) {
+			//Are attachments allowed to be sent and is the office using ClaimConnect
+			if(clearingHouse==null || !clearingHouse.IsAttachmentSendAllowed || clearingHouse.CommBridge!=EclaimsCommBridge.ClaimConnect){
 				menuItemSnipAttachment.Enabled=false;
 				menuItemSelectImage.Enabled=false;
 			}
@@ -4417,6 +4420,32 @@ namespace OpenDental {
 				//Shared.ComputeBalances();
 			}
 			ModuleSelected(_patient.PatNum);
+		}
+
+		/// <summary>Return the clinic specific ClearningHouse based on the claim the user clicked on. Can return null.</summary>
+		private Clearinghouse GetClearingHouseForClaim() {
+			DataTable table=_dataSetMain.Tables["account"];
+			//Guaranteed to be exactly one claim selected (among possible other selections) when called from contextMenuAcctGrid_Popup()
+			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
+			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
+			Claim claim=Claims.GetClaim(claimNum);
+			//Finding the clearing settings for the selected claim's clinic is from ClaimConnect.cs GetClearingHouseForClaim(). This method is private so the code was copied.
+			InsPlan insPlan=InsPlans.GetPlan(claim.PlanNum,null);
+			if(insPlan==null) {
+				return null;
+			}
+			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
+			if(carrier==null) {
+				return null;
+			}
+			if(carrier.ElectID.Length<2) {
+				return null;
+			}
+			//Fill clearing house with HQ fields
+			long clearingHouseNum=Clearinghouses.AutomateClearinghouseHqSelection(carrier.ElectID,claim.MedType);
+			Clearinghouse clearingHouse=Clearinghouses.GetClearinghouse(clearingHouseNum);
+			//Refill clearingHouse with clinic specific fields
+			return Clearinghouses.OverrideFields(clearingHouse,claim.ClinicNum);
 		}
 
 		///<summary>Returns true if XCharge or PayConnect payments are allowed to be made for the currently selected clinic.</summary>

@@ -5,6 +5,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -2801,6 +2802,26 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		
+		/// <summary>Filters a list of Patients by the numToMatch (matching against PatNum and Guarantor for each entry). Removes clones from the list if the PatNum filter didn't narrow down the list to a single entry (this can happen if the PatNum provided is the GuarantorNum and there is a clone of someone in the same family).</summary>
+		public static List<Patient> FilterDuplicatePatientsByPatNumOrGuarantorNum(List<Patient> listPats,long numToMatch) {
+			if(listPats.IsNullOrEmpty()) {
+				return new List<Patient>();
+			}
+			List<Patient> filteredListPats=listPats.FindAll(x => x.PatNum==numToMatch || x.Guarantor==numToMatch);
+			if(filteredListPats.Count > 1) {
+				//This should only occur when the list includes a clone of a patient
+				List<PatientLink> listPatientLinks = PatientLinks.GetLinks(listPats.Select(x => x.PatNum).ToList(),PatientLinkType.Clone);
+				filteredListPats.RemoveAll(x => listPatientLinks.Any(y => y.PatNumTo==x.PatNum));//Remove any clones of the patient
+				//If the list is *still* larger than 1, just filter it down to the one with the lowest PatNum.
+				if(filteredListPats.Count > 1) {
+					long lowestPatNum=filteredListPats.Min(x => x.PatNum);
+					filteredListPats=filteredListPats.Where(x => x.PatNum==lowestPatNum).ToList();
+				}
+			}
+			return filteredListPats;
+		}
+
 		///<summary>This is used in the Billing dialog and with Finance/Billing Charges.</summary>
 		public static List<PatAging> GetAgingList(string age,DateTime lastStatement,List<long> billingNums,bool excludeAddr,bool excludeNeg,
 			double excludeLessThan,bool excludeInactive,bool ignoreInPerson,List<long> clinicNums,bool isSuperStatements,bool isSinglePatient,
@@ -5043,7 +5064,7 @@ namespace OpenDentBusiness {
 			if(patient.SecurityHash==null) {//When a patient is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
 				return true;
 			}
-			if(patient.DateTStamp < Misc.SecurityHash.DateStart) {//Old
+			if(patient.DateTStamp < Misc.SecurityHash.GetHashingDate()) {//Old
 				return true;
 			}
 			if(patient.SecurityHash==HashFields(patient)) {
@@ -5059,7 +5080,7 @@ namespace OpenDentBusiness {
 				return false;
 			}
 			#region PayPlans
-			listPayPlans.RemoveAll(x => x.PayPlanDate < Misc.SecurityHash.DateStart);
+			listPayPlans.RemoveAll(x => x.PayPlanDate < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listPayPlans.Count;i++) {
 				if(i==20) { //indicitive enough of third party usage
 					break;
@@ -5070,7 +5091,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion PayPlans
 			#region Appointments
-			listAppointments.RemoveAll(x => x.AptDateTime < Misc.SecurityHash.DateStart);
+			listAppointments.RemoveAll(x => x.AptDateTime < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listAppointments.Count;i++) {
 				if(i==20) {
 					break;
@@ -5081,7 +5102,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion Appointments
 			#region PaySplits
-			listPaySplits.RemoveAll(x => x.DatePay < Misc.SecurityHash.DateStart);
+			listPaySplits.RemoveAll(x => x.DatePay < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listPaySplits.Count;i++) {
 				if(i==20) {
 					break;
@@ -5092,7 +5113,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion PaySplits
 			#region Claims
-			listClaims.RemoveAll(x => x.DateService < Misc.SecurityHash.DateStart);
+			listClaims.RemoveAll(x => x.DateService < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listClaims.Count;i++) {
 				if(i==20) {
 					break;
@@ -5103,7 +5124,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion
 			#region ClaimProcs
-			listClaimProcs.RemoveAll(x => x.SecDateEntry < Misc.SecurityHash.DateStart);
+			listClaimProcs.RemoveAll(x => x.SecDateEntry < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listClaimProcs.Count;i++) {
 				if(i==20) {
 					break;
@@ -5361,7 +5382,6 @@ namespace OpenDentBusiness {
 			return result;
 		}
 
-		
 		///<summary>Determines if the user should be given the opportunity to send a text message to the patient when changes have been made to texting settings.</summary>
 		public static bool DoPromptForSms(Patient patient,Patient patientOld) {
 			if(!Clinics.IsTextingEnabled(patient.ClinicNum)) {

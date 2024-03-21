@@ -570,7 +570,7 @@ namespace OpenDentBusiness{
 			if(paySplit==null) {
 				return true;
 			}
-			DateTime dateHashStart=Misc.SecurityHash.DateStart;
+			DateTime dateHashStart=Misc.SecurityHash.GetHashingDate();
 			if(paySplit.DatePay < dateHashStart) { //old
 				return true;
 			}

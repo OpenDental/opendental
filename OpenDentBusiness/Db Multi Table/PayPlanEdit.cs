@@ -1945,8 +1945,8 @@ namespace OpenDentBusiness {
 			if(payPlanTerms.PrincipalAmount-payPlanTerms.DownPayment < 0) {
 				sb.AppendLine(Lans.g("FormPayPlanDynamic","Down payment must be less than or equal to total amount."));
 			}
-			if(doCheckApr && !CompareDouble.IsZero(payPlanTerms.APR) && !isLocked){
-				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment plans with APR must be locked. Remove the APR or check the box for Full Lock."));
+			if(doCheckApr && !CompareDouble.IsZero(payPlanTerms.APR) && PrefC.GetBool(PrefName.PayPlanRequireLockForAPR) && !isLocked){
+				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment plans with APR must be locked. Remove the APR or check the box for FullLock."));
 			}
 			return sb.ToString();
 		}
@@ -2138,8 +2138,9 @@ namespace OpenDentBusiness {
 			Patient patient=dynamicPaymentPlanModuleData.Patient;
 			Family family=dynamicPaymentPlanModuleData.Family;
 			//Gather account information as if an income transfer is about to be made so that explicit linking is the only type of linking performed.
-			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(family.GetPatNums(),patient.PatNum,
-				new List<PaySplit>(),new Payment(),new List<AccountEntry>(),isIncomeTxfr:true,doIncludeTreatmentPlanned:true);
+			//Unattached positive adjustments can be associated with dynamic payment plans so turn off the offsetting adjustments logic so their values are not manipulated.
+			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(patient.PatNum,listPatNums:family.GetPatNums(),
+				isIncomeTxfr:true,doIncludeTreatmentPlanned:true,hasOffsettingAdjustmets:false);
 			List<Type> listTypesProd=new List<Type>() { typeof(Adjustment),typeof(Procedure) };
 			#region Invalid Procedures
 			List<AccountEntry> listAccountEntriesAll=constructResults.ListAccountEntries;

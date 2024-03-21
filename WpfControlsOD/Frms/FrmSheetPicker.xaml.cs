@@ -104,7 +104,7 @@ namespace OpenDental {
 		}
 
 		private void listMain_DoubleClick(object sender,MouseButtonEventArgs e) {
-			if(listMain.SelectedIndices.Count!=1) {
+			if(listMain.Items.Count<=0 || listMain.SelectedIndices.Count!=1) {
 				return;
 			}
 			ListSheetDefsSelected=new List<SheetDef>();
