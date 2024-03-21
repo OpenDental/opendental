@@ -1112,5 +1112,13 @@ namespace OpenDentBusiness {
 			FixADA2024IsPreAuthLocation();
 		}//End of 23_3_40() method
 
+		private static void To23_3_42() {
+			string command;
+			//Start E52592
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('PayPlanRequireLockForAPR','1')";
+			Db.NonQ(command);
+			//End E52592
+		}//End of 23_3_42() method
+
 	}
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2024,3,19);
+		public static DateTime DateStart=new DateTime(2024,3,21);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -37,6 +37,16 @@ namespace OpenDentBusiness.Misc {
 		///<summary>Only used one time during a conversion script. Sets the _arePatientsUpdate boolean to false. Allows the hashing logic to run on the patient table a subsequent time during a convert script update. </summary>
 		public static void ResetPatientHashing() {
 			_arePatientsUpdated=false;
+		}
+
+		///<summary>Returns either SecurityHash.DateStart or the date from a month prior to today, whichever is more recent.</summary>
+		public static DateTime GetHashingDate() {
+			DateTime dateLastMonth=DateTime.Now.Date.AddMonths(-1);
+			DateTime dateStartHashing=DateStart;
+			if(dateLastMonth>DateStart) {
+				dateStartHashing=dateLastMonth;
+			}
+			return dateStartHashing;
 		}
 
 		private static void RunPaysplit() {
@@ -70,8 +80,9 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PaysplitWorker() {
+			DateTime dateStartHashing=GetHashingDate();
 			//Hash entries made after new date
-			string command="SELECT SplitNum, PatNum, SplitAmt, DatePay, SecurityHash FROM paysplit WHERE DatePay >= "+POut.Date(DateStart);
+			string command="SELECT SplitNum, PatNum, SplitAmt, DatePay, SecurityHash FROM paysplit WHERE DatePay >= "+POut.Date(dateStartHashing);
 			DataTable table=Db.GetTable(command);
 			long splitNum;
 			string unhashedText="";
@@ -113,8 +124,9 @@ namespace OpenDentBusiness.Misc {
 			}
 			string updating="Hashing appointments.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
+			DateTime dateStartHashing=GetHashingDate();
 			//Hash entries made after new date
-			string command="SELECT AptNum, AptStatus, Confirmed, AptDateTime, SecurityHash FROM appointment WHERE AptDateTime>= "+POut.Date(DateStart);
+			string command="SELECT AptNum, AptStatus, Confirmed, AptDateTime, SecurityHash FROM appointment WHERE AptDateTime>= "+POut.Date(dateStartHashing);
 			DataTable table=Db.GetTable(command);
 			long aptNum;
 			string unhashedText="";
@@ -169,8 +181,9 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PatientWorker() {
-			//Update hashes for patients that have been added or changed since DateStart.
-			string command="SELECT PatNum FROM patient WHERE DateTStamp >= "+POut.Date(DateStart);
+			DateTime dateStartHashing=GetHashingDate();
+			//Hash entries made after new date
+			string command="SELECT PatNum FROM patient WHERE DateTStamp >= "+POut.Date(dateStartHashing);
 			DataTable table=Db.GetTable(command);
 			long patNum;
 			string unhashedText="";
@@ -208,8 +221,9 @@ namespace OpenDentBusiness.Misc {
 			//Clear old hashes
 			string command="UPDATE payplan SET SecurityHash=''";
 			Db.NonQ(command);
+			DateTime dateStartHashing=GetHashingDate();
 			//Hash entries made after new date
-			command="SELECT * FROM payplan WHERE PayPlanDate>= "+POut.Date(DateStart);
+			command="SELECT * FROM payplan WHERE PayPlanDate>= "+POut.Date(dateStartHashing);
 			DataTable table=Db.GetTable(command);
 			long payPlanNum;
 			string unhashedText="";
@@ -249,8 +263,9 @@ namespace OpenDentBusiness.Misc {
 			}
 			string updating="Hashing claims.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
-			//Hash claims with a DateService after DateStart
-			string command="SELECT ClaimNum, ClaimFee, ClaimStatus, InsPayEst, InsPayAmt, SecurityHash FROM claim WHERE DateService >= "+POut.Date(DateStart);
+			DateTime dateStartHashing=GetHashingDate();
+			//Hash entries made after new date
+			string command="SELECT ClaimNum, ClaimFee, ClaimStatus, InsPayEst, InsPayAmt, SecurityHash FROM claim WHERE DateService >= "+POut.Date(dateStartHashing);
 			DataTable table=Db.GetTable(command);
 			long claimNum;
 			string unhashedText="";
@@ -310,8 +325,9 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void ClaimProcWorker() {
-			//Hash claimprocs with a DateTEntry after DateStart
-			string command="SELECT ClaimProcNum, ClaimNum, Status, InsPayEst, InsPayAmt, SecurityHash FROM claimproc WHERE SecDateEntry >= "+POut.Date(DateStart);
+			DateTime dateStartHashing=GetHashingDate();
+			//Hash entries made after new date
+			string command="SELECT ClaimProcNum, ClaimNum, Status, InsPayEst, InsPayAmt, SecurityHash FROM claimproc WHERE SecDateEntry >= "+POut.Date(dateStartHashing);
 			DataTable table=Db.GetTable(command);
 			long claimProcNum;
 			string unhashedText="";

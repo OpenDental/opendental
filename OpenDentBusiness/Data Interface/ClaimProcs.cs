@@ -1017,17 +1017,15 @@ namespace OpenDentBusiness{
 				return;
 			}
 			string command;
+			//Can't delete claimprocs for procedures that have Supplemental or Pending Supplemental (Not Received and IsOverpay==true) claimprocs created.
 			if(claimProc.ClaimNum!=0 && claimProc.Status!=ClaimProcStatus.Supplemental) {
 				command="SELECT COUNT(*) FROM claimproc WHERE ProcNum="+POut.Long(claimProc.ProcNum)+" AND ClaimNum="+POut.Long(claimProc.ClaimNum)+" AND Status="+(int)ClaimProcStatus.Supplemental;
 				long supplementalCP=PIn.Long(Db.GetCount(command));
 				if(supplementalCP!=0) {
 					throw new ApplicationException(Lans.g("ClaimProcs","Not allowed to delete this procedure until all supplementals for this procedure are deleted first."));
 				}
-			}
-			//Can't delete claimprocs for procedures that have Pending Supplemental claimprocs created
-			if(claimProc.ClaimNum!=0 && claimProc.Status==ClaimProcStatus.NotReceived) {
 				command="SELECT COUNT(*) FROM claimproc WHERE ProcNum="+POut.Long(claimProc.ProcNum)+" AND ClaimNum="+POut.Long(claimProc.ClaimNum)+" AND Status="+(int)ClaimProcStatus.NotReceived+" AND IsOverPay=1";
-				long supplementalCP=PIn.Long(Db.GetCount(command));
+				supplementalCP=PIn.Long(Db.GetCount(command));
 				if(supplementalCP!=0) {
 					throw new ApplicationException(Lans.g("ClaimProcs","Not allowed to delete this estimate until all pending supplementals for this procedure are zeroed out first."));
 				}
@@ -3296,7 +3294,7 @@ namespace OpenDentBusiness{
 			if(claimProc==null) {
 				return true;
 			}
-			DateTime dateHashStart=Misc.SecurityHash.DateStart;
+			DateTime dateHashStart=Misc.SecurityHash.GetHashingDate();
 			if(claimProc.SecDateEntry < dateHashStart) { //Too old, isn't hashed.
 				return true;
 			}

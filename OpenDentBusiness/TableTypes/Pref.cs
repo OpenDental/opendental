@@ -1629,6 +1629,9 @@ namespace OpenDentBusiness {
 		PayPlanAdjType,
 		/// <summary>bool. Set to false by default. If true, the "Due Now" column will be hidden from pay plans grid in acct module.</summary>
 		PayPlanHideDueNow,
+		///<summary>Boolean. True by default. If false, allows the payment plan window to not require the full lock box to be checked before saving.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		PayPlanRequireLockForAPR,
 		PayPlansBillInAdvanceDays,
 		///<summary>Boolean.  False by default.  If true, payment plan window will exclude past activity in the amortization grid by default.</summary>
 		PayPlansExcludePastActivity,

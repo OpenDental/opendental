@@ -768,7 +768,8 @@ namespace OpenDental {
 		///<summary>Goes through the logic to create a new schedule. Returns true if a terms were successfully validated and correct.</summary>
 		private bool CreateSchedule() {
 			if(ValidateTerms(doCheckAPR:false)) {//Don't need to validate APR and full lock because we will auto-lock when APR is set (only for creating schedule).
-				if(textAPR.IsValid() && !CompareDouble.IsZero(PIn.Double(textAPR.Text)) && checkProductionLock.Checked==false) {
+				if(textAPR.IsValid() && !CompareDouble.IsZero(PIn.Double(textAPR.Text)) && checkProductionLock.Checked==false
+				&& PrefC.GetBool(PrefName.PayPlanRequireLockForAPR)) {
 					checkProductionLock.Checked=true;
 				}
 				CalculateDateInterestStartFromInterestDelay();

@@ -5039,7 +5039,7 @@ namespace OpenDentBusiness {
 			if(patient.SecurityHash==null) {//When a patient is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
 				return true;
 			}
-			if(patient.DateTStamp < Misc.SecurityHash.DateStart) {//Old
+			if(patient.DateTStamp < Misc.SecurityHash.GetHashingDate()) {//Old
 				return true;
 			}
 			if(patient.SecurityHash==HashFields(patient)) {
@@ -5055,7 +5055,7 @@ namespace OpenDentBusiness {
 				return false;
 			}
 			#region PayPlans
-			listPayPlans.RemoveAll(x => x.PayPlanDate < Misc.SecurityHash.DateStart);
+			listPayPlans.RemoveAll(x => x.PayPlanDate < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listPayPlans.Count;i++) {
 				if(i==20) { //indicitive enough of third party usage
 					break;
@@ -5066,7 +5066,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion PayPlans
 			#region Appointments
-			listAppointments.RemoveAll(x => x.AptDateTime < Misc.SecurityHash.DateStart);
+			listAppointments.RemoveAll(x => x.AptDateTime < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listAppointments.Count;i++) {
 				if(i==20) {
 					break;
@@ -5077,7 +5077,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion Appointments
 			#region PaySplits
-			listPaySplits.RemoveAll(x => x.DatePay < Misc.SecurityHash.DateStart);
+			listPaySplits.RemoveAll(x => x.DatePay < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listPaySplits.Count;i++) {
 				if(i==20) {
 					break;
@@ -5088,7 +5088,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion PaySplits
 			#region Claims
-			listClaims.RemoveAll(x => x.DateService < Misc.SecurityHash.DateStart);
+			listClaims.RemoveAll(x => x.DateService < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listClaims.Count;i++) {
 				if(i==20) {
 					break;
@@ -5099,7 +5099,7 @@ namespace OpenDentBusiness {
 			}
 			#endregion
 			#region ClaimProcs
-			listClaimProcs.RemoveAll(x => x.SecDateEntry < Misc.SecurityHash.DateStart);
+			listClaimProcs.RemoveAll(x => x.SecDateEntry < Misc.SecurityHash.GetHashingDate());
 			for(int i=0;i<listClaimProcs.Count;i++) {
 				if(i==20) {
 					break;

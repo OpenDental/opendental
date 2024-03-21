@@ -3854,7 +3854,7 @@ namespace OpenDentBusiness{
 			if(appointment==null) {
 				return true;
 			}
-			DateTime dateHashStart=Misc.SecurityHash.DateStart;
+			DateTime dateHashStart=Misc.SecurityHash.GetHashingDate();
 			if(appointment.AptDateTime < dateHashStart) { //old
 				//See notes in CDT.Class1 on how to pick which column to use for comparison
 				return true;

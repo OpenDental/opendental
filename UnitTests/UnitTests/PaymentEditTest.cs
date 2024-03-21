@@ -13528,7 +13528,7 @@ namespace UnitTests.PaymentEdit_Tests {
 			ClaimT.ReceiveClaim(claim,new List<ClaimProc> { claimProc },true);
 			//uh oh, we overpaid now boys. Time to try an income transfer out.
 			PaymentEdit.ConstructResults results=PaymentEdit.ConstructAndLinkChargeCredits(patient1.PatNum,new List<long>{patient1.PatNum,patient2.PatNum},new List<PaySplit>(),0,
-				new List<AccountEntry>(),true,false,null,false,false,DateTime.Now,false,0,0,DateTime.MinValue,false);
+				new List<AccountEntry>(),true,false,null,false,false,DateTime.Now,false,0,0,DateTime.MinValue,false,true);
 			//begin transfer loops - Does not insert objects into database from this method. Testing method needs to insert.
 			if(!PaymentEdit.TryCreateIncomeTransfer(results.ListAccountEntries,DateTime.Today,out PaymentEdit.IncomeTransferData incomeTransferData)) {
 				throw new ODException(incomeTransferData.StringBuilderErrors.ToString().TrimEnd());
