@@ -88,24 +88,35 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=true;
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string[] stringArrayFileNames;
+			if(ODCloudClient.IsAppStream) {
+				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
+				if(listImportFilePaths[0].IsNullOrEmpty()) {
+					return;
+				}
+				stringArrayFileNames=listImportFilePaths.ToArray();
+			}
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=true;
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				stringArrayFileNames=openFileDialog.FileNames;
 			}
 			Invalidate();
-			for(int i=0;i<openFileDialog.FileNames.Length;i++) {
+			for(int i=0;i<stringArrayFileNames.Length;i++) {
 				//check file types?
-				string destinationPath=FileAtoZ.CombinePaths(_imageFolder,Path.GetFileName(openFileDialog.FileNames[i]));
+				string destinationPath=FileAtoZ.CombinePaths(_imageFolder,Path.GetFileName(stringArrayFileNames[i]));
 				if(!FileAtoZ.Exists(destinationPath)){
-					FileAtoZ.Copy(openFileDialog.FileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
+					FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
 					return;
 				}
 				//from here down, file already exists
 				InputBoxParam inputBoxParam=new InputBoxParam();
 				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
 				inputBoxParam.LabelText=Lan.g(this,"New file name.");
-				inputBoxParam.Text=Path.GetFileName(openFileDialog.FileNames[i]);
+				inputBoxParam.Text=Path.GetFileName(stringArrayFileNames[i]);
 				InputBox inputBox=new InputBox(inputBoxParam);
 				inputBox.ShowDialog();
 				if(inputBox.IsDialogCancel) {
@@ -123,11 +134,11 @@ namespace OpenDental {
 					continue;//cancel rename, and go to next file.
 				}
 				destinationPath=FileAtoZ.CombinePaths(_imageFolder,inputBox.StringResult);
-				FileAtoZ.Copy(openFileDialog.FileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
+				FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
 			}
 			FillGrid();
-			if(openFileDialog.FileNames.Length==1) {//if importing exactly one image, select it upon returning.
-				textSearch.Text=Path.GetFileName(openFileDialog.FileNames[0]);
+			if(stringArrayFileNames.Length==1) {//if importing exactly one image, select it upon returning.
+				textSearch.Text=Path.GetFileName(stringArrayFileNames[0]);
 			}
 		}
 

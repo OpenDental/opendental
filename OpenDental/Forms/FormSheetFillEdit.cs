@@ -1211,7 +1211,12 @@ namespace OpenDental {
 			//preview is used because Tab doesn't hit KeyDown because it's intercepted by Windows to select the next control
 			ODtextBox textBox=(ODtextBox)sender;
 			SheetField sheetField=(SheetField)textBox.Tag;
-				if(e.KeyCode==Keys.Tab
+			if(e.KeyCode==Keys.Tab && sheetField.FieldType==SheetFieldType.StaticText) {
+				//Allow tabs to be inserted into static text fields.
+				e.IsInputKey=true;
+				return;
+			}
+			if(e.KeyCode==Keys.Tab
 				|| e.KeyCode==Keys.Enter && !textBox.Multiline)
 			{
 				int tabOrder=sheetField.TabOrder;

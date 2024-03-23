@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using CodeBase;
+using DataConnectionBase;
 
 namespace OpenDentBusiness {
 	///<summary>Handles database commands for the language table in the database.</summary>
@@ -116,7 +117,7 @@ namespace OpenDentBusiness {
 			if(text.Trim()=="") {
 				return "";
 			}
-			if(DictIsNull()) {//Use this just in case this check is happening before the db connection is established (e.g. Splash Screen)
+			if(!DataConnection.HasDatabaseConnection) {//Use this just in case this check is happening before the db connection is established (e.g. Splash Screen)
 				return text;
 			}
 			Language mylan=new Language();

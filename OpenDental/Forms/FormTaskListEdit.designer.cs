@@ -187,8 +187,8 @@ namespace OpenDental {
 			// FormTaskListEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(462, 274);
-			this.Controls.Add(this.labelGlobalFilter);
 			this.Controls.Add(this.comboGlobalFilter);
+			this.Controls.Add(this.labelGlobalFilter);
 			this.Controls.Add(this.textTaskListNum);
 			this.Controls.Add(this.labelTaskListNum);
 			this.Controls.Add(this.listObjectType);

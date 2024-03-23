@@ -21,6 +21,7 @@
 		<ui:Button x:Name="butUpCat" Width="79" Height="26" Margin="98,351,0,0" Text="Up" Click="butUpCat_Click" BitmapFileName="up.gif" />
 		<ui:Label x:Name="label2" Width="100" Height="19" Margin="181,5,0,0" Text="Note" VAlign="Bottom" />
 		<ui:Label x:Name="label1" Width="100" Height="19" Margin="6,7,0,0" Text="Category" VAlign="Bottom" />
+		<ui:Label Width="167" Height="36" Margin="4,424,0,0" Text="Categories are saved as changes are made" />
 		<ui:ListBox x:Name="listCat" Width="169" Height="316" Margin="8,28,0,0" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,12,10" Text="_Save" Click="butSave_Click" />
 		<ui:GroupBox x:Name="groupBox1" Width="207" VerticalAlignment="Bottom" Height="39" Margin="524,0,0,4" Text="  " >

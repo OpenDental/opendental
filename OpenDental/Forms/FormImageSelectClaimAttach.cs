@@ -463,12 +463,22 @@ namespace OpenDental{
 		#endregion
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=false;
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
-			string selectedFilePath=openFileDialog.FileName;
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=false;
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
+			}
+			string selectedFilePath=importFilePath;
 			try {
 				Bitmap bitmap=(Bitmap)Image.FromFile(selectedFilePath);
 				bitmap.Dispose();

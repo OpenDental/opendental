@@ -103,6 +103,8 @@ namespace WpfControls.UI{
 		private Separator separator3;
 		//<summary>This is a filename like ODSpelling.lex.  It is located in the temp folder, but that path is not part of this field.  The file is regenerated once per week and also if user on this computer adds any words to custom dict.  Checking for the file existence and timestamp and regenerating it is a slow step, but seems to be a MS limitation.</summary>
 		//private string _spellCheckFileLoc="ODSpelling.lex";//couldn't use this. Must build spell check from scratch.
+		///<summary>Puts a name to our spell check underline, so we can tell the code to remove it from given text.</summary>
+		private TextDecoration _textDecorationSpellCheck;
 		
 		#endregion Fields
 
@@ -192,6 +194,7 @@ namespace WpfControls.UI{
 			_dispatcherTimer=new DispatcherTimer();
 			_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(500);
 			_dispatcherTimer.Tick+=_dispatcherTimer_Tick;
+			SetRedWavyUnderline();
 		}
 		#endregion Constructor
 
@@ -580,21 +583,29 @@ namespace WpfControls.UI{
 
 		#region Methods - public
 		public void ClearWavyAll(){
-			for(int i=0;i<_listTextRangesMisspelled.Count;i++){
-				//string str=_listTextRanges[i].Text;//for testing
-				//If we want to be more delicate, like not removing strike through or underlining unrelated to spellcheck, 
-				//then we might do something like this (totally thrown together and untested:
-				//TextDecorationCollection textDecorationCollection=(TextDecorationCollection)_listTextRanges[i].GetPropertyValue(Inline.TextDecorationsProperty);
-				//for(int d=textDecorationCollection.Count;d>=0;d--){//go backwards
-				//	if(textDecorationCollection[d].Location!=TextDecorationLocation.Underline){
-				//		continue;
-				//	}
-				//	Need more elegant if statements
-					//textDecorationCollection.RemoveAt(d]);
-				//}
-				_listTextRangesMisspelled[i].ApplyPropertyValue(Inline.TextDecorationsProperty,new TextDecorationCollection());
-				//_listTextRanges[i].ClearAllProperties();//overkill. Needs to not clear bold.
+			TextPointer textPointer=richTextBox.Document.ContentStart;
+			//We must loop through all runs, not just our list of known misspelled words.
+			//This is because after text was automatically underlined, the cursor was set to that style. 
+			//The user could then type more text which would be underlined but would not be in our list of ranges.
+			while(true) {
+				if(textPointer==null) {
+					break;//end of text
+				}
+				if(textPointer.GetPointerContext(LogicalDirection.Forward)!=TextPointerContext.Text) {
+					textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
+					continue;//not text
+				}
+				//text run found
+				string run=textPointer.GetTextInRun(LogicalDirection.Forward);
+				TextPointer textPointerRunEnd=textPointer.GetPositionAtOffset(run.Length);
+				TextRange textRange=new TextRange(textPointer,textPointerRunEnd);
+				TextDecorationCollection textDecorationCollection=(TextDecorationCollection)textRange.GetPropertyValue(Inline.TextDecorationsProperty);
+				textDecorationCollection.Remove(_textDecorationSpellCheck);
+				textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
 			}
+			//TextRange textRange=new TextRange(richTextBox.Document.ContentStart,richTextBox.Document.ContentEnd);
+			//textRange.ApplyPropertyValue(Inline.TextDecorationsProperty,new TextDecorationCollection());
+			//The above works, but it's too much. For example, this would clear bold and it would clear yellow highlights used in AutoNotes.
 		}
 
 		public TextSelection GetSelection(){
@@ -674,76 +685,10 @@ namespace WpfControls.UI{
 				textPointer=textPointer.GetPositionAtOffset(run.Length);
 			}
 			for(int i=0;i<_listTextRangesMisspelled.Count;i++){
-				Pen pen=new Pen();
-				pen.Brush=new SolidColorBrush(Color.FromRgb(235,0,0));
-				pen.Thickness=0.5;//diagonal lines look great at less than 1.
-				pen.EndLineCap=PenLineCap.Square;//add caps so that we have more to work with for splicing.
-				pen.StartLineCap=PenLineCap.Square;
-				PathSegmentCollection pathSegmentCollection=new PathSegmentCollection();
-				//starting point 0,0 not included in segments
-				//This looked good but was touching the text: Thick:0.6; Segs:2,2; 4,0; VP:5,3, lineH:4
-				//This looked good but was too small when zoomed back to 100: Thick:0.5; Segs:1,1; 2,0; VB:0,-0.5,2,2.5; VP:2,2.5, lineH:3.5
-				//The current choices look very good, probably a bit tighter than I would like, but totally acceptable.
-				pathSegmentCollection.Add(new LineSegment(new Point(1.5,1.5),true));
-				pathSegmentCollection.Add(new LineSegment(new Point(3,0),true));
-				PathFigure pathFigure=new PathFigure(start:new Point(0,0),pathSegmentCollection,closed:false);
-				PathGeometry pathGeometry=new PathGeometry(new PathFigure[]{pathFigure });
-				DrawingBrush drawingBrush=new DrawingBrush();
-				//The numbers below were obtained through hours of trial and error.
-				//Each tweak required readjusting multiple other numbers,
-				//Including pen.Thickness=0.5, segment path, 
-				//viewbox is what section of the path we are grabbing. y=-0.5 in order to create white space above, effectively pushing red line away from text.
-				//viewport is size of tile on target. Same size as viewbox.
-				//target pen is 3.5 so we have room for things.
-				drawingBrush.Viewbox=new Rect(x:0,y:-1,width:3,height:3);
-				drawingBrush.ViewboxUnits=BrushMappingMode.Absolute;
-				drawingBrush.Viewport = new Rect(x:0,y:0,width:3,height:3);
-				drawingBrush.ViewportUnits=BrushMappingMode.Absolute;
-				drawingBrush.TileMode = TileMode.Tile;
-				drawingBrush.Stretch=Stretch.Fill;
-				drawingBrush.Drawing=new GeometryDrawing(brush:null,pen,pathGeometry);
-				TextDecoration textDecoration=new TextDecoration();
-				textDecoration.Pen=new Pen(drawingBrush,4);
 				TextDecorationCollection textDecorationCollection=new TextDecorationCollection();
-				textDecorationCollection.Add(textDecoration);
+				textDecorationCollection.Add(_textDecorationSpellCheck);
 				_listTextRangesMisspelled[i].ApplyPropertyValue(Inline.TextDecorationsProperty,textDecorationCollection);
 			}
-				/*Red wavy line.  This worked and looks gorgeous, but it's too dark and thick. Switching to a simpler zigzag line that will be less distracting.
-				//The zigzag was easy, and it even still looks like a wavy line.
-				Pen pen=new Pen();
-				pen.Brush=new SolidColorBrush(Color.FromRgb(235,0,0));
-				pen.Thickness=0.4;//0.4 feels too thick, but anything less quickly fades out and looks terrible.
-				pen.EndLineCap=PenLineCap.Square;//add caps so that we have more to work with for splicing.
-				pen.StartLineCap=PenLineCap.Square;
-				BezierSegment bezierSegment=new BezierSegment(new Point(1,0),new Point(2,2),new Point(3,1),isStroked:true);
-				PathFigure pathFigure=new PathFigure(start:new Point(0,1),new PathSegment[]{bezierSegment},closed:false);
-				PathGeometry pathGeometry=new PathGeometry(new PathFigure[]{pathFigure });
-				DrawingBrush drawingBrush=new DrawingBrush();
-				//Viewport: 
-				//This is the base for each tile.
-				//Height of less than 4 fades out and looks terrible.
-				//Unfortunately, they don't quite give us 4 pixels to work with, so we'll try 3.5.
-				//Line height should be taller than viewport height because of antialiasing.
-				//Y might need to be adjusted by some arbitrary number because the y origin of the fill pattern can depend on the y pos of the line.
-				//We sometimes don't really know what the origin is, so the y adjustment compensates for that.
-				//Width is a bit wider than height to arrive at an attractive proportion.
-				drawingBrush.Viewport = new Rect(x:0,y:3.2,width:5,height:3.5);
-				drawingBrush.ViewportUnits=BrushMappingMode.Absolute;
-				//Viewbox:
-				//Height is slightly taller than the drawing to avoid vertical wrapping.
-				//Left and right sides are slightly cut off so that they exactly line up and create a smooth joint.
-				//Arrived at by trial and error, and same regardless of the line thickness it's applied to.
-				drawingBrush.Viewbox=new Rect(x:0.082,y:0,width:0.836,height:1.1);
-				//drawingBrush2.Viewbox=new Rect(0.063,0,.874,1.1);//If we use thickness of 0.3, instead of 0.4
-				drawingBrush.TileMode = TileMode.Tile;
-				drawingBrush.Stretch=Stretch.Fill;
-				drawingBrush.Drawing=new GeometryDrawing(brush:null,pen,pathGeometry);
-				TextDecoration textDecoration=new TextDecoration();
-				textDecoration.Pen=new Pen(drawingBrush,5);
-				TextDecorationCollection textDecorationCollection=new TextDecorationCollection();
-				textDecorationCollection.Add(textDecoration);
-				_listTextRanges[i].ApplyPropertyValue(Inline.TextDecorationsProperty,textDecorationCollection);*/
-			//}
 			/*
 			TextPointer textPointerContentStart=richTextBox.Document.ContentStart;
 			TextPointer textPointerCaret=richTextBox.CaretPosition;
@@ -1367,6 +1312,76 @@ namespace WpfControls.UI{
 					throw new Exception("Text formatting symbol found.");
 				}
 			}*/
+		}
+
+		///<summary>Generates the TextDecoration that appears as our red wavy underline for Spell Check</summary>
+		private void SetRedWavyUnderline() {
+			Pen pen=new Pen();
+			pen.Brush=new SolidColorBrush(Color.FromRgb(235,0,0));
+			pen.Thickness=0.5;//diagonal lines look great at less than 1.
+			pen.EndLineCap=PenLineCap.Square;//add caps so that we have more to work with for splicing.
+			pen.StartLineCap=PenLineCap.Square;
+			PathSegmentCollection pathSegmentCollection=new PathSegmentCollection();
+			//starting point 0,0 not included in segments
+			//This looked good but was touching the text: Thick:0.6; Segs:2,2; 4,0; VP:5,3, lineH:4
+			//This looked good but was too small when zoomed back to 100: Thick:0.5; Segs:1,1; 2,0; VB:0,-0.5,2,2.5; VP:2,2.5, lineH:3.5
+			//The current choices look very good, probably a bit tighter than I would like, but totally acceptable.
+			pathSegmentCollection.Add(new LineSegment(new Point(1.5,1.5),true));
+			pathSegmentCollection.Add(new LineSegment(new Point(3,0),true));
+			PathFigure pathFigure=new PathFigure(start:new Point(0,0),pathSegmentCollection,closed:false);
+			PathGeometry pathGeometry=new PathGeometry(new PathFigure[]{pathFigure });
+			DrawingBrush drawingBrush=new DrawingBrush();
+			//The numbers below were obtained through hours of trial and error.
+			//Each tweak required readjusting multiple other numbers,
+			//Including pen.Thickness=0.5, segment path, 
+			//viewbox is what section of the path we are grabbing. y=-0.5 in order to create white space above, effectively pushing red line away from text.
+			//viewport is size of tile on target. Same size as viewbox.
+			//target pen is 3.5 so we have room for things.
+			drawingBrush.Viewbox=new Rect(x:0,y:-1,width:3,height:3);
+			drawingBrush.ViewboxUnits=BrushMappingMode.Absolute;
+			drawingBrush.Viewport = new Rect(x:0,y:0,width:3,height:3);
+			drawingBrush.ViewportUnits=BrushMappingMode.Absolute;
+			drawingBrush.TileMode = TileMode.Tile;
+			drawingBrush.Stretch=Stretch.Fill;
+			drawingBrush.Drawing=new GeometryDrawing(brush:null,pen,pathGeometry);
+			_textDecorationSpellCheck=new TextDecoration();
+			_textDecorationSpellCheck.Pen=new Pen(drawingBrush,4);
+			/*Red wavy line.  This worked and looks gorgeous, but it's too dark and thick. Switching to a simpler zigzag line that will be less distracting.
+				//The zigzag was easy, and it even still looks like a wavy line.
+				Pen pen=new Pen();
+				pen.Brush=new SolidColorBrush(Color.FromRgb(235,0,0));
+				pen.Thickness=0.4;//0.4 feels too thick, but anything less quickly fades out and looks terrible.
+				pen.EndLineCap=PenLineCap.Square;//add caps so that we have more to work with for splicing.
+				pen.StartLineCap=PenLineCap.Square;
+				BezierSegment bezierSegment=new BezierSegment(new Point(1,0),new Point(2,2),new Point(3,1),isStroked:true);
+				PathFigure pathFigure=new PathFigure(start:new Point(0,1),new PathSegment[]{bezierSegment},closed:false);
+				PathGeometry pathGeometry=new PathGeometry(new PathFigure[]{pathFigure });
+				DrawingBrush drawingBrush=new DrawingBrush();
+				//Viewport: 
+				//This is the base for each tile.
+				//Height of less than 4 fades out and looks terrible.
+				//Unfortunately, they don't quite give us 4 pixels to work with, so we'll try 3.5.
+				//Line height should be taller than viewport height because of antialiasing.
+				//Y might need to be adjusted by some arbitrary number because the y origin of the fill pattern can depend on the y pos of the line.
+				//We sometimes don't really know what the origin is, so the y adjustment compensates for that.
+				//Width is a bit wider than height to arrive at an attractive proportion.
+				drawingBrush.Viewport = new Rect(x:0,y:3.2,width:5,height:3.5);
+				drawingBrush.ViewportUnits=BrushMappingMode.Absolute;
+				//Viewbox:
+				//Height is slightly taller than the drawing to avoid vertical wrapping.
+				//Left and right sides are slightly cut off so that they exactly line up and create a smooth joint.
+				//Arrived at by trial and error, and same regardless of the line thickness it's applied to.
+				drawingBrush.Viewbox=new Rect(x:0.082,y:0,width:0.836,height:1.1);
+				//drawingBrush2.Viewbox=new Rect(0.063,0,.874,1.1);//If we use thickness of 0.3, instead of 0.4
+				drawingBrush.TileMode = TileMode.Tile;
+				drawingBrush.Stretch=Stretch.Fill;
+				drawingBrush.Drawing=new GeometryDrawing(brush:null,pen,pathGeometry);
+				TextDecoration textDecoration=new TextDecoration();
+				textDecoration.Pen=new Pen(drawingBrush,5);
+				TextDecorationCollection textDecorationCollection=new TextDecorationCollection();
+				textDecorationCollection.Add(textDecoration);
+				_listTextRanges[i].ApplyPropertyValue(Inline.TextDecorationsProperty,textDecorationCollection);*/
+			//}
 		}
 		#endregion Methods - private
 

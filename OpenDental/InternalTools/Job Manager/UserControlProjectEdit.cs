@@ -130,9 +130,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(comboPriority.Items.Count==0) {
 				_listPriorities=Defs.GetDefsForCategory(DefCat.JobPriorities,true).OrderBy(x => x.ItemOrder).ToList();
 				_listPrioritiesAll=Defs.GetDefsForCategory(DefCat.JobPriorities).OrderBy(x => x.ItemOrder).ToList();
-				comboPriority.Items.AddDefs(_listPriorities);
+				_listPriorities.ForEach(x => comboPriority.Items.Add(x.ItemName));
 			}
-			comboPriority.SetSelectedDefNum(_jobCur.Priority);
+			comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
 			string gitBranchName=Jobs.GetGitBranchName(_jobCur);
 			if(gitBranchName.Length>50){
 				gitBranchName=gitBranchName.Substring(0,50);
@@ -784,12 +784,33 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_isLoading || comboPriority.SelectedIndex==-1) {
 				return;
 			}
-			long priorityNum=comboPriority.GetSelectedDefNum();
+			SaveComboPriorityHelper(_listPriorities[comboPriority.SelectedIndex].DefNum);
+		}
+
+		private void comboPriority_Leave(object sender,EventArgs e) {
+			if(_isLoading) {
+				return;
+			}
+			Def defPriorityFromText=_listPriorities.Find(x => x.ItemName==comboPriority.Text);
+			if(defPriorityFromText==null) {
+				MsgBox.Show("Invalid Job Priority. Priority not saved.");
+				comboPriority.SelectedIndex=_listPriorities.Find(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;//Revert to saved priority
+				return;
+			}
+			if(defPriorityFromText.DefNum==_jobCur.Priority) {
+				return;
+			}
+			//Synchronize the SelectedIndex property of the combo box with the matching definition.
+			comboPriority.SelectedIndex=defPriorityFromText.ItemOrder;
+			SaveComboPriorityHelper(defPriorityFromText.DefNum);
+		}
+
+		private void SaveComboPriorityHelper(long priorityNum) {
 			_jobCur.Priority=priorityNum;
 			JobLogs.MakeLogEntryForPriority(_jobCur,_jobOld);
 			_jobOld.Priority=priorityNum;
 			if(!IsNew) {
-				Job job = Jobs.GetOne(_jobCur.JobNum);
+				Job job=Jobs.GetOne(_jobCur.JobNum);
 				Job jobOld=job.Copy();
 				job.Priority=priorityNum;
 				if(Jobs.Update(job,jobOld)) {
@@ -1131,7 +1152,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			textVersion.Text=formVersionPrompt.VersionText;
 			_jobCur.JobVersion=formVersionPrompt.VersionText;
 			_jobCur.Priority=_listPrioritiesAll.FirstOrDefault(x => x.ItemValue.Contains("DocumentationDefault")).DefNum;
-			comboPriority.SetSelectedDefNum(_jobCur.Priority);
+			comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
 			IsChanged=true;
 			_jobCur.PhaseCur=JobPhase.Complete;
 			_jobCur.DateTimeImplemented=DateTime.Now;

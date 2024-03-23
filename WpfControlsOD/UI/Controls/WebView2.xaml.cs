@@ -52,7 +52,13 @@ namespace WpfControls.UI {
 		public event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
 
 		public async Task Init() {
-			await webView2.EnsureCoreWebView2Async();
+			//Was like below by default, which didn't work because of file permissions in that folder.
+			//string userDataFolder= "C:\\Program Files (x86)\\OpenDental\\OpenDental.exe.WebView2";
+			//New location is like this:
+			//C:\\Users\\User\\AppData\\Local\\Temp\\opendental
+			string userDataFolder=OpenDentBusiness.PrefC.GetTempFolderPath();
+			CoreWebView2Environment webView2Environment=await CoreWebView2Environment.CreateAsync(null,userDataFolder,null);
+			await webView2.EnsureCoreWebView2Async(webView2Environment);
 		}
 
 		private void WebView2_NavigationStarting(object sender,CoreWebView2NavigationStartingEventArgs e) {

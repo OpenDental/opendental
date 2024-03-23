@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
+using CodeBase;
 
 namespace OpenDental {
 	public partial class FormTaskAttachmentEdit:FormODBase {
@@ -70,15 +71,25 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=false;
-			if(!TaskAttachmentCur.IsNew && TaskAttachmentCur.DocNum>0) { 
-				openFileDialog.FileName=Documents.GetPath(_document.DocNum);
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
-			if(openFileDialog.ShowDialog()==DialogResult.Cancel){
-				return;
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=false;
+				if(!TaskAttachmentCur.IsNew && TaskAttachmentCur.DocNum>0) { 
+					openFileDialog.FileName=Documents.GetPath(_document.DocNum);
+				}
+				if(openFileDialog.ShowDialog()==DialogResult.Cancel){
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
 			}
-			if(!TryImportDoc(openFileDialog.FileName)) {
+			if(!TryImportDoc(importFilePath)) {
 				return;
 			}
 			textDocNum.Text=TaskAttachmentCur.DocNum.ToString();

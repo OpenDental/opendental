@@ -238,12 +238,22 @@ namespace OpenDental{
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
+			}
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
 			}
 			try {
-				Image imageImported=Image.FromFile(openFileDialog.FileName);
+				Image imageImported=Image.FromFile(importFilePath);
 				if(imageImported.Size!=new Size(22,22)) {
 					MessageBox.Show(Lan.g(this,"Required image dimensions are 22x22.")
 						+"\r\n"+Lan.g(this,"Selected image dimensions are")+": "+imageImported.Size.Width+"x"+imageImported.Size.Height);

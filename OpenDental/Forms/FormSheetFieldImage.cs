@@ -67,41 +67,51 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog dialogOpenFile=new OpenFileDialog();
-			dialogOpenFile.Multiselect=false;
-			if(dialogOpenFile.ShowDialog()!=DialogResult.OK){
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()){
+					return;
+				}
 			}
-			if(!File.Exists(dialogOpenFile.FileName)){
-				MsgBox.Show(this,"File does not exist.");
-				return;
+			else {
+				using OpenFileDialog dialogOpenFile=new OpenFileDialog();
+				dialogOpenFile.Multiselect=false;
+				if(dialogOpenFile.ShowDialog()!=DialogResult.OK){
+					return;
+				}
+				if(!File.Exists(dialogOpenFile.FileName)){
+					MsgBox.Show(this,"File does not exist.");
+					return;
+				}
+				importFilePath=dialogOpenFile.FileName;
 			}
-			if(!ImageHelper.HasImageExtension(dialogOpenFile.FileName)){
+			if(!ImageHelper.HasImageExtension(importFilePath)){
 				MsgBox.Show(this,"Only allowed to import an image.");
 				return;
 			}
-			string newName=dialogOpenFile.FileName;
+			string newName=importFilePath;
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				newName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName));
+				newName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath));
 				if(File.Exists(newName)) {
 					MsgBox.Show(this,"A file of that name already exists in SheetImages.  Please rename the file before importing.");
 					return;
 				}
-				File.Copy(dialogOpenFile.FileName,newName);
+				File.Copy(importFilePath,newName);
 			}
 			else if(CloudStorage.IsCloudStorage) {
-				if(CloudStorage.FileExists(ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName)))) {
+				if(CloudStorage.FileExists(ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath)))) {
 					MsgBox.Show(this,"A file of that name already exists in SheetImages.  Please rename the file before importing.");
 					return;
 				}
 				UI.ProgressWin progressWin=new UI.ProgressWin();
 				progressWin.StartingMessage="Uploading...";
-				progressWin.ActionMain=() => CloudStorage.Upload(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName),File.ReadAllBytes(dialogOpenFile.FileName));
+				progressWin.ActionMain=() => CloudStorage.Upload(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath),File.ReadAllBytes(importFilePath));
 				progressWin.ShowDialog();
 				if(progressWin.IsCancelled){
 					return;
 				}
-				newName=Path.GetFileName(dialogOpenFile.FileName);
+				newName=Path.GetFileName(importFilePath);
 				//It would be nice to save the image somewhere so that we don't have to download it again.
 			}			
 			FillCombo();

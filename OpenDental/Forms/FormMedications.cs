@@ -220,8 +220,14 @@ namespace OpenDental {
 			//	listMedicationImports=DownloadDefaultMedications();//Import from OpenDental.com
 			//}
 			//else {//Prompt for file.
-			string fileName=GetFilenameFromUser(true);
-			if(string.IsNullOrEmpty(fileName)) {
+			string fileName;
+			if(ODCloudClient.IsAppStream) {
+				fileName=ODCloudClient.ImportFileForCloud();
+			}
+			else {
+				fileName=GetFilenameFromUser(true);
+			}
+			if(fileName.IsNullOrEmpty()) {
 				return;
 			}
 			Cursor=Cursors.WaitCursor;

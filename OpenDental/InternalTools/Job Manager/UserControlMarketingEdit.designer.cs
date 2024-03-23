@@ -58,6 +58,7 @@
 			this.textJobNum = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.panel4 = new System.Windows.Forms.Panel();
+			this.comboPriority = new System.Windows.Forms.ComboBox();
 			this.textHoursLeft = new OpenDental.ValidDouble();
 			this.butAddTime = new OpenDental.UI.Button();
 			this.label15 = new System.Windows.Forms.Label();
@@ -97,7 +98,6 @@
 			this.tabReviews = new System.Windows.Forms.TabPage();
 			this.gridReview = new OpenDental.UI.GridOD();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this.comboPriority = new System.Windows.Forms.ComboBox();
 			this.panel3.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel4.SuspendLayout();
@@ -477,6 +477,18 @@
 			this.panel4.Name = "panel4";
 			this.panel4.Size = new System.Drawing.Size(766, 151);
 			this.panel4.TabIndex = 329;
+			// 
+			// comboPriority
+			// 
+			this.comboPriority.FormattingEnabled = true;
+			this.comboPriority.IntegralHeight = false;
+			this.comboPriority.Location = new System.Drawing.Point(126, 26);
+			this.comboPriority.MaxDropDownItems = 10;
+			this.comboPriority.Name = "comboPriority";
+			this.comboPriority.Size = new System.Drawing.Size(121, 21);
+			this.comboPriority.TabIndex = 361;
+			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
+			this.comboPriority.Leave += new System.EventHandler(this.comboPriority_Leave);
 			// 
 			// textHoursLeft
 			// 
@@ -881,17 +893,6 @@
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(247, 726);
 			this.tableLayoutPanel2.TabIndex = 307;
-			// 
-			// comboPriority
-			// 
-			this.comboPriority.FormattingEnabled = true;
-			this.comboPriority.IntegralHeight = false;
-			this.comboPriority.Location = new System.Drawing.Point(126, 26);
-			this.comboPriority.MaxDropDownItems = 10;
-			this.comboPriority.Name = "comboPriority";
-			this.comboPriority.Size = new System.Drawing.Size(121, 21);
-			this.comboPriority.TabIndex = 361;
-			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
 			// 
 			// UserControlMarketingEdit
 			// 

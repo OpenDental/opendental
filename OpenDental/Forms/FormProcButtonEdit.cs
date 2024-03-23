@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using System.Collections.Generic;
+using CodeBase;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -70,13 +71,23 @@ namespace OpenDental{
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			if(openFileDialog.ShowDialog()!=DialogResult.OK){
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
+			}
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				if(openFileDialog.ShowDialog()!=DialogResult.OK){
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
 			}
 			Image imageImported;
 			try{
-				imageImported=Image.FromFile(openFileDialog.FileName);
+				imageImported=Image.FromFile(importFilePath);
 			}
 			catch{
 				MsgBox.Show(this,"Error loading file.");

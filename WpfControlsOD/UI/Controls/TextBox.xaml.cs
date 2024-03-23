@@ -152,10 +152,12 @@ Validating/Validated events are not supported.
 				if(_isMultiline){
 					textBox.TextWrapping=TextWrapping.Wrap;
 					textBox.AcceptsReturn=true;
+					textBox.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;
 					return;
 				}
 				textBox.TextWrapping=TextWrapping.NoWrap;
 				textBox.AcceptsReturn=false;
+				textBox.VerticalScrollBarVisibility=ScrollBarVisibility.Hidden;
 			}
 		}
 

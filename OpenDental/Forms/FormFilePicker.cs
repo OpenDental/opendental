@@ -28,6 +28,9 @@ namespace OpenDental {
 		}
 
 		private void FormFilePicker_Load(object sender,EventArgs e) {
+			if(ODCloudClient.IsAppStream){
+				DoHideLocalButton=true;
+			}
 			butFileChoose.Visible=!DoHideLocalButton;
 			FillGrid();
 		}
@@ -88,15 +91,26 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=true;
-			openFileDialog.InitialDirectory="";
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string[] stringArrayFileNames;
+			if(ODCloudClient.IsAppStream) {
+				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
+				if(listImportFilePaths[0].IsNullOrEmpty()) {
+					return;
+				}
+				stringArrayFileNames=listImportFilePaths.ToArray();
 			}
-			for(int i=0;i<openFileDialog.FileNames.Length;i++) {
-				string combinedPath=FileAtoZ.CombinePaths(textPath.Text,Path.GetFileName(openFileDialog.FileNames[i]));
-				FileAtoZ.Copy(openFileDialog.FileNames[i],combinedPath,FileAtoZSourceDestination.LocalToAtoZ);
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=true;
+				openFileDialog.InitialDirectory="";
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				stringArrayFileNames=openFileDialog.FileNames;
+			}
+			for(int i=0;i<stringArrayFileNames.Length;i++) {
+				string combinedPath=FileAtoZ.CombinePaths(textPath.Text,Path.GetFileName(stringArrayFileNames[i]));
+				FileAtoZ.Copy(stringArrayFileNames[i],combinedPath,FileAtoZSourceDestination.LocalToAtoZ);
 			}
 			FillGrid();
 		}

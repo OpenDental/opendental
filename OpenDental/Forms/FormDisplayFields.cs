@@ -172,7 +172,26 @@ namespace OpenDental{
 			_changed=true;
 		}
 
+		private bool ContainsDuplicateDescriptions() {
+			List<string> listDescriptions=new List<string>();
+			for(int i=0;i<_listDisplayFieldsShowing.Count;i++) {
+				string description=_listDisplayFieldsShowing[i].Description;
+				if(string.IsNullOrEmpty(description)) {
+					continue;
+				}
+				if(_listDisplayFieldsShowing.Any(x => x.InternalName==description) || listDescriptions.Contains(description)) {
+					return true;
+				}
+				listDescriptions.Add(description);
+			}
+			return false;
+		}
+
 		private void butSave_Click(object sender,EventArgs e) {
+			if(ContainsDuplicateDescriptions()) {
+				MsgBox.Show("Display Fields cannot have duplicate descriptions or descriptions matching FieldName. Fix all entries before saving.");
+				return;
+			}
 			if(!_changed) {
 				DialogResult=DialogResult.OK;
 				return;

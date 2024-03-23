@@ -3406,22 +3406,43 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_isLoading) {
 				return;
 			}
+			SaveComboPriorityHelper(_listPriorities[comboPriority.SelectedIndex]);
+		}
+
+		private void comboPriority_Leave(object sender,EventArgs e) {
+			if(_isLoading) {
+				return;
+			}
+			Def defPriorityFromText=_listPriorities.Find(x => x.ItemName==comboPriority.Text);
+			if(defPriorityFromText==null) {
+				MsgBox.Show("Invalid Job Priority. Priority not saved.");
+				comboPriority.SelectedIndex=_listPriorities.Find(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;//Revert to saved priority
+				return;
+			}
+			if(defPriorityFromText.DefNum==_jobCur.Priority) {
+				return;
+			}
+			//Synchronize the SelectedIndex property of the combo box with the matching definition.
+			comboPriority.SelectedIndex=defPriorityFromText.ItemOrder;
+			SaveComboPriorityHelper(defPriorityFromText);
+		}
+
+		private void SaveComboPriorityHelper(Def defPriority) {
 			if(_jobCur.PhaseCur.In(JobPhase.Concept,JobPhase.Definition,JobPhase.Development,JobPhase.Quote) 
-				&& _listPriorities[comboPriority.SelectedIndex].ItemValue.Contains("OnHold") 
+				&& defPriority.ItemValue.Contains("OnHold") 
 				&& _jobCur.ListJobLinks.Any(x => x.LinkType==JobLinkType.Bug || x.LinkType==JobLinkType.MobileBug))
 			{
 				comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
 				MsgBox.Show(this,"Please remove all bugs from a job before marking it as on hold.");
 				return;
 			}
-			long priorityNum=_listPriorities[comboPriority.SelectedIndex].DefNum;
-			_jobCur.Priority=priorityNum;
+			_jobCur.Priority=defPriority.DefNum;
 			JobLogs.MakeLogEntryForPriority(_jobCur,_jobOld);
-			_jobOld.Priority=priorityNum;
+			_jobOld.Priority=defPriority.DefNum;
 			if(!IsNew) {
-				Job job = Jobs.GetOne(_jobCur.JobNum);
+				Job job=Jobs.GetOne(_jobCur.JobNum);
 				Job jobOld=job.Copy();
-				job.Priority=priorityNum;
+				job.Priority=defPriority.DefNum;
 				if(Jobs.Update(job,jobOld)) {
 					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 				}
@@ -3480,7 +3501,28 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_isLoading) {
 				return;
 			}
-			long priorityNum=_listPriorities[comboPriorityTesting.SelectedIndex].DefNum;
+			SaveComboPriorityTestingHelper(_listPriorities[comboPriorityTesting.SelectedIndex].DefNum);
+		}
+
+		private void comboPriorityTesting_Leave(object sender,EventArgs e) {
+			if(_isLoading) {
+				return;
+			}
+			Def defPriorityFromText=_listPriorities.Find(x => x.ItemName==comboPriorityTesting.Text);
+			if(defPriorityFromText==null) {
+				MsgBox.Show("Invalid Job Priority. Priority not saved.");
+				comboPriorityTesting.SelectedIndex=_listPriorities.Find(x => x.DefNum==_jobCur.PriorityTesting)?.ItemOrder??0;//Revert to saved priority
+				return;
+			}
+			if(defPriorityFromText.DefNum==_jobCur.PriorityTesting) {
+				return;
+			}
+			//Synchronize the SelectedIndex property of the combo box with the matching definition.
+			comboPriorityTesting.SelectedIndex=defPriorityFromText.ItemOrder;
+			SaveComboPriorityTestingHelper(defPriorityFromText.DefNum);
+		}
+
+		private void SaveComboPriorityTestingHelper(long priorityNum) {
 			_jobCur.PriorityTesting=priorityNum;
 			_jobOld.PriorityTesting=priorityNum;
 			if(!IsNew) {

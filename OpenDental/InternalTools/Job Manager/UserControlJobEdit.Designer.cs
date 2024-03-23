@@ -499,6 +499,7 @@
 			this.comboPriority.Size = new System.Drawing.Size(117, 21);
 			this.comboPriority.TabIndex = 326;
 			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
+			this.comboPriority.Leave += new System.EventHandler(this.comboPriority_Leave);
 			// 
 			// comboJobTeam
 			// 
@@ -808,7 +809,6 @@
 			// 
 			// textJobEditor
 			// 
-			this.textJobEditor.MainFontConcept = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.textJobEditor.ConceptRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
     "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.22621}\\viewkind4\\uc1 \r\n\\par" +
     "d\\f0\\fs17\\par\r\n}\r\n";
@@ -817,13 +817,14 @@
 			this.textJobEditor.HasEditorOptions = true;
 			this.textJobEditor.HasSaveButton = true;
 			this.textJobEditor.Location = new System.Drawing.Point(0, 0);
+			this.textJobEditor.MainFontConcept = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.textJobEditor.MainFontWriteup = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.textJobEditor.Name = "textJobEditor";
 			this.textJobEditor.ReadOnlyConcept = false;
 			this.textJobEditor.ReadOnlyRequirementsGrid = false;
 			this.textJobEditor.ReadOnlyWriteup = false;
 			this.textJobEditor.Size = new System.Drawing.Size(928, 633);
 			this.textJobEditor.TabIndex = 20;
-			this.textJobEditor.MainFontWriteup = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.textJobEditor.WriteupRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
     "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.22621}\\viewkind4\\uc1 \r\n\\par" +
     "d\\f0\\fs17\\par\r\n}\r\n";
@@ -952,6 +953,7 @@
 			this.comboPriorityTesting.Size = new System.Drawing.Size(117, 21);
 			this.comboPriorityTesting.TabIndex = 327;
 			this.comboPriorityTesting.SelectionChangeCommitted += new System.EventHandler(this.comboPriorityTesting_SelectionChangeCommitted);
+			this.comboPriorityTesting.Leave += new System.EventHandler(this.comboPriorityTesting_Leave);
 			// 
 			// textTestingHours
 			// 

@@ -103,14 +103,24 @@ namespace OpenDental{
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog1=new OpenFileDialog();
-			openFileDialog1.FileName="";
-			openFileDialog1.DefaultExt="wav";
-			if(openFileDialog1.ShowDialog() !=DialogResult.OK){
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return;
+				}
+			}
+			else {
+				using OpenFileDialog openFileDialog1=new OpenFileDialog();
+				openFileDialog1.FileName="";
+				openFileDialog1.DefaultExt="wav";
+				if(openFileDialog1.ShowDialog() !=DialogResult.OK){
+					return;
+				}
+				importFilePath=openFileDialog1.FileName;
 			}
 			try{
-				SigElementDefCur.Sound=POut.Sound(openFileDialog1.FileName);
+				SigElementDefCur.Sound=POut.Sound(importFilePath);
 			}
 			catch(ApplicationException ex){
 				MessageBox.Show(ex.Message);

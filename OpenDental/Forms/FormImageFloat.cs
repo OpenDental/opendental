@@ -4675,20 +4675,30 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Supports multiple file imports, and user doesn't actually need to select a mount item first.</summary>
+		///<summary>Supports multiple file imports (unless in Appstream), and user doesn't actually need to select a mount item first.</summary>
 		private void ToolBarImportMount(){
-			OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=true;
-			if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
-				//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
-				//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
-				openFileDialog.ShowHelp=true;
+			string[] stringArrayFileNames=new string[0];
+			if(ODCloudClient.IsAppStream) {
+				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
+				if(listImportFilePaths[0].IsNullOrEmpty()) {
+					return;
+				}
+				stringArrayFileNames=listImportFilePaths.ToArray();
 			}
-			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			else {
+				OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=true;
+				if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
+					//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
+					//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
+					openFileDialog.ShowHelp=true;
+				}
+				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				stringArrayFileNames=openFileDialog.FileNames;
 			}
-			string[] stringArrayFileNames=openFileDialog.FileNames;
 			if(stringArrayFileNames.Length<1) {
 				return;
 			}
@@ -4735,24 +4745,34 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Not importing to mount.  Still supports multiple imports at once.</summary>
+		///<summary>Not importing to mount. Supports multiple imports at once (unless in AppStream).</summary>
 		private void ToolBarImportSingle() {
 			if(Plugins.HookMethod(this,"ContrImages.ToolBarImport_Click_Start",PatientCur)) {//Named differently for backwards compatibility
 				EventFillTree?.Invoke(this,true);
 				return;
 			}
-			OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=true;
-			if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
-				//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
-				//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
-				openFileDialog.ShowHelp=true;
+			string[] stringArrayFileNames=new string[0];
+			if(ODCloudClient.IsAppStream) {
+				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
+				if(listImportFilePaths[0].IsNullOrEmpty()) {
+					return;
+				}
+				stringArrayFileNames=listImportFilePaths.ToArray();
 			}
-			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			else {
+				OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=true;
+				if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
+					//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
+					//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
+					openFileDialog.ShowHelp=true;
+				}
+				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				stringArrayFileNames=openFileDialog.FileNames;
 			}
-			string[] stringArrayFileNames=openFileDialog.FileNames;
 			if(stringArrayFileNames.Length<1) {
 				return;
 			}
@@ -4777,7 +4797,7 @@ namespace OpenDental {
 					}
 				}
 				catch(Exception ex) {
-					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+openFileDialog.FileName);
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+stringArrayFileNames[i]);
 					continue;
 				}
 				if(!ODBuild.IsThinfinity() && i>0){

@@ -62,6 +62,8 @@
 			this.labelCheckedOut = new System.Windows.Forms.Label();
 			this.timerTitle = new System.Windows.Forms.Timer(this.components);
 			this.timerVersion = new System.Windows.Forms.Timer(this.components);
+			this.comboPriority = new System.Windows.Forms.ComboBox();
+			this.butAddExistingJob = new OpenDental.UI.Button();
 			this.textHoursActualDescendants = new OpenDental.ValidDouble();
 			this.butChangeEst = new OpenDental.UI.Button();
 			this.textHoursLeftDescendants = new OpenDental.ValidDouble();
@@ -78,9 +80,7 @@
 			this.butActions = new OpenDental.UI.Button();
 			this.checkIsActive = new OpenDental.UI.CheckBox();
 			this.comboPhase = new OpenDental.UI.ComboBox();
-			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.comboJobTeam = new OpenDental.UI.ComboBox();
-			this.butAddExistingJob = new OpenDental.UI.Button();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -523,6 +523,27 @@
 			this.timerVersion.Interval = 3000;
 			this.timerVersion.Tick += new System.EventHandler(this.timerVersion_Tick);
 			// 
+			// comboPriority
+			// 
+			this.comboPriority.FormattingEnabled = true;
+			this.comboPriority.IntegralHeight = false;
+			this.comboPriority.Location = new System.Drawing.Point(95, 155);
+			this.comboPriority.MaxDropDownItems = 10;
+			this.comboPriority.Name = "comboPriority";
+			this.comboPriority.Size = new System.Drawing.Size(117, 21);
+			this.comboPriority.TabIndex = 348;
+			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
+			this.comboPriority.Leave += new System.EventHandler(this.comboPriority_Leave);
+			// 
+			// butAddExistingJob
+			// 
+			this.butAddExistingJob.Location = new System.Drawing.Point(8, 334);
+			this.butAddExistingJob.Name = "butAddExistingJob";
+			this.butAddExistingJob.Size = new System.Drawing.Size(204, 22);
+			this.butAddExistingJob.TabIndex = 322;
+			this.butAddExistingJob.Text = "Add Existing Job to Project";
+			this.butAddExistingJob.Click += new System.EventHandler(this.butAddExistingJob_Click);
+			// 
 			// textHoursActualDescendants
 			// 
 			this.textHoursActualDescendants.Location = new System.Drawing.Point(95, 220);
@@ -679,14 +700,6 @@
 			this.comboPhase.TabIndex = 350;
 			this.comboPhase.SelectionChangeCommitted += new System.EventHandler(this.comboPhase_SelectionChangeCommitted);
 			// 
-			// comboPriority
-			// 
-			this.comboPriority.Location = new System.Drawing.Point(95, 155);
-			this.comboPriority.Name = "comboPriority";
-			this.comboPriority.Size = new System.Drawing.Size(117, 21);
-			this.comboPriority.TabIndex = 348;
-			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
-			// 
 			// comboJobTeam
 			// 
 			this.comboJobTeam.Location = new System.Drawing.Point(96, 307);
@@ -694,15 +707,6 @@
 			this.comboJobTeam.Size = new System.Drawing.Size(117, 21);
 			this.comboJobTeam.TabIndex = 339;
 			this.comboJobTeam.SelectionChangeCommitted += new System.EventHandler(this.comboJobTeam_SelectionChangeCommitted);
-			// 
-			// butAddExistingJob
-			// 
-			this.butAddExistingJob.Location = new System.Drawing.Point(8, 334);
-			this.butAddExistingJob.Name = "butAddExistingJob";
-			this.butAddExistingJob.Size = new System.Drawing.Size(204, 22);
-			this.butAddExistingJob.TabIndex = 322;
-			this.butAddExistingJob.Text = "Add Existing Job to Project";
-			this.butAddExistingJob.Click += new System.EventHandler(this.butAddExistingJob_Click);
 			// 
 			// UserControlProjectEdit
 			// 
@@ -748,6 +752,7 @@
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "UserControlProjectEdit";
 			this.Size = new System.Drawing.Size(1476, 865);
+			this.Leave += new System.EventHandler(this.comboPriority_Leave);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.tableLayoutPanel2.ResumeLayout(false);
@@ -782,7 +787,7 @@
 		private System.Windows.Forms.Label labelProjectManager;
 		private System.Windows.Forms.TextBox textGitBranchName;
 		private System.Windows.Forms.Label labelGitBranchName;
-		private UI.ComboBox comboPriority;
+		private System.Windows.Forms.ComboBox comboPriority;
 		private System.Windows.Forms.Label labelPriority;
 		private UI.ComboBox comboPhase;
 		private System.Windows.Forms.Label labelPhase;
