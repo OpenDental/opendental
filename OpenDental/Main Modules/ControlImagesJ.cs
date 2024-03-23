@@ -2504,33 +2504,32 @@ namespace OpenDental
 					progressOD.ActionMain = () => {
 						while (true) {
 							ODCloudClient.TwainAcquireBitmapStart(_deviceController.TwainName, doThrowException: true, doShowProgressBar: false);
-							Bitmap bitmap = null;
-							string statusBitmap = "ScanNotReady";
-							while (true) {
-								statusBitmap = ODCloudClient.CheckBitmapIsAcquired();
-								if (statusBitmap.IsNullOrEmpty()) {
-									//If they press cancel on the twain driver they will break here, bitmapStatus will be ""
-									break;
-								}
-								if (statusBitmap == "ScanReady") {
-									bitmap = ODCloudClient.TwainGetAcquiredBitmap();
-									//Scan was successful and retrieving the bitmap
-									break;
-								}
-								if (statusBitmap != "ScanNotReady") {
-									//Scan had an error and was not successful retrieving the bitmap
-									break;
-								}
+							Bitmap bitmap=null;
+							string scannerState="scanning";
+							while(scannerState=="scanning" || scannerState=="setup") {
+								//Scan is "setup" when starting up or currently "scanning"
+								scannerState=ODCloudClient.CheckBitmapIsAcquired();
 								Thread.Sleep(100);
 							}
-							if (statusBitmap != "ScanReady" && statusBitmap != "ScanNotReady" && !statusBitmap.IsNullOrEmpty()) {
-								Exception exception = new Exception(statusBitmap);
+							if(scannerState=="done") {
+								//Scan was successful and retrieving the bitmap
+								bitmap=ODCloudClient.TwainGetAcquiredBitmap();
+							}
+							else if(scannerState=="cancelled") {
+								//Scan was cancelled
+								bitmap?.Dispose();
+								bitmap=null;
+								break;
+							}
+							else {
+								//Scan had an error and was not successful retrieving the bitmap
+								Exception exception=new Exception(scannerState);
 								throw exception;
 							}
-							if (bitmap == null) {
+							Thread.Sleep(100);
+							if(bitmap==null) {
 								break; //Cancel the scanning task
 							}
-							statusBitmap = "";
 							if(!(bool)this.Invoke((Func<bool>)(()=>PlaceAcquiredBitmapInUI(bitmap)))) {
 								break;
 							}

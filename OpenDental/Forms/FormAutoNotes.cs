@@ -222,13 +222,23 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=ImportDialogSetup();
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return; //User cancelled out of OpenFileDialog
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
+			}
+			else {
+				using OpenFileDialog openFileDialog=ImportDialogSetup();
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return; //User cancelled out of OpenFileDialog
+				}
+				importFilePath=openFileDialog.FileName;
 			}
 			string fileContents;
 			try {
-				fileContents=File.ReadAllText(openFileDialog.FileName);
+				fileContents=File.ReadAllText(importFilePath);
 			}
 			catch(Exception err) {
 				FriendlyException.Show(Lans.g(this,"Auto Note(s) failed to import."),err);

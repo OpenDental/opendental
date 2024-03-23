@@ -91,19 +91,29 @@ namespace OpenDental {
 
 		private void butImport_Click(object sender,EventArgs e) {
 			#region Get Imported HTML 
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=false;
-			if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
-				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
-			else if(Directory.Exists("C:\\")) {
-				openFileDialog.InitialDirectory="C:\\";
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=false;
+				if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
+					openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+				}
+				else if(Directory.Exists("C:\\")) {
+					openFileDialog.InitialDirectory="C:\\";
+				}
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
 			}
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
-			}
-			string fileName=Path.GetFileName(openFileDialog.FileName);
-			string path=openFileDialog.FileName;
+			string fileName=Path.GetFileName(importFilePath);
+			string path=importFilePath;
 			if(!File.Exists(path)) {
 				MsgBox.Show(this,"File does not exist or cannot be read.");
 				return;

@@ -1100,14 +1100,24 @@ namespace OpenDental {
 			if(_needsSynch){
 				SynchAndFillListFees(true);
 			}
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
+			}
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
 			}
 			int rowsInserted=0;
 			try {
-				rowsInserted=ImportProcCodes(openFileDialog.FileName,null,"");
+				rowsInserted=ImportProcCodes(importFilePath,null,"");
 			}
 			catch(ApplicationException ex) {
 				MessageBox.Show(ex.Message);

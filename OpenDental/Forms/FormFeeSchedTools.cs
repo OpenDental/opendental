@@ -587,19 +587,29 @@ namespace OpenDental {
 			{
 				return;
 			}
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
-				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
-			else if(Directory.Exists("C:\\")) {
-				openFileDialog.InitialDirectory="C:\\";
-			}
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
-			}
-			if(!File.Exists(openFileDialog.FileName)){
-				MsgBox.Show(this,"File not found");
-				return;
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
+					openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+				}
+				else if(Directory.Exists("C:\\")) {
+					openFileDialog.InitialDirectory="C:\\";
+				}
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				if(!File.Exists(openFileDialog.FileName)){
+					MsgBox.Show(this,"File not found");
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
 			}
 			//Import deletes fee if it exists and inserts new fees based on fee settings.
 			long clinicNum=0;
@@ -628,7 +638,7 @@ namespace OpenDental {
 				provNum=_listProviders[comboProvider.SelectedIndex-1].ProvNum;
 			}
 			ProgressOD progressOD=new ProgressOD();
-			progressOD.ActionMain=() => FeeL.ImportFees(openFileDialog.FileName,feeSched.FeeSchedNum,clinicNum,provNum);
+			progressOD.ActionMain=() => FeeL.ImportFees(importFilePath,feeSched.FeeSchedNum,clinicNum,provNum);
 			progressOD.StartingMessage="Importing fees...";
 			progressOD.IsBlocks=true;
 			try{

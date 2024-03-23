@@ -908,6 +908,26 @@ namespace CodeBase {
 			MessageBox.Show(response);
 		}
 
+		///<summary>Calls the ImportFile method on the CloudClient. Splits the response string received into file name and data. Writes a new file to the FileTransferTempPath and returns the path string of the newly written file.</summary>
+		public static string ImportFileForCloud() {
+			string importFile=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ImportFile,timeoutSecs:120);
+			if(importFile.IsNullOrEmpty()){
+				return "";
+			}
+			List<string> listImportFileStrings=JsonConvert.DeserializeObject<List<string>>(importFile);
+			string fileName=listImportFileStrings[0];
+			byte[] byteArray=Convert.FromBase64String(listImportFileStrings[1]);
+			string importPath=ODFileUtils.CombinePaths(GetFileTransferTempPath(),fileName);
+			try{
+				File.WriteAllBytes(importPath,byteArray);
+			}
+			catch(Exception ex){
+				MessageBox.Show("Error importing file: "+ex.Message);
+				return "";
+			}
+			return importPath;
+		}
+
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
 		public class ODBrowserData {
 			public string ElementId;
@@ -1134,6 +1154,8 @@ namespace CodeBase {
 			TwainCloseScanner,
 			///<summary>Receive file from Cloud session and place it in downloads folder.</summary>
 			ExportFile,
+			///<summary>Imports a file from the user's workstation</summary>
+			ImportFile,
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

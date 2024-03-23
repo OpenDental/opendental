@@ -218,14 +218,24 @@ namespace OpenDental{
 
 		///<summary>Import an XML file into the custom claim forms list.</summary>
 		private void butImport_Click(object sender, System.EventArgs e) {
-			OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-			ClaimForm claimForm;
-			if(openFileDialog.ShowDialog()!=DialogResult.OK){
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
+			else {
+				OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+				if(openFileDialog.ShowDialog()!=DialogResult.OK){
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
+			}
+			ClaimForm claimForm;
 			try{
-				claimForm=ClaimForms.DeserializeClaimForm(openFileDialog.FileName,"");
+				claimForm=ClaimForms.DeserializeClaimForm(importFilePath,"");
 			}
 			catch(ApplicationException ex){
 				MessageBox.Show(ex.Message);

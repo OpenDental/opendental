@@ -88,20 +88,31 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=true;
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string[] stringArrayFileNames;
+			if(ODCloudClient.IsAppStream) {
+				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
+				if(listImportFilePaths[0].IsNullOrEmpty()) {
+					return;
+				}
+				stringArrayFileNames=listImportFilePaths.ToArray();
+			}
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=true;
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				stringArrayFileNames=openFileDialog.FileNames;
 			}
 			Invalidate();
-			for(int i=0;i<openFileDialog.FileNames.Length;i++) {
+			for(int i=0;i<stringArrayFileNames.Length;i++) {
 				//check file types?
-				string destinationPath=FileAtoZ.CombinePaths(_imageFolder,Path.GetFileName(openFileDialog.FileNames[i]));
+				string destinationPath=FileAtoZ.CombinePaths(_imageFolder,Path.GetFileName(stringArrayFileNames[i]));
 				if(FileAtoZ.Exists(destinationPath)){
 					using InputBox inputBox=new InputBox(Lan.g(this,"New file name."));
 					switch(MessageBox.Show(Lan.g(this,"Overwrite Existing File")+": "+destinationPath,"",MessageBoxButtons.YesNoCancel)){
 						case DialogResult.No://rename, do not overwrite
-							inputBox.textResult.Text=Path.GetFileName(openFileDialog.FileNames[i]);
+							inputBox.textResult.Text=Path.GetFileName(stringArrayFileNames[i]);
 							inputBox.ShowDialog();
 							if(inputBox.DialogResult!=DialogResult.OK) {
 								continue;//cancel, next file.
@@ -123,7 +134,7 @@ namespace OpenDental {
 								FileAtoZ.Delete(destinationPath);
 							}
 							catch(Exception ex){
-								MessageBox.Show(Lan.g(this,"Cannot copy file")+":" +openFileDialog.FileNames[i]+"\r\n"+ex.Message);
+								MessageBox.Show(Lan.g(this,"Cannot copy file")+":" +stringArrayFileNames[i]+"\r\n"+ex.Message);
 								continue;
 							}
 							break;//file deleted, proceed to save.
@@ -131,11 +142,11 @@ namespace OpenDental {
 							continue;//skip this file.
 					}
 				}
-				FileAtoZ.Copy(openFileDialog.FileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
+				FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
 			}
 			FillGrid();
-			if(openFileDialog.FileNames.Length==1) {//if importing exactly one image, select it upon returning.
-				textSearch.Text=Path.GetFileName(openFileDialog.FileNames[0]);
+			if(stringArrayFileNames.Length==1) {//if importing exactly one image, select it upon returning.
+				textSearch.Text=Path.GetFileName(stringArrayFileNames[0]);
 			}
 		}
 

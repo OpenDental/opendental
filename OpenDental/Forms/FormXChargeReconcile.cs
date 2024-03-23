@@ -19,18 +19,28 @@ namespace OpenDental {
 
 		private void butImport_Click(object sender,EventArgs e) {
 			Cursor=Cursors.WaitCursor;
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			if(Directory.Exists(@"C:\X-Charge\")) {
-				openFileDialog.InitialDirectory=@"C:\X-Charge\";
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
-			else if(Directory.Exists(@"C:\")) {
-				openFileDialog.InitialDirectory=@"C:\";
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				if(Directory.Exists(@"C:\X-Charge\")) {
+					openFileDialog.InitialDirectory=@"C:\X-Charge\";
+				}
+				else if(Directory.Exists(@"C:\")) {
+					openFileDialog.InitialDirectory=@"C:\";
+				}
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					Cursor=Cursors.Default;
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
 			}
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				Cursor=Cursors.Default;
-				return;
-			}
-			if(!File.Exists(openFileDialog.FileName)) {
+			if(!File.Exists(importFilePath)) {
 				Cursor=Cursors.Default;
 				MsgBox.Show(this,"File not found");
 				return;
@@ -38,7 +48,7 @@ namespace OpenDental {
 			XChargeTransaction xChargeTransaction=new XChargeTransaction();
 			string[] stringArrayfields;
 			XChargeTransaction xChargeTransactionCheck;
-			using StreamReader streamReader=new StreamReader(openFileDialog.FileName);
+			using StreamReader streamReader=new StreamReader(importFilePath);
 			Cursor=Cursors.WaitCursor;
 			string line=streamReader.ReadLine();
 			while(line!=null) {

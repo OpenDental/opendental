@@ -68,30 +68,40 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			using OpenFileDialog dialogOpenFile=new OpenFileDialog();
-			dialogOpenFile.Multiselect=false;
-			if(dialogOpenFile.ShowDialog()!=DialogResult.OK){
-				return;
+			string importFilePath;
+			if(ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()){
+					return;
+				}
 			}
-			if(!File.Exists(dialogOpenFile.FileName)){
-				MsgBox.Show(this,"File does not exist.");
-				return;
+			else {
+				using OpenFileDialog dialogOpenFile=new OpenFileDialog();
+				dialogOpenFile.Multiselect=false;
+				if(dialogOpenFile.ShowDialog()!=DialogResult.OK){
+					return;
+				}
+				if(!File.Exists(dialogOpenFile.FileName)){
+					MsgBox.Show(this,"File does not exist.");
+					return;
+				}
+				importFilePath=dialogOpenFile.FileName;
 			}
-			if(!ImageHelper.HasImageExtension(dialogOpenFile.FileName)){
+			if(!ImageHelper.HasImageExtension(importFilePath)){
 				MsgBox.Show(this,"Only allowed to import an image.");
 				return;
 			}
-			string newName=dialogOpenFile.FileName;
+			string newName=importFilePath;
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				newName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName));
+				newName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath));
 				if(File.Exists(newName)) {
 					MsgBox.Show(this,"A file of that name already exists in SheetImages.  Please rename the file before importing.");
 					return;
 				}
-				File.Copy(dialogOpenFile.FileName,newName);
+				File.Copy(importFilePath,newName);
 			}
 			else if(CloudStorage.IsCloudStorage) {
-				if(CloudStorage.FileExists(ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName)))) {
+				if(CloudStorage.FileExists(ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath)))) {
 					MsgBox.Show(this,"A file of that name already exists in SheetImages.  Please rename the file before importing.");
 					return;
 				}
@@ -101,14 +111,14 @@ namespace OpenDental {
 				formProgress.NumberMultiplication=1;
 				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
 				formProgress.TickMS=1000;
-				OpenDentalCloud.Core.TaskStateUpload taskStateUpload=CloudStorage.UploadAsync(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName)
-					,File.ReadAllBytes(dialogOpenFile.FileName)
+				OpenDentalCloud.Core.TaskStateUpload taskStateUpload=CloudStorage.UploadAsync(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath)
+					,File.ReadAllBytes(importFilePath)
 					,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
 				if(formProgress.ShowDialog()==DialogResult.Cancel) {
 					taskStateUpload.DoCancel=true;
 					return;
 				}
-				newName=Path.GetFileName(dialogOpenFile.FileName);
+				newName=Path.GetFileName(importFilePath);
 				//It would be nice to save the image somewhere so that we don't have to download it again.
 			}			
 			FillCombo();

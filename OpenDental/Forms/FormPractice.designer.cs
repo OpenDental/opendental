@@ -153,7 +153,7 @@ namespace OpenDental {
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(5, 36);
+			this.label16.Location = new System.Drawing.Point(5, 41);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(97, 16);
 			this.label16.TabIndex = 0;
@@ -162,42 +162,42 @@ namespace OpenDental {
 			// 
 			// textZip
 			// 
-			this.textZip.Location = new System.Drawing.Point(318, 57);
+			this.textZip.Location = new System.Drawing.Point(318, 62);
 			this.textZip.Name = "textZip";
 			this.textZip.Size = new System.Drawing.Size(102, 20);
 			this.textZip.TabIndex = 5;
 			// 
 			// textST
 			// 
-			this.textST.Location = new System.Drawing.Point(264, 57);
+			this.textST.Location = new System.Drawing.Point(264, 62);
 			this.textST.Name = "textST";
 			this.textST.Size = new System.Drawing.Size(52, 20);
 			this.textST.TabIndex = 4;
 			// 
 			// textCity
 			// 
-			this.textCity.Location = new System.Drawing.Point(103, 57);
+			this.textCity.Location = new System.Drawing.Point(103, 62);
 			this.textCity.Name = "textCity";
 			this.textCity.Size = new System.Drawing.Size(159, 20);
 			this.textCity.TabIndex = 3;
 			// 
 			// textAddress2
 			// 
-			this.textAddress2.Location = new System.Drawing.Point(103, 35);
+			this.textAddress2.Location = new System.Drawing.Point(103, 40);
 			this.textAddress2.Name = "textAddress2";
 			this.textAddress2.Size = new System.Drawing.Size(317, 20);
 			this.textAddress2.TabIndex = 2;
 			// 
 			// textAddress
 			// 
-			this.textAddress.Location = new System.Drawing.Point(103, 13);
+			this.textAddress.Location = new System.Drawing.Point(103, 20);
 			this.textAddress.Name = "textAddress";
 			this.textAddress.Size = new System.Drawing.Size(317, 20);
 			this.textAddress.TabIndex = 1;
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(4, 15);
+			this.label5.Location = new System.Drawing.Point(4, 20);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(98, 14);
 			this.label5.TabIndex = 0;
@@ -206,7 +206,7 @@ namespace OpenDental {
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(4, 59);
+			this.label6.Location = new System.Drawing.Point(4, 64);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(98, 15);
 			this.label6.TabIndex = 0;

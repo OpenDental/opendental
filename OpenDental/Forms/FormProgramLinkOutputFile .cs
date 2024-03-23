@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using CodeBase;
 using OpenDentBusiness;
 
 namespace OpenDental {
@@ -24,11 +25,21 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			OpenFileDialog openFileDialog=new OpenFileDialog();
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string[] stringArrayFileNames;
+			if(ODCloudClient.IsAppStream) {
+				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
+				if(listImportFilePaths[0].IsNullOrEmpty()) {
+					return;
+				}
+				stringArrayFileNames=listImportFilePaths.ToArray();
 			}
-			string[] stringArrayFileNames=openFileDialog.FileNames;
+			else {
+				OpenFileDialog openFileDialog=new OpenFileDialog();
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				stringArrayFileNames=openFileDialog.FileNames;
+			}
 			if(stringArrayFileNames.Length<1) {
 				return;
 			}
