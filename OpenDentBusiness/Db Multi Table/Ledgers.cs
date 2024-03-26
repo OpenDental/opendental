@@ -139,14 +139,12 @@ namespace OpenDentBusiness{
 			}
 			string strErrorMsg="";
 			List<long> listGuarantorNums=Patients.GetGuarantorsForPatNums(listPatNumsAssociatedToDiffFam);
-			DateTime dateTAgingBeganPref=DateTime.MinValue;
 			DateTime dtNow=MiscData.GetNowDateTime();
 			if(listGuarantorNums.Count>1) {//if this will utilize the famaging table we need to check and set the pref to block others from starting aging
 				Prefs.RefreshCache();
-				dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
-				if(dateTAgingBeganPref>DateTime.MinValue) {//pref has been set by another process, don't run aging and notify user
+				if(!PrefC.IsAgingAllowedToStart()) {//pref has been set by another process, don't run aging and notify user
 					strErrorMsg=Lans.g("Ledgers","Aging failed to run for patients who had paysplits created outside of the current family. This is due to "
-						+"the currently running aging calculations which began on")+" "+dateTAgingBeganPref.ToString()+".  "+Lans.g("Ledgers","If you "
+						+"the currently running aging calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".  "+Lans.g("Ledgers","If you "
 						+"believe the current aging process has finished, a user with SecurityAdmin permission can manually clear the date and time by going "
 						+"to Setup | Preferences | Account - General and pressing the 'Clear' button.  You will need to run aging manually once the current aging process has "
 						+"finished or date and time is cleared.");

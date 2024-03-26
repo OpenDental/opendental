@@ -1973,7 +1973,6 @@ namespace OpenDental{
 				_menuItemUserQuery.Available=false;
 			}
 			_menuItemQueryFavorites.Available=Security.IsAuthorized(EnumPermType.UserQuery,true);
-			_menuItemPatientFlow.Available=ClinicPrefs.IsODTouchAllowed(Clinics.ClinicNum);
 
 		}
 
@@ -6935,7 +6934,18 @@ namespace OpenDental{
 			}
 		}
 
-		private void _menuItemPatientFlow_Click(object sender, EventArgs e) {
+		private void _menuItemERouting_Click(object sender, EventArgs e) {
+			if(!ClinicPrefs.IsODTouchAllowed(Clinics.ClinicNum)) {
+				string site="https://www.opendental.com/site/odtouch.html";
+				try{
+					Process.Start(site);
+				}
+				catch{
+					MessageBox.Show(Lan.g(this,"Could not find")+" "+site+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+				}
+				return;
+			}
 			using FormERoutings formERoutings = new FormERoutings();
 			formERoutings.ShowDialog();
 		}

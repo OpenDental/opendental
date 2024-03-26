@@ -809,6 +809,7 @@ namespace OpenDentBusiness{
 					if(payPlan.InsSubNum>0) {
 						//Manually closing ins payment plan will set the CompletedAmt to the total InsPay.
 						payPlan.CompletedAmt=PIn.Double(table.Rows[i]["InsPay"].ToString());
+						PayPlanCharges.UpdateInsPlanPayPlanCharges(payPlan);
 					}
 					PayPlans.Update(payPlan);
 					string logMessage=Lans.g("PayPlans","Patient Payment Plan closed using Close Payment Plan tool.");

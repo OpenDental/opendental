@@ -1187,10 +1187,9 @@ namespace OpenDental {
 				return true;//already ran aging for this date, just move on
 			}
 			Prefs.RefreshCache();
-			DateTime dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
-			if(dateTAgingBeganPref>DateTime.MinValue) {
+			if(!PrefC.IsAgingAllowedToStart()) {
 				MessageBox.Show(this,Lan.g(this,"In order to print or send statments, aging must be re-calculated, but you cannot run aging until it has "
-					+"finished the current calculations which began on")+" "+dateTAgingBeganPref.ToString()+".\r\n"+Lans.g(this,"If you believe the current "
+					+"finished the current calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".\r\n"+Lans.g(this,"If you believe the current "
 					+"aging process has finished, a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General "
 					+"and pressing the 'Clear' button."));
 				return false;

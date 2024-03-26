@@ -479,8 +479,9 @@ namespace OpenDental.InternalTools.Phones {
 			}
 			//First, look for a webcam image-----------------------------------------------------------------------------------------------------------
 			PersistentTcpClient persistentTcpClient=new PersistentTcpClient();
-			persistentTcpClient.UserName=Security.CurUser.UserName;
-			persistentTcpClient.Password=Security.PasswordTyped;
+			//Instead of an OD username and PW, we will use a token from the db that proves we are already connected.
+			persistentTcpClient.UserName="HQVideoToken";
+			persistentTcpClient.Password=PrefC.GetStringSilent(PrefName.HQVideoToken);
 			await persistentTcpClient.ConnectAsyncIfNeeded();
 			bool isConnected=true;
 			if(!persistentTcpClient.IsConnected()){

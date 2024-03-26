@@ -21,6 +21,7 @@ namespace CodeBase {
 		}
 
 		private void FormProgressStatus_Shown(object sender,EventArgs e) {
+			ODEvent.Fired+=ODEvent_Fired;
 			//Spawn a separate thread that will monitor if this progress form has indicated that it needs to close.
 			//This thread will be a fail-safe in the sense that it will constantly monitor a separate indicator that this window should close.
 			ODThread threadForceCloseMonitor=new ODThread(100,new ODThread.WorkerDelegate((o) => {
@@ -104,6 +105,7 @@ namespace CodeBase {
 
 		private void FormProgressStatus_FormClosed(object sender,FormClosedEventArgs e) {
 			_hasClosed=true;
+			ODEvent.Fired-=ODEvent_Fired;
 		}
 
 	}

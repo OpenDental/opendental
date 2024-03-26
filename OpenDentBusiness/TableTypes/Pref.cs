@@ -1151,6 +1151,8 @@ namespace OpenDentBusiness {
 		HL7FolderIn,
 		///<summary>Deprecated.  Use SiteLink.EmployeeNum instead.  Used by HQ. Projected onto wall displayed on top of FormMapHQ</summary>
 		HQTriageCoordinator,
+		///<summary>Only used at Open Dental HQ. Not added with script.</summary>
+		HQVideoToken,
 		///<summary>procedurelog.DiagnosticCode will be set to this for new procedures and complete procedures if this field was blank when set complete.
 		///This can be an ICD-9 or an ICD-10.  In future versions, could be another an ICD-11, ICD-12, etc.</summary>
 		ICD9DefaultForNewProcs,
@@ -1498,7 +1500,7 @@ namespace OpenDentBusiness {
 		NewCropAccountId,
 		///<summary>The date this customer last checked with HQ to determine which provider have access to eRx.</summary>
 		NewCropDateLastAccessCheck,
-		///<summary>True for customers who were using NewCrop before version 15.4.  True if NewCropAccountId was not blank when upgraded.</summary>
+		///<summary>DEPRECATED. True for customers who were using NewCrop before version 15.4.  True if NewCropAccountId was not blank when upgraded.</summary>
 		NewCropIsLegacy,
 		///<summary>Controls which NewCrop database to use.  If false, then the customer uses the First Data Bank (FDB) database, otherwise the 
 		///customer uses the LexiData database.  Connecting to LexiData saves NewCrop some money on the new accounts.  Additionally, the RxNorms which

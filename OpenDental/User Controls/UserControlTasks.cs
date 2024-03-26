@@ -798,9 +798,26 @@ namespace OpenDental {
 		///Otherwise, a full refresh will only be run when certain types of signals corresonding to the current selected tabs are found in listSignals.
 		///</summary>
 		private void FillGrid(List<Signalod> listSignalods=null,bool isManualRefresh=false,bool isFilterRefresh=false) {
-			// These two lines will preserve the selection when a signal comes in and triggers fillgrid()
-			Task taskSelected=gridMain.SelectedTag<Task>();
-			TaskList taskListSelected=gridMain.SelectedTag<TaskList>();
+			// These two try-catches will preserve the selection when a signal comes in and triggers fillgrid()
+			Task taskSelected=null;
+			try {
+				taskSelected=gridMain.SelectedTag<Task>();
+			}
+			catch(Exception ex) {
+				//Grid can come desynced with its selected indices after a refresh, which was causing crashes. 
+				//Now we won't crash, but there's a non-zero chance of the task we just marked read
+				//losing its selected status.
+				ex.DoNothing();
+			}
+			TaskList taskListSelected=null;
+			try{
+				taskListSelected=gridMain.SelectedTag<TaskList>();
+			}
+			catch(Exception ex) {
+				//Same problem as above. Our task list might lose its selected status,
+				//but it's better than just crashing.
+				ex.DoNothing();
+			}
 			if(Security.CurUser==null 
 				|| (RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT && !Security.IsUserLoggedIn)) 
 			{

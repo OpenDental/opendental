@@ -614,6 +614,12 @@
     <Compile Include="Forms\FormBenefitFrequencies.Designer.cs">
       <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormClaimAttachPasteDXCItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormClaimAttachPasteDXCItem.designer.cs">
+      <DependentUpon>FormClaimAttachPasteDXCItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormClaimAttachSnipDXC.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -643,6 +649,12 @@
     </Compile>
     <Compile Include="Forms\FormEServicesMobileAppDeviceManage.Designer.cs">
       <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormClaimAttachPasteDXC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormClaimAttachPasteDXC.designer.cs">
+      <DependentUpon>FormClaimAttachPasteDXC.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormImagePickerDXC.cs">
       <SubType>Form</SubType>
@@ -7025,6 +7037,9 @@
     <EmbeddedResource Include="Forms\FormBenefitFrequencies.resx">
       <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormClaimAttachPasteDXCItem.resx">
+      <DependentUpon>FormClaimAttachPasteDXCItem.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormClaimAttachSnipDXC.resx">
       <DependentUpon>FormClaimAttachSnipDXC.cs</DependentUpon>
     </EmbeddedResource>
@@ -7039,6 +7054,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEServicesMobileAppDeviceManage.resx">
       <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormClaimAttachPasteDXC.resx">
+      <DependentUpon>FormClaimAttachPasteDXC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormImagePickerDXC.resx">
       <DependentUpon>FormImagePickerDXC.cs</DependentUpon>

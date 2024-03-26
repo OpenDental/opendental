@@ -57,7 +57,7 @@ namespace CodeBase {
 					progBarHelper.ProgressStyle=_progBarStyle;
 				}
 			}
-			ODEvent.Fire(ODEventType.ProgressBar,e);
+			ODEvent.Fire(ODEventType.ProgressBar,e.Tag);
 		}
 
 		/// <summary>Initializes a new bar or updates the progress bar with more specific information</summary>

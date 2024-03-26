@@ -301,6 +301,20 @@ namespace OpenDentBusiness{
 			#endregion
 		}
 
+		///<summary>Takes an insurance payplan and updates all payplancharge credits associated to it to match the completed amount on the payplan. Every insurance payplan should only have 1 PayPlanCharge of type Credit. The payplan passed in should have the correct CompletedAmt.</summary>
+		public static void UpdateInsPlanPayPlanCharges(PayPlan payplan) {
+			if(payplan==null || payplan.PayPlanNum==0 || payplan.InsSubNum==0) { 
+				return; 
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),payplan);
+				return;
+			}
+			string command=$"UPDATE payplancharge SET Principal={POut.Double(payplan.CompletedAmt)} " +
+				$"WHERE PayPlanNum={POut.Long(payplan.PayPlanNum)} AND ChargeType={POut.Enum(PayPlanChargeType.Credit)}";
+			Db.NonQ(command);
+		}
+
 		///<summary></summary>
 		public static void Update(PayPlanCharge charge){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

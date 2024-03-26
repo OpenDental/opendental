@@ -165,12 +165,11 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(_defNumPrioritySelected==0) {//The task does not yet have a priority assigned.  Find the default and assign it, if available.
+			if(_defNumPrioritySelected==0) {//The task does not yet have a priority assigned.  Find the last default and assign it, if available.
 				for(int i=0;i<_listDefsTaskPriorities.Count;i++) {
 					if(_listDefsTaskPriorities[i].ItemValue=="D") {
 						_defNumPrioritySelected=_listDefsTaskPriorities[i].DefNum;
 						hasDefault=true;
-						break;
 					}
 				}
 			}
