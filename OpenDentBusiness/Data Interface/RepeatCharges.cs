@@ -355,15 +355,13 @@ namespace OpenDentBusiness {
 				}
 				if(doComputeAging && listAddedPatNums.Count>0) {
 					List<long> listGuarantors=Patients.GetGuarantorsForPatNums(listAddedPatNums);
-					DateTime dateTAgingBeganPref=DateTime.MinValue;
 					DateTime dtNow=MiscData.GetNowDateTime();
 					//will only use the famaging table if more than 1 guarantor
 					if(listGuarantors.Count>1) {//if this will utilize the famaging table we need to check and set the pref to block others from starting aging
 						Prefs.RefreshCache();
-						dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
-						if(dateTAgingBeganPref>DateTime.MinValue) {//pref has been set by another process, don't run aging and notify user
+						if(!PrefC.IsAgingAllowedToStart()) {//pref has been set by another process, don't run aging and notify user
 							result.ErrorMsg.AppendLine(Lans.g("RepeatCharges","Aging failed to run for patients who had repeat charges added to their account. This is due to "
-								+"the currently running aging calculations which began on")+" "+dateTAgingBeganPref.ToString()+".  "+Lans.g("RepeatCharges","If you "
+								+"the currently running aging calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".  "+Lans.g("RepeatCharges","If you "
 								+"believe the current aging process has finished, a user with SecurityAdmin permission can manually clear the date and time by going " 
 								+"to Setup | Preferences | Account - General and pressing the 'Clear' button.  You will need to run aging manually once the current aging process has "
 								+"finished or date and time is cleared."));

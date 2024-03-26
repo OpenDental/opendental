@@ -41,6 +41,11 @@ namespace OpenDental {
 			checkIsXrayMirrored.Visible=false;
 			FillTree();
 			ValidateClaimDXC();
+			if(!ClaimCur.AttachmentID.ToLower().StartsWith("dxc") 
+				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"The claim has a non DentalXChange Attachment ID. Would you like to clear it out?")) 
+			{
+				ClearAttachmentID();
+			}
 			if(textClaimStatus.Text.ToUpper().Contains("ATTACHMENT ID HAS BEEN ASSOCIATED TO A DIFFERENT CLAIM")
 				|| textClaimStatus.Text.ToUpper().Contains("HAS ALREADY BEEN DELIVERED TO THE PAYER"))
 			{
@@ -249,6 +254,10 @@ namespace OpenDental {
 				//Mounts get saved to the Claim Attachment image category. This is set by the user in Setup->Definitions->Image Categories.
 				Document documentCur=ImageStore.Import(_claimConnectImageAttachment.ImageFileAsBase64,defNumImageType,ImageType.Attachment,PatientCur);
 				_claimConnectImageAttachment.ImageFileNameActual=documentCur.FileName;
+				//Set description of newly created document
+				Document documentOld=documentCur.Copy();
+				documentCur.Description=textFileName.Text;
+				Documents.Update(documentCur,documentOld);
 			}
 			//Create attachment objects
 			List<ClaimAttach> listClaimAttaches=new List<ClaimAttach>();
@@ -270,9 +279,11 @@ namespace OpenDental {
 			long priKey=imageSelector.GetSelectedKey();
 			if(nodeType==EnumImageNodeType.Document){
 				_docNumSelected=priKey;
+				_mountNumSelected=0;
 			}
 			else if(nodeType==EnumImageNodeType.Mount) {
 				_mountNumSelected=priKey;
+				_docNumSelected=0;
 			}
 			else {
 				MsgBox.Show(this,"An image must be specified before continuing.");
@@ -300,6 +311,8 @@ namespace OpenDental {
 			if(!attachmentSentAndSaved) {
 				return;
 			}
+			//Refresh tree to see mounts saved locally after sending.
+			FillTree();
 		}
 	}
 }

@@ -1463,7 +1463,7 @@ namespace OpenDentBusiness {
 		NewCropAccountId,
 		///<summary>The date this customer last checked with HQ to determine which provider have access to eRx.</summary>
 		NewCropDateLastAccessCheck,
-		///<summary>True for customers who were using NewCrop before version 15.4.  True if NewCropAccountId was not blank when upgraded.</summary>
+		///<summary>DEPRECATED. True for customers who were using NewCrop before version 15.4.  True if NewCropAccountId was not blank when upgraded.</summary>
 		NewCropIsLegacy,
 		///<summary>Controls which NewCrop database to use.  If false, then the customer uses the First Data Bank (FDB) database, otherwise the 
 		///customer uses the LexiData database.  Connecting to LexiData saves NewCrop some money on the new accounts.  Additionally, the RxNorms which

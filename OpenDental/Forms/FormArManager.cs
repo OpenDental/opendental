@@ -351,10 +351,9 @@ namespace OpenDental {
 				return true;
 			}
 			Prefs.RefreshCache();
-			DateTime dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
-			if(dateTAgingBeganPref>DateTime.MinValue) {
+			if(!PrefC.IsAgingAllowedToStart()) {
 				msgText=Lan.g(this,"In order to manage accounts receivable, aging must be calculated, but you cannot run aging until it has finished the current "
-					+"calculations which began on")+" "+dateTAgingBeganPref.ToString()+".\r\n"+Lans.g(this,"If you believe the current aging process has finished, "
+					+"calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".\r\n"+Lans.g(this,"If you believe the current aging process has finished, "
 					+"a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General and pressing the 'Clear' button.");
 				MessageBox.Show(this,msgText);
 				return false;

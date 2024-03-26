@@ -88,7 +88,7 @@ namespace OpenDental{
 			}
 			Prefs.RefreshCache();
 			//If aging is still running, then AgingBeginDateTime will have a value in it, otherwise if aging is not running, AgingBeginDateTime will be DateTime.MinVal due to GetDateT.
-			if(PrefC.GetDateT(PrefName.AgingBeginDateTime)>DateTime.MinValue){
+			if(!PrefC.IsAgingAllowedToStart()){
 				MsgBox.Show(this, "Aging is currently running. The Repeating Charges tool cannot be run until Aging has finished.\r\nIf you believe Aging has finished, go to Setup, Preferences and clear the \"DateTime the currently running aging started\".");
 				return;
 			}

@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
+using System.Diagnostics;
 
 namespace OpenDental {
 	public partial class FormEServicesSetup:FormODBase {
@@ -45,7 +46,6 @@ namespace OpenDental {
 				return;
 			}
 			butSecureEmail.Visible=EmailSecures.IsSecureEmailReleased();
-			butODTouch.Visible=ClinicPrefs.IsODTouchAllowed(Clinics.ClinicNum);
 		}
 
 		/// <summary>When the user is trying to send a text message, if sending the text would exceed the users spending limit, this handles that error.
@@ -122,6 +122,17 @@ namespace OpenDental {
 
 		private void butODTouch_Click(object sender,EventArgs e) {
 			//Permissions check presumably. Discuss with Sam.
+			if(!ClinicPrefs.IsODTouchAllowed(Clinics.ClinicNum)) {
+				string site="https://www.opendental.com/site/odtouch.html";
+				try{
+					Process.Start(site);
+				}
+				catch{
+					MessageBox.Show(Lan.g(this,"Could not find")+" "+site+"\r\n"
+					+Lan.g(this,"Please set up a default web browser."));
+				}
+				return;
+			}
 			using FormODTouchSecurityEdit formODTouchSecEdit=new FormODTouchSecurityEdit();
 			formODTouchSecEdit.ShowDialog();
 		}

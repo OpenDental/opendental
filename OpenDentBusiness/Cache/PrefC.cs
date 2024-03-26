@@ -145,6 +145,15 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		/// <summary>Returns whethere or not aging is allowed to run. AgingBeginDateTime must be minval or older than 24 hours.</summary>
+		public static bool IsAgingAllowedToStart() {
+			DateTime dateTime=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+			if(dateTime == DateTime.MinValue || DateTime_.Now >= dateTime.AddHours(24)) {
+				return true;
+			}
+			return false;
+		}
+
 		///<summary>Returns the credentials (user name and password) used to access the voicemail share via SMB2.
 		///Used by HQ only.  These preference will not be present in typical databases and this property will then throw an exception.</summary>
 		public static NetworkCredential VoiceMailNetworkCredentialsSMB2 {

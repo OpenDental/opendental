@@ -8769,7 +8769,7 @@ namespace OpenDental {
 			bool isAccessAllowed=true;
 			UpdateErxAccess(npi,"",0,"","",erxOption);//0/blank/blank for clinicNum/clinicid/clinickey is fine because we don't enable/disable the clinic for NewCrop.
 			ProviderErx providerErx=ProviderErxs.GetOneForNpiAndOption(npi,erxOption);
-			if(!PrefC.GetBool(PrefName.NewCropIsLegacy) && !providerErx.IsIdentifyProofed) {
+			if(!providerErx.IsIdentifyProofed) {
 				if(PrefC.GetString(PrefName.NewCropPartnerName)!="" || PrefC.GetString(PrefName.NewCropPassword)!="") {//Customer of a distributor
 					MessageBox.Show(Lan.g(this,"Provider")+" "+provider.Abbr+" "
 						+Lan.g(this,"must complete Identity Proofing (IDP) before using eRx.  Call support for details."));
@@ -9080,9 +9080,6 @@ namespace OpenDental {
 				providerErx.NationalProviderID=npi;
 				if(erxOption==ErxOption.NewCrop) {
 					providerErx.IsEnabled=ErxStatus.Disabled;
-					if(PrefC.GetBool(PrefName.NewCropIsLegacy)) {
-						providerErx.IsEnabled=ErxStatus.Enabled;
-					}
 				}
 				else {//DoseSpot
 					providerErx.IsEnabled=ErxStatus.PendingAccountId;
@@ -9129,7 +9126,7 @@ namespace OpenDental {
 				return;
 			}
 			if(providerErx.IsEnabled==ErxStatus.Enabled) { //If prov is enabled, don't check with OD HQ to see if the prov has been enabled yet.
-				if(erxOption!=ErxOption.NewCrop || PrefC.GetBool(PrefName.NewCropIsLegacy) || providerErx.IsIdentifyProofed) {//If new prov is identity proofed.
+				if(erxOption!=ErxOption.NewCrop ||providerErx.IsIdentifyProofed) {//If new prov is identity proofed.
 					if(providerErx.IsSentToHq) {//If prov has not been sent to OD HQ yet, always send to OD HQ so we can track our providers using eRx.
 						if(dateLastAccessMonth>=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1)) {//If it's been less than a month since sent to OD HQ.
 							return;
