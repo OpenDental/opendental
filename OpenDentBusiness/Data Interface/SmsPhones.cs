@@ -344,14 +344,15 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns true if texting is enabled for any clinics (including hidden), or if not using clinics, if it is enabled for the practice.</summary>
 		public static bool IsIntegratedTextingEnabled() {
-			//No need to check MiddleTierRole; no call to db.
-			if(Plugins.HookMethod(null,"SmsPhones.IsIntegratedTextingEnabled_start")) {
-				return true;
-			}
-			if(!PrefC.HasClinicsEnabled) {
-				return PrefC.GetDateT(PrefName.SmsContractDate).Year>1880;
-			}
-			return (Clinics.GetFirstOrDefault(x => x.SmsContractDate.Year > 1880)!=null);
+			return true; // Corrin 2024-01-25 Force this to return true.  In theory the previous code should work too but it doesn't seem to: PrefC.GetDateT(PrefName.SmsContractDate).Year
+   //                      //No need to check MiddleTierRole; no call to db.
+   //         if (Plugins.HookMethod(null,"SmsPhones.IsIntegratedTextingEnabled_start")) {
+			//	return true;
+			//}
+			//if(!PrefC.HasClinicsEnabled) {
+			//	return PrefC.GetDateT(PrefName.SmsContractDate).Year>1880;
+			//}
+			//return (Clinics.GetFirstOrDefault(x => x.SmsContractDate.Year > 1880)!=null);
 		}
 
 		///<summary>Returns 0 if clinics not in use, or patient.ClinicNum if assigned to a clinic, or ClinicNum of the default texting clinic.</summary>

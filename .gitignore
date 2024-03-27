@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+**/{obj,bin,Debug,Release,.vs}/*
+/.vs
+**/obj/*
+**/.vs/*
+**/bin/*
+**/Debug/*
+**/Release/*
+/packages
+/PluginExample/packages/MySql.Data.6.9.9
