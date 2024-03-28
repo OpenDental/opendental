@@ -3241,6 +3241,11 @@ namespace OpenDental{
 				.FindAll(x => x.Tag!=null && x.Tag.GetType()==typeof(ProcTP))//ProcTP's only
 				.Select(x => ((ProcTP)(x.Tag)).ProcNumOrig).ToList();//get ProcNums
 			//mimic calls to CreatePlannedAppt in ContrChart, no need for FillPlanned() since no gridPlanned
+			List<Procedure> listProceduresToPlan=Procedures.GetManyProc(listProcNumsSelected,includeNote:false);
+			if(listProceduresToPlan.Any(x => x.PlannedAptNum > 0)) {
+				MsgBox.Show("The selected procedure(s) are already attached to Planned Appointment(s). Procedure(s) must be detached from Planned Appointment(s) before a new Planned Appointment can be created");
+				return;
+			}
 			AppointmentL.CreatePlannedAppt(PatientCur,itemOrder,listProcNumsSelected);
 		}
 

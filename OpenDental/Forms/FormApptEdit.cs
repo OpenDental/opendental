@@ -315,9 +315,15 @@ namespace OpenDental{
 			checkIsHygiene.Checked=_appointment.IsHygiene;
 			//Fill comboAssistant with employees and none option
 			comboAssistant.Items.AddNone<Employee>();
-			comboAssistant.SelectedIndex=0;
 			List<Employee> listEmployees=Employees.GetDeepCopy(isShort: true);
 			comboAssistant.Items.AddList(listEmployees,x=>x.FName);
+			if(_appointment.Assistant==0) {
+				comboAssistant.SetSelected(0);
+			}
+			else {
+				int index=listEmployees.FindIndex(x => x.EmployeeNum==_appointment.Assistant);
+				comboAssistant.SetSelected(index+1);//+1 to skip none
+			}
 			textLabCase.Text=GetLabCaseDescript();
 			textTimeArrived.ContextMenu=contextMenuTimeArrived;
 			textTimeSeated.ContextMenu=contextMenuTimeSeated;
@@ -579,7 +585,7 @@ namespace OpenDental{
 			}
 			if(_appointment.AptStatus==ApptStatus.Complete) {
 				//added procedures would be marked complete when form closes. We'll just stop it here.
-				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate)) {
+				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,_appointment.AptDateTime,false)) {
 					return;
 				}
 			}
@@ -794,7 +800,7 @@ namespace OpenDental{
 			bool wasPrompted=false;
 			bool canDeletePlannedAppts=false;
 			List<long> listPlannedApptNumsSelected=listProceduresSelected.Select(x=>x.PlannedAptNum).Distinct().ToList().FindAll(x=>x!=0);
-			listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected);
+			listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected,isForPlanned:true);
 			if(PrefC.GetBool(PrefName.ApptsRequireProc) && listAppointmentsEmpty.Count>0) {
 				for(int i=0;i<listAppointmentsEmpty.Count;i++){
 					if(listAppointmentsEmpty[i].AptStatus==ApptStatus.Planned && listAppointmentsEmpty[i].AptNum!=_appointment.AptNum){//Is planned and not the appointment being edited
@@ -2314,9 +2320,6 @@ namespace OpenDental{
 				}
 				return false;
 			};
-			Func<bool> funcProcsConcurrentAndPlanned = () => {
-				return MsgBox.Show(this, MsgBoxButtons.OKCancel,Appointments.PROMPT_PlannedProcsConcurrent);
-			};
 			Func<bool> funcProcsConcurrentAndNotPlanned = () => {
 				return MsgBox.Show(this, MsgBoxButtons.OKCancel,Appointments.PROMPT_NotPlannedProcsConcurrent);
 			};
@@ -2328,7 +2331,7 @@ namespace OpenDental{
 			List<long> listProcNumsSelected = gridProc.SelectedIndices.Select(x => (gridProc.ListGridRows[x].Tag as Procedure).ProcNum).ToList();
 			bool isValid=Appointments.ProcsAttachedToOtherAptsHelper(
 				listProceduresInGrid, _appointment, listProcNumsSelected, _listProcNumsAttachedStart,
-				funcListAptsToDelete, funcProcsConcurrentAndPlanned, funcProcsConcurrentAndNotPlanned, listProceduresAll,actionCompletedProceduresBeingMoved
+				funcListAptsToDelete, funcProcsConcurrentAndNotPlanned, listProceduresAll,actionCompletedProceduresBeingMoved
 			);
 			if(!isValid) {
 				_listProceduresForAppointment=Procedures.GetProcsForApptEdit(_appointment);//Refresh so user can see which procedures weren't added

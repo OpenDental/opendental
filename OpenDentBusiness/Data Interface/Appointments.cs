@@ -19,9 +19,6 @@ namespace OpenDentBusiness{
 		public const string PROMPT_ListAptsToDelete = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment which will result in its deletion.\r\n"
 					+ "Continue?";
-		public const string PROMPT_PlannedProcsConcurrent = "One or more procedures are attached to another planned appointment.\r\n"
-					+ "All selected procedures will be detached from the other planned appointment.\r\n"
-					+ "Continue?";
 		public const string PROMPT_NotPlannedProcsConcurrent = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment.\r\n"
 					+ "Continue?";
@@ -5431,7 +5428,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns list of appointments going to be empty if the procedures passed in were deleted. Pass in a list of AptNums to explicitly consider. Leave the list of AptNums null to check all appointments associated with the procedures passed in.</summary>
-		public static List<Appointment> GetApptsGoingToBeEmpty(List<Procedure> listProcedures,List<long> listApptNums=null,PatientData pd=null) {
+		public static List<Appointment> GetApptsGoingToBeEmpty(List<Procedure> listProcedures,List<long> listApptNums=null,PatientData pd=null,bool isForPlanned=false) {
 			//No need to check MiddleTierRole; no call to db
 			if(listApptNums.IsNullOrEmpty()) {
 				listApptNums=new List<long>();
@@ -5448,8 +5445,8 @@ namespace OpenDentBusiness{
 				listProcsAllForAppts=pd.ListProcedures.FindAll(x => listApptNums.Contains(x.AptNum) || listApptNums.Contains(x.PlannedAptNum));
 			}
 			for(int i=0;i<listApptNums.Count;i++) {
-				int countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures).Count;
-				int countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts).Count;
+				int countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures,isForPlanned).Count;
+				int countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts,isForPlanned).Count;
 				if(countProcsForAppt>=countProcsAllForAppt&&countProcsForAppt!=0) {
 					Appointment appointment;
 					if(pd==null) {
@@ -5467,7 +5464,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Verifies various appointment procedure states. Calls given funcs as validation from the user is needed.</summary>
 		public static bool ProcsAttachedToOtherAptsHelper(List<Procedure> listProceduresInGrid,Appointment appointment, 
-			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,Func<List<long>,bool> funcListAptsToDelete,Func<bool> funcProcsConcurrentAndPlanned,
+			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,Func<List<long>,bool> funcListAptsToDelete,
 			Func<bool> funcProcsConcurrentAndNotPlanned,List<Procedure> listProceduresAll,Action actionCompletedProceduresBeingMoved)
 		{
 			bool isPlanned=appointment.AptStatus == ApptStatus.Planned;
@@ -5479,10 +5476,6 @@ namespace OpenDentBusiness{
 				bool isAttachedStart=listProcNumsOriginallyAttached.Contains(listProceduresInGrid[i].ProcNum);
 				if(!isAttachedStart && isAttaching && isPlanned) {//Attaching to this planned appointment.
 					if(listProceduresInGrid[i].PlannedAptNum != 0 && listProceduresInGrid[i].PlannedAptNum != appointment.AptNum) {//However, the procedure is attached to another planned appointment.
-						hasProcsConcurrent=true;
-						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
-					}
-					else if(listProceduresInGrid[i].AptNum != 0 && listProceduresInGrid[i].AptNum != appointment.AptNum) {//However, the procedure is attached to another appointment.
 						hasProcsConcurrent=true;
 						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
 					}
@@ -5518,11 +5511,6 @@ namespace OpenDentBusiness{
 			}
 			if(listAptNumsToDelete.Count>0) {
 				if(!funcListAptsToDelete(listAptNumsToDelete)) {
-					return false;
-				}
-			}
-			else if(hasProcsConcurrent && isPlanned) {
-				if(!funcProcsConcurrentAndPlanned()) {
 					return false;
 				}
 			}

@@ -623,11 +623,11 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets procedures for one appointment by looping through the procsMultApts which was filled previously from GetProcsMultApts.</summary>
-		public static List<Procedure> GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts) {
+		public static List<Procedure> GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts,bool isForPlanned=false) {
 			//No need to check MiddleTierRole; no call to db.
 			List<Procedure> listProcedures=new List<Procedure>();
 			for(int i=0;i<procsMultApts.Count;i++) {
-				if(procsMultApts[i].AptNum==0 && procsMultApts[i].PlannedAptNum==myAptNum) {//If proc is attached to this planned appt only
+				if(isForPlanned && procsMultApts[i].PlannedAptNum==myAptNum) {//If proc is attached to this planned appt only
 					listProcedures.Add(procsMultApts[i].Copy());
 				}
 				else if(procsMultApts[i].AptNum==myAptNum) {//If proc is attached to this appointment

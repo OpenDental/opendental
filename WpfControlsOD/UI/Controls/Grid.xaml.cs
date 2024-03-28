@@ -737,7 +737,14 @@ using WpfControls.UI;
 				Canvas.SetLeft(textBlock,Columns[i].State.XPos+2);
 				//Canvas.SetTop(textBlock,0);
 				//Canvas.SetZIndex(textBlock,0);
-				textBlock.Text=gridRow.Cells[i].Text;
+				if(gridRow.Cells[i].Underline){
+					//underline is very simple per cell. No row override involved.
+					//There's also no partial underlining of a cell. It's all or nothing.
+					textBlock.Inlines.Add(new Underline(new Run(gridRow.Cells[i].Text)));
+				}
+				else{
+					textBlock.Text=gridRow.Cells[i].Text;
+				}
 				switch(Columns[i].TextAlign) {
 					case HorizontalAlignment.Left:
 						//already left by default
@@ -1532,6 +1539,32 @@ using WpfControls.UI;
 			}
 			if(_mouseDownCol<0){
 				return;
+			}
+			//select the row or cell, just like if they left clicked.
+			GridClickEventArgs gridClickEventArgs=new GridClickEventArgs(_mouseDownCol,_mouseDownRow,MouseButton.Right);
+			CellClick?.Invoke(this,gridClickEventArgs);
+			if(AllowSelection) {
+				switch(_selectionMode) {
+					case GridSelectionMode.None:
+						break;
+					case GridSelectionMode.OneRow:
+					case GridSelectionMode.MultiExtended:
+						_listSelectedIndices.Clear();
+						_listSelectedIndices.Add(_mouseDownRow);
+						SelectionCommitted?.Invoke(this,new EventArgs());
+						DrawRowSelections();
+						break;
+					case GridSelectionMode.OneCell:
+						_listSelectedIndices.Clear();
+						_selectedCell=new ColRow(_mouseDownCol,_mouseDownRow);
+						//Do not create a floating textbox when right click
+						DrawRowSelections();
+						break;
+				}
+			}
+			else{
+				//clicks do not trigger selection of rows, but cell click event still gets fired
+				//and right click menu still works.
 			}
 			ContextMenu contextMenu=(ContextMenu)this.ContextMenu;
 			if(contextMenu is null){

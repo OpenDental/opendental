@@ -39,6 +39,8 @@ namespace WpfControls.UI {
 		public Color ColorText {get;set;}= Colors.Transparent;
 		///<summary></summary>
 		public string Text {get;set; } = "";
+		///<summary>False by default. It can be set to true for each individual cell.</summary>
+		public bool Underline { get; set; } = false;
 		#endregion Properties
 		
 		

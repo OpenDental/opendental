@@ -76,6 +76,10 @@ namespace OpenDental {
 			comboPatFieldAvailableCredit.Items.AddList(listPatFieldDefs.FindAll(x=>x.FieldType==PatFieldType.CareCreditAvailableCredit),x=>x.FieldName);
 			comboPatFieldAvailableCredit.SetSelectedKey<PatFieldDef>(patFieldDefNumAvailableCredit,x => x.PatFieldDefNum,x => Lan.g(this,"None"));
 			_hasCareCreditPatFieldDefNum=ApptViewItems.GetWhere(x => listPatFieldDefs.Select(y => y.PatFieldDefNum).ToList().Contains(x.PatFieldDefNum)).Count>0;
+			List<EnumCareCreditBatch> listCareCreditQSOptions=Enum.GetValues(typeof(EnumCareCreditBatch)).OfType<EnumCareCreditBatch>().ToList();
+			for (int i=0;i<listCareCreditQSOptions.Count;i++){
+				listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",listCareCreditQSOptions[i].GetDescription()),listCareCreditQSOptions[i]);
+			}
 			FillFields(isLoad:true);
 			DisableControlsForMerchantClosed();
 		}
@@ -90,10 +94,6 @@ namespace OpenDental {
 			string payTypeDefNum=ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,
 				comboClinics.ClinicNumSelected);
 			comboPaymentType.SetSelectedDefNum(PIn.Long(payTypeDefNum));
-			List<EnumCareCreditBatch> listCareCreditQSOptions=Enum.GetValues(typeof(EnumCareCreditBatch)).OfType<EnumCareCreditBatch>().ToList();
-			for (int i=0;i<listCareCreditQSOptions.Count;i++){
-				listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",listCareCreditQSOptions[i].GetDescription()),listCareCreditQSOptions[i]);
-			}
 			listBoxQSOptions.SetSelectedEnum(PIn.Enum<EnumCareCreditBatch>(ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled,comboClinics.ClinicNumSelected)));
 			groupQSBatch.Visible=true;
 			if(listBoxQSOptions.GetSelected<EnumCareCreditBatch>()==EnumCareCreditBatch.Off){
