@@ -63,6 +63,12 @@ namespace OpenDental {
 			if(_isOkDisabled) {
 				butSave.IsEnabled=false;
 			}
+			if(ODEnvironment.IsCloudServer) {
+				butOpen.Text="Open File";
+				if(ODCloudClient.IsAppStream || Path.GetExtension(_document.FileName).ToLower()!=".pdf") {
+					butOpen.Text="Export";
+				}
+			}
 			listCategory.Items.Clear();
 			_listDefsImageCats=Defs.GetDefsForCategory(DefCat.ImageCats,true);
 			for(int i=0;i<_listDefsImageCats.Count;i++){
@@ -138,7 +144,10 @@ namespace OpenDental {
 
 		private void butOpen_Click(object sender,EventArgs e) {
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				if(ODBuild.IsThinfinity()) {
+				if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(textFileName.Text,doPromptForName:false);
+				}
+				else if(ODBuild.IsThinfinity()) {
 					ThinfinityUtils.HandleFile(textFileName.Text);
 				}
 				else {

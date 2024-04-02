@@ -601,6 +601,11 @@ namespace WpfControls.UI{
 				TextRange textRange=new TextRange(textPointer,textPointerRunEnd);
 				TextDecorationCollection textDecorationCollection=(TextDecorationCollection)textRange.GetPropertyValue(Inline.TextDecorationsProperty);
 				textDecorationCollection.Remove(_textDecorationSpellCheck);
+				if(textDecorationCollection.Count==0) {
+					//Even if the collection of decorations is empty, there can still be an invisible tag around the range indicating empty collection.
+					//This may need further refinement if we start trying to support rich text. Example: if one word is partially bold.
+					textRange.ClearAllProperties();
+				}
 				textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
 			}
 			//TextRange textRange=new TextRange(richTextBox.Document.ContentStart,richTextBox.Document.ContentEnd);
@@ -713,6 +718,7 @@ namespace WpfControls.UI{
 
 		#region Methods - private event handlers
 		private void ContextMenu_Opened(object sender,RoutedEventArgs e) {
+			SpellCheck();//If this is not done, then it can crash after appending text and then right clicking.
 			if(SelectionLength==0) {
 				menuItemCut.IsEnabled=false;
 				menuItemCopy.IsEnabled=false;

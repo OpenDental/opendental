@@ -2246,6 +2246,9 @@ namespace OpenDentBusiness{
 				else if(remainingWriteOff<=normalWriteOff) {
 					claimProc.WriteOffEst=remainingWriteOff;
 				}
+				else if(claimProc.InsPayEst<0) {//this claimProc is an ins refund so the writeOffEst should be 0
+					claimProc.WriteOffEst=0;
+				}
 				else {
 					claimProc.WriteOffEst=normalWriteOff;
 				}

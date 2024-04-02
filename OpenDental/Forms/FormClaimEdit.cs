@@ -68,6 +68,7 @@ namespace OpenDental{
 		private Clearinghouse _clearinghouse;
 		///<summary>Used to adjust the height of the window so that we show as much of the Form as possible with larger screens. In some cases, such as with zoom, the window will have it's height shortened in order to fit into the screen more efficiently. We needed a variable so that we could do these calculations within the constructor and then change the height within the load method.</summary>
 		private int _heightCalculated=0;
+		private FormClaimAttachment _formClaimAttachment;
 
 		private List<SubstitutionLink> ListSubstitutionLinks {
 			get {
@@ -3158,11 +3159,27 @@ namespace OpenDental{
 					return;
 				}
 			}
+			_formClaimAttachment=formClaimAttachment;
+			formClaimAttachment.FormClosed+=FormClaimAttachment_FormClosed;
 			formClaimAttachment.Show();
 			//if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
 			//	formClaimAttachment.Show();
 			//	DialogResult=DialogResult.Cancel;
 			//}
+		}
+
+		private void FormClaimAttachment_FormClosed(object sender,EventArgs e) {
+			if(_formClaimAttachment.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.ClaimConnect) {
+				textDXCAttachmentID.Text=_claim.AttachmentID;
+				FillGridSentAttachments(gridDXCSent);
+			}
+			else if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.EDS) {
+				textEDSAttachmentID.Text=_claim.AttachmentID;
+				FillGridSentAttachments(gridEDSSent);
+			}
 		}
 
 		private void EditOverpay(bool isOverpaid) {

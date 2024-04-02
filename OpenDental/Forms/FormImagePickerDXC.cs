@@ -46,7 +46,8 @@ namespace OpenDental {
 			checkIsXrayMirrored.Visible=false;
 			FillTree();
 			ValidateClaimDXC();
-			if(!ClaimCur.AttachmentID.ToLower().StartsWith("dxc") 
+			if(!string.IsNullOrWhiteSpace(ClaimCur.AttachmentID)
+				&& !ClaimCur.AttachmentID.ToLower().StartsWith("dxc") 
 				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"The claim has a non DentalXChange Attachment ID. Would you like to clear it out?")) 
 			{
 				ClearAttachmentID();

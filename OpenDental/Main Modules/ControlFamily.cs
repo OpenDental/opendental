@@ -1273,7 +1273,6 @@ namespace OpenDental{
 			patientTemp.Email         =_patient.Email;
 			patientTemp.TxtMsgOk      =_patient.TxtMsgOk;
 			patientTemp.ShortCodeOptIn=_patient.ShortCodeOptIn;
-			patientTemp.Guarantor     =_patient.Guarantor;
 			patientTemp.CreditType    =_patient.CreditType;
 			if(!PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
 				patientTemp.PriProv     =_patient.PriProv;
@@ -1284,9 +1283,6 @@ namespace OpenDental{
 			patientTemp.AddrNote      =_patient.AddrNote;
 			patientTemp.ClinicNum     =_patient.ClinicNum;//this is probably better in case they don't have user.ClinicNums set.
 			//tempPat.ClinicNum  =Security.CurUser.ClinicNum;
-			if(Patients.GetPat(patientTemp.Guarantor).SuperFamily!=0) {
-				patientTemp.SuperFamily=_patient.SuperFamily;
-			}
 			Patients.Insert(patientTemp,false);
 			SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,patientTemp.PatNum,"Created from Family Module Add button.");
 			CustReference custReference=new CustReference();
@@ -1305,6 +1301,14 @@ namespace OpenDental{
 			formPatientEdit.IsNew=true;
 			formPatientEdit.ShowDialog();
 			if(formPatientEdit.DialogResult==DialogResult.OK) {
+				//Set guarantor and superfam when we've actually finished creating the patient AND have decided to keep it
+				//There were issues where non-complete patients were showing up because of a closure or crash while formPatientEdit was open
+				Patient patientOld=patientTemp.Copy();
+				patientTemp.Guarantor=_patient.Guarantor;
+				if(Patients.GetPat(patientTemp.Guarantor).SuperFamily!=0) {
+					patientTemp.SuperFamily=_patient.SuperFamily;
+				}
+				Patients.Update(patientTemp,patientOld);
 				GlobalFormOpenDental.PatientSelected(patientTemp,false);
 				ModuleSelected(patientTemp.PatNum);
 				return;

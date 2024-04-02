@@ -44,6 +44,7 @@ namespace OpenDental {
 		private List<JobTeam> _listJobTeams;
 		private List<long> _listQueryPriorityFilter=new List<long>();
 		private List<JobPhase> _listQueryJobPhaseFilter=new List<JobPhase>();
+		private readonly long _defNumIsOnHold;
 
 		private Brush _brushDefault {
 			get {
@@ -68,6 +69,8 @@ namespace OpenDental {
 			InitializeLayoutManager(isLayoutMS:true);
 			//This is here so we can see the tabs in the designer, but use the ownerdraw when the program is run.
 			tabControlNav.DrawMode=TabDrawMode.OwnerDrawFixed;
+			FillPriorityList();
+			_defNumIsOnHold=_listJobPriorities.Find(x => x.ItemValue.Contains("OnHold")).DefNum;
 		}
 
 		private void FormJobManager_Load(object sender,EventArgs e) {
@@ -75,7 +78,6 @@ namespace OpenDental {
 			FillMenu();
 			_listUsers=Userods.GetUsersForJobs();
 			_listJobTeams=JobTeams.GetDeepCopy();
-			FillPriorityList();
 			FillComboUser();
 			FillComboTeamFilter(comboTeamFilterNeedsEngineer,doAddAllOption:true);
 			FillComboTeamFilter(comboTeamFilterNeedsExpert,doAddAllOption:true);
@@ -334,10 +336,12 @@ namespace OpenDental {
 		private void tabControlNav_DrawItem(object sender,DrawItemEventArgs e) {
 			System.Windows.Forms.TabPage page=tabControlNav.TabPages[e.Index];
 			//We only care about changing the color for the Subscribed Jobs tab
-			bool hasNotifications=JobManagerCore.ListJobsAll.Where(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.Subscriber && y.FKey==Security.CurUser.UserNum) 
-			&& x.ListJobNotifications.Exists(y => y.UserNum==Security.CurUser.UserNum)).Count()>0;
-			if(page.Equals(tabSubscribed) && hasNotifications) {
+			List<Job> listJobsWithNotifications=JobManagerCore.ListJobsAll.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.Subscriber && y.FKey==Security.CurUser.UserNum) && x.ListJobNotifications.Exists(y => y.UserNum==Security.CurUser.UserNum));
+			if(page.Equals(tabSubscribed) && listJobsWithNotifications.Count>0) {
 				e.Graphics.FillRectangle(_brushNotify,e.Bounds);
+				if(listJobsWithNotifications.Any(x=>x.Priority==_defNumIsOnHold)) {
+					checkSubscribedIncludeOnHold.Checked=true;
+				}
 			}
 			else if(e.State == DrawItemState.Selected) {
 				e.Graphics.FillRectangle(_brushSelected,e.Bounds);
@@ -668,7 +672,7 @@ namespace OpenDental {
 					.ThenBy(x => x.Category==JobCategory.Bug)
 					.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 				if(!checkShowUnassigned.Checked) {
-					listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
+					listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold);
 					if(userFilter!=null) {
 						//Actions in this list will be filtered by checkShowUnassigned. If not in this list, items will always show if applicable 
 						//(For example ApproveJob always shows if user has approval permission.)
@@ -796,7 +800,7 @@ namespace OpenDental {
 					.ThenBy(x => x.OwnerNum!=0)
 					.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 				if(!checkShowUnassigned.Checked) {
-					listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
+					listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold);
 					if(userFilter!=null) {
 						//Actions in this list will be filtered by checkShowUnassigned. If not in this list, items will always show if applicable 
 						//(For example ApproveJob always shows if user has approval permission.)
@@ -1088,7 +1092,7 @@ namespace OpenDental {
 					continue;
 				}
 				List<Job> listJobsSorted=kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum || x.OwnerAction!=JobAction.AssignEngineer);
+				listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold || x.OwnerAction!=JobAction.AssignEngineer);
 				if(comboProposedVersionNeedsEngineer.SelectedIndex!=0) {//All is not selected, only select the jobs with the specified proposedversion
 					listJobsSorted.RemoveAll(x => x.ProposedVersion!=comboProposedVersionNeedsEngineer.GetSelected<JobProposedVersion>());
 				}
@@ -1238,7 +1242,7 @@ namespace OpenDental {
 					continue;
 				}
 				List<Job> listJobsSorted = kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum||x.OwnerAction!=JobAction.AssignExpert);
+				listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold||x.OwnerAction!=JobAction.AssignExpert);
 				if(comboProposedVersionNeedsExpert.SelectedIndex!=0) {//All is not selected, only select the jobs with the specified proposedversion
 					listJobsSorted.RemoveAll(x => x.ProposedVersion!=comboProposedVersionNeedsExpert.GetSelected<JobProposedVersion>());
 				}
@@ -1306,7 +1310,7 @@ namespace OpenDental {
 					continue;
 				}
 				List<Job> listJobsSorted = kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				listJobsSorted.RemoveAll(x => x.Priority!=_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum||x.PhaseCur==JobPhase.Complete||x.PhaseCur==JobPhase.Documentation||x.PhaseCur==JobPhase.Cancelled);
+				listJobsSorted.RemoveAll(x => x.Priority!=_defNumIsOnHold||x.PhaseCur==JobPhase.Complete||x.PhaseCur==JobPhase.Documentation||x.PhaseCur==JobPhase.Cancelled);
 				if(listJobsSorted.Count==0) {
 					continue;
 				}
@@ -1516,8 +1520,7 @@ namespace OpenDental {
 			List<Job> listJobsFiltered=JobManagerCore.ListJobsAll.Where(x=>x.ListJobLinks.Exists(y=>y.LinkType==JobLinkType.Subscriber && y.FKey==userFilter.UserNum) && x.PhaseCur!=JobPhase.Complete).ToList();
 			//Optionally exclude OnHold jobs.
 			if(!checkSubscribedIncludeOnHold.Checked) {
-				long defNumOnHold=_listJobPriorities.Find(x => x.ItemValue.Contains("OnHold")).DefNum;
-				listJobsFiltered.RemoveAll(x => x.Priority==defNumOnHold);
+				listJobsFiltered.RemoveAll(x => x.Priority==_defNumIsOnHold);
 			}
 			//Order by priority.
 			listJobsFiltered=listJobsFiltered.OrderBy(x=>_listJobPriorities.Find(y=>y.DefNum == x.Priority).ItemOrder).ToList();
@@ -1899,7 +1902,7 @@ namespace OpenDental {
 				.ThenBy(x => x.Category==JobCategory.Bug)
 				.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 			if(!checkShowOnHoldSubmitted.Checked) {
-				listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
+				listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold);
 			}
 			Color changedColor = Security.CurUser.UserNum==9 ? Color.FromArgb(20,Color.LightGreen) : Color.FromArgb(80,Color.LightGreen);
 			foreach(Job job in listJobsSorted) {

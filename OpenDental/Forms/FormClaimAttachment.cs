@@ -42,6 +42,10 @@ namespace OpenDental {
 			_eclaimsCommBridge=eClaimsCommBridge;
 		}
 
+		public EclaimsCommBridge GetEclaimsCommBridge() {
+			return _eclaimsCommBridge;
+		}
+
 		private void FormClaimAttachment_Load(object sender,EventArgs e) {
 			if(_isAlreadyOpen) {
 				MsgBox.Show(this,"A claim attachment window is already open.");

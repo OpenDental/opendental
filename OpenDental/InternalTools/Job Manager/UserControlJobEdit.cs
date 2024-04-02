@@ -990,6 +990,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			CreateViewLog(jobPrev);
 			if(job!=null) {//re-enable control after we have loaded the job.
 				JobNotifications.DeleteForJobAndUser(job.JobNum,Security.CurUser.UserNum);
+				Signalods.SetInvalid(InvalidType.Jobs, KeyType.Job,job.JobNum);
 				this.Enabled=true;
 			}
 			if(jobPrev==null || jobPrev.JobNum!=job.JobNum) {
