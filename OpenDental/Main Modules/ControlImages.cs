@@ -1878,7 +1878,7 @@ namespace OpenDental {
 				return;
 			}
 			string fileName="";
-			if(ODBuild.IsWeb()) {
+			if(ODEnvironment.IsCloudServer) {
 				ToolBarWebExport(nodeIdTag,apteryxDoc);
 				return;
 			}
@@ -3828,7 +3828,12 @@ namespace OpenDental {
 			}
 			if(!string.IsNullOrEmpty(docPath)) {
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				ThinfinityUtils.ExportForDownload(tempFilePath);
+				if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(tempFilePath,doPromptForName:false);
+				}
+				else {
+					ThinfinityUtils.ExportForDownload(tempFilePath);
+				}
 			}
 			else {
 				MessageBox.Show("Unable to export file");

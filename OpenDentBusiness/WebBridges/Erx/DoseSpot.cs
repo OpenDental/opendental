@@ -472,7 +472,7 @@ namespace OpenDentBusiness {
 			foreach(MedicationPat medicationPat in listMedicationPats) {
 				//Medications originating from DS are filtered out when the list is retrieved.
 				DoseSpotSelfReported doseSpotSelfReported=DoseSpotREST.MedicationPatToDoseSpotSelfReport(medicationPat);
-				if(doseSpotSelfReported.DisplayName.IsNullOrEmpty()) {
+				if(string.IsNullOrWhiteSpace(doseSpotSelfReported.DisplayName)) {
 					//Couldn't get a name from the medicationpat or the medication, don't send to DS without a name.
 					continue;
 				}
@@ -1859,7 +1859,7 @@ namespace OpenDentBusiness {
 				doseSpotSelfReported.SelfReportedMedicationId=ID;
 			}
 			//Set the DisplayName.
-			if(String.IsNullOrEmpty(medicationPat.MedDescript) && medicationPat.MedicationNum!=0) {
+			if(string.IsNullOrWhiteSpace(medicationPat.MedDescript) && medicationPat.MedicationNum!=0) {
 				Medication medication=Medications.GetMedication(medicationPat.MedicationNum);
 				doseSpotSelfReported.DisplayName=medication.MedName;
 			}
@@ -1883,7 +1883,7 @@ namespace OpenDentBusiness {
 				doseSpotSelfReported.MedicationStatus=MedicationStatus.Completed;
 				doseSpotSelfReported.DateInactive=medicationPat.DateStop;
 				//A comment is required when a medication has been discontinued (figured out through testing, not in docs)
-				if(doseSpotSelfReported.Comment.IsNullOrEmpty()) {
+				if(string.IsNullOrWhiteSpace(doseSpotSelfReported.Comment)) {
 					//We were infinitely adding this note which was causing the comment to be greater than 500 characters and caused a 400 from DS.
 					doseSpotSelfReported.Comment="Discontinued in Open Dental";
 				}

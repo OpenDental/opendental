@@ -568,12 +568,16 @@ namespace OpenDental {
 			CheckStatus();
 		}
 
-		private void textApptModNote_Leave(object sender,EventArgs e) {
+		private void UpdateTextApptModNote() {
 			if(textApptModNote.Text!=_patient.ApptModNote) {
 				Patient patientOld=_patient.Copy();
 				_patient.ApptModNote=textApptModNote.Text;
 				Patients.Update(_patient,patientOld);
 			}
+		}
+
+		private void textApptModNote_Leave(object sender,EventArgs e) {
+			UpdateTextApptModNote();
 		}
 
 		private void butGoTo_Click(object sender, System.EventArgs e) {
@@ -613,6 +617,7 @@ namespace OpenDental {
 		}
 
 		private void FormApptsOther_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			UpdateTextApptModNote();
 			if(DialogResult==DialogResult.OK) {
 				return;
 			}

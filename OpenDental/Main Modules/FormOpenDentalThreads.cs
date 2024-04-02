@@ -740,7 +740,8 @@ namespace OpenDental {
 		///machine name is "UNKNOWN" we will attempt to get the machine name from the ODCloudClient again.  If the machine name is successfully retrieved from the ODCloudClient
 		///(i.e. ODEnvironment.MachineName!="UNKNOWN") we will not attempt to get the name from the cloud client again while this session is active.</summary>
 		private void BeginODCloudMachineNameThread() {
-			if(!ODEnvironment.IsCloudServer || IsThreadAlreadyRunning(FormODThreadNames.ODCloudMachineName)) {
+			//We have to call PrefC.IsAppStream here and not ODEnvironment.IsCloudServer so ODCloudClient.IsAppStream will be set to the pref cache value
+			if((!ODBuild.IsWeb() && !PrefC.IsAppStream) || IsThreadAlreadyRunning(FormODThreadNames.ODCloudMachineName)) {
 				return;
 			}
 			ODThread threadCloudMachineName=new ODThread(60000,o => {//Once a minute

@@ -64,8 +64,8 @@ namespace OpenDentBusiness{
 		private static bool _isHQ;
 		private static long _defaultTaskPriorityDefNum;
 		private static bool _isSortApptDateTime=false;
-		///<summary>Key=AptNum, Value=TaskAptShort</summary>
-		private static List<Appointment> _listAppointments;
+		///<summary>Key=AptNum, Value=TaskAptShort. Dictionary is needed to prevent slowness issues NADG was experiencing with the refactored list version.</summary>
+		private static Dictionary<long,TaskAptShort> _dictTaskApts;
 		///<summary>Only used from UI.  The index of the last open tab.</summary>
 		public static int LastOpenGroup;
 		///<summary>Only used from UI.</summary>
@@ -858,10 +858,15 @@ namespace OpenDentBusiness{
 					List<long> listAptNums = table.Select()
 						.Where(x => PIn.Int(x["ObjectType"].ToString())==(int)TaskObjectType.Appointment && x["KeyNum"].ToString()!="0")
 						.Select(x => PIn.Long(x["KeyNum"].ToString())).Distinct().ToList();
-					_listAppointments=new List<Appointment>();//Clear the list for good measure.
+					_dictTaskApts=new Dictionary<long,TaskAptShort>();//Clear the dictionary for good measure.
 					if(listAptNums.Count>0) {//If there was at least one apt attached to the tasks in the table.
-						//Fill the list with those appointments
-						_listAppointments=Appointments.GetMultApts(listAptNums);
+						//Fill the dictionary with the key of AptNum and the value of AptDateTime.
+						_dictTaskApts=Appointments.GetAptDateTimeForAptNums(listAptNums)
+							.Select()
+							.ToDictionary(x => PIn.Long(x["AptNum"].ToString()),x => new TaskAptShort() {
+								AptDateTime=PIn.DateT(x["AptDateTime"].ToString()),
+								AptStatus=PIn.Enum<ApptStatus>(x["AptStatus"].ToString())
+							});
 					}
 				}
 			}
@@ -875,7 +880,7 @@ namespace OpenDentBusiness{
 				listTaskCompareObjs.Add(taskCompareObj);
 			}
 			listTaskCompareObjs.Sort(TaskComparer);
-			_listAppointments=null;//Clear the list used for sorting
+			_dictTaskApts=null;//Clear the dictionary used for sortings
 			_isSortApptDateTime=false;//Turn special sorting back off
 			DataTable tableSorted=table.Clone();//Easy way to copy the columns.
 			tableSorted.Rows.Clear();
@@ -1552,23 +1557,24 @@ namespace OpenDentBusiness{
 		///<summary>Compares the AptDateTime of appointments attached to tasks.  Most recently updated tasks will be farther down in the list.
 		///If there is no appointment attached, it appears at the bottom. When the ApptStatus is UnschedList then the AptDateTime will be DateTime.MaxValue.</summary>
 		public static int CompareAptDateTimes(DataRow dataRowX,DataRow dataRowY) {
-			Appointment appointmentX=_listAppointments.Find(x=>x.AptNum==PIn.Long(dataRowX["KeyNum"].ToString()));
-			if(appointmentX==null) {
-				appointmentX=new Appointment();
-				appointmentX.AptDateTime=DateTime.MaxValue;
+			TaskAptShort xTaskAptShort=new TaskAptShort();
+			TaskAptShort yTaskAptShort=new TaskAptShort();
+			xTaskAptShort.AptDateTime=DateTime.MaxValue;
+			yTaskAptShort.AptDateTime=DateTime.MaxValue;
+			//Dictionary is needed because when it was refactored to a list.Find, it caused extreme slowness issues for NADG so we reverted it back.
+			if(_dictTaskApts.ContainsKey(PIn.Long(dataRowX["KeyNum"].ToString()))) {
+				xTaskAptShort=_dictTaskApts[PIn.Long(dataRowX["KeyNum"].ToString())];
+				if(xTaskAptShort.AptStatus==ApptStatus.UnschedList) {
+					xTaskAptShort.AptDateTime=DateTime.MaxValue;
+				}
 			}
-			else if(appointmentX.AptStatus==ApptStatus.UnschedList) {
-				appointmentX.AptDateTime=DateTime.MaxValue;
+			if(_dictTaskApts.ContainsKey(PIn.Long(dataRowY["KeyNum"].ToString()))) {
+				yTaskAptShort=_dictTaskApts[PIn.Long(dataRowY["KeyNum"].ToString())];
+				if(yTaskAptShort.AptStatus==ApptStatus.UnschedList) {
+					yTaskAptShort.AptDateTime=DateTime.MaxValue;
+				}
 			}
-			Appointment appointmentY=_listAppointments.Find(x=>x.AptNum==PIn.Long(dataRowY["KeyNum"].ToString()));
-			if(appointmentY==null) {
-				appointmentY=new Appointment();
-				appointmentY.AptDateTime=DateTime.MaxValue;
-			}
-			else if(appointmentY.AptStatus==ApptStatus.UnschedList) {
-				appointmentY.AptDateTime=DateTime.MaxValue;
-			}
-			return appointmentX.AptDateTime.CompareTo(appointmentY.AptDateTime);
+			return xTaskAptShort.AptDateTime.CompareTo(yTaskAptShort.AptDateTime);
 		}
 
 		///<summary>Zeros securitylog FKey column for rows that are using the matching taskNum as FKey and are related to Task.
@@ -1598,8 +1604,8 @@ namespace OpenDentBusiness{
 		}
 
 		public class TaskAptShort {
-			public DateTime DateTimeApt;
-			public ApptStatus ApptStatus;
+			public DateTime AptDateTime;
+			public ApptStatus AptStatus;
 		}
 	}
 }

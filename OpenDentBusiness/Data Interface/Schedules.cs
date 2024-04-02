@@ -565,7 +565,7 @@ namespace OpenDentBusiness{
 			return RefreshAndFill(command);
 		}
 
-		///<summary>All ~19 places where this is called must already handle passing off to middle tier before this is called.  Retrieves all schedules from the db using command, then retrieves all scheduleops for the schedules and fills the schedule.Ops list with OperatoryNums for the schedule.</summary>
+		///<summary>This is only allowed because it's PRIVATE.  Retrieves all schedules from the db using command, then retrieves all scheduleops for the schedules and fills the schedule.Ops list with OperatoryNums for the schedule.  Does NOT use GROUP_CONCAT since there is a max length for GROUP_CONCAT and data may be incorrect or truncated, especially with random primary keys.</summary>
 		private static List<Schedule> RefreshAndFill(string command,bool skipSchedOps=false) {
 			//No need to check MiddleTierRole; private method.
 			//Not a typical refreshandfill, as it contains a query.
@@ -573,31 +573,17 @@ namespace OpenDentBusiness{
 			if(listSchedules.Count==0 || skipSchedOps) {
 				return listSchedules;
 			}
-			//Set group_concat_max_len for this session so that the comma-separated 'Ops' string may not be truncated.
-			//The default length of 1024 could easily get hit with random primary keys.
-			//Group_concat_max_len is constrained by max_allowed_packet, so set group_concat_max_len to the global value of max_allowed_packet.
-			//If that's not big enough, they will have problems in other places before here.
-			if(!_hasSet_group_concat_max_len){
-				int maxAllowedPacket=MiscData.GetMaxAllowedPacket();
-				command="SET SESSION group_concat_max_len = " + POut.Int(maxAllowedPacket);
-				Db.NonQ(command);
-				_hasSet_group_concat_max_len=true;
-			}
-			command="SELECT ScheduleNum,"
-				+"GROUP_CONCAT(DISTINCT OperatoryNum SEPARATOR ',' ) 'Ops' "
-				+"FROM scheduleop WHERE ScheduleNum IN("+string.Join(",",listSchedules.Select(x => x.ScheduleNum))+") "
-				+"GROUP BY ScheduleNum";
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count==0) {
+			command="SELECT ScheduleNum,OperatoryNum FROM scheduleop WHERE ScheduleNum IN("+string.Join(",",listSchedules.Select(x => x.ScheduleNum))+")";
+			DataTable tableSO=Db.GetTable(command);
+			if(tableSO.Rows.Count==0) {
 				return listSchedules;
 			}
-			for(int i=0;i<table.Rows.Count;i++) {//looping through schedules
-				List<long> listOpNumsDb=table.Rows[i]["Ops"].ToString().Split(',').Select(x => PIn.Long(x)).ToList();
-				//Jordan I wanted to get rid of the FindAll, but couldn't prove that there were no duplicate rows with same ScheduleNum
-				//Looked at all 19 spots, and one spot had some inner joins which could create that problem.
-				listSchedules.FindAll(x => x.ScheduleNum==PIn.Long(table.Rows[i]["ScheduleNum"].ToString()))//find schedules that have 1+ scheduleops.
-					.ForEach(x => x.Ops=listOpNumsDb);
-			}
+			//Warning: refactoring this dict into a List causes massive lag -- 45 seconds or more -- for customers with large databases, such as NADG. See job B52876 for details
+			Dictionary<long,List<long>> dictSchedOps=tableSO.Rows.OfType<DataRow>()
+				.GroupBy(x => PIn.Long(x["ScheduleNum"].ToString()),x => PIn.Long(x["OperatoryNum"].ToString()))
+				.ToDictionary(x => x.Key,x => x.ToList());
+			listSchedules.FindAll(x => dictSchedOps.ContainsKey(x.ScheduleNum))//find schedules that have 1+ scheduleops.
+				.ForEach(x => x.Ops=dictSchedOps[x.ScheduleNum]);
 			return listSchedules;
 		}
 

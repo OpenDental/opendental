@@ -39,7 +39,8 @@ namespace OpenDental {
 			FillGrid();
 			//Remainder of load comes from FormClaimAttachment.cs
 			ValidateClaimDXC();
-			if(!ClaimCur.AttachmentID.ToLower().StartsWith("dxc") 
+			if(!string.IsNullOrWhiteSpace(ClaimCur.AttachmentID)
+				&& !ClaimCur.AttachmentID.ToLower().StartsWith("dxc") 
 				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"The claim has a non DentalXChange Attachment ID. Would you like to clear it out?")) 
 			{
 				ClearAttachmentID();

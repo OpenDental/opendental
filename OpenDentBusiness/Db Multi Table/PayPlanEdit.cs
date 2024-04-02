@@ -995,7 +995,7 @@ namespace OpenDentBusiness {
 				listPaySplits=PaySplits.GetForPayPlans(new List<long>(){payplan.PayPlanNum});
 			}
 			int chargesCount=listChargesInDB.Count;
-			int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency,payplan.PayPlanNum);
+			int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency);
 			return GetListExpectedCharges(listChargesInDB,terms,famCur,listPayPlanLinks,listPaySplits,payplan,isNextPeriodOnly,chargesCount,periodCount
 				,isForDownPaymentCharge,listExpectedChargesDownPayment);
 		}
@@ -1098,15 +1098,9 @@ namespace OpenDentBusiness {
 		}
 
 		/// <summary>Calculates all periods between date of first charge and now.</summary>
-		public static int CalcPeriodsForFrequency(DateTime dateFirstCharge,PayPlanFrequency frequency,long payPlanNum) {
+		public static int CalcPeriodsForFrequency(DateTime dateFirstCharge,PayPlanFrequency frequency) {
 			int period=0;
 			if(dateFirstCharge==DateTime.MinValue) {
-				return period;
-			}
-			//If no charges have been issued for the payment plan yet, then the period should always be 0.
-			//If there is a downpayment on the plan then the downpayment charge will be in the database. We need to ingore that charge.
-			List<PayPlanCharge> listPayPlanChargesInDB=PayPlanCharges.GetForPayPlan(payPlanNum).FindAll(x=>!x.Note.Contains("Down Payment"));//This is the only way to know if a charge is a downpayment as of 2/21/2024.
-			if(listPayPlanChargesInDB.IsNullOrEmpty()) {
 				return period;
 			}
 			if(frequency==PayPlanFrequency.Weekly) {
@@ -1206,7 +1200,7 @@ namespace OpenDentBusiness {
 					List<PayPlanLink> listLinksForPayPlan=listPayPlanLinksAll.FindAll(x => x.PayPlanNum==payplan.PayPlanNum);
 					PayPlanTerms terms=PayPlanEdit.GetPayPlanTerms(payplan,listLinksForPayPlan);
 					//get the expected period that this charge would be for.
-					int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency,payplan.PayPlanNum);
+					int periodCount=CalcPeriodsForFrequency(terms.DateFirstPayment.Date,terms.Frequency);
 					DateTime nextExpectedDate =PayPlanEdit.CalcNextPeriodDate(payplan.DatePayPlanStart,periodCount,payplan.ChargeFrequency);
 					if(nextExpectedDate==DateTime_.Today && listPayPlanChargesInDb.Exists(x => x.ChargeDate==nextExpectedDate && !x.Note.Contains("Down Payment"))) {
 						continue;

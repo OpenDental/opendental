@@ -2511,6 +2511,18 @@ namespace OpenDentBusiness{
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 
+		///<summary>Gets AptNums and AptDateTimes to use for task sorting with the TaskUseApptDate pref.</summary>
+		public static DataTable GetAptDateTimeForAptNums(List<long> listAptNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),listAptNums);
+			}
+			if(listAptNums.Count==0) {
+				return new DataTable();
+			}
+			string command="SELECT AptNum,AptDateTime,AptStatus FROM appointment WHERE AptNum IN ("+string.Join(",",listAptNums)+")";
+			return Db.GetTable(command);
+		}
+
 		///<summary>Gets a list of appointments for a period of time in the schedule, whether hidden or not.</summary>
 		public static Appointment[] GetForPeriod(DateTime dateTStart,DateTime dateTEnd){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

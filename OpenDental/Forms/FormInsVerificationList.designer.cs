@@ -62,7 +62,6 @@ namespace OpenDental{
 			this.labelEmployerName = new System.Windows.Forms.Label();
 			this.labelCarrierName = new System.Windows.Forms.Label();
 			this.tabAssignStandard = new OpenDental.UI.TabPage();
-			this.butCloseStandard = new OpenDental.UI.Button();
 			this.gridAssignStandard = new OpenDental.UI.GridOD();
 			this.groupAssignVerificationStandard = new OpenDental.UI.GroupBox();
 			this.textInsVerifyNoteStandard = new System.Windows.Forms.TextBox();
@@ -72,7 +71,6 @@ namespace OpenDental{
 			this.butAssignUserPickStandard = new OpenDental.UI.Button();
 			this.butAssignUserStandard = new OpenDental.UI.Button();
 			this.tabAssignMedicaid = new OpenDental.UI.TabPage();
-			this.butCloseMedicaid = new OpenDental.UI.Button();
 			this.butAssignUserMedicaid = new OpenDental.UI.Button();
 			this.groupAssignVerificationMedicaid = new OpenDental.UI.GroupBox();
 			this.textInsVerifyNoteMedicaid = new System.Windows.Forms.TextBox();
@@ -494,7 +492,6 @@ namespace OpenDental{
 			// tabAssignStandard
 			// 
 			this.tabAssignStandard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
-			this.tabAssignStandard.Controls.Add(this.butCloseStandard);
 			this.tabAssignStandard.Controls.Add(this.gridAssignStandard);
 			this.tabAssignStandard.Controls.Add(this.groupAssignVerificationStandard);
 			this.tabAssignStandard.Controls.Add(this.butAssignUserStandard);
@@ -504,16 +501,6 @@ namespace OpenDental{
 			this.tabAssignStandard.Size = new System.Drawing.Size(967, 510);
 			this.tabAssignStandard.TabIndex = 1;
 			this.tabAssignStandard.Text = "Assign Standard Verification";
-			// 
-			// butCloseStandard
-			// 
-			this.butCloseStandard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCloseStandard.Location = new System.Drawing.Point(882, 485);
-			this.butCloseStandard.Name = "butCloseStandard";
-			this.butCloseStandard.Size = new System.Drawing.Size(75, 24);
-			this.butCloseStandard.TabIndex = 83;
-			this.butCloseStandard.Text = "&Close";
-			this.butCloseStandard.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridAssignStandard
 			// 
@@ -594,7 +581,6 @@ namespace OpenDental{
 			// 
 			// tabAssignMedicaid
 			// 
-			this.tabAssignMedicaid.Controls.Add(this.butCloseMedicaid);
 			this.tabAssignMedicaid.Controls.Add(this.butAssignUserMedicaid);
 			this.tabAssignMedicaid.Controls.Add(this.groupAssignVerificationMedicaid);
 			this.tabAssignMedicaid.Controls.Add(this.gridAssignMedicaid);
@@ -603,16 +589,6 @@ namespace OpenDental{
 			this.tabAssignMedicaid.Size = new System.Drawing.Size(967, 510);
 			this.tabAssignMedicaid.TabIndex = 2;
 			this.tabAssignMedicaid.Text = "Assign Medicaid Verification";
-			// 
-			// butCloseMedicaid
-			// 
-			this.butCloseMedicaid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCloseMedicaid.Location = new System.Drawing.Point(882, 485);
-			this.butCloseMedicaid.Name = "butCloseMedicaid";
-			this.butCloseMedicaid.Size = new System.Drawing.Size(75, 24);
-			this.butCloseMedicaid.TabIndex = 85;
-			this.butCloseMedicaid.Text = "&Close";
-			this.butCloseMedicaid.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAssignUserMedicaid
 			// 
@@ -695,7 +671,7 @@ namespace OpenDental{
 			// butClose
 			// 
 			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butClose.Location = new System.Drawing.Point(882, 628);
+			this.butClose.Location = new System.Drawing.Point(882, 629);
 			this.butClose.Name = "butClose";
 			this.butClose.Size = new System.Drawing.Size(75, 24);
 			this.butClose.TabIndex = 2;
@@ -1044,7 +1020,6 @@ namespace OpenDental{
 		private UI.GridOD gridPastDue;
 		private UI.ListBox listBoxVerifyClinics;
 		private UI.ListBox listBoxVerifyRegions;
-		private UI.Button butCloseStandard;
 		private OpenDental.UI.TabPage tabAssignMedicaid;
 		private UI.GroupBox groupAssignVerificationMedicaid;
 		private System.Windows.Forms.TextBox textInsVerifyNoteMedicaid;
@@ -1053,7 +1028,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelToUserMedicaid;
 		private UI.Button butAssignUserPickMedicaid;
 		private UI.GridOD gridAssignMedicaid;
-		private UI.Button butCloseMedicaid;
 		private UI.Button butAssignUserMedicaid;
 		private System.Windows.Forms.Label labelMedicaid;
 		private System.Windows.Forms.Label labelStandard;

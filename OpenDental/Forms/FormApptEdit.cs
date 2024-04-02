@@ -617,7 +617,7 @@ namespace OpenDental{
 			}
 			if(_appointment.AptStatus==ApptStatus.Complete) {
 				//added procedures would be marked complete when form closes. We'll just stop it here.
-				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate)) {
+				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,_appointment.AptDateTime,false)) {
 					return;
 				}
 			}

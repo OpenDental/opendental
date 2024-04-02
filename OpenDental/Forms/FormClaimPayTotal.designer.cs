@@ -59,7 +59,7 @@
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(348, 39);
 			this.label2.TabIndex = 122;
-			this.label2.Text = "Before you click OK, the Deductible and the Ins Pay amounts should exactly match " +
+			this.label2.Text = "Before you click Save, the Deductible and the Ins Pay amounts should exactly match " +
     "the insurance EOB.";
 			// 
 			// label3
