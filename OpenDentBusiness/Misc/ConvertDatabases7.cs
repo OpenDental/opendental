@@ -2513,7 +2513,7 @@ namespace OpenDentBusiness {
 			}
 			command="ALTER TABLE paysplit ADD SecurityHash varchar(255) NOT NULL";
 			Db.NonQ(command);
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 			AlterTable("document","DocNum",new ColNameAndDef("DegreesRotated","float NOT NULL"));
 			AlterTable("document","DocNum",new ColNameAndDef("IsCropOld","tinyint unsigned NOT NULL"));
 			command="UPDATE document SET IsCropOld=1 WHERE CropW>0 AND CropH>0";
@@ -2524,7 +2524,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			AlterTable("appointment","AptNum",new ColNameAndDef("SecurityHash","varchar(255) NOT NULL"));
 			AlterTable("histappointment","HistApptNum",new ColNameAndDef("SecurityHash","varchar(255) NOT NULL"));
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 			//Add Definition Edit permission to everyone who has Setup permissions--------------------
 			command="SELECT DISTINCT UserGroupNum FROM grouppermission WHERE PermType=8";//Setup
 			table=Db.GetTable(command);
@@ -2582,7 +2582,7 @@ namespace OpenDentBusiness {
 				) DEFAULT CHARSET=utf8";
 			Db.NonQ(command);
 			LargeTableHelper.AlterTable("patient","PatNum",new ColNameAndDef("SecurityHash","varchar(255) NOT NULL"));
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 			command="DROP TABLE IF EXISTS webschedcarrierrule";
 			Db.NonQ(command);
 			command=@"CREATE TABLE webschedcarrierrule (
@@ -2624,13 +2624,13 @@ namespace OpenDentBusiness {
 			DataTable table;
 			command="ALTER TABLE payplan ADD SecurityHash varchar(255) NOT NULL";
 			Db.NonQ(command);
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}//End of 21_4_7() method
 
 		private static void To21_4_8() {
 			string command;
 			DataTable table;
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}//End of 21_4_8() method
 
 		private static void To21_4_9() {
@@ -2665,7 +2665,7 @@ namespace OpenDentBusiness {
 		}//End of 21_4_9() method
 	
 		private static void To21_4_16() {
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 			Db.NonQ("ALTER TABLE emailaddress ADD QueryString varchar(1000) NOT NULL");
 		}//End of 21_4_16() method
 
@@ -2688,13 +2688,13 @@ namespace OpenDentBusiness {
 			command="UPDATE patient SET SecurityHash=''";
 			Db.NonQ(command);
 			Misc.SecurityHash.ResetPatientHashing();
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('WebSchedRecallApptSearchMaximumMonths','12')";//Default to 12 months
 			Db.NonQ(command);
 		}//End of 21_4_20() method
 
 		private static void To21_4_21() {
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}//End of 21_4_21() method
 
 		private static void To21_4_23() {
@@ -2743,15 +2743,15 @@ namespace OpenDentBusiness {
 			//B34518 - Preventing invalidated procedures from overwriting graphics on the chart
 			command="UPDATE procedurelog SET HideGraphics=1 WHERE ProcStatus=6 AND IsLocked=1";
 			Db.NonQ(command);
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}
 
 		private static void To21_4_27() {
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}
 
 		private static void To21_4_30() {
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}
 
 		private static void To21_4_38() {
@@ -2762,7 +2762,7 @@ namespace OpenDentBusiness {
 		}//End of 21_4_38() method
 
 		private static void To21_4_41()	{
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}//End of 21_4_41() method
 
 		private static void To21_4_49() {
@@ -3068,7 +3068,7 @@ namespace OpenDentBusiness {
 		}//End of 22_1_7() method
 
 		private static void To22_1_12() {
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}//End of 22_1_12() method
 
 		private static void To22_1_16() {
@@ -3115,7 +3115,7 @@ namespace OpenDentBusiness {
 		}//End of 22_1_19() method
 
 		private static void To22_1_24(){
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 		}//End of 22_1_24() method
 
 		private static void To22_1_26() {
@@ -3249,7 +3249,7 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To22_1_62() {
-			SecurityHash.UpdateHashing();
+			//SecurityHash.UpdateHashing();
 		}
 
 		private static void To22_2_1() {
@@ -3752,7 +3752,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="INSERT INTO orthohardwarespec(OrthoHardwareType,Description,ItemColor) VALUES(2,'Elastic',-1517178)";
 			Db.NonQ(command);
-			Misc.SecurityHash.UpdateHashing();
+			//Misc.SecurityHash.UpdateHashing();
 			command=$@"UPDATE preference SET ValueString={POut.Bool(true)} WHERE PrefName='AgingIsEnterprise'";
 			Db.NonQ(command);
 			command=$@"UPDATE preference SET ValueString={POut.Bool(false)} WHERE PrefName='AgingCalculatedMonthlyInsteadOfDaily'";
@@ -4003,7 +4003,7 @@ namespace OpenDentBusiness {
 		private static void To22_2_51() {
 			string command="UPDATE sheetfield SET Height=22 WHERE FieldType=10 AND Height=0";
 			Db.NonQ(command);
-			SecurityHash.UpdateHashing();
+			//SecurityHash.UpdateHashing();
 			command="SELECT EmailUsername,RefreshToken FROM emailaddress WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
 			DataTable table=Db.GetTable(command);
 			//We must determine if there are any emails currently authenticated with Microsoft.
@@ -4257,7 +4257,7 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To22_3_22() {
-			SecurityHash.UpdateHashing();
+			//SecurityHash.UpdateHashing();
 			string command="SELECT EmailUsername,RefreshToken FROM emailaddress WHERE AuthenticationType=2";//AuthenticationType.Microsoft=2
 			DataTable table=Db.GetTable(command);
 			//We must determine if there are any emails currently authenticated with Microsoft.
@@ -4445,7 +4445,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('AdjustmentBlockNegativeExceedingPatPortion','0')";
 			Db.NonQ(command);
-			SecurityHash.UpdateHashing();
+			//SecurityHash.UpdateHashing();
 			//3 state preference "ClaimEditShowPayTracking" changed to a 2 state, default state set to True
 			//to T(1) from Y(1) not needed
 			command="UPDATE preference SET ValueString=1 WHERE PrefName='ClaimEditShowPayTracking' AND ValueString=0";//to T from U
@@ -4650,7 +4650,7 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To22_4_40() {
-			SecurityHash.UpdateHashing();
+			//SecurityHash.UpdateHashing();
 		}
 
 		private static void To22_4_42() { 
@@ -4906,7 +4906,7 @@ namespace OpenDentBusiness {
 		}
 
 		private static void To23_1_5() {
-			SecurityHash.UpdateHashing();
+			//SecurityHash.UpdateHashing();
 		}
 
 		private static void To23_1_10() {
