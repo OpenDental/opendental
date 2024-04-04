@@ -89,10 +89,13 @@ namespace OpenDental{
 				}
 			}
 			for(int i=0;i<_table.Rows.Count;i++){
+				ApptStatus aptStatus=(ApptStatus)Enum.Parse(typeof(ApptStatus),_table.Rows[i]["aptStatus"].ToString());
+				long clinicNum=PIn.Long(_table.Rows[i]["ClinicNum"].ToString());
 				if(PrefC.HasClinicsEnabled //no filtering for non clinics.
 					&& operatoryNums!=null //we don't have "All" selected for an unrestricted user.
 					&& _table.Rows[i]["AptNum"].ToString()!="0" //show unattached for any clinic 
-					&& !operatoryNums.Contains(PIn.Long(_table.Rows[i]["OpNum"].ToString()))) //Attached appointment is scheduled in an Op for the clinic
+					&& !operatoryNums.Contains(PIn.Long(_table.Rows[i]["OpNum"].ToString())) //Attached appointment is scheduled in an Op for another clinic
+					&& (aptStatus!=ApptStatus.Planned || !comboClinic.ListClinicNumsSelected.Contains(clinicNum))) //Attached planned appointment is not under selected clinic
 				{
 					continue;//appointment scheduled in an operatory for another clinic.
 				}

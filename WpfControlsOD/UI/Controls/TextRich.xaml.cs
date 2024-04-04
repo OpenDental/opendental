@@ -105,6 +105,8 @@ namespace WpfControls.UI{
 		//private string _spellCheckFileLoc="ODSpelling.lex";//couldn't use this. Must build spell check from scratch.
 		///<summary>Puts a name to our spell check underline, so we can tell the code to remove it from given text.</summary>
 		private TextDecoration _textDecorationSpellCheck;
+		/// <summary>Used to pause the TextChanged event handler, because we don't want the red underline to count as affecting the text.</summary>
+		private bool _isSpellChecking;
 		
 		#endregion Fields
 
@@ -637,6 +639,7 @@ namespace WpfControls.UI{
 		}
 
 		public void SpellCheck(){
+			_isSpellChecking=true;
 			ClearWavyAll();
 			_listTextRangesMisspelled=new List<TextRange>();
 			TextPointer textPointer=richTextBox.Document.ContentStart;
@@ -694,6 +697,7 @@ namespace WpfControls.UI{
 				textDecorationCollection.Add(_textDecorationSpellCheck);
 				_listTextRangesMisspelled[i].ApplyPropertyValue(Inline.TextDecorationsProperty,textDecorationCollection);
 			}
+			_isSpellChecking=false;
 			/*
 			TextPointer textPointerContentStart=richTextBox.Document.ContentStart;
 			TextPointer textPointerCaret=richTextBox.CaretPosition;
@@ -1016,6 +1020,9 @@ namespace WpfControls.UI{
 		}
 
 		private void textBox_TextChanged(object sender,TextChangedEventArgs e) {
+			if(_isSpellChecking) {
+				return;
+			}
 			TextChanged?.Invoke(this,new EventArgs());
 		}
 

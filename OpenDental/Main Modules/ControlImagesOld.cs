@@ -2422,7 +2422,11 @@ namespace OpenDental {
 			else {//regular Images module
 				Document doc = null;
 				try {//Create corresponding image file.
-					doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient);
+					bool doPrintHeading=false;
+					if(imgType==ImageType.Radiograph) {
+						doPrintHeading=true;
+					}
+					doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient,doPrintHeading:doPrintHeading);
 				}
 				catch(Exception ex) {
 					saved=false;
@@ -2606,7 +2610,11 @@ namespace OpenDental {
 			else {//regular Images module
 				Document doc = null;
 				try {//Create corresponding image file.
-					doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient);
+					bool doPrintHeading=false;
+					if(imgType==ImageType.Radiograph) {
+						doPrintHeading=true;
+					}
+					doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient,doPrintHeading:doPrintHeading);
 				}
 				catch(Exception ex) {
 					saved=false;
@@ -3346,6 +3354,10 @@ namespace OpenDental {
 					//If sig not showing, then try the ANSI paradigm.
 					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
 						TopazWrapper.FillSignatureANSI(_sigBoxTopaz,keystring,_documentShowing.Signature,SignatureBoxWrapper.SigMode.Document);
+					}
+					//Try reading in the signature using different encodings for keyData.
+					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
+						TopazWrapper.FillSignatureEncodings(_sigBoxTopaz,keystring,_documentShowing.Signature,SignatureBoxWrapper.SigMode.Document);
 					}
 					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
 						labelInvalidSig.Visible=true;

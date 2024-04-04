@@ -11,7 +11,7 @@
 	<Grid Background="#FFFCFDFE" >
 		<ui:ComboBox x:Name="comboProv" Width="173" Height="21" Margin="245,122,0,0" />
 		<ui:Label x:Name="label1" Width="95" Height="16" Margin="149,126,0,0" Text="Provider" HAlign="Right" />
-		<ui:Label x:Name="labelMountItem" Width="271" Height="34" Margin="242,294,0,0" Text="This information is only for one individual mount item.  The mount has a separate information window." />
+        <ui:Label x:Name="labelMountItem" Width="271" Height="34" Margin="242,301,0,0" Text="This information is only for one individual mount item.  The mount has a separate information window." />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
 		<ui:TextBox x:Name="textTime" Width="104" Height="20" Margin="245,99,0,0" />
 		<ui:Label x:Name="label4" Width="95" Height="16" Margin="149,102,0,0" Text="Time" HAlign="Right" />
@@ -31,5 +31,7 @@
 		<ui:Label x:Name="labelCategory" Width="100" Height="18" Margin="12,14,0,0" Text="Category" />
 		<ui:ListBox x:Name="listCategory" Width="104" VerticalAlignment="Stretch" Margin="12,30,0,15" />
 		<ui:Label x:Name="labelFileName" Width="100" Height="18" Margin="144,33,0,0" Text="File Name" HAlign="Right" />
-	</Grid>
+        <ui:CheckBox x:Name="checkPrintHeading" Width="114" Height="19" Margin="144,266,0,0" Text="Print Heading" CheckAlign="MiddleRight" />
+        <ui:Label x:Name="labelMountItem_Copy" Width="393" Height="18" Margin="260,267,0,0" Text="(radiographs and tooth charts will have this set by default)" />
+    </Grid>
 </local:FrmODBase>

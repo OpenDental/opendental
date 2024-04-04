@@ -51,9 +51,9 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 		}
 
 		///<summary>Delete a credit card from the database and delete it from XWeb repository using DTG directly.  Throws exceptions.</summary>
-		public static XWebResponse DeleteCreditCard(long patNum,long creditCardNum) {
+		public static XWebResponse DeleteCreditCard(long patNum,long creditCardNum,LogSources logSource=LogSources.None) {
 			//No need to check MiddleTierRole; no call to db.
-			return new XWebInputDTGDeleteAlias(patNum,creditCardNum).GenerateOutput(doThrowWhenOnlinePaymentsDisabled:false);//Allow the card to be deleted even if online payments are turned off.
+			return new XWebInputDTGDeleteAlias(patNum,creditCardNum,logSource).GenerateOutput(doThrowWhenOnlinePaymentsDisabled:false);//Allow the card to be deleted even if online payments are turned off.
 		}
 
 		#endregion
@@ -542,9 +542,10 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 				}
 			}
 			protected override XWebTransactionStatus ApprovalStatus { get { return XWebTransactionStatus.DtgAliasDeleted; } }
+			private LogSources _logSource=LogSources.None;
 
-			public XWebInputDTGDeleteAlias(long patNum,long creditCardNum) : base(XWebTransactionType.AliasDeleteTransaction,patNum,"Deleting CreditCard: "+creditCardNum.ToString()) {
-				CreditCard cc=CreditCards.GetOne(creditCardNum);
+			public XWebInputDTGDeleteAlias(long patNum,long creditCardNum,LogSources logSource) : base(XWebTransactionType.AliasDeleteTransaction,patNum,"Deleting CreditCard: "+creditCardNum.ToString()) {
+				CreditCard cc = CreditCards.GetOne(creditCardNum);
 				if(cc==null) {
 					throw new ODException("CreditCardNum not found: "+creditCardNum.ToString(),ODException.ErrorCodes.OtkArgsInvalid);
 				}
@@ -555,6 +556,7 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 					throw new ODException("Invalid CC Alias",ODException.ErrorCodes.OtkArgsInvalid);
 				}
 				_cc=cc;
+				_logSource=logSource;
 			}
 
 			///<summary>Performs base XWebInputDTGForPayment behavior and deletes CreditCard row.</summary>
@@ -562,14 +564,8 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 				//Verify result and set response.PayNote.
 				base.PostProcessOutput(response);
 				response.Alias=_cc.XChargeToken;
-				try { response.PayNote="Deleted CreditCard: "+JsonConvert.SerializeObject(_cc); } catch { }				
-				CreditCards.Delete(_cc.CreditCardNum);
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,_cc.PatNum,"Credit Card Removed");
-				List<CreditCard> creditCards=CreditCards.RefreshAll(_patNum);
-				for(int i=0;i<creditCards.Count;i++) {
-					creditCards[i].ItemOrder=creditCards.Count-(i+1);
-					CreditCards.Update(creditCards[i]);//Resets ItemOrder.
-				}			
+				try { response.PayNote="Deleted CreditCard: "+JsonConvert.SerializeObject(_cc); } catch { }		
+				CreditCards.DeleteAndRefresh(_cc,_logSource);
 			}
 		}
 		#endregion

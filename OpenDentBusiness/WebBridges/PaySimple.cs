@@ -16,6 +16,8 @@ namespace OpenDentBusiness {
 			public bool IsCheckoutTokenRequest;
 			public bool IsExistingCustomerTokenRequest;
 			public bool IsSucessPostPaymentRequest;
+			public bool IsSuccessDeleteRequest;
+			public bool IsFailDeleteRequest;
 			public double PayAmt;
 		}
 
@@ -1142,6 +1144,16 @@ namespace OpenDentBusiness {
 				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType(resStr,resType),resStr);
 			}
 
+			private static RequestResponse<T> MockDeleteResponseFail<T>(T resType) {
+				//No need to try and deserialize a response here because the DELETE method works different than the other actions. Also our logic is set up that if the response code is not 204 No Content, then we throw an error similar to the one below.
+				throw new Exception("Error deleting: 500 Some test error");
+			}
+
+			private static RequestResponse<T> MockDeleteResponseSuccess<T>(T resType) {
+				//For this case, we will assume everything was successful. Our DELETE method doesn't actually use the response object so we can just have an empty object returned.
+				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType("",resType),"");
+			}
+
 			///<summary>Throws exceptions for http codes of 300 or more from API call.</summary>
 			public static ApiResponse PutPaymentVoided(string authHeader,string paymentId) {
 				var response=Request(ApiRoute.PaymentVoided,HttpMethod.Put,authHeader,"",
@@ -1374,6 +1386,12 @@ namespace OpenDentBusiness {
 					}
 					else if(Mock.IsSucessPostPaymentRequest && route==ApiRoute.AccountCreditCard) {
 						return MockSuccessGetCreditCardResponse(responseType);
+					}
+					else if(Mock.IsSuccessDeleteRequest && (route==ApiRoute.AccountACH || route==ApiRoute.AccountCreditCard)) { 
+						return MockDeleteResponseSuccess(responseType);
+					}
+					else if(Mock.IsFailDeleteRequest && (route==ApiRoute.AccountACH || route==ApiRoute.AccountCreditCard)) { 
+						return MockDeleteResponseFail(responseType);
 					}
 				}
 				using(WebClient client=new WebClient()) {

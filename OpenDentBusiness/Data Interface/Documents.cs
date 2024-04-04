@@ -548,6 +548,7 @@ namespace OpenDentBusiness {
 						doc.ImgType=ImageType.Radiograph;
 						BitmapDicom bitmapDicom=DicomHelper.GetFromFile(fileList[j]);
 						DicomHelper.CalculateWindowingOnImport(bitmapDicom);
+						doc.PrintHeading=true;
 						doc.WindowingMin=bitmapDicom.WindowingMin;
 						doc.WindowingMax=bitmapDicom.WindowingMax;
 					}

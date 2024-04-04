@@ -1122,7 +1122,7 @@ namespace OpenDental {
 				bitmapChart=_toothChartRelay.GetBitmap();
 			}
 			try {
-				ImageStore.Import(bitmapChart,defNum,ImageType.Photo,Pd.Patient);
+				ImageStore.Import(bitmapChart,defNum,ImageType.Photo,Pd.Patient,doPrintHeading:true);
 			}
 			catch(SharpDXException sharpDXException) {
 				using MsgBoxCopyPaste errorMsg=new MsgBoxCopyPaste(Lan.g(this,"Failed to capture tooth chart image from graphics card. \r\n"

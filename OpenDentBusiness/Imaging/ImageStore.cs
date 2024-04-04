@@ -492,6 +492,7 @@ namespace OpenDentBusiness {
 				doc.ImgType=ImageType.Radiograph;
 				BitmapDicom bitmapDicom=DicomHelper.GetFromFile(pathImportFrom);
 				DicomHelper.CalculateWindowingOnImport(bitmapDicom);
+				doc.PrintHeading=true;
 				doc.WindowingMin=bitmapDicom.WindowingMin;
 				doc.WindowingMax=bitmapDicom.WindowingMax;
 			}
@@ -513,8 +514,8 @@ namespace OpenDentBusiness {
 			return doc;
 		}
 
-		/// <summary>Saves to AtoZ folder, Cloud, or to db.  Saves image as a jpg.  Compression will differ depending on imageType. Throws exception if it can't save.</summary>
-		public static Document Import(Bitmap image,long docCategory,ImageType imageType,Patient pat,string mimeType="image/jpeg") {
+		/// <summary>Saves to AtoZ folder, Cloud, or to db.  Saves image as a jpg.  Compression will differ depending on imageType. Throws exception if it can't save. doPrintHeading is set to true for ToothChart and radiographs.</summary>
+		public static Document Import(Bitmap image,long docCategory,ImageType imageType,Patient pat,string mimeType="image/jpeg",bool doPrintHeading=false) {
 			string patFolder="";
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ || CloudStorage.IsCloudStorage) {
 				patFolder=GetPatientFolder(pat,GetPreferredAtoZpath());
@@ -525,6 +526,9 @@ namespace OpenDentBusiness {
 			doc.DateCreated = DateTime.Now;
 			doc.PatNum = pat.PatNum;
 			doc.DocCategory = docCategory;
+			if(doPrintHeading) {
+				doc.PrintHeading=true;
+			}
 			Documents.Insert(doc,pat);//creates filename and saves to db
 			doc=Documents.GetByNum(doc.DocNum);
 			long qualityL = 0;
@@ -656,6 +660,7 @@ namespace OpenDentBusiness {
 			doc.DateCreated = DateTime.Now;
 			doc.PatNum = pat.PatNum;
 			doc.DocCategory = docCategory;
+			doc.PrintHeading=true;
 			doc.WindowingMin = PrefC.GetInt(PrefName.ImageWindowingMin);
 			doc.WindowingMax = PrefC.GetInt(PrefName.ImageWindowingMax);
 			Documents.Insert(doc,pat);//creates filename and saves to db

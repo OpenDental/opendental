@@ -1456,7 +1456,6 @@ namespace OpenDental{
 			}
 			if(!IsBirthdateValid()) {
 				MsgBox.Show(this,"Patient's Birthdate is not a valid or allowed date.");
-				_errorProvider.SetError(odDatePickerBirthDate,"Valid dates between 1880 and 2100.");
 				return;
 			}
 			DateTime dateBirth=odDatePickerBirthDate.GetDateTime();
@@ -2596,7 +2595,7 @@ namespace OpenDental{
 			}
 			//Place all UI validation in here. Data validation should go in Patients.ValidatePatientEdit(). Even if a field has both UI and data validation, it still needs to be separated.
 			#region UI Validation
-			if(odDatePickerBirthDate.IsEmptyDateTime()//If not blank
+			if(!odDatePickerBirthDate.IsEmptyDateTime()//If not blank
 				&& !IsBirthdateValid()//Check for a valid date
 				&& !_isBirthdayMasked)//If not masked
 			{

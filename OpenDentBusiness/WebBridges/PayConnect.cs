@@ -360,7 +360,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Only deletes the credit card from Open Dental.  We currently do not delete PayConnect tokens from PayConnect anywhere like we do with XCharge/XWeb/PaySimple.
 		///Throws exceptions.</summary>
-		public static void DeleteCreditCard(Patient pat,CreditCard cc) {
+		public static void DeleteCreditCard(Patient pat,CreditCard cc,LogSources logSource=LogSources.None) {
 			if(pat==null) {
 				throw new ODException("No Patient Found",ODException.ErrorCodes.NoPatientFound);
 			}
@@ -370,13 +370,7 @@ namespace OpenDentBusiness {
 			if(string.IsNullOrEmpty(cc.PayConnectToken)) {
 				throw new ODException("Invalid CC Alias",ODException.ErrorCodes.OtkArgsInvalid);
 			}
-			CreditCards.Delete(cc.CreditCardNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,cc.PatNum,"Credit Card Removed");
-			List<CreditCard> creditCards=CreditCards.RefreshAll(pat.PatNum);
-			for(int i=0;i<creditCards.Count;i++) {
-				creditCards[i].ItemOrder=creditCards.Count-(i+1);
-				CreditCards.Update(creditCards[i]);//Resets ItemOrder.
-			}
+			CreditCards.DeleteAndRefresh(cc,logSource);
 		}
 
 		///<summary>Putting this functionality in it's own class scope prevents it from being serialized for DTO.

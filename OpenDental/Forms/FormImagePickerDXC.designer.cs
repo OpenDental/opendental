@@ -37,7 +37,6 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.textClaimStatus = new OpenDental.ODtextBox();
 			this.butSendAndAgain = new OpenDental.UI.Button();
-			this.labelSendAndAgain = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -169,27 +168,16 @@ namespace OpenDental{
 			// butSendAndAgain
 			// 
 			this.butSendAndAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSendAndAgain.Location = new System.Drawing.Point(1143, 628);
+			this.butSendAndAgain.Location = new System.Drawing.Point(1079, 628);
 			this.butSendAndAgain.Name = "butSendAndAgain";
-			this.butSendAndAgain.Size = new System.Drawing.Size(75, 24);
+			this.butSendAndAgain.Size = new System.Drawing.Size(139, 24);
 			this.butSendAndAgain.TabIndex = 49;
-			this.butSendAndAgain.Text = "S&end";
+			this.butSendAndAgain.Text = "Send and Select &Another";
 			this.butSendAndAgain.Click += new System.EventHandler(this.butSendAndAgain_Click);
-			// 
-			// labelSendAndAgain
-			// 
-			this.labelSendAndAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelSendAndAgain.Location = new System.Drawing.Point(1023, 628);
-			this.labelSendAndAgain.Name = "labelSendAndAgain";
-			this.labelSendAndAgain.Size = new System.Drawing.Size(114, 18);
-			this.labelSendAndAgain.TabIndex = 50;
-			this.labelSendAndAgain.Text = "(and Select Another)";
-			this.labelSendAndAgain.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// FormImagePickerDXC
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
-			this.Controls.Add(this.labelSendAndAgain);
 			this.Controls.Add(this.butSendAndAgain);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textClaimStatus);
@@ -227,6 +215,5 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private ODtextBox textClaimStatus;
 		private UI.Button butSendAndAgain;
-		private System.Windows.Forms.Label labelSendAndAgain;
 	}
 }

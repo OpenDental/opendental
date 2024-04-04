@@ -120,6 +120,7 @@ namespace OpenDental {
 				labelToothNums.Visible=false;
 				textToothNumbers.Visible=false;
 			}
+			checkPrintHeading.Checked=_document.PrintHeading;
 		}
 
 		///<summary>Returns patient folder name when the ImageStore was able to find or create a patient folder for the selected patient.  Sets patFolder to the corresponding folder name.
@@ -258,6 +259,12 @@ namespace OpenDental {
 			_document.ProvNum=comboProv.GetSelectedProvNum();
 			_document.Description=textDescript.Text;			
 			_document.ImgType=listType.GetSelected<ImageType>();
+			if(checkPrintHeading.Checked==true) {
+				_document.PrintHeading=true;
+			}
+			else {
+				_document.PrintHeading=false;
+			}
 			if(Documents.Update(_document,_documentOld)) {
 				ImageStore.LogDocument(Lang.g(this,"Document Edited")+": ",EnumPermType.ImageEdit,_document,_documentOld.DateTStamp);
 			}

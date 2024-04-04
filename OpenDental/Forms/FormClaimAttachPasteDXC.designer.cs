@@ -30,6 +30,17 @@ namespace OpenDental {
 			this.textClaimStatus = new OpenDental.ODtextBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.labelClaimAttachWarning = new System.Windows.Forms.Label();
+			this.contextMenuImageGrid = new System.Windows.Forms.ContextMenu();
+			this.menuItemReferralForm = new System.Windows.Forms.MenuItem();
+			this.menuItemDiagnosticReport = new System.Windows.Forms.MenuItem();
+			this.menuItemExplanationOfBenefits = new System.Windows.Forms.MenuItem();
+			this.menuItemOtherAttachments = new System.Windows.Forms.MenuItem();
+			this.menuItemPeriodontalCharts = new System.Windows.Forms.MenuItem();
+			this.menuItemXRays = new System.Windows.Forms.MenuItem();
+			this.menuItemDentalModels = new System.Windows.Forms.MenuItem();
+			this.menuItemRadiologyReports = new System.Windows.Forms.MenuItem();
+			this.menuItemIntraOralPhotograph = new System.Windows.Forms.MenuItem();
+			this.menuItemNarrative = new System.Windows.Forms.MenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -83,6 +94,7 @@ namespace OpenDental {
 			// 
 			// gridMain
 			// 
+			this.gridMain.ContextMenu = this.contextMenuImageGrid;
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridMain.Location = new System.Drawing.Point(12, 12);
@@ -102,6 +114,81 @@ namespace OpenDental {
 			this.labelClaimAttachWarning.TabIndex = 50;
 			this.labelClaimAttachWarning.Text = "No claim attachment image category definition found.  Images will be saved using " +
     "the first image category.";
+			//
+			// contextMenuImageGrid
+			//
+			this.contextMenuImageGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+				this.menuItemReferralForm,
+				this.menuItemDiagnosticReport,
+				this.menuItemExplanationOfBenefits,
+				this.menuItemOtherAttachments,
+				this.menuItemPeriodontalCharts,
+				this.menuItemXRays,
+				this.menuItemDentalModels,
+				this.menuItemRadiologyReports,
+				this.menuItemIntraOralPhotograph,
+				this.menuItemNarrative});
+			this.contextMenuImageGrid.Popup += new System.EventHandler(this.contextMenuImageGrid_Popup);
+			//
+			// menuItemReferralForm
+			//
+			this.menuItemReferralForm.Index = 0;
+			this.menuItemReferralForm.Text = "Referral Form";
+			this.menuItemReferralForm.Click += new System.EventHandler(this.menuItemReferralForm_Click);
+			//
+			// menuItemDiagnosticReport
+			//
+			this.menuItemDiagnosticReport.Index = 1;
+			this.menuItemDiagnosticReport.Text = "Diagnostic Report";
+			this.menuItemDiagnosticReport.Click += new System.EventHandler(this.menuItemDiagnosticReport_Click);
+			//
+			// menuItemExplanationOfBenefits
+			//
+			this.menuItemExplanationOfBenefits.Index = 2;
+			this.menuItemExplanationOfBenefits.Text = "Explanation of Benefits";
+			this.menuItemExplanationOfBenefits.Click += new System.EventHandler(this.menuItemExplanationOfBenefits_Click);
+			//
+			// menuItemOtherAttachments
+			//
+			this.menuItemOtherAttachments.Index = 3;
+			this.menuItemOtherAttachments.Text = "Other Attachments";
+			this.menuItemOtherAttachments.Click += new System.EventHandler(this.menuItemOtherAttachments_Click);
+			//
+			// menuItemPeriodontalCharts
+			//
+			this.menuItemPeriodontalCharts.Index = 4;
+			this.menuItemPeriodontalCharts.Text = "Periodontal Charts";
+			this.menuItemPeriodontalCharts.Click += new System.EventHandler(this.menuItemPeriodontalCharts_Click);
+			//
+			// menuItemXRays
+			//
+			this.menuItemXRays.Index = 5;
+			this.menuItemXRays.Text = "X-Rays";
+			this.menuItemXRays.Click += new System.EventHandler(this.menuItemXRays_Click);
+			//
+			// menuItemDentalModels
+			//
+			this.menuItemDentalModels.Index = 6;
+			this.menuItemDentalModels.Text = "Dental Models";
+			this.menuItemDentalModels.Click += new System.EventHandler(this.menuItemDentalModels_Click);
+			//
+			// menuItemRadiologyReports
+			//
+			this.menuItemRadiologyReports.Index = 7;
+			this.menuItemRadiologyReports.Text = "Radiology Reports";
+			this.menuItemRadiologyReports.Click += new System.EventHandler(this.menuItemRadiologyReports_Click);
+			//
+			// menuItemIntraOralPhotograph
+			//
+			this.menuItemIntraOralPhotograph.Index = 8;
+			this.menuItemIntraOralPhotograph.Text = "Intra-Oral Photograph";
+			this.menuItemIntraOralPhotograph.Click += new System.EventHandler(this.menuItemIntraOralPhotograph_Click);
+			//
+			// menuItemNarrative
+			//
+			this.menuItemNarrative.Index = 9;
+			this.menuItemNarrative.Text = "Narrative";
+			this.menuItemNarrative.Click += new System.EventHandler(this.menuItemNarrative_Click);
 			// 
 			// FormClaimAttachPasteDXC
 			// 
@@ -129,5 +216,16 @@ namespace OpenDental {
 		private ODtextBox textClaimStatus;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label labelClaimAttachWarning;
+		private System.Windows.Forms.ContextMenu contextMenuImageGrid;
+		private System.Windows.Forms.MenuItem menuItemReferralForm;
+		private System.Windows.Forms.MenuItem menuItemDiagnosticReport;
+		private System.Windows.Forms.MenuItem menuItemExplanationOfBenefits;
+		private System.Windows.Forms.MenuItem menuItemOtherAttachments;
+		private System.Windows.Forms.MenuItem menuItemPeriodontalCharts;
+		private System.Windows.Forms.MenuItem menuItemXRays;
+		private System.Windows.Forms.MenuItem menuItemDentalModels;
+		private System.Windows.Forms.MenuItem menuItemRadiologyReports;
+		private System.Windows.Forms.MenuItem menuItemIntraOralPhotograph;
+		private System.Windows.Forms.MenuItem menuItemNarrative;
 	}
 }

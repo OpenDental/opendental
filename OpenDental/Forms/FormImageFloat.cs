@@ -762,8 +762,9 @@ namespace OpenDental {
 				//Job 20502 added this info for all patient images
 				//Job 35304 removed this info except for xrays because some people found it annoying
 				//Job 50474 added this info back for toothchart.
-				//Job 51614 removed this for Perio, Graphical Perio, and toothcharts. A new option for printing for these will be added in an enhancement.
-				if(document.ImgType==ImageType.Radiograph) {
+				//Job 51614 removed this for Perio, Graphical Perio, and toothcharts.
+				//Job 52144 PrintHeading was added via an enhancement so that user can control per image.
+				if(document.PrintHeading) {
 					str=PatientCur.GetNameLF();
 					widthStr=(int)g.MeasureString(str,fontTitle).Width;
 					g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
@@ -821,35 +822,37 @@ namespace OpenDental {
 				//Single mount item
 				xTitle=e.MarginBounds.X+e.MarginBounds.Width/2;
 				yTitle=e.MarginBounds.Top;
-				str=PatientCur.GetNameLF();
-				widthStr=(int)g.MeasureString(str,fontTitle).Width;
-				g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
-				yTitle+=fontTitle.Height+4;
-				str="DOB: "+PatientCur.Birthdate.ToShortDateString();
-				widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-				g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-				yTitle+=fontSubTitles.Height;
-				str=_documentArrayShowing[_idxSelectedInMount].DateCreated.ToShortDateString();
-				widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-				g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-				yTitle+=fontSubTitles.Height;
-				if(_documentArrayShowing[_idxSelectedInMount].ProvNum!=0){
-					str=Providers.GetFormalName(_documentArrayShowing[_idxSelectedInMount].ProvNum);
+				if(_documentArrayShowing[_idxSelectedInMount].PrintHeading) {
+					str=PatientCur.GetNameLF();
+					widthStr=(int)g.MeasureString(str,fontTitle).Width;
+					g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
+					yTitle+=fontTitle.Height+4;
+					str="DOB: "+PatientCur.Birthdate.ToShortDateString();
 					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
 					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
 					yTitle+=fontSubTitles.Height;
-				}
-				if(_documentArrayShowing[_idxSelectedInMount].Description!=""){
-					str=_documentArrayShowing[_idxSelectedInMount].Description;
+					str=_documentArrayShowing[_idxSelectedInMount].DateCreated.ToShortDateString();
 					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
 					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
 					yTitle+=fontSubTitles.Height;
-				}
-				if(_documentArrayShowing[_idxSelectedInMount].ToothNumbers!=""){
-					str=Lan.g(this,"Tooth numbers: ") +_documentArrayShowing[_idxSelectedInMount].ToothNumbers;
-					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-					yTitle+=fontSubTitles.Height;
+					if(_documentArrayShowing[_idxSelectedInMount].ProvNum!=0){
+						str=Providers.GetFormalName(_documentArrayShowing[_idxSelectedInMount].ProvNum);
+						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+						yTitle+=fontSubTitles.Height;
+					}
+					if(_documentArrayShowing[_idxSelectedInMount].Description!=""){
+						str=_documentArrayShowing[_idxSelectedInMount].Description;
+						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+						yTitle+=fontSubTitles.Height;
+					}
+					if(_documentArrayShowing[_idxSelectedInMount].ToothNumbers!=""){
+						str=Lan.g(this,"Tooth numbers: ") +_documentArrayShowing[_idxSelectedInMount].ToothNumbers;
+						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+						yTitle+=fontSubTitles.Height;
+					}
 				}
 				yTitle+=20;
 				Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);

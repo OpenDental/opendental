@@ -257,6 +257,20 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 		}
 
+		///<summary>Deletes a credit card from the database for the provided patient. Then it updates the ItemOrder for any other existing CreditCard for the patient.</summary>
+		public static void DeleteAndRefresh(CreditCard cc,LogSources logSource=LogSources.None) {
+			if(cc==null) {
+				return;
+			}
+			Delete(cc.CreditCardNum);
+			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,cc.PatNum,"Credit Card Removed",logSource);
+			List<CreditCard> creditCards=RefreshAll(cc.PatNum);
+			for(int i=0;i<creditCards.Count;i++) {
+				creditCards[i].ItemOrder=creditCards.Count-(i+1);
+				Update(creditCards[i]);//Resets ItemOrder.
+			}
+		}
+
 		///<summary>Gets the masked CC# and exp date for all cards setup for monthly charges for the specified patient.  Only used for filling [CreditCardsOnFile] variable when emailing statements.</summary>
 		public static string GetMonthlyCardsOnFile(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){

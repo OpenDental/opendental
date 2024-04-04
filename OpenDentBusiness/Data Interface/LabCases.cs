@@ -22,6 +22,7 @@ namespace OpenDentBusiness{
 			table.Columns.Add("AptDateTime",typeof(DateTime));
 			table.Columns.Add("aptDateTime");
 			table.Columns.Add("AptNum");
+			table.Columns.Add("ClinicNum");
 			table.Columns.Add("OpNum");
 			table.Columns.Add("lab");
 			table.Columns.Add("LabCaseNum");
@@ -33,7 +34,7 @@ namespace OpenDentBusiness{
 			List<DataRow> rows=new List<DataRow>();
 			//the first query only gets labcases that are attached to scheduled or planned appointments
 			string command="SELECT COALESCE(appointment.AptStatus,ap1.AptStatus) AptStatus, COALESCE(appointment.AptDateTime, ap1.AptDateTime) AS AptDateTime,"
-				+"COALESCE(appointment.AptNum, ap1.AptNum) AS AptNum, COALESCE(appointment.Op, ap1.Op) AS Op, DateTimeChecked,"
+				+"COALESCE(appointment.AptNum, ap1.AptNum) AS AptNum, COALESCE(appointment.ClinicNum, ap1.ClinicNum) AS ClinicNum, COALESCE(appointment.Op, ap1.Op) AS Op, DateTimeChecked,"
 				+"DateTimeRecd,DateTimeSent, LabCaseNum, laboratory.Description, LName, FName, Preferred, MiddleI, Phone,"
 				+"COALESCE(appointment.ProcDescript,ap1.ProcDescript) AS ProcDescript, Instructions "
 				+"FROM labcase "
@@ -62,6 +63,7 @@ namespace OpenDentBusiness{
 				row["AptDateTime"]=AptDateTime;
 				row["aptDateTime"]=AptDateTime.ToShortDateString()+(apptStatus!=ApptStatus.Planned?" "+AptDateTime.ToShortTimeString():"");
 				row["AptNum"]=raw.Rows[i]["AptNum"].ToString();
+				row["ClinicNum"]=raw.Rows[i]["ClinicNum"].ToString();
 				row["OpNum"]=raw.Rows[i]["Op"].ToString();
 				row["lab"]=raw.Rows[i]["Description"].ToString();
 				row["LabCaseNum"]=raw.Rows[i]["LabCaseNum"].ToString();

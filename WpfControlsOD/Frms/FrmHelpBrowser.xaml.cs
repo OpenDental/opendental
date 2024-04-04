@@ -80,6 +80,7 @@ End of Checklist================================================================
 			InitializeComponent();
 			webBrowserManual.Navigated+=WebBrowserManual_Navigated;
 			webView2.NavigationCompleted+=WebView2FAQ_NavigationCompleted;
+			HasHelpButton=false;
 			//webBrowserManual.ScriptErrorsSuppressed=true;
 			//webBrowserFAQ.ScriptErrorsSuppressed=true;
 			Load+=FrmHelpBrowser_Load;

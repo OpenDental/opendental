@@ -564,13 +564,7 @@ namespace OpenDental {
 			if(!hasDuplicatePaySimple && !DeletePaySimpleToken()) {
 				return;
 			}
-			CreditCards.Delete(CreditCardCur.CreditCardNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,_patient.PatNum,"Credit Card Removed");
-			List<CreditCard> listCreditCards=CreditCards.RefreshAll(_patient.PatNum);
-			for(int i=0;i<listCreditCards.Count;i++) {
-				listCreditCards[i].ItemOrder=listCreditCards.Count-(i+1);
-				CreditCards.Update(listCreditCards[i]);//Resets ItemOrder.
-			}
+			CreditCards.DeleteAndRefresh(CreditCardCur);
 			DialogResult=DialogResult.OK;
 		}
 		

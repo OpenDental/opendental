@@ -230,6 +230,10 @@ namespace OpenDental.UI {
 				//Try reading in the signature using the ANSI paradigm.
 				TopazWrapper.FillSignatureANSI(sigBoxTopaz,keyData,signature,_signatureMode);
 			}
+			if(TopazWrapper.GetTopazNumberOfTabletPoints(sigBoxTopaz)==0) {
+				//Try reading in the signature using different encodings for keyData.
+				TopazWrapper.FillSignatureEncodings(sigBoxTopaz,keyData,signature,_signatureMode);
+			}
 			//If sig still not showing it must be invalid.
 			if(TopazWrapper.GetTopazNumberOfTabletPoints(sigBoxTopaz)==0) {
 				labelInvalidSig.Visible=true;

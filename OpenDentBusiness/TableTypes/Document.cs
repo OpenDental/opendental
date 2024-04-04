@@ -21,7 +21,7 @@ namespace OpenDentBusiness{
 		public long PatNum;
 		/// <summary>The name of the file. Does not include any directory info.</summary>
 		public string FileName;
-		/// <summary>Enum:ImageType Document, Radiograph, Photo, File</summary>
+		/// <summary>Enum:ImageType Document, Radiograph, Photo, File, Attachment.</summary>
 		public ImageType ImgType;
 		/// <summary>True if flipped horizontally. A vertical flip would be stored as a horizontal flip plus a 180 rotation.</summary>
 		public bool IsFlipped;
@@ -74,6 +74,8 @@ namespace OpenDentBusiness{
 		public string OcrResponseData;
 		/// <summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack. Only used when patient scans their insurance card from eClipboard.</summary>
 		public EnumOcrCaptureType ImageCaptureType;
+		///<summary>Set true by default for radiographs and tooth charts. When set to true, it will print additional heading text including patient name, DOB, and today's date.</summary>
+		public bool PrintHeading;
 
 		///<summary>Returns a copy/clone of this Document.</summary>
 		public Document Copy() {

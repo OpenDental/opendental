@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDentBusiness;
@@ -150,6 +154,66 @@ namespace OpenDental.UI {
 					break;
 			}
 			SetTopazSigString(topaz,signature);
+		}
+
+		///<summary>Use as a last resort. Enumerates all encodings to find the first encoding that successfully decrypts the signature.</summary>
+		public static void FillSignatureEncodings(Control topaz,string keyData,string signature,OpenDental.UI.SignatureBoxWrapper.SigMode sigMode) {
+			//Figure out if key data needs to be hashed depending on the SigMode.
+			string keyDataHashed;
+			switch(sigMode) {
+				case OpenDental.UI.SignatureBoxWrapper.SigMode.TreatPlan:
+					keyDataHashed=TreatPlans.GetHashStringForSignature(keyData);
+					break;
+				case OpenDental.UI.SignatureBoxWrapper.SigMode.OrthoChart:
+					keyDataHashed=OrthoCharts.GetHashStringForSignature(keyData);
+					break;
+				case OpenDental.UI.SignatureBoxWrapper.SigMode.Document:
+				case OpenDental.UI.SignatureBoxWrapper.SigMode.Default:
+				default:
+					keyDataHashed=keyData;
+					break;
+			}
+			//Use reflection to directly set encoded bytes as the KeyData that Topaz should use when decrypting the signature.
+			FieldInfo fieldInfoSig;
+			Topaz.Signature topazSignature;
+			MethodInfo methodInfoSetAutoKeyData;
+			try {
+				//Get the field info for SigPlusNET's private Sig field.
+				fieldInfoSig=typeof(SigPlusNET).GetField("Sig",BindingFlags.NonPublic | BindingFlags.Instance);
+				//Get the value of the Sig field from the instance of the SigPlusNET object passed in.
+				topazSignature=(Topaz.Signature)fieldInfoSig.GetValue(topaz);
+				//Get the method info of the private SetAutoKeyData() method that accepts a byte array from the Sig field.
+				//This method allows us to bypass the incorrect encodings that are forced on us in the public methods.
+				methodInfoSetAutoKeyData=fieldInfoSig.FieldType.GetMethod("SetAutoKeyData",BindingFlags.NonPublic | BindingFlags.Instance,null,new Type[] { typeof(Byte[]) },null);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				return;
+			}
+			List<Encoding> listEncodings=Encoding.GetEncodings().Select(x => x.GetEncoding()).ToList();
+			for(int i=0;i<listEncodings.Count;i++) {
+				//Completely clear and reset the signature pad in-between each encoding.
+				ClearTopaz(topaz);
+				SetTopazCompressionMode(topaz,0);
+				SetTopazEncryptionMode(topaz,0);
+				SetTopazKeyString(topaz,"0000000000000000");//Clear out the key string
+				SetTopazEncryptionMode(topaz,2);//high encryption
+				SetTopazCompressionMode(topaz,2);//high compression
+				try {
+					((SigPlusNET)topaz).AutoKeyStart();
+					//Invoke SetAutoKeyData() with the encoded bytes of keyDataHashed.
+					methodInfoSetAutoKeyData.Invoke(topazSignature,new object[] { listEncodings[i].GetBytes(keyDataHashed) });
+					((SigPlusNET)topaz).AutoKeyFinish();
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					continue;
+				}
+				SetTopazSigString(topaz,signature);
+				if(GetTopazNumberOfTabletPoints(topaz) > 0) {
+					break;
+				}
+			}
 		}
 
 		#endregion

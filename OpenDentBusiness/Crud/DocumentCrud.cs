@@ -85,6 +85,7 @@ namespace OpenDentBusiness.Crud{
 				document.IsCropOld       = PIn.Bool  (row["IsCropOld"].ToString());
 				document.OcrResponseData = PIn.String(row["OcrResponseData"].ToString());
 				document.ImageCaptureType= (OpenDentBusiness.EnumOcrCaptureType)PIn.Int(row["ImageCaptureType"].ToString());
+				document.PrintHeading    = PIn.Bool  (row["PrintHeading"].ToString());
 				retVal.Add(document);
 			}
 			return retVal;
@@ -125,6 +126,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("IsCropOld");
 			table.Columns.Add("OcrResponseData");
 			table.Columns.Add("ImageCaptureType");
+			table.Columns.Add("PrintHeading");
 			foreach(Document document in listDocuments) {
 				table.Rows.Add(new object[] {
 					POut.Long  (document.DocNum),
@@ -156,6 +158,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Bool  (document.IsCropOld),
 					            document.OcrResponseData,
 					POut.Int   ((int)document.ImageCaptureType),
+					POut.Bool  (document.PrintHeading),
 				});
 			}
 			return table;
@@ -175,7 +178,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="DocNum,";
 			}
-			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld,OcrResponseData,ImageCaptureType) VALUES(";
+			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld,OcrResponseData,ImageCaptureType,PrintHeading) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(document.DocNum)+",";
 			}
@@ -207,7 +210,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (document.ProvNum)+","
 				+    POut.Bool  (document.IsCropOld)+","
 				+    DbHelper.ParamChar+"paramOcrResponseData,"
-				+    POut.Int   ((int)document.ImageCaptureType)+")";
+				+    POut.Int   ((int)document.ImageCaptureType)+","
+				+    POut.Bool  (document.PrintHeading)+")";
 			if(document.Note==null) {
 				document.Note="";
 			}
@@ -252,7 +256,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="DocNum,";
 			}
-			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld,OcrResponseData,ImageCaptureType) VALUES(";
+			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld,OcrResponseData,ImageCaptureType,PrintHeading) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(document.DocNum)+",";
 			}
@@ -284,7 +288,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (document.ProvNum)+","
 				+    POut.Bool  (document.IsCropOld)+","
 				+    DbHelper.ParamChar+"paramOcrResponseData,"
-				+    POut.Int   ((int)document.ImageCaptureType)+")";
+				+    POut.Int   ((int)document.ImageCaptureType)+","
+				+    POut.Bool  (document.PrintHeading)+")";
 			if(document.Note==null) {
 				document.Note="";
 			}
@@ -344,7 +349,8 @@ namespace OpenDentBusiness.Crud{
 				+"ProvNum         =  "+POut.Long  (document.ProvNum)+", "
 				+"IsCropOld       =  "+POut.Bool  (document.IsCropOld)+", "
 				+"OcrResponseData =  "+DbHelper.ParamChar+"paramOcrResponseData, "
-				+"ImageCaptureType=  "+POut.Int   ((int)document.ImageCaptureType)+" "
+				+"ImageCaptureType=  "+POut.Int   ((int)document.ImageCaptureType)+", "
+				+"PrintHeading    =  "+POut.Bool  (document.PrintHeading)+" "
 				+"WHERE DocNum = "+POut.Long(document.DocNum);
 			if(document.Note==null) {
 				document.Note="";
@@ -481,6 +487,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="ImageCaptureType = "+POut.Int   ((int)document.ImageCaptureType)+"";
 			}
+			if(document.PrintHeading != oldDocument.PrintHeading) {
+				if(command!="") { command+=",";}
+				command+="PrintHeading = "+POut.Bool(document.PrintHeading)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -593,6 +603,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(document.ImageCaptureType != oldDocument.ImageCaptureType) {
+				return true;
+			}
+			if(document.PrintHeading != oldDocument.PrintHeading) {
 				return true;
 			}
 			return false;
