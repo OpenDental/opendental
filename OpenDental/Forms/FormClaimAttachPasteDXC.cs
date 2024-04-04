@@ -255,7 +255,7 @@ namespace OpenDental {
 				listImageAttachments.Add(_listAttachmentItems[i].ImageAttachment);
 			}
 			try {
-				//AddAttachments(listImageAttachments);//Send to DXC
+				AddAttachments(listImageAttachments);//Send to DXC
 			}
 			//Creating and sending DXC Attachments will sometimes time out when an arbitrarily large group of attachments are being sent, 
 			//at which point each attachment should be sent individually.
@@ -349,6 +349,71 @@ namespace OpenDental {
 				return;
 			}
 			pictureBox.Image=bitmap;
+		}
+
+		///<summary>Set the pictureBox.Image as soon as a right click occurs. Very similar to gridMain_CellClick().</summary>
+		private void contextMenuImageGrid_Popup(object sender,EventArgs e) {
+			int idxAttachSelected=gridMain.GetSelectedIndex();
+			if(idxAttachSelected==-1) {
+				return;
+			}
+			Bitmap bitmap=_listAttachmentItems[idxAttachSelected].Bitmap;
+			if(bitmap==null) {
+				MsgBox.Show("Cannot load the image for this file");
+				return;
+			}
+			pictureBox.Image=bitmap;
+		}
+
+		///<summary>Centralizes setting an imageTypeCode from the right click menu.</summary>
+		private void SetImageTypeCode(ClaimConnect.ImageTypeCode imageTypeCode) {
+			int idxAttachSelected=gridMain.GetSelectedIndex();
+			if(idxAttachSelected==-1) {
+				return;
+			}
+			_listAttachmentItems[idxAttachSelected].HasTypeBeenSet=true;
+			_listAttachmentItems[idxAttachSelected].ImageAttachment.ImageType=imageTypeCode;
+			FillGrid();//Refill grid to show updated imageTypeCode
+		}
+
+		private void menuItemReferralForm_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.ReferralForm);
+		}
+
+		private void menuItemDiagnosticReport_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.DiagnosticReport);
+		}
+
+		private void menuItemExplanationOfBenefits_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.ExplanationOfBenefits);
+		}
+
+		private void menuItemOtherAttachments_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.OtherAttachments);
+		}
+
+		private void menuItemPeriodontalCharts_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.PeriodontalCharts);
+		}
+
+		private void menuItemXRays_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.XRays);
+		}
+
+		private void menuItemDentalModels_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.DentalModels);
+		}
+
+		private void menuItemRadiologyReports_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.RadiologyReports);
+		}
+
+		private void menuItemIntraOralPhotograph_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.IntraOralPhotograph);
+		}
+
+		private void menuItemNarrative_Click(object sender,EventArgs e) {
+			SetImageTypeCode(ClaimConnect.ImageTypeCode.Narrative);
 		}
 
 		private void butSend_Click(object sender,EventArgs e) {

@@ -1901,6 +1901,10 @@ namespace OpenDental
 					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
 						TopazWrapper.FillSignatureANSI(_sigBoxTopaz,keystring,GetDocumentShowing(0).Signature,SignatureBoxWrapper.SigMode.Document);
 					}
+					//Try reading in the signature using different encodings for keyData.
+					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
+						TopazWrapper.FillSignatureEncodings(_sigBoxTopaz,keystring,GetDocumentShowing(0).Signature,SignatureBoxWrapper.SigMode.Document);
+					}
 					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
 						labelInvalidSig.Visible=true;
 					}

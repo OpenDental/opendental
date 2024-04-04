@@ -77,6 +77,7 @@ End of Checklist================================================================
 
 		public FrmHelpBrowser() {
 			InitializeComponent();
+			HasHelpButton=false;
 			webBrowserManual.Navigated+=WebBrowserManual_Navigated;
 			webBrowserFAQ.Navigated+=WebBrowserFAQ_Navigated;
 			Load+=FrmHelpBrowser_Load;

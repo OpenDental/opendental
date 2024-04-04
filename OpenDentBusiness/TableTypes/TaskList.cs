@@ -33,7 +33,7 @@ namespace OpenDentBusiness{
 		[CrudColumn(IsNotDbColumn=true)]
 		public int NewTaskCount;
 		///<summary>Enum:GlobalTaskFilterType 0=Disabled, 1=Default, 2=None, 3=Clinic, 4=Region.  If a type is selected, then tasks in this tasklist will be filtered by default 
-		///such that only tasks that match the tasklist's GlobalFilterType will show in the view.</summary>
+		///such that only tasks that match the tasklist's GlobalFilterType will show in the view. Disabled is not valid for tasklists and will be treated as Default if applied to a tasklist; it is only valid on the TasksGlobalFilterType preference.</summary>
 		public EnumTaskFilterType GlobalTaskFilterType;
 		///<summary>Enum:TaskListStatusEnum 0=Active, 1=Archived. Archived task lists are hidden from the Task Window's User, Main, and Reminder tabs by default.</summary>
 		public TaskListStatusEnum TaskListStatus;
@@ -47,7 +47,7 @@ namespace OpenDentBusiness{
 
 	///<summary>Used to determine which tasks should be filtered to show in a tasklist based upon clinic/region.</summary>
 	public enum EnumTaskFilterType {
-		///<summary>0-Hides filtering from UI. Only shows in FormTaskPreferences.</summary>
+		///<summary>0-Hides filtering from UI. Only shows in FormTaskPreferences.  Disabled is only valid on the TasksGlobalFilterType preference. Disabled is not valid for tasklists and will be treated as Default if applied to a tasklist.</summary>
 		Disabled=0,
 		///<summary>1-Only shows in FormTaskListEdit.</summary>
 		Default,

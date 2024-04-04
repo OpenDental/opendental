@@ -310,6 +310,7 @@ namespace OpenDental {
 			menuItemSnipAttachment.Enabled=true;
 			menuItemSelectImage.Enabled=true;
 			menuItemPasteAttachment.Enabled=true;
+			menuItemAttachmentHistory.Enabled=true;
 			Clearinghouse clearingHouse=new Clearinghouse();
 			int countClaim=listIdxRowsSelected.Select(x => table.Rows[x]["ClaimNum"].ToString()).Count(y => y!="0");
 			//Must be exactly 1 claim selected.
@@ -320,12 +321,14 @@ namespace OpenDental {
 				menuItemSnipAttachment.Enabled=false;
 				menuItemSelectImage.Enabled=false;
 				menuItemPasteAttachment.Enabled=false;
+				menuItemAttachmentHistory.Enabled=false;
 			}
 			//Are attachments allowed to be sent and is the office using ClaimConnect
 			if(clearingHouse==null || !clearingHouse.IsAttachmentSendAllowed || clearingHouse.CommBridge!=EclaimsCommBridge.ClaimConnect){
 				menuItemSnipAttachment.Enabled=false;
 				menuItemSelectImage.Enabled=false;
 				menuItemPasteAttachment.Enabled=false;
+				menuItemAttachmentHistory.Enabled=false;
 			}
 			//Delete PayPlan Charge--------------------------------------------------------------------------------------------
 			menuItemDeletePayPlanCharge.Visible=false;
@@ -2000,10 +2003,10 @@ namespace OpenDental {
 			if(!ValidateRightClickDXC(claim)) {
 				return;
 			}
-			using FormClaimAttachSnipDXC formClaimAttachSnipDXC=new FormClaimAttachSnipDXC();
+			FormClaimAttachSnipDXC formClaimAttachSnipDXC=new FormClaimAttachSnipDXC();
 			formClaimAttachSnipDXC.Claim=claim;
 			formClaimAttachSnipDXC.Patient=_patient;
-			formClaimAttachSnipDXC.ShowDialog();
+			formClaimAttachSnipDXC.Show();
 		}
 
 		private void menuItemSelectImage_Click(object sender,EventArgs e) {
@@ -2040,6 +2043,22 @@ namespace OpenDental {
 			formClaimAttachPasteDXC.ClaimCur=claim;
 			formClaimAttachPasteDXC.PatientCur=_patient;
 			formClaimAttachPasteDXC.ShowDialog();
+		}
+
+		private void menuItemAttachmentHistory_Click(object sender,EventArgs e) {
+			DataTable table=_dataSetMain.Tables["account"];
+			//Guaranteed to be exactly one claim selected (among possible other selections)
+			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
+			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
+			if(claimNum==0) {
+				return;
+			}
+			Claim claim=Claims.GetClaim(claimNum);
+			//no need to validate since we're just looking at existing.
+			using FormClaimAttachHistory formClaimAttachHistory=new FormClaimAttachHistory();
+			formClaimAttachHistory.ClaimCur=claim;
+			formClaimAttachHistory.PatientCur=_patient;
+			formClaimAttachHistory.ShowDialog();
 		}
 		#endregion Methods - Event Handlers MenuItem
 

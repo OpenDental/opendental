@@ -456,7 +456,7 @@ namespace OpenDental {
 		private void butSend_Click(object sender,EventArgs e) {
 			bool attachmentSentAndSaved=SendAttachmentToDXCAndSaveLocally();
 			if(attachmentSentAndSaved) {
-				DialogResult=DialogResult.OK;
+				Close();
 			}
 		}
 

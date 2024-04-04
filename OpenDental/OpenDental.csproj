@@ -727,6 +727,12 @@
     <Compile Include="Forms\FormBenefitFrequencies.Designer.cs">
       <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormClaimAttachHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormClaimAttachHistory.designer.cs">
+      <DependentUpon>FormClaimAttachHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormClaimAttachPasteDXCItem.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7547,6 +7553,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormBenefitFrequencies.resx">
       <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormClaimAttachHistory.resx">
+      <DependentUpon>FormClaimAttachHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormClaimAttachPasteDXCItem.resx">
       <DependentUpon>FormClaimAttachPasteDXCItem.cs</DependentUpon>

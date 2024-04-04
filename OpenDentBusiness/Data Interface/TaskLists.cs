@@ -292,7 +292,8 @@ namespace OpenDentBusiness{
 			string strClinicFilterNums=string.Join(",",listClinicNums.Select(x => POut.Long(x)));
 			string strRegionFilterNums=string.Join(",",listClinicNumsInRegion.Select(x => POut.Long(x)));
 			//Clause for TaskLists that have Default filter.
-			string cmdFilterTaskListByDefault="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)EnumTaskFilterType.Default)
+			string cmdFilterTaskListByDefault="(tasklistfortask.GlobalTaskFilterType IN ("
+				+POut.Long((long)EnumTaskFilterType.Disabled)+","+POut.Long((long)EnumTaskFilterType.Default)+")"//Disabled is treated as Default for tasklists.
 				+GetDefaultFilterTypeString((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType),strClinicFilterNums,strRegionFilterNums)+") ";
 			//Clause for TaskLists that have None filter.
 			string cmdFilterTaskListByNone="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)EnumTaskFilterType.None)+")";

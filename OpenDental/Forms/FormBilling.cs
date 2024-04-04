@@ -454,7 +454,8 @@ namespace OpenDental {
 			//In case the user didn't come directly from FormBillingOptions check the DateRangeFrom on an electronic statement to see if we need to
 			//display the warning message. Spot checking to save time. 
 			if(popUpCheck!=null && (IsHistoryStartMinDate || popUpCheck.DateRangeFrom.Year<1880)) {
-				if(!MsgBox.Show(MsgBoxButtons.YesNo,"Sending statements electronically for all account history could result in many pages. Continue?")) {
+				if(MessageBox.Show(Lan.g(this,"Sending statements electronically for all account history could result in many pages. Continue?"),"",MessageBoxButtons.YesNo)==DialogResult.No) {
+					//use a MessageBox for now until MsgBox hiding behind things is fixed
 					return;
 				}
 				SecurityLogs.MakeLogEntry(EnumPermType.Billing,0,"User proceeded with electronic billing for all dates.");

@@ -35,7 +35,6 @@
 			this.checkIsXrayMirrored = new OpenDental.UI.CheckBox();
 			this.pictureBoxImagePreview = new System.Windows.Forms.PictureBox();
 			this.butSendAndAgain = new OpenDental.UI.Button();
-			this.labelNewSnip = new System.Windows.Forms.Label();
 			this.labelClaimAttachWarning = new System.Windows.Forms.Label();
 			this.timerKillSnipToolProcesses = new System.Windows.Forms.Timer(this.components);
 			this.timerMonitorClipboard = new System.Windows.Forms.Timer(this.components);
@@ -79,7 +78,7 @@
 			// butSend
 			// 
 			this.butSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSend.Location = new System.Drawing.Point(390, 302);
+			this.butSend.Location = new System.Drawing.Point(438, 302);
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(75, 24);
 			this.butSend.TabIndex = 4;
@@ -126,23 +125,13 @@
 			// butSendAndAgain
 			// 
 			this.butSendAndAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSendAndAgain.Location = new System.Drawing.Point(390, 262);
+			this.butSendAndAgain.Location = new System.Drawing.Point(384, 272);
 			this.butSendAndAgain.Name = "butSendAndAgain";
-			this.butSendAndAgain.Size = new System.Drawing.Size(75, 24);
+			this.butSendAndAgain.Size = new System.Drawing.Size(129, 24);
 			this.butSendAndAgain.TabIndex = 6;
-			this.butSendAndAgain.Text = "&Send";
+			this.butSendAndAgain.Text = "Send and Snip &Another";
 			this.butSendAndAgain.UseVisualStyleBackColor = true;
 			this.butSendAndAgain.Click += new System.EventHandler(this.butSendAndAgain_Click);
-			// 
-			// labelNewSnip
-			// 
-			this.labelNewSnip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelNewSnip.Location = new System.Drawing.Point(469, 265);
-			this.labelNewSnip.Name = "labelNewSnip";
-			this.labelNewSnip.Size = new System.Drawing.Size(116, 15);
-			this.labelNewSnip.TabIndex = 10;
-			this.labelNewSnip.Text = "(and Snip Another)";
-			this.labelNewSnip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelClaimAttachWarning
 			// 
@@ -169,7 +158,6 @@
 			this.AcceptButton = this.butSend;
 			this.ClientSize = new System.Drawing.Size(584, 338);
 			this.Controls.Add(this.labelClaimAttachWarning);
-			this.Controls.Add(this.labelNewSnip);
 			this.Controls.Add(this.butSendAndAgain);
 			this.Controls.Add(this.pictureBoxImagePreview);
 			this.Controls.Add(this.checkIsXrayMirrored);
@@ -202,7 +190,6 @@
 		private OpenDental.UI.CheckBox checkIsXrayMirrored;
 		private System.Windows.Forms.PictureBox pictureBoxImagePreview;
 		private UI.Button butSendAndAgain;
-		private System.Windows.Forms.Label labelNewSnip;
 		private System.Windows.Forms.Label labelClaimAttachWarning;
 		private System.Windows.Forms.Timer timerKillSnipToolProcesses;
 		private System.Windows.Forms.Timer timerMonitorClipboard;
