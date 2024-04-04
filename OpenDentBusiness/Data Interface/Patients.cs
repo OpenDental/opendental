@@ -5036,8 +5036,9 @@ namespace OpenDentBusiness {
 			if(patient.SecurityHash==null) {//When a patient is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
 				return true;
 			}
-			//Do not check date, all patients are subject to validation
-			//SecDateEntry only get set on Insert, so once or never. It's useless.
+			if(patient.DateTStamp < Misc.SecurityHash.DateStart) {//Old
+				return true;
+			}
 			if(patient.SecurityHash==HashFields(patient)) {
 				return true;
 			}
