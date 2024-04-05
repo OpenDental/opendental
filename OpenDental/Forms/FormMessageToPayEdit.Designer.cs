@@ -182,7 +182,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butSend);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMessageToPayEdit";
-			this.Text = "Message To Pay Edit";
+			this.Text = "Message-to-Pay Edit";
 			this.Load += new System.EventHandler(this.FormMessageToPayEdit_Load);
 			this.groupCommType.ResumeLayout(false);
 			this.ResumeLayout(false);

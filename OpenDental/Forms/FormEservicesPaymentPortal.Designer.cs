@@ -129,7 +129,7 @@ namespace OpenDental{
 			this.groupBoxMessageToPay.Name = "groupBoxMessageToPay";
 			this.groupBoxMessageToPay.Size = new System.Drawing.Size(538, 427);
 			this.groupBoxMessageToPay.TabIndex = 53;
-			this.groupBoxMessageToPay.Text = "Message To Pay Template (Same for all clinics)";
+			this.groupBoxMessageToPay.Text = "Message-to-Pay Template (Same for all clinics)";
 			// 
 			// groupBoxUserControlFill
 			// 

@@ -76,10 +76,15 @@ namespace OpenDental {
 			comboPatFieldAvailableCredit.Items.AddList(listPatFieldDefs.FindAll(x=>x.FieldType==PatFieldType.CareCreditAvailableCredit),x=>x.FieldName);
 			comboPatFieldAvailableCredit.SetSelectedKey<PatFieldDef>(patFieldDefNumAvailableCredit,x => x.PatFieldDefNum,x => Lan.g(this,"None"));
 			_hasCareCreditPatFieldDefNum=ApptViewItems.GetWhere(x => listPatFieldDefs.Select(y => y.PatFieldDefNum).ToList().Contains(x.PatFieldDefNum)).Count>0;
-			List<EnumCareCreditBatch> listCareCreditQSOptions=Enum.GetValues(typeof(EnumCareCreditBatch)).OfType<EnumCareCreditBatch>().ToList();
-			for (int i=0;i<listCareCreditQSOptions.Count;i++){
-				listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",listCareCreditQSOptions[i].GetDescription()),listCareCreditQSOptions[i]);
-			}
+			//EnumCareCreditBatch is stored in db. Manually order to preserve enum order but improve readability.
+			EnumCareCreditBatch enumCareCreditBatch=EnumCareCreditBatch.Off;
+			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
+			enumCareCreditBatch=EnumCareCreditBatch.On;
+			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
+			enumCareCreditBatch=EnumCareCreditBatch.NoBalance;
+			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
+			enumCareCreditBatch=EnumCareCreditBatch.LookupOnly;
+			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
 			FillFields(isLoad:true);
 			DisableControlsForMerchantClosed();
 		}

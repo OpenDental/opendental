@@ -1366,7 +1366,7 @@ namespace OpenDentBusiness {
 			//End E52592
 		}//End of 24_1_12() method
 
-		private static void o24_1_17() {
+		private static void To24_1_18() {
 			string command;
 			LargeTableHelper.AlterTable("document","DocNum",new LargeTableHelper.ColNameAndDef("PrintHeading","tinyint NOT NULL"));
 			command="UPDATE document SET PrintHeading=1 WHERE ImgType=1";//1=radiograph

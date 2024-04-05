@@ -4590,7 +4590,7 @@
       <summary>The name of the file. Does not include any directory info.</summary>
     </column>
     <column order="6" name="ImgType" type="tinyint">
-      <summary>Enum:ImageType Document, Radiograph, Photo, File</summary>
+      <summary>Enum:ImageType Document, Radiograph, Photo, File, Attachment.</summary>
       <Enumeration name="ImageType">
         <summary>The type of image for images module.</summary>
         <EnumValue name="Document">0- Includes scanned documents and screenshots.</EnumValue>
@@ -17108,7 +17108,7 @@
     </column>
     <column order="9" name="GlobalTaskFilterType" type="tinyint(4)">
       <summary>Enum:GlobalTaskFilterType 0=Disabled, 1=Default, 2=None, 3=Clinic, 4=Region.  If a type is selected, then tasks in this tasklist will be filtered by default 
-            such that only tasks that match the tasklist's GlobalFilterType will show in the view.</summary>
+            such that only tasks that match the tasklist's GlobalFilterType will show in the view. Disabled is not valid for tasklists and will be treated as Default if applied to a tasklist; it is only valid on the TasksGlobalFilterType preference.</summary>
       <Enumeration name="GlobalTaskFilterType">
         <summary></summary>
       </Enumeration>

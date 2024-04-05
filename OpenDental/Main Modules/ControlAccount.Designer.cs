@@ -941,7 +941,7 @@
 			// menuItemSendMsgToPay
 			// 
 			this.menuItemSendMsgToPay.Index = 4;
-			this.menuItemSendMsgToPay.Text = "Send Message-To-Pay";
+			this.menuItemSendMsgToPay.Text = "Send Message-to-Pay";
 			this.menuItemSendMsgToPay.Click += new System.EventHandler(this.menuItemSendMessageToPay_Click);
 			// 
 			// contextMenuPayPlan

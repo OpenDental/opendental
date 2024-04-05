@@ -159,6 +159,7 @@ namespace OpenDentBusiness {
 		public static EServiceSetup.SignupOut GetEServiceSetupFull(SignupPortalPermission permission,bool isSwitchClinicPref=false,EServiceSetup.SignupOut oldSignupOut=null) {
 			//Clinics will be stored in this order at HQ to allow signup portal to display them in proper order.
 			List<Clinic> clinics=Clinics.GetDeepCopy().OrderBy(x => x.ItemOrder).ToList();
+			clinics.Add(Clinics.GetPracticeAsClinicZero("HQ"));
 			if(PrefC.GetBool(PrefName.ClinicListIsAlphabetical)) {
 				clinics=clinics.OrderBy(x => x.Abbr).ToList();
 			}
@@ -191,6 +192,7 @@ namespace OpenDentBusiness {
 											//Use the ClinicPref as an override, otherwise, Clinic.Abbr is used, if blank, finally use practice title.
 											ShortCodeOptInYourDentist=ClinicPrefs.GetPref(PrefName.ShortCodeOptInClinicTitle,x.ClinicNum)?.ValueString
 												?? (string.IsNullOrWhiteSpace(x.Description) ? shortCodePracticeTitle : x.Description),
+											AddressInfo=EServiceSetup.SignupIn.ClinicLiteIn.AddressInfoLite.SerializeAddress(x),
 										}).ToList(),
 									IsSwitchClinicPref=isSwitchClinicPref,
 									//Use the ClinicNum=0 ClinicPref as an override, otherwise, PracticeTitle.
@@ -848,6 +850,59 @@ namespace OpenDentBusiness {
 					public string ClinicTitle;
 					public bool IsHidden;
 					public string ShortCodeOptInYourDentist;
+					public string AddressInfo;
+
+					///<summary>Lite version of Practice Clinic table's Address info</summary>
+					public class AddressInfoLite {
+						public string Address;
+						public string Address2;
+						public string City;
+						public string State;
+						public string Zip;
+						public string BillingAddress;
+						public string BillingAddress2;
+						public string BillingCity;
+						public string BillingState;
+						public string BillingZip;
+						public string PayToAddress;
+						public string PayToAddress2;
+						public string PayToCity;
+						public string PayToState;
+						public string PayToZip;
+
+						///<summary>Convert a versioned OD Clinic to a version-less json representation of a AddressInfoLite, to be stored at HQ.</summary>
+						public static string SerializeAddress(Clinic clinic) {
+							AddressInfoLite addressInfo=new AddressInfoLite();
+							addressInfo.Address=clinic.Address;
+							addressInfo.Address2=clinic.Address2;
+							addressInfo.City=clinic.City;
+							addressInfo.State=clinic.State;
+							addressInfo.Zip=clinic.Zip;
+							addressInfo.BillingAddress=clinic.BillingAddress;
+							addressInfo.BillingAddress2=clinic.BillingAddress2;
+							addressInfo.BillingCity=clinic.BillingCity;
+							addressInfo.BillingState=clinic.BillingState;
+							addressInfo.BillingZip=clinic.BillingZip;
+							addressInfo.PayToAddress=clinic.PayToAddress;
+							addressInfo.PayToAddress2=clinic.PayToAddress2;
+							addressInfo.PayToCity=clinic.PayToCity;
+							addressInfo.PayToState=clinic.PayToState;
+							addressInfo.PayToZip=clinic.PayToZip;
+							return JsonConvert.SerializeObject(addressInfo);
+						}
+
+						///<summary>Takes the JSON value in the "AddressInfo" column of EServiceClinic and parses it into an AddressInfoLite</summary>
+						public static AddressInfoLite DeserializeAddress(string addressInfoString) {
+							try {
+								AddressInfoLite addressInfoLite;
+								addressInfoLite=JsonConvert.DeserializeObject<AddressInfoLite>(addressInfoString);
+								return addressInfoLite;
+							}
+							catch(Exception ex) {
+								return new AddressInfoLite();
+							}
+						}
+					}
 				}
 
 				/// <summary>Lite version of the HQ Mobile App Device table. Versionless so keep simple and do not remove or rename fields.</summary>

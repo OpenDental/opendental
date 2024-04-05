@@ -1,7 +1,6 @@
 using CodeBase;
 using Newtonsoft.Json;
 using OpenDentBusiness;
-using OpenDentBusiness.Crud;
 using OpenDentBusiness.WebTypes.WebApps;
 using System;
 using System.Collections.Generic;
@@ -60,7 +59,7 @@ namespace OpenDental {
 			//Email Template
 			if(!string.IsNullOrWhiteSpace(_apptReminderRule.TemplateEmail)) {
 				if(!_apptReminderRule.TemplateEmail.Contains(MsgToPaySents.MSG_TO_PAY_TAG)) {
-					listErrors.Add(Lan.g(this,"Your Message-To-Pay Email Template must contain")+$" {MsgToPaySents.MSG_TO_PAY_TAG} ");
+					listErrors.Add(Lan.g(this,"Your Message-to-Pay Email Template must contain")+$" {MsgToPaySents.MSG_TO_PAY_TAG} ");
 				}
 				string emailErrorText=PrefC.GetFirstShortURL(_apptReminderRule.TemplateEmail);
 				if(!string.IsNullOrWhiteSpace(emailErrorText)) {
@@ -70,7 +69,7 @@ namespace OpenDental {
 			//SMS Template
 			if(!string.IsNullOrWhiteSpace(_apptReminderRule.TemplateSMS)) {
 				if(!_apptReminderRule.TemplateSMS.Contains(MsgToPaySents.MSG_TO_PAY_TAG)) {
-					listErrors.Add(Lan.g(this,"Your Message-To-Pay Text Template must contain")+$" {MsgToPaySents.MSG_TO_PAY_TAG} ");
+					listErrors.Add(Lan.g(this,"Your Message-to-Pay Text Template must contain")+$" {MsgToPaySents.MSG_TO_PAY_TAG} ");
 				}
 				string smsErrorText=PrefC.GetFirstShortURL(_apptReminderRule.TemplateSMS);
 				if(!string.IsNullOrWhiteSpace(smsErrorText)) {

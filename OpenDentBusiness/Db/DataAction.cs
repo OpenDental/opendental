@@ -164,11 +164,6 @@ namespace OpenDentBusiness {
 			Run(a,ConnectionNames.ServicesHQ);
 		}
 
-		///<summary>HQ only. Perform the given action in the context of the eServices logger db.</summary>
-		public static void RunEServicesLogger(Action a) {
-			Run(a,ConnectionNames.ServicesHQLog);
-		}
-
 		///<summary>HQ only. Perform the given action in the context of the headmaster db.</summary>
 		public static void RunHeadmaster(Action a) {
 			Run(a,ConnectionNames.Headmaster);
@@ -268,10 +263,6 @@ namespace OpenDentBusiness {
 		///<summary>Perform the given function in the context of the serviceshq db.</summary>
 		public static T GetEServices<T>(Func<T> fn) {
 			return GetT(fn,ConnectionNames.ServicesHQ);
-		}
-
-		public static T GetEServicesLogger<T>(Func<T> fn) {
-			return GetT(fn,ConnectionNames.ServicesHQLog);
 		}
 
 		public static T GetHeadmaster<T>(Func<T> fn) {

@@ -29,6 +29,10 @@ namespace OpenDental {
 				BottomYLimit=SheetCur.Height;
 			}
 			FillFields();
+			textXPos.Text=SheetFieldCur.XPos.ToString();
+			textYPos.Text=SheetFieldCur.YPos.ToString();
+			textWidth.Text=SheetFieldCur.Width.ToString();
+			textHeight.Text=SheetFieldCur.Height.ToString();
 		}
 
 		private void FillFields(){
@@ -44,10 +48,6 @@ namespace OpenDental {
 				Document document=Documents.GetByNum(docNum);
 				textFieldValueDoc.Text=document.DateCreated.ToShortDateString()+" "+document.Description;
 			}
-			textXPos.Text=SheetFieldCur.XPos.ToString();
-			textYPos.Text=SheetFieldCur.YPos.ToString();
-			textWidth.Text=SheetFieldCur.Width.ToString();
-			textHeight.Text=SheetFieldCur.Height.ToString();
 		}
 
 		private void butChange_Click(object sender, EventArgs e){

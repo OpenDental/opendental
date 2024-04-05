@@ -433,9 +433,9 @@ namespace WpfControls.UI{
 				TextPointer textPointerEnd=ConvertLengthFromPlain(textPointerStart,value);
 				//int iEnd=iStart+value;//this works even if value is 0
 				//TextPointer textPointerEnd=textPointerContentStart.GetPositionAtOffset(iEnd);
-				//if(textPointerEnd is null){
-				//	return;//invalid.
-				//}
+				if(textPointerEnd is null){
+					return;//invalid.
+				}
 				richTextBox.Selection.Select(textPointerStart,textPointerEnd);
 				//this is something that the caller might need to do. We shouldn't do it here:
 				//if(!richTextBox.IsKeyboardFocused){
@@ -981,12 +981,7 @@ namespace WpfControls.UI{
 					TextPointer textPointerEnd=textPointer.GetPositionAtOffset(match.Index+match.Length);
 					TextRange textRange=new TextRange(textPointerStart,textPointerEnd);
 					textRange.Text=listQuickPasteNotes[i].Note;
-					//pointer are not preserved, so recalculate
-					int idxEnd=match.Index+listQuickPasteNotes[i].Note.Length
-						+Regex.Matches(listQuickPasteNotes[i].Note,@"\r\n").Count*2;//each CR adds 2 char. From \r\n to RunEnd,ParagraphEnd,ParagraphStart,RunStart is an increase of 2
-					//if note is multiline, the above always works at the end, but if it's in the middle, there can be edge cases where it's off by a couple.
-					//Not sure why, and it's no big deal.
-					textPointerEnd=textPointer.GetPositionAtOffset(idxEnd);
+					textPointerEnd=textRange.End;
 					richTextBox.Selection.Select(textPointerEnd,textPointerEnd);
 					return;
 				}
@@ -1144,7 +1139,7 @@ namespace WpfControls.UI{
 			return idx+count*2;//from \r\n to RunEnd,ParagraphEnd,ParagraphStart,RunStart is an increase of 2
 		}
 
-		///<summary></summary>
+		///<summary>Can return null if the end pointer cannot find the next position.</summary>
 		private TextPointer ConvertLengthFromPlain(TextPointer textPointer,int lengthPlain){
 			//scan from textPointer, compensating for paragraphs as we go.
 			int countScanned=0;
@@ -1167,7 +1162,10 @@ namespace WpfControls.UI{
 					break;
 				}
 				//because the original textPointer was passed in by value, this does not affect the original. It's new each time.
-				textPointer = textPointer.GetNextContextPosition(LogicalDirection.Forward);
+				textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
+				if(textPointer is null) {
+					return null;
+				}
 			}
 			return textPointer;
 		}
