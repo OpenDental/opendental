@@ -221,7 +221,7 @@ namespace OpenDental {
 			//}
 			//else {//Prompt for file.
 			string fileName;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
 				fileName=ODCloudClient.ImportFileForCloud();
 			}
 			else {

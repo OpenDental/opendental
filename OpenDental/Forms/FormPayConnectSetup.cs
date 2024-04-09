@@ -398,11 +398,11 @@ namespace OpenDental{
 			}
 			if(ODEnvironment.IsCloudServer) {
 				//ODCloud, send the installer to the client computer instead of installing it here on the server computer.
-				if(ODCloudClient.IsAppStream) {
-					CloudClientL.ExportForCloud(zipFileName,doPromptForName:false);
-				}
-				else {
+				if(ODBuild.IsThinfinity()) {
 					Thinfinity.ThinfinityUtils.ExportForDownload(zipFileName);
+				}
+				else {//Is AppStream
+					CloudClientL.ExportForCloud(zipFileName,doPromptForName:false);
 				}
 				Cursor=Cursors.Default;
 				MessageBox.Show(Lans.g(this,"Download complete. Run the Setup.exe file in the downloaded zip file."));

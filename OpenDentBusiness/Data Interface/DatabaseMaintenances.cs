@@ -727,6 +727,7 @@ namespace OpenDentBusiness {
 				//"alertitem",//Not including this because we intentionally set ClinicNum to -1 to indicate the alert's for all clinics.
 				"appointment",
 				"claim",
+				"claimpayment",
 				"claimproc",
 				"histappointment",
 				"patient",

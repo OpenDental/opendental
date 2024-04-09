@@ -158,11 +158,31 @@ namespace OpenDentBusiness{
 			}
 			return false;
 		}
+
+		///<summary>Gets one CovSpan from the DB. Returns null if not found.</summary>
+		public static CovSpan GetOne(long covSpanNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<CovSpan>(MethodBase.GetCurrentMethod(),covSpanNum);
+			}
+			string command="SELECT * FROM covspan WHERE CovSpanNum="+POut.Long(covSpanNum);
+			return Crud.CovSpanCrud.SelectOne(command);
+		}
+
+		///<summary>Gets multiple CovSpans from database. Returns null if not found.</summary>
+		public static List<CovSpan> GetCovSpansForApi(int limit,int offset,long covCatNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<CovSpan>>(MethodBase.GetCurrentMethod(),limit,offset,covCatNum);
+			}
+			string command="SELECT * FROM covspan ";
+			if(covCatNum>-1) {
+				command+="WHERE CovCatNum="+POut.Long(covCatNum)+" ";
+			}
+			command+="ORDER BY CovSpanNum "//Ensure order for limit and offset.
+			+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.CovSpanCrud.SelectMany(command);
+		}
+
 	}
-
-	
-
-
 }
 
 

@@ -3823,11 +3823,11 @@ namespace OpenDental {
 			}
 			if(!string.IsNullOrEmpty(docPath)) {
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				if(ODCloudClient.IsAppStream) {
-					CloudClientL.ExportForCloud(tempFilePath,doPromptForName:false);
-				}
-				else {
+				if(ODBuild.IsThinfinity()) {
 					ThinfinityUtils.ExportForDownload(tempFilePath);
+				}
+				else {//Is AppStream
+					CloudClientL.ExportForCloud(tempFilePath,doPromptForName:false);
 				}
 			}
 			else {

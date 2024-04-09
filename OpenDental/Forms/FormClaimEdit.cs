@@ -2536,11 +2536,11 @@ namespace OpenDental{
 					string tempPath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
 					string currentPath=FileAtoZ.CombinePaths(EmailAttaches.GetAttachPath(),_claim.Attachments[i].ActualFileName);
 					FileAtoZ.Copy(currentPath,tempPath,FileAtoZSourceDestination.AtoZToLocal,"Exporting attachment...");
-					if(ODCloudClient.IsAppStream) {
-						CloudClientL.ExportForCloud(tempPath,doPromptForName:false);
-					}
-					else {
+					if(ODBuild.IsThinfinity()) {
 						ThinfinityUtils.ExportForDownload(tempPath);
+					}
+					else if(ODCloudClient.IsAppStream) {
+						CloudClientL.ExportForCloud(tempPath,doPromptForName:false);
 					}
 				}
 				return;

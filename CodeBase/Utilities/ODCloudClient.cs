@@ -397,7 +397,7 @@ namespace CodeBase {
 
 		public static string CheckIsRunning() {
 			string result=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.CheckIsRunning,timeoutSecs:5,doShowProgressBar:false);
-			if(IsAppStream) {
+			if(!ODBuild.IsThinfinity() && IsAppStream) {
 				var dese=JsonConvert.DeserializeObject<CloudClientResult>(result);
 				if(_appstreamId.IsNullOrEmpty() || _lastAppstreamRequest.IsNullOrEmpty() || File.Exists(ODFileUtils.CombinePaths(FileWatcherDirectory,_lastAppstreamRequest))) {
 					_appstreamId=dese.ResultData.IsNullOrEmpty() ? "" : dese.ResultData;
@@ -752,9 +752,9 @@ namespace CodeBase {
 				FileIdentifier="",
 				hasResponse=hasResponse,
 			};
-			if(IsAppStream) {
-                jsonData.FileIdentifier=Guid.NewGuid().ToString();
-            }
+			if(!ODBuild.IsThinfinity() && IsAppStream) {
+				jsonData.FileIdentifier=Guid.NewGuid().ToString();
+			}
 			return JsonConvert.SerializeObject(jsonData);
 		}
 

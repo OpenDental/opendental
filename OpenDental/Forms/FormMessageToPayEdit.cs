@@ -12,6 +12,7 @@ namespace OpenDental {
 		private Patient _patient;
 		private Clinic _clinic;
 		private MsgToPayEmailTemplate _msgToPayEmailTemplate;
+		private MsgToPayTagReplacer _msgToPayTagReplacer;
 
 		public FormMessageToPayEdit(long patNum) {
 			InitializeComponent();
@@ -19,6 +20,8 @@ namespace OpenDental {
 			Lan.F(this);
 			_patient=Patients.GetGuarForPat(patNum);
 			_clinic=Clinics.GetClinic(_patient.ClinicNum);
+			//Do not replace the Statement Balance tag yet. Tag is replaced by the most recent statement which gets generated after we insert this message into the database.
+			_msgToPayTagReplacer=new MsgToPayTagReplacer(replaceStatmentBalance:false);
 		}
 
 		private void FormMessageToPayEdit_Load(object sender,EventArgs e) {
@@ -38,9 +41,8 @@ namespace OpenDental {
 			else {
 				try {
 					string text=MarkupEdit.TranslateToXhtml(_msgToPayEmailTemplate.Template,isPreviewOnly:true,hasWikiPageTitles:false,isEmail:true,scale:LayoutManager.ScaleMyFont());
-					MsgToPayTagReplacer tagReplacer=new MsgToPayTagReplacer();
 					MsgToPayLite msgToPayLite=new MsgToPayLite(_patient);
-					text=tagReplacer.ReplaceTags(text,msgToPayLite,_clinic,false);
+					text=_msgToPayTagReplacer.ReplaceTags(text,msgToPayLite,_clinic,false);
 					browserEmail.DocumentText=text;
 				}
 				catch(Exception ex) {
@@ -57,9 +59,8 @@ namespace OpenDental {
 				_msgToPayEmailTemplate.Template="";
 			}
 			string template=PrefC.GetString(PrefName.PaymentPortalMsgToPayTextMessageTemplate);
-			MsgToPayTagReplacer tagReplacer=new MsgToPayTagReplacer();
 			MsgToPayLite msgToPayLite=new MsgToPayLite(_patient);
-			template=tagReplacer.ReplaceTags(template,msgToPayLite,_clinic,false);
+			template=_msgToPayTagReplacer.ReplaceTags(template,msgToPayLite,_clinic,false);
 			textMessage.Text=template;
 			RefreshEmail();
 		}

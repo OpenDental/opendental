@@ -447,7 +447,7 @@ namespace OpenDentBusiness{
 			if(tempFileName==null) {
 				return;
 			}
-			Dictionary<string,Snomed> dictionarySnomeds=Snomeds.GetAll().ToDictionary(x => x.SnomedCode,x => x);
+			List<Snomed> listSnomeds=Snomeds.GetAll();
 			string[] stringArrayLines=File.ReadAllLines(tempFileName);
 			string[] stringArraySnomeds;
 			Snomed snomed=new Snomed();
@@ -459,19 +459,24 @@ namespace OpenDentBusiness{
 					progressArgs(i+1,stringArrayLines.Length);
 				}
 				stringArraySnomeds=stringArrayLines[i].Split('\t');
-				if(dictionarySnomeds.ContainsKey(stringArraySnomeds[0])) {//code already exists
-					snomed=dictionarySnomeds[stringArraySnomeds[0]];
-					if(updateExisting && snomed.Description!=stringArraySnomeds[1]) {
-						snomed.Description=stringArraySnomeds[1];
-						Snomeds.Update(snomed);
-						numCodesUpdated++;
-					}
+				if(stringArraySnomeds.Length<2) {
+					continue;//Line is not formatted properly. Do not import this code.
+				}
+				snomed=listSnomeds.Find(x => x.SnomedCode==stringArraySnomeds[0]);
+				if(snomed==null) {//Adding a new SNOMED
+					snomed=new Snomed();
+					snomed.SnomedCode		=stringArraySnomeds[0];
+					snomed.Description	=stringArraySnomeds[1];
+					Snomeds.Insert(snomed);
+					listSnomeds.Add(snomed);//To prevent inserting duplicates
+					numCodesImported++;
 					continue;
 				}
-				snomed.SnomedCode		=stringArraySnomeds[0];
-				snomed.Description	=stringArraySnomeds[1];
-				Snomeds.Insert(snomed);
-				numCodesImported++;
+				if(updateExisting && snomed.Description!=stringArraySnomeds[1]) {
+					snomed.Description=stringArraySnomeds[1];
+					Snomeds.Update(snomed);
+					numCodesUpdated++;
+				}
 			}
 		}
 

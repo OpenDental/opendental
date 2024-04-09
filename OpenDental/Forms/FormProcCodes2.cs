@@ -1100,7 +1100,7 @@ namespace OpenDental {
 				SynchAndFillListFees(true);
 			}
 			string importFilePath;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
 				importFilePath=ODCloudClient.ImportFileForCloud();
 				if(importFilePath.IsNullOrEmpty()) {
 					return; //User cancelled out of OpenFileDialog

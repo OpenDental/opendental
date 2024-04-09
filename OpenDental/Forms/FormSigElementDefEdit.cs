@@ -104,7 +104,7 @@ namespace OpenDental{
 
 		private void butImport_Click(object sender,EventArgs e) {
 			string importFilePath;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
 				importFilePath=ODCloudClient.ImportFileForCloud();
 				if(importFilePath.IsNullOrEmpty()) {
 					return;
@@ -141,11 +141,11 @@ namespace OpenDental{
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				if(ODCloudClient.IsAppStream) {
-					CloudClientL.ExportForCloud(tempPath);
-				}
-				else {
+				if(ODBuild.IsThinfinity()) {
 					ThinfinityUtils.ExportForDownload(tempPath);
+				}
+				else {//Is AppStream
+					CloudClientL.ExportForCloud(tempPath);
 				}
 				return;
 			}

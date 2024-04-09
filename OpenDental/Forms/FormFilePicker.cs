@@ -28,7 +28,7 @@ namespace OpenDental {
 		}
 
 		private void FormFilePicker_Load(object sender,EventArgs e) {
-			if(ODCloudClient.IsAppStream){
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
 				DoHideLocalButton=true;
 			}
 			butFileChoose.Visible=!DoHideLocalButton;
@@ -92,7 +92,7 @@ namespace OpenDental {
 
 		private void butImport_Click(object sender,EventArgs e) {
 			string[] stringArrayFileNames;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
 				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
 				if(listImportFilePaths[0].IsNullOrEmpty()) {
 					return;

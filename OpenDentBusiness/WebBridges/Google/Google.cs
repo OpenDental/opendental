@@ -234,7 +234,7 @@ namespace OpenDentBusiness {
 				_codeVerifier=RandomDataBase64Url(32);
 				_codeChallenge=Base64urlencodeNoPadding(Sha256(_codeVerifier));
 				BuildAuthorizationUrl(emailAddress);
-				if(ODCloudClient.IsAppStream) {
+				if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
 					ODCloudClient.LaunchFileWithODCloudClient(_url);
 				}
 				else{
