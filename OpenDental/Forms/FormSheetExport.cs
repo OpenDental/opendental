@@ -81,12 +81,12 @@ namespace OpenDental {
 				using XmlWriter xmlWriter=XmlWriter.Create(stringBuilder2);
 				xmlSerializer.Serialize(xmlWriter,sheetDef);
 				xmlWriter.Close();
-				if(ODCloudClient.IsAppStream) {
+				if(ODBuild.IsWeb()) {
+					ThinfinityUtils.ExportForDownload(fileName,stringBuilder2.ToString());
+				}
+				else {//Is AppStream
 					File.WriteAllText(fileName,stringBuilder2.ToString());
 					CloudClientL.ExportForCloud(fileName);
-				}
-				else {
-					ThinfinityUtils.ExportForDownload(fileName,stringBuilder2.ToString());
 				}
 			}
 			else {

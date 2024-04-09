@@ -222,7 +222,7 @@ namespace OpenDental {
 			//}
 			//else {//Prompt for file.
 			string fileName;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
 				fileName=ODCloudClient.ImportFileForCloud();
 			}
 			else {

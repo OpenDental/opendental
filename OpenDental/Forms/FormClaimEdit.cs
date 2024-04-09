@@ -2523,11 +2523,11 @@ namespace OpenDental{
 					string tempPath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
 					string currentPath=FileAtoZ.CombinePaths(EmailAttaches.GetAttachPath(),_claim.Attachments[i].ActualFileName);
 					FileAtoZ.Copy(currentPath,tempPath,FileAtoZSourceDestination.AtoZToLocal,"Exporting attachment...");
-					if(ODCloudClient.IsAppStream) {
-						CloudClientL.ExportForCloud(tempPath,doPromptForName:false);
-					}
-					else {
+					if(ODBuild.IsWeb()) {
 						ThinfinityUtils.ExportForDownload(tempPath);
+					}
+					else if(ODCloudClient.IsAppStream) {
+						CloudClientL.ExportForCloud(tempPath,doPromptForName:false);
 					}
 				}
 				return;
@@ -3133,6 +3133,7 @@ namespace OpenDental{
 			}
 			FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
 			_formClaimAttachmentDXC=formClaimAttachmentDXC;
+			_formClaimAttachmentDXC.FormClosed+=FormClaimAttachment_FormClosed;
 			formClaimAttachmentDXC.Show();
 			//if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
 			//	FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);

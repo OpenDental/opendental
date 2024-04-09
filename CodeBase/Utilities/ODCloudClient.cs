@@ -737,9 +737,9 @@ namespace CodeBase {
 				FileIdentifier="",
 				hasResponse=hasResponse,
 			};
-			if(IsAppStream) {
-        jsonData.FileIdentifier=Guid.NewGuid().ToString();
-      }
+			if(!ODBuild.IsWeb() && IsAppStream) {
+				jsonData.FileIdentifier=Guid.NewGuid().ToString();
+			}
 			return JsonConvert.SerializeObject(jsonData);
 		}
 

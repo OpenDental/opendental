@@ -691,7 +691,7 @@ namespace OpenDental {
 			Color colorBorder=_colorBorder;
 			Color colorBorderText=_colorBorderText;
 			Color colorButtonHot=_colorButtonHot;
-			if(this.GetType().ToString() == "FormImageFloat"){
+			if(this.GetType()==typeof(FormImageFloat)){ //"OpenDental.FormImageFloat"){
 				//They don't get a choice on these colors because that's too hard
 				Color colorFloatBase=Color.FromArgb(65, 94, 154);//This is the default dark blue-gray, same as grid titles
 				if(IsImageFloatSelected){

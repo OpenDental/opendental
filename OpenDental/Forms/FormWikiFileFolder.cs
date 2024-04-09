@@ -36,8 +36,8 @@ namespace OpenDental {
 				textLink.Text=folderBrowserDialog.SelectedPath;
 				return;
 			}
-			if(ODCloudClient.IsAppStream) {
-				//Block File browsing to prevent access to file directory of the VM. We will redirect to use the ODCloudClient in a future job.
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
+				//Block File browsing in AppStream to prevent access to file directory of the VM. We will redirect to use the ODCloudClient in a future job.
 				MessageBox.Show(Lans.g(this,"File browsing not allowed in web mode."));
 				return;
 			}

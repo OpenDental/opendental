@@ -304,7 +304,7 @@ namespace OpenDental {
 				return;
 			}
 			string filePath;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
 				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"ODUserQueryExport.xls");
 			}
 			else {

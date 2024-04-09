@@ -4572,12 +4572,12 @@ namespace OpenDental {
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),GetDocumentShowing(0).FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),GetDocumentShowing(0).FileName);
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				if(ODCloudClient.IsAppStream) {
-					CloudClientL.ExportForCloud(tempFilePath);
-				}
-				else {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.ExportForDownload(tempFilePath);
 					MsgBox.Show(this,"Done.");
+				}
+				else {//Is AppStream
+					CloudClientL.ExportForCloud(tempFilePath);
 				}
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with category "
@@ -4592,12 +4592,12 @@ namespace OpenDental {
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),_documentArrayShowing[_idxSelectedInMount].FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),_documentArrayShowing[_idxSelectedInMount].FileName);
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				if(ODCloudClient.IsAppStream) {
-					CloudClientL.ExportForCloud(tempFilePath);
-				}
-				else {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.ExportForDownload(tempFilePath);
 					MsgBox.Show(this,"Done.");
+				}
+				else {//Is AppStream
+					CloudClientL.ExportForCloud(tempFilePath);
 				}
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Exported: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
@@ -4617,14 +4617,14 @@ namespace OpenDental {
 				DrawMount(g);
 				g.Dispose();
 				bitmapExport.Save(tempFilePath);
-				if(ODCloudClient.IsAppStream){
-					CloudClientL.ExportForCloud(tempFilePath);
-					bitmapExport.Dispose();
-				}
-				else {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.ExportForDownload(tempFilePath);
 					bitmapExport.Dispose();
 					MsgBox.Show(this,"Done.");
+				}
+				else {//Is AppStream
+					CloudClientL.ExportForCloud(tempFilePath);
+					bitmapExport.Dispose();
 				}
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
 				string logText="Mount Exported: "+_mountShowing.Description+" with category "
@@ -4636,8 +4636,8 @@ namespace OpenDental {
 
 		///<summary>Supports multiple file imports (unless in Appstream), and user doesn't actually need to select a mount item first.</summary>
 		private void ToolBarImportMount(){
-			string[] stringArrayFileNames;
-			if(ODCloudClient.IsAppStream) {
+			string[] stringArrayFileNames=new string[0];
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
 				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
 				if(listImportFilePaths[0].IsNullOrEmpty()) {
 					return;
@@ -4710,8 +4710,8 @@ namespace OpenDental {
 				EventFillTree?.Invoke(this,true);
 				return;
 			}
-			string[] stringArrayFileNames;
-			if(ODCloudClient.IsAppStream) {
+			string[] stringArrayFileNames=new string[0];
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
 				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
 				if(listImportFilePaths[0].IsNullOrEmpty()) {
 					return;

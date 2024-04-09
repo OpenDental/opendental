@@ -188,12 +188,12 @@ namespace OpenDental{
 				XmlSerializer xmlSerializerWeb=new XmlSerializer(typeof(ClaimForm));
 				xmlSerializerWeb.Serialize(xmlWriter,claimForm);
 				xmlWriter.Close();
-				if(ODCloudClient.IsAppStream) {
+				if(ODBuild.IsWeb()) {
+					ThinfinityUtils.ExportForDownload(fileName,stringBuilder.ToString());
+				}
+				else if(ODCloudClient.IsAppStream) {
 					File.WriteAllText(fileName,stringBuilder.ToString());
 					CloudClientL.ExportForCloud(fileName,doPromptForName:false);
-				}
-				else {
-					ThinfinityUtils.ExportForDownload(fileName,stringBuilder.ToString());
 				}
 				return;
 			}
@@ -219,7 +219,7 @@ namespace OpenDental{
 		///<summary>Import an XML file into the custom claim forms list.</summary>
 		private void butImport_Click(object sender, System.EventArgs e) {
 			string importFilePath;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
 				importFilePath=ODCloudClient.ImportFileForCloud();
 				if(importFilePath.IsNullOrEmpty()) {
 					return; //User cancelled out of OpenFileDialog

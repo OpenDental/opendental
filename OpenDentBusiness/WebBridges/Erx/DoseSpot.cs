@@ -238,8 +238,7 @@ namespace OpenDentBusiness {
 			List<DoseSpotMedicationWrapper> listDoseSpotMedicationWrappers=listDoseSpotPerscriptions.Select(x => new DoseSpotMedicationWrapper(x,null)).ToList();
 			//Add self reported medications.
 			listDoseSpotMedicationWrappers.AddRange(DoseSpotREST.GetSelfReported(token,oIDExternal.IDExternal).Select(x => new DoseSpotMedicationWrapper(null,x)).ToList());
-			listDoseSpotMedicationWrappers=listDoseSpotMedicationWrappers.FindAll(x => x.MedicationStatus!=DoseSpotREST.MedicationStatus.Deleted);
-			foreach(DoseSpotMedicationWrapper doseSpotMedicationWrapper in listDoseSpotMedicationWrappers) {
+			foreach(DoseSpotMedicationWrapper doseSpotMedicationWrapper in listDoseSpotMedicationWrappers.Where(x=>x.MedicationStatus!=DoseSpotREST.MedicationStatus.Deleted)) {
 				RxPat rxPatOld=null;
 				if(doseSpotMedicationWrapper.IsSelfReported) {
 					//Get self reported that originated in OD
@@ -407,7 +406,7 @@ namespace OpenDentBusiness {
 				else {
 					medicationPatNum=Erx.InsertOrUpdateErxMedication(rxPatOld,rxPat,rxCui,doseSpotMedicationWrapper.DisplayName,doseSpotMedicationWrapper.GenericProductName,isProvider);
 				}
-				if(rxPatOld==null) {//Only add the rx if it is new.  We don't want to trigger automation for existing prescriptions.
+				if(rxPatOld==null && !doseSpotMedicationWrapper.MedicationStatus.In(DoseSpotREST.MedicationStatus.Unknown, DoseSpotREST.MedicationStatus.Inactive)) {//Only add the rx if it is new and it's status isn't deprecated.  We don't want to trigger automation for existing prescriptions.
 					listRxPats.Add(rxPat);
 				}
 				if(doseSpotMedicationWrapper.MedicationStatus==DoseSpotREST.MedicationStatus.Active) {

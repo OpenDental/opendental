@@ -89,7 +89,7 @@ namespace OpenDental {
 
 		private void butImport_Click(object sender,EventArgs e) {
 			string[] stringArrayFileNames;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
 				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
 				if(listImportFilePaths[0].IsNullOrEmpty()) {
 					return;

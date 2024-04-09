@@ -92,7 +92,7 @@ namespace OpenDental {
 		private void butImport_Click(object sender,EventArgs e) {
 			#region Get Imported HTML 
 			string importFilePath;
-			if(ODCloudClient.IsAppStream) {
+			if(!ODBuild.IsWeb() && ODCloudClient.IsAppStream) {
 				importFilePath=ODCloudClient.ImportFileForCloud();
 				if(importFilePath.IsNullOrEmpty()) {
 					return; //User cancelled out of OpenFileDialog
