@@ -83,22 +83,23 @@ namespace OpenDental {
 		}
 
 		public static void ExportForCloud(string filePath,bool doPromptForName=true) {
+			string fileName=Path.GetFileName(filePath);
+			string origExt=Path.GetExtension(filePath);
 			if(doPromptForName) {
-				string fileName=Path.GetFileName(filePath);
 				InputBox inputBox=new InputBox("Enter file name:\r\nExample: \"PaymentsReport.xls\", \"ProcedureCode.xml\"",fileName);
 				inputBox.ShowDialog();
 				if(inputBox.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				if(!inputBox.Text.IsNullOrEmpty()) {
-					if(Path.GetExtension(inputBox.Text).IsNullOrEmpty()) {
-						fileName+=".txt";
+				string fileNameInput=inputBox.textResult.Text;
+				if(!fileNameInput.IsNullOrEmpty()) {
+					fileName=ODFileUtils.CleanFileName(fileNameInput);
+					if(Path.GetExtension(fileNameInput).IsNullOrEmpty()) {
+						fileName+=origExt;
 					}
-					fileName=ODFileUtils.CleanFileName(inputBox.Text);
-					filePath=ODFileUtils.CombinePaths(filePath,fileName);
 				}
 			}
-			ODCloudClient.ExportForAppStream(filePath);
+			ODCloudClient.ExportForAppStream(filePath,fileName);
 		}
 
 		private enum PromptSelections {

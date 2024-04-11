@@ -239,12 +239,19 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Sets Clinics.ClinicNum. Used when logging on to determines what clinic to start with based on user and workstation preferences.</summary>
-		public static void LoadClinicNumForUser() {
+		public static void LoadClinicNumForUser(string clinicNumCLA="") {
 			_clinicNum=0;//aka headquarters clinic when clinics are enabled.
 			if(!PrefC.HasClinicsEnabled || Security.CurUser==null) {
 				return;
 			}
 			List<Clinic> listClinics = Clinics.GetForUserod(Security.CurUser);
+			if(!long.TryParse(clinicNumCLA, out long clinicNum)){
+				clinicNum=-1;
+			}
+			if(clinicNum>=0 && listClinics.Any(x => x.ClinicNum==clinicNum)){
+				_clinicNum=clinicNum;
+				return;
+			}
 			switch(PrefC.GetString(PrefName.ClinicTrackLast)) {
 				case "Workstation":
 					if(Security.CurUser.ClinicIsRestricted && Security.CurUser.ClinicNum!=ComputerPrefs.LocalComputer.ClinicNum) {//The user is restricted and it's not the clinic this computer has by default

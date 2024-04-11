@@ -214,7 +214,7 @@ namespace OpenDentBusiness {
 			}
 			else if(ODCloudClient.IsAppStream) {
 				File.WriteAllText(path,json);
-				ODCloudClient.ExportForAppStream(path);
+				ODCloudClient.ExportForAppStream(path,Path.GetFileName(path));
 			}
 			else {
 				File.WriteAllText(path,json);

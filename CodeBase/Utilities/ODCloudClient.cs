@@ -897,12 +897,11 @@ namespace CodeBase {
 			}
 		}
 
-		public static void ExportForAppStream(string filePath) {
+		public static void ExportForAppStream(string filePath,string fileName) {
 			Byte[] bytes=File.ReadAllBytes(filePath);
 			string fileDataString=Convert.ToBase64String(bytes);
 			ODCloudClientData oDCloudClientData=new ODCloudClientData();
 			oDCloudClientData.FileData=fileDataString;
-			string fileName=Path.GetFileName(filePath);
 			oDCloudClientData.OtherData=fileName;
 			string response=SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.ExportFile);
 			MessageBox.Show(response);

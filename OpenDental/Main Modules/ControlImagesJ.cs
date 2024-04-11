@@ -894,9 +894,12 @@ namespace OpenDental
 			//We allow anything which ends with a different extention to be viewed in the windows fax viewer.
 			//Specifically, multi-page faxes can be viewed more easily by one of our customers using the fax viewer.
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+				string tempFile=ImageStore.GetFilePath(document,_patFolder);
 				if(ODBuild.IsWeb()) {
-					string tempFile=ImageStore.GetFilePath(document,_patFolder);
 					ThinfinityUtils.HandleFile(tempFile);
+				}
+				else if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(tempFile,doPromptForName:false);
 				}
 				else {
 					try {
@@ -928,6 +931,9 @@ namespace OpenDental
 					File.WriteAllBytes(tempFile,state.FileContent);
 					if(ODBuild.IsWeb()) {
 						ThinfinityUtils.HandleFile(tempFile);
+					}
+					else if(ODCloudClient.IsAppStream) {
+						CloudClientL.ExportForCloud(tempFile,doPromptForName:false);
 					}
 					else {
 						Process.Start(tempFile);
