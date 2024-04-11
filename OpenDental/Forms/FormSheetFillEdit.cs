@@ -2026,8 +2026,8 @@ namespace OpenDental {
 				SheetCur.SheetFields[i].SheetNum=SheetCur.SheetNum;
 			}
 			if(!isNewReferralLetterWithProcsOrChart) {
-				//Don't need to do this for referral letters that have tooth charts or grids because 
-				//we don't save their sheet fields. Instead, they are saved and accessed as PDFs. 
+				//Prog grids and tooth charts are complex to generate, and we have no mechanism to store them with a sheet.
+				//So when those are present, we always just generate a pdf, and the user will have no way to get back to the sheet.
 				//Sync fields before sigBoxes
 				SheetFields.Sync(SheetCur.SheetFields.FindAll(x => !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)),SheetCur.SheetNum,isSigBoxOnly:false);
 			}

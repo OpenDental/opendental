@@ -5854,6 +5854,11 @@ namespace OpenDental {
 		///<summary>Returns true if the row can be deleted.</summary>
 		private EnumSkippedRow CanDeleteRow(DataRow dataRow, bool isCheckDb=true, OrthoProcLink orthoProcLink=null) {
 			long procNum=PIn.Long(dataRow["ProcNum"].ToString(),false);
+			long sheetNum=PIn.Long(dataRow["SheetNum"].ToString(),false);
+			Sheet sheet=null;
+			if(sheetNum!=0) {
+				sheet=Sheets.GetSheet(sheetNum);
+			}
 			if(procNum!=0) {
 				ProcStat procStat=PIn.Enum<ProcStat>(PIn.Int(dataRow["ProcStatus"].ToString()));
 				if(procStat.In(ProcStat.C,ProcStat.EC,ProcStat.EO)
@@ -5922,6 +5927,9 @@ namespace OpenDental {
 				if(isCheckDb && !Security.IsAuthorized(EnumPermType.RxEdit)) {
 					return EnumSkippedRow.RxSecurity;
 				}
+				return EnumSkippedRow.None;
+			}
+			if(sheet!=null && sheet.SheetType==SheetTypeEnum.ReferralLetter && sheet.DocNum!=0) {
 				return EnumSkippedRow.None;
 			}
 			//Not a proc or a prescription
@@ -9736,6 +9744,7 @@ namespace OpenDental {
 			List<OrthoProcLink> listOrthoProcLinks=OrthoProcLinks.GetManyForProcs(listProcNumsSelected);
 			for(int i=0;i<listDataRowsSelected.Count();i++) {
 				long procNum=PIn.Long(listDataRowsSelected[i]["ProcNum"].ToString());
+				long sheetNum=PIn.Long(listDataRowsSelected[i]["SheetNum"].ToString(),false);
 				if(procNum!=0) {
 					orthoProcLink=listOrthoProcLinks.Find(x=>x.ProcNum==procNum);
 				}
@@ -9762,6 +9771,27 @@ namespace OpenDental {
 					case EnumSkippedRow.NoneButCannotDelete:
 					case EnumSkippedRow.None:
 						break;
+				}
+				Sheet sheet=null;
+				if(sheetNum!=0) {
+					sheet=Sheets.GetSheet(sheetNum);
+				}
+				//This specific sheet was saved as a document due to it having a procedure grid and cannot be deleted through FormSheetFillEdit
+				if(sheet!=null) {
+					Sheets.Delete(sheet.SheetNum);//just changes status instead of actually removing
+					SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,sheet.PatNum,sheet.Description
+						+" "+Lan.g(this,"deleted from")+" "+sheet.DateTimeSheet.ToShortDateString());
+					Document document=new Document();
+					document=Documents.GetByNum(sheet.DocNum,true);
+					if(document!=null) {
+						try {
+							ImageStore.DeleteDocuments(new List<Document> {document},_patFolder);
+						}
+						catch(Exception ex) {//Image could not be deleted, in use.
+							MsgBox.Show(this,ex.Message);
+						}
+					}
+					continue;
 				}
 				if(listDataRowsSelected[i]["ProcNum"].ToString()!="0") {
 					try {
