@@ -24,6 +24,8 @@ namespace OpenDental {
 		private List<Label> _listLabels;
 		///<summary>Only used in one spot. If true, this window will close in 15 seconds if no user input.</summary>
 		public bool HasTimeout=false;
+		///<summary>If true, this window has had 15 seconds without user clicking OK or X, so close the window.</summary>
+		public bool HasTimedOut=false;
 		public Func<string,bool> FuncOkClick;
 		int _curLocationY=2;
 		int _minWidth=250;
@@ -280,6 +282,7 @@ namespace OpenDental {
 		private void Timer_Tick(object sender,EventArgs e) {
 			_dispatcherTimer.IsEnabled=false;
 			IsDialogCancel=true;
+			HasTimedOut=true;
 		}
 		#endregion Methods - Event Handlers
 

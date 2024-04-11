@@ -84,17 +84,19 @@ namespace OpenDental {
 
 		public static void ExportForCloud(string filePath,bool doPromptForName=true) {
 			string fileName=Path.GetFileName(filePath);
+			string origExt=Path.GetExtension(filePath);
 			if(doPromptForName) {
 				InputBox inputBox=new InputBox("Enter file name:\r\nExample: \"PaymentsReport.xls\", \"ProcedureCode.xml\"",fileName);
 				inputBox.ShowDialog();
 				if(!inputBox.IsDialogOK) {
 					return;
 				}
-				if(!inputBox.StringResult.IsNullOrEmpty()) {
-					if(Path.GetExtension(inputBox.StringResult).IsNullOrEmpty()) {
-						fileName+=".txt";
+				string fileNameInput=inputBox.StringResult;
+				if(!fileNameInput.IsNullOrEmpty()) {
+					fileName=ODFileUtils.CleanFileName(fileNameInput);
+					if(Path.GetExtension(fileNameInput).IsNullOrEmpty()) {
+						fileName+=origExt;
 					}
-					fileName=ODFileUtils.CleanFileName(inputBox.StringResult);
 				}
 			}
 			ODCloudClient.ExportForAppStream(filePath,fileName);

@@ -89,7 +89,9 @@ namespace OpenDental{
 				}
 			}
 			for(int i=0;i<_table.Rows.Count;i++){
-				ApptStatus aptStatus=(ApptStatus)Enum.Parse(typeof(ApptStatus),_table.Rows[i]["aptStatus"].ToString());
+				if(!Enum.TryParse(_table.Rows[i]["aptStatus"].ToString(),out ApptStatus aptStatus)) {
+					aptStatus=ApptStatus.None;
+				}
 				long clinicNum=PIn.Long(_table.Rows[i]["ClinicNum"].ToString());
 				if(PrefC.HasClinicsEnabled //no filtering for non clinics.
 					&& operatoryNums!=null //we don't have "All" selected for an unrestricted user.

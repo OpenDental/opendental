@@ -401,6 +401,7 @@ namespace OpenDental{
 			bool useDynamicMode=(CommandLineArgs_.UseDynamicMode??"").Contains("true");
 			string domainUser=CommandLineArgs_.DomainUser??"";
 			string webServiceUri=CommandLineArgs_.WebServiceUri??"";
+			string clinicNumCLA=CommandLineArgs_.ClinicNum??"";
 			YN webServiceIsEcw=YN.Unknown;
 			if(!CommandLineArgs_.WebServiceIsEcw.IsNullOrEmpty()) {
 				if(CommandLineArgs_.WebServiceIsEcw=="true") {
@@ -646,7 +647,12 @@ namespace OpenDental{
 			//If the user is not restricted, or if the user is restricted but has access to the computerpref clinic, the computerpref clinic will be selected
 			//The ClinicNum will determine which view is loaded, either from the computerpref table or from the userodapptview table
 			if(PrefC.HasClinicsEnabled && Security.CurUser!=null) {//If block must be run before StartCacheFillForFees() so correct clinic filtration occurs.
-				Clinics.LoadClinicNumForUser();
+				if(clinicNumCLA!=""){
+					Clinics.LoadClinicNumForUser(clinicNumCLA);
+				}
+				else{
+					Clinics.LoadClinicNumForUser();
+				}
 				RefreshMenuClinics();
 			}
 			BeginODDashboardStarterThread();
@@ -4807,6 +4813,9 @@ namespace OpenDental{
 				InputBox inputBox=new InputBox(inputBoxParam);
 				inputBox.HasTimeout=true;
 				inputBox.ShowDialog();
+				if(inputBox.HasTimedOut) {//Don't save the checkbox if inputBox times out
+					return true;
+				}
 				if(inputBox.IsDialogCancel) {
 					return false;
 				}
@@ -8253,6 +8262,7 @@ namespace OpenDental{
 		public string[] ArrayCommandLineArgs;
 		public string AptNum;
 		public string ChartNumber;
+		public string ClinicNum;
 		public string DatabaseName;
 		///<summary>Not in manual</summary>
 		public string DomainUser;
@@ -8292,6 +8302,7 @@ namespace OpenDental{
 			}
 			AptNum=GetArgFromCommandLineArgs("AptNum=",arrayCommandLineArgs);
 			ChartNumber=GetArgFromCommandLineArgs("ChartNumber=",arrayCommandLineArgs);
+			ClinicNum=GetArgFromCommandLineArgs("ClinicNum=",arrayCommandLineArgs);
 			DatabaseName=GetArgFromCommandLineArgs("DatabaseName=",arrayCommandLineArgs);
 			DomainUser=GetArgFromCommandLineArgs("DomainUser=",arrayCommandLineArgs);
 			string dynamicModeValue=GetArgFromCommandLineArgs("DynamicMode=",arrayCommandLineArgs);
@@ -8353,6 +8364,9 @@ namespace OpenDental{
 			}
 			if(ChartNumber!=null) {
 				arguments+="ChartNumber=\""+ChartNumber+"\" ";
+			}
+			if(ClinicNum!=null) {
+				arguments+="ClinicNum=\""+ClinicNum+"\" ";
 			}
 			if(EcwConfigPath!=null) {
 				arguments+="EcwConfigPath=\""+EcwConfigPath+"\" ";

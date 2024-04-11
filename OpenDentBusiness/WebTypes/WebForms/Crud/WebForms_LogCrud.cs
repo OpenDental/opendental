@@ -56,6 +56,8 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			table.Columns.Add("DateTStamp");
 			table.Columns.Add("RegistrationKeyNum");
 			table.Columns.Add("ServerName");
+			table.Columns.Add("UserHostAddress");
+			table.Columns.Add("UserAgent");
 			foreach(WebForms_Log webForms_Log in listWebForms_Logs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (webForms_Log.LogNum),
@@ -65,6 +67,8 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 					POut.DateT (webForms_Log.DateTStamp),
 					POut.Long  (webForms_Log.RegistrationKeyNum),
 					            webForms_Log.ServerName,
+					            webForms_Log.UserHostAddress,
+					            webForms_Log.UserAgent,
 				});
 			}
 			return table;
@@ -83,6 +87,8 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				webForms_Log.DateTStamp        = PIn.DateT (table.Rows[i]["DateTStamp"].ToString());
 				webForms_Log.RegistrationKeyNum= PIn.Long  (table.Rows[i]["RegistrationKeyNum"].ToString());
 				webForms_Log.ServerName        = PIn.String(table.Rows[i]["ServerName"].ToString());
+				webForms_Log.UserHostAddress   = PIn.String(table.Rows[i]["UserHostAddress"].ToString());
+				webForms_Log.UserAgent         = PIn.String(table.Rows[i]["UserAgent"].ToString());
 				retVal.Add(webForms_Log);
 			}
 			return retVal;
@@ -99,7 +105,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			if(useExistingPK) {
 				command+="LogNum,";
 			}
-			command+="DentalOfficeID,WebSheetDefIDs,LogMessage,RegistrationKeyNum,ServerName) VALUES(";
+			command+="DentalOfficeID,WebSheetDefIDs,LogMessage,RegistrationKeyNum,ServerName,UserHostAddress,UserAgent) VALUES(";
 			if(useExistingPK) {
 				command+=POut.Long(webForms_Log.LogNum)+",";
 			}
@@ -109,7 +115,9 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				+    DbHelper.ParamChar+"paramLogMessage,"
 				//DateTStamp can only be set by MySQL
 				+    POut.Long  (webForms_Log.RegistrationKeyNum)+","
-				+"'"+POut.String(webForms_Log.ServerName)+"')";
+				+"'"+POut.String(webForms_Log.ServerName)+"',"
+				+"'"+POut.String(webForms_Log.UserHostAddress)+"',"
+				+"'"+POut.String(webForms_Log.UserAgent)+"')";
 			if(webForms_Log.LogMessage==null) {
 				webForms_Log.LogMessage="";
 			}
@@ -143,7 +151,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 					if(useExistingPK) {
 						sbCommands.Append("LogNum,");
 					}
-					sbCommands.Append("DentalOfficeID,WebSheetDefIDs,LogMessage,RegistrationKeyNum,ServerName) VALUES ");
+					sbCommands.Append("DentalOfficeID,WebSheetDefIDs,LogMessage,RegistrationKeyNum,ServerName,UserHostAddress,UserAgent) VALUES ");
 					countRows=0;
 				}
 				else {
@@ -157,7 +165,9 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				sbRow.Append("'"+POut.String(webForms_Log.LogMessage)+"'"); sbRow.Append(",");
 				//DateTStamp can only be set by MySQL
 				sbRow.Append(POut.Long(webForms_Log.RegistrationKeyNum)); sbRow.Append(",");
-				sbRow.Append("'"+POut.String(webForms_Log.ServerName)+"'"); sbRow.Append(")");
+				sbRow.Append("'"+POut.String(webForms_Log.ServerName)+"'"); sbRow.Append(",");
+				sbRow.Append("'"+POut.String(webForms_Log.UserHostAddress)+"'"); sbRow.Append(",");
+				sbRow.Append("'"+POut.String(webForms_Log.UserAgent)+"'"); sbRow.Append(")");
 				if(sbCommands.Length+sbRow.Length+1 > TableBase.MaxAllowedPacketCount && countRows > 0) {
 					DataCore.NonQ(sbCommands.ToString());
 					sbCommands=null;
@@ -184,7 +194,9 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				+"LogMessage        =  "+DbHelper.ParamChar+"paramLogMessage, "
 				//DateTStamp can only be set by MySQL
 				+"RegistrationKeyNum=  "+POut.Long  (webForms_Log.RegistrationKeyNum)+", "
-				+"ServerName        = '"+POut.String(webForms_Log.ServerName)+"' "
+				+"ServerName        = '"+POut.String(webForms_Log.ServerName)+"', "
+				+"UserHostAddress   = '"+POut.String(webForms_Log.UserHostAddress)+"', "
+				+"UserAgent         = '"+POut.String(webForms_Log.UserAgent)+"' "
 				+"WHERE LogNum = "+POut.Long(webForms_Log.LogNum);
 			if(webForms_Log.LogMessage==null) {
 				webForms_Log.LogMessage="";
@@ -216,6 +228,14 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			if(webForms_Log.ServerName != oldWebForms_Log.ServerName) {
 				if(command!="") { command+=",";}
 				command+="ServerName = '"+POut.String(webForms_Log.ServerName)+"'";
+			}
+			if(webForms_Log.UserHostAddress != oldWebForms_Log.UserHostAddress) {
+				if(command!="") { command+=",";}
+				command+="UserHostAddress = '"+POut.String(webForms_Log.UserHostAddress)+"'";
+			}
+			if(webForms_Log.UserAgent != oldWebForms_Log.UserAgent) {
+				if(command!="") { command+=",";}
+				command+="UserAgent = '"+POut.String(webForms_Log.UserAgent)+"'";
 			}
 			if(command=="") {
 				return false;

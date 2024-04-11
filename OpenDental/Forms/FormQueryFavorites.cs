@@ -102,7 +102,7 @@ namespace OpenDental{
 				return;
 			}
 			UserQueryCur = (UserQuery)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
-			textQuery.Text=UserQueryCur.QueryText;
+			textQuery.Text=UserQueryCur.QueryText.Replace("\n","\r\n");
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {

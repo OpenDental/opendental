@@ -239,7 +239,7 @@
 			this.gridMain.Location = new System.Drawing.Point(16, 83);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(1003, 669);
+			this.gridMain.Size = new System.Drawing.Size(1003, 579);
 			this.gridMain.TabIndex = 8;
 			this.gridMain.Title = "ERAs";
 			this.gridMain.TranslationName = "TableEtrans835s";
@@ -266,7 +266,7 @@
 			// butAutoProcessedEras
 			// 
 			this.butAutoProcessedEras.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butAutoProcessedEras.Location = new System.Drawing.Point(16, 758);
+			this.butAutoProcessedEras.Location = new System.Drawing.Point(16, 668);
 			this.butAutoProcessedEras.Name = "butAutoProcessedEras";
 			this.butAutoProcessedEras.Size = new System.Drawing.Size(149, 24);
 			this.butAutoProcessedEras.TabIndex = 272;
@@ -276,7 +276,7 @@
 			// 
 			// FormEtrans835s
 			// 
-			this.ClientSize = new System.Drawing.Size(1034, 786);
+			this.ClientSize = new System.Drawing.Size(1034, 696);
 			this.Controls.Add(this.butAutoProcessedEras);
 			this.Controls.Add(this.checkShowFinalizedOnly);
 			this.Controls.Add(this.checkAutomatableCarriersOnly);

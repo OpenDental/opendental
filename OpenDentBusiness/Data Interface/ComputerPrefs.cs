@@ -17,7 +17,7 @@ namespace OpenDentBusiness {
 
 		public static ComputerPref LocalComputer{
 			get {
-				if(_computerPrefLocal==null) {
+				if(_computerPrefLocal==null || _computerPrefLocal.ComputerName.ToLower()!=ODEnvironment.MachineName.ToLower()){
 					_computerPrefLocal=GetForLocalComputer();
 					_computerPrefLocalOld=_computerPrefLocal.Copy();
 				}

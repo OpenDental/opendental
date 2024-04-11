@@ -21,8 +21,12 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 		public long RegistrationKeyNum;
 		///<summary>The MachineName of the server that inserted this log.</summary>
 		public string ServerName;
-		
-    public WebForms_Log(){
+		///<summary>The IP host address of the remote client.</summary>
+		public string UserHostAddress;
+		///<summary>The raw user agent string of the client browser that has been provided.</summary>
+		public string UserAgent;
+
+		public WebForms_Log(){
 
 		}
 		

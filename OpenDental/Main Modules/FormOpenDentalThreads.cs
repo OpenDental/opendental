@@ -746,6 +746,7 @@ namespace OpenDental {
 				if(ODEnvironment.MachineName.ToUpper()!=Security.CurComputerName.ToUpper()) {//_machineName was just found, update Security.cs and the activeinstance row
 					Security.CurComputerName=ODEnvironment.MachineName;
 					ActiveInstances.Upsert(Security.CurUser.UserNum,Computers.GetCur().ComputerNum,Process.GetCurrentProcess().Id);
+					this.InvokeIfRequired(() =>RefreshLocalDataPostCleanup(InvalidType.AllLocal));
 				}
 			});
 			threadCloudMachineName.AddExceptionHandler((e) => e.DoNothing());

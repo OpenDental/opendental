@@ -4,7 +4,9 @@ using OpenDentBusiness.WebTypes.WebForms.Crud;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Web;
 
 namespace OpenDentBusiness.WebTypes.WebForms {
 	public class WebForms_Logs {
@@ -29,6 +31,34 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 				}
 			}
 			return _serverName;
+		}
+
+		private static string GetUserHostAddress() {
+			string userHostAddress;
+			try {
+				//HAProxy will include a header 'X-Forwarded-For' that contains the client IP address.
+				userHostAddress=HttpContext.Current.Request.Headers.GetValues("X-Forwarded-For")?.FirstOrDefault()??"";
+				if(!string.IsNullOrEmpty(userHostAddress)) {
+					return userHostAddress;
+				}
+				//If this request came via HAProxy, then Context.Request.UserHostAddress will be the address of the HAProxy server.
+				userHostAddress=HttpContext.Current.Request.UserHostAddress;
+			}
+			catch(Exception) { 
+				userHostAddress="UNKNOWN";
+			}
+			return userHostAddress;
+		}
+
+		private static string GetUserAgent() {
+			string userAgent;
+			try {
+				userAgent=HttpContext.Current.Request.UserAgent;
+			}
+			catch(Exception) {
+				userAgent="UNKNOWN";
+			}
+			return userAgent;
 		}
 
 		///<summary>Returns all logs for the dental office where the timestamp on the log is greater than or equal to the date and time passed in.</summary>
@@ -121,7 +151,9 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 					LogMessage=logMessage,
 					RegistrationKeyNum=registrationKeyNum,
 					WebSheetDefIDs=string.Join(",",listWebSheetDefIDs),
-					ServerName=GetServerName()
+					ServerName=GetServerName(),
+					UserAgent=GetUserAgent(),
+					UserHostAddress=GetUserHostAddress(),
 				};
 				Insert(webForms_Log);
 			}
@@ -132,6 +164,5 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 			}
 			return true;
 		}
-		
 	}
 }

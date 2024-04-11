@@ -5575,6 +5575,35 @@ namespace OpenDentBusiness {
 		}
 
 		[DbmMethodAttr(IsReplicationUnsafe=true)]
+		public static string JournalEntryInvalidTransactionNum(bool verbose,DbmMode dbmMode) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,dbmMode);
+			}
+			string command="SELECT COUNT(*) FROM journalentry WHERE TransactionNum NOT IN(SELECT TransactionNum FROM transaction)";
+			int numFound=PIn.Int(Db.GetCount(command));
+			string log="";
+			switch(dbmMode) {
+				case DbmMode.Check:
+					if(numFound > 0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Transactions found with an invalid transaction number")+": "+numFound+"\r\n";
+					}
+					break;
+				case DbmMode.Fix:
+					if(numFound > 0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Transactions found with an invalid transaction number")+": "+numFound+"\r\n";
+					}
+					if(numFound > 0) {
+						//Delete the journalentry row.
+						command="DELETE FROM journalentry WHERE TransactionNum NOT IN(SELECT TransactionNum FROM transaction)";
+						Db.NonQ(command);
+						log+=Lans.g("FormDatabaseMaintenance","All invalid transactions have been deleted from transaction history.")+"\r\n";
+					}
+					break;
+			}
+			return log;
+		}
+
+		[DbmMethodAttr(IsReplicationUnsafe=true)]
 		public static string LabCaseWithInvalidLaboratory(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);

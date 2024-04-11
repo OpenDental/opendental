@@ -80,5 +80,7 @@
 		DentalOfficeReadOnlyServer,
 		///<summary>The centralized connection information at HQ that all workstations will use when taking/owning triage tasks.</summary>
 		TriageHQ,
+		///<summary>Logger database for ServicesHQ</summary>
+		ServicesHQLog,
 	}
 }
