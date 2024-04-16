@@ -89,6 +89,7 @@ End of Checklist================================================================
 
 		private void FrmHelpBrowser_Load(object sender,EventArgs e) {
 			LayoutToolBar();
+			StartMaximized=true;
 		}
 
 		public void LayoutToolBar() {

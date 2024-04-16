@@ -43,7 +43,7 @@ namespace OpenDental {
 		}
 
 		private void FormClaimOverpay_Load(object sender,EventArgs e) {
-			List<ClaimProc> listPaymentClaimProcs=_listClaimProcs.FindAll(x => !x.IsOverpay);//Retrieve all the claimprocs that are not under/overrpayment claimprocs.
+			List<ClaimProc> listPaymentClaimProcs=_listClaimProcs.FindAll(x => !x.IsOverpay && x.Status!=ClaimProcStatus.Supplemental);//Only one overpayment per ProcNum and it belongs to the NotReceived/Received claimproc.
 			if(listPaymentClaimProcs.Count==0){//Job 49660. Will prevent phone calls to our techs by preventing UE below.
 				MsgBox.Show(this,"No valid claim procedures attached. Please delete this claim and recreate it with the desired procedures attached or run database maintenance method "+nameof(DatabaseMaintenances.ClaimDeleteWithNoClaimProcs)+".","Error");
 				Close();
@@ -73,7 +73,7 @@ namespace OpenDental {
 			gridMain.Columns.Add(new GridColumn(Lan.g("TableClaimProc","Pmt"),30,HorizontalAlignment.Center));
 			gridMain.Columns.Add(new GridColumn(Lan.g("TableClaimProc","Remarks"),130){ IsWidthDynamic=true });
 			gridMain.ListGridRows.Clear();
-			List<ClaimProc> listPaymentClaimProcs=_listClaimProcs.FindAll(x => !x.IsOverpay);//Retrieve all the claimprocs that are not under/overrpayment claimprocs.
+			List<ClaimProc> listPaymentClaimProcs=_listClaimProcs.FindAll(x => !x.IsOverpay && x.Status!=ClaimProcStatus.Supplemental);//Only one overpayment per ProcNum and it belongs to the NotReceived/Received claimproc.
 			ClaimProc claimProcSelected=_listClaimProcs.Find(x => x.ClaimProcNum==_selectedClaimProcNum);//Retrieve the claimproc that should be pre-selected in the grid.
 			if(claimProcSelected!=null && claimProcSelected.IsOverpay) { //If the pre-selected claimproc is an under/overpayment claimproc, find its matching regular claimproc instead.
 				claimProcSelected=_listClaimProcs.Find(x => x.ClaimNum==claimProcSelected.ClaimNum && x.ProcNum==claimProcSelected.ProcNum && !x.IsOverpay);
@@ -92,7 +92,8 @@ namespace OpenDental {
 				}
 				row.Cells.Add(procedureCode.Descript);
 				row.Cells.Add(procedure.ProcFeeTotal.ToString("F"));
-				row.Cells.Add(listPaymentClaimProcs[i].InsPayAmt.ToString("F"));
+				double insPayAmt=_listClaimProcs.FindAll(x => x.ProcNum==listPaymentClaimProcs[i].ProcNum && !x.IsOverpay).Sum(x => x.InsPayAmt);
+				row.Cells.Add(insPayAmt.ToString("F"));
 				ClaimProc claimProcOverpay=_listClaimProcs//Should be at-most one overpayment claimproc per regular claimproc
 					.Find(x => x.ClaimNum==listPaymentClaimProcs[i].ClaimNum && x.ProcNum==listPaymentClaimProcs[i].ProcNum && x.IsOverpay);
 				if(claimProcOverpay==null || claimProcOverpay.InsEstTotalOverride==0) {

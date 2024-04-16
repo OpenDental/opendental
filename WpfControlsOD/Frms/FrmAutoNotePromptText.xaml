@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="422" Height="361" 
+             Width="530" Height="361" 
              Text="Text Prompt" MinMaxBoxes="False" >
     <Grid Background="#FFFCFDFE" >
         <ui:Button x:Name="butSkipForNow" HorizontalAlignment="Right" Width="85" VerticalAlignment="Bottom" Height="24" Margin="0,0,96,57" Text="_Skip For Now" Click="butSkipForNow_Click" />

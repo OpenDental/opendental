@@ -1127,8 +1127,8 @@ using WpfControls.UI;
 			if(_dispatcherTimerSizing is null){
 				_dispatcherTimerSizing=new DispatcherTimer();
 				_dispatcherTimerSizing.Tick += new EventHandler(timerSizing_Tick);
-				_dispatcherTimerSizing.Interval = TimeSpan.FromMilliseconds(500);
-				
+				//Tested 500,400,300,200,100,175,150 milliseconds. 150 was the highest without a noticeable column size adjustment upon opening a frm. The adjustment occurs when a vertical scrollbar is not needed.
+				_dispatcherTimerSizing.Interval = TimeSpan.FromMilliseconds(150);
 			}
 			_dispatcherTimerSizing.Start();
 			//todo:

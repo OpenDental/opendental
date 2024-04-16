@@ -12,8 +12,7 @@ namespace OpenDental {
 	public partial class FormERoutingDefs:FormODBase {
 
 		private long _clinicNum;
-		private ClinicPrefHelper _clinicPrefHelper = new ClinicPrefHelper(PrefName.ERoutingUseHQDefaults
-			);
+		private ClinicPrefHelper _clinicPrefHelper = new ClinicPrefHelper(PrefName.ERoutingUseHQDefaults);
 
 		public FormERoutingDefs() {
 			InitializeComponent();
@@ -21,17 +20,9 @@ namespace OpenDental {
 			Lan.F(this);
 		}
 
-		private void FormPatientFlow_Load(object sender,EventArgs e) {
-			if(!PrefC.HasClinicsEnabled) {
-				comboClinic.Visible=false;
-				checkUseDefault.Visible=false;
-				_clinicNum=0;
-			}
-			else {
-				_clinicNum = Clinics.ClinicNum;
-				checkUseDefault.Checked=_clinicPrefHelper.GetBoolVal(PrefName.ERoutingUseHQDefaults,_clinicNum);
-				checkUseDefault.Visible=_clinicNum!=0;
-			}
+		private void FormPatientFlow_Load(object sender,EventArgs e) {	
+			comboClinic.Visible=PrefC.HasClinicsEnabled;
+			ChangeClinic(Clinics.ClinicNum);
 			FillGrid();
 		}
 
@@ -48,12 +39,7 @@ namespace OpenDental {
 		}
 
 		private void ComboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			_clinicNum = comboClinic.ClinicNumSelected;
-			checkUseDefault.Checked=_clinicPrefHelper.GetBoolVal(PrefName.ERoutingUseHQDefaults, _clinicNum);
-			checkUseDefault.Visible=_clinicNum!=0;
-			labelUseDefaults.Visible=_clinicNum!=0 && checkUseDefault.Checked;
-			butAdd.Enabled=_clinicNum==0 || !_clinicPrefHelper.GetBoolVal(PrefName.ERoutingUseHQDefaults, _clinicNum);
-			gridERouting.Enabled=_clinicNum==0;
+			ChangeClinic(comboClinic.ClinicNumSelected);
 			FillGrid();
 		}
 
@@ -127,5 +113,15 @@ namespace OpenDental {
 			Cache.Refresh(InvalidType.ERoutingDef);
 		}
 
+		private void ChangeClinic(long clinicNum) {
+			_clinicNum=clinicNum;
+			checkUseDefault.Checked=_clinicPrefHelper.GetBoolVal(PrefName.ERoutingUseHQDefaults,_clinicNum);
+			checkUseDefault.Visible=_clinicNum!=0;
+			labelUseDefaults.Visible=_clinicNum!=0 && checkUseDefault.Checked;
+			bool isEditingEnabled=_clinicNum==0 || !_clinicPrefHelper.GetBoolVal(PrefName.ERoutingUseHQDefaults, _clinicNum);
+			butAdd.Enabled=isEditingEnabled;
+			gridERouting.Enabled=isEditingEnabled;
+			butDuplicate.Enabled=isEditingEnabled;
+		}
 	}
 }

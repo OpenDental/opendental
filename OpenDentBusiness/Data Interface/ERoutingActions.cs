@@ -152,6 +152,17 @@ namespace OpenDentBusiness{
 			}
 			Crud.ERoutingActionCrud.Delete(eRoutingActionNum);
 		}
+
+		///<summary>Deletes all ERoutingActions for the specified eRoutingNum.</summary>
+		public static void DeleteAllForERouting(long eRoutingNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),eRoutingNum);
+				return;
+			}
+			string command="DELETE FROM eroutingaction "
+				+"WHERE ERoutingNum="+POut.Long(eRoutingNum);
+			Db.NonQ(command);
+		}
 		#endregion Methods - Modify
 		#region Methods - Misc
 		

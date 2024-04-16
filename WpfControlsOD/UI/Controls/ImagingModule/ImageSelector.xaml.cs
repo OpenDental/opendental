@@ -139,6 +139,10 @@ Only used once in Imaging module.
 		#endregion Enums
 
 		#region Properties - Not Browsable
+		///<summary>Set to false to hide the right click context menu.</summary>
+		[Browsable(false)]
+		public bool IsContextVisible {get;set; } =true;
+
 		///<summary>Gets or sets the value of the vertical scrollbar.  Does all error checking and invalidates.</summary>
 		[Browsable(false)]
 		[DefaultValue(0)]
@@ -1218,7 +1222,9 @@ Only used once in Imaging module.
 				SetColors();
 				SelectionChangeCommitted?.Invoke(this,new EventArgs());
 			}
-			if(contextMenu!=null) {//When using FormImagePickerPatient, the ContextMenu control is not initialized so we need to do a null check to prevent errors.
+			if(contextMenu!=null//When using FormImagePickerPatient, the ContextMenu control is not initialized so we need to do a null check to prevent errors.
+				&& IsContextVisible)
+			{
 				contextMenu.PlacementTarget=this;
 				//Could add Placement, HorizontalOffset and VerticalOffset to control location.
 				contextMenu.IsOpen=true;

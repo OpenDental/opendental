@@ -101,13 +101,15 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_listTeamReportUsers.IsNullOrEmpty() && !RunReport()) { 
 				return;
 			}
-            using FormTeamSummary formJobTeamSummary=new FormTeamSummary(
+            FormTeamSummary formJobTeamSummary=new FormTeamSummary(
 				_teamNameLastRun,
 				_dateTimeFrom,
 				_dateTimeTo,
 				_listTeamReportUsers
 			);
-			formJobTeamSummary.ShowDialog();
+			groupBoxFilters.Enabled=false;
+			formJobTeamSummary.FormClosed+=(object sender,FormClosedEventArgs e) => groupBoxFilters.Enabled=true; 
+			formJobTeamSummary.Show();
 		}
 
 		///<summary>Returns true if the report ran. Shows message and returns false on failure.</summary>

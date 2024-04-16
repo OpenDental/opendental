@@ -31,6 +31,7 @@ namespace OpenDental {
 			Lan.F(this);
 			_imageSelector=new WpfControls.UI.ImageSelector();
 			elementHostImageSelector.Child=_imageSelector;
+			_imageSelector.IsContextVisible=false;
 			_imageSelector.ItemDoubleClick+=imageSelector_ItemDoubleClick;
 			_imageSelector.SelectionChangeCommitted+=imageSelector_SelectionChangeCommitted;
 			float scaleZoom=LayoutManager.ScaleMyFont();

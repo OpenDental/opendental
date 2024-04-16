@@ -949,6 +949,40 @@ namespace WpfControls.UI{
 				return;
 				//this is mostly here to help me with testing when no db
 			}
+		}
+
+		private void textBox_LostFocus(object sender,RoutedEventArgs e) {
+			
+		}
+
+		private void textBox_GotKeyboardFocus(object sender,KeyboardFocusChangedEventArgs e) {
+			//string name=Name;
+			//Debug.WriteLine("GOT KBFocus: nested textBox within "+name);
+			if(e.KeyboardDevice.IsKeyDown(Key.Tab)){
+				((System.Windows.Controls.RichTextBox)sender).SelectAll();
+			}
+		}
+
+		private void textBox_LostKeyboardFocus(object sender,KeyboardFocusChangedEventArgs e) {
+			//This happens in a number of situations:
+			//1. The user presses Tab.
+			//2. Right click for context menu
+			//string name=Name;
+			//Debug.WriteLine("LOST KBFocus: nested textBox within "+name);
+			//SelectionStart=0;
+			//SelectionLength=0;
+			//TextPointer textPointer=richTextBox.Document.ContentStart;
+			//((System.Windows.Controls.RichTextBox)sender).Selection.Select(textPointer,textPointer);
+		}
+
+		private void textBox_TextChanged(object sender,TextChangedEventArgs e) {
+			//We were forced to use TextChanged instead of KeyUp because we can't guarantee that the text will have changed when KeyUp is raised. It usually is, but it's not guaranteed. It was possible to demonstrate this in testing. So this is our only option.
+			if(_isSpellChecking) {
+				return;
+			}
+			if(IsUsingSpellCheck()) {
+				ClearWavyAll();
+			}
 			List<QuickPasteCat> listQuickPasteCatsForType=QuickPasteCats.GetCategoriesForType(QuickPasteType).OrderBy(x => x.ItemOrder).ToList();
 			List<QuickPasteNote> listQuickPasteNotes=QuickPasteNotes.GetForCats(listQuickPasteCatsForType);
 			TextPointer textPointer=richTextBox.Document.ContentStart;
@@ -987,36 +1021,6 @@ namespace WpfControls.UI{
 				}
 				//jump to end of text
 				textPointer=textPointer.GetPositionAtOffset(run.Length);
-			}
-		}
-
-		private void textBox_LostFocus(object sender,RoutedEventArgs e) {
-			
-		}
-
-		private void textBox_GotKeyboardFocus(object sender,KeyboardFocusChangedEventArgs e) {
-			//string name=Name;
-			//Debug.WriteLine("GOT KBFocus: nested textBox within "+name);
-			if(e.KeyboardDevice.IsKeyDown(Key.Tab)){
-				((System.Windows.Controls.RichTextBox)sender).SelectAll();
-			}
-		}
-
-		private void textBox_LostKeyboardFocus(object sender,KeyboardFocusChangedEventArgs e) {
-			//This happens in a number of situations:
-			//1. The user presses Tab.
-			//2. Right click for context menu
-			//string name=Name;
-			//Debug.WriteLine("LOST KBFocus: nested textBox within "+name);
-			//SelectionStart=0;
-			//SelectionLength=0;
-			//TextPointer textPointer=richTextBox.Document.ContentStart;
-			//((System.Windows.Controls.RichTextBox)sender).Selection.Select(textPointer,textPointer);
-		}
-
-		private void textBox_TextChanged(object sender,TextChangedEventArgs e) {
-			if(_isSpellChecking) {
-				return;
 			}
 			TextChanged?.Invoke(this,new EventArgs());
 		}

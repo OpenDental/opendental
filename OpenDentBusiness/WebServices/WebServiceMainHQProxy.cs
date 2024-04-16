@@ -158,8 +158,8 @@ namespace OpenDentBusiness {
 		///However, these items are only used for validation and billing in the case where HasClinics==true.</summary>
 		public static EServiceSetup.SignupOut GetEServiceSetupFull(SignupPortalPermission permission,bool isSwitchClinicPref=false,EServiceSetup.SignupOut oldSignupOut=null) {
 			//Clinics will be stored in this order at HQ to allow signup portal to display them in proper order.
-			List<Clinic> clinics=Clinics.GetDeepCopy().OrderBy(x => x.ItemOrder).ToList();
-			clinics.Add(Clinics.GetPracticeAsClinicZero("HQ"));
+			List<Clinic> clinics=new List<Clinic>() { Clinics.GetPracticeAsClinicZero("HQ") };
+			clinics.AddRange(Clinics.GetDeepCopy().OrderBy(x => x.ItemOrder));
 			if(PrefC.GetBool(PrefName.ClinicListIsAlphabetical)) {
 				clinics=clinics.OrderBy(x => x.Abbr).ToList();
 			}

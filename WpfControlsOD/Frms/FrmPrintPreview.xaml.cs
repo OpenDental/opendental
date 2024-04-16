@@ -26,6 +26,7 @@ namespace OpenDental {
 
 		private void FrmPrintPreview_Load(object sender, EventArgs e) {
 			documentViewer.Document=FixedDocumentCur;
+			StartMaximized=true;
 		}
 	}
 }

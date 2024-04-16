@@ -25,6 +25,9 @@ namespace OpenDental {
 			checkNoShow.Checked=ComputerPrefs.LocalComputer.NoShowDecimal;
 			string decimalDigits=CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits.ToString();
 			label2.Text+=": "+decimalDigits;
+			if(CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits==2) {
+				label1.Visible=false;
+			}
 		}
 
 		private void FrmDecimalSettings_PreviewKeyDown(object sender,KeyEventArgs e) {

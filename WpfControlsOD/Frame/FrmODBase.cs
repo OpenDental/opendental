@@ -290,10 +290,10 @@ How to:
 			}
 		}
 
-		[Description("Set to true to show window initially maximized.")]
+		[Description("Set to true to show window initially maximized. Set in the Load() instead of designer. Otherwise, the Width and Height that you specified will be ignored when users restores down.")]
 		[Category("OD")]
 		[DefaultValue(false)]
-		///<summary>Set to true to show window initially maximized.</summary>
+		///<summary>Set to true to show window initially maximized. Set in the Load() instead of designer. Otherwise, the Width and Height that you specified will be ignored when users restores down.</summary>
 		public bool StartMaximized{
 			get{
 				return _startMaximized;

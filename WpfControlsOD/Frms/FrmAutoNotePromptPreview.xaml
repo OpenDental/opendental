@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="379" Height="240" 
+             Width="530" Height="361" 
              Text="Preview" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:TextBox x:Name="textMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,12,42" TabIndexOD="1" IsMultiline="True" />

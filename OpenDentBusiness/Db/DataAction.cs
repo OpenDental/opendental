@@ -174,6 +174,11 @@ namespace OpenDentBusiness {
 			Run(a,ConnectionNames.Headmaster);
 		}
 
+		///<summary>HQ only. Perform the given action in the context of the headmaster db.</summary>
+		public static void RunHosting(Action a) {
+			Run(a,ConnectionNames.Hosting);
+		}
+
 		///<summary>Perform the given action in the context of the manual publisher db (jordans_mp)
 		///Leave useConnectionStore false to use the ConnectionSettingsHQ preference or the sitelink override for ConnectionNames.ManualPublisher.</summary>
 		public static void RunManualPublisherHQ(Action a,bool useConnectionStore=false) {

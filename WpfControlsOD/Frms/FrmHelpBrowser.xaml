@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="1212" Height="719" 
-             Text="Help" StartMaximized="True">
+             Text="Help" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:ToolBar x:Name="toolBarMain" Width="1096" Height="24" Margin="0,0,0,0" />
 		<ui:SplitContainer x:Name="splitContainer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,24,0,0" >
