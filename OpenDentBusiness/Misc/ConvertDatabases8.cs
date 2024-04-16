@@ -197,7 +197,7 @@ namespace OpenDentBusiness {
 				command="SELECT ClaimFormItemNum " +
 					"FROM claimformitem " +
 					$"WHERE ClaimFormNum={POut.Long(claimFormNum2024)} AND FieldName='IsPreAuth' " +
-					$"AND XPos=184 AND YPos=74 AND Width=0";//Default values
+					$"AND XPos=184 AND (YPos=74 OR YPos=72) AND Width=0";//Default values
 				long claimFormItemNum = Db.GetLong(command);
 				if(claimFormItemNum>0) {
 					command=$"UPDATE claimformitem SET XPos=224, YPos=56 WHERE ClaimFormItemNum={POut.Long(claimFormItemNum)}";
@@ -1119,6 +1119,10 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End E52592
 		}//End of 23_3_42() method
+
+		private static void To23_3_50() {
+			FixADA2024IsPreAuthLocation();//B53212
+		}//End of 23_3_50() method
 
 	}
 }

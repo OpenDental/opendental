@@ -1183,7 +1183,7 @@ namespace OpenDentBusiness {
 				return;
 			}
 			Patient pat=Patients.GetPat(patNum);
-			if(pat.PatStatus==PatientStatus.Archived) {//do not calculate recall if patient is archived.
+			if(pat.PatStatus!=PatientStatus.Patient) {//do not calculate recall if patient is not an active patient.
 				return;
 			}
 			List<RecallType> typeListActive=RecallTypes.GetActive();

@@ -169,7 +169,7 @@ namespace OpenDentBusiness{
 				return false;
 			}
 			try {
-				return IsAuthorized(perm,date,suppressMsgBox,suppressLockDateMessage,curUser,procCodeNum,procCodeFee,sheetDefNum,fKey,actionNotAuthorized);
+				return IsAuthorized(perm,date,suppressMsgBox,suppressLockDateMessage,CurUser,procCodeNum,procCodeFee,sheetDefNum,fKey,actionNotAuthorized);
 			}
 			catch(Exception ex) {
 				if(!suppressMsgBox) {
@@ -434,16 +434,23 @@ namespace OpenDentBusiness{
 			}
 		}
 
+		///<summary>This sets the private _curUserT field using the passed in Userod object. This can be used to change the thread static object. Does nothing if the user object that is passed in is null.</summary>
+		public static void SetUserCurT(Userod userT) {
+			if(userT!=null) {
+				_curUserT=userT;
+			}
+		}
+
 		#region eServices
 
 		///<summary>Returns false if the currently logged in user is not designated for the eConnector or if the user does not have permission.</summary>
 		private static bool IsValidEServicePermission(EnumPermType perm) {
 			//No need to check MiddleTierRole; no call to db.
-			if(curUser==null) {
+			if(CurUser==null) {
 				return false;
 			}
 			//Run specific checks against certain types of eServices.
-			switch(curUser.EServiceType) {
+			switch(CurUser.EServiceType) {
 				case EServiceTypes.Broadcaster:
 				case EServiceTypes.BroadcastMonitor:
 				case EServiceTypes.ServiceMainHQ:
