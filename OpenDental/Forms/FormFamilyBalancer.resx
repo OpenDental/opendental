@@ -135,9 +135,7 @@ Designed for bi-weekly usage. NOT for normal users. NOT for conversions.</value>
     <value>17, 17</value>
   </metadata>
   <data name="label1.Text" xml:space="preserve">
-    <value>This tool will convert all insurance overpayments into patient payments (all claims, not just claims with no procedures).
-Supplemental claimprocs for overpayment amounts will be created to remove claims from insurance overpaid reports.
-New payments, split to unearned, will be created to allow the insurance overpayments to be treated as patient payments.</value>
+    <value>This tool will convert all insurance overpayments into patient payments (all claims, not just claims with no procedures). Supplemental claimprocs for overpayment amounts will be created to remove claims from insurance overpaid reports. New payments, split to unearned, will be created to allow the insurance overpayments to be treated as patient payments.</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>58</value>

@@ -70,9 +70,9 @@
 			// labelPasteImage
 			// 
 			this.labelPasteImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelPasteImage.Location = new System.Drawing.Point(491, 98);
+			this.labelPasteImage.Location = new System.Drawing.Point(485, 98);
 			this.labelPasteImage.Name = "labelPasteImage";
-			this.labelPasteImage.Size = new System.Drawing.Size(87, 18);
+			this.labelPasteImage.Size = new System.Drawing.Size(103, 18);
 			this.labelPasteImage.TabIndex = 16;
 			this.labelPasteImage.Text = "(from clipboard)";
 			this.labelPasteImage.TextAlign = System.Drawing.ContentAlignment.TopCenter;

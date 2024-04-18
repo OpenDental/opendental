@@ -1021,15 +1021,15 @@
 			this.groupBox1.Controls.Add(this.butHidden);
 			this.groupBox1.Location = new System.Drawing.Point(12, 6);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(201, 99);
+			this.groupBox1.Size = new System.Drawing.Size(210, 99);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.Text = "Set Selected Teeth";
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(95, 75);
+			this.label7.Location = new System.Drawing.Point(91, 75);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(103, 17);
+			this.label7.Size = new System.Drawing.Size(116, 17);
 			this.label7.TabIndex = 20;
 			this.label7.Text = "(including numbers)";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

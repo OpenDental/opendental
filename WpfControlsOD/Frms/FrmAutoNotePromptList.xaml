@@ -16,7 +16,7 @@
         <ui:Button x:Name="butSelectAll" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="20" Margin="0,0,96,293" Text="Select _All" Click="butSelectAll_Click" />
         <ui:Button x:Name="butSelectNone" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="20" Margin="0,0,16,293" Text="Select N_one" Click="butSelectNone_Click" />
         <ui:Button x:Name="butRemovePrompt" HorizontalAlignment="Right" Width="98" VerticalAlignment="Bottom" Height="24" Margin="0,0,96,57" Text="_Remove Prompt" Click="butRemovePrompt_Click" />
-        <ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="11,70,16,87" />
+        <ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="11,70,16,87" Focusable="True" />
         <ui:Label x:Name="labelPrompt" HorizontalAlignment="Stretch" Height="44" Margin="12,2,10,0" Text="Prompt&#10;Line 2&#10;Line3" VAlign="Bottom" IsWrap="True" />
         <ui:Button x:Name="butExit" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,10" Text="_Exit" Click="butExit_Click" />
     </Grid>

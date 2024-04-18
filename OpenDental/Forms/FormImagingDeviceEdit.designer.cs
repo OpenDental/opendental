@@ -158,7 +158,7 @@ namespace OpenDentalImaging{
 			this.groupBoxOD1.Controls.Add(this.radioTwain);
 			this.groupBoxOD1.Location = new System.Drawing.Point(126, 88);
 			this.groupBoxOD1.Name = "groupBoxOD1";
-			this.groupBoxOD1.Size = new System.Drawing.Size(219, 44);
+			this.groupBoxOD1.Size = new System.Drawing.Size(243, 44);
 			this.groupBoxOD1.TabIndex = 28;
 			this.groupBoxOD1.Text = "";
 			// 
@@ -185,7 +185,7 @@ namespace OpenDentalImaging{
 			// 
 			this.radioTwainMulti.Location = new System.Drawing.Point(5, 23);
 			this.radioTwainMulti.Name = "radioTwainMulti";
-			this.radioTwainMulti.Size = new System.Drawing.Size(211, 18);
+			this.radioTwainMulti.Size = new System.Drawing.Size(235, 18);
 			this.radioTwainMulti.TabIndex = 1;
 			this.radioTwainMulti.TabStop = true;
 			this.radioTwainMulti.Text = "Twain Multi (example: phosphor plate)";

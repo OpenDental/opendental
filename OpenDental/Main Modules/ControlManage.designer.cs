@@ -55,7 +55,7 @@ namespace OpenDental {
 			this.textDays = new System.Windows.Forms.TextBox();
 			this.labelDays = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.comboBoxViewUser = new UI.ComboBox();
+			this.comboBoxViewUser = new OpenDental.UI.ComboBox();
 			this.gridMessages = new OpenDental.UI.GridOD();
 			this.checkIncludeAck = new OpenDental.UI.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -120,7 +120,6 @@ namespace OpenDental {
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(272, 181);
 			this.groupBox3.TabIndex = 23;
-			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Daily";
 			// 
 			// butEras
@@ -278,7 +277,6 @@ namespace OpenDental {
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(902, 422);
 			this.groupBox2.TabIndex = 19;
-			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Messaging";
 			// 
 			// listBoxMessages
@@ -395,7 +393,7 @@ namespace OpenDental {
 			// 
 			this.label5.Location = new System.Drawing.Point(250, 16);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(100, 16);
+			this.label5.Size = new System.Drawing.Size(124, 16);
 			this.label5.TabIndex = 9;
 			this.label5.Text = "Message (&& Send)";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -481,7 +479,6 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(458, 272);
 			this.groupBox1.TabIndex = 18;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Time Clock";
 			// 
 			// textFilterName

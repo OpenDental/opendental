@@ -14,13 +14,15 @@ namespace OpenDental {
 		private CloudUser _cloudUserCur;
 		private List<CloudGroup> _listGroups;
 		private AmazonIdentityStoreClient _awsClient=new AmazonIdentityStoreClient(new AmazonIdentityStoreConfig() { Profile = new Profile("appstream_machine_role") });
+		private List<TmZoneInfo> _listTimeZones=new List<TmZoneInfo>();
 
-		public FormCloudUserEdit(List<CloudGroup> listGroups,CloudUser cloudUserCur) {
+		public FormCloudUserEdit(List<CloudGroup> listGroups,CloudUser cloudUserCur,List<TmZoneInfo> listTimeZones) {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 			_listGroups=listGroups;
 			_cloudUserCur=cloudUserCur;
+			_listTimeZones=listTimeZones;
 		}
 
 		private void FormCloudUserEdit_Load(object sender,EventArgs e) {
@@ -33,6 +35,14 @@ namespace OpenDental {
 				CloudGroup groupCur=_listGroups[i];
 				listGroups.Items.Add(groupCur.DisplayName,groupCur);
 				listGroups.SetSelected(i,_cloudUserCur.ListGroups.Any(x => x.GroupId==groupCur.GroupId));
+			}
+			comboTimezone.Items.AddList(_listTimeZones,x => x.TZInfo.DisplayName,x => x.TZInfo.Id);
+			comboTimezone.SetSelected(0);
+			if(!_cloudUserCur.TimeZone.IsNullOrEmpty()) {
+				int timeZoneIndex=_listTimeZones.FindIndex(x => _cloudUserCur.TimeZone.ToLower().In(x.AwsTZoneName.ToLower(),x.TZInfo.Id.ToLower()));
+				if(timeZoneIndex!=-1) {
+					comboTimezone.SetSelected(timeZoneIndex);
+				}
 			}
 		}
 
@@ -50,7 +60,7 @@ namespace OpenDental {
 			}
 			string email=(responseUser.Emails.Find(x => x.Primary)??responseUser.Emails.First())?.Value??"";
 			_cloudUserCur=new CloudUser(responseUser.IdentityStoreId,responseUser.UserId,responseUser.UserName,responseUser.DisplayName,responseUser.Name.GivenName,
-				responseUser.Name.FamilyName,email);
+				responseUser.Name.FamilyName,email,responseUser.Timezone);
 			ListGroupMembershipsForMemberRequest requestListGroups=new ListGroupMembershipsForMemberRequest() {
 				IdentityStoreId=_cloudUserCur.IdentityStoreId,
 				MemberId=new MemberId() { UserId=_cloudUserCur.UserId }
@@ -208,7 +218,8 @@ namespace OpenDental {
 					UserName=textUserName.Text,
 					Name=new Name() { GivenName=textFirstName.Text,FamilyName=textLastName.Text },
 					DisplayName=textDisplayName.Text,
-					Emails=new List<Email>() { new Email() { Primary=true,Value=textEmail.Text } }
+					Emails=new List<Email>() { new Email() { Primary=true,Value=textEmail.Text } },
+					Timezone=comboTimezone.GetSelected<TmZoneInfo>().AwsTZoneName
 				};
 				if(!FormCloudUsers.TryAwsAction(() => _awsClient.CreateUser(requestCreateUser),out CreateUserResponse responseCreateUser)) {
 					RefreshCurUser();
@@ -232,6 +243,9 @@ namespace OpenDental {
 				}
 				if(textEmail.Text!=_cloudUserCur.Email) {
 					listOperations.Add(new AttributeOperation() { AttributePath="emails",AttributeValue=new Document(Document.FromObject(new Email() { Primary=true,Value=textEmail.Text,Type="work" })) });
+				}
+				if(_cloudUserCur.TimeZone.IsNullOrEmpty() || comboTimezone.GetSelected<TmZoneInfo>().AwsTZoneName.ToLower()!=_cloudUserCur.TimeZone.ToLower()) {
+					listOperations.Add(new AttributeOperation() { AttributePath="timezone",AttributeValue=new Document(comboTimezone.GetSelected<TmZoneInfo>().AwsTZoneName) });
 				}
 				if(listOperations.Count>0) {
 					UpdateUserRequest requestUpdateUser=new UpdateUserRequest() {

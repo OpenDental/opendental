@@ -43,7 +43,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(469, 286);
+			this.butOK.Location = new System.Drawing.Point(503, 286);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 2;
@@ -113,7 +113,7 @@ namespace OpenDental {
 			// 
 			this.radioWriteoffProc.Location = new System.Drawing.Point(7, 38);
 			this.radioWriteoffProc.Name = "radioWriteoffProc";
-			this.radioWriteoffProc.Size = new System.Drawing.Size(199, 17);
+			this.radioWriteoffProc.Size = new System.Drawing.Size(199, 19);
 			this.radioWriteoffProc.TabIndex = 1;
 			this.radioWriteoffProc.TabStop = true;
 			this.radioWriteoffProc.Text = "Using procedure date.";
@@ -123,7 +123,7 @@ namespace OpenDental {
 			// 
 			this.radioWriteoffPay.Location = new System.Drawing.Point(7, 20);
 			this.radioWriteoffPay.Name = "radioWriteoffPay";
-			this.radioWriteoffPay.Size = new System.Drawing.Size(240, 17);
+			this.radioWriteoffPay.Size = new System.Drawing.Size(240, 19);
 			this.radioWriteoffPay.TabIndex = 0;
 			this.radioWriteoffPay.TabStop = true;
 			this.radioWriteoffPay.Text = "Using insurance payment date.";
@@ -133,7 +133,7 @@ namespace OpenDental {
 			// 
 			this.label2.Location = new System.Drawing.Point(3, 9);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(561, 20);
+			this.label2.Size = new System.Drawing.Size(597, 20);
 			this.label2.TabIndex = 34;
 			this.label2.Text = "This report only takes payment plans into account when using the default charge l" +
     "ogic (Age Credits and Debits).";
@@ -141,7 +141,7 @@ namespace OpenDental {
 			// FormRpReceivablesBreakdown
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(567, 324);
+			this.ClientSize = new System.Drawing.Size(601, 324);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.groupInsBox);
 			this.Controls.Add(this.labClinic);

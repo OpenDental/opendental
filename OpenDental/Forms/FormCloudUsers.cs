@@ -14,12 +14,31 @@ namespace OpenDental {
 		private const string IDENTITY_STORE_ID="d-92674b4f05";
 		private List<CloudUser> _listUsers;
 		private AmazonIdentityStoreClient _awsClient=new AmazonIdentityStoreClient(new AmazonIdentityStoreConfig() { Profile=new Profile("appstream_machine_role") });
+		private List<TmZoneInfo> _listTimeZones=new List<TmZoneInfo>();
 
 		public FormCloudUsers() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 			_waitFilterMs=200;//because we are not doing any database calls, we want a lower time to make the application feel more responsive
+			FillTimeZones();
+		}
+
+		private void FillTimeZones() {
+			_listTimeZones.Clear();
+			try {
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("UTC"),"UTC"));
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"),"US/Eastern"));
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"),"US/Central"));
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("US Mountain Standard Time"),"US/Arizona"));
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time"),"US/Mountain"));
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"),"US/Pacific"));
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time"),"US/Alaska"));
+				_listTimeZones.Add(new TmZoneInfo(TimeZoneInfo.FindSystemTimeZoneById("Hawaiian Standard Time"),"US/Hawaii"));
+			}
+			catch(Exception ex) {
+				FriendlyException.Show(Lan.g(this,"Could not retrieve time zone information from the local PC."),ex);
+			}
 		}
 
 		private void FormCloudUsers_Load(object sender,EventArgs e) {
@@ -44,11 +63,12 @@ namespace OpenDental {
 			int scroll=gridUsers.ScrollValue;
 			gridUsers.BeginUpdate();
 			gridUsers.Columns.Clear();
-			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"User Name"),150) { IsWidthDynamic=true,DynamicWeight=2f });
-			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"Display Name"),150) { IsWidthDynamic=true,DynamicWeight=2f });
-			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"First Name"),100) { IsWidthDynamic=true });
-			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"Last Name"),100) { IsWidthDynamic = true });
-			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"Email"),180) { IsWidthDynamic = true,DynamicWeight=2f });
+			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"User Name"),125) { IsWidthDynamic=true,DynamicWeight=2f });
+			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"Display Name"),125) { IsWidthDynamic=true,DynamicWeight=2f });
+			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"First Name"),75) { IsWidthDynamic=true });
+			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"Last Name"),75) { IsWidthDynamic = true });
+			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"Email"),150) { IsWidthDynamic = true,DynamicWeight=2f });
+			gridUsers.Columns.Add(new GridColumn(Lan.g(this,"Time Zone"),240));
 			if(checkShowUserId.Checked) {
 				gridUsers.Columns.Add(new GridColumn(Lan.g(this,"User ID"),230));
 			}
@@ -69,6 +89,8 @@ namespace OpenDental {
 				row.Cells.Add(userCur.FName);
 				row.Cells.Add(userCur.LName);
 				row.Cells.Add(userCur.Email);
+				TmZoneInfo tzInfoCur=_listTimeZones.FirstOrDefault(x => !userCur.TimeZone.IsNullOrEmpty() && userCur.TimeZone.ToLower().In(x.AwsTZoneName.ToLower(),x.TZInfo.Id.ToLower()));
+				row.Cells.Add(tzInfoCur!=null?tzInfoCur.TZInfo.DisplayName:"");
 				if(checkShowUserId.Checked) {
 					row.Cells.Add(userCur.UserId);
 				}
@@ -130,7 +152,7 @@ namespace OpenDental {
 							return;
 						}
 						string email=(respUser.Emails.Find(x => x.Primary)??respUser.Emails.First())?.Value??"";
-						userCur=new CloudUser(IDENTITY_STORE_ID,respUser.UserId,respUser.UserName,respUser.DisplayName,respUser.Name.GivenName,respUser.Name.FamilyName,email);
+						userCur=new CloudUser(IDENTITY_STORE_ID,respUser.UserId,respUser.UserName,respUser.DisplayName,respUser.Name.GivenName,respUser.Name.FamilyName,email,respUser.Timezone);
 						_listUsers.Add(userCur);
 					}
 					userCur.ListGroups.Add(groupCur);
@@ -140,7 +162,7 @@ namespace OpenDental {
 
 		private void gridUsers_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			List<CloudGroup> listGroups=_listUsers.SelectMany(x => x.ListGroups).DistinctBy(y => y.GroupId).ToList();
-			FormCloudUserEdit formCloudUserEdit=new FormCloudUserEdit(listGroups,gridUsers.SelectedTag<CloudUser>());
+			FormCloudUserEdit formCloudUserEdit=new FormCloudUserEdit(listGroups,gridUsers.SelectedTag<CloudUser>(),_listTimeZones);
 			formCloudUserEdit.ShowDialog();
 			FillGridUsers(true);
 		}
@@ -203,7 +225,7 @@ namespace OpenDental {
 
 		private void butAdd_Click(object sender,EventArgs e) {
 			List<CloudGroup> listGroups=_listUsers.SelectMany(x => x.ListGroups).DistinctBy(y => y.GroupId).ToList();
-			FormCloudUserEdit formCloudUserEdit=new FormCloudUserEdit(listGroups,new CloudUser(IDENTITY_STORE_ID));
+			FormCloudUserEdit formCloudUserEdit=new FormCloudUserEdit(listGroups,new CloudUser(IDENTITY_STORE_ID),_listTimeZones);
 			formCloudUserEdit.ShowDialog();
 			FillGridUsers(true);
 		}
@@ -259,9 +281,10 @@ namespace OpenDental {
 		public string FName;
 		public string LName;
 		public string Email;
+		public string TimeZone;
 		public List<CloudGroup> ListGroups;
 
-		public CloudUser(string identityStoreId="",string userId="",string userName="",string displayName="",string fName="",string lName="",string email="") {
+		public CloudUser(string identityStoreId="",string userId="",string userName="",string displayName="",string fName="",string lName="",string email="",string timezone="") {
 			IdentityStoreId=identityStoreId;
 			UserId=userId;
 			UserName=userName;
@@ -269,6 +292,7 @@ namespace OpenDental {
 			FName=fName;
 			LName=lName;
 			Email=email;
+			TimeZone=timezone;
 			ListGroups=new List<CloudGroup>();
 		}
 	}
@@ -280,6 +304,16 @@ namespace OpenDental {
 		public CloudGroup(string groupId,string displayName) {
 			GroupId=groupId;
 			DisplayName=displayName;
+		}
+	}
+
+	public class TmZoneInfo {
+		public TimeZoneInfo TZInfo;
+		public string AwsTZoneName;
+
+		public TmZoneInfo(TimeZoneInfo timeZoneInfo,string awsTZoneName) {
+			TZInfo=timeZoneInfo;
+			AwsTZoneName=awsTZoneName;
 		}
 	}
 }

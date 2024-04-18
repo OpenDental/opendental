@@ -213,11 +213,11 @@ namespace OpenDental {
 			// label5
 			// 
 			this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label5.Location = new System.Drawing.Point(20, 472);
+			this.label5.Location = new System.Drawing.Point(15, 472);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(127, 43);
+			this.label5.Size = new System.Drawing.Size(150, 43);
 			this.label5.TabIndex = 10;
-			this.label5.Text = "(remove this medication from this patient)";
+			this.label5.Text = "(remove this medication\r\nfrom this patient)";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// textPatNote

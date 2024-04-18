@@ -618,7 +618,7 @@
 			// 
 			this.labelMissingTeeth.Location = new System.Drawing.Point(3, 77);
 			this.labelMissingTeeth.Name = "labelMissingTeeth";
-			this.labelMissingTeeth.Size = new System.Drawing.Size(280, 32);
+			this.labelMissingTeeth.Size = new System.Drawing.Size(290, 32);
 			this.labelMissingTeeth.TabIndex = 28;
 			this.labelMissingTeeth.Text = "For bridges, dentures, and partials, missing teeth must have been correctly enter" +
     "ed in the Chart module. ";
@@ -1059,7 +1059,7 @@
 			// 
 			this.radioAttachElect.Location = new System.Drawing.Point(171, 59);
 			this.radioAttachElect.Name = "radioAttachElect";
-			this.radioAttachElect.Size = new System.Drawing.Size(104, 16);
+			this.radioAttachElect.Size = new System.Drawing.Size(104, 19);
 			this.radioAttachElect.TabIndex = 129;
 			this.radioAttachElect.Text = "Electronically";
 			// 
@@ -1068,7 +1068,7 @@
 			this.radioAttachMail.Checked = true;
 			this.radioAttachMail.Location = new System.Drawing.Point(171, 39);
 			this.radioAttachMail.Name = "radioAttachMail";
-			this.radioAttachMail.Size = new System.Drawing.Size(104, 16);
+			this.radioAttachMail.Size = new System.Drawing.Size(104, 19);
 			this.radioAttachMail.TabIndex = 128;
 			this.radioAttachMail.TabStop = true;
 			this.radioAttachMail.Text = "By Mail";
@@ -3183,7 +3183,7 @@
 			// 
 			this.label4.Location = new System.Drawing.Point(752, 389);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(213, 26);
+			this.label4.Size = new System.Drawing.Size(280, 26);
 			this.label4.TabIndex = 131;
 			this.label4.Text = "Reasons underpaid:  (shows on patient bill)";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;

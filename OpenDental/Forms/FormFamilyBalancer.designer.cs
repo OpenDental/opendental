@@ -162,9 +162,9 @@ namespace OpenDental{
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(8, 28);
+			this.label4.Location = new System.Drawing.Point(8, 21);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(574, 56);
+			this.label4.Size = new System.Drawing.Size(574, 69);
 			this.label4.TabIndex = 158;
 			this.label4.Text = resources.GetString("label4.Text");
 			// 
@@ -209,7 +209,7 @@ namespace OpenDental{
 			// 
 			this.labelAsOfDateDesc.Location = new System.Drawing.Point(278, 163);
 			this.labelAsOfDateDesc.Name = "labelAsOfDateDesc";
-			this.labelAsOfDateDesc.Size = new System.Drawing.Size(304, 43);
+			this.labelAsOfDateDesc.Size = new System.Drawing.Size(310, 43);
 			this.labelAsOfDateDesc.TabIndex = 166;
 			this.labelAsOfDateDesc.Text = "Account entries after this date are ignored during transfers.\r\nFor conversions, s" +
     "et this to the date of the conversion.\r\nFor bi-weekly usage, use today\'s date.";
@@ -317,9 +317,9 @@ namespace OpenDental{
 			// 
 			// labelAsOfDateDescRecreate
 			// 
-			this.labelAsOfDateDescRecreate.Location = new System.Drawing.Point(314, 91);
+			this.labelAsOfDateDescRecreate.Location = new System.Drawing.Point(314, 88);
 			this.labelAsOfDateDescRecreate.Name = "labelAsOfDateDescRecreate";
-			this.labelAsOfDateDescRecreate.Size = new System.Drawing.Size(214, 13);
+			this.labelAsOfDateDescRecreate.Size = new System.Drawing.Size(274, 18);
 			this.labelAsOfDateDescRecreate.TabIndex = 174;
 			this.labelAsOfDateDescRecreate.Text = "Account entries after this date are ignored.";
 			this.labelAsOfDateDescRecreate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -369,9 +369,9 @@ namespace OpenDental{
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(8, 28);
+			this.label11.Location = new System.Drawing.Point(8, 21);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(574, 56);
+			this.label11.Size = new System.Drawing.Size(574, 63);
 			this.label11.TabIndex = 159;
 			this.label11.Text = resources.GetString("label11.Text");
 			// 
@@ -487,9 +487,9 @@ namespace OpenDental{
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(314, 90);
+			this.label3.Location = new System.Drawing.Point(314, 88);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(210, 13);
+			this.label3.Size = new System.Drawing.Size(273, 18);
 			this.label3.TabIndex = 164;
 			this.label3.Text = "Date set on all new payments and splits.";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -505,9 +505,9 @@ namespace OpenDental{
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(8, 28);
+			this.label1.Location = new System.Drawing.Point(5, 21);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(574, 56);
+			this.label1.Size = new System.Drawing.Size(582, 64);
 			this.label1.TabIndex = 160;
 			this.label1.Text = resources.GetString("label1.Text");
 			// 

@@ -10,8 +10,8 @@
              Text="Referrals for Patient" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butAddCustom" Width="109" Height="24" Margin="227,10,0,0" Text="Refer Custom" Icon="Add" Click="butAddCustom_Click" />
-		<ui:Button x:Name="butUp" Width="82" VerticalAlignment="Bottom" Height="24" Margin="314,0,0,9" Text="_Up" Click="butUp_Click"  />
-		<ui:Button x:Name="butDown" Width="82" VerticalAlignment="Bottom" Height="24" Margin="402,0,0,9" Text="_Down" Click="butDown_Click"  />
+		<ui:Button x:Name="butUp" Width="70" VerticalAlignment="Bottom" Height="24" Margin="314,0,0,9" Text="_Up" Click="butUp_Click" BitmapFileName="up.gif"  />
+		<ui:Button x:Name="butDown" Width="70" VerticalAlignment="Bottom" Height="24" Margin="402,0,0,9" Text="_Down" Click="butDown_Click" BitmapFileName="down.gif"  />
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,10" Text="OK" Click="butOK_Click" />
 		<ui:CheckBox x:Name="checkShowAll" Width="162" Height="20" Margin="560,18,0,0" Text="Show All" CheckAlign="MiddleLeft" Click="checkShowAll_Click" />
 		<ui:Button x:Name="butAddTo" Width="94" Height="24" Margin="127,10,0,0" Text="Refer To" Icon="Add" Click="butAddTo_Click" />

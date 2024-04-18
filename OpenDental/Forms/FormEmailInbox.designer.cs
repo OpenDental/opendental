@@ -279,7 +279,7 @@ namespace OpenDental{
 			// 
 			// textDateTo
 			// 
-			this.textDateTo.Location = new System.Drawing.Point(80, 67);
+			this.textDateTo.Location = new System.Drawing.Point(80, 73);
 			this.textDateTo.Name = "textDateTo";
 			this.textDateTo.Size = new System.Drawing.Size(70, 20);
 			this.textDateTo.TabIndex = 5;
@@ -287,7 +287,7 @@ namespace OpenDental{
 			// label2
 			// 
 			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(80, 50);
+			this.label2.Location = new System.Drawing.Point(80, 56);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(80, 16);
 			this.label2.TabIndex = 166;
@@ -298,7 +298,7 @@ namespace OpenDental{
 			// 
 			this.butClear.Enabled = false;
 			this.butClear.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butClear.Location = new System.Drawing.Point(359, 92);
+			this.butClear.Location = new System.Drawing.Point(359, 98);
 			this.butClear.Name = "butClear";
 			this.butClear.Size = new System.Drawing.Size(45, 20);
 			this.butClear.TabIndex = 8;
@@ -310,7 +310,7 @@ namespace OpenDental{
 			this.butSearch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.butSearch.ImageKey = "Email_Search.png";
 			this.butSearch.ImageList = this.imageListButtonSmall;
-			this.butSearch.Location = new System.Drawing.Point(283, 92);
+			this.butSearch.Location = new System.Drawing.Point(283, 98);
 			this.butSearch.Name = "butSearch";
 			this.butSearch.Size = new System.Drawing.Size(73, 20);
 			this.butSearch.TabIndex = 7;
@@ -319,7 +319,7 @@ namespace OpenDental{
 			// 
 			// checkSearchAttach
 			// 
-			this.checkSearchAttach.Location = new System.Drawing.Point(6, 92);
+			this.checkSearchAttach.Location = new System.Drawing.Point(6, 98);
 			this.checkSearchAttach.Name = "checkSearchAttach";
 			this.checkSearchAttach.Size = new System.Drawing.Size(258, 20);
 			this.checkSearchAttach.TabIndex = 3;
@@ -328,7 +328,7 @@ namespace OpenDental{
 			// label6
 			// 
 			this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label6.Location = new System.Drawing.Point(181, 50);
+			this.label6.Location = new System.Drawing.Point(181, 56);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(147, 16);
 			this.label6.TabIndex = 163;
@@ -337,7 +337,7 @@ namespace OpenDental{
 			// 
 			// textSearchBody
 			// 
-			this.textSearchBody.Location = new System.Drawing.Point(181, 67);
+			this.textSearchBody.Location = new System.Drawing.Point(181, 73);
 			this.textSearchBody.Name = "textSearchBody";
 			this.textSearchBody.Size = new System.Drawing.Size(223, 20);
 			this.textSearchBody.TabIndex = 6;
@@ -345,7 +345,7 @@ namespace OpenDental{
 			// label5
 			// 
 			this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label5.Location = new System.Drawing.Point(181, 12);
+			this.label5.Location = new System.Drawing.Point(181, 18);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(173, 16);
 			this.label5.TabIndex = 161;
@@ -354,14 +354,14 @@ namespace OpenDental{
 			// 
 			// textSearchEmail
 			// 
-			this.textSearchEmail.Location = new System.Drawing.Point(181, 29);
+			this.textSearchEmail.Location = new System.Drawing.Point(181, 35);
 			this.textSearchEmail.Name = "textSearchEmail";
 			this.textSearchEmail.Size = new System.Drawing.Size(223, 20);
 			this.textSearchEmail.TabIndex = 2;
 			// 
 			// textDateFrom
 			// 
-			this.textDateFrom.Location = new System.Drawing.Point(6, 67);
+			this.textDateFrom.Location = new System.Drawing.Point(6, 73);
 			this.textDateFrom.Name = "textDateFrom";
 			this.textDateFrom.Size = new System.Drawing.Size(70, 20);
 			this.textDateFrom.TabIndex = 4;
@@ -369,7 +369,7 @@ namespace OpenDental{
 			// label4
 			// 
 			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label4.Location = new System.Drawing.Point(6, 50);
+			this.label4.Location = new System.Drawing.Point(6, 56);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(71, 16);
 			this.label4.TabIndex = 158;
@@ -379,7 +379,7 @@ namespace OpenDental{
 			// butPickPat
 			// 
 			this.butPickPat.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPickPat.Location = new System.Drawing.Point(151, 29);
+			this.butPickPat.Location = new System.Drawing.Point(151, 35);
 			this.butPickPat.Name = "butPickPat";
 			this.butPickPat.Size = new System.Drawing.Size(20, 20);
 			this.butPickPat.TabIndex = 1;
@@ -389,7 +389,7 @@ namespace OpenDental{
 			// label1
 			// 
 			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label1.Location = new System.Drawing.Point(1, 12);
+			this.label1.Location = new System.Drawing.Point(1, 18);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(173, 16);
 			this.label1.TabIndex = 156;
@@ -398,7 +398,7 @@ namespace OpenDental{
 			// 
 			// textSearchPat
 			// 
-			this.textSearchPat.Location = new System.Drawing.Point(6, 29);
+			this.textSearchPat.Location = new System.Drawing.Point(6, 35);
 			this.textSearchPat.Name = "textSearchPat";
 			this.textSearchPat.ReadOnly = true;
 			this.textSearchPat.Size = new System.Drawing.Size(144, 20);

@@ -271,6 +271,11 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				sizeParentClientOriginal96=control96InfoParent.ClientSize96Orig;
 			}
 			SizeF sizeParentClientNow96=new SizeF(UnscaleF(controlParent.ClientSize.Width),UnscaleF(controlParent.ClientSize.Height));
+			if(controlParent is UI.TabPage tabPage2) {
+				//See LayoutChildren, we manually remove additional scaled height from UI.Tab contols.  This is because their tab buttons gain height and we need to remove that height difference from the tabControl and all of it's children.  When manually moving any control via the LayoutManager.Move method (which calls this), we need to check to see if the parent is a UI.TabPage.  If so, we need to remove the same height adjustment so that the control itself knows about the height of the tabcontrol adjustment for it's own placement. 
+				int adj=(int)ScaleFontODZoom(20)-20;//There will be no height change at 100% zoom.
+				sizeParentClientNow96.Height=sizeParentClientNow96.Height-adj;
+			}
 			//but the bounds are wrong.  It must be calculated backward to the original position it would be in if the parent had not resized.
 			float x=UnscaleF(boundsScaled.Left);
 			float y=UnscaleF(boundsScaled.Top);
@@ -809,6 +814,17 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				//So, we must handle tabPage size specially. No support here for autoscroll, with bigger clientSize.
 				Size sizeTabPage =((System.Windows.Forms.TabControl)tabPage.Parent).DisplayRectangle.Size;
 				sizeParentClientNow96=new SizeF(UnscaleF(sizeTabPage.Width),UnscaleF(sizeTabPage.Height));
+			}
+			if(control is UI.TabPage tabPage2){
+				//The buttons of our TabControl grow with zoom increase.
+				//This changes the clientSize height available for the tabpage.
+				//This is subtle and only noticeable at high zoom, which users shouldn't even be using anyway (use MS scale instead)
+				//The result is controls within tabpages getting slightly cut off at the bottom.
+				//Tab height at 96dpi is 20
+				//Example 150% zoom, we need to subtract 10 from client size. Scale(20)-20=10;
+				//We will only use the OD zoom component, not the MS scale component.
+				int adj=(int)ScaleFontODZoom(20)-20;//There will be no height change at 100% zoom.
+				sizeParentClientNow96.Height=sizeParentClientNow96.Height-adj;
 			}
 			//control.SuspendLayout();//no, this would prevent things from resizing
 			List<Control> listControlsDocked=new List<Control>();

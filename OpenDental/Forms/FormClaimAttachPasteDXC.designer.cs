@@ -41,6 +41,7 @@ namespace OpenDental {
 			this.menuItemRadiologyReports = new System.Windows.Forms.MenuItem();
 			this.menuItemIntraOralPhotograph = new System.Windows.Forms.MenuItem();
 			this.menuItemNarrative = new System.Windows.Forms.MenuItem();
+			this.buttonPasteAgain = new OpenDental.UI.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -190,9 +191,20 @@ namespace OpenDental {
 			this.menuItemNarrative.Text = "Narrative";
 			this.menuItemNarrative.Click += new System.EventHandler(this.menuItemNarrative_Click);
 			// 
+			// buttonPasteAgain
+			// 
+			this.buttonPasteAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonPasteAgain.Location = new System.Drawing.Point(926, 427);
+			this.buttonPasteAgain.Name = "buttonPasteAgain";
+			this.buttonPasteAgain.Size = new System.Drawing.Size(87, 24);
+			this.buttonPasteAgain.TabIndex = 51;
+			this.buttonPasteAgain.Text = "Paste &Again";
+			this.buttonPasteAgain.Click += new System.EventHandler(this.buttonPasteAgain_Click);
+			// 
 			// FormClaimAttachPasteDXC
 			// 
 			this.ClientSize = new System.Drawing.Size(1025, 498);
+			this.Controls.Add(this.buttonPasteAgain);
 			this.Controls.Add(this.labelClaimAttachWarning);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
@@ -227,5 +239,6 @@ namespace OpenDental {
 		private System.Windows.Forms.MenuItem menuItemRadiologyReports;
 		private System.Windows.Forms.MenuItem menuItemIntraOralPhotograph;
 		private System.Windows.Forms.MenuItem menuItemNarrative;
+		private UI.Button buttonPasteAgain;
 	}
 }

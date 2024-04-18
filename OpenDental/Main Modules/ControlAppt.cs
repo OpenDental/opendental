@@ -2652,6 +2652,7 @@ namespace OpenDental {
 				//	PatientSelected(this,eArgs);
 				//}
 				//Contr_PatientSelected(this,eArgs);
+				RefreshModuleDataPatient(patient.PatNum);
 				GlobalFormOpenDental.PatientSelected(patient,false,false);
 				GlobalFormOpenDental.GotoAppointment(appointment.AptDateTime,appointment.AptNum);
 			}

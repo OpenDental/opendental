@@ -245,14 +245,17 @@ namespace OpenDentBusiness {
 			if(listJobsForTree.IsNullOrEmpty()) {
 				return;
 			}
-			List<Job> listJobs;
-			lock(_lock) {
-   				listJobs=new List<Job>(_listJobsAll);
+			List<Job> listJobsToAdd=new List<Job>();
+			for (int i=0;i<listJobsForTree.Count; i++) {
+				if(ListJobsAll.Find(x => x.JobNum==listJobsForTree[i].JobNum) is Job job) {
+					listJobsForTree[i]=job;
+				}
+				else {
+					listJobsToAdd.Add(listJobsForTree[i]);
+				}
 			}
-			List<long> listJobNums=ListJobNumsAll;
 			//Fill the in-memory lists from the database
-			Jobs.FillInMemoryLists(listJobsForTree.FindAll(x => !listJobNums.Exists(y => x.JobNum==y)).ToList());
-			List<Job> listJobsToAdd=listJobsForTree.Where(x => !listJobs.Select(x => x.JobNum).Contains(x.JobNum)).ToList();
+			Jobs.FillInMemoryLists(listJobsToAdd);
 			lock(_lock) {
 				_listJobsAll.AddRange(listJobsToAdd);
 			}

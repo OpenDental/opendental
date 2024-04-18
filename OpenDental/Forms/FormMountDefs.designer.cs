@@ -55,9 +55,9 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(21, 10);
+			this.label1.Location = new System.Drawing.Point(3, 10);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(362, 32);
+			this.label1.Size = new System.Drawing.Size(384, 32);
 			this.label1.TabIndex = 11;
 			this.label1.Text = "This is a list of radiograph mounts and image composites.  You can freely edit, m" +
     "ove, or delete any of these mounts without affecting patient records";

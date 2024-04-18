@@ -199,7 +199,7 @@ namespace OpenDental {
 			// 
 			this.label7.Location = new System.Drawing.Point(345, 42);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(246, 15);
+			this.label7.Size = new System.Drawing.Size(274, 15);
 			this.label7.TabIndex = 23;
 			this.label7.Text = "0-100. 100=No compression.  Typical setting: 40";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.BottomLeft;

@@ -61,6 +61,7 @@ namespace OpenDental {
 			this.userControlQueryEdit.Size = new System.Drawing.Size(1220, 623);
 			this.userControlQueryEdit.TabIndex = 2;
 			this.userControlQueryEdit.SaveClick += new System.EventHandler(this.userControlQueryEdit_SaveClick);
+			this.userControlQueryEdit.RequestJob += new OpenDental.InternalTools.Job_Manager.UserControlQueryEdit.RequestJobEvent(this.userControlJobEdit_RequestJob);
 			// 
 			// userControlProjectEdit
 			// 

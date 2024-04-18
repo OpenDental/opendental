@@ -127,9 +127,9 @@ namespace OpenDental {
 			// 
 			// labelAutoLogoff
 			// 
-			this.labelAutoLogoff.Location = new System.Drawing.Point(427, 50);
+			this.labelAutoLogoff.Location = new System.Drawing.Point(425, 49);
 			this.labelAutoLogoff.Name = "labelAutoLogoff";
-			this.labelAutoLogoff.Size = new System.Drawing.Size(140, 41);
+			this.labelAutoLogoff.Size = new System.Drawing.Size(143, 47);
 			this.labelAutoLogoff.TabIndex = 266;
 			this.labelAutoLogoff.Text = "Automatic logoff time in minutes (0 is disabled, blank is global value)";
 			this.labelAutoLogoff.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -276,7 +276,7 @@ namespace OpenDental {
 			// 
 			this.label2.Location = new System.Drawing.Point(24, 91);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(135, 20);
+			this.label2.Size = new System.Drawing.Size(165, 20);
 			this.label2.TabIndex = 156;
 			this.label2.Text = "Employee (for timecards)";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

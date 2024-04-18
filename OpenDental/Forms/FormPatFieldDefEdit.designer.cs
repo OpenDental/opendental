@@ -94,7 +94,7 @@ namespace OpenDental {
 			this.comboFieldType.BackColor = System.Drawing.SystemColors.Window;
 			this.comboFieldType.Location = new System.Drawing.Point(12, 68);
 			this.comboFieldType.Name = "comboFieldType";
-			this.comboFieldType.Size = new System.Drawing.Size(169, 21);
+			this.comboFieldType.Size = new System.Drawing.Size(184, 21);
 			this.comboFieldType.TabIndex = 82;
 			this.comboFieldType.SelectedIndexChanged += new System.EventHandler(this.comboFieldType_SelectedIndexChanged);
 			// 
