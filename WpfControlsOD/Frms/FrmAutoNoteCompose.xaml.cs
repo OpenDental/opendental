@@ -196,7 +196,7 @@ End of Checklist================================================================
 			#region Insert Auto Note Text
 			//Logic for determining where the note should go based on the users cursor location.
 			int selectionStart=textRichMain.SelectionStart;
-			if(selectionStart==0) {//Cursor is at the beginning of the textbox.
+			if(selectionStart==0 || selectionStart<-1) {//Cursor is at the beginning of the textbox.
 				textRichMain.Text=strNote+textRichMain.Text;
 			}
 			else if(selectionStart==textRichMain.Text.Length-1) {//Cursor at end of textbox

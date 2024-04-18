@@ -416,6 +416,13 @@ namespace OpenDental {
 			SetImageTypeCode(ClaimConnect.ImageTypeCode.Narrative);
 		}
 
+		private void buttonPasteAgain_Click(object sender,EventArgs e) {
+			if(!GetImagesFromClipboard()) {
+				return;
+			}
+			FillGrid();
+		}
+
 		private void butSend_Click(object sender,EventArgs e) {
 			bool attachmentSentAndSaved=SendAttachmentsToDXCAndSaveLocally();
 			if(attachmentSentAndSaved) {

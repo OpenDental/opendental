@@ -2648,6 +2648,7 @@ namespace OpenDental {
 				//	PatientSelected(this,eArgs);
 				//}
 				//Contr_PatientSelected(this,eArgs);
+				RefreshModuleDataPatient(patient.PatNum);
 				FormOpenDental.S_Contr_PatientSelected(patient,false,false);
 				GotoModule.GotoAppointment(appointment.AptDateTime,appointment.AptNum);
 			}

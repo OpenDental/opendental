@@ -499,23 +499,23 @@ namespace OpenDental {
 					}
 					if(colInternalName=="Guarantor") {
 						//+1 so label doesn't cover right side of textbox if it happens to follow a totals textbox
-						LayoutManager.MoveLocation(labelTotalNumAccounts,new Point(colLocWidthCur.Item1+1,gridCur.Bottom+6));
+						LayoutManager.MoveLocation(labelTotalNumAccounts,new Point(colLocWidthCur.Item1+1,gridCur.Bottom+LayoutManager.Scale(6)));
 						labelTotalNumAccounts.Visible=true;
 						//+2 to account for +1 above and a 1 pixel space between label and textbox
-						LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1+labelTotalNumAccounts.Width+2,gridCur.Bottom+4));
+						LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1+labelTotalNumAccounts.Width+2,gridCur.Bottom+LayoutManager.Scale(4)));
 						//width of label+width of textbox+2 will be width of Guarantor column up to a max textbox width of 65, which will hold at least 10 digits,
 						//so works for all numbers of accounts up to 9,999,999,999.  It is highly unlikely that any customer will ever have 10 billion guarantors
 						//in their aging list.  (That's more than the number of people on the planet, as of 6/27/2018 anyway.)
-						LayoutManager.MoveWidth(textBoxCur,Math.Max(Math.Min(colLocWidthCur.Item2-labelTotalNumAccounts.Width-1,65),1));
+						LayoutManager.MoveWidth(textBoxCur,Math.Max(Math.Min(colLocWidthCur.Item2-labelTotalNumAccounts.Width-1,LayoutManager.Scale(65)),1));
 						continue;
 					}
 					if(firstCol) {
 						//left of the first textbox label width+1 for a space between label and textbox
-						LayoutManager.MoveLocation(labelTotals,new Point(colLocWidthCur.Item1-labelTotals.Width-1,gridCur.Bottom+6));
+						LayoutManager.MoveLocation(labelTotals,new Point(colLocWidthCur.Item1-labelTotals.Width-1,gridCur.Bottom+LayoutManager.Scale(6)));
 						labelTotals.Visible=true;
 						firstCol=false;
 					}
-					LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1,gridCur.Bottom+4));//set location and width to the column's x-pos and width
+					LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1,gridCur.Bottom+LayoutManager.Scale(4)));//set location and width to the column's x-pos and width
 					LayoutManager.MoveWidth(textBoxCur,colLocWidthCur.Item2);
 				}
 			}
@@ -837,8 +837,8 @@ namespace OpenDental {
 			Dictionary<string,Tuple<int,int>> retval=new Dictionary<string,Tuple<int,int>>();
 			int xPos=grid.Location.X-hScrollValue;
 			foreach(GridColumn column in grid.Columns) {
-				retval[column.Heading]=Tuple.Create(xPos+1,column.ColWidth+1);//+1 because the textbox lines seem to be slightly thinner than the grid column lines
-				xPos+=column.ColWidth;
+				retval[column.Heading]=Tuple.Create(xPos+1,LayoutManager.Scale(column.ColWidth)+1);//+1 because the textbox lines seem to be slightly thinner than the grid column lines
+				xPos+=LayoutManager.Scale(column.ColWidth);
 			}
 			return retval;
 		}

@@ -271,6 +271,11 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				sizeParentClientOriginal96=control96InfoParent.ClientSize96Orig;
 			}
 			SizeF sizeParentClientNow96=new SizeF(UnscaleF(controlParent.ClientSize.Width),UnscaleF(controlParent.ClientSize.Height));
+			if(controlParent is UI.TabPage tabPage2) {
+				//See LayoutChildren, we manually remove additional scaled height from UI.Tab contols.  This is because their tab buttons gain height and we need to remove that height difference from the tabControl and all of it's children.  When manually moving any control via the LayoutManager.Move method (which calls this), we need to check to see if the parent is a UI.TabPage.  If so, we need to remove the same height adjustment so that the control itself knows about the height of the tabcontrol adjustment for it's own placement. 
+				int adj=(int)ScaleFontODZoom(20)-20;//There will be no height change at 100% zoom.
+				sizeParentClientNow96.Height=sizeParentClientNow96.Height-adj;
+			}
 			//but the bounds are wrong.  It must be calculated backward to the original position it would be in if the parent had not resized.
 			float x=UnscaleF(boundsScaled.Left);
 			float y=UnscaleF(boundsScaled.Top);

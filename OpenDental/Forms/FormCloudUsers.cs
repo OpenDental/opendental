@@ -89,7 +89,7 @@ namespace OpenDental {
 				row.Cells.Add(userCur.FName);
 				row.Cells.Add(userCur.LName);
 				row.Cells.Add(userCur.Email);
-				TmZoneInfo tzInfoCur=_listTimeZones.FirstOrDefault(x => userCur.TimeZone.ToLower().In(x.AwsTZoneName.ToLower(),x.TZInfo.Id.ToLower()));
+				TmZoneInfo tzInfoCur=_listTimeZones.FirstOrDefault(x => !userCur.TimeZone.IsNullOrEmpty() && userCur.TimeZone.ToLower().In(x.AwsTZoneName.ToLower(),x.TZInfo.Id.ToLower()));
 				row.Cells.Add(tzInfoCur!=null?tzInfoCur.TZInfo.DisplayName:"");
 				if(checkShowUserId.Checked) {
 					row.Cells.Add(userCur.UserId);

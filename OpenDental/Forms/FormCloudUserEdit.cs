@@ -244,7 +244,7 @@ namespace OpenDental {
 				if(textEmail.Text!=_cloudUserCur.Email) {
 					listOperations.Add(new AttributeOperation() { AttributePath="emails",AttributeValue=new Document(Document.FromObject(new Email() { Primary=true,Value=textEmail.Text,Type="work" })) });
 				}
-				if(comboTimezone.GetSelected<TmZoneInfo>().AwsTZoneName.ToLower()!=_cloudUserCur.TimeZone.ToLower()) {
+				if(_cloudUserCur.TimeZone.IsNullOrEmpty() || comboTimezone.GetSelected<TmZoneInfo>().AwsTZoneName.ToLower()!=_cloudUserCur.TimeZone.ToLower()) {
 					listOperations.Add(new AttributeOperation() { AttributePath="timezone",AttributeValue=new Document(comboTimezone.GetSelected<TmZoneInfo>().AwsTZoneName) });
 				}
 				if(listOperations.Count>0) {
