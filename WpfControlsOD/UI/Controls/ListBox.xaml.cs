@@ -76,6 +76,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			scrollViewer.CanContentScroll=false;//results in physical(pixel) scrolling instead of logical(Item) scrolling.
 			Items=new ListBoxItemCollection(this);
 			IsEnabledChanged+=ListBox_IsEnabledChanged;
+			PreviewKeyDown+=ListBox_PreviewKeyDown;
 		}
 		
 		#endregion Constructor
@@ -415,6 +416,75 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			}
 			SetColors();
 		}
+
+		///<summary>Used by autonotes for SelectionMode.CheckBoxes and SelectionMode.One</summary>
+		private void ListBox_PreviewKeyDown(object sender,KeyEventArgs e) {
+			if(SelectionMode!=SelectionMode.CheckBoxes && SelectionMode!=SelectionMode.One){
+				return;
+			}
+			if(e.Key==Key.Escape){//Closing the form
+				return;
+			}
+			List<string> listItems=Items.GetAll<string>();
+			if(listItems==null || listItems.Count==0){
+				return;
+			}
+			int index=0;
+			if(SelectionMode==SelectionMode.One && SelectedIndex!=-1){
+				index=SelectedIndex+1;
+			}
+			if(index>=Items.Count){
+				index=0;
+			}
+			string key=e.Key.ToString().ToLower();
+			if(key.Length>2){//For keys that aren't letters or numbers, such as alt. Alt will have "system" as the key.
+				return;
+			}
+			if(key.Length>1 && key[0]=='d'){//EX:Keyboard presses like 1,2,3 will result in D1, D2, ect so we remove the D part from it. Also need to check D so we don't trim key presses like f1.
+				key=key.Substring(1,1);
+			}
+			//From the index to the end of the list
+			for(int i=index;i<listItems.Count;i++){
+				if(key[0]!=listItems[i].ToLower()[0]){//If the key does not match, skip it.
+					continue;
+				}
+				//We found a match
+				if(SelectionMode==SelectionMode.One){
+					SelectedIndex=i;
+					return;
+				}
+				//Otherwise SelectionMode.CheckBoxes
+				Border border=(Border)stackPanel.Children[i];
+				CheckBox checkBox=(CheckBox)border.Child;
+				if(checkBox.Checked==true){
+					continue;
+				}
+				_listSelectedIndices.Add(i);
+				FillCheckBoxesFromSelectedIndices();
+				return;
+			}
+			//From the start of the list to the index
+			for(int i=0;i<index;i++){
+				if(key[0]!=listItems[i].ToLower()[0]){//If the key does not match, skip it.
+					continue;
+				}
+				//We found a match
+				if(SelectionMode==SelectionMode.One){
+					SelectedIndex=i;
+					return;
+				}
+				//Otherwise SelectionMode.CheckBoxes
+				Border border=(Border)stackPanel.Children[i];
+				CheckBox checkBox=(CheckBox)border.Child;
+				if(checkBox.Checked==true){
+					continue;
+				}
+				_listSelectedIndices.Add(i);
+				FillCheckBoxesFromSelectedIndices();
+				return;
+			}
+		}
+
 		#endregion Methods - event handlers, mouse
 
 		#region Methods - Public

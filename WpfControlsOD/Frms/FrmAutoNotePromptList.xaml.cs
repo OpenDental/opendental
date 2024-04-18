@@ -72,7 +72,7 @@ namespace OpenDental {
 			}
 			int adj=ScaleFormValue(150);
 			_formFrame.Top+=adj;
-			Focus();//so that Alt keys will work.
+			listMain.Focus();
 		}
 
 		private void listMain_MouseDoubleClick(object sender,MouseEventArgs e) {

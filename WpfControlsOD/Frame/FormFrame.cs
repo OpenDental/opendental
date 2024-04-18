@@ -281,10 +281,28 @@ namespace OpenDental {
 			}
 			UIManager_.LayoutFormBoundsAndFonts();
 			base.OnLoad(e);
-			ElementHostUI.Select();//this lets the hover effects work properly on menus and toolbars.
-			UIManager_.FrmODBaseHosted.Focus();//so that keystrokes will work.
-			//Since Frms are not focusable by default, this actually selects the first control inside the Frm.
-			//See FrmTestFocusTabbing for more notes and scenarios regarding focus.
+			//The above line is calling Form.OnLoad.
+			//Remember that we are already inside FormFrame.OnLoad override.
+			//The above line causes all FormFrame.Load event handlers to be invoked, like the one over in FrmODBase for example.
+			//Within that event handle is where we raise our fake Frm Load (not Loaded) event.
+			//This Frm Load event only has handlers in the derived Frms. There is nothing in FrmODBase.
+			//As we document at the top of FrmODBase, the Frm Load event handler is the recommended place to explicity set focus.
+			//Right after the derived Frm Load event handlers run, then FrmODBase.FormFrame_Load calls SetFocusToFirst().
+			//If we did not already explicity set focus, then this will set focus to something, even if just the Frm itself.
+			//We are now guaranteed to have focus even in all cases, even if we didn't explicity set focus.
+			//Testing:
+			//We found a Frm with menu, toolbar, and alt-key shortcuts: FrmTestAllControls.
+			//On that Frm, we tested that menu hover, toolbar hover, and the alt-keys all worked in two different scenarios:
+			//1. When we added a line at the end of the Load event similar to this: textBox.Focus().
+			//2. When there is no focus set in the Load event.
+			//if(!UIManager_.FrmODBaseHosted.IsKeyboardFocusWithin){
+				//This never gets hit. We worked instead on setting focus prior to this point.
+				//ElementHostUI.Select();//this lets the hover effects work properly on menus and toolbars.
+				//Winforms Select() does not distinguish between keyboard and logical focus.
+				//UIManager_.FrmODBaseHosted.Focus();//Keyboard and logical focus so that keystrokes will work.
+				//Since Frms are not focusable by default, this actually selects the first control inside the Frm.
+				//See FrmTestFocusTabbing for more notes and scenarios regarding focus.
+			//}
 			//Also seeFrmODBase constructor.
 		}
 

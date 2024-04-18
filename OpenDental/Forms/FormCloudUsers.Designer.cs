@@ -43,7 +43,7 @@ namespace OpenDental{
 			this.gridUsers.Location = new System.Drawing.Point(12, 38);
 			this.gridUsers.Name = "gridUsers";
 			this.gridUsers.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridUsers.Size = new System.Drawing.Size(934, 461);
+			this.gridUsers.Size = new System.Drawing.Size(1150, 461);
 			this.gridUsers.TabIndex = 8;
 			this.gridUsers.Title = "Users";
 			this.gridUsers.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridUsers_CellDoubleClick);
@@ -53,7 +53,7 @@ namespace OpenDental{
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(952, 38);
+			this.butAdd.Location = new System.Drawing.Point(1168, 38);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(90, 24);
 			this.butAdd.TabIndex = 3;
@@ -65,7 +65,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(952, 68);
+			this.butDelete.Location = new System.Drawing.Point(1168, 68);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(90, 24);
 			this.butDelete.TabIndex = 4;
@@ -92,7 +92,7 @@ namespace OpenDental{
 			// 
 			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butClose.Location = new System.Drawing.Point(952, 475);
+			this.butClose.Location = new System.Drawing.Point(1168, 475);
 			this.butClose.Name = "butClose";
 			this.butClose.Size = new System.Drawing.Size(90, 24);
 			this.butClose.TabIndex = 7;
@@ -120,7 +120,7 @@ namespace OpenDental{
 			// FormCloudUsers
 			// 
 			this.CancelButton = this.butClose;
-			this.ClientSize = new System.Drawing.Size(1054, 511);
+			this.ClientSize = new System.Drawing.Size(1270, 511);
 			this.Controls.Add(this.checkShowUserId);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.butClose);

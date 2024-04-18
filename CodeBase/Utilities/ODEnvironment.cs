@@ -63,6 +63,8 @@ namespace CodeBase {
 			}
 		}
 
+		private static DateTime _dateTimeLastCloudCheck= DateTime.MinValue;
+		private static bool _isCloudServerFileValid=false;
 		///<summary>Indicates if we are running on an OD Cloud server (Thinfinity or AppStream).</summary>
 		public static bool IsCloudServer {
 			get {
@@ -70,8 +72,13 @@ namespace CodeBase {
 					return true;
 				}
 				//Sometimes we connect to an OD Cloud db with a normal build to do things like updates or from the ODService or ODEConnector services.
-				FileInfo fileInfo=new FileInfo(@"C:\Scripts\RegKeyNum.txt");
-				return (fileInfo.Exists && fileInfo.Length>0);
+				//Only check every 1 minute to prevent spamming the file system.
+				if(DateTime.Now.Subtract(_dateTimeLastCloudCheck).TotalMinutes>1) {
+					FileInfo fileInfo=new FileInfo(@"C:\Scripts\RegKeyNum.txt");
+					_isCloudServerFileValid=(fileInfo.Exists&&fileInfo.Length>0);
+					_dateTimeLastCloudCheck=DateTime.Now;
+				}
+				return _isCloudServerFileValid;				
 			}
 		}
 
