@@ -33,7 +33,7 @@ namespace OpenDental {
 				labelClaimAttachWarning.Visible=false;
 			}
 			if(!GetImagesFromClipboard()) {//If getting images from clipboard fails, then kick out
-				DialogResult=DialogResult.Cancel;
+				Close();
 				return;
 			}
 			FillGrid();
@@ -74,7 +74,7 @@ namespace OpenDental {
 		private void FillGrid() {
 			if(_listAttachmentItems.Count<1) {//See if list is now empty after deleting item
 				MsgBox.Show("All images have been deleted.");
-				DialogResult=DialogResult.OK;
+				Close();
 				return;
 			}
 			gridMain.BeginUpdate();
@@ -327,6 +327,8 @@ namespace OpenDental {
 			if(formClaimAttachPasteDXCItem.AttachmentItemCur.ImageAttachment==null) {//Attachment has been deleted
 				_listAttachmentItems[e.Row].Bitmap?.Dispose();
 				_listAttachmentItems.RemoveAt(e.Row);
+				pictureBox.Image?.Dispose();
+				pictureBox.Image=null;
 			}
 			else if(formClaimAttachPasteDXCItem.DialogResult==DialogResult.OK) {//Attachment has been saved
 				_listAttachmentItems[e.Row].ImageAttachment=formClaimAttachPasteDXCItem.AttachmentItemCur.ImageAttachment;
@@ -426,7 +428,7 @@ namespace OpenDental {
 		private void butSend_Click(object sender,EventArgs e) {
 			bool attachmentSentAndSaved=SendAttachmentsToDXCAndSaveLocally();
 			if(attachmentSentAndSaved) {
-				DialogResult=DialogResult.OK;
+				Close();
 			}
 		}
 

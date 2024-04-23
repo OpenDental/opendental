@@ -131,6 +131,7 @@ namespace OpenDentBusiness.Crud{
 				claim.DateOtherQualifier            = (OpenDentBusiness.DateOtherQualifier)PIn.Int(row["DateOtherQualifier"].ToString());
 				claim.IsOutsideLab                  = PIn.Bool  (row["IsOutsideLab"].ToString());
 				claim.SecurityHash                  = PIn.String(row["SecurityHash"].ToString());
+				claim.Narrative                     = PIn.String(row["Narrative"].ToString());
 				retVal.Add(claim);
 			}
 			return retVal;
@@ -226,6 +227,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DateOtherQualifier");
 			table.Columns.Add("IsOutsideLab");
 			table.Columns.Add("SecurityHash");
+			table.Columns.Add("Narrative");
 			foreach(Claim claim in listClaims) {
 				table.Rows.Add(new object[] {
 					POut.Long  (claim.ClaimNum),
@@ -312,6 +314,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Int   ((int)claim.DateOtherQualifier),
 					POut.Bool  (claim.IsOutsideLab),
 					            claim.SecurityHash,
+					            claim.Narrative,
 				});
 			}
 			return table;
@@ -331,7 +334,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ClaimNum,";
 			}
-			command+="PatNum,DateService,DateSent,ClaimStatus,DateReceived,PlanNum,ProvTreat,ClaimFee,InsPayEst,InsPayAmt,DedApplied,PreAuthString,IsProsthesis,PriorDate,ReasonUnderPaid,ClaimNote,ClaimType,ProvBill,ReferringProv,RefNumString,PlaceService,AccidentRelated,AccidentDate,AccidentST,EmployRelated,IsOrtho,OrthoRemainM,OrthoDate,PatRelat,PlanNum2,PatRelat2,WriteOff,Radiographs,ClinicNum,ClaimForm,AttachedImages,AttachedModels,AttachedFlags,AttachmentID,CanadianMaterialsForwarded,CanadianReferralProviderNum,CanadianReferralReason,CanadianIsInitialLower,CanadianDateInitialLower,CanadianMandProsthMaterial,CanadianIsInitialUpper,CanadianDateInitialUpper,CanadianMaxProsthMaterial,InsSubNum,InsSubNum2,CanadaTransRefNum,CanadaEstTreatStartDate,CanadaInitialPayment,CanadaPaymentMode,CanadaTreatDuration,CanadaNumAnticipatedPayments,CanadaAnticipatedPayAmount,PriorAuthorizationNumber,SpecialProgramCode,UniformBillType,MedType,AdmissionTypeCode,AdmissionSourceCode,PatientStatusCode,CustomTracking,DateResent,CorrectionType,ClaimIdentifier,OrigRefNum,ProvOrderOverride,OrthoTotalM,ShareOfCost,SecUserNumEntry,SecDateEntry,OrderingReferralNum,DateSentOrig,DateIllnessInjuryPreg,DateIllnessInjuryPregQualifier,DateOther,DateOtherQualifier,IsOutsideLab,SecurityHash) VALUES(";
+			command+="PatNum,DateService,DateSent,ClaimStatus,DateReceived,PlanNum,ProvTreat,ClaimFee,InsPayEst,InsPayAmt,DedApplied,PreAuthString,IsProsthesis,PriorDate,ReasonUnderPaid,ClaimNote,ClaimType,ProvBill,ReferringProv,RefNumString,PlaceService,AccidentRelated,AccidentDate,AccidentST,EmployRelated,IsOrtho,OrthoRemainM,OrthoDate,PatRelat,PlanNum2,PatRelat2,WriteOff,Radiographs,ClinicNum,ClaimForm,AttachedImages,AttachedModels,AttachedFlags,AttachmentID,CanadianMaterialsForwarded,CanadianReferralProviderNum,CanadianReferralReason,CanadianIsInitialLower,CanadianDateInitialLower,CanadianMandProsthMaterial,CanadianIsInitialUpper,CanadianDateInitialUpper,CanadianMaxProsthMaterial,InsSubNum,InsSubNum2,CanadaTransRefNum,CanadaEstTreatStartDate,CanadaInitialPayment,CanadaPaymentMode,CanadaTreatDuration,CanadaNumAnticipatedPayments,CanadaAnticipatedPayAmount,PriorAuthorizationNumber,SpecialProgramCode,UniformBillType,MedType,AdmissionTypeCode,AdmissionSourceCode,PatientStatusCode,CustomTracking,DateResent,CorrectionType,ClaimIdentifier,OrigRefNum,ProvOrderOverride,OrthoTotalM,ShareOfCost,SecUserNumEntry,SecDateEntry,OrderingReferralNum,DateSentOrig,DateIllnessInjuryPreg,DateIllnessInjuryPregQualifier,DateOther,DateOtherQualifier,IsOutsideLab,SecurityHash,Narrative) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(claim.ClaimNum)+",";
 			}
@@ -418,12 +421,17 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Date  (claim.DateOther)+","
 				+    POut.Int   ((int)claim.DateOtherQualifier)+","
 				+    POut.Bool  (claim.IsOutsideLab)+","
-				+"'"+POut.String(claim.SecurityHash)+"')";
+				+"'"+POut.String(claim.SecurityHash)+"',"
+				+    DbHelper.ParamChar+"paramNarrative)";
+			if(claim.Narrative==null) {
+				claim.Narrative="";
+			}
+			OdSqlParameter paramNarrative=new OdSqlParameter("paramNarrative",OdDbType.Text,POut.StringParam(claim.Narrative));
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramNarrative);
 			}
 			else {
-				claim.ClaimNum=Db.NonQ(command,true,"ClaimNum","claim");
+				claim.ClaimNum=Db.NonQ(command,true,"ClaimNum","claim",paramNarrative);
 			}
 			return claim.ClaimNum;
 		}
@@ -443,7 +451,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ClaimNum,";
 			}
-			command+="PatNum,DateService,DateSent,ClaimStatus,DateReceived,PlanNum,ProvTreat,ClaimFee,InsPayEst,InsPayAmt,DedApplied,PreAuthString,IsProsthesis,PriorDate,ReasonUnderPaid,ClaimNote,ClaimType,ProvBill,ReferringProv,RefNumString,PlaceService,AccidentRelated,AccidentDate,AccidentST,EmployRelated,IsOrtho,OrthoRemainM,OrthoDate,PatRelat,PlanNum2,PatRelat2,WriteOff,Radiographs,ClinicNum,ClaimForm,AttachedImages,AttachedModels,AttachedFlags,AttachmentID,CanadianMaterialsForwarded,CanadianReferralProviderNum,CanadianReferralReason,CanadianIsInitialLower,CanadianDateInitialLower,CanadianMandProsthMaterial,CanadianIsInitialUpper,CanadianDateInitialUpper,CanadianMaxProsthMaterial,InsSubNum,InsSubNum2,CanadaTransRefNum,CanadaEstTreatStartDate,CanadaInitialPayment,CanadaPaymentMode,CanadaTreatDuration,CanadaNumAnticipatedPayments,CanadaAnticipatedPayAmount,PriorAuthorizationNumber,SpecialProgramCode,UniformBillType,MedType,AdmissionTypeCode,AdmissionSourceCode,PatientStatusCode,CustomTracking,DateResent,CorrectionType,ClaimIdentifier,OrigRefNum,ProvOrderOverride,OrthoTotalM,ShareOfCost,SecUserNumEntry,SecDateEntry,OrderingReferralNum,DateSentOrig,DateIllnessInjuryPreg,DateIllnessInjuryPregQualifier,DateOther,DateOtherQualifier,IsOutsideLab,SecurityHash) VALUES(";
+			command+="PatNum,DateService,DateSent,ClaimStatus,DateReceived,PlanNum,ProvTreat,ClaimFee,InsPayEst,InsPayAmt,DedApplied,PreAuthString,IsProsthesis,PriorDate,ReasonUnderPaid,ClaimNote,ClaimType,ProvBill,ReferringProv,RefNumString,PlaceService,AccidentRelated,AccidentDate,AccidentST,EmployRelated,IsOrtho,OrthoRemainM,OrthoDate,PatRelat,PlanNum2,PatRelat2,WriteOff,Radiographs,ClinicNum,ClaimForm,AttachedImages,AttachedModels,AttachedFlags,AttachmentID,CanadianMaterialsForwarded,CanadianReferralProviderNum,CanadianReferralReason,CanadianIsInitialLower,CanadianDateInitialLower,CanadianMandProsthMaterial,CanadianIsInitialUpper,CanadianDateInitialUpper,CanadianMaxProsthMaterial,InsSubNum,InsSubNum2,CanadaTransRefNum,CanadaEstTreatStartDate,CanadaInitialPayment,CanadaPaymentMode,CanadaTreatDuration,CanadaNumAnticipatedPayments,CanadaAnticipatedPayAmount,PriorAuthorizationNumber,SpecialProgramCode,UniformBillType,MedType,AdmissionTypeCode,AdmissionSourceCode,PatientStatusCode,CustomTracking,DateResent,CorrectionType,ClaimIdentifier,OrigRefNum,ProvOrderOverride,OrthoTotalM,ShareOfCost,SecUserNumEntry,SecDateEntry,OrderingReferralNum,DateSentOrig,DateIllnessInjuryPreg,DateIllnessInjuryPregQualifier,DateOther,DateOtherQualifier,IsOutsideLab,SecurityHash,Narrative) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(claim.ClaimNum)+",";
 			}
@@ -530,12 +538,17 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Date  (claim.DateOther)+","
 				+    POut.Int   ((int)claim.DateOtherQualifier)+","
 				+    POut.Bool  (claim.IsOutsideLab)+","
-				+"'"+POut.String(claim.SecurityHash)+"')";
+				+"'"+POut.String(claim.SecurityHash)+"',"
+				+    DbHelper.ParamChar+"paramNarrative)";
+			if(claim.Narrative==null) {
+				claim.Narrative="";
+			}
+			OdSqlParameter paramNarrative=new OdSqlParameter("paramNarrative",OdDbType.Text,POut.StringParam(claim.Narrative));
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramNarrative);
 			}
 			else {
-				claim.ClaimNum=Db.NonQ(command,true,"ClaimNum","claim");
+				claim.ClaimNum=Db.NonQ(command,true,"ClaimNum","claim",paramNarrative);
 			}
 			return claim.ClaimNum;
 		}
@@ -625,9 +638,14 @@ namespace OpenDentBusiness.Crud{
 				+"DateOther                     =  "+POut.Date  (claim.DateOther)+", "
 				+"DateOtherQualifier            =  "+POut.Int   ((int)claim.DateOtherQualifier)+", "
 				+"IsOutsideLab                  =  "+POut.Bool  (claim.IsOutsideLab)+", "
-				+"SecurityHash                  = '"+POut.String(claim.SecurityHash)+"' "
+				+"SecurityHash                  = '"+POut.String(claim.SecurityHash)+"', "
+				+"Narrative                     =  "+DbHelper.ParamChar+"paramNarrative "
 				+"WHERE ClaimNum = "+POut.Long(claim.ClaimNum);
-			Db.NonQ(command);
+			if(claim.Narrative==null) {
+				claim.Narrative="";
+			}
+			OdSqlParameter paramNarrative=new OdSqlParameter("paramNarrative",OdDbType.Text,POut.StringParam(claim.Narrative));
+			Db.NonQ(command,paramNarrative);
 		}
 
 		///<summary>Updates one Claim in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -956,12 +974,20 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="SecurityHash = '"+POut.String(claim.SecurityHash)+"'";
 			}
+			if(claim.Narrative != oldClaim.Narrative) {
+				if(command!="") { command+=",";}
+				command+="Narrative = "+DbHelper.ParamChar+"paramNarrative";
+			}
 			if(command=="") {
 				return false;
 			}
+			if(claim.Narrative==null) {
+				claim.Narrative="";
+			}
+			OdSqlParameter paramNarrative=new OdSqlParameter("paramNarrative",OdDbType.Text,POut.StringParam(claim.Narrative));
 			command="UPDATE claim SET "+command
 				+" WHERE ClaimNum = "+POut.Long(claim.ClaimNum);
-			Db.NonQ(command);
+			Db.NonQ(command,paramNarrative);
 			return true;
 		}
 
@@ -1209,6 +1235,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(claim.SecurityHash != oldClaim.SecurityHash) {
+				return true;
+			}
+			if(claim.Narrative != oldClaim.Narrative) {
 				return true;
 			}
 			return false;

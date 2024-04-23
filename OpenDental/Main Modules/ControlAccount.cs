@@ -2086,6 +2086,24 @@ namespace OpenDental {
 			formImagePickerDXC.ShowDialog();
 		}
 
+		private void menuItemPasteAttachment_Click(object sender,EventArgs e) {
+			DataTable table=_dataSetMain.Tables["account"];
+			//Guaranteed to be exactly one claim selected (among possible other selections)
+			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
+			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
+			if(claimNum==0) {
+				return;
+			}
+			Claim claim=Claims.GetClaim(claimNum);
+			if(!ValidateRightClickDXC(claim)) {
+				return;
+			}
+			FormClaimAttachPasteDXC formClaimAttachPasteDXC=new FormClaimAttachPasteDXC();
+			formClaimAttachPasteDXC.ClaimCur=claim;
+			formClaimAttachPasteDXC.PatientCur=_patient;
+			formClaimAttachPasteDXC.Show();
+		}
+
 		private void menuItemAttachmentHistory_Click(object sender,EventArgs e) {
 			DataTable table=_dataSetMain.Tables["account"];
 			//Guaranteed to be exactly one claim selected (among possible other selections)
@@ -2108,24 +2126,6 @@ namespace OpenDental {
 			if(Visible){
 				this.OnMouseWheel(e);
 			}
-		}
-
-		private void menuItemPasteAttachment_Click(object sender,EventArgs e) {
-			DataTable table=_dataSetMain.Tables["account"];
-			//Guaranteed to be exactly one claim selected (among possible other selections)
-			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
-			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
-			if(claimNum==0) {
-				return;
-			}
-			Claim claim=Claims.GetClaim(claimNum);
-			if(!ValidateRightClickDXC(claim)) {
-				return;
-			}
-			using FormClaimAttachPasteDXC formClaimAttachPasteDXC=new FormClaimAttachPasteDXC();
-			formClaimAttachPasteDXC.ClaimCur=claim;
-			formClaimAttachPasteDXC.PatientCur=_patient;
-			formClaimAttachPasteDXC.ShowDialog();
 		}
 		#endregion Methods - Event Handlers Parent
 
@@ -2479,6 +2479,32 @@ namespace OpenDental {
 			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
 				GlobalFormOpenDental.PatientSelected(new Patient(),false);
 				RefreshModuleData(0,isSelectingFamily);
+			}
+			if(_patient!=null) {//Only when a patient is selected
+				//This section could be improved to use objects once we switch from DataSet to lists.
+				DataTable dataTable=_loadData.DataSetMain.Tables["account"];
+				List<DataRow> listDataRowsClaims=dataTable.Select().ToList().FindAll(x => x["ClaimNum"].ToString()!="0");
+				//Get a list of procnums of procedures that do not have a status of complete. Since the logic that fills the account
+				//table only selects completed procedures, any procnums not in the account table must have a different procstatus.
+				List<long> listProcNumsAll=dataTable.Select().Select(x => PIn.Long(x["ProcNum"].ToString())).ToList();
+				List<long> listProcNumsIncompleteClaims=string.Join(",",listDataRowsClaims.Select(x => x["procsOnObj"]))//All procNums on the all claims in account
+					.Split(',')
+					.Distinct()
+					.Select(x => PIn.Long(x))
+					.ToList()
+					//get procNums that are on claim but not in account
+					.FindAll(y => !y.In(listProcNumsAll.ToArray()));
+				//Warn the user if they have any incomplete procs attached to claims.
+				if(!listProcNumsIncompleteClaims.IsNullOrEmpty()) {
+					StringBuilder stringBuilder=new StringBuilder(Lans.g(this,"The following procedure(s) are incomplete and attached to claim(s). It is recommended that all procedures attached to claims be completed")+":\r\n");
+					//These extra queries should not be executed very often, and they will only return a small dataset in most cases
+					List<Procedure> listProcedures=Procedures.GetManyProc(listProcNumsIncompleteClaims,includeNote:false);
+					for(int i=0;i<listProcedures.Count;i++) {
+						stringBuilder.AppendLine(listProcedures[i].ProcDate.ToShortDateString()+"\t"+Procedures.GetDescription(listProcedures[i],forAccount:true));
+					}
+					MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(stringBuilder.ToString());
+					msgBoxCopyPaste.Show();
+				}
 			}
 			Logger.LogAction("RefreshModuleScreen",LogPath.AccountModule,() => RefreshModuleScreen(isSelectingFamily));
 			ODEvent.Fire(ODEventType.ModuleSelected,_loadData);

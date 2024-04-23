@@ -515,6 +515,48 @@ namespace OpenDental{
 			GridRow row;
 			for(int i=0;i<_tablePats.Rows.Count;i++) {
 				row=new GridRow();
+				#region New York Mental Health
+				if(PrefC.GetBool(PrefName.OmhNy)) {
+					DateTime dateLastVisit=PIn.Date(_tablePats.Rows[i]["lastVisit"].ToString());
+					string description=_tablePats.Rows[i]["RecallPastDue"].ToString();
+					if(dateLastVisit.Year<1880) {
+						row.ColorText=Color.Orange;
+					}
+					else if(dateLastVisit.Year>1880 && description=="") {
+						row.ColorText=Color.Black;
+					}
+					else if(description=="PROPHY") {
+						row.ColorText=Color.Red;
+					}
+					else if(description=="CHILD PROPHY") {
+						row.ColorText=Color.Red;
+					}
+					else if(description=="ANNUAL EXAM") {
+						row.ColorText=Color.Green;
+					}
+					else if(description=="6 MONTH EXAM") {
+						row.ColorText=Color.Blue;
+					}
+					else if(description=="PANO X-RAY") {
+						row.ColorText=Color.Purple;
+					}
+					else if(description=="PERIO SRP(UR)") {
+						row.ColorText=Color.Brown;
+					}
+					else if(description=="PERIO SRP(UL)") {
+						row.ColorText=Color.Brown;
+					}
+					else if(description=="PERIO SRP(LR)") {
+						row.ColorText=Color.Brown;
+					}
+					else if(description=="PERIO SRP(LL)") {
+						row.ColorText=Color.Brown;
+					}
+					else {
+						row.ColorText=Color.Black;
+					}
+				}
+				#endregion New York Mental Health
 				for(int f=0;f<_listDisplayFields.Count;f++) {
 					switch(_listDisplayFields[f].InternalName) {
 						case "LastName":

@@ -2630,9 +2630,9 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Used to display procedure descriptions on appointments. The returned string also includes surf and toothNum.</summary>
-		public static string GetDescription(Procedure proc) {
+		public static string GetDescription(Procedure proc,bool forAccount=false) {
 			//No need to check MiddleTierRole; no call to db.
-			return ConvertProcToString(proc.CodeNum,proc.Surf,proc.ToothNum,false);
+			return ConvertProcToString(proc.CodeNum,proc.Surf,proc.ToothNum,forAccount);
 		}
 
 		///<summary>Used to display procedure descriptions on letters. The returned string also includes surf and toothNum.</summary>

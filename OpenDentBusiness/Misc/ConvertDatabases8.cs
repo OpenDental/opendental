@@ -1381,5 +1381,12 @@ namespace OpenDentBusiness {
 			FixADA2024IsPreAuthLocation();
 		}//End of 24_1_21() method
 
+		private static void To24_1_23() {
+			string command;
+			command="ALTER TABLE claim ADD Narrative text NOT NULL";
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('OmhNy','0')";
+			Db.NonQ(command);
+		}//End of 24_1_23() method
 	}
 }

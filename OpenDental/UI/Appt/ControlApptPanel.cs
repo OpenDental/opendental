@@ -185,6 +185,8 @@ namespace OpenDental.UI{
 		private int _dayClicked;
 		///<summary>When resizing, we need to know the original height.</summary>
 		private int _heightResizingOriginal;
+		///<summary>Keeps track of status of left mouse button.</summary>
+		private bool _isLeftMouseDown;
 		///<summary></summary>
 		private bool _isResizingAppt;
 		///<summary>Appt origin.  If moving an appointment, this is the location where the appointment was at the beginning of the drag, in coordinates of the parent control.</summary>
@@ -857,12 +859,14 @@ namespace OpenDental.UI{
 			if(ListOpsVisible.Count==0) {//no ops visible.
 				return;
 			}
-			//if(_isMouseDown) {
 			if(((Control.MouseButtons & MouseButtons.Left)>0 && (Control.MouseButtons & MouseButtons.Right)>0)) {
 				return;
 			}
 			if(((Control.MouseButtons & MouseButtons.Left)>0 && (Control.MouseButtons & MouseButtons.Middle)>0)) {
 				return;
+			}
+			if((Control.MouseButtons & MouseButtons.Left)>0) {
+				_isLeftMouseDown=true;
 			}
 			if(e.Y<_heightProvOpHeaders
 				&& e.X>_widthTime 
@@ -1036,7 +1040,9 @@ namespace OpenDental.UI{
 				}
 				return;
 			}
-			if(Control.MouseButtons!=MouseButtons.Left) { 
+			if(Control.MouseButtons!=MouseButtons.Left || !_isLeftMouseDown) { 
+				//Prevents a bug where another window is open, user clicks a button that closes that window,
+				//before releasing their click, if they were to drag here, a phantom appt would show.
 				return;
 			}
 			//from here down, left mouse button is down
@@ -1077,14 +1083,14 @@ namespace OpenDental.UI{
 
 		protected override void OnMouseUp(MouseEventArgs e) {
 			base.OnMouseUp(e);
-			//If both buttons are used in some combination, we only get a mouse up event on the first button released.
-			//So we treat either of them as the mouse up event.
-			//if(!_isMouseDown) {
-			//	return;
-			//}
 			//try/finally only. No catch. We probably want a handy exception to popup if there is a real bug.
 			//Any return from this point forward will cause HideDraggableContrApptSingle() and ResizingAppt=false.
 			try {
+				if(!_isLeftMouseDown) {
+					//This is important to prevent a bug where another window is open, user clicks a button that closes that window,
+					//and then the mouse up fires here. That kind of mouse up must be ignored.
+					return;
+				}
 				//int thisIndex=GetIndex(ContrApptSingle.SelectedAptNum);
 				Appointment apptOld;
 				if(_isResizingAppt) {
@@ -1270,6 +1276,7 @@ namespace OpenDental.UI{
 				//MoveAppointment(new List<Appointment>() { appt },new List<Appointment>() { apptOld },curOp,timeWasMoved,isOpChanged);//Apt's time has already been changed at this point.  Internally calls Appointments S-class to insert invalid signal.				
 			}
 			finally { //Cleanup. We are done with mouse up so we can't possibly be resizing or moving an appt.
+				_isLeftMouseDown=false;
 				_isResizingAppt=false;
 				HideDraggableTempApptSingle();//sets mouseup
 			}

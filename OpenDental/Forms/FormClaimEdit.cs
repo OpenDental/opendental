@@ -131,12 +131,22 @@ namespace OpenDental{
 				automationTrigger=EnumAutomationTrigger.ClaimCreate;
 			}
 			AutomationL.Trigger(automationTrigger,null,_claim.PatNum,triggerObj:listClaimProcsForClaim);
+			List<Procedure> listProcedures=Procedures.GetManyProc(_listClaimProcsForClaim.Select(x => x.ProcNum).ToList(),false);
+			List<Procedure> listProceduresIncomplete=listProcedures.FindAll(x => x.ProcStatus!=ProcStat.C 
+				&& Procedures.IsAttachedToClaim(x,listClaimProcsForClaim,isPreauthIncluded:false));
+			if(!listProceduresIncomplete.IsNullOrEmpty() && IsNew) {//Only block the creation of new claims for incomplete procedures.
+				MsgBox.Show("One or more procedures attached to this claim are not complete. Cannot create claim for incomplete procedures.");
+				//Remove the claim procs for this claim since that is how we determine if a procedure is attached to a claim.
+				ClaimProcs.DeleteMany(_listClaimProcsForClaim.FindAll(x => x.ProcNum.In(listProceduresIncomplete.Select(x => x.ProcNum).ToArray())));
+				DialogResult=DialogResult.OK;//Prevent the warning message in the FormClosing event from showing.
+				this.Close();
+				return;
+			}
 			if(!_isForOrthoAutoPay) {
 				return;
 			}
 			//Automatically show the supplemental payment window after automatically selecting all ortho banding codes.
 			List<long> listCodeNums = ProcedureCodes.GetOrthoBandingCodeNums();
-			List<Procedure> listProcedures=Procedures.GetManyProc(_listClaimProcsForClaim.Select(x => x.ProcNum).ToList(),false);
 			for(int i = 0;i < _listClaimProcsForClaim.Count;i++) {
 				ClaimProc claimProc = _listClaimProcsForClaim[i];
 				Procedure procedure = listProcedures.Find(x => x.ProcNum==claimProc.ProcNum);

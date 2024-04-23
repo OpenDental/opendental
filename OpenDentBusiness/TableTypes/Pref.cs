@@ -1523,6 +1523,9 @@ namespace OpenDentBusiness {
 		ODMobileCacheDurationHours,
 		/// <summary>Used for the clinicpref table when clinics are enabled, otherwise used by preference table. Specifies the ODTouch device limit for a given clinic (i.e. the count of devices included with an ODTouch signup). Any devices over this limit are considered surplus and subject to additional charge(s). </summary>
 		ODTouchDeviceLimit,
+		///<summary>This is only true for New York Office of Mental Health.</summary>
+		[PrefName(ValueType = PrefValueType.BOOL)]
+		OmhNy,
 		///<summary>Mark online payments as processed when an eClipboard/patient portal payment is auto-split.</summary>
 		[PrefName(ValueType = PrefValueType.BOOL)]
 		OnlinePaymentsMarkAsProcessed,

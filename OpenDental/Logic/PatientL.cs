@@ -50,13 +50,20 @@ namespace OpenDental{
 			}
 			for(int i=0;i<_listPatientsLastFive.Count;i++) {
 				string name=_listPatientsLastFive[i].GetNameLF();
+				if(PrefC.IsODHQ) {
+					name+=" - "+POut.Long(_listPatientsLastFive[i].PatNum);
+				}
 				contextMenu.MenuItems.Add(name,eventHandlerOnClick);
 			}
 			contextMenu.MenuItems.Add("-");
 			contextMenu.MenuItems.Add("FAMILY");
 			if(patNum!=0 && family!=null) {
 				for(int i=0;i<family.ListPats.Length;i++) {
-					contextMenu.MenuItems.Add(family.ListPats[i].GetNameLF(),eventHandlerOnClick);
+					string name=family.ListPats[i].GetNameLF();
+					if(PrefC.IsODHQ) {
+						name+=" - "+POut.Long(family.ListPats[i].PatNum);
+					}
+					contextMenu.MenuItems.Add(name,eventHandlerOnClick);
 				}
 			}
 		}

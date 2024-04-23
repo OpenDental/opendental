@@ -1967,7 +1967,7 @@ namespace OpenDentBusiness {
 			}
 			List<string> listPatNumStrs=table.Select().Select(x => x["PatNum"].ToString()).ToList();
 			Dictionary<string,Tuple<DateTime,DateTime>> dictNextLastApts=new Dictionary<string,Tuple<DateTime,DateTime>>();
-			if(ptSearchArgs.HasNextLastVisit && ptSearchArgs.DoLimit && table.Rows.Count>0) {
+			if((ptSearchArgs.HasNextLastVisit || PrefC.GetBool(PrefName.OmhNy)) && ptSearchArgs.DoLimit && table.Rows.Count>0) {
 				command=$@"SELECT PatNum,
 					COALESCE(MIN(CASE WHEN AptStatus={SOut.Int((int)ApptStatus.Scheduled)} AND AptDateTime>={DbHelper.Now()}
 						THEN AptDateTime END),{SOut.DateT(DateTime.MinValue)}) NextVisit,
@@ -1980,9 +1980,10 @@ namespace OpenDentBusiness {
 				dictNextLastApts=ReportsComplex.RunFuncOnReadOnlyServer(() => Db.GetTable(command).Select() 
 					.ToDictionary(x => x["PatNum"].ToString(),x => Tuple.Create(SIn.DateT(x["NextVisit"].ToString()),SIn.DateT(x["LastVisit"].ToString()))));
 			}
+			List<long> listPatNums=new List<long>();
 			List<EhrPatient> listEhrPatients=new List<EhrPatient>();
 			if(DisplayFields.IsInUse(DisplayFieldCategory.PatientSelect,"DischargeDate")) {
-				List<long> listPatNums=listPatNumStrs.Select(x=>PIn.Long(x)).ToList();
+				listPatNums=listPatNumStrs.Select(x=>PIn.Long(x)).ToList();
 				listEhrPatients=EhrPatients.GetByPatNums(listPatNums);
 			}
 			DataTable PtDataTable=table.Clone();//does not copy any data
@@ -1995,6 +1996,15 @@ namespace OpenDentBusiness {
 			PtDataTable.Columns.Add("nextVisit");
 			//DischargeDate is not a part of the table and must be added manually by grabbing the ehrpatient data.
 			PtDataTable.Columns.Add("DischargeDate");
+			List<Recall> listRecalls=new List<Recall>();//only for OmhNy
+			//RecallPastDue is not a part of the table and must be added manually by grabbing the recall data.
+			if(PrefC.GetBool(PrefName.OmhNy)) {
+				if(listPatNums.Count==0) {
+					listPatNums=listPatNumStrs.Select(x => PIn.Long(x)).ToList();
+				}
+				listRecalls=Recalls.GetList(listPatNums);
+				PtDataTable.Columns.Add("RecallPastDue");
+			}
 			PtDataTable.Columns.OfType<DataColumn>().ForEach(x => x.DataType=typeof(string));
 			DataRow r;
 			DateTime date;
@@ -2066,6 +2076,18 @@ namespace OpenDentBusiness {
 				date=listEhrPatients.Find(x=>x.PatNum==patNum)?.DischargeDate??new DateTime();
 				if(date.Year>1880) {
 					r["DischargeDate"]=date.ToShortDateString();
+				}
+				if(PrefC.GetBool(PrefName.OmhNy)) {
+					r["RecallPastDue"]="";
+					Recall recallPastDue=listRecalls
+						.FindAll(x => x.PatNum==patNum)
+						.OrderBy(x => x.RecallTypeNum).ToList()//at their request, not sure why
+						.Find(x => x.DateDue.Year>1880 && x.DateDue<DateTime.Today);
+					string description="";
+					if(recallPastDue!=null) {
+						description=RecallTypes.GetDescription(recallPastDue.RecallTypeNum);
+					}
+					r["RecallPastDue"]=description;
 				}
 				PtDataTable.Rows.Add(r);
 			}

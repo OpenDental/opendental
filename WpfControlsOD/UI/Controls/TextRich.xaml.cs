@@ -585,6 +585,10 @@ namespace WpfControls.UI{
 
 		#region Methods - public
 		public void ClearWavyAll(){
+			bool isCalledFromTextChanged=!_isSpellChecking;
+			if(isCalledFromTextChanged) {
+				_isSpellChecking=true;//this disables the TextChanged event handler.
+			}
 			TextPointer textPointer=richTextBox.Document.ContentStart;
 			//We must loop through all runs, not just our list of known misspelled words.
 			//This is because after text was automatically underlined, the cursor was set to that style. 
@@ -609,6 +613,9 @@ namespace WpfControls.UI{
 					textRange.ClearAllProperties();
 				}
 				textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
+			}
+			if(isCalledFromTextChanged) {
+				_isSpellChecking=false;//re-enable the textchanged event handler.
 			}
 			//TextRange textRange=new TextRange(richTextBox.Document.ContentStart,richTextBox.Document.ContentEnd);
 			//textRange.ApplyPropertyValue(Inline.TextDecorationsProperty,new TextDecorationCollection());
@@ -722,7 +729,9 @@ namespace WpfControls.UI{
 
 		#region Methods - private event handlers
 		private void ContextMenu_Opened(object sender,RoutedEventArgs e) {
-			SpellCheck();//If this is not done, then it can crash after appending text and then right clicking.
+			if(IsUsingSpellCheck()) {
+				SpellCheck();//If this is not done, then it can crash after appending text and then right clicking.
+			}
 			if(SelectionLength==0) {
 				menuItemCut.IsEnabled=false;
 				menuItemCopy.IsEnabled=false;

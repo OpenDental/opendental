@@ -202,6 +202,11 @@ namespace OpenDental{
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
+			#region Validation
+			if(string.IsNullOrWhiteSpace(textHeading.Text)) {
+				MsgBox.Show(this,"Header name cannot be empty.");
+				return;
+			}
 			if(!textDateTP.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -210,6 +215,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please enter a date first.");
 				return;
 			}
+			#endregion Validation
 			_treatPlan.DateTP=PIn.Date(textDateTP.Text);
 			_treatPlan.Heading=textHeading.Text;
 			_treatPlan.Note=textNote.Text;

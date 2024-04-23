@@ -195,6 +195,9 @@ namespace OpenDentBusiness{
 		public bool IsOutsideLab;
 		///<summary>Holds the salted hash of the following claim fields: ClaimFee, ClaimStatus, InsPayEst, InsPayAmt.</summary>
 		public string SecurityHash;
+		///<summary>A note that pertains to all attachments on the claim. Currently only applies to DentalXChange, but could be expanded. 2000 character limit put in place by DentalXChange.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
+		public string Narrative;
 
 		///<summary>Not a data column.</summary>
 		[CrudColumn(IsNotDbColumn=true)]

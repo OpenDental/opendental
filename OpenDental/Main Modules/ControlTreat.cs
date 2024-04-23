@@ -2652,8 +2652,7 @@ namespace OpenDental{
 
 		private void ToolBarMainCreate_Click(){//Save TP
 			//Cannot even click this button if user has not selected one of the treatment plans; Otherwise button is disabled.
-			if(!new[]{TreatPlanStatus.Active,TreatPlanStatus.Inactive}.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)){
-			//if(gridPlans.SelectedIndices[0]!=0){
+			if(!_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus.In(TreatPlanStatus.Active,TreatPlanStatus.Inactive)) {
 				MsgBox.Show(this,"An Active or Inactive TP must be selected before saving a TP.  You can highlight some procedures in the TP to save a TP with only those procedures in it.");
 				return;
 			}
@@ -2689,6 +2688,10 @@ namespace OpenDental{
 				InputBox inputBoxHeadingName=new InputBox(Lan.g(this,$"Save Treatment Plan as"),treatPlanHeading);
 				inputBoxHeadingName.ShowDialog();
 				if(inputBoxHeadingName.IsDialogCancel) {
+					return;
+				}
+				if(inputBoxHeadingName.StringResult.Trim()=="") {
+					MessageBox.Show("Heading Name cannot be empty.");
 					return;
 				}
 				treatPlanHeading=inputBoxHeadingName.StringResult;
@@ -2748,9 +2751,7 @@ namespace OpenDental{
 
 		///<summary>Returns true if given treatPlanHeading is not currently in use by a saved TreatPlan in _listTreatPlans.</summary>
 		private bool IsSavedTPHeadingUnique(string treatPlanHeading) {
-			return (_listTreatPlans.FindAll(x => x.TPStatus==TreatPlanStatus.Saved 
-				&& x.Heading==treatPlanHeading).Count()==0
-			);
+			return _listTreatPlans.Count(x => x.TPStatus==TreatPlanStatus.Saved && x.Heading==treatPlanHeading)==0;
 		}
 
 		private void ToolBarMainSign_Click() {

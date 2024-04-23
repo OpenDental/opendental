@@ -599,6 +599,48 @@ End of Checklist================================================================
 			GridRow row;
 			for(int i=0;i<_tablePats.Rows.Count;i++) {
 				row=new GridRow();
+				#region New York Mental Health
+				if(PrefC.GetBool(PrefName.OmhNy)) {
+					DateTime dateLastVisit=PIn.Date(_tablePats.Rows[i]["lastVisit"].ToString());
+					string description=_tablePats.Rows[i]["RecallPastDue"].ToString();
+					if(dateLastVisit.Year<1880) {
+						row.ColorText=Color.FromRgb(255,165,0);//Orange
+					}
+					else if(dateLastVisit.Year>1880 && description=="") {
+						row.ColorText=Color.FromRgb(0,0,0);//Black
+					}
+					else if(description=="PROPHY") {
+						row.ColorText=Color.FromRgb(255,0,0);//Red
+					}
+					else if(description=="CHILD PROPHY") {
+						row.ColorText=Color.FromRgb(255,0,0);//Red
+					}
+					else if(description=="ANNUAL EXAM") {
+						row.ColorText=Color.FromRgb(0,128,0);//Green
+					}
+					else if(description=="6 MONTH EXAM") {
+						row.ColorText=Color.FromRgb(0,0,255);//Blue
+					}
+					else if(description=="PANO X-RAY") {
+						row.ColorText=Color.FromRgb(128,0,128);//Purple
+					}
+					else if(description=="PERIO SRP(UR)") {
+						row.ColorText=Color.FromRgb(150,75,0);//Brown
+					}
+					else if(description=="PERIO SRP(UL)") {
+						row.ColorText=Color.FromRgb(150,75,0);//Brown
+					}
+					else if(description=="PERIO SRP(LR)") {
+						row.ColorText=Color.FromRgb(150,75,0);//Brown
+					}
+					else if(description=="PERIO SRP(LL)") {
+						row.ColorText=Color.FromRgb(150,75,0);//Brown
+					}
+					else {
+						row.ColorText=Color.FromRgb(0,0,0);//Black
+					}
+				}
+				#endregion New York Mental Health
 				for(int f=0;f<_listDisplayFields.Count;f++) {
 					switch(_listDisplayFields[f].InternalName) {
 						case "LastName":
