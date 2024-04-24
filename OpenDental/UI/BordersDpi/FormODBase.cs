@@ -24,6 +24,8 @@ namespace OpenDental {
 		#region Fields - Public
 		///<summary>Set to true to use traditional MS borders for all forms.</summary>
 		public static bool AreBordersMS;
+		///<summary>This can be set to false to stop the client area for the window from re-calculating multiple times on windows that need to load a large amount of controls. Currently only used for FormClaimEdit which was calculating client area 20 times. Most other windows, even complex ones, only calculate 2-3 times.</summary>
+		public bool DoCalculateClientArea=true;
 		///<summary>This gets set to true when the NoDpi.txt file is found. It only applies to UIManager, not LayoutManager.</summary>
 		public static bool IsDpiSystem;
 		///<summary>This will be true for PDF. This prevents dragging away from docked position.</summary>
@@ -1593,14 +1595,16 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					//Marshal.StructureToPtr(new RECT(rectangle), m.LParam, true);//return screen coords of new window client area
 					//m.Result = IntPtr.Zero;//always for wParam false
 				}
-				//wParam true
+				//wParam true, so we're supposed to indicate valid client area
 				//Copied from the UsingUIManager section above
-				NCCALCSIZE_PARAMS ncCalcSizeParams2 = (NCCALCSIZE_PARAMS)m.GetLParam(typeof(NCCALCSIZE_PARAMS));
-				Rectangle rectangle2 = ncCalcSizeParams2.rgrc0.ToRectangle();//Starts as new coords of window after move or resize.
-				int widthBorder2=(int)Math.Round(8+(5*(LayoutManager.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
-				rectangle2=new Rectangle(rectangle2.X+widthBorder2,rectangle2.Y,rectangle2.Width-widthBorder2*2,rectangle2.Height-widthBorder2);
-				ncCalcSizeParams2.rgrc0 = new RECT(rectangle2);
-				Marshal.StructureToPtr(ncCalcSizeParams2,m.LParam,true);//return screen coords of new window client area
+				if(DoCalculateClientArea) {
+					NCCALCSIZE_PARAMS ncCalcSizeParams2 = (NCCALCSIZE_PARAMS)m.GetLParam(typeof(NCCALCSIZE_PARAMS));
+					Rectangle rectangle2 = ncCalcSizeParams2.rgrc0.ToRectangle();//Starts as new coords of window after move or resize.
+					int widthBorder2=(int)Math.Round(8+(5*(LayoutManager.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
+					rectangle2=new Rectangle(rectangle2.X+widthBorder2,rectangle2.Y,rectangle2.Width-widthBorder2*2,rectangle2.Height-widthBorder2);
+					ncCalcSizeParams2.rgrc0 = new RECT(rectangle2);
+					Marshal.StructureToPtr(ncCalcSizeParams2,m.LParam,true);//return screen coords of new window client area
+				}
 				return;
 				//else{//wParam true, so we're supposed to indicate valid client area
 					/*

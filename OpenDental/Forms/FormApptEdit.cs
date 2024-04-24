@@ -805,8 +805,8 @@ namespace OpenDental{
 			List<Procedure> listProceduresSelected=gridProc.SelectedTags<Procedure>();
 			List<Appointment> listAppointmentsEmpty=new List<Appointment>();
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<long> listApptNumsSelected=listProceduresSelected.Select(x => x.AptNum).ToList();
-				if(listApptNumsSelected.Any(x => x!=_appointment.AptNum && x!=0)) {
+				List<long> listApptNumsSelected=listProceduresSelected.Where(x => x.AptNum!=0).Select(x => x.AptNum).Distinct().ToList();
+				if(listApptNumsSelected.Any(x => x!=_appointment.AptNum)) {
 					listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected,listApptNumsSelected);
 					if(listAppointmentsEmpty.Count>0) {
 						MsgBox.Show("One or more selected procedures are attached to another appointment.");

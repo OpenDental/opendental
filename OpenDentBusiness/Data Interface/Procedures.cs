@@ -3799,7 +3799,7 @@ namespace OpenDentBusiness {
 				patPlanNum=patPlan.PatPlanNum;
 			}
 			ClaimProcStatus[] arrayClaimProcStatuses=new ClaimProcStatus[] {
-				ClaimProcStatus.Received,ClaimProcStatus.InsHist,ClaimProcStatus.NotReceived,ClaimProcStatus.Estimate
+				ClaimProcStatus.Received,ClaimProcStatus.InsHist,ClaimProcStatus.NotReceived,ClaimProcStatus.Estimate,ClaimProcStatus.Supplemental
 			};
 			List<BenefitProcCodes> listMatchingFrequencyBenefits=new List<BenefitProcCodes>();//List of all frequency benefits matcihng the given procedure.
 			for(int i=0;i<listBenefits.Count;i++) {

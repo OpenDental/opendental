@@ -112,7 +112,7 @@ namespace OpenDental{
 			_listClaimProcsForClaim=new List<ClaimProc>();
 			InitializeComponent();// Required for Windows Form Designer support
 			InitializeLayoutManager();
-			SetBounds();
+			SetBounds();//this calculates the height but does not set it.
 			//tbPay.CellDoubleClicked += new OpenDental.ContrTable.CellEventHandler(tbPay_CellDoubleClicked);
 			//tbProc.CellClicked += new OpenDental.ContrTable.CellEventHandler(tbProc_CellClicked);
 			//tbPay.CellClicked += new OpenDental.ContrTable.CellEventHandler(tbPay_CellClicked);
@@ -122,6 +122,7 @@ namespace OpenDental{
 				listCanadianAttachments.ContextMenu=contextMenuAttachments;
 			}
 			gridProc.ContextMenu=contextAdjust;
+			DoCalculateClientArea=false;
 		}
 
 		private void FormClaimEdit_Shown(object sender,EventArgs e) {
@@ -153,7 +154,14 @@ namespace OpenDental{
 		}
 		
 		private void FormClaimEdit_Load(object sender, System.EventArgs e) {
-			Height=_heightCalculated;
+			DoCalculateClientArea=true;
+			if(Height!=_heightCalculated) {
+				Height=_heightCalculated;
+			}
+			else {
+				//This is just here to make sure that we set the client area of the window in either case by adjusting the height of the window. See "DoCalculateClientArea" in FormODBase.
+				Height=Height-1;
+			}
 			_loadData=ClaimEdit.GetLoadData(_patient,_family,_claim);
 			textPatResp.Visible=_loadData.DoShowPatResp;
 			if(IsFromBatchWindow) {

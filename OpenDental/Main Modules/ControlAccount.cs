@@ -2039,10 +2039,10 @@ namespace OpenDental {
 			if(!ValidateRightClickDXC(claim)) {
 				return;
 			}
-			using FormClaimAttachPasteDXC formClaimAttachPasteDXC=new FormClaimAttachPasteDXC();
+			FormClaimAttachPasteDXC formClaimAttachPasteDXC=new FormClaimAttachPasteDXC();
 			formClaimAttachPasteDXC.ClaimCur=claim;
 			formClaimAttachPasteDXC.PatientCur=_patient;
-			formClaimAttachPasteDXC.ShowDialog();
+			formClaimAttachPasteDXC.Show();
 		}
 
 		private void menuItemAttachmentHistory_Click(object sender,EventArgs e) {

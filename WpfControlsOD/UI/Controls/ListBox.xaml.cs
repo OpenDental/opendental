@@ -425,7 +425,10 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			if(e.Key==Key.Escape){//Closing the form
 				return;
 			}
-			List<string> listItems=Items.GetAll<string>();
+			List<string> listItems=new List<string>();
+			for(int i=0;i<Items.Count;i++){
+				listItems.Add(Items.GetTextShowingAt(i));
+			}
 			if(listItems==null || listItems.Count==0){
 				return;
 			}

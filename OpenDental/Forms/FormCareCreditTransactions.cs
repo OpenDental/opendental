@@ -54,7 +54,6 @@ namespace OpenDental {
 				e.Cancel=true;
 				return;
 			}
-			menuItemGoTo.Available=(_patient?.PatNum??0)==0;
 			if(tabControl.SelectedTab==tabTrans) { 
 				CareCreditWebResponse careCreditWebResponseSelected=getGrid().SelectedTag<CareCreditWebResponse>();
 				acknowledgeToolStripMenuItem.Available=false; 

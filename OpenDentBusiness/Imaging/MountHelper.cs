@@ -54,6 +54,11 @@ namespace OpenDentBusiness {
 				string str=mountItem.TextShowing;
 				str=Patients.ReplacePatient(str,patient);
 				str=Mounts.ReplaceMount(str,mount);
+				PatPlan patPlan=PatPlans.GetPatPlan(patient.PatNum,1);
+				if(patPlan!=null){
+					InsSub insSub=InsSubs.GetOne(patPlan.InsSubNum);
+					str=InsSubs.ReplaceInsSub(str, insSub);
+				}
 				Clinic clinic=Clinics.GetClinic(patient.ClinicNum);
 				str=Clinics.ReplaceOffice(str,clinic);
 				g.DrawString(str,font,solidBrushFore,rectangleF);

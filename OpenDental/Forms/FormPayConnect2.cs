@@ -261,14 +261,14 @@ namespace OpenDental {
 				}	
 			}
 			_response=PayConnect2.ApiResponseToPayConnectResponse(payConnect2Response);
-			bool wasSigned=false;
+			bool doShowSignatureLine=true;
 			if(TransType==transType.SALE || TransType==transType.AUTH) {
 				PayConnect2Response signatureResponse=SendSignature();
 				if(signatureResponse!=null && signatureResponse.SignatureResponse!=null && signatureResponse.SignatureResponse.Status=="Processed") {
-					wasSigned=true;
+					doShowSignatureLine=false;
 				}
 			}
-			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData:"",_response.AuthCode,_response.Description,messages:null,_response.Amount,wasSigned,_clinicNum,_response.CardType);
+			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData:"",_response.AuthCode,_response.Description,messages:null,_response.Amount,doShowSignatureLine,_clinicNum,_response.CardType);
 			return true;
 		}
 

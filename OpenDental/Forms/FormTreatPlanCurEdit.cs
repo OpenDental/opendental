@@ -280,6 +280,12 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
+			#region Validation
+			if(string.IsNullOrWhiteSpace(textHeading.Text)) {
+				MsgBox.Show(this,"Header name cannot be empty.");
+				return;
+			}
+			#endregion Validation
 			TreatPlanCur.Heading=textHeading.Text;
 			TreatPlanCur.Note=textNote.Text;
 			TreatPlanCur.UserNumPresenter=0;
