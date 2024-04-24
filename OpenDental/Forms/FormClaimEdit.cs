@@ -116,6 +116,7 @@ namespace OpenDental{
 				listCanadianAttachments.ContextMenu=contextMenuAttachments;
 			}
 			gridProc.ContextMenu=contextAdjust;
+			DoCalculateClientArea=false;
 		}
 
 		private void FormClaimEdit_Shown(object sender,EventArgs e) {
@@ -370,6 +371,7 @@ namespace OpenDental{
 				fillGridSentAttachments();
 				tabControlAttach.SelectedTab=tabDXC;
 			}
+			DoCalculateClientArea=true;
 			SetBounds();
 		}
 
@@ -384,7 +386,11 @@ namespace OpenDental{
 			}
 			if(Height<heightAvail){
 				Height=heightAvail;
-			}	
+			}
+			else{
+				//This is just here to make sure that we set the client area of the window in either case by adjusting the height of the window. See "DoCalculateClientArea" in FormODBase.
+				Height=Height-1;
+			}
 			//Center the window on the parent.
 			Location=new Point(rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-Width/2,
 				y:rectangleWorkingArea.Top+rectangleWorkingArea.Height/2-Height/2);
