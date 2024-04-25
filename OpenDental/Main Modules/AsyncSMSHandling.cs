@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
 using DataConnectionBase;
+using System.Windows.Forms;
 
 // Questions for Nathan
 //
@@ -34,6 +35,13 @@ namespace OpenDental.Main_Modules
         private static HttpClient sharedClient = ODSMS.sharedClient;
         private static string auth = ODSMS.AUTH;
         private static String sms_folder_path = @"L:\msg_guids\";
+
+        public enum ReminderFilterType
+        {
+            OneDay,
+            OneWeek,
+            TwoWeeks
+        }
 
         public static async System.Threading.Tasks.Task<bool> CheckSMSConnection()
         {
@@ -87,17 +95,86 @@ namespace OpenDental.Main_Modules
         async public static void onceAnHour()
         {
             bool smsIsWorking = await CheckSMSConnection();
-            if (!smsIsWorking)
+            if (smsIsWorking == false)
             {
-                MsgBox.Show("Failure checking Diafaan.  SMS is currently brken.");
-                EventLog.WriteEntry("ODSMS", "Diafaan says that SMS is not working", EventLogEntryType.Error, 101, 1, new byte[10]);
-                ODSMS.USE_ODSMS = false;        // Disable the plugin
+                if (ODSMS.wasSmsBroken == true)
+                {
+                    MsgBox.Show("SMS is restored.  Birthday texts and reminders will be sent now.");
+                    EventLog.WriteEntry("ODSMS", "SMS has been restored", EventLogEntryType.Information, 101, 1, new byte[10]);
+                    ODSMS.USE_ODSMS = true;
+                }
+                sendBirthdayTexts();
+                sendReminderTexts();
+                receiveSMS();
+            }
+            else
+            {
+                if (ODSMS.wasSmsBroken == false)
+                {
+                    MsgBox.Show("Failure checking Diafaan. SMS functionality is currently unavailable. Please check the GSM Modem Gateway and ensure Wi-Fi is enabled. Restart Open Dental to re-attempt connection.");
+                    EventLog.WriteEntry("ODSMS", "SMS is down", EventLogEntryType.Error, 101, 1, new byte[10]);
+                    ODSMS.USE_ODSMS = false;
+                }
+                else
+                {
+                    Console.WriteLine("SMS continues to be down");
+                    EventLog.WriteEntry("ODSMS", "SMS is still down", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                }
             }
 
-            sendBirthdayTexts();
+            // Update the previous state for the next call
+            ODSMS.wasSmsBroken = !smsIsWorking;
+        }
+        private static void sendReminderTexts(ReminderFilterType filterType)
+        {
+            var currentTime = DateTime.Now; // Using local time
+            if (currentTime.Hour < 7)
+            {
+                return; // It's before 7 AM, do not proceed
+            }
 
-            receiveSMS();
+            // Get all enum values
+            var enumValues = Enum.GetValues(typeof(ReminderFilterType));
 
+            // Iterate over enum values
+            foreach (ReminderFilterType enumValue in enumValues)
+            {
+                // Call GetPatientsWithAppointmentsTwoWeeks with each value
+                patientsNeedingApptReminder = GetPatientsWithAppointmentsTwoWeeks(enumValue);
+
+                // Lookup the appropriate value from the database
+                string reminderMessageTemplate;
+                switch (enumValue)
+                {
+                    case ReminderFilterType.OneDay:
+                        reminderMessageTemplate = PrefC.GetString(PrefName.ConfirmTextMessage);
+                        break;
+                    case ReminderFilterType.OneWeek:
+                        reminderMessageTemplate = PrefC.GetString(PrefName.ConfirmPostcardMessage);
+                        break;
+                    case ReminderFilterType.TwoWeeks:
+                        reminderMessageTemplate = PrefC.GetString(PrefName.ConfirmPostcardFamMessage);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                // Prepare SMS messages
+                List<SmsToMobile> messagesToSend = patientsNeedingApptReminder.Select(patient =>
+                    new SmsToMobile
+                    {
+                        PatNum = patient.PatNum, // Assuming Patient class has PatNum property
+                        SmsPhoneNumber = "+64275598699", // Set to your sending phone number in international format
+                        MobilePhoneNumber = patient.WirelessPhone, // Assuming Patient class has PhoneNumber property
+                        MsgText = reminderMessageTemplate.Replace("?NamePreferredOrFirst", patient.GetNameFirstOrPreferred()).Replace("?FName", patient.FName),
+                        MsgType = SmsMessageSource.Reminder, // Set the source based on your SmsMessageSource enum
+                        SmsStatus = SmsDeliveryStatus.Pending, // Initial status, assuming you have a Pending status
+                        MsgParts = 1, // Assuming the message fits into one part
+                                      // Set any other necessary properties
+                    }).ToList();
+
+
+            }
         }
 
         private static void sendBirthdayTexts()
@@ -117,17 +194,18 @@ namespace OpenDental.Main_Modules
 
             // Step 3: Prepare SMS messages
             List<SmsToMobile> messagesToSend = patientsWithBirthday.Select(patient =>
-                new SmsToMobile
-                {
-                    PatNum = patient.PatNum, // Assuming Patient class has PatNum property
-                    SmsPhoneNumber = "+64275598699", // Set to your sending phone number in international format
-                    MobilePhoneNumber = patient.WirelessPhone, // Assuming Patient class has PhoneNumber property
-                    MsgText = birthdayMessageTemplate.Replace("?FName", patient.FName), // The birthday message you want to send
-                    MsgType = SmsMessageSource.GeneralMessage, // Set the source based on your SmsMessageSource enum
-                    SmsStatus = SmsDeliveryStatus.Pending, // Initial status, assuming you have a Pending status
-                    MsgParts = 1, // Assuming the message fits into one part
-                                  // Set any other necessary properties
-                }).ToList();
+                    new SmsToMobile
+                    {
+                        PatNum = patient.PatNum, // Assuming Patient class has PatNum property
+                        SmsPhoneNumber = "+64275598699", // Set to your sending phone number in international format
+                        MobilePhoneNumber = patient.WirelessPhone, // Assuming Patient class has PhoneNumber property
+                        MsgText = birthdayMessageTemplate.Replace("?NamePreferredOrFirst", patient.GetNameFirstOrPreferred()).Replace("?FName", patient.FName),
+                        MsgType = SmsMessageSource.GeneralMessage, // Set the source based on your SmsMessageSource enum
+                        SmsStatus = SmsDeliveryStatus.Pending, // Initial status, assuming you have a Pending status
+                        MsgParts = 1, // Assuming the message fits into one part
+                                      // Set any other necessary properties
+                    }).ToList();
+
 
             // Step 4: Send the SMS messages
             if (messagesToSend.Any())
@@ -143,6 +221,47 @@ namespace OpenDental.Main_Modules
 
         }
 
+        public static List<Patient> GetPatientsWithAppointmentsTwoWeeks(ReminderFilterType filterType)
+        {
+            string select = "SELECT p.PatNum, " +
+                           "CASE " +
+                           "WHEN a.AppointmentDate < DATE_ADD(NOW(), INTERVAL 1 DAY) THEN '1 Day' " +
+                           "WHEN a.AppointmentDate < DATE_ADD(NOW(), INTERVAL 1 WEEK) THEN '1 Week' " +
+                           "WHEN a.AppointmentDate < DATE_ADD(NOW(), INTERVAL 2 WEEK) THEN '2 Weeks' " +
+                           "END AS ReminderState ";
+            string from = "FROM patient AS p ";
+            string where_true = "WHERE TRUE ";
+           //  string where_active = $"AND p.PatStatus IN ({(int)PatientStatus.Patient}) "; // Do not filter for active patients if they have an appointment
+            string where_allow_sms = $"AND p.TxtMsgOk < 2 "; // Only text patients with SMS permission
+            string where_confirm_not_sms = $"AND p.LSKDJF < 2 "; // Prefearred confirm method = SMS OR NOT SET
+
+            // AUTOGENERATED AND NOT TESTED CODE
+            // Filter for patients with an appointment 1 day, 1 week, or 2 weeks away
+            string where_appointment = $"AND EXISTS (" +
+                                       "SELECT 1 " +
+                                       "FROM Appointment a " +
+                                       "WHERE a.PatNum = p.PatNum " +
+                                       "AND a.AppointmentDate >= NOW() " +  // Check for future appointments
+                                       "AND a.AppointmentDate <= DATE_ADD(NOW(), INTERVAL 2 WEEK) " +
+                                       "AND a.ReminderSent = 0) "; // Only include patients who haven't received a reminder yet
+
+            // Filter to exclude patients who have been contacted in the last 72 hours
+            string where_not_contacted = "AND NOT EXISTS (" +
+                                         "SELECT 1 " +
+                                         "FROM CommLog m " +
+                                         "WHERE m.PatNum = p.PatNum " +
+                                         "AND m.Note LIKE '%Appointment Reminder%' " +
+                                         "AND m.CommDateTime > DATE_SUB(NOW(), INTERVAL 3 DAY)) ";
+
+            string where_mobile_phone = "AND LENGTH(COALESCE(p.WirelessPhone,'')) > 7 ";
+
+            // Combine all parts to form the final command
+            string command = select + from + where_true + where_appointment + where_not_contacted + where_mobile_phone;
+            Console.WriteLine(command);
+            List<Patient> listPats = OpenDentBusiness.Crud.PatientCrud.SelectMany(command);
+            return listPats;
+        }
+
         public static List<Patient> GetPatientsWithBirthdayToday()
         {
             string select = "SELECT p.* ";
@@ -150,6 +269,7 @@ namespace OpenDental.Main_Modules
             // Start with a WHERE TRUE to allow all subsequent conditions to use AND
             string where_true = "WHERE TRUE ";
             string where_active = $"AND p.PatStatus IN ({(int)PatientStatus.Patient}) "; // Only text active patients
+            string where_allow_sms = $"AND p.TxtMsgOk < 2 "; // Do not text people that have opted out
 
             // Filter for patients with a birthday today
             string where_birthday = $"AND MONTH(p.Birthdate) = MONTH(CURRENT_DATE()) " +
@@ -166,7 +286,7 @@ namespace OpenDental.Main_Modules
             string where_mobile_phone = "AND LENGTH(COALESCE(p.WirelessPhone,'')) > 7 ";
 
             // Combine all parts to form the final command
-            string command = select + from + where_true + where_active + where_birthday + where_not_contacted + where_mobile_phone;
+            string command = select + from + where_true + where_active + where_birthday + where_not_contacted + where_allow_sms + where_mobile_phone;
             Console.WriteLine(command);
 
             List<Patient> listPats = OpenDentBusiness.Crud.PatientCrud.SelectMany(command);
@@ -206,15 +326,7 @@ namespace OpenDental.Main_Modules
             log.CommDateTime = time;
             log.SentOrReceived = CommSentOrReceived.Received;
             log.CommType = Commlogs.GetTypeAuto(CommItemTypeAuto.TEXT);
-            if (Security.CurUser != null)
-            {
-                log.UserNum = Security.CurUser.UserNum;
-            }
-            else
-            {
-                EventLog.WriteEntry("ODSMS", "Got logged out so can't check SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
-                return;
-            }
+            log.UserNum = 1; // Corrin 2024-04-25.  This is the admin user
             var sms = new SmsFromMobile();
             sms.CommlogNum = Commlogs.Insert(log);
             sms.MobilePhoneNumber = msgFrom;
@@ -231,8 +343,6 @@ namespace OpenDental.Main_Modules
             //Alert ODMobile where applicable.
             PushNotificationUtils.ODM_NewTextMessage(sms, sms.PatNum);
             Console.WriteLine("Finished ODM New Text Message");
-
-
         }
 
         async public static void receiveSMS()
@@ -255,6 +365,7 @@ namespace OpenDental.Main_Modules
             int count;
             int offset = 0;
             string removeStr;
+            string logMessage;
 
             count = getAllCount;
             removeStr = "&remove=1";
@@ -290,13 +401,18 @@ namespace OpenDental.Main_Modules
                     string msgText = child.ChildNodes[2].InnerText;
                     string msgTime = child.ChildNodes[11].InnerText;
                     string msgGUID = child.ChildNodes[4].InnerText;
-                    Console.WriteLine($"SMS from {msgFrom} at time {msgTime} with body {msgText} - GUID: {msgGUID}");
+                    logMessage = $"SMS from {msgFrom} at time {msgTime} with body {msgText} - GUID: {msgGUID}";
+                    Console.WriteLine(logMessage);
+                    EventLog.WriteEntry("ODSMS", logMessage, EventLogEntryType.Information, 101, 1);
+
 
                     string guidFilePath = Path.Combine(sms_folder_path, msgGUID);
 
                     if (File.Exists(guidFilePath)) // True if we have we processed this message before
                     {
-                        Console.WriteLine("Must've already processed this SMS");
+                        string errorMessage = "Must've already processed this SMS";
+                        Console.WriteLine(errorMessage);
+                        EventLog.WriteEntry("ODSMS", errorMessage, EventLogEntryType.Warning, 101, 1, new byte[10]);
                     }
                     else
                     {
@@ -308,6 +424,8 @@ namespace OpenDental.Main_Modules
                         {
                             Console.WriteLine($"An exception occurred: {ex.Message}");
                             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                            logMessage = $"An exception occurred: {ex.Message}\nStack Trace: {ex.StackTrace}";
+                            EventLog.WriteEntry("ODSMS", logMessage, EventLogEntryType.Error, 101, 1);
                         }
 
 
@@ -340,8 +458,19 @@ namespace OpenDental.Main_Modules
             while (true)
             {
                 Console.WriteLine("Performing hourly SMS related tasks");
+                EventLog.WriteEntry("ODSMS", "Performing hourly SMS related tasks", EventLogEntryType.Information, 101, 1, new byte[10]);
+
+                // normally we want to wait an hour between SMS tasks (reminding patients, birthdays, etc).  But...
+                // if SMS was down then we switch to checking that every minute in case it's come back up
+
                 onceAnHour();
-                await Task.Delay(60 * 60 * 1000); // Perform hourly tasks
+
+                bool shouldCheckFrequently = !ODSMS.USE_ODSMS && ODSMS.wasSmsBroken;
+
+                // Decide the delay based on whether the SMS service was working and now is not
+                int delayMinutes = shouldCheckFrequently ? 1 : 60;  // Check every minute if SMS was working and now isn't, else check every hour
+
+                await Task.Delay(TimeSpan.FromMinutes(delayMinutes));
 
 
             }
