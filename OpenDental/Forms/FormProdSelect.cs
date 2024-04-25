@@ -62,7 +62,7 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");//shouldn't happen, but since we're not sure...
 					}
-					row.Cells.Add($"{ProcedureCodes.GetStringProcCode(procedure.CodeNum)} - {ProcedureCodes.GetLaymanTerm(procedure.CodeNum)}");
+					row.Cells.Add($"{ProcedureCodes.GetStringProcCode(procedure.CodeNum)}: {Procedures.GetDescription(procedure)}");
 				}
 				else if(_listAccountEntries[i].GetType()==typeof(Adjustment)) {
 					Adjustment adjustment=(Adjustment)_listAccountEntries[i].Tag;

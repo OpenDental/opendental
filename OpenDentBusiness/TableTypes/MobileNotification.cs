@@ -1,11 +1,11 @@
 ﻿using System;
 
 namespace OpenDentBusiness {
-	///<summary></summary>
+	///<summary>Mobile App devices periodically poll this table and retrieve any records that are relevant to the device itself, the user using the device, or the clinic
+	///the device belongs to. The mobile apps will then perform an action based on the mobile notification type.</summary>
 	[Serializable]
 	public class MobileNotification:TableBase {
-		///<summary>Mobile App devices periodically poll this table and retrieve any records that are relevant to the device itself, the user using the device, or the clinic
-		///the device belongs to. The mobile apps will then perform an action based on the mobile notification type.</summary>
+		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long MobileNotificationNum;
 		///<summary>Enum:MobileNotificationType The type of notification. Example: TP. This will determine what actions the mobile app will perform upon retrieving this notification.</summary>
@@ -25,6 +25,9 @@ namespace OpenDentBusiness {
 		///<summary>DateTime notification expires and becomes invalid.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateTimeExpires;
+		///<summary>Enum:EnumAppTarget Stores the mobile app that this notification is targeting. Prohibits a device running one app from consuming mobile 
+		///notifications intended for a different app.</summary>
+		public EnumAppTarget AppTarget;
 
 		///<summary></summary>
 		public MobileNotification Copy() {
@@ -52,8 +55,8 @@ namespace OpenDentBusiness {
 		///EClipboardAllowSelfPortraitOnCheckIn(bool), and EClipboardPresentAvailableFormsOnCheckIn(bool) in that order.</summary>
 		CI_NewEClipboardPrefs,
 		///<summary>This mobile notification occurs when the MobileAppDevice.IsAllowed changed for this device. The tag for this mobile notification will be IsAllowed (bool).
-		///If true then device which is currently awaiting in 'Not Allowed' state will try another login, should work this time. If false then force signout.</summary>
-		CI_IsAllowedChanged,
+		///If true then device which is currently awaiting in 'Not Allowed' state will try another login, should work this time. If false then force signout. Used for eClipboard and ODTouch.</summary>
+		IsAllowedChanged,
 		///<summary>This mobile notification occurs when a permission has changed for a given OD user and they are no longer allowed to use OD Mobile. 
 		///The ListPrimaryKeys may contain the UserNum of the user who is no longer allowed. This session will then be logged out of versioned OD Mobile.
 		///If ListPrimaryKeys IsNullOrEmpty() then assume all users for the given ClinicNum should be logged out. No UserNum filter necessary in this case.</summary>
@@ -84,8 +87,18 @@ namespace OpenDentBusiness {
 		///ListPrimaryKeys => [PayPlan.PatNum,PayPlan.PayPlanNum]</summary>
 		CI_RemovePaymentPlan,
 		///<summary></summary>
-		CL_ExamSheetsAll,
+		ODT_ExamSheetsAll,
 		///<summary></summary>
-		CL_ExamSheet,
+		ODT_ExamSheet,
+	}
+
+	///<summary>The mobile apps that support mobile notifications. Must stay synched 1:1 with the ODXamBusiness.ApplicationTarget enum.</summary>
+	public enum EnumAppTarget {
+		///<summary>0</summary>
+		eClipboard, 
+		///<summary>1</summary>
+		ODMobile,
+		///<summary>2</summary>
+		ODTouch,
 	}
 }

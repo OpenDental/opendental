@@ -2488,7 +2488,7 @@ namespace OpenDental {
 				//table only selects completed procedures, any procnums not in the account table must have a different procstatus.
 				List<long> listProcNumsAll=dataTable.Select().Select(x => PIn.Long(x["ProcNum"].ToString())).ToList();
 				List<long> listProcNumsIncompleteClaims=string.Join(",",listDataRowsClaims.Select(x => x["procsOnObj"]))//All procNums on the all claims in account
-					.Split(',')
+					.Split(",",StringSplitOptions.RemoveEmptyEntries)
 					.Distinct()
 					.Select(x => PIn.Long(x))
 					.ToList()
@@ -4410,6 +4410,12 @@ namespace OpenDental {
 		///selects one procedure (not validated) we maintain the previous functionality of opening FormAdjust.</summary>
 		private void AddAdjustmentToSelectedProcsHelper(bool openMultiAdj=false) {
 			Plugins.HookAddCode(this,"ContrAccount.AddAdjustmentToSelectedProcsHelper_beginning",_patient,gridPayPlan);
+			bool isTsiAdj=(TsiTransLogs.IsTransworldEnabled(_patient.ClinicNum)
+				&& Patients.IsGuarCollections(_patient.Guarantor)
+				&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"The guarantor of this family has been sent to TSI for a past due balance.  "
+					+"Is this an adjustment applied by the office?\r\n\r\n"
+					+"Yes - this is an adjustment applied by the office\r\n\r\n"
+					+"No - this adjustment is the result of a payment received from TSI"));
 			DataTable tableAcct=_dataSetMain.Tables["account"];
 			List<long> listProcNumsSelected=new List<long>();
 			for(int i=0;i<gridAccount.SelectedIndices.Length;i++){
@@ -4456,7 +4462,7 @@ namespace OpenDental {
 						}
 					}
 				}
-				using FormAdjust formAdjust=new FormAdjust(patient,adjustment);
+				using FormAdjust formAdjust=new FormAdjust(patient,adjustment,isTsiAdj);
 				formAdjust.IsNew=true;
 				formAdjust.ShowDialog();
 				//Shared.ComputeBalances();

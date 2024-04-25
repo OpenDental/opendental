@@ -366,10 +366,10 @@
 			this.Controls.Add(this.elementHostUnmountedBar);
 			this.Controls.Add(this.elementHostWindowingSlider);
 			this.Controls.Add(this.elementHostZoomSlider);
+			this.Controls.Add(this.panelSplitter);
 			this.Controls.Add(this.elementHostImageSelector);
 			this.Controls.Add(this.panelDraw);
 			this.Controls.Add(this.panelImportAuto);
-			this.Controls.Add(this.panelSplitter);
 			this.Controls.Add(this.panelNote);
 			this.Controls.Add(this.toolBarPaint);
 			this.Controls.Add(this.panelMain);

@@ -156,13 +156,18 @@ namespace OpenDentBusiness{
 
 		#region Delete
 
-		public static void Delete(long mobileAppDeviceNum) {
+		public static void Delete(MobileAppDevice mobileAppDevice) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),mobileAppDeviceNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),mobileAppDevice);
 				return;
 			}
-			MobileNotifications.CI_IsAllowedChanged(mobileAppDeviceNum,false);//deleting so always false
-			Crud.MobileAppDeviceCrud.Delete(mobileAppDeviceNum);
+			if(mobileAppDevice.IsEclipboardEnabled) {
+				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.eClipboard,false);//deleting so always false
+			}
+			if(mobileAppDevice.IsODTouchEnabled) {
+				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.ODTouch,false);
+			}
+			Crud.MobileAppDeviceCrud.Delete(mobileAppDevice.MobileAppDeviceNum);
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
 
@@ -176,7 +181,10 @@ namespace OpenDentBusiness{
 			}
 			for(int i=0;i<listMobileAppDevices.Count;i++) {
 				if(listMobileAppDevices[i].IsEclipboardEnabled) {
-					MobileNotifications.CI_IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,false); //deleting so always false
+					MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,false); //deleting so always false
+				}
+				if(listMobileAppDevices[i].IsODTouchEnabled) {
+					MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODTouch,false); //deleting so always false
 				}
 			}
 			Crud.MobileAppDeviceCrud.DeleteMany(listMobileAppDevices.Select(x => x.MobileAppDeviceNum).ToList());

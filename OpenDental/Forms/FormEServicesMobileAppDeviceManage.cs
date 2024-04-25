@@ -203,7 +203,7 @@ namespace OpenDental {
 				}
 				mobileAppDevice.IsEclipboardEnabled=!mobileAppDevice.IsEclipboardEnabled;//Flip the bit.
 				//Update the device because the signal processing of this form isn't friendly to keeping an in-memory list that syncs when the form closes
-				MobileNotifications.CI_IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,mobileAppDevice.IsEclipboardEnabled);
+				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.eClipboard,mobileAppDevice.IsEclipboardEnabled);
 			}
 			if(e.Col==idxODTouchColumn) {
 				mobileAppDevice.IsODTouchEnabled=!mobileAppDevice.IsODTouchEnabled;//Flip the bit.
@@ -218,6 +218,7 @@ namespace OpenDental {
 					mobileAppDevice.IsODTouchEnabled=false;
 					return;//Don't activate device.
 				}
+				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.ODTouch,mobileAppDevice.IsODTouchEnabled);
 				SecurityLogs.MakeLogEntry(EnumPermType.EServicesSetup,0,$"ODTouch {(mobileAppDevice.IsODTouchEnabled ? "enabled" : "disabled")} for device {mobileAppDevice.UniqueID}",mobileAppDevice.MobileAppDeviceNum,LogSources.None,DateTime.Now,Security.CurUser.UserNum);
 			}
 			FillGridMobileAppDevices();	//Fill the grid to show the changes.

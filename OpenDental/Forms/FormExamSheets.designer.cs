@@ -32,10 +32,8 @@ namespace OpenDental{
 			this.panelSheetPreview = new OpenDental.UI.PanelOD();
 			this.labelVerticalDivider = new System.Windows.Forms.Label();
 			this.groupEClipboard = new OpenDental.UI.GroupBox();
-			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSendToDevice = new OpenDental.UI.Button();
-			this.butSendAllToDevice = new OpenDental.UI.Button();
 			this.groupEClipboard.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -112,23 +110,13 @@ namespace OpenDental{
 			// 
 			// groupEClipboard
 			// 
-			this.groupEClipboard.Controls.Add(this.label2);
 			this.groupEClipboard.Controls.Add(this.label1);
 			this.groupEClipboard.Controls.Add(this.butSendToDevice);
-			this.groupEClipboard.Controls.Add(this.butSendAllToDevice);
 			this.groupEClipboard.Location = new System.Drawing.Point(4, 571);
 			this.groupEClipboard.Name = "groupEClipboard";
-			this.groupEClipboard.Size = new System.Drawing.Size(425, 91);
+			this.groupEClipboard.Size = new System.Drawing.Size(425, 53);
 			this.groupEClipboard.TabIndex = 50;
 			this.groupEClipboard.Text = "Send to ODTouch";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(91, 63);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(330, 18);
-			this.label2.TabIndex = 3;
-			this.label2.Text = "Logs the current user into the device and displays all exam sheets ";
 			// 
 			// label1
 			// 
@@ -149,18 +137,6 @@ namespace OpenDental{
 			this.butSendToDevice.Text = "Exam";
 			this.butSendToDevice.UseVisualStyleBackColor = true;
 			this.butSendToDevice.Click += new System.EventHandler(this.butSendToDevice_Click);
-			// 
-			// butSendAllToDevice
-			// 
-			this.butSendAllToDevice.Image = global::OpenDental.Properties.Resources.arrowRightLine;
-			this.butSendAllToDevice.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSendAllToDevice.Location = new System.Drawing.Point(3, 58);
-			this.butSendAllToDevice.Name = "butSendAllToDevice";
-			this.butSendAllToDevice.Size = new System.Drawing.Size(85, 24);
-			this.butSendAllToDevice.TabIndex = 0;
-			this.butSendAllToDevice.Text = "All Exams";
-			this.butSendAllToDevice.UseVisualStyleBackColor = true;
-			this.butSendAllToDevice.Click += new System.EventHandler(this.butSendAllToDevice_Click);
 			// 
 			// FormExamSheets
 			// 
@@ -191,9 +167,7 @@ namespace OpenDental{
 		private OpenDental.UI.PanelOD panelSheetPreview;
 		private System.Windows.Forms.Label labelVerticalDivider;
 		private UI.GroupBox groupEClipboard;
-		private UI.Button butSendAllToDevice;
 		private UI.Button butSendToDevice;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 	}
 }

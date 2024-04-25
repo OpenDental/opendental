@@ -468,7 +468,7 @@ namespace OpenDental {
 					TerminalActives.DeleteForCmptrSessionAndId(TerminalActiveComputerKiosk.ComputerName,TerminalActiveComputerKiosk.SessionId,processId:TerminalActiveComputerKiosk.ProcessId);
 				}
 				else {
-					MobileAppDevices.Delete(MobileAppDevice.MobileAppDeviceNum);
+					MobileAppDevices.Delete(MobileAppDevice);
 				}
 			}
 

@@ -14,9 +14,9 @@ namespace OpenDentBusiness {
 
 		#region Methods - Get
 		///<summary>Gets notifications that were added to the DB since the last poll for the device with the passed-in deviceId.</summary>
-		public static List<MobileNotification> GetManySinceLastPoll(DateTime dateTimeLastPoll,string deviceId){
+		public static List<MobileNotification> GetManySinceLastPoll(DateTime dateTimeLastPoll,string deviceId,EnumAppTarget appTarget){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<List<MobileNotification>>(MethodBase.GetCurrentMethod(),dateTimeLastPoll,deviceId);
+				return Meth.GetObject<List<MobileNotification>>(MethodBase.GetCurrentMethod(),dateTimeLastPoll,deviceId,appTarget);
 			}
 			//DateTimeEntry>=DateTimeLastPoll is inclusive due to the edge case where two mobile notifications are inserted at the same second but a poll is conducted
 			//in between both inserts. Because the CRUD generator does not support fractional seconds, if the query were not inclusive, the second mobile notification
@@ -24,7 +24,8 @@ namespace OpenDentBusiness {
 			//duplicate mobile notifications.
 			string command="SELECT * FROM mobilenotification WHERE DateTimeEntry>="+POut.DateT(dateTimeLastPoll)
 				+" AND DateTimeExpires>"+POut.DateT(DateTime_.Now)
-				+" AND DeviceId='"+POut.String(deviceId)+"'";
+				+" AND DeviceId='"+POut.String(deviceId)+"'"
+				+" AND AppTarget='"+POut.Enum<EnumAppTarget>(appTarget)+"'";
 			return Crud.MobileNotificationCrud.SelectMany(command);
 		}
 		#endregion Methods - Get
@@ -87,7 +88,7 @@ namespace OpenDentBusiness {
 				return;
 			}
 			//See CI_CheckinPatient for input details.
-			InsertMobileNotification(MobileNotificationType.CI_CheckinPatient,mobileAppDeviceNum,listTags: new List<string>() { pat.FName,pat.LName,pat.Birthdate.Ticks.ToString(),patNum.ToString() });
+			InsertMobileNotification(MobileNotificationType.CI_CheckinPatient,mobileAppDeviceNum,EnumAppTarget.eClipboard,listTags: new List<string>() { pat.FName,pat.LName,pat.Birthdate.Ticks.ToString(),patNum.ToString() });
 		}
 
 		///<summary>Add a sheet the the device check-in checklist.</summary>
@@ -106,7 +107,7 @@ namespace OpenDentBusiness {
 			}
 			//See CI_AddSheet for input details.
 			foreach(MobileAppDevice mad in listMads) {
-				InsertMobileNotification(MobileNotificationType.CI_AddSheet,mad.MobileAppDeviceNum,listPrimaryKeys: new List<long>() { pat.PatNum,sheet.SheetNum });
+				InsertMobileNotification(MobileNotificationType.CI_AddSheet,mad.MobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys: new List<long>() { pat.PatNum,sheet.SheetNum });
 			}
 		}
 
@@ -123,20 +124,14 @@ namespace OpenDentBusiness {
 			}
 			//See CI_RemoveSheet for input details.
 			foreach(MobileAppDevice mad in listMads) {
-				InsertMobileNotification(MobileNotificationType.CI_RemoveSheet,mad.MobileAppDeviceNum,listPrimaryKeys: new List<long>() { pat.PatNum,sheetNum });
+				InsertMobileNotification(MobileNotificationType.CI_RemoveSheet,mad.MobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys: new List<long>() { pat.PatNum,sheetNum });
 			}
 		}
 
 		///<summary>Take this device back to check-in. Any action being taken in an existing check-in session will be lost.</summary>
 		public static void CI_GoToCheckin(long mobileAppDeviceNum) {
 			//See CI_GoToCheckin for input details.
-			InsertMobileNotification(MobileNotificationType.CI_GoToCheckin,mobileAppDeviceNum);
-		}
-
-		///<summary>Occurs when the MobileAppDevice.IsAllowed changed for this device or this MobileAppDevice row is deleted (send isAllowed = false).</summary>
-		public static void CI_IsAllowedChanged(long mobileAppDeviceNum,bool isAllowed) {
-			//See CI_IsAllowedChanged for input details.
-			InsertMobileNotification(MobileNotificationType.CI_IsAllowedChanged,mobileAppDeviceNum,listTags: new List<string>() { POut.Bool(isAllowed) });
+			InsertMobileNotification(MobileNotificationType.CI_GoToCheckin,mobileAppDeviceNum,EnumAppTarget.eClipboard);
 		}
 
 		///<summary>This mobile notification is inserted when the eClipboard preferences for the given clinic change.</summary>
@@ -150,7 +145,7 @@ namespace OpenDentBusiness {
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetForClinic(clinicNum);
 			for(int i=0;i<listMobileAppDevices.Count;i++) { 
 				//See CI_NewEClipboardPrefs for input details.
-				InsertMobileNotification(MobileNotificationType.CI_NewEClipboardPrefs,mobileAppDeviceNum:listMobileAppDevices[i].MobileAppDeviceNum,
+				InsertMobileNotification(MobileNotificationType.CI_NewEClipboardPrefs,mobileAppDeviceNum:listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,
 					listTags:new List<string>() {
 						allowSelfCheckin,
 						eClipboardMessageComplete,
@@ -174,7 +169,7 @@ namespace OpenDentBusiness {
 					TreatPlans.UpdateMobileAppDeviceNum(treatPlan,mobileAppDeviceNum);
 					Signalods.SetInvalid(InvalidType.TPModule,KeyType.PatNum,treatPlan.PatNum);
 					Signalods.SetInvalid(InvalidType.EClipboard);
-					InsertMobileNotification(MobileNotificationType.CI_TreatmentPlan,mobileAppDeviceNum
+					InsertMobileNotification(MobileNotificationType.CI_TreatmentPlan,mobileAppDeviceNum,EnumAppTarget.eClipboard
 						,listPrimaryKeys: new List<long>() { mobileDataByteNum,treatPlan.PatNum,treatPlan.TreatPlanNum }
 						,listTags: new List<string>() { treatPlan.Heading,hasPracticeSig.ToString(), treatPlan.DateTP.Ticks.ToString() }
 					);
@@ -188,7 +183,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Removes the MobileAppDeviceNum from the treatment plan as well.</summary>
 		public static void CI_RemoveTreatmentPlan(long mobileAppDeviceNum,TreatPlan treatPlan){
-			InsertMobileNotification(MobileNotificationType.CI_RemoveTreatmentPlan,mobileAppDeviceNum,listPrimaryKeys:new List<long>() { treatPlan.PatNum,treatPlan.TreatPlanNum });
+			InsertMobileNotification(MobileNotificationType.CI_RemoveTreatmentPlan,mobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys:new List<long>() { treatPlan.PatNum,treatPlan.TreatPlanNum });
 			//TreatPlanParams are only inserted into the database if this pref is true
 			if(PrefC.GetBool(PrefName.TreatPlanSaveSignedToPdf)) {
 				TreatPlanParams.DeleteByTreatPlanNum(treatPlan.TreatPlanNum);
@@ -204,7 +199,7 @@ namespace OpenDentBusiness {
 		public static bool CI_SendPayment(long mobileAppDeviceNum,long patNum,out string errorMsg){
 			errorMsg="";
 			try {
-				InsertMobileNotification(MobileNotificationType.CI_SendPayment,mobileAppDeviceNum,listPrimaryKeys:new List<long> { patNum });
+				InsertMobileNotification(MobileNotificationType.CI_SendPayment,mobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys:new List<long> { patNum });
 			}
 			catch(Exception ex) {
 				errorMsg=ex.Message;
@@ -217,7 +212,7 @@ namespace OpenDentBusiness {
 		public static void CI_RefreshPayment(long mobileAppDeviceNum,long patNum,out string errorMsg) {
 			errorMsg="";
 			try {
-				InsertMobileNotification(MobileNotificationType.CI_RefreshPayment,mobileAppDeviceNum,listPrimaryKeys:new List<long>{ patNum });
+				InsertMobileNotification(MobileNotificationType.CI_RefreshPayment,mobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys:new List<long>{ patNum });
 			}
 			catch(Exception ex) {
 				errorMsg=ex.Message;
@@ -236,7 +231,7 @@ namespace OpenDentBusiness {
 					PayPlans.UpdateMobileAppDeviceNum(payPlan,mobileAppDeviceNum);
 					Signalods.SetInvalid(InvalidType.AccModule,KeyType.PatNum,payPlan.PatNum);
 					Signalods.SetInvalid(InvalidType.EClipboard);
-					InsertMobileNotification(MobileNotificationType.CI_PaymentPlan,mobileAppDeviceNum
+					InsertMobileNotification(MobileNotificationType.CI_PaymentPlan,mobileAppDeviceNum,EnumAppTarget.eClipboard
 						,listPrimaryKeys: new List<long>() { mobileDataByteNum,payPlan.PatNum,payPlan.PayPlanNum }
 						,listTags: listTags
 					);
@@ -249,7 +244,7 @@ namespace OpenDentBusiness {
 		}
 
 		public static void CI_RemovePaymentPlan(long mobileAppDeviceNum,PayPlan payPlan) {
-			InsertMobileNotification(MobileNotificationType.CI_RemovePaymentPlan,mobileAppDeviceNum,listPrimaryKeys:new List<long>() { payPlan.PatNum,payPlan.PayPlanNum});
+			InsertMobileNotification(MobileNotificationType.CI_RemovePaymentPlan,mobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys:new List<long>() { payPlan.PatNum,payPlan.PayPlanNum});
 			//Treatment plan is being removed from device, so the MobileAppDeviceNum needs to be 0
 			PayPlans.UpdateMobileAppDeviceNum(payPlan,0);
 			Signalods.SetInvalid(InvalidType.AccModule,KeyType.PatNum,payPlan.PatNum);
@@ -264,7 +259,7 @@ namespace OpenDentBusiness {
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetForClinic(clinicNum);
 			for(int i=0;i<listMobileAppDevices.Count;i++) { 
 				//See ODM_LogoutODUser for input details.
-				InsertMobileNotification(MobileNotificationType.ODM_LogoutODUser,mobileAppDeviceNum:listMobileAppDevices[i].MobileAppDeviceNum);
+				InsertMobileNotification(MobileNotificationType.ODM_LogoutODUser,mobileAppDeviceNum:listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODMobile);
 			}
 		}
 
@@ -274,24 +269,32 @@ namespace OpenDentBusiness {
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetForUser(Userods.GetUser(userNum),true);
 			for(int i = 0;i<listMobileAppDevices.Count;i++) {
 				//See ODM_LogoutODUser for input details. Explicitly specify non-clinic specific.
-				InsertMobileNotification(MobileNotificationType.ODM_LogoutODUser,mobileAppDeviceNum: listMobileAppDevices[i].MobileAppDeviceNum,listPrimaryKeys: new List<long> { userNum });
+				InsertMobileNotification(MobileNotificationType.ODM_LogoutODUser,mobileAppDeviceNum: listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODMobile,listPrimaryKeys: new List<long> { userNum });
 			}
 		}
 		#endregion
 
-		#region Clinical 
-		public static bool CL_ExamSheet(long patNum,long sheetNum,long mobileAppDeviceNum,out string errorMsg) {
+		#region ODTouch 
+		public static bool ODT_ExamSheet(long patNum,long sheetNum,long mobileAppDeviceNum,out string errorMsg) {
 			errorMsg="";
 			try {
 				List<long> listPrimaryKeys=new List<long>() { patNum,sheetNum };
-				InsertMobileNotification(MobileNotificationType.CL_ExamSheet,mobileAppDeviceNum,listPrimaryKeys:listPrimaryKeys);
+				InsertMobileNotification(MobileNotificationType.ODT_ExamSheet,mobileAppDeviceNum,EnumAppTarget.ODTouch,listPrimaryKeys:listPrimaryKeys);
 			}
 			catch (Exception ex) {
 				errorMsg=ex.Message;
 			}
 			return errorMsg.IsNullOrEmpty();
 		}
-		#endregion Clinical
+		#endregion ODTouch
+
+		#region Multi-App
+		///<summary>Occurs when the MobileAppDevice.IsXEnabled changed for this device or this MobileAppDevice row is deleted (send isAllowed = false). Used for eClipboard and ODTouch. Pass in appTarget.</summary>
+		public static void IsAllowedChanged(long mobileAppDeviceNum,EnumAppTarget enumAppTarget,bool isAllowed) {
+			//See CI_IsAllowedChanged for input details.
+			InsertMobileNotification(MobileNotificationType.IsAllowedChanged,mobileAppDeviceNum,enumAppTarget,listTags: new List<string>() { POut.Bool(isAllowed) });
+		}
+		#endregion
 
 		#region Insert
 		///<summary>Inserts a mobile notification to tell open applications to perform a specific task (as defined by the payload). 
@@ -303,35 +306,12 @@ namespace OpenDentBusiness {
 		///Only use this when notification is intended for one and only one device.</param>
 		///<param name="listPrimaryKeys">Varies depending on specific MobileNotificationType(s).</param>
 		///<param name="listTags">Varies depending on specific MobileNotificationType(s).</param>		
-		public static void InsertMobileNotification(MobileNotificationType mobileNotificationType,long mobileAppDeviceNum,List<long> listPrimaryKeys=null,List<string> listTags=null) {
-			eServiceCode eService=eServiceCode.EClipboard;
-			switch(mobileNotificationType) {
-				case MobileNotificationType.CI_CheckinPatient:
-				case MobileNotificationType.CI_AddSheet:
-				case MobileNotificationType.CI_RemoveSheet:
-				case MobileNotificationType.CI_GoToCheckin:
-				case MobileNotificationType.CI_NewEClipboardPrefs:
-				case MobileNotificationType.CI_IsAllowedChanged:
-				case MobileNotificationType.CI_TreatmentPlan:
-				case MobileNotificationType.CI_RemoveTreatmentPlan:
-				case MobileNotificationType.CI_SendPayment:
-				case MobileNotificationType.CI_RefreshPayment:
-				case MobileNotificationType.CI_PaymentPlan:
-				case MobileNotificationType.CI_RemovePaymentPlan:
-				case MobileNotificationType.CL_ExamSheet:
-					eService=eServiceCode.EClipboard;
-					break;
-				case MobileNotificationType.ODM_LogoutODUser:
-					eService=eServiceCode.MobileWeb;
-					break;
-				case MobileNotificationType.None:
-				default:
-					throw new Exception("Unsupported MobileNotificationType: "+mobileNotificationType.ToString());
-			}
+		public static void InsertMobileNotification(MobileNotificationType mobileNotificationType,long mobileAppDeviceNum,EnumAppTarget appTarget,List<long> listPrimaryKeys=null,List<string> listTags=null) {
 			MobileNotification mobileNotification=new MobileNotification {
 				NotificationType=mobileNotificationType,
 				PrimaryKeys=JsonConvert.SerializeObject(listPrimaryKeys??new List<long>()),
-				Tags=JsonConvert.SerializeObject(listTags??new List<string>())
+				Tags=JsonConvert.SerializeObject(listTags??new List<string>()),
+				AppTarget=appTarget,
 			};
 			MobileAppDevice mobileAppDevice=MobileAppDevices.GetOne(mobileAppDeviceNum);
 			if(mobileAppDevice==null) {
@@ -339,14 +319,17 @@ namespace OpenDentBusiness {
 			}
 			mobileNotification.DeviceId=mobileAppDevice.UniqueID;
 			//Validate that this clinic is signed up for eClipboard if the mobile notification is related to eClipboard
-			if(eService==eServiceCode.EClipboard && !MobileAppDevices.IsClinicSignedUpForEClipboard(mobileAppDevice.ClinicNum)) {
+			if(appTarget==EnumAppTarget.eClipboard && !MobileAppDevices.IsClinicSignedUpForEClipboard(mobileAppDevice.ClinicNum)) {
 				throw new Exception($"ClinicNum {mobileAppDevice.ClinicNum} is not signed up for eClipboard.");
 			}
 			//Validate that this clinic is signed up for MobileWeb if the mobile notification is related to ODMobile
-			else if(eService==eServiceCode.MobileWeb && !MobileAppDevices.IsClinicSignedUpForMobileWeb(mobileAppDevice.ClinicNum)) {
+			else if(appTarget==EnumAppTarget.ODMobile && !MobileAppDevices.IsClinicSignedUpForMobileWeb(mobileAppDevice.ClinicNum)) {
 				if(mobileNotificationType!=MobileNotificationType.ODM_LogoutODUser) { //Logout is allowed to be sent to non-specific clinicNum. All others are not.
 					throw new Exception($"ClinicNum {mobileAppDevice.ClinicNum} is not signed up for ODMobile.");
 				}
+			}
+			else if(appTarget==EnumAppTarget.ODTouch && !ClinicPrefs.IsODTouchAllowed(mobileAppDevice.ClinicNum)) {
+				throw new Exception($"ClinicNum {mobileAppDevice.ClinicNum} is not signed up for ODTouch.");
 			}
 			mobileNotification.DateTimeEntry=DateTime_.Now;
 			mobileNotification.DateTimeExpires=DateTime_.Now.AddMinutes(10);

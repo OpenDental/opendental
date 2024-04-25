@@ -123,18 +123,26 @@ namespace OpenDental {
 					continue;//cancel, next file.
 				}
 				bool isCancel=false;
-				while(!isCancel && FileAtoZ.Exists(FileAtoZ.CombinePaths(_imageFolder,inputBox.StringResult))){
-					MsgBox.Show(this,"File name already exists.");
-					inputBox.ShowDialog();
-					if(inputBox.IsDialogCancel) {
+				string stringResult=inputBox.StringResult;
+				while(true){
+					if(!string.IsNullOrWhiteSpace(stringResult) && !FileAtoZ.Exists(FileAtoZ.CombinePaths(_imageFolder,stringResult))){
+						break;
+					}
+					MsgBox.Show(this,"File name cannot be blank or in use.");
+					InputBox inputBoxRefresh=new InputBox(inputBoxParam);
+					inputBoxRefresh.ShowDialog();
+					stringResult=inputBoxRefresh.StringResult;
+					if(inputBoxRefresh.IsDialogCancel) {
 						isCancel=true;
+						break;
 					}
 				}
 				if(isCancel) {
 					continue;//cancel rename, and go to next file.
 				}
-				destinationPath=FileAtoZ.CombinePaths(_imageFolder,inputBox.StringResult);
+				destinationPath=FileAtoZ.CombinePaths(_imageFolder,stringResult);
 				FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
+				stringArrayFileNames[i]=stringResult;
 			}
 			FillGrid();
 			if(stringArrayFileNames.Length==1) {//if importing exactly one image, select it upon returning.

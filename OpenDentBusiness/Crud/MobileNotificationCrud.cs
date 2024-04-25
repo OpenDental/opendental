@@ -54,6 +54,7 @@ namespace OpenDentBusiness.Crud{
 				mobileNotification.Tags                 = PIn.String(row["Tags"].ToString());
 				mobileNotification.DateTimeEntry        = PIn.DateT (row["DateTimeEntry"].ToString());
 				mobileNotification.DateTimeExpires      = PIn.DateT (row["DateTimeExpires"].ToString());
+				mobileNotification.AppTarget            = (OpenDentBusiness.EnumAppTarget)PIn.Int(row["AppTarget"].ToString());
 				retVal.Add(mobileNotification);
 			}
 			return retVal;
@@ -72,6 +73,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("Tags");
 			table.Columns.Add("DateTimeEntry");
 			table.Columns.Add("DateTimeExpires");
+			table.Columns.Add("AppTarget");
 			foreach(MobileNotification mobileNotification in listMobileNotifications) {
 				table.Rows.Add(new object[] {
 					POut.Long  (mobileNotification.MobileNotificationNum),
@@ -81,6 +83,7 @@ namespace OpenDentBusiness.Crud{
 					            mobileNotification.Tags,
 					POut.DateT (mobileNotification.DateTimeEntry,false),
 					POut.DateT (mobileNotification.DateTimeExpires,false),
+					POut.Int   ((int)mobileNotification.AppTarget),
 				});
 			}
 			return table;
@@ -100,7 +103,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="MobileNotificationNum,";
 			}
-			command+="NotificationType,DeviceId,PrimaryKeys,Tags,DateTimeEntry,DateTimeExpires) VALUES(";
+			command+="NotificationType,DeviceId,PrimaryKeys,Tags,DateTimeEntry,DateTimeExpires,AppTarget) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(mobileNotification.MobileNotificationNum)+",";
 			}
@@ -110,7 +113,8 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.ParamChar+"paramPrimaryKeys,"
 				+    DbHelper.ParamChar+"paramTags,"
 				+    POut.DateT (mobileNotification.DateTimeEntry)+","
-				+    POut.DateT (mobileNotification.DateTimeExpires)+")";
+				+    POut.DateT (mobileNotification.DateTimeExpires)+","
+				+    POut.Int   ((int)mobileNotification.AppTarget)+")";
 			if(mobileNotification.PrimaryKeys==null) {
 				mobileNotification.PrimaryKeys="";
 			}
@@ -143,7 +147,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="MobileNotificationNum,";
 			}
-			command+="NotificationType,DeviceId,PrimaryKeys,Tags,DateTimeEntry,DateTimeExpires) VALUES(";
+			command+="NotificationType,DeviceId,PrimaryKeys,Tags,DateTimeEntry,DateTimeExpires,AppTarget) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(mobileNotification.MobileNotificationNum)+",";
 			}
@@ -153,7 +157,8 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.ParamChar+"paramPrimaryKeys,"
 				+    DbHelper.ParamChar+"paramTags,"
 				+    POut.DateT (mobileNotification.DateTimeEntry)+","
-				+    POut.DateT (mobileNotification.DateTimeExpires)+")";
+				+    POut.DateT (mobileNotification.DateTimeExpires)+","
+				+    POut.Int   ((int)mobileNotification.AppTarget)+")";
 			if(mobileNotification.PrimaryKeys==null) {
 				mobileNotification.PrimaryKeys="";
 			}
@@ -179,7 +184,8 @@ namespace OpenDentBusiness.Crud{
 				+"PrimaryKeys          =  "+DbHelper.ParamChar+"paramPrimaryKeys, "
 				+"Tags                 =  "+DbHelper.ParamChar+"paramTags, "
 				+"DateTimeEntry        =  "+POut.DateT (mobileNotification.DateTimeEntry)+", "
-				+"DateTimeExpires      =  "+POut.DateT (mobileNotification.DateTimeExpires)+" "
+				+"DateTimeExpires      =  "+POut.DateT (mobileNotification.DateTimeExpires)+", "
+				+"AppTarget            =  "+POut.Int   ((int)mobileNotification.AppTarget)+" "
 				+"WHERE MobileNotificationNum = "+POut.Long(mobileNotification.MobileNotificationNum);
 			if(mobileNotification.PrimaryKeys==null) {
 				mobileNotification.PrimaryKeys="";
@@ -219,6 +225,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="DateTimeExpires = "+POut.DateT(mobileNotification.DateTimeExpires)+"";
 			}
+			if(mobileNotification.AppTarget != oldMobileNotification.AppTarget) {
+				if(command!="") { command+=",";}
+				command+="AppTarget = "+POut.Int   ((int)mobileNotification.AppTarget)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -255,6 +265,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(mobileNotification.DateTimeExpires != oldMobileNotification.DateTimeExpires) {
+				return true;
+			}
+			if(mobileNotification.AppTarget != oldMobileNotification.AppTarget) {
 				return true;
 			}
 			return false;

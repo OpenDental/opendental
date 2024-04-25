@@ -94,6 +94,7 @@ namespace OpenDental {
 				listReplacementFields.Add(new ReplacementField("[MountDate]","Date of the mount.",MessageReplaceType.Mount,isAllowPhi,listMessageReplaceTypesSupported));
 				listReplacementFields.Add(new ReplacementField("[MountDescript]","Description of the mount.",MessageReplaceType.Mount,isAllowPhi,listMessageReplaceTypesSupported));
 				listReplacementFields.Add(new ReplacementField("[MountProv]","Provider of the mount, First Last Suffix.",MessageReplaceType.Mount,isAllowPhi,listMessageReplaceTypesSupported));
+				listReplacementFields.Add(new ReplacementField("[SubscriberID]","Subscriber ID on the patient's primary insurance.",MessageReplaceType.Mount, isAllowPhi, listMessageReplaceTypesSupported));
 				listReplacementFields.Add(new ReplacementField("[OfficeName]","The practice or clinic name.",MessageReplaceType.Office,isAllowPhi,listMessageReplaceTypesSupported));
 				listReplacementFields.Add(new ReplacementField("[OfficePhone]","The practice or clinic phone number in standard format.",MessageReplaceType.Office,isAllowPhi,listMessageReplaceTypesSupported));
 				return listReplacementFields;

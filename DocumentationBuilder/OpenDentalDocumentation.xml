@@ -2376,6 +2376,9 @@
     <column order="83" name="SecurityHash" type="varchar(255)">
       <summary>Holds the salted hash of the following claim fields: ClaimFee, ClaimStatus, InsPayEst, InsPayAmt.</summary>
     </column>
+    <column order="84" name="Narrative" type="text">
+      <summary>A note that pertains to all attachments on the claim. Currently only applies to DentalXChange, but could be expanded. 2000 character limit put in place by DentalXChange.</summary>
+    </column>
   </table>
   <table name="claimattach">
     <summary>Keeps track of one image file attached to a claim.  Multiple files can be attached to a claim using this method.</summary>

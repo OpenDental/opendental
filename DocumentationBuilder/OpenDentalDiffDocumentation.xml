@@ -21,6 +21,12 @@
       </Enumeration>
     </column>
   </table>
+  <table name="claim">
+    <summary></summary>
+    <column order="84" name="Narrative" type="text">
+      <summary>A note that pertains to all attachments on the claim. Currently only applies to DentalXChange, but could be expanded. 2000 character limit put in place by DentalXChange.</summary>
+    </column>
+  </table>
   <table name="clearinghouse">
     <summary></summary>
     <column order="30" name="LocationID" type="varchar(255)">

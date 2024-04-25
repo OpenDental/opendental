@@ -208,19 +208,7 @@ namespace OpenDental {
 				_startedAttachedToClaim=true;
 				//however, this doesn't stop someone from creating a claim while this window is open,
 				//so this is checked at the end, too.
-				panel1.Enabled=false;
-				comboProcStatus.Enabled=false;
-				checkNoBillIns.Enabled=false;
-				butChange.Enabled=false;
-				butEditAnyway.Visible=true;
-				butSetComplete.Enabled=false;
-				textCanadaLabFee1.Enabled=false;
-				textCanadaLabFee2.Enabled=false;
-			}
-			if(Procedures.IsAttachedToClaim(_procedure,_listClaimProcs,false)) {
-				butDelete.Enabled=false;
-				labelClaim.Visible=true;
-				butAddEstimate.Enabled=false;
+				SetControlsAttachedToClaim();
 			}
 			if(PrefC.GetBool(PrefName.EasyHideClinical)){
 				labelDx.Visible=false;
@@ -1322,6 +1310,12 @@ namespace OpenDental {
 				MsgBox.Show(this,"Adjustments may only be added to completed procedures.");
 				return;
 			}
+			bool isTsiAdj=(TsiTransLogs.IsTransworldEnabled(_patient.ClinicNum)
+				&& Patients.IsGuarCollections(_patient.Guarantor)
+				&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"The guarantor of this family has been sent to TSI for a past due balance.  "
+					+"Is this an adjustment applied by the office?\r\n\r\n"
+					+"Yes - this is an adjustment applied by the office\r\n\r\n"
+					+"No - this adjustment is the result of a payment received from TSI"));
 			Adjustment adjustment=new Adjustment();
 			adjustment.PatNum=_patient.PatNum;
 			adjustment.ProvNum=comboProv.GetSelectedProvNum();
@@ -1330,7 +1324,7 @@ namespace OpenDental {
 			adjustment.ProcDate=_procedure.ProcDate;
 			adjustment.ProcNum=_procedure.ProcNum;
 			adjustment.ClinicNum=_procedure.ClinicNum;
-			using FormAdjust formAdjust=new FormAdjust(_patient,adjustment);
+			using FormAdjust formAdjust=new FormAdjust(_patient,adjustment,isTsiAdj);
 			formAdjust.IsNew=true;
 			if(formAdjust.ShowDialog()!=DialogResult.OK) {
 				return;
@@ -2525,8 +2519,31 @@ namespace OpenDental {
 			}
 		}
 
+		/// <summary>Disables/enables various controls if the current procedure is attached to a claim.</summary>
+		private void SetControlsAttachedToClaim() {
+			panel1.Enabled=false;
+			comboProcStatus.Enabled=false;
+			checkNoBillIns.Enabled=false;
+			butChange.Enabled=false;
+			butEditAnyway.Visible=true;
+			butSetComplete.Enabled=false;
+			textCanadaLabFee1.Enabled=false;
+			textCanadaLabFee2.Enabled=false;
+			if(Procedures.IsAttachedToClaim(_procedure,_listClaimProcs,isPreauthIncluded:false)) {//This procedure is not a preauth
+				butDelete.Enabled=false;
+				labelClaim.Visible=true;
+				butAddEstimate.Enabled=false;
+			}
+		}
+
 		private void butSave_Click(object sender,System.EventArgs e) {
 			if(!EntriesAreValid()) {
+				return;
+			}
+			if(_procedure.ProcStatus!=ProcStat.C && ProcedureL.IsProcCompleteAttachedToClaim(_procedureOld,_listClaimProcs)) {
+				SetControlsAttachedToClaim();
+				_procedure.ProcStatus=ProcStat.C;
+				comboProcStatus.SetSelectedEnum(ProcStat.C);
 				return;
 			}
 			if(_hasUserChanged && !_procedureOld.Signature.IsNullOrEmpty()) {

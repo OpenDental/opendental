@@ -27,8 +27,6 @@ namespace OpenDental {
 		private Patient _patientGuar;
 		private List<Def> _listDefsAdjPosCats;
 		private List<Def> _listDefsAdjNegCats;
-		private List<ProgramProperty> _listProgramPropertiesExcludedAdjTypes;
-		private List<ProgramProperty> _listProgramPropertiesForClinicExcludedAdjTypes;
 		private List<long> _listExcludedAdjTypeNums;
 		#endregion
 
@@ -54,8 +52,19 @@ namespace OpenDental {
 			}
 			dateAdjustment.Text=DateTime.Today.ToShortDateString();
 			_rigorousAdjustment=PrefC.GetEnum<RigorousAdjustments>(PrefName.RigorousAdjustments);
-			checkOnlyTsiExcludedAdjTypes.CheckedChanged-=checkOnlyTsiExcludedAdjTypes_Checked;	
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum)) { //Transworld program link is enabled and the patient is part of a family where the guarantor has been sent to TSI
+			checkOnlyTsiExcludedAdjTypes.CheckedChanged-=checkOnlyTsiExcludedAdjTypes_Checked;
+			List<ProgramProperty> listProgramPropertiesExcludedAdjTypes=ProgramProperties
+				.GetWhere(x => x.ProgramNum==_program.ProgramNum
+					&& _program.Enabled
+					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
+						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
+			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
+			List<ProgramProperty> listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==_patientGuar.ClinicNum);
+			if(!PrefC.HasClinicsEnabled || listProgramPropertiesForClinicExcludedAdjTypes.Count==0){
+				listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==0);
+			}
+			_listExcludedAdjTypeNums=listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
+			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listExcludedAdjTypeNums.Any(x => x>0)) { //Transworld program link is enabled and the patient is part of a family where the guarantor has been sent to TSI
 				checkOnlyTsiExcludedAdjTypes.Checked=true;
 			}
 			else {
@@ -187,17 +196,6 @@ namespace OpenDental {
 			listTypeNeg.Items.Clear();
 			_listDefsAdjPosCats=Defs.GetPositiveAdjTypes(considerPermission:true);
 			_listDefsAdjNegCats=Defs.GetNegativeAdjTypes(considerPermission:true);
-			_listProgramPropertiesExcludedAdjTypes=ProgramProperties
-				.GetWhere(x => x.ProgramNum==_program.ProgramNum
-					&& _program.Enabled
-					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
-						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
-			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
-			_listProgramPropertiesForClinicExcludedAdjTypes=_listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==_patientGuar.ClinicNum);
-			if(!PrefC.HasClinicsEnabled || _listProgramPropertiesForClinicExcludedAdjTypes.Count==0){
-				_listProgramPropertiesForClinicExcludedAdjTypes=_listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==0);
-			}
-			_listExcludedAdjTypeNums=_listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
 			if(checkOnlyTsiExcludedAdjTypes.Checked) {
 				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x => _listExcludedAdjTypeNums.Contains(x.DefNum));
 				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => _listExcludedAdjTypeNums.Contains(x.DefNum));
@@ -561,8 +559,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum)) {
-				_listExcludedAdjTypeNums=_listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
+			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listExcludedAdjTypeNums.Any(x => x>0)) {
 				List<Adjustment> listAdjustmentsPosExcluded=_listAdjustments.FindAll(x=>_listExcludedAdjTypeNums.Contains(x.AdjType));
 				List<Adjustment> listAdjustmentsNegExcluded=_listAdjustments.FindAll(x=>_listExcludedAdjTypeNums.Contains(x.AdjType));
 				string msgTxt="The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that will be synched with TSI."

@@ -242,10 +242,11 @@ namespace OpenDental{
 				_listProviderClinicLinks=ProviderClinicLinks.GetForProvider(ProviderCur.ProvNum);
 				//If there are no ProviderClinicLinks, then the provider is associated to all clinics.
 				bool doSelectAll=(_listProviderClinicLinks.Count==0 || _listClinicsForUser.All(x => _listProviderClinicLinks.Any(y => y.ClinicNum==x.ClinicNum)));
-				listBoxClinics.Items.AddList(_listClinicsForUser.FindAll(x => !x.IsHidden),x => x.Abbr);
+				List<Clinic> listClinicsForUserUnhidden=_listClinicsForUser.FindAll(x => !x.IsHidden);
+				listBoxClinics.Items.AddList(listClinicsForUserUnhidden,x => x.Abbr);
 				List<long> listClinicNumsForClinicLinks=_listProviderClinicLinks.Select(x => x.ClinicNum).ToList();;
-				for(int i=0; i<_listClinicsForUser.Count;i++) {
-					if(!doSelectAll && listClinicNumsForClinicLinks.Contains(_listClinicsForUser[i].ClinicNum)) {
+				for(int i=0;i<listClinicsForUserUnhidden.Count;i++) {
+					if(!doSelectAll && listClinicNumsForClinicLinks.Contains(listClinicsForUserUnhidden[i].ClinicNum)) {
 						listBoxClinics.SetSelected(i,true);
 					}
 				}

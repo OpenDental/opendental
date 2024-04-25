@@ -274,6 +274,15 @@ namespace OpenDentBusiness {
 					)adjSplit ON adjSplit.AdjNum=adjustment.AdjNum
 				) prodlink ON prodlink.LinkNum=payplanlink.PayPlanLinkNum 
 				WHERE prodlink.AgeDate <= {POut.Date(ageOptions.DateAsOf)} ";
+			//Taken from GetTransQueryString. Calculates discounts on procedures.
+			PayPlanVersions payPlanVersionCur=(PayPlanVersions)PrefC.GetInt(PrefName.PayPlansVersion);
+			if(payPlanVersionCur.In(PayPlanVersions.AgeCreditsAndDebits,PayPlanVersions.AgeCreditsOnly)) {
+				command+="UNION ALL SELECT 'PayPlanLink' TranType,p.PatNum,p.ProcDate,COALESCE(p.Discount+p.DiscountPlanAmt) FROM procedurelog p "+
+					"INNER JOIN payplanlink ppl ON p.ProcNum=ppl.FKey AND ppl.FKey=p.ProcNum AND ppl.LinkType="+POut.Int((int)PayPlanLinkType.Procedure)+" "+
+					"INNER JOIN payplan pp ON ppl.PayPlanNum=pp.PayPlanNum	"+
+					"WHERE pp.IsDynamic=1 AND pp.DynamicPayPlanTPOption="+POut.Int((int)DynamicPayPlanTPOptions.TreatAsComplete)+" "+
+					"AND (p.Discount!=0 OR p.DiscountPlanAmt!=0) AND p.ProcStatus="+POut.Int((int)ProcStat.TP)+" AND p.ProcDate <="+POut.Date(ageOptions.DateAsOf);
+			}
 			return command;
 		}
 

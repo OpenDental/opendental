@@ -1388,5 +1388,11 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference(PrefName,ValueString) VALUES('OmhNy','0')";
 			Db.NonQ(command);
 		}//End of 24_1_23() method
+
+		private static void To24_1_24() {
+			string command;
+			command="ALTER TABLE mobilenotification ADD AppTarget tinyint NOT NULL";
+			Db.NonQ(command);
+		}//End of 24_1_24() method
 	}
 }

@@ -791,6 +791,7 @@
     <Compile Include="WebBridges\OcrInsScan\OcrInsScanRequest.cs" />
     <Compile Include="WebBridges\OcrInsScan\OcrInsScanResponse.cs" />
     <Compile Include="WebBridges\PayConnect2.cs" />
+    <Compile Include="WebServices\PatientviewerServer.cs" />
     <Compile Include="WebTypes\AutoComm\AutoCommObj\AutoCommRule.cs" />
     <Compile Include="WebTypes\AutoComm\AutoCommObj\MsgToPayLite.cs" />
     <Compile Include="WebTypes\AutoComm\IAutoCommSent.cs" />
