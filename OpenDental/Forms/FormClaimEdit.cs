@@ -827,6 +827,7 @@ namespace OpenDental{
 			else {
 				textAttachID.Text=_claim.AttachmentID;
 			}
+			textNarrative.Text=_claim.Narrative;
 			//medical/inst
 			textBillType.Text=_claim.UniformBillType;
 			textAdmissionType.Text=_claim.AdmissionTypeCode;
@@ -3193,6 +3194,7 @@ namespace OpenDental{
 			if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.ClaimConnect) {
 				textDXCAttachmentID.Text=_claim.AttachmentID;
 				FillGridSentAttachments(gridDXCSent);
+				textNarrative.Text=_claim.Narrative;
 			}
 			else if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.EDS) {
 				textEDSAttachmentID.Text=_claim.AttachmentID;

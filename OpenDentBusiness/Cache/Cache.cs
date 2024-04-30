@@ -9,11 +9,14 @@ using CodeBase;
 
 namespace OpenDentBusiness {
 	public class Cache {
-		//If you add a new cached TableTypes, then you need to either add a new Enumerations.InvalidType value or utilize an enum value that already exists.
-		//Then, you need to add/edit sections in all 3 of the following methods: etCacheDs(), FillCache(), and ClearCaches().
-		//The "S" class for your new TableType will need to have a Cache Pattern region toward the top.
-		//The Cache Pattern region might already exist and be commented out.
-		//If that region is missing, you can run the CRUD generator, Create Snippet button, with "EntireSclass" selected in the combobox and your class selected in the listbox.
+	/*
+		If you add a new cached TableType, then you need to either add a new Enumerations.InvalidType value or utilize an enum value that already exists.
+		Then, you need to add/edit sections in all 3 of the following methods: GetCacheDs(), FillCache(), and ClearCaches().
+		The "S" class for your new TableType will need to have a Cache Pattern region toward the top.
+		The Cache Pattern region might already exist and be commented out.
+		If that region is missing, you can run the CRUD generator, Create Snippet button, with "EntireSclass" selected in the combobox and your class selected in the listbox.
+		See wiki page Programming Pattern - Cache.
+	*/
 
 		///<summary> Keep track of all cache objects </summary>
 		private static List<object> _listCacheAbssAll=new List<object>();

@@ -40,6 +40,8 @@ Jordan is the only one allowed to edit this file.
 		#region Constructor
 		public UnmountedBar(){
 			InitializeComponent();
+			FontSize=11.5;
+			FontFamily=new FontFamily("Segoe UI");
 			stackPanel.MouseLeftButtonDown+=StackPanel_MouseLeftButtonDown;
 		}
 		#endregion Constructor

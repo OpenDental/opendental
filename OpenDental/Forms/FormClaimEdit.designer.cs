@@ -113,6 +113,8 @@
 			this.textDXCAttachmentID = new OpenDental.ODtextBox();
 			this.labelAttachmentID = new System.Windows.Forms.Label();
 			this.gridDXCSent = new OpenDental.UI.GridOD();
+			this.labelNarrative = new System.Windows.Forms.Label();
+			this.textNarrative = new OpenDental.ODtextBox();
 			this.tabEDS = new OpenDental.UI.TabPage();
 			this.butEDSClaimAttachment = new OpenDental.UI.Button();
 			this.textEDSAttachmentID = new OpenDental.ODtextBox();
@@ -1236,12 +1238,38 @@
 			this.tabDXC.Controls.Add(this.textDXCAttachmentID);
 			this.tabDXC.Controls.Add(this.labelAttachmentID);
 			this.tabDXC.Controls.Add(this.gridDXCSent);
+			this.tabDXC.Controls.Add(this.textNarrative);
+			this.tabDXC.Controls.Add(this.labelNarrative);
 			this.tabDXC.Location = new System.Drawing.Point(2, 21);
 			this.tabDXC.Name = "tabDXC";
 			this.tabDXC.Padding = new System.Windows.Forms.Padding(3);
 			this.tabDXC.Size = new System.Drawing.Size(667, 198);
 			this.tabDXC.TabIndex = 1;
 			this.tabDXC.Text = "DentalXChange";
+			// 
+			// labelNarrative
+			// 
+			this.labelNarrative.AutoSize = true;
+			this.labelNarrative.Location = new System.Drawing.Point(483, 5);
+			this.labelNarrative.Name = "labelNarrative";
+			this.labelNarrative.Size = new System.Drawing.Size(50, 13);
+			this.labelNarrative.TabIndex = 154;
+			this.labelNarrative.Text = "Narrative";
+			// 
+			// textNarrative
+			// 
+			this.textNarrative.AcceptsTab = true;
+			this.textNarrative.BackColor = System.Drawing.SystemColors.Control;
+			this.textNarrative.DetectLinksEnabled = false;
+			this.textNarrative.DetectUrls = false;
+			this.textNarrative.Location = new System.Drawing.Point(483, 21);
+			this.textNarrative.Name = "textNarrative";
+			this.textNarrative.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
+			this.textNarrative.ReadOnly = true;
+			this.textNarrative.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.textNarrative.Size = new System.Drawing.Size(176, 173);
+			this.textNarrative.TabIndex = 153;
+			this.textNarrative.Text = "";
 			// 
 			// butDXCClaimAttachment
 			// 
@@ -4167,5 +4195,7 @@
 		private System.Windows.Forms.Label label7;
 		private UI.GridOD gridEDSSent;
 		private UI.WarningIntegrity warningIntegrity;
+		private System.Windows.Forms.Label labelNarrative;
+		private ODtextBox textNarrative;
 	}
 }

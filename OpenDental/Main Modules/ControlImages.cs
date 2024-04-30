@@ -505,6 +505,7 @@ namespace OpenDental
 			windowingSlider.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
 			zoomSlider.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
 			toolBarMain.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
+			unmountedBar.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
 			Plugins.HookAddCode(this,"ContrImages.ModuleSelected_end",patNum,docNum);
 		}
 		

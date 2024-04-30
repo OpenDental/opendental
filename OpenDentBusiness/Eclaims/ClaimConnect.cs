@@ -447,6 +447,8 @@ namespace OpenDentBusiness.Eclaims {
 				DxcCredentials.GetDentalxchangeCredentials(claim)
 				,BuildAttachmentRequest(claim,narrative)
 				,arrayAttachments
+				,releaseAttachment:false
+				,releaseAttachmentSpecified:false
 			);
 			//Not sure which one to trust
 			if(response==null) {
@@ -477,6 +479,21 @@ namespace OpenDentBusiness.Eclaims {
 				if(!imageResponse.MsgSuccess || imageResponse.Status.code!=0) {
 					throw new ODException(imageResponse.Status.description);
 				}
+			}
+		}
+
+		///<summary>Add a narrative to a claim that has an existing attachmentID. Will overwrite any narrative sent to DXC. Narrative has a 2000 char limit. Can throw an exception.</summary>
+		public static void AddNarrative(Claim claim,string narrative) {
+			DentalxchangePartnerService.DeaPartnerService deaPartnerService=new DentalxchangePartnerService.DeaPartnerService();
+			deaPartnerService.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDeaURL,"https://webservices.dentalxchange.com/dea/DeaPartnerService");
+			if(ODBuild.IsDebug()) {
+				deaPartnerService.Url="https://prelive2.dentalxchange.com/dea/DeaPartnerService";
+			}
+			DentalxchangePartnerService.AttachmentReference attachmentReference=new DentalxchangePartnerService.AttachmentReference();
+			attachmentReference.AttachmentID=claim.AttachmentID;
+			DentalxchangePartnerService.AttachmentReferenceResponse attachmentReferenceResponse=deaPartnerService.addNarrative(DxcCredentials.GetDentalxchangeCredentials(claim),attachmentReference,narrative);
+			if(!attachmentReferenceResponse.MsgSuccess || attachmentReferenceResponse.Status.code!=0) {
+				throw new ODException(attachmentReferenceResponse.Status.description);
 			}
 		}
 

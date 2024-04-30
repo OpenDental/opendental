@@ -275,8 +275,8 @@ End of Checklist================================================================
 			frmFaqEdit.FaqCur=new Faq();
 			frmFaqEdit.FaqCur.IsNew=true;
 			frmFaqEdit.IsQuickAdd=true;
-			frmFaqEdit.ManualPage=GetPageTopicFromUrl(url);
-			frmFaqEdit.Version=FormatVersionNumber(url);
+			frmFaqEdit.FaqCur.ManualPageName=GetPageTopicFromUrl(url);
+			frmFaqEdit.FaqCur.ManualVersion=PIn.Int(FormatVersionNumber(url));
 			frmFaqEdit.ShowDialog();
 		}
 

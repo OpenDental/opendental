@@ -838,7 +838,7 @@ namespace OpenDental {
 			}
 			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
 				if(_idxSelectedInMount>=0 && _documentArrayInMount[_idxSelectedInMount]!=null) {//mount item only
-					bitmapPrint=ImageHelper.ApplyDocumentSettingsToImage(_documentArrayInMount[_idxSelectedInMount],_bitmapArrayRaw[_idxSelectedInMount],ImageSettingFlags.ALL);
+					bitmapPrint=ApplyDocumentSettingsToImage(_documentArrayInMount[_idxSelectedInMount],_bitmapArrayRaw[_idxSelectedInMount],ImageSettingFlags.ALL);
 				}
 				else {//Entire mount. Individual images are already rendered onto mount with correct settings.
 					bitmapPrint=bitmapCloned;
@@ -846,7 +846,7 @@ namespace OpenDental {
 			}
 			else if(nodeIdTag.NodeType==EnumNodeType.Doc) {
 				//Crop and color function have already been applied to the render image, now do the rest.
-				bitmapPrint=ImageHelper.ApplyDocumentSettingsToImage(Documents.GetByNum(nodeIdTag.PriKey),bitmapCloned,ImageSettingFlags.FLIP | ImageSettingFlags.ROTATE);
+				bitmapPrint=ApplyDocumentSettingsToImage(Documents.GetByNum(nodeIdTag.PriKey),bitmapCloned,ImageSettingFlags.FLIP | ImageSettingFlags.ROTATE);
 			}
 			else if(nodeIdTag.NodeType==EnumNodeType.Eob) {
 				bitmapPrint=(Bitmap)bitmapCloned.Clone();
@@ -1801,7 +1801,7 @@ namespace OpenDental {
 			nodeIdTag = (NodeIdTag)treeMain.SelectedNode.Tag;
 			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
 				if(_idxSelectedInMount>=0 && _documentArrayInMount[_idxSelectedInMount]!=null) {//A mount item is currently selected.
-					bitmapCopy=ImageHelper.ApplyDocumentSettingsToImage(_documentArrayInMount[_idxSelectedInMount],_bitmapArrayRaw[_idxSelectedInMount],ImageSettingFlags.ALL);
+					bitmapCopy=ApplyDocumentSettingsToImage(_documentArrayInMount[_idxSelectedInMount],_bitmapArrayRaw[_idxSelectedInMount],ImageSettingFlags.ALL);
 				}
 				else {//Assume the copy is for the entire mount.
 					bitmapCopy=(Bitmap)_bitmapShowing.Clone();
@@ -1809,7 +1809,7 @@ namespace OpenDental {
 			}
 			else if(nodeIdTag.NodeType==EnumNodeType.Doc) {
 				//Crop and color function has already been applied to the render image.
-				bitmapCopy=ImageHelper.ApplyDocumentSettingsToImage(Documents.GetByNum(nodeIdTag.PriKey),_bitmapShowing,
+				bitmapCopy=ApplyDocumentSettingsToImage(Documents.GetByNum(nodeIdTag.PriKey),_bitmapShowing,
 					ImageSettingFlags.FLIP | ImageSettingFlags.ROTATE);
 			}
 			else if(nodeIdTag.NodeType.In(EnumNodeType.Eob,EnumNodeType.EhrAmend,EnumNodeType.ApteryxImage)) {
@@ -2931,6 +2931,124 @@ namespace OpenDental {
 		#endregion Methods - ToolBarMain
 
 		#region Methods - Private
+
+		///<summary>Applies the document specified cropping, flip, rotation, and windowing (brightness/contrast) to the bitmap and returns the resulting bitmap. Zoom and translation must be handled by the calling code. The returned image is always a new image that can be modified without affecting the original image.</summary>
+		private static Bitmap ApplyDocumentSettingsToImage(Document document, Bitmap bitmapReference, ImageSettingFlags imageSettingFlags) {
+			if(bitmapReference==null) {
+				return null;
+			}
+			if(document==null) {//No doc implies no operations, implies that the image should be returned "unaltered".
+				//return (Bitmap)image.Clone();//this would keep the original resolution, which causes problems.
+				return new Bitmap(bitmapReference);//resets the resolution to 96, just like it does for docs 20 lines down.
+			}
+			//CROP - Implies that the croping rectangle must be saved in raw-image-space coordinates, 
+			//with an origin of that equal to the upper left hand portion of the image.
+			Rectangle rectangleCrop;
+			if((imageSettingFlags & ImageSettingFlags.CROP) != 0 &&	//Crop not requested.
+				document.CropW > 0 && document.CropH > 0)//No clip area yet defined, so no clipping is performed.
+			{
+				//todo: this is all wrong.  It's not supposed to be an intersection.  Crop rectangle can be bigger than original image.
+				float[] cropDims = ODMathLib.IntersectRectangles(0, 0, bitmapReference.Width, bitmapReference.Height,//Intersect image rectangle with
+					document.CropX, document.CropY, document.CropW, document.CropH);//document crop rectangle.
+				if (cropDims.Length == 0) {//The entire image has been cropped away.
+					return null;
+				}
+				//Rounds dims up, so that data is not lost, but possibly not removing all of what was expected.
+				rectangleCrop = new Rectangle((int)cropDims[0], (int)cropDims[1],
+					(int)Math.Ceiling(cropDims[2]), (int)Math.Ceiling(cropDims[3]));
+			}
+			else {
+				rectangleCrop = new Rectangle(0, 0, bitmapReference.Width, bitmapReference.Height);//No cropping.
+			}
+			//Always use 32-bit images in memory. We could use 24-bit images here (it works in Windows, but MONO produces
+			//output using 32-bit data on a 24-bit image in that case, providing horrible output). Perhaps we can update
+			//this when MONO is more fully featured.
+			Bitmap bitmapCropped = new Bitmap(rectangleCrop.Width, rectangleCrop.Height, PixelFormat.Format32bppArgb);
+			Graphics g = Graphics.FromImage(bitmapCropped);
+			Rectangle rectangleCroppedDims = new Rectangle(0, 0, bitmapCropped.Width, bitmapCropped.Height);
+			g.DrawImage(bitmapReference, rectangleCroppedDims, rectangleCrop, GraphicsUnit.Pixel);
+			g.Dispose();
+			//FLIP AND ROTATE - must match the operations in GetDocumentFlippedRotatedMatrix().
+			if((imageSettingFlags & ImageSettingFlags.FLIP) != 0) {
+				if (document.IsFlipped) {
+					bitmapCropped.RotateFlip(RotateFlipType.RotateNoneFlipX);
+				}
+			}
+			if((imageSettingFlags & ImageSettingFlags.ROTATE) != 0) {
+				if (document.DegreesRotated % 360 == 90) {
+					bitmapCropped.RotateFlip(RotateFlipType.Rotate90FlipNone);
+				}
+				else if (document.DegreesRotated % 360 == 180) {
+					bitmapCropped.RotateFlip(RotateFlipType.Rotate180FlipNone);
+				}
+				else if (document.DegreesRotated % 360 == 270) {
+					bitmapCropped.RotateFlip(RotateFlipType.Rotate270FlipNone);
+				}
+			}
+			//APPLY BRIGHTNESS AND CONTRAST - 
+			//TODO: should be updated later for more general functions 
+			//(create inputValues and outputValues from stored db function/table).
+			if((imageSettingFlags & ImageSettingFlags.COLORFUNCTION) != 0 &&
+				document.WindowingMax != 0 && //Do not apply color function if brightness/contrast have never been set (assume normal settings).
+				!(document.WindowingMax == 255 && document.WindowingMin == 0)) {//Don't apply if brightness/contrast settings are normal.
+				float[] inputValues = new float[] {
+					document.WindowingMin/255f,
+					document.WindowingMax/255f,
+				};
+				float[] outputValues = new float[]{
+					0,
+					1,
+				};
+				BitmapData bitmapData = null;
+				try {
+					bitmapData = bitmapCropped.LockBits(new Rectangle(0, 0, bitmapCropped.Width, bitmapCropped.Height),
+						ImageLockMode.ReadWrite, bitmapCropped.PixelFormat);
+					unsafe {
+						byte* pBytes;
+						if(bitmapData.Stride < 0) {//Indicates bitmap is bottom up, but that should never happen
+							pBytes = (byte*)bitmapData.Scan0.ToPointer() + bitmapData.Stride * (bitmapData.Height - 1);
+						}
+						else {
+							pBytes = (byte*)bitmapData.Scan0.ToPointer();
+						}
+						//The following loop goes through each byte of each 32-bit value and applies the color function to it.
+						//Thus, the same transformation is performed to all 4 color components equivalently for each pixel.
+						for (int i = 0; i < bitmapData.Stride * bitmapData.Height; i++) {
+							float colorComponent = pBytes[i] / 255f;
+							float rangedOutput;
+							if (colorComponent <= inputValues[0]) {
+								rangedOutput = outputValues[0];
+							}
+							else if (colorComponent >= inputValues[inputValues.Length - 1]) {
+								rangedOutput = outputValues[outputValues.Length - 1];
+							}
+							else {
+								int j = 0;
+								//j never increments here, so this must all be code for some future color enhancement idea that's not documented.
+								//Seems like maybe a pixel needs to be between two given input values to get transformed to the same interpolated position between 2 output values
+								while (!(inputValues[j] <= colorComponent && colorComponent < inputValues[j + 1])) {
+									j++;
+								}
+								rangedOutput = ((colorComponent - inputValues[j]) * (outputValues[j + 1] - outputValues[j]))
+									/ (inputValues[j + 1] - inputValues[j]);
+							}
+							pBytes[i] = (byte)Math.Round(255 * rangedOutput);
+						}
+					}
+				}
+				catch {
+				}
+				finally {
+					try {
+						bitmapCropped.UnlockBits(bitmapData);
+					}
+					catch {
+					}
+				}
+			}
+			return bitmapCropped;
+		}
+
 		///<summary>Resizes all controls in the image module to fit inside the current window, including controls which have varying visibility.</summary>
 		private void LayoutAll() {
 			LayoutManager.Move(ToolBarMain,new Rectangle(0,0,Width,LayoutManager.Scale(25)));
@@ -3899,7 +4017,7 @@ namespace OpenDental {
 							//currentImages[] is guaranteed to exist and be the current. If currentImages gets updated, this thread 
 							//gets aborted with a call to KillMyThread(). The only place currentImages[] is invalid is in a call to 
 							//EraseCurrentImage(), but at that point, this thread has been terminated.
-							_bitmapShowing=ImageHelper.ApplyDocumentSettingsToImage(docForSettings,_bitmapArrayRaw[_idxSelectedInMount],
+							_bitmapShowing=ApplyDocumentSettingsToImage(docForSettings,_bitmapArrayRaw[_idxSelectedInMount],
 								ImageSettingFlags.CROP | ImageSettingFlags.COLORFUNCTION);
 						}
 						//Make the current _bitmapRenderingNow visible in the picture box, and perform rotation, flip, zoom, and translation on
@@ -3918,7 +4036,7 @@ namespace OpenDental {
 								oldRenderImage.Dispose();
 								oldRenderImage=null;
 							}
-							_bitmapShowing=ImageHelper.ApplyDocumentSettingsToImage(docForSettings,_bitmapArrayRaw[_idxSelectedInMount],
+							_bitmapShowing=ApplyDocumentSettingsToImage(docForSettings,_bitmapArrayRaw[_idxSelectedInMount],
 								ImageSettingFlags.CROP | ImageSettingFlags.COLORFUNCTION);
 							//ImageRenderingNow=ImagesCur[IdxSelectedInMount];//no crop or color settings in an eob
 						}

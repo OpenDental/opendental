@@ -159,8 +159,7 @@
   <table name="mobilenotification">
     <summary></summary>
     <column order="0" name="MobileNotificationNum" type="bigint(20)">
-      <summary>Mobile App devices periodically poll this table and retrieve any records that are relevant to the device itself, the user using the device, or the clinic
-            the device belongs to. The mobile apps will then perform an action based on the mobile notification type.</summary>
+      <summary>Primary key.</summary>
     </column>
     <column order="1" name="NotificationType" type="tinyint(4)">
       <summary>Enum:MobileNotificationType The type of notification. Example: TP. This will determine what actions the mobile app will perform upon retrieving this notification.</summary>
@@ -177,8 +176,8 @@
             allows users from OD to "clear" the device of a stale patient. No primary keys or tags needed.</EnumValue>
         <EnumValue name="CI_NewEClipboardPrefs">This mobile notification occurs when the preferences for this device's clinic changes. The tags for this mobile notification will be the EClipboardAllowSelfCheckIn(bool), EClipboardMessageComplete(string), 
             EClipboardAllowSelfPortraitOnCheckIn(bool), and EClipboardPresentAvailableFormsOnCheckIn(bool) in that order.</EnumValue>
-        <EnumValue name="CI_IsAllowedChanged">This mobile notification occurs when the MobileAppDevice.IsAllowed changed for this device. The tag for this mobile notification will be IsAllowed (bool).
-            If true then device which is currently awaiting in 'Not Allowed' state will try another login, should work this time. If false then force signout.</EnumValue>
+        <EnumValue name="IsAllowedChanged">This mobile notification occurs when the MobileAppDevice.IsAllowed changed for this device. The tag for this mobile notification will be IsAllowed (bool).
+            If true then device which is currently awaiting in 'Not Allowed' state will try another login, should work this time. If false then force signout. Used for eClipboard and ODTouch.</EnumValue>
         <EnumValue name="ODM_LogoutODUser">This mobile notification occurs when a permission has changed for a given OD user and they are no longer allowed to use OD Mobile. 
             The ListPrimaryKeys may contain the UserNum of the user who is no longer allowed. This session will then be logged out of versioned OD Mobile.
             If ListPrimaryKeys IsNullOrEmpty() then assume all users for the given ClinicNum should be logged out. No UserNum filter necessary in this case.</EnumValue>
@@ -201,8 +200,8 @@
         <EnumValue name="CI_RemovePaymentPlan">This mobile notification occurs when a payment plan is removed from the associated eClip device or when a payment plan is removed from OD proper.
             This will remove a payment plan from user view on eClip.
             ListPrimaryKeys =&gt; [PayPlan.PatNum,PayPlan.PayPlanNum]</EnumValue>
-        <EnumValue name="CL_ExamSheetsAll"></EnumValue>
-        <EnumValue name="CL_ExamSheet"></EnumValue>
+        <EnumValue name="ODT_ExamSheetsAll"></EnumValue>
+        <EnumValue name="ODT_ExamSheet"></EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="DeviceId" type="varchar(255)">
@@ -220,6 +219,16 @@
     </column>
     <column order="6" name="DateTimeExpires" type="datetime">
       <summary>DateTime notification expires and becomes invalid.</summary>
+    </column>
+    <column order="7" name="AppTarget" type="tinyint(4)">
+      <summary>Enum:EnumAppTarget Stores the mobile app that this notification is targeting. Prohibits a device running one app from consuming mobile 
+            notifications intended for a different app.</summary>
+      <Enumeration name="EnumAppTarget">
+        <summary>The mobile apps that support mobile notifications. Must stay synched 1:1 with the ODXamBusiness.ApplicationTarget enum.</summary>
+        <EnumValue name="eClipboard">0</EnumValue>
+        <EnumValue name="ODMobile">1</EnumValue>
+        <EnumValue name="ODTouch">2</EnumValue>
+      </Enumeration>
     </column>
   </table>
   <table name="msgtopaysent">

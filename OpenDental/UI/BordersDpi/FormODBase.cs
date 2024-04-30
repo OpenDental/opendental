@@ -817,6 +817,11 @@ namespace OpenDental {
 					fontSizeMainWindow=fontSizeMainWindow*scaleRatio;
 				}
 			}
+			//Rarely seems to be 0, neg, or infinity. Not sure which or why.
+			//Blind fix:
+			if(fontSize<=0 || float.IsInfinity(fontSize)){
+				return;
+			}
 			using Font font=new Font("Microsoft Sans Serif",fontSize);
 			using Font fontMainWindow=new Font("Microsoft Sans Serif",fontSizeMainWindow);
 			float heightFont=ScaleMS(font.Height);

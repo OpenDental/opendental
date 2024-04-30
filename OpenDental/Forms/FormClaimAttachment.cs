@@ -71,6 +71,7 @@ namespace OpenDental {
 			{
 					ClearAttachmentID();
 			}
+			textNarrative.Text=_claim.Narrative;
 			Plugins.HookAddCode(this,"FormClaimAttachment.Load_end",_patient,_claim,(Action<Bitmap>)ShowImageAttachmentItemEdit);
 		}
 
@@ -715,7 +716,11 @@ namespace OpenDental {
 			}
 			else {//An attachment already exists for this claim.
 				ClaimConnect.AddAttachment(_claim, listImageAttachments);
+				if(_claim.Narrative!=textNarrative.Text) {
+					ClaimConnect.AddNarrative(_claim,textNarrative.Text);
+				}
 			}
+			_claim.Narrative=textNarrative.Text;
 			Claims.Update(_claim);
 		}
 
@@ -727,6 +732,8 @@ namespace OpenDental {
 			_claim.AttachedFlags="Mail";
 			string oldAttachmentID=_claim.AttachmentID;
 			_claim.AttachmentID="";
+			_claim.Narrative="";//Clear out narrative when changing attachments
+			textNarrative.Text="";
 			DateTime claimSecDateTEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
 			Claims.Update(_claim);
 			SecurityLogs.MakeLogEntry(EnumPermType.ClaimEdit,_claim.PatNum

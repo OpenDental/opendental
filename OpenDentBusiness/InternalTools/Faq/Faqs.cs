@@ -132,15 +132,18 @@ namespace OpenDentBusiness{
 		}
 		
 		///<summary>Gets all manual page names from database. Excludes entries in the manualpage table that are used for the manual index.</summary>
-		public static List<string> GetAllManualPageNames() {
+		public static List<string> GetAllManualPageNamesForVersions(List<int> listVersions) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
 			}
 			string command=$@"
 				SELECT manualpage.FileName
 				FROM manualpage
-				WHERE FileName NOT LIKE '+%';
-			";
+				WHERE FileName NOT LIKE '+%' ";
+			if(!listVersions.IsNullOrEmpty()) {
+				command+=$"AND VersionOd IN ({ string.Join(",",listVersions) }) ";
+			}
+			command+="ORDER BY manualpage.FileName;";
 			List<string> retVal=new List<string>();
 			DataAction.RunManualPublisherHQ(() => {
 				retVal=Db.GetListString(command).Distinct().ToList();

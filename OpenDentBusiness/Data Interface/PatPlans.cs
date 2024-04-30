@@ -57,8 +57,8 @@ namespace OpenDentBusiness{
 			}
 			//Cameron_ Possibly create outbound ADT message to update insurance info
 			long patPlanNum=Crud.PatPlanCrud.Insert(patPlan);
-			//Insert an InsVerify for the patplan to ensure that the patplan can be verified.
-			InsVerifies.InsertForPatPlanNum(patPlanNum);
+			//Upsert an InsVerify for the patplan to ensure that the patplan can be verified.
+			InsVerifies.Upsert(patPlanNum,VerifyTypes.PatientEnrollment);
 			InsEditPatLogs.MakeLogEntry(patPlan,null,InsEditPatLogType.PatPlan);
 			return patPlanNum;
 		}

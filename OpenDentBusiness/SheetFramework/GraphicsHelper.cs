@@ -209,6 +209,7 @@ namespace OpenDentBusiness {
 			}
 			SizeF sizeLayout=new SizeF(rectangleF.Width,font.Height);
 			StringFormat stringFormat=new StringFormat();
+			stringFormat.SetTabStops(0.0f, new float[] {50.0f});//helps with measurement further down.
 			stringFormat.Trimming=StringTrimming.Word;
 			float pixelsPerLine=font.GetHeight();
 			XStringFormat xStringFormat=new XStringFormat();//or maybe XStringFormats.Default
@@ -234,6 +235,7 @@ namespace OpenDentBusiness {
 				substring=substring.Replace("\r\n","");
 				substring=substring.Replace("\r","");
 				substring=substring.Replace("\n","");
+				substring=substring.Replace("\t","    ");
 				//use points here:
 				double x=PixelsToPoints(rectangleF.X);
 				if(horizontalAlignment==HorizontalAlignment.Right){

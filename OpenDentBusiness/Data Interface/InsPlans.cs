@@ -38,7 +38,7 @@ namespace OpenDentBusiness {
 			else {
 				InsEditLogs.MakeLogEntry(plan,planOld,InsEditLogType.InsPlan,plan.SecUserNumEntry);
 			}
-			InsVerifies.InsertForPlanNum(planNum);
+			InsVerifies.Upsert(planNum,VerifyTypes.InsuranceBenefit);
 			return planNum;
 		}
 

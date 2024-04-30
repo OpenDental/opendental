@@ -3133,10 +3133,8 @@ namespace OpenDental{
 			}
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.TreatPlanDiscountAdjustmentType));
 			List<ProcTP> listSelectedProcTPS=gridMain.SelectedTags<ProcTP>();
-			for(int i=0;i<listSelectedProcTPS.Count();i++) {
-				if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,listSelectedProcTPS[i].DateTP,false)) {
-					return;
-				}
+			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,false)) {
+				return;
 			}
 			if(!new[] { TreatPlanStatus.Active,TreatPlanStatus.Inactive }.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)) {
 				MsgBox.Show(this,"You can only create discounts from a current TP, not a saved TP.");

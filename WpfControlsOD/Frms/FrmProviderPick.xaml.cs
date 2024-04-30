@@ -179,6 +179,9 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			if(gridMain.GetSelectedIndex()<0 || gridMain.GetSelectedIndex()>=gridMain.ListGridRows.Count) {//adding this check to fix an Index out of Range UE per tasknum:6313708
+				return;
+			}
 			ProvNumSelected=PIn.Long(gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag.ToString());
 			IsDialogOK=true;
 		}

@@ -657,7 +657,7 @@ namespace OpenDentBusiness {
 					continue;//display employee errors in note field for employee. All columns will be blank for just this employee.
 				}
 				//sum values for each week----------------------------------------------------------------------------------------------------
-				List<DateTime> listDateTimesWeekStart=weekStartHelper(dateTimeStart,dateTimeStop);
+				List<DateTime> listDateTimesWeekStart=WeekStartHelper(dateTimeStart,dateTimeStop);
 				for(int j=0;j<listDateTimesWeekStart.Count;j++) {
 					listTimeSpansRegularHoursWeekly.Add(TimeSpan.Zero);			
 					listTimeSpansOTHoursWeekly.Add(TimeSpan.Zero);
@@ -862,7 +862,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns number of work weeks spanned by dates.  Example: "11-01-2013"(Friday), to "11-14-2013"(Thursday) spans 3 weeks, if the workweek starts on Sunday it would
 		///return a list containing "10-27-2013"(Sunday),"11-03-2013"(Sunday),and"11-10-2013"(Sunday).  Used to determine which week time adjustments and clock events belong to when totalling timespans.</summary>
-		private static List<DateTime> weekStartHelper(DateTime dateTimeStart,DateTime dateTimeStop) {
+		public static List<DateTime> WeekStartHelper(DateTime dateTimeStart,DateTime dateTimeStop) {
 			//No remoting role check; no call to db
 			List<DateTime> listDateTimes=new List<DateTime>();
 			DayOfWeek dayOfWeekFirst=(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek);
@@ -872,10 +872,7 @@ namespace OpenDentBusiness {
 					break;
 				}
 			}
-			while(true) {
-				if(listDateTimes[listDateTimes.Count-1].AddDays(7)<dateTimeStop){ //add start of each workweek until we are past the dateStop
-					break;
-				}
+			while(listDateTimes[listDateTimes.Count-1].AddDays(7)<dateTimeStop) {//add start of each workweek until we are past the dateStop
 				listDateTimes.Add(listDateTimes[listDateTimes.Count-1].AddDays(7));
 			}
 			return listDateTimes;

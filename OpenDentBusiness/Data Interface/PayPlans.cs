@@ -129,32 +129,32 @@ namespace OpenDentBusiness{
 							}
 							else {
 								amountOvercharged+=proc.ProcFee*Math.Max(1,proc.BaseUnits+proc.UnitQty);
-							}
-							if(!listExplicitAdjs.IsNullOrEmpty()) {
-								amountOvercharged+=listExplicitAdjs.Sum(x=>x.AdjAmt);
-							}
-							List<ClaimProc> listClaimProcsForProc=listClaimProcsForProcs.FindAll(x=>x.ProcNum==proc.ProcNum);
-							double sumIns=0;
-							if(!listClaimProcsForProc.IsNullOrEmpty()) {
-								List<int> listClaimProcStatForInsPaid=ClaimProcs.GetInsPaidStatuses().Select(x => (int)x).ToList();
-								List<int> listClaimProcStatForInsEst=ClaimProcs.GetEstimatedStatuses().Select(x => (int)x).ToList();
-								for(int i=0;i<listClaimProcsForProc.Count();i++) {
-									if(listClaimProcStatForInsPaid.Contains((int)listClaimProcsForProc[i].Status)) {
-										sumIns+=listClaimProcsForProc[i].InsPayAmt+listClaimProcsForProc[i].WriteOff;
-									}
-									else if(listClaimProcStatForInsEst.Contains((int)listClaimProcsForProc[i].Status)) {
-										sumIns+=listClaimProcsForProc[i].InsPayEst;
-										if(listClaimProcsForProc[i].WriteOffEstOverride!=-1) {
-											sumIns+=listClaimProcsForProc[i].WriteOffEstOverride;
+								if(!listExplicitAdjs.IsNullOrEmpty()) {
+									amountOvercharged+=listExplicitAdjs.Sum(x=>x.AdjAmt);
+								}
+								List<ClaimProc> listClaimProcsForProc=listClaimProcsForProcs.FindAll(x=>x.ProcNum==proc.ProcNum);
+								double sumIns=0;
+								if(!listClaimProcsForProc.IsNullOrEmpty()) {
+									List<int> listClaimProcStatForInsPaid=ClaimProcs.GetInsPaidStatuses().Select(x => (int)x).ToList();
+									List<int> listClaimProcStatForInsEst=ClaimProcs.GetEstimatedStatuses().Select(x => (int)x).ToList();
+									for(int i=0;i<listClaimProcsForProc.Count();i++) {
+										if(listClaimProcStatForInsPaid.Contains((int)listClaimProcsForProc[i].Status)) {
+											sumIns+=listClaimProcsForProc[i].InsPayAmt+listClaimProcsForProc[i].WriteOff;
 										}
-										else if(listClaimProcsForProc[i].WriteOffEst!=-1) {
-											sumIns+=listClaimProcsForProc[i].WriteOffEst;
+										else if(listClaimProcStatForInsEst.Contains((int)listClaimProcsForProc[i].Status)) {
+											sumIns+=listClaimProcsForProc[i].InsPayEst;
+											if(listClaimProcsForProc[i].WriteOffEstOverride!=-1) {
+												sumIns+=listClaimProcsForProc[i].WriteOffEstOverride;
+											}
+											else if(listClaimProcsForProc[i].WriteOffEst!=-1) {
+												sumIns+=listClaimProcsForProc[i].WriteOffEst;
+											}
 										}
 									}
 								}
+								amountOvercharged-=sumIns;
+								amountOvercharged-=listSplitsForProcs.FindAll(x=>x.ProcNum==payPlanLink.FKey && x.PayPlanNum==0 && x.PayPlanChargeNum==0).Sum(x=>x.SplitAmt); // Outside Procedure PaySplits
 							}
-							amountOvercharged-=sumIns;
-							amountOvercharged-=listSplitsForProcs.FindAll(x=>x.ProcNum==payPlanLink.FKey && x.PayPlanNum==0 && x.PayPlanChargeNum==0).Sum(x=>x.SplitAmt); // Outside Procedure PaySplits
 						}
 					}
 					else if(payPlanLink.LinkType==PayPlanLinkType.Adjustment) {
@@ -165,8 +165,8 @@ namespace OpenDentBusiness{
 							}
 							else {
 								amountOvercharged+=adj.AdjAmt;
+								amountOvercharged-=listSplitsForAdjustments.FindAll(x => x.AdjNum==payPlanLink.FKey && x.PayPlanNum==0 && x.PayPlanChargeNum==0).Sum(x => x.SplitAmt); // Outside Adjustment PaySplits
 							}
-							amountOvercharged-=listSplitsForAdjustments.FindAll(x=>x.AdjNum==payPlanLink.FKey && x.PayPlanNum==0 && x.PayPlanChargeNum==0).Sum(x=>x.SplitAmt); // Outside Adjustment PaySplits
 						}
 					}
 					amountOvercharged-=listPayPlanCharges.FindAll(x=>x.ChargeType==(int)PayPlanChargeType.Debit && x.FKey==payPlanLink.FKey && x.LinkType==payPlanLink.LinkType).Sum(x=>x.Principal); // Debit PayPlanCharges

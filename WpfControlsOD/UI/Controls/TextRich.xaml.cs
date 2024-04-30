@@ -116,6 +116,7 @@ namespace WpfControls.UI{
 			//Width=75;
 			//Height=20;
 			Focusable=true;//so that .Focus() will work, but then we manually change focus to textBox
+			richTextBox.AcceptsTab=true;//to match the original ODTextBox behavior
 			richTextBox.GotKeyboardFocus+=textBox_GotKeyboardFocus;
 			richTextBox.KeyUp+=textBox_KeyUp;
 			richTextBox.LostFocus+=textBox_LostFocus;

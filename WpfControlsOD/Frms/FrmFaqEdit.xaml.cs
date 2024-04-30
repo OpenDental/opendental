@@ -54,14 +54,12 @@ End of Checklist================================================================
 	public partial class FrmFaqEdit:FrmODBase {
 		///<summary>Represents either a new faq object that will be inserted into the database or an existing faq object that needs to be updated.</summary>
 		public Faq FaqCur;
-		///<summary>Holds a list of all unique manualpage names.</summary>
-		private List<string> _listManualPagesAll;
+		///<summary>Holds a list of all unique manualpage names corresponding to the selected version(s).</summary>
+		private List<string> _listManualPagesForVersions;
 		///<summary>Only set when creating a new FAQ object. This list holds versions selected by the user.</summary>
 		private List<int> _listVersions;
 		///<summary>Set to try when called from the quick add button in FormHelpBrowser</summary>
 		public bool IsQuickAdd=false;
-		public string ManualPage="";
-		public string Version="";
 
 		///<summary>Pass in an existing faq object to edit it.</summary>
 		public FrmFaqEdit() {
@@ -77,8 +75,12 @@ End of Checklist================================================================
 		}
 
 		private void FrmFaqEdit_Load(object sender,EventArgs e) {
-			//Jordan's manual page table has an entry for each page and version. 
-			_listManualPagesAll=Faqs.GetAllManualPageNames();
+			//Jordan's manual page table has an entry for each page and version.
+			_listVersions=new List<int>();
+			if(FaqCur.ManualVersion!=0) {
+				_listVersions.Add(FaqCur.ManualVersion);
+			}
+			_listManualPagesForVersions=Faqs.GetAllManualPageNamesForVersions(_listVersions);
 			FillFaqInfo();
 			if(FaqCur.IsNew) {
 				butDelete.Visible=false;
@@ -86,7 +88,7 @@ End of Checklist================================================================
 				//If the FAQ is not new, it has one specific version and cannot be changed (must delete)
 				butVersionPick.Visible=true;
 			}
-			FillGridManualPages(_listManualPagesAll);
+			FillGridManualPages(_listManualPagesForVersions);
 		}
 
 		private void FrmFaqEdit_Shown(object sender,EventArgs e) {
@@ -98,9 +100,12 @@ End of Checklist================================================================
 			if(FaqCur.IsNew && !IsQuickAdd) {//Creating a new faq, no data to load
 				return;
 			}
+			textManualVersion.Text="";
+			if(FaqCur.ManualVersion!=0) {
+				textManualVersion.Text=FaqCur.ManualVersion.ToString();
+			}
 			if(IsQuickAdd) {//We're going to have a new FAQ we're creating but we do have a new FAQ object that won't have a bunch of data set yet.
-				textManualVersion.Text=Version;
-				List<string> listLinkedManualPageNames=_listManualPagesAll.FindAll(x=>x==ManualPage).ToList();
+				List<string> listLinkedManualPageNames=_listManualPagesForVersions.FindAll(x=>x==FaqCur.ManualPageName).ToList();
 				listBoxLinkedPages.Items.AddList(listLinkedManualPageNames,x=>x);
 				textEmbeddedMediaURL.Visible=false;
 				textImagePath.Visible=false;
@@ -112,7 +117,6 @@ End of Checklist================================================================
 				textAnswer.Text=FaqCur.AnswerText;
 				textImagePath.Text=FaqCur.ImageUrl;
 				textEmbeddedMediaURL.Text=FaqCur.EmbeddedMediaUrl;
-				textManualVersion.Text=FaqCur.ManualVersion.ToString();
 				textUserCreated.Text=Userods.GetName(FaqCur.UserNumCreated);
 				textUserEdited.Text=Userods.GetName(FaqCur.UserNumEdited);
 				checkSticky.Checked=FaqCur.IsStickied;
@@ -120,7 +124,7 @@ End of Checklist================================================================
 				List<string> listLinkedPages=Faqs.GetLinkedManualPages(FaqCur.FaqNum);
 				listBoxLinkedPages.Items.AddList(listLinkedPages,x=>x);
 			}
-			FillGridManualPages(_listManualPagesAll);
+			FillGridManualPages(_listManualPagesForVersions);
 		}
 
 		private void FillPrieview() {
@@ -235,9 +239,9 @@ End of Checklist================================================================
 		private void FilterHelper() {
 			string textEntered=textLinkPage.Text;
 			List<string> listResults=new List<string>();
-			for(int i=0;i<_listManualPagesAll.Count();i++) {
-				if(_listManualPagesAll[i].Contains(textEntered)) {
-					listResults.Add(_listManualPagesAll[i]);
+			for(int i=0;i<_listManualPagesForVersions.Count();i++) {
+				if(_listManualPagesForVersions[i].Contains(textEntered)) {
+					listResults.Add(_listManualPagesForVersions[i]);
 				}
 			}
 			FillGridManualPages(listResults);
@@ -312,8 +316,10 @@ End of Checklist================================================================
 			if(!frmFaqVersionPicker.IsDialogOK) {
 				return;
 			}
-				_listVersions=frmFaqVersionPicker.ListSelectedVersions;
+			_listVersions=frmFaqVersionPicker.ListSelectedVersions;
 			textManualVersion.Text=String.Join(",",_listVersions);
+			_listManualPagesForVersions=Faqs.GetAllManualPageNamesForVersions(_listVersions);
+			FillGridManualPages(_listManualPagesForVersions);
 		}
 
 		private void FrmFaqEdit_PreviewKeyDown(object sender,KeyEventArgs e) {

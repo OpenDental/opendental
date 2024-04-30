@@ -83,7 +83,7 @@ namespace OpenDental{
 			formPatFieldDefEdit.PatFieldDefCur=_listPatFieldDefs[e.Row];
 			formPatFieldDefEdit.ShowDialog();
 			if(formPatFieldDefEdit.DialogResult==DialogResult.OK) {
-				Cache.ClearCaches(InvalidType.PatFields);
+				PatFieldDefs.RefreshCache();
 				_hasChanged|=formPatFieldDefEdit.HasChanged;
 				FillGrid();
 			}
@@ -107,7 +107,7 @@ namespace OpenDental{
 			_listPatFieldDefs[idx-1].ItemOrder++;
 			PatFieldDefs.Update(_listPatFieldDefs[idx]);
 			PatFieldDefs.Update(_listPatFieldDefs[idx-1]);
-			DataValid.SetInvalid(InvalidType.PatFields);
+			PatFieldDefs.RefreshCache();
 			_hasChanged=true;
 			FillGrid();
 			gridMain.SetSelected(idx-1);
@@ -126,7 +126,7 @@ namespace OpenDental{
 			_listPatFieldDefs[idx+1].ItemOrder--;
 			PatFieldDefs.Update(_listPatFieldDefs[idx]);
 			PatFieldDefs.Update(_listPatFieldDefs[idx+1]);
-			DataValid.SetInvalid(InvalidType.PatFields);
+			PatFieldDefs.RefreshCache();
 			_hasChanged=true;
 			FillGrid();
 			gridMain.SetSelected(idx+1);
@@ -144,7 +144,7 @@ namespace OpenDental{
 				PatFieldDefs.Delete(formPatFieldDefEdit.PatFieldDefCur);
 				return;
 			}
-			DataValid.SetInvalid(InvalidType.PatFields);
+			PatFieldDefs.RefreshCache();
 			_hasChanged=true;
 			FillGrid();
 		}
@@ -158,7 +158,7 @@ namespace OpenDental{
 				if(_listPatFieldDefs[i].ItemOrder!=i) {
 					_listPatFieldDefs[i].ItemOrder=i;
 					PatFieldDefs.Update(_listPatFieldDefs[i]);
-					Cache.ClearCaches(InvalidType.PatFields);
+					PatFieldDefs.RefreshCache();
 					_hasChanged=true;
 				}
 			}

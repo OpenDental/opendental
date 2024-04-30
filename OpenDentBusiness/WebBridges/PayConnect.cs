@@ -222,10 +222,10 @@ namespace OpenDentBusiness {
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
 			if(transType.In(PayConnectService.transType.RETURN,PayConnectService.transType.VOID)) {
-				result+="Total Amt".PadRight(xright-xleft,'.')+(amount*-1)+Environment.NewLine;
+				result+="Total Amt".PadRight(xright-xleft,'.')+(amount*-1).ToString("c")+Environment.NewLine;
 			}
 			else {
-				result+="Total Amt".PadRight(xright-xleft,'.')+amount+Environment.NewLine;
+				result+="Total Amt".PadRight(xright-xleft,'.')+amount.ToString("c")+Environment.NewLine;
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
 			result+="I agree to pay the above total amount according to my card issuer/bank agreement."+Environment.NewLine;

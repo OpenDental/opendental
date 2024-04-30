@@ -75,6 +75,9 @@ namespace OpenDental{
 					break;
 				}
 			}
+			if(comboGradeSchool.SelectedIndex<0 && _screenGroup.GradeSchool!="") {//if GradeSchool is not in list, just display the GradeSchool upon load
+				comboGradeSchool.SetSelectedKey<long>(-1,x=>x,x=>_screenGroup.GradeSchool);
+			}
 			//comboGradeSchool.SelectedIndex=comboGradeSchool.Items.IndexOf(_screenGroup.GradeSchool);//"" etc OK
 			comboPlaceService.Items.AddList(Enum.GetNames(typeof(PlaceOfService)));
 			comboPlaceService.SelectedIndex=(int)_screenGroup.PlaceService;

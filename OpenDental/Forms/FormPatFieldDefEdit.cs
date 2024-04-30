@@ -151,17 +151,6 @@ namespace OpenDental {
 
 		private void FillGrid() {
 			_listPatFieldPickItems=PatFieldPickItems.GetWhere(x=>x.PatFieldDefNum==PatFieldDefCur.PatFieldDefNum).OrderBy(x=>x.ItemOrder).ToList();
-			//Unlikely, but just in case of corruption:
-			for(int i = 0;i<_listPatFieldPickItems.Count;i++) {
-				if(_listPatFieldPickItems[i].ItemOrder!=i) {
-					_listPatFieldPickItems[i].ItemOrder=i;
-					PatFieldPickItems.Update(_listPatFieldPickItems[i]);
-					HasChanged=true;
-					Cache.ClearCaches(InvalidType.PatFields);
-				}
-			}
-			//in case itemOrder changed:
-			_listPatFieldPickItems=PatFieldPickItems.GetWhere(x=>x.PatFieldDefNum==PatFieldDefCur.PatFieldDefNum).OrderBy(x=>x.ItemOrder).ToList();
 			gridPickListItems.BeginUpdate();
 			gridPickListItems.Columns.Clear();
 			GridColumn gridColumn;
@@ -198,7 +187,7 @@ namespace OpenDental {
 				return;
 			}
 			HasChanged=true;
-			Cache.ClearCaches(InvalidType.PatFields);
+			PatFieldPickItems.RefreshCache();
 			FillGrid();
 		}
 
@@ -214,7 +203,7 @@ namespace OpenDental {
 				return;
 			}
 			HasChanged=true;
-			Cache.ClearCaches(InvalidType.PatFields);
+			PatFieldPickItems.RefreshCache();
 			FillGrid();
 		}
 
@@ -231,7 +220,7 @@ namespace OpenDental {
 				_listPatFieldPickItems.Reverse(listSelectedIncides[i]-1,2);
 			}
 			HasChanged=true;
-			UpdateItemOrder(_listPatFieldPickItems);
+			UpdateItemOrder(_listPatFieldPickItems); //Does PatFieldPickItems.RefreshCache(); in method
 			FillGrid();
 			for(int i=0;i<listSelectedIncides.Count;i++) {
 				gridPickListItems.SetSelected(listSelectedIncides[i]-1,true);
@@ -251,7 +240,7 @@ namespace OpenDental {
 				_listPatFieldPickItems.Reverse(listSelectedIncides[i],2);
 			}
 			HasChanged=true;
-			UpdateItemOrder(_listPatFieldPickItems);
+			UpdateItemOrder(_listPatFieldPickItems); //Does PatFieldPickItems.RefreshCache(); in method
 			FillGrid();
 			for(int i=0;i<listSelectedIncides.Count;i++) {
 				gridPickListItems.SetSelected(listSelectedIncides[i]+1,true);
@@ -271,7 +260,7 @@ namespace OpenDental {
 				hasChanged=true;
 			}
 			if(hasChanged) {
-				Cache.ClearCaches(InvalidType.PatFields);
+				PatFieldPickItems.RefreshCache();
 			}
 		}
 
@@ -322,7 +311,7 @@ namespace OpenDental {
 			patFieldPickItemA.Name=nameNew;
 			PatFieldPickItems.Update(patFieldPickItemA);
 			PatFieldPickItems.Delete(patFieldPickItemB.PatFieldPickItemNum);
-			Cache.ClearCaches(InvalidType.PatFields);//local
+			PatFieldPickItems.RefreshCache();
 			FillGrid();
 		}
 	}
