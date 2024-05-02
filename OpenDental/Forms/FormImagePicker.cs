@@ -118,16 +118,23 @@ namespace OpenDental {
 								continue;//cancel, next file.
 							}
 							bool isCancel=false;
-							while(!isCancel && FileAtoZ.Exists(FileAtoZ.CombinePaths(_imageFolder,inputBox.textResult.Text))){
-								MsgBox.Show(this,"File name already exists.");
-								if(inputBox.ShowDialog()!=DialogResult.OK) {
-									isCancel=true;
+							string stringResult=inputBox.textResult.Text;
+							while(true){
+								if(!String.IsNullOrWhiteSpace(stringResult) && !FileAtoZ.Exists(FileAtoZ.CombinePaths(_imageFolder,stringResult))){
+										break;
 								}
+								MsgBox.Show(this,"File name cannot be blank or in use.");
+								using InputBox inputBoxRefresh=new InputBox(Lan.g(this,"New file name."));
+								if(inputBoxRefresh.ShowDialog()!=DialogResult.OK) {
+									isCancel=true;
+									break;
+								}
+								stringResult=inputBoxRefresh.textResult.Text;
 							}
 							if(isCancel) {
 								continue;//cancel rename, and go to next file.
 							}
-							destinationPath=FileAtoZ.CombinePaths(_imageFolder,inputBox.textResult.Text);
+							destinationPath=FileAtoZ.CombinePaths(_imageFolder,stringResult);
 							break;//proceed to save file.
 						case DialogResult.Yes://overwrite
 							try {
@@ -143,6 +150,7 @@ namespace OpenDental {
 					}
 				}
 				FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
+				stringArrayFileNames[i]=destinationPath.TrimStart(_imageFolder.ToCharArray());
 			}
 			FillGrid();
 			if(stringArrayFileNames.Length==1) {//if importing exactly one image, select it upon returning.

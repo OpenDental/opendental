@@ -196,11 +196,13 @@ namespace OpenDental {
 			SaveLocationIdToList();
 			_clinicNum=_listClinicNumsUser[comboClinic.SelectedIndex];
 			//This will either display the HQ value, or the clinic specific value.
-			textLocationID.Text=_listProgramProperties.Find(x=>x.ClinicNum==_clinicNum && x.PropertyDesc==XDR.PropertyDescs.LocationID).PropertyValue;
-			if(textLocationID.Text==null) {
-				textLocationID.Text=_listProgramProperties.Find(x=>x.ClinicNum==0).PropertyValue;//Default to showing the HQ value when filling info for a clinic with no program property.
+			ProgramProperty programProperty=_listProgramProperties.Find(x=>x.ClinicNum==_clinicNum && x.PropertyDesc==XDR.PropertyDescs.LocationID);
+			if(programProperty!=null) {
+				textLocationID.Text=programProperty.PropertyValue;
 				return;
 			}
+			//Default to showing the HQ value when filling info for a clinic with no program property.
+			textLocationID.Text=_listProgramProperties.Find(x=>x.ClinicNum==0 && x.PropertyDesc==XDR.PropertyDescs.LocationID).PropertyValue;
 		}
 
 		private void ButImport_Click(object sender,EventArgs e) {

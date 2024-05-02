@@ -559,12 +559,13 @@ namespace OpenDentBusiness{
 			return isValid;
 		}
 
-		///<summary>Replace the tag "[SubscriberID]" with the insurance subcriber id (found on InsSub) for the patient. If there isn't one, returns the message that was passed in.</summary>
+		///<summary>Replace the tag "[SubscriberID]" with the insurance subcriber id (found on InsSub) for the patient. If there isn't one, replaces the [SubscriberID] tag with empty string and returns the message.</summary>
 		public static string ReplaceInsSub(string message,InsSub insSub,bool isHtmlEmail=false) {
-			if(insSub==null) {
-				return message;
-			}
 			StringBuilder stringBuilder=new StringBuilder(message);
+			if(insSub==null) {
+				ReplaceTags.ReplaceOneTag(stringBuilder,"[SubscriberID]","",isHtmlEmail);
+				return stringBuilder.ToString();
+			}
 			ReplaceTags.ReplaceOneTag(stringBuilder,"[SubscriberID]",insSub.SubscriberID,isHtmlEmail);
 			return stringBuilder.ToString();
 		}

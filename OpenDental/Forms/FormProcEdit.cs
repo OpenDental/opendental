@@ -1322,6 +1322,12 @@ namespace OpenDental {
 				MsgBox.Show(this,"Adjustments may only be added to completed procedures.");
 				return;
 			}
+			bool isTsiAdj=(TsiTransLogs.IsTransworldEnabled(_patient.ClinicNum)
+				&& Patients.IsGuarCollections(_patient.Guarantor)
+				&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"The guarantor of this family has been sent to TSI for a past due balance.  "
+					+"Is this an adjustment applied by the office?\r\n\r\n"
+					+"Yes - this is an adjustment applied by the office\r\n\r\n"
+					+"No - this adjustment is the result of a payment received from TSI"));
 			Adjustment adjustment=new Adjustment();
 			adjustment.PatNum=_patient.PatNum;
 			adjustment.ProvNum=comboProv.GetSelectedProvNum();
@@ -1330,7 +1336,7 @@ namespace OpenDental {
 			adjustment.ProcDate=_procedure.ProcDate;
 			adjustment.ProcNum=_procedure.ProcNum;
 			adjustment.ClinicNum=_procedure.ClinicNum;
-			using FormAdjust formAdjust=new FormAdjust(_patient,adjustment);
+			using FormAdjust formAdjust=new FormAdjust(_patient,adjustment,isTsiAdj);
 			formAdjust.IsNew=true;
 			if(formAdjust.ShowDialog()!=DialogResult.OK) {
 				return;

@@ -53,6 +53,12 @@ namespace OpenDental {
 			{
 				ClearAttachmentID();
 			}
+			if(!string.IsNullOrEmpty(_claim.AttachmentID)) {//Hide narrative if this claim already has an attachment
+				//This is enhanced in versions after this.
+				labelNarrative.Visible=false;
+				textNarrative.Visible=false;
+				labelCharCount.Visible=false;
+			}
 			Plugins.HookAddCode(this,"FormClaimAttachmentDXC.Load_end",_patient,_claim,(Action<Bitmap>)ShowImageAttachmentItemEdit);
 		}
 

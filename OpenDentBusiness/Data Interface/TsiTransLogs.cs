@@ -150,7 +150,7 @@ namespace OpenDentBusiness{
 		}
 
 		/// <summary>Inserts a TsiTransLog for the adjustment if necessary.</summary>
-		public static void CheckAndInsertLogsIfAdjTypeExcluded(Adjustment adjustment) {
+		public static void CheckAndInsertLogsIfAdjTypeExcluded(Adjustment adjustment,bool isFromTsi=false) {
 			//No need to check MiddleTierRole; no call to db.
 			Program program=Programs.GetCur(ProgramName.Transworld);
 			if(program==null || !program.Enabled) {
@@ -184,6 +184,9 @@ namespace OpenDentBusiness{
 				//decision will be effectively overridden to to behave as though the adjustment was applied by the office.
 				msgText="Adjustment type is set to excluded type from transworld program properties.";
 				tsiTransType=TsiTransType.Excluded;
+			}
+			else if(!isFromTsi) {
+				return;//if this adjustment is not an excluded type and not from TSI, return
 			}
 			InsertTsiLogsForAdjustment(patientGuar.PatNum,adjustment,msgText,tsiTransType);
 		}

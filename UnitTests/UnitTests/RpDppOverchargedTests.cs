@@ -59,13 +59,13 @@ namespace UnitTests.UnitTests {
 		}
 
 		[TestMethod]
-		public void RpDppOverchargedTests_GetDPPOvercharged_Overcharged_ProcOverrideWithAdjustment() {
+		public void RpDppOverchargedTests_GetDPPOvercharged_NoOvercharged_ProcOverrideWithAdjustment() {
 			//Setup
 			long provNum=ProviderT.CreateProvider("LS");
 			Patient pat=PatientT.CreatePatient(fName:"Austin",lName:"Patient",priProvNum:provNum);
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0150",ProcStat.C,"",64,DateTime.Today.AddMonths(-1),provNum:provNum);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.C,"",58,DateTime.Today.AddMonths(-1),provNum:provNum);
-			//Make a dynamic payment plan where over half of the production is due right now.
+			//Make a locked dynamic payment plan where over half of the production is due right now.
 			PayPlan dynamicPayPlan=PayPlanT.CreateDynamicPaymentPlan(pat.PatNum,pat.Guarantor,DateTime.Today,35,1,35,
 				new List<Procedure>{proc1,proc2},new List<Adjustment>{ },PayPlanFrequency.Monthly);
 			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlan(dynamicPayPlan.PayPlanNum);
@@ -77,11 +77,11 @@ namespace UnitTests.UnitTests {
 				payPlanChargeNum: proc1PayPlanCharge.PayPlanChargeNum);
 			PaymentT.MakePayment(pat.PatNum,58,payDate:DateTime.Now,procNum:proc2.ProcNum,payPlanNum:dynamicPayPlan.PayPlanNum,
 				payPlanChargeNum:proc2PayPlanCharge.PayPlanChargeNum);
-			AdjustmentT.MakeAdjustment(pat.PatNum,-64,procNum:proc1.ProcNum);
-			//Payment plan should be overcharged.
+			AdjustmentT.MakeAdjustment(pat.PatNum,-64,procNum:proc1.ProcNum);//No effect on overcharged due to override amount as documented in manual
+			//Payment plan should not be overcharged.
 			DataTable table=RpDPPOvercharged.GetDPPOvercharged(DateTime.Today,DateTime.Today,
 				new List<long>() { pat.ClinicNum },new List<long>() { pat.PriProv },pat.PatNum);
-			Assert.AreEqual(1,table.Rows.Count);
+			Assert.AreEqual(0,table.Rows.Count);
 		}
 	}
 }

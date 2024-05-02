@@ -440,6 +440,10 @@ namespace OpenDentBusiness{
 		#region Delete
 		///<summary>If the claim has transfers and is then edited in any way after the fact, call this method to remove all associate transfer procedures.</summary>
 		public static void RemoveSupplementalTransfersForClaims(long claimNum) {
+			//A claimnum of zero will scan the entire database, we save MT users a lot of time if we kick out before checking MT.
+			if(claimNum==0) {
+				return;
+			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),claimNum);
 				return;

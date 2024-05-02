@@ -28,18 +28,20 @@ namespace OpenDental {
 		private bool _isEditAnyway;
 		private List<PaySplit> _listPaySplitsForAdjustment;
 		private bool _isNegativeAdjustment;
-		private List<ProgramProperty> _listProgramPropertiesForClinicExcludedAdjTypes;
+		private List<long> _listTsiExcludedAdjDefNums;
 		private Program _program;
 		private Patient _patientGuar;
+		private bool _isTsiAdj;
 
 		///<summary></summary>
-		public FormAdjust(Patient patient,Adjustment adjustment){
+		public FormAdjust(Patient patient,Adjustment adjustment,bool isTsiAdj=false){
 			InitializeComponent();
 			InitializeLayoutManager();
 			_patient=patient;
 			_adjustment=adjustment;
 			_program=Programs.GetCur(ProgramName.Transworld);
 			_patientGuar=Patients.GetGuarForPat(_adjustment.PatNum);
+			_isTsiAdj=isTsiAdj;
 			Lan.F(this);
 		}
 
@@ -123,7 +125,18 @@ namespace OpenDental {
 				}
 			}
 			checkOnlyTsiExcludedAdjTypes.CheckedChanged-=checkOnlyTsiExcludedAdjTypes_Checked;
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum)) { //Transworld program link is enabled and the patient is part of a family where the guarantor has been sent to TSI
+			List<ProgramProperty> listProgramPropertiesExcludedAdjTypes=ProgramProperties
+				.GetWhere(x => x.ProgramNum==_program.ProgramNum
+					&& _program.Enabled
+					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
+						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
+			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
+			List<ProgramProperty> listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x => x.ClinicNum==_patientGuar.ClinicNum);
+			if(!PrefC.HasClinicsEnabled || listProgramPropertiesForClinicExcludedAdjTypes.Count==0) {
+				listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x => x.ClinicNum==0);
+			}
+			_listTsiExcludedAdjDefNums=listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
+			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listTsiExcludedAdjDefNums.Any(x => x>0)) { //Transworld program link is enabled and the patient is part of a family where the guarantor has been sent to TSI
 				checkOnlyTsiExcludedAdjTypes.Checked=true;
 			}
 			else {
@@ -413,7 +426,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Amount has to be 0.00 due to security permission.");
 				return;
 			}
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum)) {
+			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listTsiExcludedAdjDefNums.Any(x => x>0)) {
 				if(checkOnlyTsiExcludedAdjTypes.Checked && !MsgBox.Show(this,MsgBoxButtons.OKCancel,"The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that is excluded from being synched with TSI. This will not reduce the balance sent for collection by TSI. Continue?")){
 					return;
 				}
@@ -433,7 +446,7 @@ namespace OpenDental {
 				SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,_adjustment.PatNum,
 					_patient.GetNameLF()+", "
 					+_adjustment.AdjAmt.ToString("c"));
-				TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(_adjustment);
+					TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(_adjustment,_isTsiAdj);
 			}
 			else {
 				try{ 
@@ -481,37 +494,26 @@ namespace OpenDental {
 		private void FillListBoxAdjTypes() {
 			listTypePos.Items.Clear();
 			listTypeNeg.Items.Clear();
-			List<ProgramProperty> listProgramPropertiesExcludedAdjTypes=ProgramProperties
-				.GetWhere(x => x.ProgramNum==_program.ProgramNum
-					&& _program.Enabled
-					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
-						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
-			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
-			_listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==_patientGuar.ClinicNum);
-			if(!PrefC.HasClinicsEnabled || _listProgramPropertiesForClinicExcludedAdjTypes.Count==0){
-				_listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==0);
-			}
-			List<long> listAdjTypeNums=_listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
 			//prevents FillProcedure from being called too many times.  Event handlers hooked back up after the lists are filled.
 			listTypeNeg.SelectedIndexChanged-=listTypeNeg_SelectedIndexChanged;
 			listTypePos.SelectedIndexChanged-=listTypePos_SelectedIndexChanged;
 			//Positive adjustment types
 			_listDefsAdjPosCats=Defs.GetPositiveAdjTypes(considerPermission:true);
 			if(checkOnlyTsiExcludedAdjTypes.Checked) {
-				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x=>listAdjTypeNums.Contains(x.DefNum));
+				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x=>_listTsiExcludedAdjDefNums.Contains(x.DefNum));
 			}
 			else {
-				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x=> !listAdjTypeNums.Contains(x.DefNum));
+				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x=> !_listTsiExcludedAdjDefNums.Contains(x.DefNum));
 			}
 			_listDefsAdjPosCats.ForEach(x => listTypePos.Items.Add(x.ItemName));
 			listTypePos.SelectedIndex=_listDefsAdjPosCats.FindIndex(x => x.DefNum==_adjustment.AdjType);//can be -1
 			//Negative adjustment types
 			_listDefsAdjNegCats=Defs.GetNegativeAdjTypes(considerPermission:true);
 			if(checkOnlyTsiExcludedAdjTypes.Checked) {
-				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => listAdjTypeNums.Contains(x.DefNum));
+				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => _listTsiExcludedAdjDefNums.Contains(x.DefNum));
 			}
 			else {
-				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x=> !listAdjTypeNums.Contains(x.DefNum));
+				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x=> !_listTsiExcludedAdjDefNums.Contains(x.DefNum));
 			}
 			_listDefsAdjNegCats.ForEach(x => listTypeNeg.Items.Add(x.ItemName));
 			listTypeNeg.SelectedIndex=_listDefsAdjNegCats.FindIndex(x => x.DefNum==_adjustment.AdjType);//can be -1

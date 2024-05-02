@@ -3987,6 +3987,12 @@ namespace OpenDental {
 				string str=_listMountItems[i].TextShowing;
 				str=Patients.ReplacePatient(str,PatientCur);
 				str=Mounts.ReplaceMount(str,_mountShowing);
+				PatPlan patPlan=PatPlans.GetPatPlan(PatientCur.PatNum,1);
+				InsSub insSub=null;
+				if(patPlan!=null){
+					insSub=InsSubs.GetOne(patPlan.InsSubNum);
+				}
+				str=InsSubs.ReplaceInsSub(str, insSub);
 				Clinic clinic=Clinics.GetClinic(PatientCur.ClinicNum);
 				str=Clinics.ReplaceOffice(str,clinic);
 				g.DrawString(str,font,solidBrushFore,rectangleF);

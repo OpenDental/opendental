@@ -56,6 +56,8 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		private int _hoverIndex=-1;
 		///<summary>When we capture mouse, it causes a mouse move event that messes up our logic. This allows us to ignore that event for that one line.</summary>
 		private bool _ignoreMouseMove;
+		///<summary>We must combine this class level field with Mouse.LeftButton==MouseButtonState.Pressed to avoid two different edge case bugs. Using _isMouseDown prevents bug in following scenario: a combobox above the listbox has a dropdown that user clicks on. This causes the dropdown to close, triggering a mouse move in the listbox while mouse is stilldown. Using _isMouseDown lets us ignore this because we didn't actually mouse down in the listbox.</summary>
+		private bool _isMouseDown;
 		///<summary>This is the only internal storage for tracking selected indices.  All properties refer to this same list. Don't change this list from outside of the three big properties unless you also refresh the UI.</summary>
 		private List<int> _listSelectedIndices=new List<int>();
 		///<summary>On mouse down, this copy is made.  Use as needed for logic.  No need to clear when done.</summary>
@@ -319,7 +321,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			{
 				return;
 			}
-			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;
+			_isMouseDown=true;
 			_ignoreMouseMove=true;
 			((IInputElement)sender).CaptureMouse();
 			_ignoreMouseMove=false;
@@ -346,12 +348,11 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			RaiseEvent(mouseButtonEventArgs);
 			//because OnMouseDown(e) wasn't working.
 			//At end so that index will be selected before mouse down fires somewhere else (e.g. FormApptEdit).  Matches MS.
-			//but, sometimes, if an event from above resulted in a dialog, then there will be no mouse up event.  Handle that below.
-			//Not necessary because we improved this WPF version to use local isMouseDown variables.
-			//MouseButtons mouseButtons=Control.MouseButtons;//introducing variable for debugging because this state is not preserved at break points.
-			//if(mouseButtons==MouseButtons.None){
-			//	_isMouseDown=false;
-			//}
+			//But, sometimes, if an event from above resulted in a dialog, then there will be no mouse up event.  Handle that below.
+			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;//introducing variable for debugging because this state is not preserved at break points.
+			if(!isMouseDown) {
+				_isMouseDown=false;
+			}
 		}
 
 		private void Item_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
@@ -361,7 +362,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			{
 				return;
 			}
-			//_isMouseDown=false;
+			_isMouseDown=false;
 			SetColors();
 		}
 
@@ -376,7 +377,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			Point point=e.GetPosition(this);
 			_hoverIndex=IndexFromPoint(point);
 			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;
-			if(!isMouseDown) {
+			if(!isMouseDown || !_isMouseDown) {
 				SetColors();
 				return;
 			}
