@@ -189,8 +189,6 @@ namespace OpenDental {
 			this.label24 = new System.Windows.Forms.Label();
 			this.label22 = new System.Windows.Forms.Label();
 			this.textPlanFlag = new System.Windows.Forms.TextBox();
-			this.textDentaide = new OpenDental.ValidNum();
-			this.labelDentaide = new System.Windows.Forms.Label();
 			this.tabPageOrtho = new OpenDental.UI.TabPage();
 			this.panelOrtho = new System.Windows.Forms.Panel();
 			this.textOrthoAutoFee = new OpenDental.ValidDouble();
@@ -1770,8 +1768,6 @@ namespace OpenDental {
 			this.groupCanadian.Controls.Add(this.label24);
 			this.groupCanadian.Controls.Add(this.label22);
 			this.groupCanadian.Controls.Add(this.textPlanFlag);
-			this.groupCanadian.Controls.Add(this.textDentaide);
-			this.groupCanadian.Controls.Add(this.labelDentaide);
 			this.groupCanadian.Location = new System.Drawing.Point(14, 14);
 			this.groupCanadian.Name = "groupCanadian";
 			this.groupCanadian.Size = new System.Drawing.Size(404, 129);
@@ -1780,7 +1776,7 @@ namespace OpenDental {
 			// 
 			// label19
 			// 
-			this.label19.Location = new System.Drawing.Point(37, 106);
+			this.label19.Location = new System.Drawing.Point(37, 85);
 			this.label19.Name = "label19";
 			this.label19.Size = new System.Drawing.Size(140, 19);
 			this.label19.TabIndex = 173;
@@ -1789,7 +1785,7 @@ namespace OpenDental {
 			// 
 			// textCanadianInstCode
 			// 
-			this.textCanadianInstCode.Location = new System.Drawing.Point(181, 103);
+			this.textCanadianInstCode.Location = new System.Drawing.Point(181, 82);
 			this.textCanadianInstCode.MaxLength = 20;
 			this.textCanadianInstCode.Name = "textCanadianInstCode";
 			this.textCanadianInstCode.Size = new System.Drawing.Size(88, 20);
@@ -1797,7 +1793,7 @@ namespace OpenDental {
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(37, 85);
+			this.label9.Location = new System.Drawing.Point(37, 64);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(140, 19);
 			this.label9.TabIndex = 171;
@@ -1806,7 +1802,7 @@ namespace OpenDental {
 			// 
 			// textCanadianDiagCode
 			// 
-			this.textCanadianDiagCode.Location = new System.Drawing.Point(181, 82);
+			this.textCanadianDiagCode.Location = new System.Drawing.Point(181, 61);
 			this.textCanadianDiagCode.MaxLength = 20;
 			this.textCanadianDiagCode.Name = "textCanadianDiagCode";
 			this.textCanadianDiagCode.Size = new System.Drawing.Size(88, 20);
@@ -1815,7 +1811,7 @@ namespace OpenDental {
 			// checkIsPMP
 			// 
 			this.checkIsPMP.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsPMP.Location = new System.Drawing.Point(18, 62);
+			this.checkIsPMP.Location = new System.Drawing.Point(18, 41);
 			this.checkIsPMP.Name = "checkIsPMP";
 			this.checkIsPMP.Size = new System.Drawing.Size(178, 17);
 			this.checkIsPMP.TabIndex = 169;
@@ -1823,7 +1819,7 @@ namespace OpenDental {
 			// 
 			// label24
 			// 
-			this.label24.Location = new System.Drawing.Point(221, 39);
+			this.label24.Location = new System.Drawing.Point(221, 18);
 			this.label24.Name = "label24";
 			this.label24.Size = new System.Drawing.Size(140, 19);
 			this.label24.TabIndex = 168;
@@ -1832,7 +1828,7 @@ namespace OpenDental {
 			// 
 			// label22
 			// 
-			this.label22.Location = new System.Drawing.Point(37, 41);
+			this.label22.Location = new System.Drawing.Point(37, 20);
 			this.label22.Name = "label22";
 			this.label22.Size = new System.Drawing.Size(140, 19);
 			this.label22.TabIndex = 167;
@@ -1841,28 +1837,11 @@ namespace OpenDental {
 			// 
 			// textPlanFlag
 			// 
-			this.textPlanFlag.Location = new System.Drawing.Point(181, 38);
+			this.textPlanFlag.Location = new System.Drawing.Point(181, 17);
 			this.textPlanFlag.MaxLength = 20;
 			this.textPlanFlag.Name = "textPlanFlag";
 			this.textPlanFlag.Size = new System.Drawing.Size(37, 20);
 			this.textPlanFlag.TabIndex = 1;
-			// 
-			// textDentaide
-			// 
-			this.textDentaide.Location = new System.Drawing.Point(181, 17);
-			this.textDentaide.Name = "textDentaide";
-			this.textDentaide.ShowZero = false;
-			this.textDentaide.Size = new System.Drawing.Size(37, 20);
-			this.textDentaide.TabIndex = 0;
-			// 
-			// labelDentaide
-			// 
-			this.labelDentaide.Location = new System.Drawing.Point(37, 20);
-			this.labelDentaide.Name = "labelDentaide";
-			this.labelDentaide.Size = new System.Drawing.Size(140, 19);
-			this.labelDentaide.TabIndex = 160;
-			this.labelDentaide.Text = "Dentaide Card Sequence";
-			this.labelDentaide.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// tabPageOrtho
 			// 
@@ -2206,8 +2185,6 @@ namespace OpenDental {
 		private Label label24;
 		private Label label22;
 		private TextBox textPlanFlag;
-		private ValidNum textDentaide;
-		private Label labelDentaide;
 		private OpenDental.UI.TabPage tabPageOrtho;
 		private Panel panelOrtho;
 		private Label labelAutoOrthoProcPeriod;

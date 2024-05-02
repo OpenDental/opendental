@@ -283,6 +283,9 @@ namespace OpenDental{
 			if(_appointment.Op != 0) {
 				titleText+=" | "+Operatories.GetAbbrev(_appointment.Op);
 			}
+			object[] objectArray={ _patient,titleText };
+			Plugins.HookAddCode(null,"FormApptEdit.FormApptEdit_Load_beforeAssignTitle",objectArray);
+			titleText=(string)objectArray[1];
 			this.Text = titleText;
 			contrApptProvSlider.ProvBarText=_appointment.ProvBarText;
 			checkASAP.Checked=_appointment.Priority==ApptPriority.ASAP;

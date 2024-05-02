@@ -52,13 +52,19 @@ namespace OpenDental.Bridges{
 			}
 			string baseUrl=$"https://{practiceInstanceName}.sotadevices.com/select-patients?" +
 				$"nameFirst={CleanPatientName(pat.FName)}" +
-				$"&nameLast={CleanPatientName(pat.LName)}" +
-				$"&nameMiddle={CleanPatientName(pat.MiddleI)}" +
-				$"&dateBirth={pat.Birthdate.ToString("MM-dd-yyyy")}" +
-				$"&bridgeId={bridgeId}" +
-				$"&email={pat.Email}" +
-				$"&phone={FormatPhoneNumber(patientPhoneNumber)}" +
-				$"&forceUpdate=0";
+				$"&nameLast={CleanPatientName(pat.LName)}";
+				if(!string.IsNullOrWhiteSpace(CleanPatientName(pat.MiddleI))) {
+					baseUrl+=$"&nameMiddle={CleanPatientName(pat.MiddleI)}";
+				}
+				baseUrl+=$"&dateBirth={pat.Birthdate.ToString("MM-dd-yyyy")}" +
+				$"&bridgeId={bridgeId}";
+				if(!string.IsNullOrWhiteSpace(pat.Email) && EmailAddresses.IsValidEmail(pat.Email)) {
+					baseUrl+=$"&email={pat.Email}";
+				}
+				if(!string.IsNullOrWhiteSpace(TelephoneNumbers.FormatNumbersExactTen(patientPhoneNumber))) {
+					baseUrl+=$"&phone={FormatPhoneNumber(patientPhoneNumber)}";
+				}
+				baseUrl+=$"&forceUpdate=0";
 			if(!Uri.IsWellFormedUriString(baseUrl,UriKind.Absolute)) {
 				string message=Lans.g("SOTACloud","The following URL is not valid:");
 				MsgBox.Show(message+"\r\n"+baseUrl);
@@ -98,17 +104,8 @@ namespace OpenDental.Bridges{
 			if(string.IsNullOrWhiteSpace(CleanPatientName(patient.LName))) {
 				stringBuilder.AppendLine(Lans.g("SOTACloud","Invalid last name."));
 			}
-			if(string.IsNullOrWhiteSpace(CleanPatientName(patient.MiddleI))) {
-				stringBuilder.AppendLine(Lans.g("SOTACloud","Invalid middle name."));
-			}
-			if(string.IsNullOrWhiteSpace(patient.Email) || !EmailAddresses.IsValidEmail(patient.Email)) {
-				stringBuilder.AppendLine(Lans.g("SOTACloud","Invalid email address."));
-			}
-			if(TelephoneNumbers.FormatNumbersExactTen(patient.HmPhone).IsNullOrEmpty() && 
-				TelephoneNumbers.FormatNumbersExactTen(patient.WirelessPhone).IsNullOrEmpty() && 
-				TelephoneNumbers.FormatNumbersExactTen(patient.WkPhone).IsNullOrEmpty()) 
-			{
-				stringBuilder.AppendLine(Lans.g("SOTACloud","No valid phone number(s). Must be 10 digits."));
+			if(!DateTime.TryParse(patient.Birthdate.ToString(),out DateTime dateTime) || dateTime.Year < 1880) {
+				stringBuilder.AppendLine(Lans.g("SOTACloud","Invalid birthdate"));
 			}
 			if(doUseChartNum && patient.ChartNumber.Trim().IsNullOrEmpty()) {
 				stringBuilder.AppendLine(Lans.g("SOTACloud","Invalid ChartNum."));

@@ -171,6 +171,7 @@ namespace OpenDental {
 			ClaimCur.AttachedFlags="Mail";
 			string oldAttachmentID=ClaimCur.AttachmentID;
 			ClaimCur.AttachmentID="";
+			ClaimCur.Narrative="";//Clear narrative for new attachment
 			DateTime secDateTEdit=ClaimCur.SecDateTEdit;//Preserve the date prior to any claim updates affecting it.
 			Claims.Update(ClaimCur);
 			SecurityLogs.MakeLogEntry(EnumPermType.ClaimEdit,ClaimCur.PatNum

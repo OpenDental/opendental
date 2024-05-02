@@ -63,7 +63,7 @@ namespace OpenDental{
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(475, 576);
+			this.butSave.Location = new System.Drawing.Point(475, 586);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 23);
 			this.butSave.TabIndex = 500;
@@ -294,7 +294,7 @@ namespace OpenDental{
 			// 
 			// FormEServicesPatientPortal
 			// 
-			this.ClientSize = new System.Drawing.Size(562, 608);
+			this.ClientSize = new System.Drawing.Size(562, 618);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.butSave);

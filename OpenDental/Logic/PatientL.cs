@@ -200,6 +200,9 @@ namespace OpenDental{
 			}
 			else if(PrefC.GetLong(PrefName.ShowIDinTitleBar)==2) {
 				retVal+=" - "+_patientSelected.ChartNumber;
+				object[] objectArray={ _patientSelected,retVal };
+				Plugins.HookAddCode(null,"PatientL.GetMainTitleSamePat_afterAddChartNum",objectArray);
+				retVal=(string)objectArray[1];
 			}
 			else if(PrefC.GetLong(PrefName.ShowIDinTitleBar)==3) {
 				if(_patientSelected.Birthdate.Year>1880) {

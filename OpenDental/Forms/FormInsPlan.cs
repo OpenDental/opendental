@@ -232,7 +232,6 @@ namespace OpenDental {
 				comboBoxZeroWriteOffsOnAnnualMaxLimitation.Enabled=false;
 				comboZeroWriteOffsOnLimitationOrAging.Enabled=false;
 				checkShowBaseUnits.Enabled=false;
-				textDentaide.Enabled=false;
 				textPlanFlag.Enabled=false;
 				checkIsPMP.Enabled=false;
 				textCanadianDiagCode.Enabled=false;
@@ -638,12 +637,6 @@ namespace OpenDental {
 			}
 			FillOtherSubscribers();
 			textPlanNote.Text=_insPlan.PlanNote;
-			if(_insPlan.DentaideCardSequence==0) {
-				textDentaide.Text="";
-			}
-			else{
-				textDentaide.Text=_insPlan.DentaideCardSequence.ToString();
-			}
 			textPlanFlag.Text=_insPlan.CanadianPlanFlag;
 			textCanadianDiagCode.Text=_insPlan.CanadianDiagnosticCode;
 			textCanadianInstCode.Text=_insPlan.CanadianInstitutionCode;
@@ -2988,7 +2981,6 @@ namespace OpenDental {
 		private bool FillPlanCurFromForm() {
 			if(!textDateEffect.IsValid()
 				|| !textDateTerm.IsValid()
-				|| !textDentaide.IsValid()
 				|| !textDateLastVerifiedBenefits.IsValid()
 				|| !textDateLastVerifiedPatPlan.IsValid())
 			{
@@ -3235,7 +3227,6 @@ namespace OpenDental {
 			}
 			_insPlan.CobRule=(EnumCobRule)comboCobRule.SelectedIndex;
 			//Canadian------------------------------------------------------------------------------------------
-			_insPlan.DentaideCardSequence=PIn.Byte(textDentaide.Text);
 			_insPlan.CanadianPlanFlag=textPlanFlag.Text;//validated
 			_insPlan.CanadianDiagnosticCode=textCanadianDiagCode.Text;//validated
 			_insPlan.CanadianInstitutionCode=textCanadianInstCode.Text;//validated

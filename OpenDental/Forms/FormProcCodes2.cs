@@ -34,6 +34,8 @@ namespace OpenDental {
 		private Color _colorProv;
 		private Color _colorProvClinic;
 		private Color _colorDefault;
+		///<summary>Used to prevent recursive calls to the event handler gridMain_CellLeave().</summary>
+		private bool _isInCellLeave;
 		//<summary>Local copy of a FeeCache class that contains all fees, stored in memory for easy access and editing.  Synced on form closing.</summary>
 		//private FeeCache _feeCache;
 		///<summary>List of all fees for all three selected fee schedules.  This includes all clinic and provider overrides, regardless of selected clinic and provider.  We could do three separate lists, but that doesn't save us much.  And it's common to use all three columns with the same feeschedule, which would make synching separate lists difficult. Gets synched to db every time selected feescheds change.  This keeps it snappy when entering a series of fees because there is no db write.</summary>
@@ -677,8 +679,22 @@ namespace OpenDental {
 			Security.IsAuthorized(EnumPermType.FeeSchedEdit);//Show message if user does not have permission.
 		}
 
-		///<summary>Takes care of individual cell edits.  Calls FillGrid to refresh other columns using the same data.</summary>
 		private void gridMain_CellLeave(object sender,ODGridClickEventArgs e) {
+			if(_isInCellLeave) {
+				return;
+			}
+			_isInCellLeave=true;
+			try {
+				//This CellLeave event handler has the chance to get recursively fired.  The logic of this handler is not intended to be recursive and needs to guard against reentrance.The most common cause for reentrance is when the user is met with a popup noting that they lack security permissions to edit this cell value.
+				GridCellUpdateAndSecurityCheck(e);
+			}
+			finally {
+				_isInCellLeave=false;
+			}
+		}
+
+		///<summary>Takes care of individual cell edits.  Calls FillGrid to refresh other columns using the same data.</summary>
+		private void GridCellUpdateAndSecurityCheck(ODGridClickEventArgs e) {
 			//This is where the real fee editing logic is.
 			if(!Security.IsAuthorized(EnumPermType.FeeSchedEdit,true)) { //Don't do anything if they don't have permission.
 				return;

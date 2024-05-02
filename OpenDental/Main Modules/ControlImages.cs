@@ -1453,7 +1453,7 @@ namespace OpenDental
 			}
 			int idx=formImageFloat.GetIdxSelectedInMount();
 			if(idx==-1){
-				MsgBox.Show(this,"This is intended to be used in the middle of a series of image acquisitions. It will unmount the prior image.");
+				MsgBox.Show(this,"This is intended to be used in the middle of a series of image acquisitions.");
 				return;
 			}
 			List<MountItem> listMountItems=formImageFloat.GetListMountItems();

@@ -44,7 +44,7 @@ namespace OpenDentBusiness{
 		public bool IsMedical;
 		///<summary>FK to insfilingcode.InsFilingCodeNum.  Used for e-claims.  Also used for some complex reports in public health.  The e-claim usage might become obsolete when PlanID implemented by HIPAA.  Can be 0 to indicate none.  Then 'CI' will go out on claims.</summary>
 		public long FilingCode;
-		///<summary>Canadian e-claim field. D11 and E07.  Zero indicates empty.  Mandatory value for Dentaide.  Not used for all others.  2 digit.</summary>
+		///<summary>Canadian e-claim field. D11 and E07.  Zero indicates empty.  Mandatory value for Dentaide.  Not used for all others.  2 digit.  DEPRECATED - See CDAnet Message Formats+Standards 4.2_2021.</summary>
 		public byte DentaideCardSequence;
 		///<summary>If checked, the units Qty will show the base units assigned to a procedure on the claim form.</summary>
 		public bool ShowBaseUnits;

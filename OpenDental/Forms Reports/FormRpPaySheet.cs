@@ -307,6 +307,46 @@ namespace OpenDental{
 			DataTable tablePat=RpPaySheet.GetPatTable(date1.SelectionStart,date2.SelectionStart,listProvNums,listClinicNums,listPatTypes,
 				checkAllProv.Checked,checkAllClin.Checked,checkPatientTypes.Checked,radioPatient.Checked,checkUnearned.Checked,checkShowProvSeparate.Checked,
 				checkReportDisplayUnearnedTP.Checked);
+			//Gather a list of PayConnect sources, as there's a handful.
+			List<long> listPayConnectPaySources=new List<long>();
+			listPayConnectPaySources.Add((long)CreditCardSource.PayConnect);
+			listPayConnectPaySources.Add((long)CreditCardSource.XServerPayConnect);
+			listPayConnectPaySources.Add((long)CreditCardSource.PayConnectPortal);
+			listPayConnectPaySources.Add((long)CreditCardSource.PayConnectPortalLogin);
+			listPayConnectPaySources.Add((long)CreditCardSource.PayConnectPaymentPortal);
+			listPayConnectPaySources.Add((long)CreditCardSource.PayConnectPaymentPortalGuest);
+			//If showing providers on seperate rows, we need to add an extra row for each payment for any MerchantFees. We don't want to be sticking them on a random provider.
+			//We don't need to worry about MerchantFee rows if this isn't checked, since we're pinning all providers on the same line with the MerchantFee anyway.
+			//The goal of this chunk is to not display the same MerchantFee on multiple rows, which compounds their value on the report, and doing so in a way that doesn't single out one provider if multiple were involved.
+			if(checkShowProvSeparate.Checked) {
+				List<long> listPayNumsVisited=new List<long>();
+				//Start at the end and go backwards, so our Fee rows are added directly after all of their relevant payment rows, and so we can easily scrub MerchantFees off the actual payment rows.
+				//Opted to go backwards since I believe there are circumstances where the same payment can have multiple rows scattered apart from each other.
+				for(int i=tablePat.Rows.Count-1;i>=0;i--) {
+					DataRow rowPat=tablePat.Rows[i];
+					//We only want to bother with this new row if this payment comes from a source that has a box checked for viewing their fees.
+					bool isMerchantFeeConsidered=(checkShowCareCreditFees.Checked && PIn.Long(rowPat["PaymentSource"].ToString())==(long)CreditCardSource.CareCredit)
+						|| (checkShowPayConnectFees.Checked && listPayConnectPaySources.Contains(PIn.Long(rowPat["PaymentSource"].ToString())));
+					//IF this payment comes from a source we want to see fees for, AND it actually has a fee in the first place, AND we haven't already taken care of this payment, THEN we'll make a new row for the fee.
+					if(isMerchantFeeConsidered 
+						&& PIn.Decimal(rowPat["MerchantFee"].ToString())!=0 
+						&& !listPayNumsVisited.Contains(PIn.Long(rowPat["PayNum"].ToString()))) 
+					{
+						//This new fee row should not have an amt or a provider abbreviation. It's purely for the fee portion of the payment. The other information is still relevant though,
+						//so we'll just copy the current row and clear out the amt and provider.
+						DataRow rowNew=tablePat.NewRow();
+						rowNew.ItemArray=rowPat.ItemArray;
+						rowNew["amt"]=0;
+						rowNew["GROUP_CONCAT(DISTINCT provider.Abbr)"]="";
+						//Insert the new row right after our current one.
+						tablePat.Rows.InsertAt(rowNew,i+1);
+						//We don't want to make the same row for one payment multiple times, so add the PayNum to our visited list.
+						listPayNumsVisited.Add(PIn.Long(rowPat["PayNum"].ToString()));
+					}
+					//If we care about the MerchantFee, we'll have made a new row for it already. Safe to clear it out of the base row.
+					rowPat["MerchantFee"]=0;
+				}
+			}
 			AddAfterFeeColumn(tablePat);
 			DataTable tableOnlinePat=new DataTable();
 			if(checkShowOnlinePatientPaymentsSeparately.Checked) {

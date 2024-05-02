@@ -1268,6 +1268,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 
 		private const int WM_DPICHANGED=0x02E0;
 		private const int WM_NCCALCSIZE = 0x83;
+		private const int WM_WINDOWPOSCHANGED=0x0047;
 
 		[StructLayout(LayoutKind.Sequential)]
 		private struct NCCALCSIZE_PARAMS{
@@ -1393,6 +1394,15 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				//https://stackoverflow.com/questions/2135068/how-to-set-the-size-of-the-non-client-area-of-a-win32-window-native
 			}
 			#endregion WM_NCCALCSIZE
+			#region WM_WINDOWPOSCHANGED
+			if(m.Msg==WM_WINDOWPOSCHANGED) {
+				//This is a workaround needed to make Windows 11 Snap Layout function properly when the window was maximized because of a Microsoft bug that wasn't fixed until .Net 7 https://github.com/dotnet/winforms/issues/6153.
+				System.Reflection.FieldInfo restoredBoundsSpecified = typeof(Form).GetField("restoredWindowBoundsSpecified",System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+				if(restoredBoundsSpecified!=null) {
+					restoredBoundsSpecified.SetValue(this,BoundsSpecified.None);
+				}
+			}
+			#endregion WM_WINDOWPOSCHANGED
 			base.WndProc(ref m);
 		}
 

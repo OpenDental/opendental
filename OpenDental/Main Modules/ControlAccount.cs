@@ -2113,7 +2113,9 @@ namespace OpenDental {
 				return;
 			}
 			Claim claim=Claims.GetClaim(claimNum);
-			//no need to validate since we're just looking at existing.
+			if(!ValidateRightClickDXC(claim)) {//Validation now needed for sending Narratives
+				return;
+			}
 			using FormClaimAttachHistory formClaimAttachHistory=new FormClaimAttachHistory();
 			formClaimAttachHistory.ClaimCur=claim;
 			formClaimAttachHistory.PatientCur=_patient;
