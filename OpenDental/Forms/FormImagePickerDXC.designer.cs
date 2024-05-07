@@ -37,6 +37,9 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.textClaimStatus = new OpenDental.ODtextBox();
 			this.butSendAndAgain = new OpenDental.UI.Button();
+			this.textNarrative = new OpenDental.ODtextBox();
+			this.labelNarrative = new System.Windows.Forms.Label();
+			this.labelCharCount = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -175,9 +178,50 @@ namespace OpenDental{
 			this.butSendAndAgain.Text = "Send and Select &Another";
 			this.butSendAndAgain.Click += new System.EventHandler(this.butSendAndAgain_Click);
 			// 
+			// textNarrative
+			// 
+			this.textNarrative.AcceptsTab = true;
+			this.textNarrative.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textNarrative.BackColor = System.Drawing.SystemColors.Window;
+			this.textNarrative.DetectLinksEnabled = false;
+			this.textNarrative.DetectUrls = false;
+			this.textNarrative.Location = new System.Drawing.Point(1024, 402);
+			this.textNarrative.MaxLength = 2000;
+			this.textNarrative.Name = "textNarrative";
+			this.textNarrative.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
+			this.textNarrative.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.textNarrative.Size = new System.Drawing.Size(194, 210);
+			this.textNarrative.TabIndex = 55;
+			this.textNarrative.Text = "";
+			this.textNarrative.TextChanged += new System.EventHandler(this.textNarrative_TextChanged);
+			// 
+			// labelNarrative
+			// 
+			this.labelNarrative.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelNarrative.Location = new System.Drawing.Point(1021, 381);
+			this.labelNarrative.Name = "labelNarrative";
+			this.labelNarrative.Size = new System.Drawing.Size(88, 18);
+			this.labelNarrative.TabIndex = 56;
+			this.labelNarrative.Text = "Narrative";
+			this.labelNarrative.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			// 
+			// labelCharCount
+			// 
+			this.labelCharCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelCharCount.Location = new System.Drawing.Point(1142, 382);
+			this.labelCharCount.Name = "labelCharCount";
+			this.labelCharCount.Size = new System.Drawing.Size(76, 18);
+			this.labelCharCount.TabIndex = 61;
+			this.labelCharCount.Text = "/2000";
+			this.labelCharCount.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+			// 
 			// FormImagePickerDXC
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
+			this.Controls.Add(this.labelCharCount);
+			this.Controls.Add(this.labelNarrative);
+			this.Controls.Add(this.textNarrative);
 			this.Controls.Add(this.butSendAndAgain);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textClaimStatus);
@@ -215,5 +259,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private ODtextBox textClaimStatus;
 		private UI.Button butSendAndAgain;
+		private ODtextBox textNarrative;
+		private System.Windows.Forms.Label labelNarrative;
+		private System.Windows.Forms.Label labelCharCount;
 	}
 }

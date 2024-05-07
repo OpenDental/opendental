@@ -23,6 +23,8 @@ namespace OpenDental {
 		private Claim _claim;
 		private Patient _patient;
 		private static bool _isAlreadyOpen=false;
+		///<summary>Stores a list of the image Ids from DXC to be saved locally.</summary>
+		private List<int> _listImageReferenceIds;
 		private static readonly string _snipSketchURI="ms-screensketch";
 		///<summary> Keeps track of how long we've been trying to kill all running Snip Tool processes </summary>
 		private Stopwatch _stopwatchKillSnipToolProcesses=new Stopwatch();
@@ -715,7 +717,7 @@ namespace OpenDental {
 				_claim.AttachedFlags="Misc";
 			}
 			else {//An attachment already exists for this claim.
-				ClaimConnect.AddAttachment(_claim, listImageAttachments);
+				_listImageReferenceIds=ClaimConnect.AddAttachment(_claim, listImageAttachments);
 				if(_claim.Narrative!=textNarrative.Text) {
 					ClaimConnect.AddNarrative(_claim,textNarrative.Text);
 				}
@@ -818,6 +820,9 @@ namespace OpenDental {
 					}
 					//Create attachment objects
 					ClaimAttach claimAttach=CreateClaimAttachment(imageAttachmentRow.ImageFileNameDisplay,imageAttachmentRow.ImageFileNameActual);
+					if(_listImageReferenceIds!=null) {
+						claimAttach.ImageReferenceId=_listImageReferenceIds[i];
+					}
 					listClaimAttachments.Add(claimAttach);
 				}
 				else if(_eclaimsCommBridge==EclaimsCommBridge.EDS) {

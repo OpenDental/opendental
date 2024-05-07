@@ -15,6 +15,8 @@ namespace OpenDentBusiness {
 		public string DisplayedFileName;
 		///<summary>The actual file is stored in the A-Z folder in EmailAttachments.  (yes, even though it's not actually an email attachment)  The files are named automatically based on Date/time along with a random number.  This ensures that they will be sequential as well as unique.</summary>
 		public string ActualFileName;
+		///<summary>This is the image Id that DentalXChange gives back after calling addImage(). Storing this will allow users to delete images they sent to DentalXChange.</summary>
+		public int ImageReferenceId;
 
 		public ClaimAttach Copy(){
 			return (ClaimAttach)this.MemberwiseClone();

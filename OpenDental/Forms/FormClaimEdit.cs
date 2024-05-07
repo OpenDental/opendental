@@ -3830,8 +3830,19 @@ namespace OpenDental{
 					+"\r\nand the associated ERA will need to be edited before it can be Finalized."
 					+"\r\n";
 				}
-				if(MessageBox.Show(msgAttaches+Lan.g(this,"Delete Claim?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
-					return;
+				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+					if(MessageBox.Show(msgAttaches
+						+Lan.g(this,"Warning, try reversing this claim before deleting it. "
+						+"If this is a primary claim, you may also need to reverse and delete the secondary claim. "
+						+"Delete this claim now?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK)
+					{
+						return;
+					}
+				}
+				else{
+					if(MessageBox.Show(msgAttaches+Lan.g(this,"Delete Claim?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
+						return;
+					}
 				}
 			}
 			DeleteClaimHelper(listETrans835Attaches);

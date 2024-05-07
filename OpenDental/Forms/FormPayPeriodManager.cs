@@ -335,10 +335,6 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
-			if(textDaysAfterPayPeriod.Enabled && textDaysAfterPayPeriod.Text=="0") {
-				MsgBox.Show(this,"# Days After Pay Period cannot be zero.");
-				return;
-			}
 			if(radioSemiMonthly.Checked) {
 				GenerateSemiMonthlyPayPeriods();
 				return;

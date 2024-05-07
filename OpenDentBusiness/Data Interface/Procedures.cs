@@ -1706,6 +1706,27 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
+		public static void AttachToApptForApi(List<long> procNums,Appointment appointment,bool isPlanned) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),procNums,appointment,isPlanned);
+				return;
+			}
+			if(procNums.Count==0) {
+				return;
+			}
+			string command="UPDATE procedurelog SET ";
+			if(isPlanned) {
+				command+="PlannedAptNum";
+			}
+			else {
+				command+="AptNum";
+			}
+			command+="="+POut.Long(appointment.AptNum)+", ";
+			command+="ProcDate="+POut.Date(appointment.AptDateTime)+" ";
+			command+="WHERE ProcNum IN ("+String.Join(",",procNums)+")";
+			Db.NonQ(command);
+		}
+
 		public static void DetachFromApt(List<long> procNums,bool isPlanned) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),procNums,isPlanned);

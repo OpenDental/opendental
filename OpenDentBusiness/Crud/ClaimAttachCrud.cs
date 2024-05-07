@@ -51,6 +51,7 @@ namespace OpenDentBusiness.Crud{
 				claimAttach.ClaimNum         = PIn.Long  (row["ClaimNum"].ToString());
 				claimAttach.DisplayedFileName= PIn.String(row["DisplayedFileName"].ToString());
 				claimAttach.ActualFileName   = PIn.String(row["ActualFileName"].ToString());
+				claimAttach.ImageReferenceId = PIn.Int   (row["ImageReferenceId"].ToString());
 				retVal.Add(claimAttach);
 			}
 			return retVal;
@@ -66,12 +67,14 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ClaimNum");
 			table.Columns.Add("DisplayedFileName");
 			table.Columns.Add("ActualFileName");
+			table.Columns.Add("ImageReferenceId");
 			foreach(ClaimAttach claimAttach in listClaimAttachs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (claimAttach.ClaimAttachNum),
 					POut.Long  (claimAttach.ClaimNum),
 					            claimAttach.DisplayedFileName,
 					            claimAttach.ActualFileName,
+					POut.Int   (claimAttach.ImageReferenceId),
 				});
 			}
 			return table;
@@ -91,14 +94,15 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ClaimAttachNum,";
 			}
-			command+="ClaimNum,DisplayedFileName,ActualFileName) VALUES(";
+			command+="ClaimNum,DisplayedFileName,ActualFileName,ImageReferenceId) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(claimAttach.ClaimAttachNum)+",";
 			}
 			command+=
 				     POut.Long  (claimAttach.ClaimNum)+","
 				+"'"+POut.String(claimAttach.DisplayedFileName)+"',"
-				+"'"+POut.String(claimAttach.ActualFileName)+"')";
+				+"'"+POut.String(claimAttach.ActualFileName)+"',"
+				+    POut.Int   (claimAttach.ImageReferenceId)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -123,14 +127,15 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ClaimAttachNum,";
 			}
-			command+="ClaimNum,DisplayedFileName,ActualFileName) VALUES(";
+			command+="ClaimNum,DisplayedFileName,ActualFileName,ImageReferenceId) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(claimAttach.ClaimAttachNum)+",";
 			}
 			command+=
 				     POut.Long  (claimAttach.ClaimNum)+","
 				+"'"+POut.String(claimAttach.DisplayedFileName)+"',"
-				+"'"+POut.String(claimAttach.ActualFileName)+"')";
+				+"'"+POut.String(claimAttach.ActualFileName)+"',"
+				+    POut.Int   (claimAttach.ImageReferenceId)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -145,7 +150,8 @@ namespace OpenDentBusiness.Crud{
 			string command="UPDATE claimattach SET "
 				+"ClaimNum         =  "+POut.Long  (claimAttach.ClaimNum)+", "
 				+"DisplayedFileName= '"+POut.String(claimAttach.DisplayedFileName)+"', "
-				+"ActualFileName   = '"+POut.String(claimAttach.ActualFileName)+"' "
+				+"ActualFileName   = '"+POut.String(claimAttach.ActualFileName)+"', "
+				+"ImageReferenceId =  "+POut.Int   (claimAttach.ImageReferenceId)+" "
 				+"WHERE ClaimAttachNum = "+POut.Long(claimAttach.ClaimAttachNum);
 			Db.NonQ(command);
 		}
@@ -164,6 +170,10 @@ namespace OpenDentBusiness.Crud{
 			if(claimAttach.ActualFileName != oldClaimAttach.ActualFileName) {
 				if(command!="") { command+=",";}
 				command+="ActualFileName = '"+POut.String(claimAttach.ActualFileName)+"'";
+			}
+			if(claimAttach.ImageReferenceId != oldClaimAttach.ImageReferenceId) {
+				if(command!="") { command+=",";}
+				command+="ImageReferenceId = "+POut.Int(claimAttach.ImageReferenceId)+"";
 			}
 			if(command=="") {
 				return false;
@@ -184,6 +194,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(claimAttach.ActualFileName != oldClaimAttach.ActualFileName) {
+				return true;
+			}
+			if(claimAttach.ImageReferenceId != oldClaimAttach.ImageReferenceId) {
 				return true;
 			}
 			return false;

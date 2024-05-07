@@ -2063,7 +2063,7 @@ namespace OpenDental {
 				return;
 			}
 			FormClaimAttachSnipDXC formClaimAttachSnipDXC=new FormClaimAttachSnipDXC();
-			formClaimAttachSnipDXC.Claim=claim;
+			formClaimAttachSnipDXC.ClaimCur=claim;
 			formClaimAttachSnipDXC.Patient=_patient;
 			formClaimAttachSnipDXC.Show();
 		}

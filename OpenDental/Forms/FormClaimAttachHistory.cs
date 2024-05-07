@@ -29,19 +29,6 @@ namespace OpenDental {
 
 		private void FormClaimAttachHistory_Load(object sender,EventArgs e) {
 			ValidateClaimDXC();
-			if(textClaimStatus.Text.ToUpper().Contains("ATTACHMENT ID HAS BEEN ASSOCIATED TO A DIFFERENT CLAIM")
-				|| textClaimStatus.Text.ToUpper().Contains("HAS ALREADY BEEN DELIVERED TO THE PAYER")) {
-				//If users do not clear out their attachment a message will be in the validation textbox telling users they should do so
-				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"The attachment ID is associated to another claim. Any future attachment information will be sent to the wrong claim until you clear out the attachment. Would you like to do this now?"))
-				{
-					//Potential way to save users time by making a new attachment with the same information for the new claim
-					//if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to reuse the current attachment information to create a new attachment for the correct claim before this information is cleared out?")) {
-						//not implemented
-					//}
-					ClearAttachmentID();
-					ValidateClaimDXC();
-				}
-			}
 			textNarrative.Text=ClaimCur.Narrative;
 			if(ClaimCur.AttachmentID=="") {
 				textNarrative.ReadOnly=true;
@@ -117,6 +104,10 @@ namespace OpenDental {
 			gridMain.EndUpdate();
 		}
 
+		private void textNarrative_TextChanged(object sender,EventArgs e) {
+			labelCharCount.Text=textNarrative.Text.Length+"/2000";//2000 char limit set by DXC
+		}
+
 		///<summary>The selected image opens in default photo viewer. This code was copied from FormClaimEdit gridSent_CellDoubleClick().</summary>
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			if(!PrefC.GetBool(PrefName.SaveDXCAttachments)) {
@@ -172,7 +163,7 @@ namespace OpenDental {
 		}
 
 		private void butClear_Click(object sender,EventArgs e) {
-			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"This will clear out this claim's attachment information. You will have to recreate the entire attachment for this claim. Would you like to continue?"))
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will clear out this claim's attachment information. You will have to recreate the entire attachment for this claim. Would you like to continue?"))
 			{
 				return;
 			}
@@ -183,7 +174,7 @@ namespace OpenDental {
 		}
 
 			private void FormClaimAttachHistory_FormClosing(object sender,FormClosingEventArgs e) {
-			if(ClaimCur.Narrative==textNarrative.Text) {
+			if(ClaimCur.Narrative==textNarrative.Text) {//Limited to 2000 char in UI
 				return;
 			}
 			try {

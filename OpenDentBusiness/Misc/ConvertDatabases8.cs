@@ -1394,5 +1394,10 @@ namespace OpenDentBusiness {
 			command="ALTER TABLE mobilenotification ADD AppTarget tinyint NOT NULL";
 			Db.NonQ(command);
 		}//End of 24_1_24() method
+
+		private static void To24_1_27() {
+			string command="ALTER TABLE claimattach ADD ImageReferenceId int NOT NULL";
+			Db.NonQ(command);
+		}//End of 24_1_27()
 	}
 }

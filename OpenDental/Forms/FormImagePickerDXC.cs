@@ -21,6 +21,8 @@ namespace OpenDental {
 		private ClaimConnect.ImageAttachment _claimConnectImageAttachment;
 		private long _docNumSelected;
 		private WpfControls.UI.ImageSelector _imageSelector;
+		///<summary>Stores a list of the image Ids from DXC to be saved locally.</summary>
+		private List<int> _listImageReferenceIds;
 		private long _mountNumSelected;
 		private string _patFolder;
 
@@ -47,22 +49,8 @@ namespace OpenDental {
 			checkIsXrayMirrored.Visible=false;
 			FillTree();
 			ValidateClaimDXC();
-			if(!string.IsNullOrWhiteSpace(ClaimCur.AttachmentID)
-				&& !ClaimCur.AttachmentID.ToLower().StartsWith("dxc") 
-				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"The claim has a non DentalXChange Attachment ID. Would you like to clear it out?")) 
-			{
-				ClearAttachmentID();
-			}
-			if(textClaimStatus.Text.ToUpper().Contains("ATTACHMENT ID HAS BEEN ASSOCIATED TO A DIFFERENT CLAIM")
-				|| textClaimStatus.Text.ToUpper().Contains("HAS ALREADY BEEN DELIVERED TO THE PAYER"))
-			{
-				MessageBox.Show("The attachment ID is associated to another claim. Please redo your attachments.");
-				ClearAttachmentID();
-				if(!ValidateClaimDXC()){
-					return;
-				}
-			}
 			WindowState=FormWindowState.Maximized;
+			textNarrative.Text=ClaimCur.Narrative;
 		}
 
 		///<summary>Refreshes list from db, then fills the treeview.  Set keepSelection to true in order to keep the current selection active.</summary>
@@ -111,21 +99,6 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Wipes out the existing attachmentID, makes a securitylog for the old ID, and clears the 'Misc' attached flag on the claim.
-		///This must be done when a non-DXC attachmentID has been detected so that claim validation will work as expected.</summary>
-		private void ClearAttachmentID() {
-			//Blindly set the claim's attached flags back to 'Mail' so that, deep down in the 837 text generation logic, the PWK segment will not be written
-			//which will allow DentalXChange to validate the claim as if it is brand new with no attachments. See X837_5010.GenerateMessageText().
-			ClaimCur.AttachedFlags="Mail";
-			string oldAttachmentID=ClaimCur.AttachmentID;
-			ClaimCur.AttachmentID="";
-			ClaimCur.Narrative="";//Clear narrative for new attachment
-			DateTime secDateTEdit=ClaimCur.SecDateTEdit;//Preserve the date prior to any claim updates affecting it.
-			Claims.Update(ClaimCur);
-			SecurityLogs.MakeLogEntry(EnumPermType.ClaimEdit,ClaimCur.PatNum
-				,$"Removed attachmentID {oldAttachmentID} for ClaimNum:{ClaimCur.ClaimNum}",ClaimCur.ClaimNum,secDateTEdit);
-		}
-
 		private bool ValidateClaimDXC() {
 			ClaimConnect.ValidateClaimResponse validateClaimResponse=null;
 			//Usually super fast, but with a web call, they need a way to cancel if locked up.
@@ -165,7 +138,7 @@ namespace OpenDental {
 			listClaimConnectImageAttachments.Add(_claimConnectImageAttachment);
 			if(string.IsNullOrWhiteSpace(ClaimCur.AttachmentID)) {
 				//If an attachment has not already been created, create one.
-				string attachmentId=ClaimConnect.CreateAttachment(listClaimConnectImageAttachments,narrative:"",ClaimCur);
+				string attachmentId=ClaimConnect.CreateAttachment(listClaimConnectImageAttachments,textNarrative.Text,ClaimCur);
 				//Update claim if attachmentID was set. Must happen here so that the validation will consider the new attachmentID.
 				ClaimCur.AttachmentID=attachmentId;
 				//Set the claims attached flag to 'Misc' so that the attachmentID will write to the PWK segment 
@@ -173,8 +146,12 @@ namespace OpenDental {
 				ClaimCur.AttachedFlags="Misc";
 			}
 			else {//An attachment already exists for this claim.
-				ClaimConnect.AddAttachment(ClaimCur,listClaimConnectImageAttachments);
+				_listImageReferenceIds=ClaimConnect.AddAttachment(ClaimCur,listClaimConnectImageAttachments);
+				if(ClaimCur.Narrative!=textNarrative.Text) {
+					ClaimConnect.AddNarrative(ClaimCur,textNarrative.Text);
+				}
 			}
+			ClaimCur.Narrative=textNarrative.Text;
 			Claims.Update(ClaimCur);
 		}
 
@@ -273,6 +250,9 @@ namespace OpenDental {
 			claimAttach.DisplayedFileName=_claimConnectImageAttachment.ImageFileNameDisplay;
 			claimAttach.ActualFileName=_claimConnectImageAttachment.ImageFileNameActual;
 			claimAttach.ClaimNum=ClaimCur.ClaimNum;
+			if(_listImageReferenceIds!=null) {
+				claimAttach.ImageReferenceId=_listImageReferenceIds[0];
+			}
 			listClaimAttaches.Add(claimAttach);
 			//Keep a running list of attachments sent to DXC for the claim. This will show in the attachments listbox.
 			ClaimCur.Attachments.AddRange(listClaimAttaches);
@@ -298,6 +278,10 @@ namespace OpenDental {
 				return false;
 			}
 			return SendSelectedToDXCAndSaveLocally();
+		}
+
+		private void textNarrative_TextChanged(object sender,EventArgs e) {
+			labelCharCount.Text=textNarrative.Text.Length+"/2000";//2000 char limit set by DXC
 		}
 
 		private void imageSelector_ItemDoubleClick(object sender,EventArgs e) {

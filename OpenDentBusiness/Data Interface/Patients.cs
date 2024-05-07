@@ -1967,18 +1967,20 @@ namespace OpenDentBusiness {
 			}
 			List<string> listPatNumStrs=table.Select().Select(x => x["PatNum"].ToString()).ToList();
 			Dictionary<string,Tuple<DateTime,DateTime>> dictNextLastApts=new Dictionary<string,Tuple<DateTime,DateTime>>();
-			if((ptSearchArgs.HasNextLastVisit || PrefC.GetBool(PrefName.OmhNy)) && ptSearchArgs.DoLimit && table.Rows.Count>0) {
-				command=$@"SELECT PatNum,
-					COALESCE(MIN(CASE WHEN AptStatus={SOut.Int((int)ApptStatus.Scheduled)} AND AptDateTime>={DbHelper.Now()}
-						THEN AptDateTime END),{SOut.DateT(DateTime.MinValue)}) NextVisit,
-					COALESCE(MAX(CASE WHEN AptStatus={SOut.Int((int)ApptStatus.Complete)} AND AptDateTime<={DbHelper.Now()}
-						THEN AptDateTime END),{SOut.DateT(DateTime.MinValue)}) LastVisit
-					FROM appointment 
-					WHERE AptStatus IN({SOut.Int((int)ApptStatus.Scheduled)},{SOut.Int((int)ApptStatus.Complete)})
-				  AND PatNum IN ({string.Join(",",listPatNumStrs)})
-					GROUP BY PatNum";
-				dictNextLastApts=ReportsComplex.RunFuncOnReadOnlyServer(() => Db.GetTable(command).Select() 
-					.ToDictionary(x => x["PatNum"].ToString(),x => Tuple.Create(SIn.DateT(x["NextVisit"].ToString()),SIn.DateT(x["LastVisit"].ToString()))));
+			if(table.Rows.Count>0){
+				if((ptSearchArgs.HasNextLastVisit && ptSearchArgs.DoLimit) || PrefC.GetBool(PrefName.OmhNy)) {
+					command=$@"SELECT PatNum,
+						COALESCE(MIN(CASE WHEN AptStatus={SOut.Int((int)ApptStatus.Scheduled)} AND AptDateTime>={DbHelper.Now()}
+							THEN AptDateTime END),{SOut.DateT(DateTime.MinValue)}) NextVisit,
+						COALESCE(MAX(CASE WHEN AptStatus={SOut.Int((int)ApptStatus.Complete)} AND AptDateTime<={DbHelper.Now()}
+							THEN AptDateTime END),{SOut.DateT(DateTime.MinValue)}) LastVisit
+						FROM appointment 
+						WHERE AptStatus IN({SOut.Int((int)ApptStatus.Scheduled)},{SOut.Int((int)ApptStatus.Complete)})
+						AND PatNum IN ({string.Join(",",listPatNumStrs)})
+						GROUP BY PatNum";
+					dictNextLastApts=ReportsComplex.RunFuncOnReadOnlyServer(() => Db.GetTable(command).Select() 
+						.ToDictionary(x => x["PatNum"].ToString(),x => Tuple.Create(SIn.DateT(x["NextVisit"].ToString()),SIn.DateT(x["LastVisit"].ToString()))));
+				}
 			}
 			List<long> listPatNums=new List<long>();
 			List<EhrPatient> listEhrPatients=new List<EhrPatient>();
@@ -5231,7 +5233,7 @@ namespace OpenDentBusiness {
 				return result;
 			}
 			//see if chartNum is a duplicate
-			if(!string.IsNullOrEmpty(patient.ChartNumber)){
+			if(!PrefC.GetBool(PrefName.OmhNy) && !string.IsNullOrEmpty(patient.ChartNumber)){
 				//the patNum will be 0 for new
 				string usedBy=Patients.ChartNumUsedBy(patient.ChartNumber,patient.PatNum);
 				if(!string.IsNullOrEmpty(usedBy)){

@@ -32,6 +32,7 @@ namespace OpenDental {
 			this.labelAttachmentID = new System.Windows.Forms.Label();
 			this.textAttachmentID = new OpenDental.ODtextBox();
 			this.butClear = new OpenDental.UI.Button();
+			this.labelCharCount = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// gridMain
@@ -41,6 +42,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(14, 12);
 			this.gridMain.Name = "gridMain";
+			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
 			this.gridMain.Size = new System.Drawing.Size(353, 501);
 			this.gridMain.TabIndex = 49;
 			this.gridMain.Title = "Attachments Sent";
@@ -91,12 +93,14 @@ namespace OpenDental {
 			this.textNarrative.DetectLinksEnabled = false;
 			this.textNarrative.DetectUrls = false;
 			this.textNarrative.Location = new System.Drawing.Point(387, 227);
+			this.textNarrative.MaxLength = 2000;
 			this.textNarrative.Name = "textNarrative";
 			this.textNarrative.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
 			this.textNarrative.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNarrative.Size = new System.Drawing.Size(257, 286);
 			this.textNarrative.TabIndex = 54;
 			this.textNarrative.Text = "";
+			this.textNarrative.TextChanged += new System.EventHandler(this.textNarrative_TextChanged);
 			// 
 			// labelAttachmentID
 			// 
@@ -134,9 +138,20 @@ namespace OpenDental {
 			this.butClear.Text = "Clear Attachment";
 			this.butClear.Click += new System.EventHandler(this.butClear_Click);
 			// 
+			// labelCharCount
+			// 
+			this.labelCharCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelCharCount.Location = new System.Drawing.Point(568, 207);
+			this.labelCharCount.Name = "labelCharCount";
+			this.labelCharCount.Size = new System.Drawing.Size(76, 18);
+			this.labelCharCount.TabIndex = 58;
+			this.labelCharCount.Text = "/2000";
+			this.labelCharCount.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+			// 
 			// FormClaimAttachHistory
 			// 
 			this.ClientSize = new System.Drawing.Size(656, 530);
+			this.Controls.Add(this.labelCharCount);
 			this.Controls.Add(this.butClear);
 			this.Controls.Add(this.textAttachmentID);
 			this.Controls.Add(this.labelAttachmentID);
@@ -163,5 +178,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelAttachmentID;
 		private ODtextBox textAttachmentID;
 		private UI.Button butClear;
+		private System.Windows.Forms.Label labelCharCount;
 	}
 }

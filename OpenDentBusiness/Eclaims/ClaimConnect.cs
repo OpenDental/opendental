@@ -463,8 +463,8 @@ namespace OpenDentBusiness.Eclaims {
 			return response.AttachmentReference.AttachmentID;
 		}
 
-		///<summary>This method is used to add attachments to claims that already have an existing attachmentID. Can throw an exception. If this method is not used then validation will fail.</summary>
-		public static void AddAttachment(Claim claim,List<ImageAttachment> listImages) {
+		///<summary>This method is used to add attachments to claims that already have an existing attachmentID. Can throw an exception. If this method is not used then validation will fail. Returns ImageReferenceIds assigned by DXC.</summary>
+		public static List<int> AddAttachment(Claim claim,List<ImageAttachment> listImages) {
 			DentalxchangePartnerService.DeaPartnerService deaPartnerService=new DentalxchangePartnerService.DeaPartnerService();
 			deaPartnerService.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDeaURL,"https://webservices.dentalxchange.com/dea/DeaPartnerService");
 			if(ODBuild.IsDebug()) {
@@ -472,6 +472,7 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			DentalxchangePartnerService.AttachmentReference attachmentRef=new DentalxchangePartnerService.AttachmentReference();
 			attachmentRef.AttachmentID=claim.AttachmentID;
+			List<int> listImageReferenceIds=new List<int>();
 			//Can only send one image at a time. Loop through all the images the user is adding.
 			foreach(ImageAttachment image in listImages) {
 				DentalxchangePartnerService.ImageReferenceResponses imageResponse=deaPartnerService.addImage
@@ -479,7 +480,9 @@ namespace OpenDentBusiness.Eclaims {
 				if(!imageResponse.MsgSuccess || imageResponse.Status.code!=0) {
 					throw new ODException(imageResponse.Status.description);
 				}
+				listImageReferenceIds.Add(imageResponse.ImageReferenceResponses1[0].ImageReference.ImageReferenceId);
 			}
+			return listImageReferenceIds;
 		}
 
 		///<summary>Add a narrative to a claim that has an existing attachmentID. Will overwrite any narrative sent to DXC. Narrative has a 2000 char limit. Can throw an exception.</summary>
