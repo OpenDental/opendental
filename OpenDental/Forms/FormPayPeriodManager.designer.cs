@@ -141,8 +141,8 @@ namespace OpenDental {
 			// 
 			this.textDaysAfterPayPeriod.Location = new System.Drawing.Point(170, 73);
 			this.textDaysAfterPayPeriod.MaxVal = 200;
+			this.textDaysAfterPayPeriod.MinVal = 1;
 			this.textDaysAfterPayPeriod.Name = "textDaysAfterPayPeriod";
-			this.textDaysAfterPayPeriod.ShowZero = false;
 			this.textDaysAfterPayPeriod.Size = new System.Drawing.Size(40, 20);
 			this.textDaysAfterPayPeriod.TabIndex = 21;
 			this.textDaysAfterPayPeriod.TextChanged += new System.EventHandler(this.numDaysAfterPayPeriod_TextChanged);

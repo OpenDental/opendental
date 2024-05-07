@@ -1155,6 +1155,9 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					if(ODBuild.IsWeb()) {
 						Process.Start(manualPageURL);
 					}
+					else if(ODCloudClient.IsAppStream){
+						ODCloudClient.LaunchFileWithODCloudClient(manualPageURL);
+					}
 					else{
 						FrmHelpBrowser frmHelpBrowser=new FrmHelpBrowser();
 						frmHelpBrowser.EnableUI(enableUI:isKeyValid);//If false, then just the Help Feature page shows

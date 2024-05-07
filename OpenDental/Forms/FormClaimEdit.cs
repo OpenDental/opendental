@@ -3155,6 +3155,7 @@ namespace OpenDental{
 				return;
 			}
 			textAttachmentID.Text=_claim.AttachmentID;
+			fillGridSentAttachments();
 		}
 
 		private void EditOverpay(bool isOverpaid) {

@@ -12,7 +12,7 @@
         <ui:Button x:Name="butSkipForNow" HorizontalAlignment="Right" Width="85" VerticalAlignment="Bottom" Height="24" Margin="0,0,96,57" Text="_Skip For Now" Click="butSkipForNow_Click" />
         <ui:Button x:Name="butNext" HorizontalAlignment="Right" Width="77" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,57" Text="_Next" Click="butNext_Click" Icon="ArrowRight" ImageAlign="Right" />
         <ui:Button x:Name="butBack" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,284,57" Text="_Back" Click="butBack_Click" Icon="ArrowLeft"/>
-        <ui:TextRich x:Name="textMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="11,62,16,87" TabIndexOD="1" />
+        <ui:TextRich x:Name="textMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="11,62,16,87" TabIndexOD="1" QuickPasteType="AutoNotePrompt" />
         <ui:Button x:Name="butSkip" HorizontalAlignment="Right" Width="98" VerticalAlignment="Bottom" Height="24" Margin="0,0,183,57" Text="_Remove Prompt" Click="butRemovePrompt_Click" />
         <ui:Label x:Name="labelPrompt" HorizontalAlignment="Stretch" Height="56" Margin="12,3,10,0" Text="Prompt" VAlign="Bottom" />
         <ui:Button x:Name="butExit" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,10" Text="_Exit" Click="butExit_Click" />

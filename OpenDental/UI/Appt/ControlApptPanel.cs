@@ -3702,7 +3702,6 @@ namespace OpenDental.UI{
 							if(!proc.IsNullOrEmpty()) {
 								procSize=g.MeasureString(proc,_font,(int)widthAppt-(int)WidthProvOnAppt-1,new StringFormat(StringFormatFlags.MeasureTrailingSpaces));
 							}
-							procSize.Width=(float)Math.Ceiling(procSize.Width);
 							if(tempPt.X+procSize.Width>widthAppt) {
 								tempPt.X=pointDraw.X;
 								tempPt.Y+=lastH;
@@ -3715,7 +3714,7 @@ namespace OpenDental.UI{
 							using SolidBrush solidBrush=new SolidBrush(c);
 							g.DrawString(proc,_font,solidBrush,procRect);
 							if(!proc.IsNullOrEmpty()) { 
-								tempPt.X+=(int)procRect.Width+3;//+3 is room for spaces
+								tempPt.X+=procRect.Width;
 							}
 							lastH=(int)procSize.Height;
 							if(tempPt.Y+lastH > heightAppt || i==lines.Length-1) {
