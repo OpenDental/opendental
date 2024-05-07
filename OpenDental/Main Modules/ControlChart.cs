@@ -9451,6 +9451,16 @@ namespace OpenDental {
 				}
 				return;//cancelled insert
 			}
+			if(procedure.ProcStatus==ProcStat.TP || procedure.ProcStatus==ProcStat.TPi) {//Now that a procedure is selected, attach it to the correct TP or TPi
+				long priorityNum=0;
+				if(comboPriority.SelectedIndex!=0) {
+					priorityNum=comboPriority.GetSelectedDefNum();
+				}
+				if(gridTreatPlans.GetSelectedIndex()>=0) {
+					List<long> listTpNums=gridTreatPlans.SelectedIndices.Select(x => _listTreatPlans[x].TreatPlanNum).ToList();
+					ChartModules.AttachProcToTPs(procedure,_listTreatPlans,listTpNums,Pd,priorityNum);
+				}
+			}
 			//The status may have been edited in formProcEdit, should rely on ProcCur.ProcStatus
 			ChartModules.AddProcSetCompleteHelper(procedure);
 			logComplCreate(procedure);
