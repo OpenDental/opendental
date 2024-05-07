@@ -64,7 +64,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(392, 589);
+			this.butOK.Location = new System.Drawing.Point(392, 599);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 23);
 			this.butOK.TabIndex = 500;
@@ -296,7 +296,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(473, 589);
+			this.butCancel.Location = new System.Drawing.Point(473, 599);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 501;
@@ -306,7 +306,7 @@ namespace OpenDental{
 			// 
 			// FormEServicesPatientPortal
 			// 
-			this.ClientSize = new System.Drawing.Size(562, 627);
+			this.ClientSize = new System.Drawing.Size(562, 637);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox4);
