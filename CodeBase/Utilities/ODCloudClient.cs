@@ -476,6 +476,9 @@ namespace CodeBase {
 		}
 
 		public static string GetComputerName() {
+			if(ODBuild.IsThinfinity()) {
+				return SendToBrowserSynchronously("",BrowserAction.GetComputerName,doShowProgressBar:false);
+			}
 			return SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetComputerName,doShowProgressBar:false);
 		}
 

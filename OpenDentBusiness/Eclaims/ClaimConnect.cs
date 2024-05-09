@@ -463,8 +463,48 @@ namespace OpenDentBusiness.Eclaims {
 			return response.AttachmentReference.AttachmentID;
 		}
 
+		///<summary>The first step in DXC's manual attachment workflow. Creates a DXC attachment for the claim and returns the AttachmentID. Is capable of taking a narrative. Can throw exceptions.</summary>
+		public static string OpenAttachment(Claim claim,string narrative) {
+			DentalxchangePartnerService.DeaPartnerService deaPartnerService=new DentalxchangePartnerService.DeaPartnerService();
+			deaPartnerService.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDeaURL,"https://webservices.dentalxchange.com/dea/DeaPartnerService");
+			if(ODBuild.IsDebug()) {
+				deaPartnerService.Url="https://prelive2.dentalxchange.com/dea/DeaPartnerService";
+			}
+			DentalxchangePartnerService.Attachment attachment=BuildAttachmentRequest(claim,narrative);
+			DentalxchangePartnerService.AttachmentReferenceResponse attachmentReferenceResponse=deaPartnerService.openAttachment(DxcCredentials.GetDentalxchangeCredentials(claim),attachment);
+			if(attachmentReferenceResponse==null) {
+				throw new ODException(Lans.g("ClaimConnect","No response from ClaimConnect was received."));
+			}
+			if(!attachmentReferenceResponse.MsgSuccess || attachmentReferenceResponse.Status==null || attachmentReferenceResponse.Status.code!=0)
+			{
+				throw new ODException(attachmentReferenceResponse.Status==null ? Lans.g("ClaimConnect","Invalid ClaimConnect response status") : attachmentReferenceResponse.Status.description);
+			}
+			if(attachmentReferenceResponse.AttachmentReference==null) {
+				throw new ODException(Lans.g("ClaimConnect","Invalid attachment reference received."));
+			}
+			return attachmentReferenceResponse.AttachmentReference.AttachmentID;
+		}
+
+		///<summary>The last step in DXC's manual attachment workflow, although we are still allowed to add more images later. Can throw exceptions.</summary>
+		public static void SubmitAttachment(Claim claim) {
+			DentalxchangePartnerService.DeaPartnerService deaPartnerService=new DentalxchangePartnerService.DeaPartnerService();
+			deaPartnerService.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDeaURL,"https://webservices.dentalxchange.com/dea/DeaPartnerService");
+			if(ODBuild.IsDebug()) {
+				deaPartnerService.Url="https://prelive2.dentalxchange.com/dea/DeaPartnerService";
+			}
+			DentalxchangePartnerService.AttachmentReference attachmentReference=new DentalxchangePartnerService.AttachmentReference();
+			attachmentReference.AttachmentID=claim.AttachmentID;
+			DentalxchangePartnerService.DeaResponse deaResponse=deaPartnerService.submitAttachment(DxcCredentials.GetDentalxchangeCredentials(claim),attachmentReference);
+			if(deaResponse==null) {
+				throw new ODException(Lans.g("ClaimConnect","No response from ClaimConnect was received."));
+			}
+			if(!deaResponse.MsgSuccess || deaResponse.Status==null || deaResponse.Status.code!=0) {
+				throw new ODException(deaResponse.Status==null ? Lans.g("ClaimConnect","Invalid ClaimConnect response status") : deaResponse.Status.description);
+			}
+		}
+
 		///<summary>This method is used to add attachments to claims that already have an existing attachmentID. Can throw an exception. If this method is not used then validation will fail. Returns ImageReferenceIds assigned by DXC.</summary>
-		public static List<int> AddAttachment(Claim claim,List<ImageAttachment> listImages) {
+		public static List<int> AddAttachmentImage(Claim claim,List<ImageAttachment> listImages) {
 			DentalxchangePartnerService.DeaPartnerService deaPartnerService=new DentalxchangePartnerService.DeaPartnerService();
 			deaPartnerService.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDeaURL,"https://webservices.dentalxchange.com/dea/DeaPartnerService");
 			if(ODBuild.IsDebug()) {
@@ -497,6 +537,24 @@ namespace OpenDentBusiness.Eclaims {
 			DentalxchangePartnerService.AttachmentReferenceResponse attachmentReferenceResponse=deaPartnerService.addNarrative(DxcCredentials.GetDentalxchangeCredentials(claim),attachmentReference,narrative);
 			if(!attachmentReferenceResponse.MsgSuccess || attachmentReferenceResponse.Status.code!=0) {
 				throw new ODException(attachmentReferenceResponse.Status.description);
+			}
+		}
+
+		///<summary>Deletes the selected attachment images from DXC. Caller should handle images that do not have a valid ImageReferenceId. Can throw exceptions.</summary>
+		public static void DeleteImages(Claim claim,List<ClaimAttach> listClaimAttaches) {
+			DentalxchangePartnerService.DeaPartnerService deaPartnerService=new DentalxchangePartnerService.DeaPartnerService();
+			deaPartnerService.Url=Introspection.GetOverride(Introspection.IntrospectionEntity.DentalXChangeDeaURL,"https://webservices.dentalxchange.com/dea/DeaPartnerService");
+			if(ODBuild.IsDebug()) {
+				deaPartnerService.Url="https://prelive2.dentalxchange.com/dea/DeaPartnerService";
+			}
+			for(int i=0;i<listClaimAttaches.Count;i++) {
+				DentalxchangePartnerService.ImageReference imageReference=new DentalxchangePartnerService.ImageReference();
+				imageReference.ImageReferenceId=listClaimAttaches[i].ImageReferenceId;
+				imageReference.ImageReferenceIdSpecified=true;
+				DentalxchangePartnerService.DeaResponse deaResponse=deaPartnerService.deleteImage(DxcCredentials.GetDentalxchangeCredentials(claim),imageReference);
+				if(!deaResponse.MsgSuccess || deaResponse.Status.code!=0) {
+					throw new ODException(deaResponse.Status.description);
+				}
 			}
 		}
 

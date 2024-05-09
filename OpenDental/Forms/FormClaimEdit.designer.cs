@@ -525,7 +525,7 @@
 			// 
 			this.butBatch.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butBatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butBatch.Location = new System.Drawing.Point(8, 14);
+			this.butBatch.Location = new System.Drawing.Point(3, 14);
 			this.butBatch.Name = "butBatch";
 			this.butBatch.Size = new System.Drawing.Size(96, 24);
 			this.butBatch.TabIndex = 150;
@@ -536,7 +536,7 @@
 			// 
 			this.butThisClaimOnly.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butThisClaimOnly.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butThisClaimOnly.Location = new System.Drawing.Point(8, 66);
+			this.butThisClaimOnly.Location = new System.Drawing.Point(3, 66);
 			this.butThisClaimOnly.Name = "butThisClaimOnly";
 			this.butThisClaimOnly.Size = new System.Drawing.Size(96, 24);
 			this.butThisClaimOnly.TabIndex = 264;
@@ -545,7 +545,7 @@
 			// 
 			// labelBatch
 			// 
-			this.labelBatch.Location = new System.Drawing.Point(6, 37);
+			this.labelBatch.Location = new System.Drawing.Point(1, 37);
 			this.labelBatch.Name = "labelBatch";
 			this.labelBatch.Size = new System.Drawing.Size(167, 28);
 			this.labelBatch.TabIndex = 151;
@@ -612,7 +612,7 @@
 			this.groupProsth.Controls.Add(this.label16);
 			this.groupProsth.Location = new System.Drawing.Point(3, 3);
 			this.groupProsth.Name = "groupProsth";
-			this.groupProsth.Size = new System.Drawing.Size(286, 114);
+			this.groupProsth.Size = new System.Drawing.Size(294, 114);
 			this.groupProsth.TabIndex = 9;
 			this.groupProsth.Text = "Crown, Bridge, or Denture";
 			// 
@@ -778,7 +778,7 @@
 			this.groupAccident.Controls.Add(this.labelAccidentST);
 			this.groupAccident.Location = new System.Drawing.Point(3, 165);
 			this.groupAccident.Name = "groupAccident";
-			this.groupAccident.Size = new System.Drawing.Size(286, 79);
+			this.groupAccident.Size = new System.Drawing.Size(294, 79);
 			this.groupAccident.TabIndex = 149;
 			this.groupAccident.Text = "Accident";
 			// 
@@ -908,7 +908,7 @@
 			// 
 			// comboEmployRelated
 			// 
-			this.comboEmployRelated.Location = new System.Drawing.Point(134, 143);
+			this.comboEmployRelated.Location = new System.Drawing.Point(142, 143);
 			this.comboEmployRelated.Name = "comboEmployRelated";
 			this.comboEmployRelated.Size = new System.Drawing.Size(155, 21);
 			this.comboEmployRelated.TabIndex = 141;
@@ -923,7 +923,7 @@
 			// 
 			// comboPlaceService
 			// 
-			this.comboPlaceService.Location = new System.Drawing.Point(134, 122);
+			this.comboPlaceService.Location = new System.Drawing.Point(142, 122);
 			this.comboPlaceService.Name = "comboPlaceService";
 			this.comboPlaceService.Size = new System.Drawing.Size(155, 21);
 			this.comboPlaceService.TabIndex = 140;
@@ -946,7 +946,7 @@
 			// label48
 			// 
 			this.label48.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.label48.Location = new System.Drawing.Point(15, 123);
+			this.label48.Location = new System.Drawing.Point(23, 123);
 			this.label48.Name = "label48";
 			this.label48.Size = new System.Drawing.Size(117, 17);
 			this.label48.TabIndex = 136;
@@ -956,7 +956,7 @@
 			// label49
 			// 
 			this.label49.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.label49.Location = new System.Drawing.Point(15, 144);
+			this.label49.Location = new System.Drawing.Point(23, 144);
 			this.label49.Name = "label49";
 			this.label49.Size = new System.Drawing.Size(117, 17);
 			this.label49.TabIndex = 137;

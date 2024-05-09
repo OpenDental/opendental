@@ -99,6 +99,18 @@ namespace OpenDentBusiness {
 		}
 		#endregion Cache Pattern
 
+		#region Methods - Get
+		
+		///<summary>Gets one PatFieldPickItem from the DB. Used in the API.</summary>
+		public static PatFieldPickItem GetPatFieldPickItemForApi(long patFieldPickItemNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetObject<PatFieldPickItem>(MethodBase.GetCurrentMethod(),patFieldPickItemNum);
+			}
+			return Crud.PatFieldPickItemCrud.SelectOne(patFieldPickItemNum);
+		}
+
+		#endregion Methods - Get
+
 		#region Methods - Modify
 		///<summary></summary>
 		public static long Insert(PatFieldPickItem patFieldPickItem) {
@@ -126,10 +138,18 @@ namespace OpenDentBusiness {
 			}
 			Crud.PatFieldPickItemCrud.Delete(patFieldPickItemNum);
 		}
+
+		///<summary>Deletes all PatFieldPickItems for a specified PatFieldDef from the DB. Used in the API.</summary>
+		public static void DeleteForPatFieldDef(long patFieldDefNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetObject<PatFieldPickItem>(MethodBase.GetCurrentMethod(),patFieldDefNum);
+			}
+			string command="DELETE FROM patfieldpickitem"
+				+" WHERE PatFieldDefNum = "+POut.Long(patFieldDefNum);
+			Db.NonQ(command);
+		}
+
 		#endregion Methods - Modify
 
-		#region Methods - Get
-		
-		#endregion Methods - Get
 	}
 }

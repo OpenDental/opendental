@@ -2219,7 +2219,7 @@ namespace OpenDental {
 			if(!hasSelectedIndices) {
 				grid.SetAll(true);//Artificially select every row in the grid.
 			}
-			if(comboGroupBy.SelectedIndex > 0) {
+			if(comboGroupBy.SelectedIndex > 0 && tabControlCharges.SelectedTab==tabPageOutstanding) {
 				List<List<AccountEntry>> listListsAccountEntries=grid.SelectedTags<List<AccountEntry>>();
 				for(int i = 0;i<listListsAccountEntries.Count;i++) {
 					listListsAccountEntriesSelectedCharges.Add(listListsAccountEntries[i]);
@@ -3199,9 +3199,13 @@ namespace OpenDental {
 			//Thus, on the first FillGridTreatPlan() during load, the vScroll is not taken into account when computing column widths, causing some visual differences.
 			//Forcing the grid to re-fill and draw when we change tabs will compute the column widths again, but with vScroll.Visible updated to being true.
 			if(tabControlCharges.SelectedTab==tabPageOutstanding) {
+				comboGroupBy.SelectedIndex=0;
+				comboGroupBy.Enabled=true;
 				FillGridCharges();
 			}
 			else {//Treat' Plan
+				comboGroupBy.SelectedIndex=0;
+				comboGroupBy.Enabled=false;
 				FillGridTreatPlan();
 			}
 			UpdateChargeTotalWithSelectedEntries();

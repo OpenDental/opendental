@@ -709,15 +709,17 @@ namespace OpenDental {
 		private void AddAttachments(List<ClaimConnect.ImageAttachment> listImageAttachments) {
 			if(string.IsNullOrWhiteSpace(_claim.AttachmentID)) {
 				//If an attachment has not already been created, create one.
-				string attachmentId=ClaimConnect.CreateAttachment(listImageAttachments, textNarrative.Text,_claim);
+				string attachmentId=ClaimConnect.OpenAttachment(_claim,textNarrative.Text);
 				//Update claim if attachmentID was set. Must happen here so that the validation will consider the new attachmentID.
 				_claim.AttachmentID=attachmentId;
+				_listImageReferenceIds=ClaimConnect.AddAttachmentImage(_claim,listImageAttachments);
+				ClaimConnect.SubmitAttachment(_claim);
 				//Set the claims attached flag to 'Misc' so that the attachmentID will write to the PWK segment 
 				//when the claim is generated as an 837.
 				_claim.AttachedFlags="Misc";
 			}
 			else {//An attachment already exists for this claim.
-				_listImageReferenceIds=ClaimConnect.AddAttachment(_claim, listImageAttachments);
+				_listImageReferenceIds=ClaimConnect.AddAttachmentImage(_claim, listImageAttachments);
 				if(_claim.Narrative!=textNarrative.Text) {
 					ClaimConnect.AddNarrative(_claim,textNarrative.Text);
 				}
@@ -820,9 +822,7 @@ namespace OpenDental {
 					}
 					//Create attachment objects
 					ClaimAttach claimAttach=CreateClaimAttachment(imageAttachmentRow.ImageFileNameDisplay,imageAttachmentRow.ImageFileNameActual);
-					if(_listImageReferenceIds!=null) {
-						claimAttach.ImageReferenceId=_listImageReferenceIds[i];
-					}
+					claimAttach.ImageReferenceId=_listImageReferenceIds[i];
 					listClaimAttachments.Add(claimAttach);
 				}
 				else if(_eclaimsCommBridge==EclaimsCommBridge.EDS) {

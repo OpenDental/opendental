@@ -2394,6 +2394,9 @@
     <column order="3" name="ActualFileName" type="varchar(255)">
       <summary>The actual file is stored in the A-Z folder in EmailAttachments.  (yes, even though it's not actually an email attachment)  The files are named automatically based on Date/time along with a random number.  This ensures that they will be sequential as well as unique.</summary>
     </column>
+    <column order="4" name="ImageReferenceId" type="int(11)">
+      <summary>This is the image Id that DentalXChange gives back after calling addImage(). Storing this will allow users to delete images they sent to DentalXChange.</summary>
+    </column>
   </table>
   <table name="claimcondcodelog">
     <summary>There is either one or zero per claim.</summary>

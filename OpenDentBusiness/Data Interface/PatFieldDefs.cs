@@ -189,6 +189,17 @@ namespace OpenDentBusiness {
 			return Crud.PatFieldDefCrud.SelectOne(patFieldDefNum);
 		}
 
+		///<summary>Gets all PatFieldDefs from the DB. Used in the API.</summary>
+		public static List<PatFieldDef> GetPatFieldDefsForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<PatFieldDef>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM patfielddef ";
+			command+="ORDER BY PatFieldDefNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit)+"";
+			return Crud.PatFieldDefCrud.SelectMany(command);
+		}
+
 		///<summary>Sync pattern, must sync entire table. Probably only to be used in the master problem list window.</summary>
 		public static void Sync(List<PatFieldDef> listDefs,List<PatFieldDef> listDefsOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

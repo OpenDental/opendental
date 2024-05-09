@@ -354,6 +354,7 @@ namespace WpfControls.UI{
 				streamWriter.Flush();
 				textRange.Load(memoryStream,DataFormats.Rtf);
 				richTextBox.Document=flowDocument;
+				SpellCheck();
 			}
 		}
 
@@ -376,6 +377,7 @@ namespace WpfControls.UI{
 			}
 			set {
 				richTextBox.Selection.Text=value;
+				SpellCheck();
 				TextSelection textSelection = richTextBox.Selection;
 				TextPointer textPointerEnd = textSelection.End;
 				richTextBox.Selection.Select(textPointerEnd,textPointerEnd);
@@ -562,6 +564,7 @@ namespace WpfControls.UI{
 					}
 				}
 				richTextBox.Document=flowDocument;
+				SpellCheck();
 			}
 		}
 
@@ -646,7 +649,11 @@ namespace WpfControls.UI{
 			textSelection.ApplyPropertyValue(TextElement.BackgroundProperty,new SolidColorBrush(color));
 		}
 
+		///<summary>This must be run any time the text changes in the RichTextBox, or else the pointers in _listTextRangesMisspelled are outdated and it will crash when you later try to use them.</summary>
 		public void SpellCheck(){
+			if(!IsUsingSpellCheck()){//if spell checking is disabled for this control or is disabled globally
+				return;
+			}
 			_isSpellChecking=true;
 			ClearWavyAll();
 			_listTextRangesMisspelled=new List<TextRange>();
@@ -730,9 +737,6 @@ namespace WpfControls.UI{
 
 		#region Methods - private event handlers
 		private void ContextMenu_Opened(object sender,RoutedEventArgs e) {
-			if(IsUsingSpellCheck()) {
-				SpellCheck();//If this is not done, then it can crash after appending text and then right clicking.
-			}
 			if(SelectionLength==0) {
 				menuItemCut.IsEnabled=false;
 				menuItemCopy.IsEnabled=false;
@@ -906,6 +910,7 @@ namespace WpfControls.UI{
 			}
 			if(menuItem==menuItemCut) {
 				richTextBox.Cut();
+				SpellCheck();
 				return;
 			}
 			if(menuItem==menuItemCopy) {
@@ -913,12 +918,13 @@ namespace WpfControls.UI{
 					MsgBox.Show(this,"Not allowed because this text box is set to read-only.");
 					return;
 				}
-				richTextBox.Copy();
+				richTextBox.Copy();//no need to refresh SpellCheck because no text is added
 				return;
 			}
 			if(menuItem==menuItemPaste) {
 				if(FormattedTextAllowed) {
 					richTextBox.Paste();
+					SpellCheck();
 				}
 				else {
 					PastePlainText();
@@ -1233,6 +1239,7 @@ namespace WpfControls.UI{
 			TextPointer textPointerStart=textSelection.Start;
 			string strDate=DateTime.Today.ToShortDateString();
 			richTextBox.Selection.Text=strDate;
+			SpellCheck();
 			//TextPointers are copies/Selections, not references.
 			//So we have to get them again.
 			textSelection=richTextBox.Selection;
@@ -1247,6 +1254,7 @@ namespace WpfControls.UI{
 			TextSelection textSelection=richTextBox.Selection;
 			TextPointer textPointerStart=textSelection.Start;
 			richTextBox.Selection.Text=strPaste;
+			SpellCheck();
 			//TextPointers/Selections are copies, not references.
 			//So we have to get them again.
 			textSelection=richTextBox.Selection;

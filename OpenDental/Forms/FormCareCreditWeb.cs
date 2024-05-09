@@ -124,6 +124,7 @@ namespace OpenDental {
 		}
 
 		protected override void OnClosed(EventArgs e) {
+			webViewMain.Dispose();
 			base.OnClosed(e);
 		}
 	}

@@ -214,7 +214,10 @@ namespace OpenDentBusiness {
 		///AND the program has a property of "Disable Advertising" = 1 OR "Disable Advertising HQ" = 1.
 		///This means that either the office has disabled the ad or HQ has disabled the ad.</summary>
 		public static bool IsAdvertisingDisabled(Program program) {
-			if(program==null || program.Enabled) {
+			if(program==null) {
+				return true;
+			}
+			if(program.Enabled) {
 				return false;//do not block advertising
 			}
 			return GetForProgram(program.ProgramNum).Any(x => (x.PropertyDesc=="Disable Advertising" && x.PropertyValue=="1") //Office has decided to hide the advertising
@@ -611,6 +614,8 @@ namespace OpenDentBusiness {
 		private static List<string> GetDeletablePropertyDescriptions() {
 			return new List<string>() {
 				PropertyDescs.ClinicHideButton,
+				PropertyDescs.DisableAdvertising,
+				PropertyDescs.DisableAdvertisingHQ
 			};
 		}
 
@@ -620,6 +625,8 @@ namespace OpenDentBusiness {
 			public const string Username="Username";
 			public const string Password="Password";
 			public const string ClinicHideButton="ClinicHideButton";
+			public const string DisableAdvertising="Disable Advertising";
+			public const string DisableAdvertisingHQ="Disable Advertising HQ";
 
 			//Prevents this class from being instansiated.
 			private PropertyDescs() { }

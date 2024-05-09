@@ -27,6 +27,12 @@
       <summary>A note that pertains to all attachments on the claim. Currently only applies to DentalXChange, but could be expanded. 2000 character limit put in place by DentalXChange.</summary>
     </column>
   </table>
+  <table name="claimattach">
+    <summary></summary>
+    <column order="4" name="ImageReferenceId" type="int(11)">
+      <summary>This is the image Id that DentalXChange gives back after calling addImage(). Storing this will allow users to delete images they sent to DentalXChange.</summary>
+    </column>
+  </table>
   <table name="clearinghouse">
     <summary></summary>
     <column order="30" name="LocationID" type="varchar(255)">

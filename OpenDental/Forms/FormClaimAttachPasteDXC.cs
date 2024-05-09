@@ -187,15 +187,17 @@ namespace OpenDental {
 		private void AddAttachments(List<ClaimConnect.ImageAttachment> listImageAttachments) {
 			if(string.IsNullOrWhiteSpace(ClaimCur.AttachmentID)) {
 				//If an attachment has not already been created, create one.
-				string attachmentId=ClaimConnect.CreateAttachment(listImageAttachments,textNarrative.Text,ClaimCur);
+				string attachmentId=ClaimConnect.OpenAttachment(ClaimCur,textNarrative.Text);
 				//Update claim if attachmentID was set. Must happen here so that the validation will consider the new attachmentID.
 				ClaimCur.AttachmentID=attachmentId;
+				_listImageReferenceIds=ClaimConnect.AddAttachmentImage(ClaimCur,listImageAttachments);
+				ClaimConnect.SubmitAttachment(ClaimCur);
 				//Set the claims attached flag to 'Misc' so that the attachmentID will write to the PWK segment 
 				//when the claim is generated as an 837.
 				ClaimCur.AttachedFlags="Misc";
 			}
 			else {//An attachment already exists for this claim.
-				_listImageReferenceIds=ClaimConnect.AddAttachment(ClaimCur,listImageAttachments);
+				_listImageReferenceIds=ClaimConnect.AddAttachmentImage(ClaimCur,listImageAttachments);
 				if(ClaimCur.Narrative!=textNarrative.Text) {
 					ClaimConnect.AddNarrative(ClaimCur,textNarrative.Text);
 				}
@@ -287,9 +289,7 @@ namespace OpenDental {
 				claimAttach.DisplayedFileName=listImageAttachments[i].ImageFileNameDisplay;
 				claimAttach.ActualFileName=listImageAttachments[i].ImageFileNameActual;
 				claimAttach.ClaimNum=ClaimCur.ClaimNum;
-				if(_listImageReferenceIds!=null) {
-					claimAttach.ImageReferenceId=_listImageReferenceIds[i];
-				}
+				claimAttach.ImageReferenceId=_listImageReferenceIds[i];
 				listClaimAttaches.Add(claimAttach);
 			}
 			//Keep a running list of attachments sent to DXC for the claim. This will show in the attachments listbox.
