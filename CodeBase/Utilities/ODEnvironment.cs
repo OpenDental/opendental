@@ -68,7 +68,7 @@ namespace CodeBase {
 		///<summary>Indicates if we are running on an OD Cloud server (Thinfinity or AppStream).</summary>
 		public static bool IsCloudServer {
 			get {
-				if(ODBuild.IsWeb() || ODCloudClient.IsAppStream) {
+				if(IsCloudInstance) {
 					return true;
 				}
 				//Sometimes we connect to an OD Cloud db with a normal build to do things like updates or from the ODService or ODEConnector services.
@@ -79,6 +79,12 @@ namespace CodeBase {
 					_dateTimeLastCloudCheck=DateTime.Now;
 				}
 				return _isCloudServerFileValid;				
+			}
+		}
+
+		public static bool IsCloudInstance {
+			get {
+				return ODBuild.IsWeb() || ODCloudClient.IsAppStream;
 			}
 		}
 
@@ -97,7 +103,7 @@ namespace CodeBase {
 		///<summary>Always client name.  If on RDP, gets client name, never server name. If Thinfinity or AppStream, sends a request to the CloudClient to get the computer name.</summary>
 		public static string MachineName {
 			get {
-				if(IsCloudServer) {
+				if(IsCloudInstance) {
 					return _machineName;
 				}
 				if(typeof(SystemInformation).GetProperty("TerminalServerSession").GetValue(null).ToString()!="True"){
@@ -131,7 +137,7 @@ namespace CodeBase {
 		///and this will try again the next time it's called by the ODCloudMachineName thread.  Once the machine name is retrieved from ODCloudClient successfully
 		///(_machineName!="UNKNOWN") this will not attempt to retrieve the local computer name again while this instance is running.</summary>
 		public static void SetMachineName() {
-			if(!IsCloudServer) {//only for Thinfinity and AppStream
+			if(!IsCloudInstance) {//only for Thinfinity and AppStream
 				return;
 			}
 			if(!_machineName.IsNullOrEmpty() && _machineName.ToUpper()!=UNKNOWN_NAME.ToUpper()) {//_machineName is already set, no need to get from ODCloudClient

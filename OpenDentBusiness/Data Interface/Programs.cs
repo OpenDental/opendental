@@ -127,6 +127,14 @@ namespace OpenDentBusiness {
 					}
 				}
 			}
+			//Delete all programs disabled by HQ
+			if(!retVal) {
+				List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(progCur.ProgramNum);
+				for(int i=0;i<listProgramProperties.Count;i++) {
+					ProgramProperties.Delete(listProgramProperties[i]);
+				}
+				Programs.Delete(progCur);
+			}
 			if(!retVal && string.IsNullOrWhiteSpace(err)) {//if the CustErr wasn't set at HQ then we assume a customer is not able to use this program because they are not on support
 				err=Lans.g("Program","You must be on support to use this program.");
 			}

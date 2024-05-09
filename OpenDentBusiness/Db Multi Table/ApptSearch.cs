@@ -27,9 +27,13 @@ namespace OpenDentBusiness {
 			//list of all openings for the given blockouts - list of providers is just provNum 0 for blockout purposes.
 			listOpeningForBlockout=GetSearchResults(apptNum,startDate,endDate,new List<long>() {0},listOpNums,listClinicNums,timeBefore,
 				timeAfter,listBlockoutTypes,true).OrderBy(x => x.DateTimeAvail).ToList();
+			HashSet<DateTime> hashSetDateTimeAvailOpeningForBlockout = new HashSet<DateTime>();
+			for(int i=0;i<listOpeningForBlockout.Count;i++) {
+				hashSetDateTimeAvailOpeningForBlockout.Add(listOpeningForBlockout[i].DateTimeAvail);
+			}
 			//Get the first DateTime,OpNum,Clinic combo that are present in both the provider and blockout openings.
 			Dictionary<DateTime,List<ScheduleOpening>> dictOpeningsByDate=listOpeningsForProvs
-				.Where(x => listOpeningForBlockout.Any(y => y.DateTimeAvail==x.DateTimeAvail && y.OpNum==x.OpNum && y.ClinicNum==x.ClinicNum))
+				.Where(x => hashSetDateTimeAvailOpeningForBlockout.Contains(x.DateTimeAvail))
 				.GroupBy(x => x.DateTimeAvail.Date)
 				.ToDictionary(x => x.Key,x => x.ToList());
 			//Only return one opening per day and limit the results by resultCount that was passed in.

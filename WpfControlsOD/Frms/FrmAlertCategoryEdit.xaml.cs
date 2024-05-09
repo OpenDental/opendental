@@ -22,7 +22,7 @@ namespace OpenDental {
 			//Lan.F(this);
 			_alertCategory=alertCategory;
 			Load+=FrmAlertCategoryEdit_Load;
-			PreviewMouseDown+=listBoxAlertTypes_PreviewMouseDown;
+			listBoxAlertTypes.MouseDown+=listBoxAlertTypes_MouseDown;
 		}
 		
 		private void FrmAlertCategoryEdit_Load(object sender,EventArgs e) {
@@ -48,7 +48,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void listBoxAlertTypes_PreviewMouseDown(object sender,MouseButtonEventArgs e) {
+		private void listBoxAlertTypes_MouseDown(object sender,MouseButtonEventArgs e) {
 			if(_alertCategory.IsHQCategory) {
 				InitAlertTypeSelections();
 				MsgBox.Show(this,"You can only edit custom alert categories.");

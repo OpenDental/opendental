@@ -326,6 +326,7 @@ namespace OpenDental {
 		///<summary>Tries to log the text passed in to a centralized DBM log.  Displays an error message to the user if anything goes wrong.
 		///Always sets the current Cursor state back to Cursors.Default once finished.</summary>
 		private void SaveLogToFile(string logText) {
+			logText="Database Maintenance for Patient - Results: \r\n"+logText;
 			try {
 				DatabaseMaintenances.SaveLogToFile(logText);
 			}

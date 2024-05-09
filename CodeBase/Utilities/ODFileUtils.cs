@@ -160,7 +160,7 @@ namespace CodeBase {
 		///<summary>Start the given process.   
 		///If using a Thinfinity compiled version of Open Dental or this is an AppStream instance, pass through to the odcloud client to start the process locally.</summary>
 		public static void ProcessStart(Process process) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODEnvironment.IsCloudInstance) {
 				//We will only use the FileName and Arguments from the process's StartInfo.  Only non-web builds utilize the entire process.
 				ProcessStart(process.StartInfo.FileName,process.StartInfo.Arguments);
 			}
@@ -174,7 +174,7 @@ namespace CodeBase {
 		///<param name="doWaitForODCloudClientResponse">If true, will wait for ODCloudClient and throw any exceptions from it.</param>
 		///<param name="createDirIfNeeded">If included, will create the directory if it doesn't exist.</param>
 		public static Process ProcessStart(string path,string commandLineArgs="",bool doWaitForODCloudClientResponse=false,string createDirIfNeeded="",bool tryLaunch=false) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODEnvironment.IsCloudInstance) {
 				ODCloudClient.LaunchFileWithODCloudClient(path,commandLineArgs,doWaitForResponse:doWaitForODCloudClientResponse,
 					createDirIfNeeded:createDirIfNeeded,tryLaunch:tryLaunch);
 				return null;
@@ -188,7 +188,7 @@ namespace CodeBase {
 		///<summary>Write the given text to the given file.  
 		///If using a Thinfinity compiled version of Open Dental or is an AppStream instance, pass through to the odcloud client for File IO.</summary>
 		public static void WriteAllText(string filePath,string text,bool doOverwriteFile=true) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODEnvironment.IsCloudInstance) {
 				try {
 					ODCloudClient.WriteFile(filePath,text,doOverwriteFile);
 				}
@@ -215,7 +215,7 @@ namespace CodeBase {
 		///<summary>Write the given text to the given file, then start a new process with the given path.  
 		///If using a WEB compiled version of Open Dental, pass through to the odcloud client for File IO and to start the process locally. Throws exceptions.</summary>
 		public static Process WriteAllTextThenStart(string filePath,string fileText,string processPath,string commandLineArgs,bool doStartWithoutExtraFile=false) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODEnvironment.IsCloudInstance) {
 				ODCloudClient.LaunchFileWithODCloudClient(processPath,commandLineArgs,filePath,fileText,doWaitForResponse:true,doStartWithoutExtraFile:doStartWithoutExtraFile);
 				return null;
 			}
@@ -228,7 +228,7 @@ namespace CodeBase {
 		///<summary>Write the given text to the given file, then start a new process with the given path.  
 		///If using a Thinfinity compiled version of Open Dental or an AppStream instance, pass through to the odcloud client for File IO and to start the process locally.</summary>
 		public static Process WriteAllTextThenStart(string filePath,string fileText,Encoding encoding,string processPath,string commandLineArgs) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODEnvironment.IsCloudInstance) {
 				//Purposefully omit encoding.  This can be an enhancement if needed.
 				ODCloudClient.LaunchFileWithODCloudClient(processPath,commandLineArgs,filePath,fileText);
 				return null;
@@ -291,7 +291,7 @@ namespace CodeBase {
 		///<param name="commandLineArgs">Command line arguments to pass to processPath.</param>
 		///<param name="millisecondsToSleep">Time for thread to sleep between the program writing to a file and launching. Not always necessary. Currently only used for dexis integrator.</param>
 		public static Process WriteAllBytesThenStart(string filePath,byte[] fileBytes,string processPath,string commandLineArgs,int millisecondsToSleep=0) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODEnvironment.IsCloudInstance) {
 				string byteString=Convert.ToBase64String(fileBytes);
 				ODCloudClient.LaunchFileWithODCloudClient(processPath,commandLineArgs,filePath,byteString,"binary");
 				return null;

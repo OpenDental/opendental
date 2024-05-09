@@ -470,12 +470,15 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		private static YN _isAppStream=YN.Unknown;
 		public static bool IsAppStream {
 			get {
 				try {
-					bool isAppStream=PrefC.GetBool(PrefName.CloudIsAppStream);
-					ODCloudClient.IsAppStream=isAppStream;
-					return isAppStream;
+					if(GetBool(PrefName.CloudIsAppStream) && _isAppStream==YN.Unknown) {
+						_isAppStream=string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AppStream_UserName"))?YN.No:YN.Yes;
+					}
+					ODCloudClient.IsAppStream=_isAppStream==YN.Yes;
+					return ODCloudClient.IsAppStream;
 				}
 				catch(Exception ex) {
 					ex.DoNothing();

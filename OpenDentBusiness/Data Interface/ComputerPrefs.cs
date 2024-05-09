@@ -17,7 +17,7 @@ namespace OpenDentBusiness {
 
 		public static ComputerPref LocalComputer{
 			get {
-				if(_localComputer==null || (ODEnvironment.IsCloudServer && _localComputer.ComputerName.ToLower()!=ODEnvironment.MachineName.ToLower())) {
+				if(_localComputer==null || (ODEnvironment.IsCloudInstance && _localComputer.ComputerName.ToLower()!=ODEnvironment.MachineName.ToLower())) {
 					_localComputer=GetForLocalComputer();
 					_localComputerOld=_localComputer.Copy();
 				}

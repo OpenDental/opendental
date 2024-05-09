@@ -517,7 +517,7 @@
 			// 
 			this.butBatch.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butBatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butBatch.Location = new System.Drawing.Point(8, 14);
+			this.butBatch.Location = new System.Drawing.Point(3, 14);
 			this.butBatch.Name = "butBatch";
 			this.butBatch.Size = new System.Drawing.Size(96, 24);
 			this.butBatch.TabIndex = 150;
@@ -528,7 +528,7 @@
 			// 
 			this.butThisClaimOnly.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butThisClaimOnly.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butThisClaimOnly.Location = new System.Drawing.Point(8, 66);
+			this.butThisClaimOnly.Location = new System.Drawing.Point(3, 66);
 			this.butThisClaimOnly.Name = "butThisClaimOnly";
 			this.butThisClaimOnly.Size = new System.Drawing.Size(96, 24);
 			this.butThisClaimOnly.TabIndex = 264;
@@ -537,7 +537,7 @@
 			// 
 			// labelBatch
 			// 
-			this.labelBatch.Location = new System.Drawing.Point(6, 37);
+			this.labelBatch.Location = new System.Drawing.Point(1, 37);
 			this.labelBatch.Name = "labelBatch";
 			this.labelBatch.Size = new System.Drawing.Size(167, 28);
 			this.labelBatch.TabIndex = 151;
