@@ -453,7 +453,7 @@ namespace OpenDental {
 				return;
 			}
 			if(emailPreview.IsHtml || IsAutographHTML(listAutographs.GetSelected<EmailAutograph>())) {
-				if(MsgBox.Show(MsgBoxButtons.YesNo,"Autographs with images or HTML tags must be inserted from the Edit HTML window using the Autograph dropdown in the toolbar."
+				if(MsgBox.Show(MsgBoxButtons.YesNo,"Adding an autograph to an email with images or HTML tags must be done from the Edit HTML window."
 					+"\r\n\r\nWould you like to open the Edit HTML window?")) 
 				{
 					OpenEditHtmlWindow();

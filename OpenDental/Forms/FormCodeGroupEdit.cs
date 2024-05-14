@@ -58,8 +58,8 @@ namespace OpenDental {
 			//Also, users are allowed to enter values that are not currently present within the database.
 			//The following code is case sensitive on purpose.
 			List<string> listProcCodes=textProcCodes.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)
-				.GroupBy(x => x)
-				.Select(x => x.Key.Trim())
+				.Select(x => x.Trim())
+				.Distinct()
 				.ToList();
 			listProcCodes.RemoveAll(x => string.IsNullOrWhiteSpace(x));
 			return listProcCodes;
