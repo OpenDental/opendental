@@ -391,25 +391,13 @@ namespace OpenDental {
 			if(emailAutograph==null) {
 				return;
 			}
-			if(!IsAutographHTML(emailAutograph)) {//HTML autographs will be appended automatically on send.
+			if(!EmailAutographs.IsAutographHTML(emailAutograph.AutographText)) {//HTML autographs will be appended automatically on send.
 				InsertAutograph(emailAutograph);
 			}
 		}
 		
 		private void InsertAutograph(EmailAutograph emailAutograph) {
 			emailPreview.BodyText=EmailMessages.InsertAutograph(emailPreview.BodyText,emailAutograph);
-		}
-
-		/// <summary>Returns true if the given EmailAutograph contains HTML tags, false otherwise. </summary>
-		private bool IsAutographHTML(EmailAutograph emailAutograph) {
-			string allTagsPattern="<(?:\"[^\"]*\"|'[^']*'|[^'\">])+>"; //Matches all HTML tags including inline css with double or single quotations.
-			bool doesContainHtml=Regex.IsMatch(emailAutograph.AutographText,allTagsPattern);
-			//An autograph without HTML tags may still have an OD-style image link (which requires HTML to insert correctly), so check for that as well
-			//This regex looks for any tags of the syntax "[[img:FILE.EXT]]" where "FILE" is any valid file name and "EXT" is a file extension that matches one of the image formats specified below
-			//We check for a valid file extension to prevent matching against non-image links, e.g. "[[How To Check A Patient In]]"
-			string imageTagPattern="\\[\\[img:.*(bmp|gif|jpeg|jpg|png|svg)\\]\\]";
-			doesContainHtml|=Regex.IsMatch(emailAutograph.AutographText,imageTagPattern,RegexOptions.IgnoreCase);
-			return doesContainHtml;
 		}
 
 		private void listAutographs_DoubleClick(object sender,EventArgs e) { //edit an autograph
@@ -440,8 +428,8 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Please select an autograph before inserting."));
 				return;
 			}
-			if(emailPreview.IsHtml || IsAutographHTML(listAutographs.GetSelected<EmailAutograph>())) {
-				if(MsgBox.Show(MsgBoxButtons.YesNo,"Autographs with images or HTML tags must be inserted from the Edit HTML window using the Autograph dropdown in the toolbar."
+			if(emailPreview.IsHtml ||EmailAutographs.IsAutographHTML(listAutographs.GetSelected<EmailAutograph>().AutographText)) {
+				if(MsgBox.Show(MsgBoxButtons.YesNo,"Adding an autograph to an email with images or HTML tags must be done from the Edit HTML window."
 					+"\r\n\r\nWould you like to open the Edit HTML window?")) 
 				{
 					OpenEditHtmlWindow();
@@ -855,7 +843,7 @@ namespace OpenDental {
 			}
 			//If default autograph is HTML send the whole email as HTML.
 			EmailAutograph emailAutograph=FindDefaultEmailAutograph();
-			if(emailAutograph!=null && IsAutographHTML(emailAutograph) && _emailMessage.HtmlType==EmailType.Regular) {
+			if(emailAutograph!=null && EmailAutographs.IsAutographHTML(emailAutograph.AutographText) && _emailMessage.HtmlType==EmailType.Regular) {
 				bool hasValidHTML=false;
 				try {
 					string markupText=emailPreview.BodyText+"\r\n\r\n"+emailAutograph.AutographText;

@@ -2322,6 +2322,7 @@ namespace OpenDental {
 				{
 					return null;//send user back to fix information or use suggested auto code.
 				}
+				FillFees();//Make sure _lookupFees is up to date in case proc has changed.
 				return frmAutoCodeLessIntrusive.ProcedureCur;
 			};
 			string translationSource=nameof(FormProcEdit);

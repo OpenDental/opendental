@@ -710,7 +710,10 @@ namespace OpenDental {
 				}
 			}
 			//If it is an exam and has the permission to save it, enable the save button.
-			butSave.Visible=(SheetCur.SheetType==SheetTypeEnum.ExamSheet && butOK.Enabled && butOK.Visible && !IsReadOnly);
+			if(SheetCur.SheetType==SheetTypeEnum.ExamSheet && butOK.Enabled && butOK.Visible && !IsReadOnly){
+				butSave.Visible=true;
+				butOK.Text="Save && Close";
+			}
 			if(SheetCur.IsNew && SheetCur.SheetType!=SheetTypeEnum.PaymentPlan) {//payplan does not get saved to db so sheet is always new
 				butChangePat.Enabled=false;
 				return;

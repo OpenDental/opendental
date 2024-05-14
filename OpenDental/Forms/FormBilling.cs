@@ -25,9 +25,7 @@ namespace OpenDental {
 		private int _pagesPrinted;
 		private DataTable _table;
 		private bool _isInitial=true;
-		public long ClinicNumInitial;
-		///<summary>Do not pass a list of clinics in.  This list gets filled on load based on the user logged in.  ListClinics is used in other forms so it is public.</summary>
-		public List<Clinic> ListClinics;
+		public List<long> ClinicNumsSelectedInitial=new List<long>();
 		private List<long> _listStatementNumsSent;
 		///<summary>If progress is paused and then resumed, it checks db for any that got deleted and puts in this variable.</summary>
 		private List<long> _listStatementNumsToSkipAfterPause=new List<long>();
@@ -63,13 +61,11 @@ namespace OpenDental {
 			comboOrder.Items.Add(Lan.g(this,"BillingType"));
 			comboOrder.Items.Add(Lan.g(this,"PatientName"));
 			comboOrder.SelectedIndex=0;
-			//ListClinics can be called even when Clinics is not turned on, therefore it needs to be set to something to avoid a null reference.
-			ListClinics=new List<Clinic>();
-			if(Clinics.ClinicNum==0) {
+			if(ClinicNumsSelectedInitial.Any(x => x<=0)) {
 				comboClinic.IsAllSelected=true;
 			}
 			else {
-				comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinic.ListClinicNumsSelected=ClinicNumsSelectedInitial;
 			}
 			FillComboEmail();
 			FillGrid();
@@ -91,8 +87,8 @@ namespace OpenDental {
 				dateTo=PIn.Date(textDateEnd.Text);
 			}
 			List<long> clinicNums=new List<long>();//an empty list indicates to Statements.GetBilling to run for all clinics
-			if(PrefC.HasClinicsEnabled && comboClinic.ClinicNumSelected>0) {
-				clinicNums.Add(comboClinic.ClinicNumSelected);
+			if(PrefC.HasClinicsEnabled && comboClinic.ListClinicNumsSelected.Count>0) {
+				clinicNums.AddRange(comboClinic.ListClinicNumsSelected);
 			}
 			_table=Statements.GetBilling(radioSent.Checked,comboOrder.SelectedIndex,dateFrom,dateTo,clinicNums);
 			gridBill.BeginUpdate();
@@ -726,7 +722,16 @@ namespace OpenDental {
 						else {
 							if(PrefC.GetBool(PrefName.BillingEmailIncludeAutograph)) {
 								EmailAutograph emailAutograph=EmailAutographs.GetForOutgoing(listEmailAutographs,emailAddress);
-								if(emailAutograph!=null) {
+								if(EmailAutographs.IsAutographHTML(emailAutograph.AutographText)) {
+									//Attempt to convert entire message to html to accomodate for html autograph.
+									ODException.SwallowAnyException(() => {
+										string markup=MarkupEdit.TranslateToXhtml(EmailMessages.InsertAutograph(message.BodyText,emailAutograph),false,isEmail:true);
+										//We got this far so change the message body and html type.
+										message.BodyText=markup;
+										message.HtmlType=EmailType.Html;
+									});
+								}
+								else {
 									message.BodyText=EmailMessages.InsertAutograph(message.BodyText,emailAutograph);
 								}
 							}

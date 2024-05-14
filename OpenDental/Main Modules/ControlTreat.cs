@@ -2577,6 +2577,9 @@ namespace OpenDental{
 		}
 
 		private void ToolBarMainUpdate_Click() {
+			if(dateTimeTP.Value!=DateTime.Today) {//Do not update current estimates based on future date estimates
+				dateTimeTP.Value=DateTime.Today;
+			}
 			if(!new[] { TreatPlanStatus.Active,TreatPlanStatus.Inactive }.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)) {
 				MsgBox.Show(this,"The update fee utility only works on current treatment plans, not any saved plans.");
 				return;

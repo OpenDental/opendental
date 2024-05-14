@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -99,7 +100,20 @@ namespace OpenDentBusiness{
 		//	}
 		//	return Crud.EmailAutographCrud.SelectOne(emailAutographNum);
 		//}
-		
+
+
+		/// <summary>Returns true if the given autographText contains HTML tags, false otherwise. </summary>
+		public static bool IsAutographHTML(string autographText) {
+			string allTagsPattern="<(?:\"[^\"]*\"|'[^']*'|[^'\">])+>"; //Matches all HTML tags including inline css with double or single quotations.
+			bool doesContainHtml=Regex.IsMatch(autographText,allTagsPattern);
+			//An autograph without HTML tags may still have an OD-style image link (which requires HTML to insert correctly), so check for that as well
+			//This regex looks for any tags of the syntax "[[img:FILE.EXT]]" where "FILE" is any valid file name and "EXT" is a file extension that matches one of the image formats specified below
+			//We check for a valid file extension to prevent matching against non-image links, e.g. "[[How To Check A Patient In]]"
+			string imageTagPattern="\\[\\[img:.*(bmp|gif|jpeg|jpg|png|svg)\\]\\]";
+			doesContainHtml|=Regex.IsMatch(autographText,imageTagPattern,RegexOptions.IgnoreCase);
+			return doesContainHtml;
+		}
+
 		///<summary>Insert one EmailAutograph in the database.</summary>
 		public static long Insert(EmailAutograph emailAutograph){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){

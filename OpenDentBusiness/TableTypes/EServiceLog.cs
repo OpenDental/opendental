@@ -99,6 +99,10 @@ namespace OpenDentBusiness {
 		///<summary>12. This means the action done was for the mobile app ODTouch.</summary>
 		[Description("ODTouch")]
 		ODTouch,
+		///<summary>13. This means the action done was for the Payment Portal.</summary>
+		[Description("Payment Portal")]
+		PaymentPortal,
+
 	}
 
 	///<summary>Used by the API. Indicates how the appointment was originally made. Roughly corresponds to the eServiceType enumeration. </summary>
@@ -525,6 +529,70 @@ namespace OpenDentBusiness {
 		[Description("Web Forms - Import Cancelled")]
 		[EServiceLogType(eServiceType.WebForms)]
 		WFCancelled,
+		///<summary>102 - Payment Portal - Unverified user arrived at the payment portal</summary>
+		[Description("Payment Portal - Unverified user arrived at the payment portal")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalArrived,
+		///<summary>103 - Payment Portal - Verified user arrived at the payment portal</summary>
+		[Description("Payment Portal - Verified user arrived at the payment portal")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalArrivedWithSessionToken,
+		///<summary>104 - Payment Portal - User arrived at the payment portal via message-to-pay</summary>
+		[Description("Payment Portal - User arrived at the payment portal via message-to-pay")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalArrivedWithPayGuid,
+		///<summary>105 - Payment Portal - User provided patient information on patient information view</summary>
+		[Description("Payment Portal - User provided patient information on patient information view")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalSelectedPatient,
+		///<summary>106 - Payment Portal - Switched to selected patient's clinic</summary>
+		[Description("Payment Portal - Switched to selected patient's clinic")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalSwitchedToCorrectClinic,
+		///<summary>107 - Payment Portal - User requested an email authentication code</summary>
+		[Description("Payment Portal - User requested an email authentication code")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalRequestedCodeViaEmail,
+		///<summary>108 - Payment Portal - User requested a text authentication code</summary>
+		[Description("Payment Portal - User requested a text authentication code")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalRequestedCodeViaSms,
+		///<summary>109 - Payment Portal - User verfied identity with an email authentication code</summary>
+		[Description("Payment Portal - User verfied identity with an email authentication code")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalAuthenticatedViaEmail,
+		///<summary>110 - Payment Portal - User verfied identity with an SMS authentication code</summary>
+		[Description("Payment Portal - User verfied identity with an SMS authentication code")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalAuthenticatedViaSms,
+		///<summary>111 - Payment Portal - User opted to pay amount due</summary>
+		[Description("Payment Portal - User opted to pay amount due")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalUseAmountDue,
+		///<summary>112 - Payment Portal - User entered a custom amount to pay</summary>
+		[Description("Payment Portal - User entered a custom amount to pay")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalEnteredPayAmount,
+		///<summary>113 - Payment Portal - User selected an existing payment method</summary>
+		[Description("Payment Portal - User selected an existing payment method")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalSelectedPaymentMethod,
+		///<summary>114 - Payment Portal - The make payment window was loaded</summary>
+		[Description("Payment Portal - The make payment window was loaded")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalHostedFormLoaded,
+		///<summary>115 - Payment Portal - The payment was processed successfully</summary>
+		[Description("Payment Portal - The payment was processed successfully")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalPaymentSucceeded,
+		///<summary>116 - Payment Portal - The user printed their receipt</summary>
+		[Description("Payment Portal - The user printed their receipt")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalClickedPrint,
+		///<summary>117 - Payment Portal - The user received an error</summary>
+		[Description("Payment Portal - The user received an error")]
+		[EServiceLogType(eServiceType.PaymentPortal)]
+		PayPortalPaymentPortalError,
 	}
 
 	public class EServiceLogType:Attribute {

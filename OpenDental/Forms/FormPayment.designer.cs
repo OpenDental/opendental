@@ -30,7 +30,6 @@
 		private System.Windows.Forms.TextBox textDeposit;
 		private System.Windows.Forms.Label labelDeposit;
 		private OpenDental.UI.CheckBox checkPayTypeNone;
-		private OpenDental.UI.Button butPayConnect;
 		private System.Windows.Forms.ContextMenu contextMenuPayConnect;
 		private System.Windows.Forms.MenuItem menuPayConnect;
 		private UI.ComboBox comboCreditCards;
@@ -126,7 +125,6 @@
 			this.butShowHide = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.textDeposit = new System.Windows.Forms.TextBox();
-			this.butPayConnect = new OpenDental.UI.Button();
 			this.labelDepositAccount = new System.Windows.Forms.Label();
 			this.labelDeposit = new System.Windows.Forms.Label();
 			this.textDepositAccount = new System.Windows.Forms.TextBox();
@@ -222,6 +220,7 @@
 			this.labelTransactionCompleted = new System.Windows.Forms.Label();
 			this.labelSurchargeFee = new System.Windows.Forms.Label();
 			this.textSurcharge = new System.Windows.Forms.TextBox();
+			this.butPayConnect = new System.Windows.Forms.Panel();
 			this.groupXWeb.SuspendLayout();
 			this.tabControlCharges.SuspendLayout();
 			this.tabPageOutstanding.SuspendLayout();
@@ -370,16 +369,6 @@
 			this.textDeposit.ReadOnly = true;
 			this.textDeposit.Size = new System.Drawing.Size(100, 20);
 			this.textDeposit.TabIndex = 125;
-			// 
-			// butPayConnect
-			// 
-			this.butPayConnect.Location = new System.Drawing.Point(958, 17);
-			this.butPayConnect.Name = "butPayConnect";
-			this.butPayConnect.Size = new System.Drawing.Size(75, 26);
-			this.butPayConnect.TabIndex = 129;
-			this.butPayConnect.Text = "PayConnect";
-			this.butPayConnect.Visible = false;
-			this.butPayConnect.Click += new System.EventHandler(this.butPayConnect_Click);
 			// 
 			// labelDepositAccount
 			// 
@@ -1389,9 +1378,21 @@
 			this.textSurcharge.TabIndex = 1005;
 			this.textSurcharge.Visible = false;
 			// 
+			// butPayConnect
+			// 
+			this.butPayConnect.BackgroundImage = global::OpenDental.Properties.Resources.payconnect_btn_26;
+			this.butPayConnect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.butPayConnect.Location = new System.Drawing.Point(958, 17);
+			this.butPayConnect.Name = "butPayConnect";
+			this.butPayConnect.Size = new System.Drawing.Size(75, 26);
+			this.butPayConnect.TabIndex = 141;
+			this.butPayConnect.Visible = false;
+			this.butPayConnect.Click += new System.EventHandler(this.butPayConnect_Click);
+			// 
 			// FormPayment
 			// 
 			this.ClientSize = new System.Drawing.Size(1111, 696);
+			this.Controls.Add(this.butPayConnect);
 			this.Controls.Add(this.textSurcharge);
 			this.Controls.Add(this.labelSurchargeFee);
 			this.Controls.Add(this.labelTransactionCompleted);
@@ -1406,7 +1407,6 @@
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.textDeposit);
 			this.Controls.Add(this.butDeletePayment);
-			this.Controls.Add(this.butPayConnect);
 			this.Controls.Add(this.labelDepositAccount);
 			this.Controls.Add(this.butPrintReceipt);
 			this.Controls.Add(this.labelDeposit);
@@ -1488,5 +1488,6 @@
 		private System.Windows.Forms.Label labelSurchargeFee;
 		private System.Windows.Forms.TextBox textSurcharge;
 		private System.Windows.Forms.Label labelIncludesNegativeEntries;
+		private System.Windows.Forms.Panel butPayConnect;
 	}
 }

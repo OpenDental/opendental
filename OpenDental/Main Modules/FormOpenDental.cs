@@ -1807,12 +1807,12 @@ namespace OpenDental{
 								panelSplitter.Height=7;
 								int splitterNewY=LayoutManager.Scale(540);
 								if(ComputerPrefs.LocalComputer.TaskY!=0) {
-									splitterNewY=ComputerPrefs.LocalComputer.TaskY;
-									if(splitterNewY<300) {
-										splitterNewY=300;//keeps it from going too high
+									splitterNewY=LayoutManager.Scale(ComputerPrefs.LocalComputer.TaskY);
+									if(splitterNewY<LayoutManager.Scale(300)) {
+										splitterNewY=LayoutManager.Scale(300);//keeps it from going too high
 									}
-									if(splitterNewY>ClientSize.Height-50) {
-										splitterNewY=ClientSize.Height-panelSplitter.Height-50;//keeps it from going off the bottom edge
+									if(splitterNewY>ClientSize.Height-LayoutManager.Scale(50)) {
+										splitterNewY=ClientSize.Height-panelSplitter.Height-LayoutManager.Scale(50);//keeps it from going off the bottom edge
 									}
 								}
 								_pointFPanelSplitter96dpi=new PointF(0,LayoutManager.UnscaleF(splitterNewY));
@@ -1825,12 +1825,12 @@ namespace OpenDental{
 								panelSplitter.Width=7;
 								int splitterNewX=LayoutManager.Scale(900);
 								if(ComputerPrefs.LocalComputer.TaskX!=0) {
-									splitterNewX=ComputerPrefs.LocalComputer.TaskX;
-									if(splitterNewX<300) {
-										splitterNewX=300;//keeps it from going too far to the left
+									splitterNewX=LayoutManager.Scale(ComputerPrefs.LocalComputer.TaskX);
+									if(splitterNewX<LayoutManager.Scale(300)) {
+										splitterNewX=LayoutManager.Scale(300);//keeps it from going too far to the left
 									}
-									if(splitterNewX>ClientSize.Width-60) {
-										splitterNewX=ClientSize.Width-panelSplitter.Width-60;//keeps it from going off the right edge
+									if(splitterNewX>ClientSize.Width-LayoutManager.Scale(60)) {
+										splitterNewX=ClientSize.Width-panelSplitter.Width-LayoutManager.Scale(60);//keeps it from going off the right edge
 									}
 								}
 								_pointFPanelSplitter96dpi=new PointF(LayoutManager.UnscaleF(splitterNewX),0);
@@ -2207,22 +2207,22 @@ namespace OpenDental{
 			}
 			if(menuItemDockBottom.Checked){
 				int splitterNewY=_pointSplitterOriginalLocation.Y+(panelSplitter.Top+e.Y)-_pointOriginalMouse.Y;
-				if(splitterNewY<300){
-					splitterNewY=300;//keeps it from going too high
+				if(splitterNewY<LayoutManager.Scale(300)){
+					splitterNewY=LayoutManager.Scale(300);//keeps it from going too high
 				}
-				if(splitterNewY>ClientSize.Height-50){
-					splitterNewY=ClientSize.Height-panelSplitter.Height-50;//keeps it from going off the bottom edge
+				if(splitterNewY>ClientSize.Height-LayoutManager.Scale(50)){
+					splitterNewY=ClientSize.Height-panelSplitter.Height-LayoutManager.Scale(50);//keeps it from going off the bottom edge
 				}
 				//panelSplitter.Top=splitterNewY;
 				_pointFPanelSplitter96dpi.Y=LayoutManager.UnscaleF(splitterNewY);
 			}
 			else{//docked right
 				int splitterNewX=_pointSplitterOriginalLocation.X+(panelSplitter.Left+e.X)-_pointOriginalMouse.X;
-				if(splitterNewX<300) {
-					splitterNewX=300;//keeps it from going too far to the left
+				if(splitterNewX<LayoutManager.Scale(300)) {
+					splitterNewX=LayoutManager.Scale(300);//keeps it from going too far to the left
 				}
-				if(splitterNewX>ClientSize.Width-60) {
-					splitterNewX=ClientSize.Width-panelSplitter.Width-60;//keeps it from going off the right edge
+				if(splitterNewX>ClientSize.Width-LayoutManager.Scale(60)) {
+					splitterNewX=ClientSize.Width-panelSplitter.Width-LayoutManager.Scale(60);//keeps it from going off the right edge
 				}
 				//panelSplitter.Left=splitterNewX;
 				_pointFPanelSplitter96dpi.X=LayoutManager.UnscaleF(splitterNewX);

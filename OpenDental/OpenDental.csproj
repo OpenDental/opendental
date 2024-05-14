@@ -10414,6 +10414,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\payconnect-btn-26.png" />
     <Resource Include="Resources\Midway_Icon_22x22.png" />
     <None Include="Resources\Icon1.ico" />
     <None Include="Resources\Podium_logo_Black.png" />

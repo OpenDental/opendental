@@ -14,7 +14,7 @@ namespace OpenDental{
 	public partial class FormBillingOptions : FormODBase {
 		//private FormQuery FormQuery2;
 		private List<Dunning> _listDunnings;
-		public long ClinicNum;
+		public List<long> ListClinicNumsSelected=new List<long>();
 		///<summary>Key: ClinicNum, Value: List of ClinicPrefs for clinic.
 		///List contains all existing ClinicPrefs.</summary>
 		private Dictionary<long,List<ClinicPref>> _dictionaryClinicPrefsOld;
@@ -682,6 +682,7 @@ namespace OpenDental{
 				countCreated=CreateHelper(-2);
 			}
 			if(countCreated>0){
+				ListClinicNumsSelected=comboClinic.ListClinicNumsSelected; 
 				DialogResult=DialogResult.OK;
 			}
 		}

@@ -98,7 +98,7 @@ namespace OpenDental {
 				textCheckSaveNumber.ReadOnly=true;
 				textBankName.ReadOnly=true;
 			}
-			if(_creditCard==null || _creditCard.IsPaySimpleACH()) {
+			if(_creditCard==null || !_creditCard.IsPaySimpleACH()) {
 				textCardNumber.Select();
 				return;
 			}

@@ -97,14 +97,14 @@ namespace OpenDental{
 			if(unsentStatementsExist) {
 				if(PrefC.HasClinicsEnabled) {//Using clinics.
 					if(Statements.UnsentClinicStatementsExist(Clinics.ClinicNum)) {//Check if clinic has unsent bills.
-						ShowBilling(Clinics.ClinicNum);//Clinic has unsent bills.  Simply show billing window.
+						ShowBilling(new List<long>() { Clinics.ClinicNum });//Clinic has unsent bills.  Simply show billing window.
 					}
 					else {//No unsent bills for clinic.  Show billing options to generate a billing list.
 						ShowBillingOptions(Clinics.ClinicNum);
 					}
 				}
 				else {//Not using clinics and has unsent bills.  Simply show billing window.
-					ShowBilling(0);
+					ShowBilling(new List<long>() { 0 });
 				}
 				SecurityLogs.MakeLogEntry(EnumPermType.Billing,0,"");
 				return;
@@ -918,41 +918,30 @@ namespace OpenDental{
 		}
 
 		///<summary>Shows FormBilling and displays warning message if needed.  Pass 0 to show all clinics.  Make sure to check for unsent bills before calling this method.</summary>
-		private void ShowBilling(long clinicNum,bool isHistStartMinDate=false,bool showBillTransSinceZero=false) {
-			bool hadListShowing=false;
+		private void ShowBilling(List<long> listClinicNums,bool isHistStartMinDate=false,bool showBillTransSinceZero=false) {
 			//Check to see if there is an instance of the billing list window already open that needs to be closed.
 			//This can happen if multiple people are trying to send bills at the same time.
 			if(_formBilling!=null && !_formBilling.IsDisposed) {
-				hadListShowing=true;
 				//It does not hurt to always close this window before loading a new instance, because the unsent bills are saved in the database and the entire purpose of FormBilling is the Go To feature.
 				//Any statements that were showing in the old billing list window that we are about to close could potentially be stale and are now invalid and should not be sent.
-				//Another good reason to close the window is when using clinics.  It was possible to show a different clinic billing list than the one chosen.
-				for(int i=0;i<_formBilling.ListClinics.Count;i++) {
-					if(_formBilling.ListClinics[i].ClinicNum!=clinicNum) {//For most users clinic nums will always be 0.
-						//The old billing list was showing a different clinic.  No need to show the warning message in this scenario.
-						hadListShowing=false;
-					}
-				}
+				//Another good reason to close the window is when using clinics.  It was possible to show a different clinic billing list than the one chosen.			
 				_formBilling.Close();
 			}
 			_formBilling=new FormBilling();
-			_formBilling.ClinicNumInitial=clinicNum;
+			_formBilling.ClinicNumsSelectedInitial=listClinicNums;
 			_formBilling.IsHistoryStartMinDate=isHistStartMinDate;
 			_formBilling.ShowBillTransSinceZero=showBillTransSinceZero;
 			_formBilling.Show();//FormBilling has a Go To option and is shown as a non-modal window so the user can view the patient account and the billing list at the same time.
 			_formBilling.BringToFront();
-			if(hadListShowing) {
-				MsgBox.Show(this,"These unsent bills must either be sent or deleted before a new list can be created.");
-			}
 		}
 
 		///<summary>Shows FormBillingOptions and FormBilling if needed.  Pass 0 to show all clinics.  Make sure to check for unsent bills before calling this method.</summary>
 		private void ShowBillingOptions(long clinicNum) {
 			using FormBillingOptions formBillingOptions=new FormBillingOptions();
-			formBillingOptions.ClinicNum=clinicNum;
+			formBillingOptions.ListClinicNumsSelected=new List<long>() { clinicNum };
 			formBillingOptions.ShowDialog();
 			if(formBillingOptions.DialogResult==DialogResult.OK) {
-				ShowBilling(clinicNum,formBillingOptions.IsHistoryStartMinDate,formBillingOptions.ShowBillTransSinceZero);
+				ShowBilling(formBillingOptions.ListClinicNumsSelected,formBillingOptions.IsHistoryStartMinDate,formBillingOptions.ShowBillTransSinceZero);
 			}
 		}
 

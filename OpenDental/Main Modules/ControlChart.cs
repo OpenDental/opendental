@@ -1428,7 +1428,12 @@ namespace OpenDental {
 			Plugins.HookAddCode(this,"ControlChart.menuItemPrintDay_Click_update",objectArray);
 			checkComm.Checked=(bool)objectArray[0];
 			checkAppt.Checked=(bool)objectArray[1];
+			if(Plugins.HookMethod(this,"ControlChart.menuItemPrintDay_Click_fillProgNotes")) {
+				//We're not really sure why this hook was requested. Perhaps they are running FillProgNotes in a slightly different way.
+				goto HookSkipFillProgressNotes;
+			}
 			FillProgNotes();
+			HookSkipFillProgressNotes:
 			if(gridProg.ListGridRows.Count==0) {
 				MsgBox.Show(this,"No completed procedures or notes to print");
 			}
@@ -1900,6 +1905,9 @@ namespace OpenDental {
 			int center=rectangleBounds.X+rectangleBounds.Width/2;
 			#region printHeading
 			if(!_isHeadingPrinted) {
+				if(Plugins.HookMethod(this,"ControlChart.pd2_PrintPageDay_heading")) {
+					goto HookSkipHeadingText;
+				}
 				text="Chart Progress Notes";
 				g.DrawString(text,fontHeading,Brushes.Black,center-g.MeasureString(text,fontHeading).Width/2,yPos);
 				yPos+=(int)g.MeasureString(text,fontHeading).Height;
@@ -1938,8 +1946,12 @@ namespace OpenDental {
 				text="Ward: "+Pd.Patient.Ward;
 				g.DrawString(text,fontSubHeading,Brushes.Black,center-g.MeasureString(text,fontSubHeading).Width/2,yPos);
 				yPos+=20;
+				HookSkipHeadingText:
 				//Patient images are not shown when the A to Z folders are disabled.
 				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ || CloudStorage.IsCloudStorage) {
+					if(Plugins.HookMethod(this,"ControlChart.pd2_PrintPageDay_patImages")) {
+						goto HookSkipHeadingImage;
+					}
 					Bitmap bitmapPatPic=Documents.GetPatPict(Pd.PatNum,ImageStore.GetPatientFolder(Pd.Patient,ImageStore.GetPreferredAtoZpath()));
 					if(bitmapPatPic!=null) {
 						Bitmap bitmap80=ImageHelper.GetBitmapSquare(bitmapPatPic,80);
@@ -1948,7 +1960,11 @@ namespace OpenDental {
 						bitmapPatPic.Dispose();
 						yPos+=80;
 					}
+					HookSkipHeadingImage:
 					yPos+=30;
+					object[] objectArray={ Pd,e,gridProg,yPos };
+					Plugins.HookAddCode(null,"ControlChart.pd2_PrintPageDay_afterSkipImage",objectArray);
+					yPos=(int)objectArray[3];
 					_isHeadingPrinted=true;
 					_heightHeadingPrint=yPos;
 				}
@@ -1960,8 +1976,13 @@ namespace OpenDental {
 				e.HasMorePages=true;
 				return;
 			}
+			if(Plugins.HookMethod(this,"ControlChart.pd2_PrintPageDay_signature")) {
+				goto HookSkipSignature;
+			}
 			g.DrawString("Signature_________________________________________________________",
-							fontSubHeading,Brushes.Black,160,yPos+20);
+				fontSubHeading,Brushes.Black,160,yPos+20);
+			HookSkipSignature: 
+			Plugins.HookAddCode(null,"ControlChart.pd2_PrintPageDay_afterSkipSignature",g,yPos);
 			e.HasMorePages=false;
 		}
 		#endregion Methods - Event Handlers - Printing

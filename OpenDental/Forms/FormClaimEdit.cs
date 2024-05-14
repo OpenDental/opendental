@@ -2763,6 +2763,7 @@ namespace OpenDental{
 			formClaimPrint.PatNum=_claim.PatNum;
 			formClaimPrint.ClaimNum=_claim.ClaimNum;
 			formClaimPrint.DoPrintImmediately=false;
+			formClaimPrint.ShowDialog();
 			_claim=Claims.GetClaim(_claim.ClaimNum);//status will have changed to sent.
 			if(_claim is null){
 				//if claim has been deleted, close out of current form.
@@ -2770,7 +2771,6 @@ namespace OpenDental{
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			formClaimPrint.ShowDialog();
 			_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
 			FillForm();
 			//no need to FillCanadian.  Nothing has changed.
@@ -3181,6 +3181,7 @@ namespace OpenDental{
 			_formClaimAttachment=formClaimAttachment;
 			formClaimAttachment.FormClosed+=FormClaimAttachment_FormClosed;
 			formClaimAttachment.Show();
+			MsgBox.Show(this,"The Claim Attachments window will be hidden if you close the Edit Claim window. Go to your taskbar and click on the Claim Attachments window to bring it back into focus.");
 			//if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
 			//	formClaimAttachment.Show();
 			//	DialogResult=DialogResult.Cancel;

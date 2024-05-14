@@ -348,9 +348,9 @@ namespace OpenDentBusiness{
 				logSource=LogSources.PaymentPortal;
 			}
 			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,ccSourceString+" "+Lans.g("Payments.InsertFromXWeb","payment by")+" "+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),logSource);
-			if(logGuid!="") {//There is no way to make an XWeb payment from the Patient Portal without making a log GUID.
-				EServiceLogs.MakeLogEntry(eServiceAction.PPPaymentCreatedByXWeb,eServiceType.PatientPortal,
-					FKeyType.PayNum,patNum:patNum,FKey:retVal,clinicNum:clinicNum,logGuid:logGuid,note:amount.ToString("c"));
+			if(logGuid!="") {//There should be a log GUID for all Payment Portal payments.
+				EServiceLogs.MakeLogEntry(eServiceAction.PayPortalPaymentSucceeded,eServiceType.PaymentPortal,
+					FKeyType.PayNum,patNum:patNum,FKey:retVal,clinicNum:clinicNum,logGuid:logGuid,note:amount.ToString("c")+",EdgeExpress,Hosted form");
 			}
 			return retVal;
 		}
@@ -383,9 +383,9 @@ namespace OpenDentBusiness{
 			}
 			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,Lans.g("Payments.InsertFromPayConnect","PayConnect payment by")+" "
 				+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),logSource);
-			if(logGuid!="") {//There is no way to make a PayConnect payment from the Patient Portal without making a log GUID.
-				EServiceLogs.MakeLogEntry(eServiceAction.PPPaymentCreatedByPayconnect,eServiceType.PatientPortal,
-					FKeyType.PayNum,patNum:patNum,clinicNum:clinicNum,FKey:ret,logGuid:logGuid,note:amount.ToString("c"));
+			if(logGuid!="") {//There should be a log GUID for all Payment Portal payments.
+				EServiceLogs.MakeLogEntry(eServiceAction.PayPortalPaymentSucceeded,eServiceType.PaymentPortal,
+					FKeyType.PayNum,patNum:patNum,clinicNum:clinicNum,FKey:ret,logGuid:logGuid,note:amount.ToString("c")+",PayConnect,Hosted form");
 			}
 			return ret;
 		}

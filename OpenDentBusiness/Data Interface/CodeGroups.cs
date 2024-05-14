@@ -178,6 +178,28 @@ namespace OpenDentBusiness {
 			return GetFirstOrDefault(x => x.CodeGroupFixed==codeGroupFixed,isShort);
 		}
 
+		///<summary>Gets one CodeGroup from db. Returns null if not found. Used by the API.</summary>
+		public static CodeGroup GetOneFromDb(long codeGroupNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<CodeGroup>(MethodBase.GetCurrentMethod(),codeGroupNum);
+			}
+			if(codeGroupNum==0) {
+				return null;
+			}
+			string command="SELECT * FROM codegroup "
+				+"WHERE CodeGroupNum = '"+POut.Long(codeGroupNum)+"'";
+			return Crud.CodeGroupCrud.SelectOne(command);
+		}
+
+		///<summary>Gets a list of all codegroups from the db. Returns an empty list if none are found. Used by the API.</summary>
+		public static List<CodeGroup> GetManyFromDb() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<CodeGroup>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM codegroup";
+			return Crud.CodeGroupCrud.SelectMany(command);
+		}
+
 		///<summary>Used by the API to get a list of codegroups. Returns an empty list if none are found.</summary>
 		public static List<CodeGroup> GetCodeGroupsForApi(int limit,int offset) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

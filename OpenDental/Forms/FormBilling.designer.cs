@@ -176,7 +176,6 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(96, 136);
 			this.groupBox1.TabIndex = 33;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Counts";
 			// 
 			// labelTexted
@@ -324,6 +323,7 @@ namespace OpenDental {
 			this.comboClinic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboClinic.IncludeAll = true;
+			this.comboClinic.IsMultiSelect = true;
 			this.comboClinic.Location = new System.Drawing.Point(390, 8);
 			this.comboClinic.Name = "comboClinic";
 			this.comboClinic.Size = new System.Drawing.Size(226, 21);

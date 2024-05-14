@@ -407,7 +407,7 @@ namespace OpenDentBusiness{
 		///<summary>Creates a new sheet instance based on sheetDefOriginal, and fills it with values from the db, and then fills remaining with values from sheet. Returns the new, pre-filled sheet.</summary>
 		public static Sheet PreFillSheetFromPreviousAndDatabase(SheetDef sheetDefOriginal,Sheet sheet) {
 			//No need to check MiddleTierRole; no call to db
-			Sheet sheetNew=SheetUtil.CreateSheet(sheetDefOriginal);
+			Sheet sheetNew=SheetUtil.CreateSheet(sheetDefOriginal,sheet.PatNum);
 			sheetNew.DateTimeSheet=DateTime.Now;
 			sheetNew.PatNum=sheet.PatNum;
 			//Only setting the PatNum sheet parameter was what the Add button was doing from the "Patient Forms and Medical Histories" window.

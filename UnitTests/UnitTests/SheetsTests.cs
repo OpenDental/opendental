@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenDentBusiness;
 using UnitTestsCore;
 using OpenDentBusiness.WebTypes;
+using CodeBase;
 
 namespace UnitTests {
 	[TestClass]
@@ -216,6 +217,57 @@ namespace UnitTests {
 			Assert.AreEqual(1, listMedication.Count());
 			List<SheetField> listAllergies= sheetNew.SheetFields.FindAll(x => x.FieldName.Contains("Ibuprofen") && x.FieldValue=="X" && x.RadioButtonValue=="Y");
 			Assert.AreEqual(1, listAllergies.Count);
+		}
+
+		/// <summary>Asserts that sheets for a patient whose preferred language is not the practice default, are prefilled with the sheetfields of the translated sheet.</summary>
+		[TestMethod]
+		public void Sheets_PrefillSheetFromPreviousAndDatabase_PrefillTranslatedSheetTest() {
+			const string preferredLanguage="spa";
+			Prefs.UpdateString(PrefName.LanguageAndRegion,"en-US");//Default language of the practice is english
+			Patient patient=PatientT.CreatePatient(language:preferredLanguage);//Preferred language of the patient is spanish
+			//Create a sheetdef
+			SheetDef sheetDef=SheetDefT.CreateSheetDef(SheetTypeEnum.MedicalHistory);
+			//Fill in parameters so null exceptions aren't thrown later
+			sheetDef.Parameters=new List<SheetParameter>();
+			SheetParameter sheetParameter=new SheetParameter();
+			sheetParameter.ParamName="PatNum";
+			sheetParameter.ParamValue=patient.PatNum;
+			sheetDef.Parameters.Add(sheetParameter);
+			//Create the sheetFieldDefs for the translated sheet
+			for(int i=0;i<6;i++) {
+				SheetFieldDef sheetFieldDef=new SheetFieldDef();
+				sheetFieldDef.SheetDefNum=sheetDef.SheetDefNum;
+				sheetFieldDef.FieldName="misc";
+				sheetFieldDef.FieldValue="";
+				sheetFieldDef.FieldType=SheetFieldType.InputField;
+				if(i<3) {//First three sheetFieldDefs are translated to spanish
+					sheetFieldDef.Language=preferredLanguage;
+				}
+				else {//Last three sheetFieldDefs use the practice default
+					sheetFieldDef.Language="";
+				}
+				sheetFieldDef.SheetFieldDefNum=SheetFieldDefs.Insert(sheetFieldDef);
+				sheetDef.SheetFieldDefs.Add(sheetFieldDef);
+			}
+			//Create sheet fields for the untranslated sheetFieldDefs
+			List<SheetFieldDef> listSheetFieldDef=sheetDef.SheetFieldDefs.FindAll(x => x.Language=="");
+			List<SheetField> listSheetFields=new List<SheetField>();
+			for(int i = 0;i < listSheetFieldDef.Count;i++) {
+				SheetField sheetField=new SheetField();
+				sheetField.FieldValue=listSheetFieldDef[i].FieldValue;
+				sheetField.FieldName=listSheetFieldDef[i].FieldName;
+				sheetField.FieldType=listSheetFieldDef[i].FieldType;
+				sheetField.SheetFieldDefNum=listSheetFieldDef[i].SheetFieldDefNum;
+				listSheetFields.Add(sheetField);
+			}
+			Sheet sheet=SheetT.CreateSheet(sheetDef.SheetDefNum,listSheetFields,patient.PatNum);
+			Sheet sheetNew=Sheets.PreFillSheetFromPreviousAndDatabase(sheetDef,sheet);
+			Assert.AreEqual(3,sheetNew.SheetFields.Count);
+			List<long> listSheetFieldDefNumsSpanish=sheetDef.SheetFieldDefs
+				.FindAll(x => x.Language==preferredLanguage)
+				.Select(x => x.SheetFieldDefNum)
+				.ToList();
+			Assert.IsTrue(sheetNew.SheetFields.All(x => x.SheetFieldDefNum.In(listSheetFieldDefNumsSpanish.ToArray())));
 		}
 
 		///<summary>Turn a WebForms_Sheet into a sheet and check that the sheetFieldDefNums on the WebFormsSheetFieldDefs match.</summary>
