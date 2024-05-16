@@ -205,7 +205,7 @@ namespace OpenDental {
 			}
 			if(e.Col==idxODTouchColumn) {
 				mobileAppDevice.IsODTouchEnabled=!mobileAppDevice.IsODTouchEnabled;//Flip the bit.
-				long clinicNum=clinicPickerEClipboard.ClinicNumSelected;
+				long clinicNum=mobileAppDevice.ClinicNum;
 				int deviceLimitForClinic=_clinicPrefHelper.GetIntVal(PrefName.ODTouchDeviceLimit,clinicNum);
 				int deviceCountForClinic=_listMobileAppDevicesAll.Where(x=>x.ClinicNum==clinicNum && x.IsODTouchEnabled).Count();
 				int previousDeviceCountForClinic=_listMobileAppDevicesOld.Where(x=>x.ClinicNum==clinicNum && x.IsODTouchEnabled).Count();
