@@ -369,7 +369,6 @@ namespace OpenDental{
 				//Disabling and hiding UI elements that don't make sense when using the ClaimConnect attachment service.
 				tabNEA.Enabled=false;
 				tabEDS.Enabled=false;
-				FillGridSentAttachments(gridDXCSent);
 				tabControlAttach.SelectedTab=tabDXC;
 			}
 			else if(_clearinghouse!=null && _clearinghouse.IsAttachmentSendAllowed && _clearinghouse.CommBridge==EclaimsCommBridge.EDS) {
@@ -818,16 +817,12 @@ namespace OpenDental{
 						break;
 				}
 			}
-			if(_claim.AttachmentID.ToLower().StartsWith("dxc") && tabControlAttach.SelectedTab==tabDXC) {
-				textDXCAttachmentID.Text=_claim.AttachmentID;
-			}
-			else if(tabControlAttach.SelectedTab==tabEDS) {
+			if(tabControlAttach.SelectedTab==tabEDS) {
 				textEDSAttachmentID.Text=_claim.AttachmentID;
 			}
 			else {
 				textAttachID.Text=_claim.AttachmentID;
 			}
-			textNarrative.Text=_claim.Narrative;
 			//medical/inst
 			textBillType.Text=_claim.UniformBillType;
 			textAdmissionType.Text=_claim.AdmissionTypeCode;
@@ -1217,11 +1212,7 @@ namespace OpenDental{
 		private void gridSent_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			ClaimAttach claimAttach=new ClaimAttach();
 			bool doSaveToImagingModule=false;
-			if(tabControlAttach.SelectedTab==tabDXC) {
-				claimAttach=(ClaimAttach)gridDXCSent.ListGridRows[e.Row].Tag;
-				doSaveToImagingModule=PrefC.GetBool(PrefName.SaveDXCAttachments);
-			}
-			else if (tabControlAttach.SelectedTab==tabEDS) {
+			if(tabControlAttach.SelectedTab==tabEDS) {
 				claimAttach=(ClaimAttach)gridEDSSent.ListGridRows[e.Row].Tag;
 				doSaveToImagingModule=PrefC.GetBool(PrefName.SaveEDSAttachments);
 			}
@@ -2971,18 +2962,19 @@ namespace OpenDental{
 				if(validateClaimResponse!=null //the catches above don't alway return
 					&& validateClaimResponse.IsAttachmentRequired) 
 				{
-					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
-						FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
-						formClaimAttachment.Show();
-						SaveCleanup();
-						return;
-					}
-					else if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to continue sending the claim?")) {
+					//Do not open Claim Attachment window for ClaimConnect
+					//if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
+					//	FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
+					//	formClaimAttachment.Show();
+					//	SaveCleanup();
+					//	return;
+					//}
+					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Use the right click attachment workflows to add an attachment to this claim. Would you like to continue sending the claim?")) {
 						return;
 					}
 				}
 			}
-			Cursor=Cursors.WaitCursor;			
+			Cursor=Cursors.WaitCursor;
 			if(clearinghouseHq.Eformat==ElectronicClaimFormat.Canadian) {
 				if(!SendClaimCanadian(clearinghouseClin,claimSendQueueItemsArrayCA[0])) {
 					return;
@@ -3138,11 +3130,11 @@ namespace OpenDental{
 			FillStatusHistory();
 		}
 
-		///<summary>Opens FormClaimAttachmentDXC. This form is used for managing attachments to send to DentalXChange.</summary>
-		private void buttonDXCClaimAttachment_Click(object sender,EventArgs e) {
-			FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
-			OpenAttachmentForm(formClaimAttachment);
-		}
+		///<summary>This button has beeen removed from the UI to force users to use the right click attachment workflows. Opens FormClaimAttachmentDXC. This form is used for managing attachments to send to DentalXChange.</summary>
+		//private void buttonDXCClaimAttachment_Click(object sender,EventArgs e) {
+		//	FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
+		//	OpenAttachmentForm(formClaimAttachment);
+		//}
 
 		///<summary>Opens FormClaimAttachmentEDS. This form is used for managing attachments to send to EDS.</summary>
 		private void butEDSClaimAttachment_Click(object sender,EventArgs e) {
@@ -3192,15 +3184,14 @@ namespace OpenDental{
 			if(_formClaimAttachment.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.ClaimConnect) {
-				textDXCAttachmentID.Text=_claim.AttachmentID;
-				FillGridSentAttachments(gridDXCSent);
-				textNarrative.Text=_claim.Narrative;
-			}
-			else if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.EDS) {
-				textEDSAttachmentID.Text=_claim.AttachmentID;
-				FillGridSentAttachments(gridEDSSent);
-			}
+			//No longer used for the DXC attachment workflow
+			//if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.ClaimConnect) {
+			//	textDXCAttachmentID.Text=_claim.AttachmentID;
+			//	FillGridSentAttachments(gridDXCSent);
+			//	textNarrative.Text=_claim.Narrative;
+			//}
+			textEDSAttachmentID.Text=_claim.AttachmentID;
+			FillGridSentAttachments(gridEDSSent);
 		}
 
 		private void EditOverpay(bool isOverpaid) {
@@ -3603,10 +3594,7 @@ namespace OpenDental{
 			//Use the DXC attachmentID if it is not blank, otherwise use the NEA attachmentID. In the case they are both blank it does not matter,
 			//but users can have DXC attachments enabled with old NEA numbers attached. This will preserve those.
 			_claim.AttachmentID=textAttachID.Text;
-			if(!textDXCAttachmentID.Text.IsNullOrEmpty()) {
-				_claim.AttachmentID=textDXCAttachmentID.Text;
-			}
-			else if(!textEDSAttachmentID.Text.IsNullOrEmpty()) {
+			if(!textEDSAttachmentID.Text.IsNullOrEmpty()) {
 				_claim.AttachmentID=textEDSAttachmentID.Text;
 			}
 			//Canadian---------------------------------------------------------------------------------
@@ -4093,10 +4081,12 @@ namespace OpenDental{
 							_claim.AttachedFlags="Misc";
 							Claims.Update(_claim);
 						}
-						if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
-							FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
-							formClaimAttachment.Show();
-						}
+						//Do not open Claim Attachment window for ClaimConnect
+						//if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
+						//	FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
+						//	formClaimAttachment.Show();
+						//}
+						MsgBox.Show(this,"An attachment is required for this claim. Use the right click attachment workflow to add an attachment to this claim.");
 					}
 					else if(_claim.Attachments.Count==0 && _claim.AttachedFlags!="Mail") {//Don't set to 'Mail' on claims with attachments or make unneccessary DB trips.
 						_claim.AttachedFlags="Mail";

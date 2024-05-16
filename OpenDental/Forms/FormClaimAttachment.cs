@@ -18,7 +18,7 @@ using OpenDentBusiness.Eclaims;
 using Dicom.Imaging.Mathematics;
 
 namespace OpenDental {
-	///<summary></summary>
+	///<summary>As of 5/14/2024, this form will no longer send attachments to DentalXChange. We want users to use the right click attachment workflows instead of this form, so all the controls have been removed from the FormClaimEdit DXC tab. The DXC logic will remain in this form in case we ever need to revert</summary>
 	public partial class FormClaimAttachment:FormODBase {
 		private Claim _claim;
 		private Patient _patient;
@@ -66,6 +66,7 @@ namespace OpenDental {
 				labelClaimAttachWarning.Visible=true;
 			}
 			//Non-DXC numbers (NEA) can be wiped out as they are no longer supported by DentalXChange starting 12/01/19.
+			//Will never use ClaimConnect
 			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect 
 				&& !string.IsNullOrWhiteSpace(_claim.AttachmentID) 
 				&& !_claim.AttachmentID.ToLower().StartsWith("dxc") 
@@ -79,7 +80,7 @@ namespace OpenDental {
 
 		private void FormClaimAttachment_Shown(object sender,EventArgs e) {
 			FillGrid();
-			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 				//Check for if the attachmentID is already in use. If so inform the user they need to redo their attachments.
 				ValidateClaimDXC();
 				if(textClaimStatus.Text.ToUpper().Contains("ATTACHMENT ID HAS BEEN ASSOCIATED TO A DIFFERENT CLAIM")
@@ -118,7 +119,7 @@ namespace OpenDental {
 			col=new GridColumn("File",150);
 			gridAttachedImages.Columns.Add(col);
 			int countAttachedImages=0;
-			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 				countAttachedImages=_listImageAttachmentsDXC.Count;
 			}
 			else if(_eclaimsCommBridge==EclaimsCommBridge.EDS) {
@@ -126,7 +127,7 @@ namespace OpenDental {
 			}
 			GridRow row=new GridRow();
 			for(int i=0;i<countAttachedImages;i++) {
-				if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+				if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 					row=CreateRow(_listImageAttachmentsDXC[i].ImageDate,
 						_listImageAttachmentsDXC[i].ImageType.GetDescription(),
 						_listImageAttachmentsDXC[i].ImageFileNameDisplay);
@@ -477,7 +478,7 @@ namespace OpenDental {
 			if(formClaimAttachmentItemEdit.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 				ClaimConnect.ImageAttachment imageAttachmentDXC=formClaimAttachmentItemEdit.ImageAttachmentDXC;
 				_listImageAttachmentsDXC.Add(imageAttachmentDXC);
 			}
@@ -574,7 +575,7 @@ namespace OpenDental {
 		}
 
 		private void gridAttachedImages_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 			ClaimConnect.ImageAttachment imageAttachmentSelected=gridAttachedImages.SelectedTag<ClaimConnect.ImageAttachment>();
 			using Image image=GetSelectedImage();
 			using FormClaimAttachmentItemEdit formClaimAttachmentItemEdit=new FormClaimAttachmentItemEdit(
@@ -611,7 +612,7 @@ namespace OpenDental {
 
 		private Image GetSelectedImage() {
 			byte[] byteArr=new byte[0];
-			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 				byteArr=gridAttachedImages.SelectedTag<ClaimConnect.ImageAttachment>().ImageFileAsBase64;
 			}
 			else if(_eclaimsCommBridge==EclaimsCommBridge.EDS) {
@@ -626,7 +627,7 @@ namespace OpenDental {
 			if(toolStripItem.Text=="Delete") {
 				//Delete every selected row
 				for(int i=gridAttachedImages.SelectedIndices.Length-1;i>=0;i--) {//because we are removing items
-					if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+					if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 						_listImageAttachmentsDXC.RemoveAt(gridAttachedImages.SelectedIndices[i]);
 					}
 					else if(_eclaimsCommBridge==EclaimsCommBridge.EDS) {
@@ -772,7 +773,7 @@ namespace OpenDental {
 			//Creating and sending DXC Attachments will sometimes time out when an arbitrarily large group of attachments are being sent, 
 			//at which point each attachment should be sent individually.
 			catch(TimeoutException ex) {
-				if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+				if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 					ProgressWin progressWin=new ProgressWin();
 					progressWin.ActionMain=BatchSendAttachments;
 					progressWin.StartingMessage="Sending attachments timed out. Attempting to send individually. Please wait.";
@@ -798,7 +799,7 @@ namespace OpenDental {
 				return;
 			}
 			//Validate the claim, if it isn't valid let the user decide if they want to continue
-			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect && !ValidateClaimDXC()) {
+			if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect && !ValidateClaimDXC()) {//Will never use ClaimConnect
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"There were errors validating the claim, would you like to continue?")) {
 					return;
 				}
@@ -814,7 +815,7 @@ namespace OpenDental {
 			}
 			List<ClaimAttach> listClaimAttachments=new List<ClaimAttach>();
 			for(int i=0;i<gridAttachedImages.ListGridRows.Count;i++) {
-				if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {
+				if(_eclaimsCommBridge==EclaimsCommBridge.ClaimConnect) {//Will never use ClaimConnect
 					ClaimConnect.ImageAttachment imageAttachmentRow=((ClaimConnect.ImageAttachment)gridAttachedImages.ListGridRows[i].Tag);
 					if(PrefC.GetBool(PrefName.SaveDXCAttachments)) {
 						Document documentCur=ImageStore.Import(imageAttachmentRow.ImageFileAsBase64,imageTypeDefNum,ImageType.Attachment,_patient);

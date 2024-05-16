@@ -557,7 +557,17 @@ How to:
 			IInputElement iInputElementFocused=Keyboard.FocusedElement;//should be null or the result of SetFocusRecursive(grid);
 			if(iInputElementFocused==null){
 				Focusable=true;
-				Focus();
+				try{
+					Focus();//sets keyboard and logical focus to this FrmODBase.
+				}
+				catch{
+					//This needs a try catch because we got a UE:
+					//Object reference not set to an instance of an object.
+					//When this happened, we were inside WpfControls.UI.FrmProgressAuto.
+					//In FormRpOutstandingIns, the Load calls SetFilterControlsAndAction which fills the grid
+					//The UE is probably caused by the threading in the old FilterControlsAndAction,
+					//so it would probably be fixed if we switch to the new FilterControlsAndAction.
+				}
 				//no tabIndexes set
 			}
 			//bool isFocused=frameworkElementMin.Focus();//this is false because the focus was immediately transferred to the nested textBox, etc.

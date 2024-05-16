@@ -210,7 +210,7 @@ namespace OpenDentBusiness {
 		internal static void AddAlertTypesToOdAllTypesCategory() {
 			string command="SELECT AlertCategoryNum FROM alertcategory WHERE IsHQCategory=1 AND InternalName='OdAllTypes'";
 			long alertCategoryNum=PIn.Long(Db.GetScalar(command));
-			command="SELECT AlertType FROM alertCategoryLink WHERE AlertCategoryNum="+alertCategoryNum;
+			command="SELECT AlertType FROM alertcategorylink WHERE AlertCategoryNum="+alertCategoryNum;
 			DataTable table=Db.GetTable(command);//Get all currently linked to the OdAllTypes category
 			List<AlertType> listDbAlertTypes=Db.GetListLong(command).Select(x => (AlertType)x).ToList();
 			List<AlertType> listAllAlertTypes=((AlertType[])Enum.GetValues(typeof(AlertType))).ToList();

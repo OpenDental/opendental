@@ -497,9 +497,9 @@
 			// 
 			this.checkShowAllUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkShowAllUsers.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowAllUsers.Location = new System.Drawing.Point(9, 6);
+			this.checkShowAllUsers.Location = new System.Drawing.Point(3, 6);
 			this.checkShowAllUsers.Name = "checkShowAllUsers";
-			this.checkShowAllUsers.Size = new System.Drawing.Size(100, 20);
+			this.checkShowAllUsers.Size = new System.Drawing.Size(106, 20);
 			this.checkShowAllUsers.TabIndex = 244;
 			this.checkShowAllUsers.Text = "Show All Users";
 			this.checkShowAllUsers.CheckedChanged += new System.EventHandler(this.checkShowAllUsers_CheckedChanged);

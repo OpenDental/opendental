@@ -122,6 +122,7 @@ namespace OpenDental {
 			WasPaymentAttempted=true;
 			PayConnect2Response payConnect2Response=new PayConnect2Response();
 			int amountInCents=GetAmountFieldAsCents();
+			string magData="";
 			if(radioTerminal.Checked) {
 				if(comboTerminal.SelectedItem==null) {
 					MsgBox.Show(this,"Please select a terminal from the dropdown.");
@@ -188,6 +189,8 @@ namespace OpenDental {
 				//		return false;
 				//	}
 				//}
+				//We only have the last 4 digits of the card to work with now, no need for MagStripCardParser
+				magData=payConnect2Response.TerminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 			}
 			else if(radioWebService.Checked) {
 				if(radioSale.Checked) {
@@ -268,7 +271,7 @@ namespace OpenDental {
 					doShowSignatureLine=false;
 				}
 			}
-			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData:"",_response.AuthCode,_response.Description,messages:null,_response.Amount,doShowSignatureLine,_clinicNum,_response.CardType);
+			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData,_response.AuthCode,_response.Description,messages:null,_response.Amount,doShowSignatureLine,_clinicNum,_response.CardType);
 			return true;
 		}
 

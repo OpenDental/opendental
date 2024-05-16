@@ -142,6 +142,13 @@
   </table>
   <table name="eservicelog">
     <summary></summary>
+    <column order="3" name="EServiceType" type="tinyint(4)">
+      <summary>Enum:eServiceType</summary>
+      <Enumeration name="eServiceType">
+        <summary>List of some possible eService Actions.</summary>
+        <EnumValue name="PaymentPortal">13. This means the action done was for the Payment Portal.</EnumValue>
+      </Enumeration>
+    </column>
     <column order="4" name="EServiceAction" type="smallint(6)">
       <summary>Enum:eServiceAction</summary>
       <Enumeration name="eServiceAction">
@@ -152,6 +159,22 @@
         <EnumValue name="WFDeletedForm">99 - Web Forms Form Deleted.</EnumValue>
         <EnumValue name="WFError">100 - Web Forms Error.</EnumValue>
         <EnumValue name="WFCancelled">101 - Web Forms Cancelled Import.</EnumValue>
+        <EnumValue name="PayPortalArrived">102 - Payment Portal - Unverified user arrived at the payment portal</EnumValue>
+        <EnumValue name="PayPortalArrivedWithSessionToken">103 - Payment Portal - Verified user arrived at the payment portal</EnumValue>
+        <EnumValue name="PayPortalArrivedWithPayGuid">104 - Payment Portal - User arrived at the payment portal via message-to-pay</EnumValue>
+        <EnumValue name="PayPortalSelectedPatient">105 - Payment Portal - User provided patient information on patient information view</EnumValue>
+        <EnumValue name="PayPortalSwitchedToCorrectClinic">106 - Payment Portal - Switched to selected patient's clinic</EnumValue>
+        <EnumValue name="PayPortalRequestedCodeViaEmail">107 - Payment Portal - User requested an email authentication code</EnumValue>
+        <EnumValue name="PayPortalRequestedCodeViaSms">108 - Payment Portal - User requested a text authentication code</EnumValue>
+        <EnumValue name="PayPortalAuthenticatedViaEmail">109 - Payment Portal - User verfied identity with an email authentication code</EnumValue>
+        <EnumValue name="PayPortalAuthenticatedViaSms">110 - Payment Portal - User verfied identity with an SMS authentication code</EnumValue>
+        <EnumValue name="PayPortalUseAmountDue">111 - Payment Portal - User opted to pay amount due</EnumValue>
+        <EnumValue name="PayPortalEnteredPayAmount">112 - Payment Portal - User entered a custom amount to pay</EnumValue>
+        <EnumValue name="PayPortalSelectedPaymentMethod">113 - Payment Portal - User selected an existing payment method</EnumValue>
+        <EnumValue name="PayPortalHostedFormLoaded">114 - Payment Portal - The make payment window was loaded</EnumValue>
+        <EnumValue name="PayPortalPaymentSucceeded">115 - Payment Portal - The payment was processed successfully</EnumValue>
+        <EnumValue name="PayPortalClickedPrint">116 - Payment Portal - The user printed their receipt</EnumValue>
+        <EnumValue name="PayPortalPaymentPortalError">117 - Payment Portal - The user received an error</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="KeyType" type="smallint(6)">

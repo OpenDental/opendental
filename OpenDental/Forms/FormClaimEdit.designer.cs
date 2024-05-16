@@ -85,6 +85,7 @@
 			this.tabAttachments = new OpenDental.UI.TabPage();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.tabControlAttach = new OpenDental.UI.TabControl();
+			this.tabDXC = new OpenDental.UI.TabPage();
 			this.tabNEA = new OpenDental.UI.TabPage();
 			this.groupAttachments = new OpenDental.UI.GroupBox();
 			this.label65 = new System.Windows.Forms.Label();
@@ -108,13 +109,6 @@
 			this.butAttachPerio = new OpenDental.UI.Button();
 			this.labelAttachedImagesWillNotBeSent = new System.Windows.Forms.Label();
 			this.listAttachments = new OpenDental.UI.ListBox();
-			this.tabDXC = new OpenDental.UI.TabPage();
-			this.butDXCClaimAttachment = new OpenDental.UI.Button();
-			this.textDXCAttachmentID = new OpenDental.ODtextBox();
-			this.labelAttachmentID = new System.Windows.Forms.Label();
-			this.gridDXCSent = new OpenDental.UI.GridOD();
-			this.labelNarrative = new System.Windows.Forms.Label();
-			this.textNarrative = new OpenDental.ODtextBox();
 			this.tabEDS = new OpenDental.UI.TabPage();
 			this.butEDSClaimAttachment = new OpenDental.UI.Button();
 			this.textEDSAttachmentID = new OpenDental.ODtextBox();
@@ -364,6 +358,7 @@
 			this.butInsuranceOverpaid = new OpenDental.UI.Button();
 			this.butInsuranceUnderpaid = new OpenDental.UI.Button();
 			this.warningIntegrity = new OpenDental.UI.WarningIntegrity();
+			this.labelWorkflowMsg = new System.Windows.Forms.Label();
 			this.groupFinalizePayment.SuspendLayout();
 			this.tabControlMain.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
@@ -375,10 +370,10 @@
 			this.tabAttachments.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.tabControlAttach.SuspendLayout();
+			this.tabDXC.SuspendLayout();
 			this.tabNEA.SuspendLayout();
 			this.groupAttachments.SuspendLayout();
 			this.groupAttachedImages.SuspendLayout();
-			this.tabDXC.SuspendLayout();
 			this.tabEDS.SuspendLayout();
 			this.tabCanadianAttachments.SuspendLayout();
 			this.groupCanadianAttachedImages.SuspendLayout();
@@ -996,6 +991,16 @@
 			this.tabControlAttach.Size = new System.Drawing.Size(671, 221);
 			this.tabControlAttach.TabIndex = 152;
 			// 
+			// tabDXC
+			// 
+			this.tabDXC.Controls.Add(this.labelWorkflowMsg);
+			this.tabDXC.Location = new System.Drawing.Point(2, 21);
+			this.tabDXC.Name = "tabDXC";
+			this.tabDXC.Padding = new System.Windows.Forms.Padding(3);
+			this.tabDXC.Size = new System.Drawing.Size(667, 198);
+			this.tabDXC.TabIndex = 1;
+			this.tabDXC.Text = "DentalXChange";
+			// 
 			// tabNEA
 			// 
 			this.tabNEA.BackColor = System.Drawing.Color.White;
@@ -1231,89 +1236,6 @@
 			this.listAttachments.TabIndex = 149;
 			this.listAttachments.DoubleClick += new System.EventHandler(this.listAttachments_DoubleClick);
 			this.listAttachments.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listAttachments_MouseDown);
-			// 
-			// tabDXC
-			// 
-			this.tabDXC.Controls.Add(this.butDXCClaimAttachment);
-			this.tabDXC.Controls.Add(this.textDXCAttachmentID);
-			this.tabDXC.Controls.Add(this.labelAttachmentID);
-			this.tabDXC.Controls.Add(this.gridDXCSent);
-			this.tabDXC.Controls.Add(this.textNarrative);
-			this.tabDXC.Controls.Add(this.labelNarrative);
-			this.tabDXC.Location = new System.Drawing.Point(2, 21);
-			this.tabDXC.Name = "tabDXC";
-			this.tabDXC.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDXC.Size = new System.Drawing.Size(667, 198);
-			this.tabDXC.TabIndex = 1;
-			this.tabDXC.Text = "DentalXChange";
-			// 
-			// labelNarrative
-			// 
-			this.labelNarrative.AutoSize = true;
-			this.labelNarrative.Location = new System.Drawing.Point(483, 5);
-			this.labelNarrative.Name = "labelNarrative";
-			this.labelNarrative.Size = new System.Drawing.Size(50, 13);
-			this.labelNarrative.TabIndex = 154;
-			this.labelNarrative.Text = "Narrative";
-			// 
-			// textNarrative
-			// 
-			this.textNarrative.AcceptsTab = true;
-			this.textNarrative.BackColor = System.Drawing.SystemColors.Control;
-			this.textNarrative.DetectLinksEnabled = false;
-			this.textNarrative.DetectUrls = false;
-			this.textNarrative.Location = new System.Drawing.Point(483, 21);
-			this.textNarrative.Name = "textNarrative";
-			this.textNarrative.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
-			this.textNarrative.ReadOnly = true;
-			this.textNarrative.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textNarrative.Size = new System.Drawing.Size(176, 173);
-			this.textNarrative.TabIndex = 153;
-			this.textNarrative.Text = "";
-			// 
-			// butDXCClaimAttachment
-			// 
-			this.butDXCClaimAttachment.Location = new System.Drawing.Point(6, 62);
-			this.butDXCClaimAttachment.Name = "butDXCClaimAttachment";
-			this.butDXCClaimAttachment.Size = new System.Drawing.Size(113, 24);
-			this.butDXCClaimAttachment.TabIndex = 152;
-			this.butDXCClaimAttachment.Text = "Add Attachment";
-			this.butDXCClaimAttachment.UseVisualStyleBackColor = true;
-			this.butDXCClaimAttachment.Click += new System.EventHandler(this.buttonDXCClaimAttachment_Click);
-			// 
-			// textDXCAttachmentID
-			// 
-			this.textDXCAttachmentID.AcceptsTab = true;
-			this.textDXCAttachmentID.BackColor = System.Drawing.SystemColors.Control;
-			this.textDXCAttachmentID.DetectLinksEnabled = false;
-			this.textDXCAttachmentID.DetectUrls = false;
-			this.textDXCAttachmentID.Location = new System.Drawing.Point(6, 35);
-			this.textDXCAttachmentID.Name = "textDXCAttachmentID";
-			this.textDXCAttachmentID.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
-			this.textDXCAttachmentID.ReadOnly = true;
-			this.textDXCAttachmentID.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textDXCAttachmentID.Size = new System.Drawing.Size(176, 21);
-			this.textDXCAttachmentID.TabIndex = 10;
-			this.textDXCAttachmentID.Text = "";
-			// 
-			// labelAttachmentID
-			// 
-			this.labelAttachmentID.AutoSize = true;
-			this.labelAttachmentID.Location = new System.Drawing.Point(3, 19);
-			this.labelAttachmentID.Name = "labelAttachmentID";
-			this.labelAttachmentID.Size = new System.Drawing.Size(75, 13);
-			this.labelAttachmentID.TabIndex = 11;
-			this.labelAttachmentID.Text = "Attachment ID";
-			// 
-			// gridDXCSent
-			// 
-			this.gridDXCSent.Location = new System.Drawing.Point(200, 6);
-			this.gridDXCSent.Name = "gridDXCSent";
-			this.gridDXCSent.Size = new System.Drawing.Size(261, 188);
-			this.gridDXCSent.TabIndex = 0;
-			this.gridDXCSent.Title = "Attachments Sent";
-			this.gridDXCSent.TranslationName = "gridSent";
-			this.gridDXCSent.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSent_CellDoubleClick);
 			// 
 			// tabEDS
 			// 
@@ -3710,12 +3632,20 @@
 			this.butInsuranceUnderpaid.Text = "&Ins Underpaid";
 			this.butInsuranceUnderpaid.Click += new System.EventHandler(this.butInsuranceUnderpaid_Click);
 			// 
-			// warningIntegrity1
+			// warningIntegrity
 			// 
 			this.warningIntegrity.Location = new System.Drawing.Point(2, 2);
-			this.warningIntegrity.Name = "warningIntegrity1";
+			this.warningIntegrity.Name = "warningIntegrity";
 			this.warningIntegrity.Size = new System.Drawing.Size(18, 18);
 			this.warningIntegrity.TabIndex = 269;
+			// 
+			// labelWorkflowMsg
+			// 
+			this.labelWorkflowMsg.Location = new System.Drawing.Point(6, 12);
+			this.labelWorkflowMsg.Name = "labelWorkflowMsg";
+			this.labelWorkflowMsg.Size = new System.Drawing.Size(263, 27);
+			this.labelWorkflowMsg.TabIndex = 155;
+			this.labelWorkflowMsg.Text = "Use right-click options on Claim";
 			// 
 			// FormClaimEdit
 			// 
@@ -3804,12 +3734,11 @@
 			this.tabAttachments.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
 			this.tabControlAttach.ResumeLayout(false);
+			this.tabDXC.ResumeLayout(false);
 			this.tabNEA.ResumeLayout(false);
 			this.groupAttachments.ResumeLayout(false);
 			this.groupAttachments.PerformLayout();
 			this.groupAttachedImages.ResumeLayout(false);
-			this.tabDXC.ResumeLayout(false);
-			this.tabDXC.PerformLayout();
 			this.tabEDS.ResumeLayout(false);
 			this.tabEDS.PerformLayout();
 			this.tabCanadianAttachments.ResumeLayout(false);
@@ -4156,10 +4085,6 @@
 		private OpenDental.UI.TabControl tabControlAttach;
 		private OpenDental.UI.TabPage tabNEA;
 		private OpenDental.UI.TabPage tabDXC;
-		private UI.GridOD gridDXCSent;
-		private ODtextBox textDXCAttachmentID;
-		private System.Windows.Forms.Label labelAttachmentID;
-		private UI.Button butDXCClaimAttachment;
 		private System.Windows.Forms.ErrorProvider _recalcErrorProvider;
 		private OpenDental.UI.GroupBox groupDateOtherCondOrTreatment;
 		private ValidDate textDateOther;
@@ -4195,7 +4120,6 @@
 		private System.Windows.Forms.Label label7;
 		private UI.GridOD gridEDSSent;
 		private UI.WarningIntegrity warningIntegrity;
-		private System.Windows.Forms.Label labelNarrative;
-		private ODtextBox textNarrative;
+		private System.Windows.Forms.Label labelWorkflowMsg;
 	}
 }

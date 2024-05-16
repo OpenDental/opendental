@@ -391,7 +391,7 @@ namespace OpenDental {
 			if(emailAutograph==null) {
 				return;
 			}
-			if(!EmailAutographs.IsAutographHTML(emailAutograph.AutographText)) {//HTML autographs will be appended automatically on send.
+			if(!MarkupEdit.ContainsOdHtmlTags(emailAutograph.AutographText)) {//HTML autographs will be appended automatically on send.
 				InsertAutograph(emailAutograph);
 			}
 		}
@@ -428,7 +428,7 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Please select an autograph before inserting."));
 				return;
 			}
-			if(emailPreview.IsHtml ||EmailAutographs.IsAutographHTML(listAutographs.GetSelected<EmailAutograph>().AutographText)) {
+			if(emailPreview.IsHtml ||MarkupEdit.ContainsOdHtmlTags(listAutographs.GetSelected<EmailAutograph>().AutographText)) {
 				if(MsgBox.Show(MsgBoxButtons.YesNo,"Adding an autograph to an email with images or HTML tags must be done from the Edit HTML window."
 					+"\r\n\r\nWould you like to open the Edit HTML window?")) 
 				{
@@ -843,7 +843,7 @@ namespace OpenDental {
 			}
 			//If default autograph is HTML send the whole email as HTML.
 			EmailAutograph emailAutograph=FindDefaultEmailAutograph();
-			if(emailAutograph!=null && EmailAutographs.IsAutographHTML(emailAutograph.AutographText) && _emailMessage.HtmlType==EmailType.Regular) {
+			if(emailAutograph!=null && MarkupEdit.ContainsOdHtmlTags(emailAutograph.AutographText) && _emailMessage.HtmlType==EmailType.Regular) {
 				bool hasValidHTML=false;
 				try {
 					string markupText=emailPreview.BodyText+"\r\n\r\n"+emailAutograph.AutographText;

@@ -1738,7 +1738,11 @@ namespace OpenDentBusiness{
 
 		///<summary>Appends an autograph to the bottom of the email body text if the autograph is not already present and returns the modified body text. When the functionality to reply to emails is implemented, this will need to be modified so that it inserts the autograph text at the bottom of the new message being composed, but above the message history.</summary>
 		public static string InsertAutograph(string bodyText,EmailAutograph emailAutograph) {
-			if(!bodyText.TrimEnd().ToLower().EndsWith(emailAutograph.AutographText.ToLower().Trim())) {
+			if(
+				emailAutograph!=null && 
+				!string.IsNullOrEmpty(emailAutograph.AutographText) && 
+				!bodyText.TrimEnd().ToLower().EndsWith(emailAutograph.AutographText.ToLower().Trim())) 
+			{
 				bodyText+="\r\n\r\n"+emailAutograph.AutographText;
 			}
 			return bodyText;
@@ -2885,7 +2889,7 @@ namespace OpenDentBusiness{
 		///<exception cref="ApplicationException">For BodyText not properly formatted as HTML.</exception>
 		public static void PrepHtmlEmail(EmailMessage message) {
 			//No need to check MiddleTierRole; no call to db.
-			if(message.HtmlType!=EmailType.RawHtml && !ContainsOdHtmlTags(message.BodyText)) {
+			if(message.HtmlType!=EmailType.RawHtml && !MarkupEdit.ContainsOdHtmlTags(message.BodyText)) {
 				//OD will not allow the user to save the email edit window if they have included a '<' or '>' without prefixing '&'.
 				message.BodyText=message.BodyText.Replace("&<","<");
 				message.BodyText=message.BodyText.Replace("&>",">");
@@ -2917,13 +2921,6 @@ namespace OpenDentBusiness{
 			emailAttach.ActualFileName=fileName;
 			emailMessage.Attachments.Add(emailAttach);
 			return emailMessage;
-		}
-
-		///<summary>Determines if the given text contains any HTML tags, ex <a href="opendental.com">opendental.com</a> or any Od wiki syntax tags that
-		///would result in HTML tags being added to the text when run through MarkupEdit.TranslateToXhtml()</summary>
-		public static bool ContainsOdHtmlTags(string text) {
-			Regex tagRegex=new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
-			return tagRegex.IsMatch(text??"") || MarkupEdit.ContainsOdMarkupForEmail(text??"");
 		}
 
 		#endregion Helpers
