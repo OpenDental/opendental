@@ -160,8 +160,10 @@ namespace OpenDental{
 			for(int i=0;i<listAppointments.Count;i++) {
 				listAppointmentsOld.Add(listAppointments[i].Copy());
 			}
-			ControlApptRef.MoveAppointments(listAppointments,listAppointmentsOld,_operatory);
-			MsgBox.Show(this,"Done");
+			bool isUpdateSuccessful=ControlApptRef.MoveAppointments(listAppointments,listAppointmentsOld,_operatory);
+			if(isUpdateSuccessful) {
+				MsgBox.Show(this,"Done");
+			}
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {

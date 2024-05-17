@@ -200,6 +200,30 @@ namespace OpenDentBusiness{
 			return PIn.Int(Db.GetScalar(command));
 		}
 
+		///<summary>Gets the bool value for a YN pref without using the cache.</summary>
+		public static bool GetYNNoCache(PrefName prefName) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),prefName);
+			}
+			string command="SELECT ValueString FROM preference WHERE PrefName = '"+POut.String(prefName.ToString())+"'";
+			YN yn=(YN)PIn.Int(Db.GetScalar(command));
+			if(yn==YN.Yes) {
+				return true;
+			}
+			if(yn==YN.No) {
+				return false;
+			}
+			//unknown, so use the default
+			PrefValueType prefValueType=prefName.GetValueType();
+			if(prefValueType==PrefValueType.YN_DEFAULT_FALSE) {
+				return false;
+			}
+			if(prefValueType==PrefValueType.YN_DEFAULT_TRUE) {
+				return true;
+			}
+			throw new ArgumentException("Invalid type");
+		}
+
 		///<summary></summary>
 		public static void Update(Pref pref) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

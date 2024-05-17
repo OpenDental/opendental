@@ -207,18 +207,14 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>This helper method CANNOT be edited for backwards compatibility reasons.</summary>
-		internal static void AddAlertTypesToOdAllTypesCategory() {
+		internal static void AddAlertTypesToOdAllTypesCategory(int alertTypeNum) {
 			string command="SELECT AlertCategoryNum FROM alertcategory WHERE IsHQCategory=1 AND InternalName='OdAllTypes'";
 			long alertCategoryNum=PIn.Long(Db.GetScalar(command));
-			command="SELECT AlertType FROM alertcategorylink WHERE AlertCategoryNum="+alertCategoryNum;
-			DataTable table=Db.GetTable(command);//Get all currently linked to the OdAllTypes category
-			List<AlertType> listDbAlertTypes=Db.GetListLong(command).Select(x => (AlertType)x).ToList();
-			List<AlertType> listAllAlertTypes=((AlertType[])Enum.GetValues(typeof(AlertType))).ToList();
-			//Find all items missing from the table that exist in the enum
-			List<AlertType> listAlertTypesMissing=listAllAlertTypes.FindAll(x => !listDbAlertTypes.Contains(x));
-			//Link any missing items to the OdAllTypes category
-			for(int i=0;i<listAlertTypesMissing.Count;i++) {
-				command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES("+alertCategoryNum+","+(int)listAlertTypesMissing[i]+")";
+			command="SELECT AlertCategoryLinkNum FROM alertcategorylink WHERE AlertCategoryNum="+alertCategoryNum
+				+" AND AlertType="+alertTypeNum;
+			long alertCategoryLinkNum=PIn.Long(Db.GetScalar(command));
+			if(alertCategoryLinkNum==0) {//No table entry was found so create one
+				command="INSERT INTO alertcategorylink(AlertCategoryNum,AlertType) VALUES("+alertCategoryNum+","+alertTypeNum+")";
 				Db.NonQ(command);
 			}
 		}
@@ -1103,10 +1099,17 @@ namespace OpenDentBusiness {
 		}//End of 23_3_50() method
 
 		private static void To23_3_57() {
-			//Start B53848
-			AddAlertTypesToOdAllTypesCategory();
-			//End B53848
+			//Start B53978
+			AddAlertTypesToOdAllTypesCategory(alertTypeNum:39);//AlertType.SignatureCleared
+			//End B53978
 		}//End of 23_3_57() method
+		
+		private static void To23_3_59() {
+			//Start B53968
+			string command="UPDATE preference SET ValueString='time.nist.gov' WHERE ValueString='nist-time-server.eoni.com' AND PrefName='NistTimeServerUrl'";
+			Db.NonQ(command);
+			//End B53968
+		}//End of 23_3_59()
 
 		private static void To24_1_1() {
 			string command;
@@ -1424,10 +1427,16 @@ namespace OpenDentBusiness {
 		}//End of 24_1_27()
 
 		private static void To24_1_29() {
-			//Start B53848
-			AddAlertTypesToOdAllTypesCategory();
-			//End B53848
+			//Start B53978
+			AddAlertTypesToOdAllTypesCategory(alertTypeNum:39);//AlertType.SignatureCleared
+			//End B53978
 		}//End of 24_1_29()
 
+		private static void To24_1_31() {
+			//Start B53968
+			string command="UPDATE preference SET ValueString='time.nist.gov' WHERE ValueString='nist-time-server.eoni.com' AND PrefName='NistTimeServerUrl'";
+			Db.NonQ(command);
+			//End B53968
+		}//End of 24_1_31()
 	}
 }

@@ -4200,8 +4200,9 @@ namespace OpenDental {
 			LayoutManager.Move(contrApptPanel,new Rectangle(0,toolBarMain.Height,panelCalendar.Left,Height-toolBarMain.Height));
 		}
 
-		///<summary>Used for the UpdateProvs tool to reassign all future appointments for one op to another prov. </summary>
-		public void MoveAppointments(List<Appointment> listAppts,List<Appointment> listApptsOld,Operatory operatoryCur){
+		///<summary>Used for the UpdateProvs tool to reassign all future appointments for one op to another prov.
+		///Returns true if appointments were updated successfully.</summary>
+		public bool MoveAppointments(List<Appointment> listAppts,List<Appointment> listApptsOld,Operatory operatoryCur){
 			List<Schedule> listSchedulesForOp=Schedules.GetSchedsForOp(operatoryCur,listAppts.Select(x => x.AptDateTime).ToList());
 			List<Operatory> listOperatoriesForClinic=contrApptPanel.ListOpsVisible.Select(x => x.Copy()).ToList();
 			if(((ApptSchedEnforceSpecialty)PrefC.GetInt(PrefName.ApptSchedEnforceSpecialty)).In(
@@ -4209,11 +4210,23 @@ namespace OpenDental {
 				//if specialties are enforced, don't auto-move appt into an op assigned to a different clinic than the curOp's clinic
 				listOperatoriesForClinic.RemoveAll(x => x.ClinicNum!=operatoryCur.ClinicNum);
 			}
+			List<long> listProvNumsScheduled=listSchedulesForOp.Select(x => x.ProvNum).ToList();
+			listProvNumsScheduled.Add(operatoryCur.ProvDentist);//Check default provs for operatory.
+			listProvNumsScheduled.Add(operatoryCur.ProvHygienist);
+			//Consider any providers term'd before the appt with the furthest date as invalid.
+			List<long> listProvNumsInvalid=Providers.GetInvalidProvsByTermDate(listProvNumsScheduled,listAppts.Max(x=>x.AptDateTime));
+			if(listProvNumsInvalid.Count>0) {
+				string message=Lan.g("FormOperatoryEdit","Cannot update appointments. This operatory has default or scheduled providers with a Term Date prior to a future appointment's date:")+"\r\n"
+					+string.Join("\r\n",listProvNumsInvalid.Select(x=>Providers.GetLongDesc(x)));
+				MsgBox.Show(message);
+				return false;
+			}
 			for(int i=0;i<listAppts.Count;i++) {
 				Appointment appointment=listAppts[i];
 				Appointment appointmentOld=listApptsOld[i];
 				MoveAppointment(appointment,appointmentOld,listSchedulesForOp,true);
 			}
+			return true;
 		}
 
 		///<summary>Mostly for moving a single appointment.  Similar to the logic which runs in pinBoard_MouseUp(), but pinBoard_MouseUp() has additional things that are done.  This is also used for the UpdateProvs tool to reassign all future appointments for one op to another prov.</summary>
