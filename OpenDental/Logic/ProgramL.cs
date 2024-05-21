@@ -43,9 +43,14 @@ namespace OpenDental{
 				}
 				return;
 			}
-			if(ODEnvironment.IsCloudServer && Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
-				MsgBox.Show("ProgramLinks","Bridge is not available while using Open Dental Cloud.");
-				return;//bridge is not available for web users at this time. 
+			if(ODEnvironment.IsCloudServer) {
+				if(Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
+					MsgBox.Show("ProgramLinks","Bridge is not available while using Open Dental Cloud.");
+					return;//bridge is not available for web users at this time. 
+				}
+				if(!CloudClientL.IsCloudClientRunning()) {
+					return;
+				}
 			}
 			if(program.ProgName==ProgramName.ActeonImagingSuite.ToString()) {
 				ActeonImagingSuite.SendData(program,patient);
