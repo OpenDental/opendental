@@ -45,7 +45,7 @@ namespace OpenDentBusiness {
 			else { //URL was provided so use that.
 				service.Url=webServiceHqUrl;
 			}
-			if(ODBuild.IsDebug()) {
+			if(webServiceHqUrl.IsNullOrEmpty() && ODBuild.IsDebug()) {
 				//Change arguments for debug only.
 				service.Url="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx";//localhost
 				//service.Url="https://patientviewer.com:49997/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx";//Live server

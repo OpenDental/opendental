@@ -234,6 +234,11 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		///<summary>Perform the given action in the context of the supplementalbackups db.</summary>
+		public static void RunSupplementalBackups(Action a) {
+			Run(a,ConnectionNames.SupplementalBackups);
+		}
+
 		///<summary>HQ only. Perform the given action in the context of the designated 'triage tasks taken' database.
 		///The connection information for this context will come from the implimentation of ConnectionStoreBase.GetTriageHQ() so make sure to instantiate that correctly prior to invoking this.</summary>
 		public static void RunTriageHQ(Action a) {
@@ -307,6 +312,11 @@ namespace OpenDentBusiness {
 		///<summary>Perform the given function in the context of the webforms db.</summary>
 		public static T GetWebForms<T>(Func<T> fn) {
 			return GetT(fn,ConnectionNames.WebForms);
+		}
+
+		///<summary>Perform the given function in the context of the supplementalbackups db.</summary>
+		public static T GetSupplementalBackups<T>(Func<T> fn) {
+			return GetT(fn,ConnectionNames.SupplementalBackups);
 		}
 		#endregion
 		#endregion

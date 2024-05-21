@@ -136,6 +136,8 @@ namespace OpenDental {
 			SelectComboBoxesDefault(comboBoxChartLayout,PrefName.SheetsDefaultChartModule);
 			SelectComboBoxesDefault(comboTreatmentPlan,PrefName.SheetsDefaultTreatmentPlan);
 			_clinicNumPrevSelected=comboClinicDefault.ClinicNumSelected;//Store the newly selected clinic for when we have to run this event again.
+			//Invalidate the clinicPref cache
+			DataValid.SetInvalid(InvalidType.ClinicPrefs);
 		}
 
 		///<summary>Returns true if the comboboxes selected key is different from the stored key in the db</summary>
@@ -155,6 +157,8 @@ namespace OpenDental {
 			long sheetDefNum=comboLabel.GetSelectedKey<SheetDef>(x => x.SheetDefNum);
 			Prefs.UpdateLong(PrefName.LabelPatientDefaultSheetDefNum,sheetDefNum);
 			DataValid.SetInvalid(InvalidType.Prefs);
+			//Invalidate the clinicPref cache
+			DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			DialogResult=DialogResult.OK;
 		}
 

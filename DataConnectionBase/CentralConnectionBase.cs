@@ -82,5 +82,7 @@
 		TriageHQ,
 		///<summary>Logger database for ServicesHQ</summary>
 		ServicesHQLog,
+		///<summary>Database that stores the upload schedule and metadata regarding supplemental backups from each dental office.</summary>
+		SupplementalBackups,
 	}
 }
