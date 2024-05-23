@@ -39,7 +39,7 @@ namespace OpenDental {
 			textAtoZpath.Text=ReplicationServerCur.AtoZpath;
 			checkUpdateBlocked.Checked=ReplicationServerCur.UpdateBlocked;
 			if(ReplicationServerCur.ReplicationServerNum==PrefC.GetLong(PrefName.ReplicationUserQueryServer)) {
-				checkReportServer.Checked=true;
+				checkTempTablesAllowedServer.Checked=true;
 			}
 		}
 
@@ -124,7 +124,7 @@ namespace OpenDental {
 				ReplicationServers.Update(ReplicationServerCur);
 			}
 			//Update the ReplicationUserQueryServer preference as needed.
-			if(checkReportServer.Checked) {
+			if(checkTempTablesAllowedServer.Checked) {
 				if(Prefs.UpdateLong(PrefName.ReplicationUserQueryServer,ReplicationServerCur.ReplicationServerNum)) {
 					DataValid.SetInvalid(InvalidType.Prefs);
 				}

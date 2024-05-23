@@ -922,6 +922,8 @@ namespace OpenDental{
 				Patient patient=new Patient();
 				patient.FName=PIn.String(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["FName"].ToString());
 				patient.Preferred=PIn.String(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["Preferred"].ToString());
+				patient.ClinicNum=PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["ClinicNum"].ToString());
+				patient.PriProv=PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["PriProv"].ToString());
 				DateTime dateTimeAskedToArrive=PIn.DateT(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["DateTimeAskedToArrive"].ToString());
 				DateTime dateTimeApt=PIn.DateT(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["AptDateTime"].ToString());
 				if(checkGroupFamilies.Checked) {//build the list of appointments a family has scheduled

@@ -239,6 +239,7 @@ namespace OpenDental{
 				groupEnterPayment.Text=Lan.g(this,"Enter Estimate");
 				this.Text=Lan.g(this,"Edit Preauthorization");
 				groupBoxPendingPayment.Visible=false;
+				labelWorkflowMsg.Text="Use right-click options on Preauthorization";
 			}
 			comboClaimType.Items.Add(Lan.g(this,"Primary"));
 			comboClaimType.Items.Add(Lan.g(this,"Secondary"));

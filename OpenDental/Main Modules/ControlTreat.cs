@@ -3339,5 +3339,141 @@ namespace OpenDental{
 			ToolBarMain.Invalidate();
 			//listPreAuth.Enabled=false;
 		}
+
+		///<summary>Determines if the right click DXC options are grayed out. If the preauth selected does not have a clearinghouse, is not allowed to send attachments, or the clearinghouse is not ClaimConnect, then the options will be grayed out.</summary>
+		private void contextMenuPreAuthGrid_Popup(object sender,EventArgs e) {
+			menuItemSnipAttachment.Enabled=true;
+			menuItemSelectImage.Enabled=true;
+			menuItemPasteAttachment.Enabled=true;
+			menuItemAttachmentHistory.Enabled=true;
+			Clearinghouse clearingHouse=GetClearingHouseForClaim();
+			if(clearingHouse==null) {
+				menuItemSnipAttachment.Enabled=false;
+				menuItemSelectImage.Enabled=false;
+				menuItemPasteAttachment.Enabled=false;
+				menuItemAttachmentHistory.Enabled=false;
+				return;
+			}
+			//Are attachments allowed to be sent and is the office using ClaimConnect
+			if(clearingHouse?.IsAttachmentSendAllowed!=true || clearingHouse.CommBridge!=EclaimsCommBridge.ClaimConnect) {
+				menuItemSnipAttachment.Enabled=false;
+				menuItemSelectImage.Enabled=false;
+				menuItemPasteAttachment.Enabled=false;
+				menuItemAttachmentHistory.Enabled=false;
+			}
+		}
+
+		/// <summary>Return the clinic specific ClearningHouse based on the preauth the user clicked on. Can return null.</summary>
+		private Clearinghouse GetClearingHouseForClaim() {
+			//SelectionMode is set to OneRow
+			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
+			Claim claimPreAuth=(Claim)_arrayListPreAuth[idxPreAuthSelected];
+			//Finding the clearing house settings for the selected preauth's clinic is from ClaimConnect.cs GetClearingHouseForClaim(). This method is private so the code was copied.
+			InsPlan insPlan=InsPlans.GetPlan(claimPreAuth.PlanNum,null);
+			if(insPlan==null) {
+				return null;
+			}
+			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
+			if(carrier==null) {
+				return null;
+			}
+			if(carrier.ElectID.Length<2) {
+				return null;
+			}
+			//Fill clearing house with HQ fields
+			long clearingHouseNum=Clearinghouses.AutomateClearinghouseHqSelection(carrier.ElectID,claimPreAuth.MedType);
+			Clearinghouse clearingHouse=Clearinghouses.GetClearinghouse(clearingHouseNum);
+			//Refill clearingHouse with clinic specific fields
+			return Clearinghouses.OverrideFields(clearingHouse,claimPreAuth.ClinicNum);
+		}
+
+		private void menuItemSnipAttachment_Click(object sender,EventArgs e) {
+			//SelectionMode is set to OneRow
+			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
+			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
+			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
+			if(claimPreAuth==null) {
+				return;
+			}
+			if(!ValidateRightClickDXC(claimPreAuth)) {
+				return;
+			}
+			FormClaimAttachSnipDXC formClaimAttachSnipDXC=new FormClaimAttachSnipDXC();
+			formClaimAttachSnipDXC.ClaimCur=claimPreAuth;
+			formClaimAttachSnipDXC.Patient=PatientCur;
+			formClaimAttachSnipDXC.Show();
+		}
+
+		private void menuItemSelectImage_Click(object sender,EventArgs e) {
+			//SelectionMode is set to OneRow
+			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
+			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
+			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
+			if(claimPreAuth==null) {
+				return;
+			}
+			if(!ValidateRightClickDXC(claimPreAuth)) {
+				return;
+			}
+			using FormImagePickerDXC formImagePickerDXC=new FormImagePickerDXC();
+			formImagePickerDXC.PatientCur=PatientCur;
+			formImagePickerDXC.ClaimCur=claimPreAuth;
+			formImagePickerDXC.ShowDialog();
+		}
+
+		private void menuItemPasteAttachment_Click(object sender,EventArgs e) {
+			//SelectionMode is set to OneRow
+			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
+			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
+			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
+			if(claimPreAuth==null) {
+				return;
+			}
+			if(!ValidateRightClickDXC(claimPreAuth)) {
+				return;
+			}
+			FormClaimAttachPasteDXC formClaimAttachPasteDXC=new FormClaimAttachPasteDXC();
+			formClaimAttachPasteDXC.ClaimCur=claimPreAuth;
+			formClaimAttachPasteDXC.PatientCur=PatientCur;
+			formClaimAttachPasteDXC.Show();
+		}
+
+		private void menuItemAttachmentHistory_Click(object sender,EventArgs e) {
+			//SelectionMode is set to OneRow
+			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
+			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
+			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
+			if(claimPreAuth==null) {
+				return;
+			}
+			if(!ValidateRightClickDXC(claimPreAuth)) {
+				return;
+			}
+			using FormClaimAttachHistory formClaimAttachHistory=new FormClaimAttachHistory();
+			formClaimAttachHistory.ClaimCur=claimPreAuth;
+			formClaimAttachHistory.PatientCur=PatientCur;
+			formClaimAttachHistory.ShowDialog();
+		}
+
+		///<summary>Centralize validation for the DXC right click options. Validation logic taken from the FormClaimEdit.cs OpenAttachmentForm method.</summary>
+		private bool ValidateRightClickDXC(Claim claimPreAuth) {
+			if(claimPreAuth.ClaimStatus=="W") {
+				ClaimSendQueueItem[] claimSendQueueItemsArray=Claims.GetQueueList(claimPreAuth.ClaimNum,claimPreAuth.ClinicNum,0);
+				if(!claimSendQueueItemsArray[0].CanSendElect) {
+					MsgBox.Show(this,"Carrier is not set to Send Claims Electronically.");
+					return false;
+				}
+				Clearinghouse clearinghouseHq=ClearinghouseL.GetClearinghouseHq(claimSendQueueItemsArray[0].ClearinghouseNum);
+				Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,Clinics.ClinicNum);
+				claimSendQueueItemsArray[0]=OpenDentBusiness.Eclaims.Eclaims.GetMissingData(clearinghouseClin,claimSendQueueItemsArray[0]);
+				if(claimSendQueueItemsArray[0].MissingData!="") {
+					MessageBox.Show("Cannot add attachments until missing data is fixed:\r\n"+claimSendQueueItemsArray[0].MissingData);
+					return false;
+				}
+			}
+			return true;
+		}
+
+
 	}
 }

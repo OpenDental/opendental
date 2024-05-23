@@ -124,7 +124,7 @@ namespace OpenDental {
 				listMode.SetSelected((int)_commlog.Mode_);
 				listSentOrReceived.SetSelected((int)_commlog.SentOrReceived);
 			}
-			textNote.Text=_commlog.Note;
+			textNote.Text=_commlog.Note;//ok because no formatting characters in the commlog note.
 			textNote.SelectionStart=textNote.Text.Length;
 			textNote.Focus();
 			butEditAutoNote.Visible=GetHasAutoNotePrompt();

@@ -1193,7 +1193,7 @@ namespace OpenDentBusiness {
 			///<summary>Transaction origination point</summary>
 			[DataMember(Name = "source")]
 			public TransactionSource Source;
-			///<summary>Raw response form the gateway</summary>
+			///<summary>Raw response from the gateway</summary>
 			[DataMember(Name = "gatewayResponse")]
 			public object GatewayResponse;
 			///<summary>Merchant identification number</summary>

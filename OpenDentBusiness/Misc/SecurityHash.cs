@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2024,5,21);
+		public static DateTime DateStart=new DateTime(2024,5,23);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -181,9 +181,8 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PatientWorker() {
-			DateTime dateStartHashing=GetHashingDate();
 			//Hash entries made after new date
-			string command="SELECT PatNum FROM patient WHERE DateTStamp >= "+POut.Date(dateStartHashing);
+			string command="SELECT PatNum FROM patient WHERE SecurityHash = ''";
 			DataTable table=Db.GetTable(command);
 			long patNum;
 			string unhashedText="";
@@ -192,7 +191,7 @@ namespace OpenDentBusiness.Misc {
 				patNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
 				unhashedText=patNum.ToString();
 				try {
-					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
+					hashedText=CDT.Class1.CreateSaltedHash(unhashedText,isStatic:true);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();

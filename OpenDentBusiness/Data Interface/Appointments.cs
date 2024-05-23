@@ -1965,12 +1965,13 @@ namespace OpenDentBusiness{
 			table.Columns.Add("PatNum");
 			table.Columns.Add("PreferConfirmMethod");
 			table.Columns.Add("Preferred");
+			table.Columns.Add("PriProv");
 			table.Columns.Add("ProcDescript");
 			table.Columns.Add("TxtMsgOk");
 			table.Columns.Add("WirelessPhone");
 			List<DataRow> listDataRows=new List<DataRow>();
 			string command="SELECT patient.PatNum,patient.LName,patient.FName,patient.Preferred,patient.LName,patient.Guarantor,"
-				+"AptDateTime,patient.Birthdate,patient.ClinicNum,patient.HmPhone,patient.TxtMsgOk,patient.WkPhone,"
+				+"AptDateTime,patient.Birthdate,patient.ClinicNum,patient.HmPhone,patient.TxtMsgOk,patient.WkPhone,patient.PriProv,"
 				+"patient.WirelessPhone,appointment.ProcDescript,appointment.Confirmed,appointment.Note,patient.AddrNote,appointment.AptNum,patient.MedUrgNote,"
 				+"patient.PreferConfirmMethod,guar.Email guarEmail,guar.WirelessPhone guarWirelessPhone,guar.TxtMsgOK guarTxtMsgOK,guar.ClinicNum guarClinicNum,"
 				+"guar.PreferConfirmMethod guarPreferConfirmMethod,patient.Email,patient.Premed,appointment.DateTimeAskedToArrive,securitylog.LogDateTime,"
@@ -2121,6 +2122,7 @@ namespace OpenDentBusiness{
 				dataRow["PatNum"]=tableRaw.Rows[i]["PatNum"].ToString();
 				dataRow["PreferConfirmMethod"]=tableRaw.Rows[i]["PreferConfirmMethod"].ToString();
 				dataRow["Preferred"]=tableRaw.Rows[i]["Preferred"].ToString();
+				dataRow["PriProv"]=tableRaw.Rows[i]["PriProv"].ToString();
 				dataRow["ProcDescript"]=tableRaw.Rows[i]["ProcDescript"].ToString();
 				dataRow["TxtMsgOk"]=tableRaw.Rows[i]["TxtMsgOk"].ToString();
 				dataRow["WirelessPhone"]=tableRaw.Rows[i]["WirelessPhone"].ToString();
@@ -3522,6 +3524,25 @@ namespace OpenDentBusiness{
 				//If not on middle tier, the reference to appointment will be the same as what's in the list, so we don't need to add again.
 				if(listAppointments.RemoveAll(x => x.AptNum==appointment.AptNum)>0) {
 					listAppointments.Add(appointment);
+				}
+			}
+			if(appointment.AptStatus==ApptStatus.Planned) {
+				List<Appointment> listAppointmentsChecks=listAppointments;
+				for(int i = 0; i<listAppointments.Count;i++) {
+					if(listAppointments[i].AptNum==appointment.AptNum || listAppointments[i].AptStatus==ApptStatus.Planned) {
+						continue;
+					}
+					//We must go to db to get these procedures because AptNum is wrong.
+					if(!listProceduresSelected.Any(x=>Procedures.GetOneProc(x.ProcNum,false).AptNum==listAppointments[i].AptNum)) {
+						continue;
+					}
+					//We now know that the scheduled appt in this loop has one of our procs attached.
+					//Mark this appointment as being derived from the planned appointment we are saving.
+					//It's harmless if we set this field on multiple scheduled appts.
+					//In that case, when putting a planned appt on the pinboard, it will just use the first one it finds.
+					Appointment appointmentScheduled=listAppointments[i].Copy();
+					appointmentScheduled.NextAptNum=appointment.AptNum;//planned AptNum
+					Appointments.Update(appointmentScheduled,listAppointments[i]);
 				}
 			}
 			Procedures.ProcsAptNumHelper(listProceduresForAppt,appointment,listAppointments,listSelectedIndices,listProcNumsAttachedStart,isPlanned);			

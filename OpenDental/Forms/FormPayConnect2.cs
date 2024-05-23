@@ -190,7 +190,9 @@ namespace OpenDental {
 				//	}
 				//}
 				//We only have the last 4 digits of the card to work with now, no need for MagStripCardParser
-				magData=payConnect2Response.TerminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+				if(payConnect2Response.TerminalTransactionResponse!=null) {
+					magData=payConnect2Response.TerminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+				}
 			}
 			else if(radioWebService.Checked) {
 				if(radioSale.Checked) {
@@ -202,8 +204,13 @@ namespace OpenDental {
 						using FormPayConnect2iFrame formPayConnect2IFrame=new FormPayConnect2iFrame(_clinicNum,amountInCents,_isAddingCard);
 						formPayConnect2IFrame.ShowDialog();
 						payConnect2Response=formPayConnect2IFrame.GetResponse();
-						if(payConnect2Response.GetStatusResponse==null) {
+						GetStatusResponse getStatusResponse=payConnect2Response.GetStatusResponse;
+						if(getStatusResponse==null) {
 							return false;
+						}
+						string pc2GatewayResponse=getStatusResponse.GatewayResponse.ToString();
+						if(pc2GatewayResponse.ToLower().Contains("swipe")){//"entrymode" : "Swipe (non emv)" means card was swiped, not manually entered.
+							magData="swiped";//Set magData to something other than blank so receipt shows "Swiped"
 						}
 					}
 					//We have a saved card with a token

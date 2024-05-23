@@ -1438,5 +1438,13 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End B53968
 		}//End of 24_1_31()
+
+		private static void To24_1_33() {
+			//Start B54068
+			string command="UPDATE patient SET SecurityHash=''";
+			Db.NonQ(command);
+			//End B54068
+		}//End of 24_1_33()
+
 	}
 }

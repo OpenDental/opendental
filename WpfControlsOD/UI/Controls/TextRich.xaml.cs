@@ -536,8 +536,10 @@ namespace WpfControls.UI{
 			}
 		}
 
+		///<summary>Be very careful! This only works with plain text. If the TextRich has any formatting like bold or red underlines for spell check, it will likely fail.</summary>
 		[Category("OD")]
 		[DefaultValue("")]
+		[Description("Be very careful! This only works with plain text. If the TextRich has any formatting like bold or red underlines for spell check, it will likely fail.")]
 		public string Text {
 			get {
 				FlowDocument flowDocument=richTextBox.Document;
@@ -564,7 +566,13 @@ namespace WpfControls.UI{
 					}
 				}
 				richTextBox.Document=flowDocument;
-				SpellCheck();
+				if(!_listTextRangesMisspelled.IsNullOrEmpty()){
+					//This effectively skips spell checking when first loading the textRich with text.
+					//We don't want red underlines to start showing until user presses some keys.
+					//The reason we have to have this in the other situations (not initial)
+					//is because we need to refresh the pointers in _listTextRangesMisspelled.
+					SpellCheck();
+				}
 			}
 		}
 

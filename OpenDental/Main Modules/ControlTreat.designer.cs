@@ -50,6 +50,11 @@ namespace OpenDental {
 			this.tabPagePrint = new OpenDental.UI.TabPage();
 			this.checkPrintClassic = new OpenDental.UI.CheckBox();
 			this.labelCheckInsFrequency = new System.Windows.Forms.Label();
+			this.contextMenuPreAuthGrid = new System.Windows.Forms.ContextMenu();
+			this.menuItemSnipAttachment = new System.Windows.Forms.MenuItem();
+			this.menuItemSelectImage = new System.Windows.Forms.MenuItem();
+			this.menuItemPasteAttachment = new System.Windows.Forms.MenuItem();
+			this.menuItemAttachmentHistory = new System.Windows.Forms.MenuItem();
 			this.userControlIndIns = new OpenDental.DashIndividualInsurance();
 			this.userControlFamIns = new OpenDental.DashFamilyInsurance();
 			this.butPlannedAppt = new OpenDental.UI.Button();
@@ -121,6 +126,7 @@ namespace OpenDental {
 			// 
 			// gridPreAuth
 			// 
+			this.gridPreAuth.ContextMenu = this.contextMenuPreAuthGrid;
 			this.gridPreAuth.Location = new System.Drawing.Point(693, 29);
 			this.gridPreAuth.Name = "gridPreAuth";
 			this.gridPreAuth.Size = new System.Drawing.Size(299, 146);
@@ -129,6 +135,39 @@ namespace OpenDental {
 			this.gridPreAuth.TranslationName = "TablePreAuth";
 			this.gridPreAuth.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridPreAuth_CellDoubleClick);
 			this.gridPreAuth.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridPreAuth_CellClick);
+			// 
+			// contextMenuPreAuthGrid
+			// 
+			this.contextMenuPreAuthGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemSnipAttachment,
+            this.menuItemSelectImage,
+            this.menuItemPasteAttachment,
+            this.menuItemAttachmentHistory});
+			this.contextMenuPreAuthGrid.Popup += new System.EventHandler(this.contextMenuPreAuthGrid_Popup);
+			// 
+			// menuItemSnipAttachment
+			// 
+			this.menuItemSnipAttachment.Index = 0;
+			this.menuItemSnipAttachment.Text = "Snip Attachment for DentalXChange";
+			this.menuItemSnipAttachment.Click += new System.EventHandler(this.menuItemSnipAttachment_Click);
+			// 
+			// menuItemSelectImage
+			// 
+			this.menuItemSelectImage.Index = 1;
+			this.menuItemSelectImage.Text = "Select Attachment for DentalXChange";
+			this.menuItemSelectImage.Click += new System.EventHandler(this.menuItemSelectImage_Click);
+			// 
+			// menuItemPasteAttachment
+			// 
+			this.menuItemPasteAttachment.Index = 2;
+			this.menuItemPasteAttachment.Text = "Paste Attachment(s) for DentalXChange";
+			this.menuItemPasteAttachment.Click += new System.EventHandler(this.menuItemPasteAttachment_Click);
+			// 
+			// menuItemAttachmentHistory
+			// 
+			this.menuItemAttachmentHistory.Index = 3;
+			this.menuItemAttachmentHistory.Text = "View Sent Attachments for DentalXChange";
+			this.menuItemAttachmentHistory.Click += new System.EventHandler(this.menuItemAttachmentHistory_Click);
 			// 
 			// gridPlans
 			// 
@@ -506,6 +545,11 @@ namespace OpenDental {
 		private UI.Button butInsRem;
 		private UI.Button butNewTP;
 		private UI.Button butSaveTP;
+		private System.Windows.Forms.ContextMenu contextMenuPreAuthGrid;
+		private System.Windows.Forms.MenuItem menuItemSnipAttachment;
+		private System.Windows.Forms.MenuItem menuItemSelectImage;
+		private System.Windows.Forms.MenuItem menuItemPasteAttachment;
+		private System.Windows.Forms.MenuItem menuItemAttachmentHistory;
 		private System.Drawing.Printing.PrintDocument pd2;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.GridOD gridPrint;

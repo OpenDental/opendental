@@ -66,6 +66,12 @@ namespace OpenDental {
 			if(!MakeABackup(isSilent,backupLocation,isSecurityLogged)) {
 				return false;
 			}
+			return RepairAndOptimize(isSilent);
+		}
+
+		///<summary>Returns false if the repair or the optimze failed.
+		///Set isSilent to true to suppress the failure message boxes.  However, progress windows will always be shown.</summary>
+		public static bool RepairAndOptimize(bool isSilent) {
 			try {
 				UI.ProgressWin progressOD=new UI.ProgressWin();
 				progressOD.ActionMain=()=>DatabaseMaintenances.RepairAndOptimize();

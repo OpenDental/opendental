@@ -61,6 +61,7 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.textArchiveServerName = new System.Windows.Forms.TextBox();
 			this.textArchivePass = new System.Windows.Forms.TextBox();
+			this.checkOptimize = new OpenDental.UI.CheckBox();
 			this.textArchiveUser = new System.Windows.Forms.TextBox();
 			this.butArchive = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
@@ -88,6 +89,7 @@
 			this.tabControl1.Controls.Add(this.tabPageBackup);
 			this.tabControl1.Controls.Add(this.tabPageArchive);
 			this.tabControl1.Controls.Add(this.tabPageSupplementalBackups);
+			this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControl1.Location = new System.Drawing.Point(0, 2);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.Size = new System.Drawing.Size(780, 577);
@@ -160,7 +162,7 @@
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(674,516);
+			this.butSave.Location = new System.Drawing.Point(674, 516);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(86, 26);
 			this.butSave.TabIndex = 13;
@@ -361,6 +363,7 @@
 			this.tabPageArchive.Controls.Add(this.checkSecurityLog);
 			this.tabPageArchive.Controls.Add(this.checkArchiveDoBackupFirst);
 			this.tabPageArchive.Controls.Add(this.labelWarning);
+			this.tabPageArchive.Controls.Add(this.checkOptimize);
 			this.tabPageArchive.Controls.Add(this.label7);
 			this.tabPageArchive.Controls.Add(this.butSaveArchiveData);
 			this.tabPageArchive.Controls.Add(this.groupBoxBackupConnection);
@@ -414,7 +417,7 @@
 			this.labelWarning.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelWarning.ForeColor = System.Drawing.Color.Red;
-			this.labelWarning.Location = new System.Drawing.Point(246, 406);
+			this.labelWarning.Location = new System.Drawing.Point(246, 430);
 			this.labelWarning.Name = "labelWarning";
 			this.labelWarning.Size = new System.Drawing.Size(509, 55);
 			this.labelWarning.TabIndex = 13;
@@ -435,7 +438,7 @@
 			// 
 			// butSaveArchiveData
 			// 
-			this.butSaveArchiveData.Location = new System.Drawing.Point(139, 389);
+			this.butSaveArchiveData.Location = new System.Drawing.Point(139, 413);
 			this.butSaveArchiveData.Name = "butSaveArchiveData";
 			this.butSaveArchiveData.Size = new System.Drawing.Size(86, 26);
 			this.butSaveArchiveData.TabIndex = 4;
@@ -452,7 +455,7 @@
 			this.groupBoxBackupConnection.Controls.Add(this.textArchiveServerName);
 			this.groupBoxBackupConnection.Controls.Add(this.textArchivePass);
 			this.groupBoxBackupConnection.Controls.Add(this.textArchiveUser);
-			this.groupBoxBackupConnection.Location = new System.Drawing.Point(140, 207);
+			this.groupBoxBackupConnection.Location = new System.Drawing.Point(140, 231);
 			this.groupBoxBackupConnection.Name = "groupBoxBackupConnection";
 			this.groupBoxBackupConnection.Size = new System.Drawing.Size(493, 176);
 			this.groupBoxBackupConnection.TabIndex = 0;
@@ -501,6 +504,15 @@
 			this.textArchivePass.Size = new System.Drawing.Size(283, 20);
 			this.textArchivePass.TabIndex = 3;
 			// 
+			// checkOptimize
+			// 
+			this.checkOptimize.Location = new System.Drawing.Point(138, 205);
+			this.checkOptimize.Name = "checkOptimize";
+			this.checkOptimize.Size = new System.Drawing.Size(247, 20);
+			this.checkOptimize.TabIndex = 21;
+			this.checkOptimize.Text = "Optimize Database (requires backup)";
+			this.checkOptimize.Click += new System.EventHandler(this.checkOptimize_Click);
+			// 
 			// textArchiveUser
 			// 
 			this.textArchiveUser.Location = new System.Drawing.Point(10, 99);
@@ -511,7 +523,7 @@
 			// butArchive
 			// 
 			this.butArchive.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.butArchive.Location = new System.Drawing.Point(141, 421);
+			this.butArchive.Location = new System.Drawing.Point(141, 445);
 			this.butArchive.Name = "butArchive";
 			this.butArchive.Size = new System.Drawing.Size(99, 26);
 			this.butArchive.TabIndex = 2;
@@ -590,7 +602,6 @@
 			this.textSupplementalBackupCopyNetworkPath.Name = "textSupplementalBackupCopyNetworkPath";
 			this.textSupplementalBackupCopyNetworkPath.Size = new System.Drawing.Size(494, 20);
 			this.textSupplementalBackupCopyNetworkPath.TabIndex = 17;
-			this.textSupplementalBackupCopyNetworkPath.Text = "";
 			// 
 			// labelLastSupplementalBackupDateTime
 			// 
@@ -610,7 +621,6 @@
 			this.textSupplementalBackupDateLastComplete.ReadOnly = true;
 			this.textSupplementalBackupDateLastComplete.Size = new System.Drawing.Size(150, 20);
 			this.textSupplementalBackupDateLastComplete.TabIndex = 15;
-			this.textSupplementalBackupDateLastComplete.Text = "";
 			// 
 			// checkSupplementalBackupEnabled
 			// 
@@ -654,6 +664,7 @@
 			this.groupBoxBackupConnection.ResumeLayout(false);
 			this.groupBoxBackupConnection.PerformLayout();
 			this.tabPageSupplementalBackups.ResumeLayout(false);
+			this.tabPageSupplementalBackups.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -714,5 +725,6 @@
 		private OpenDental.UI.CheckBox checkSecurityLog;
 		private OpenDental.UI.CheckBox checkEmailMessage;
 		private System.Windows.Forms.Label labelSelectTables;
+		private UI.CheckBox checkOptimize;
 	}
 }

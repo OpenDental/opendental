@@ -62,7 +62,7 @@ namespace OpenDental {
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("FormReplicationSetup","UpdateBlocked"),100,HorizontalAlignment.Center);
 			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g("FormReplicationSetup","IsReport"),100,HorizontalAlignment.Center);
+			col=new GridColumn(Lan.g("FormReplicationSetup","IsTempAllowed"),100,HorizontalAlignment.Center);
 			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row;

@@ -715,7 +715,10 @@ namespace OpenDental {
 			catch(Exception ex) {
 				FriendlyException.Show("An error occurred backing up the old database. Old data was not removed from the database. "+
 					"Ensure no other machines are currently using OpenDental and try again.",ex);
+				return;
 			}
+			//The UI enforces a backup to occur above when optimize is checked
+			Shared.RepairAndOptimize(true);
 		}
 
 		private void butSaveArchive_Click(object sender,EventArgs e) {
@@ -776,6 +779,17 @@ namespace OpenDental {
 		}
 
 		#endregion Supplemental Tab
+
+		private void checkOptimize_Click(object sender,EventArgs e) {
+			if(checkOptimize.Checked) {
+				checkArchiveDoBackupFirst.Checked=true;
+				checkArchiveDoBackupFirst.Enabled=false;
+			}
+			else {
+				checkArchiveDoBackupFirst.Enabled=true;
+			}
+		}
+
 	}
 
 	///<summary>Backing up can fail at two points, when backing up the database or the A to Z images.  This delegate lets the backup thread manipulate a local variable so that we can let the user know at what point the backup failed.</summary>

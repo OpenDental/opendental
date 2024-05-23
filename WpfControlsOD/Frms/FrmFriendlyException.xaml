@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="1246" Height="735" 
-             Text="Error Encountered - 12/7/2023 2:31:05 PM" HasHelpButton="False" >
+             Text="Error Encountered" HasHelpButton="False" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:TextBox x:Name="textQuery" Width="575" Height="554" Margin="638,92,0,0" ColorBack="#FFF0F0F0" IsMultiline="True" ReadOnly="True" Text="Query Detail" />
 		<ui:TextBox x:Name="textStackTrace" Height="554" Margin="16,92,0,0" ColorBack="#FFF0F0F0" IsMultiline="True" ReadOnly="True" Text="Error Details" Width="575" />

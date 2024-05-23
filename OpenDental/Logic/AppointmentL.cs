@@ -134,7 +134,11 @@ namespace OpenDental{
 				procedureBroken.ProcStatus=ProcStat.C;
 				procedureBroken.ClinicNum=appointment.ClinicNum;
 				procedureBroken.UserNum=Security.CurUser.UserNum;
-				procedureBroken.Note=Lans.g("AppointmentEdit","Appt BROKEN for")+" "+appointment.ProcDescript+"  "+appointment.AptDateTime.ToString();
+				procedureBroken.Note=Lans.g("AppointmentEdit","Appt BROKEN for")+" ";
+				if(!string.IsNullOrWhiteSpace(appointment.ProcDescript)) {
+					procedureBroken.Note+=appointment.ProcDescript+" ";
+				}
+				procedureBroken.Note+=appointment.AptDateTime.ToString("ddd")+" "+appointment.AptDateTime.ToString();
 				procedureBroken.PlaceService=Clinics.GetPlaceService(procedureBroken.ClinicNum);
 				List<InsSub> listInsSubs=InsSubs.RefreshForFam(Patients.GetFamily(patient.PatNum));
 				List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
@@ -206,7 +210,11 @@ namespace OpenDental{
 				commLog.PatNum=patient.PatNum;
 				commLog.CommDateTime=DateTime.Now;
 				commLog.CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.APPT);
-				commLog.Note=Lan.g("Appointment","Appt BROKEN for")+" "+appointment.ProcDescript+"  "+appointment.AptDateTime.ToString();
+				commLog.Note=Lan.g("Appointment","Appt BROKEN for")+" ";
+				if(!string.IsNullOrWhiteSpace(appointment.ProcDescript)) {
+					commLog.Note+=appointment.ProcDescript+" ";
+				}
+				commLog.Note+=appointment.AptDateTime.ToString("ddd")+" "+appointment.AptDateTime.ToString();
 				commLog.Mode_=CommItemMode.None;
 				commLog.UserNum=Security.CurUser.UserNum;
 				commLog.IsNew=true;

@@ -5071,9 +5071,9 @@ namespace OpenDentBusiness {
 			}
 			string unhashedText=patient.PatNum.ToString();
 			try {
-				return CDT.Class1.CreateSaltedHash(unhashedText);
+				return CDT.Class1.CreateSaltedHash(unhashedText,isStatic:true);
 			}
-			catch(Exception ex)  {
+			catch(Exception ex) {
 				ex.DoNothing();
 				return ex.GetType().Name;
 			}
@@ -5088,13 +5088,10 @@ namespace OpenDentBusiness {
 			if(patient.SecurityHash==null) {//When a patient is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
 				return true;
 			}
-			if(patient.DateTStamp < Misc.SecurityHash.GetHashingDate()) {//Old
-				return true;
-			}
 			if(patient.SecurityHash==HashFields(patient)) {
 				return true;
 			}
-			return false; 
+			return false;
 		}
 
 		///<summary>Checks all passed lists protected by SecurityHash columns. Returns false if a single row in any table is invalidly hashed. Limited to only 20 rows per table to reduce this process's impact on performance. Ignores rows occuring before SecurityHash.DateStart.</summary>

@@ -419,8 +419,8 @@ namespace OpenDentBusiness{
 		ClaimProcReceivedEdit,
 		///<summary>126 - Used to diagnose an error in statement creation. Audit Trail Permission Only</summary>
 		StatementPatNumMismatch,
-		///<summary>127 - User has access to Mobile Web.</summary>
-		[Description("Mobile Web/ODMobile")]
+		///<summary>127 - User has access to ODTouch.</summary>
+		[Description("ODTouch/ODMobile")]
 		MobileWeb,
 		///<summary>128 - For logging purposes only.  Used when PatPlans are created and not otherwise logged.</summary>
 		PatPlanCreate,

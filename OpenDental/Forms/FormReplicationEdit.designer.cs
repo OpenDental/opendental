@@ -41,7 +41,7 @@ namespace OpenDental{
 			this.textServerId = new OpenDental.ValidNum();
 			this.butSave = new OpenDental.UI.Button();
 			this.label11 = new System.Windows.Forms.Label();
-			this.checkReportServer = new OpenDental.UI.CheckBox();
+			this.checkTempTablesAllowedServer = new OpenDental.UI.CheckBox();
 			this.butThisComputerDesc = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -196,18 +196,17 @@ namespace OpenDental{
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(368, 46);
 			this.label11.TabIndex = 104;
-			this.label11.Text = "User queries with CREATE TABLE or DROP TABLE syntax can only be run when connecte" +
-    "d to this server.  Allowing such queries to run on non-report servers can cause " +
-    "replication to crash.";
+			this.label11.Text = "Typically checked. This will prevent user queries with CREATE TABLE or DROP TABLE" +
+    " from running. This is useful because they can cause replication to crash.";
 			// 
-			// checkReportServer
+			// checkTempTablesAllowedServer
 			// 
-			this.checkReportServer.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkReportServer.Location = new System.Drawing.Point(16, 248);
-			this.checkReportServer.Name = "checkReportServer";
-			this.checkReportServer.Size = new System.Drawing.Size(236, 18);
-			this.checkReportServer.TabIndex = 7;
-			this.checkReportServer.Text = "Report Server";
+			this.checkTempTablesAllowedServer.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkTempTablesAllowedServer.Location = new System.Drawing.Point(16, 248);
+			this.checkTempTablesAllowedServer.Name = "checkTempTablesAllowedServer";
+			this.checkTempTablesAllowedServer.Size = new System.Drawing.Size(236, 18);
+			this.checkTempTablesAllowedServer.TabIndex = 7;
+			this.checkTempTablesAllowedServer.Text = "Temp Tables Allowed Server";
 			// 
 			// butThisComputerDesc
 			// 
@@ -222,7 +221,7 @@ namespace OpenDental{
 			// 
 			this.ClientSize = new System.Drawing.Size(678, 353);
 			this.Controls.Add(this.butThisComputerDesc);
-			this.Controls.Add(this.checkReportServer);
+			this.Controls.Add(this.checkTempTablesAllowedServer);
 			this.Controls.Add(this.label11);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.label7);
@@ -268,7 +267,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label11;
-		private OpenDental.UI.CheckBox checkReportServer;
+		private OpenDental.UI.CheckBox checkTempTablesAllowedServer;
 		private UI.Button butThisComputerDesc;
 	}
 }

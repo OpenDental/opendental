@@ -644,6 +644,12 @@ namespace OpenDental {
 			}
 		}
 
+		private void contrApptPanel_MouseMoved(object sender,MouseEventArgs e) {
+			if(e.Button==MouseButtons.None) {
+				MouseUpForced();
+			}
+		}
+
 		///<summary>Finds the MenuItem on the contextMenu and performs the action on it.</summary>
 		private void SetMenuItemProperty(ContextMenuStrip contextMenu,string menuItemName,Action<ToolStripItem> actionSetMenuItem) {
 			ToolStripItem[] toolStripItemArray=contextMenu.Items.Find(menuItemName,false);
