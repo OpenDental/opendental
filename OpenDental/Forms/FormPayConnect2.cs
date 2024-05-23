@@ -122,6 +122,7 @@ namespace OpenDental {
 			WasPaymentAttempted=true;
 			PayConnect2Response payConnect2Response=new PayConnect2Response();
 			int amountInCents=GetAmountFieldAsCents();
+			string magData="";
 			if(radioTerminal.Checked) {
 				if(comboTerminal.SelectedItem==null) {
 					MsgBox.Show(this,"Please select a terminal from the dropdown.");
@@ -199,8 +200,13 @@ namespace OpenDental {
 						using FormPayConnect2iFrame formPayConnect2IFrame=new FormPayConnect2iFrame(_clinicNum,amountInCents,_isAddingCard);
 						formPayConnect2IFrame.ShowDialog();
 						payConnect2Response=formPayConnect2IFrame.GetResponse();
-						if(payConnect2Response.GetStatusResponse==null) {
+						GetStatusResponse getStatusResponse=payConnect2Response.GetStatusResponse;
+						if(getStatusResponse==null) {
 							return false;
+						}
+						string pc2GatewayResponse=getStatusResponse.GatewayResponse.ToString();
+						if(pc2GatewayResponse.ToLower().Contains("swipe")){//"entrymode" : "Swipe (non emv)" means card was swiped, not manually entered.
+							magData="swiped";//Set magData to something other than blank so receipt shows "Swiped"
 						}
 					}
 					//We have a saved card with a token
@@ -268,7 +274,7 @@ namespace OpenDental {
 					doShowSignatureLine=false;
 				}
 			}
-			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData:"",_response.AuthCode,_response.Description,messages:null,_response.Amount,doShowSignatureLine,_clinicNum,_response.CardType);
+			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData,_response.AuthCode,_response.Description,messages:null,_response.Amount,doShowSignatureLine,_clinicNum,_response.CardType);
 			return true;
 		}
 

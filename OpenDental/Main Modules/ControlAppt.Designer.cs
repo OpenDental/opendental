@@ -929,6 +929,7 @@
 			this.contrApptPanel.ApptResized += new System.EventHandler<OpenDental.UI.ApptEventArgs>(this.contrApptPanel_ApptResized);
 			this.contrApptPanel.ApptRightClicked += new System.EventHandler<OpenDental.UI.ApptRightClickEventArgs>(this.ContrApptPanel_ApptRightClicked);
 			this.contrApptPanel.DateChanged += new System.EventHandler(this.ContrApptPanel_DateChanged);
+			this.contrApptPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.contrApptPanel_MouseMoved);
 			this.contrApptPanel.SelectedApptChanged += new System.EventHandler<OpenDental.UI.ApptSelectedChangedEventArgs>(this.contrApptPanel_SelectedApptChanged);
 			// 
 			// ControlAppt
