@@ -125,7 +125,7 @@ namespace OpenDental.Main_Modules
             // Update the previous state for the next call
             ODSMS.wasSmsBroken = !smsIsWorking;
         }
-        private static void sendReminderTexts(ReminderFilterType filterType)
+        private static void sendReminderTexts()
         {
             var currentTime = DateTime.Now; // Using local time
             if (currentTime.Hour < 7)
@@ -140,7 +140,7 @@ namespace OpenDental.Main_Modules
             foreach (ReminderFilterType enumValue in enumValues)
             {
                 // Call GetPatientsWithAppointmentsTwoWeeks with each value
-                patientsNeedingApptReminder = GetPatientsWithAppointmentsTwoWeeks(enumValue);
+                List<Patient> patientsNeedingApptReminder  = GetPatientsWithAppointmentsTwoWeeks(enumValue);
 
                 // Lookup the appropriate value from the database
                 string reminderMessageTemplate;
@@ -216,7 +216,14 @@ namespace OpenDental.Main_Modules
 
                     // Print any other relevant properties you want to check
                 }
-                SmsToMobiles.SendSmsMany(messagesToSend);
+                if (ODSMS.SEND_SMS)
+                {
+                    SmsToMobiles.SendSmsMany(messagesToSend);
+                }
+                else
+                {
+                    Console.WriteLine("SMS sending is disabled. Not sending any messages.");
+                }
             }
 
         }
