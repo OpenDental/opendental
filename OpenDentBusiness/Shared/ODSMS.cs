@@ -14,6 +14,9 @@ namespace OpenDental
         public static string AUTH;  // username/password for diafaan
         public static string URL;   // URL for diafaan
         public static bool RECEIVE_SMS = false;   // should we receive text on this computer?
+        public static bool SEND_SMS = false;   // Set to false for disabling all sending
+        public static string DEBUG_NUMBER = "";   // Set to true and everything works like normal, but all sent SMS are sent straight to 
+
         public static HttpClient sharedClient = null;
 
         static ODSMS()

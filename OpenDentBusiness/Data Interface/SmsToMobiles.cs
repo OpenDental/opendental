@@ -380,14 +380,20 @@ namespace OpenDentBusiness
 			{
 				foreach (SmsToMobile msg in listMessages)
 				{
-					if (msg.MobilePhoneNumber[0] == '+')
-					{
+                    if (!string.IsNullOrEmpty(ODSMS.DEBUG_NUMBER))  // Do not send to a real patient if debug is set
+                    {
+                        msg.MobilePhoneNumber = ODSMS.DEBUG_NUMBER;
+                    }
+
+                    if (msg.MobilePhoneNumber[0] == '+')  // Remove the + from the phone number
+                    {
 						msg.MobilePhoneNumber = msg.MobilePhoneNumber.Substring(1);
 					}
-					else if (msg.MobilePhoneNumber[0] == '0')
-					{
+					else if (msg.MobilePhoneNumber[0] == '0') // Replace the leading 0 with 64
+                    {
 						msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
 					}
+
 					// msg.MobilePhoneNumber = "6421467784"; // BUG: REMOVE SOON! 2024-02-06
 
                     string auth = ODSMS.AUTH;
