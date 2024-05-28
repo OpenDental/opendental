@@ -84,7 +84,20 @@ End of Checklist================================================================
 				_listManualPagesUnlinked=Faqs.GetListUnlinkedFaq();
 			}
 			else {
-				listFaqsForPageName=Faqs.GetAllForNameAndVersion(textManualPage.Text,version);
+				DateTime dateFrom=DateTime.MinValue;
+				DateTime dateTo=DateTime.MaxValue;
+				try {
+					dateFrom=datePickerFrom.GetDateTime().Date;
+					dateTo=datePickerTo.GetDateTime().Date;
+				}
+				catch (Exception ex) {
+					MsgBox.Show("Error:\r\n"+ex.Message);
+					return;
+				}
+				if(dateTo==DateTime.MinValue.Date) {
+					dateTo=DateTime.MaxValue.Date;//DatePicker blank text defaults to MinValue, but Date To should default to MaxValue.
+				}
+				listFaqsForPageName=Faqs.GetAllForNameAndVersion(textManualPage.Text,version,dateFrom,dateTo);
 			}
 			listFaqsForPageName=Faqs.GetManualPageNamesForFaqs(listFaqsForPageName);
 			gridODMain.BeginUpdate();

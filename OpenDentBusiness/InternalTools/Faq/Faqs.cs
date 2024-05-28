@@ -151,17 +151,19 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
-		///<summary>Gets all Faq's associated to the given manual page name and version. If version is blank will query for all versions.</summary>
-		public static List<Faq> GetAllForNameAndVersion(string pageName,int version) {
+		///<summary>Gets all Faq's associated to the given manual page name and version, filtered to the date range specified by dateFrom and dateTo. 
+		///If version is blank will query for all versions.</summary>
+		public static List<Faq> GetAllForNameAndVersion(string pageName,int version,DateTime dateFrom,DateTime dateTo) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Faq>>(MethodBase.GetCurrentMethod(),pageName,version);
+				return Meth.GetObject<List<Faq>>(MethodBase.GetCurrentMethod(),pageName,version,dateFrom,dateTo);
 			}
 			string command=$@"
 			SELECT faq.*
 			FROM faqmanualpagelink
 			INNER JOIN manualpage ON manualpage.ManualPageNum=faqmanualpagelink.ManualPageNum
 			INNER JOIN faq ON faq.FaqNum=faqmanualpagelink.FaqNum
-			WHERE manualpage.FileName LIKE '%{POut.String(pageName)}%'";
+			WHERE manualpage.FileName LIKE '%{POut.String(pageName)}%' 
+			AND DATE(faq.DateTEntry) >= {POut.Date(dateFrom)} AND DATE(faq.DateTEntry) <= {POut.Date(dateTo)}";
 			if(version>0) {
 				command+=$"AND faq.ManualVersion={POut.Int(version)}";
 			}

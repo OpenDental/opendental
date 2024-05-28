@@ -7869,7 +7869,7 @@
         <EnumValue name="ProviderAlphabetize">124 - Allows users to use the Alphabetize Provider button from FormProviderSetup to permanently re-order providers.</EnumValue>
         <EnumValue name="ClaimProcReceivedEdit">125 - Allows editing of claimprocs that are marked as received status.</EnumValue>
         <EnumValue name="StatementPatNumMismatch">126 - Used to diagnose an error in statement creation. Audit Trail Permission Only</EnumValue>
-        <EnumValue name="MobileWeb">127 - User has access to Mobile Web.</EnumValue>
+        <EnumValue name="MobileWeb">127 - User has access to ODTouch.</EnumValue>
         <EnumValue name="PatPlanCreate">128 - For logging purposes only.  Used when PatPlans are created and not otherwise logged.</EnumValue>
         <EnumValue name="PatPriProvEdit">129 - Allows the user to change a patient's primary provider, with audit trail logging.</EnumValue>
         <EnumValue name="ReferralEdit">130</EnumValue>
@@ -15246,7 +15246,7 @@
         <EnumValue name="ProviderAlphabetize">124 - Allows users to use the Alphabetize Provider button from FormProviderSetup to permanently re-order providers.</EnumValue>
         <EnumValue name="ClaimProcReceivedEdit">125 - Allows editing of claimprocs that are marked as received status.</EnumValue>
         <EnumValue name="StatementPatNumMismatch">126 - Used to diagnose an error in statement creation. Audit Trail Permission Only</EnumValue>
-        <EnumValue name="MobileWeb">127 - User has access to Mobile Web.</EnumValue>
+        <EnumValue name="MobileWeb">127 - User has access to ODTouch.</EnumValue>
         <EnumValue name="PatPlanCreate">128 - For logging purposes only.  Used when PatPlans are created and not otherwise logged.</EnumValue>
         <EnumValue name="PatPriProvEdit">129 - Allows the user to change a patient's primary provider, with audit trail logging.</EnumValue>
         <EnumValue name="ReferralEdit">130</EnumValue>

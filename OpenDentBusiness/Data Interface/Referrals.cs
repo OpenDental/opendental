@@ -255,6 +255,32 @@ namespace OpenDentBusiness{
 			return Crud.ReferralCrud.SelectOne(command);
 		}
 
+		///<summary>Gets all Referrals from the database. Returns empty list if not found.</summary>
+		public static List<Referral> GetReferralsForApi(int limit,int offset,bool isHidden,bool notPerson,bool isDoctor,bool isPreferred,bool isPatient) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Referral>>(MethodBase.GetCurrentMethod(),limit,offset,isHidden,notPerson,isDoctor,isPreferred,isPatient);
+			}
+			string command="SELECT * FROM referral WHERE DateTStamp>="+POut.DateT(DateTime.MinValue)+" ";
+			if(isHidden) {
+				command+="AND IsHidden=1 ";
+			}
+			if(notPerson) {
+				command+="AND NotPerson=1 ";
+			}
+			if(isDoctor) {
+				command+="AND IsDoctor=1 ";
+			}
+			if(isPreferred) {
+				command+="AND IsPreferred=1 ";
+			}
+			if(isPatient) {
+				command+="AND PatNum>0 ";
+			}
+			command+="ORDER BY referralNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ReferralCrud.SelectMany(command);
+		}
+
 		///<summary>Gets IsDoctors referred "from" referrals for the given patient.  Will return empty list if no "from" and IsDoctor found for patient.</summary>
 		public static List<Referral> GetIsDoctorReferralsForPat(long patNum,List<RefAttach> listRefAttaches=null) {
 			//No need to check MiddleTierRole; no call to db.

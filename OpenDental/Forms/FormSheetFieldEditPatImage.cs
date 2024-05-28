@@ -41,7 +41,7 @@ namespace OpenDental {
 			if(SheetFieldCur.FieldValue.StartsWith("MountNum:")){
 				long mountNum=PIn.Long(SheetFieldCur.FieldValue.Substring(9));
 				Mount mount=Mounts.GetByNum(mountNum);
-				textFieldValueDoc.Text=mount.DateCreated.ToShortDateString()+" "+mount.Description;
+				textFieldValueMount.Text=mount.DateCreated.ToShortDateString()+" "+mount.Description;
 			}
 			else if(SheetFieldCur.FieldValue!=""){
 				long docNum=PIn.Long(SheetFieldCur.FieldValue);
