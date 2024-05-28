@@ -75,9 +75,11 @@ namespace OpenDental {
 			long priKey=imageSelector.GetSelectedKey();
 			if(nodeType==EnumImageNodeType.Document){
 				DocNumSelected=priKey;
+				MountNumSelected=0;
 			}
 			else if(nodeType==EnumImageNodeType.Mount){
 				MountNumSelected=priKey;
+				DocNumSelected=0;
 			}
 			else{
 				return;
@@ -90,9 +92,11 @@ namespace OpenDental {
 			long priKey=imageSelector.GetSelectedKey();
 			if(nodeType==EnumImageNodeType.Document){
 				DocNumSelected=priKey;
+				MountNumSelected=0;
 			}
 			else if(nodeType==EnumImageNodeType.Mount){
 				MountNumSelected=priKey;
+				DocNumSelected=0;
 			}
 			else{
 				return;
