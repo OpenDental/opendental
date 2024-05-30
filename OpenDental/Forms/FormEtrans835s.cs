@@ -24,7 +24,7 @@ namespace OpenDental {
 		
 		private void FormEtrans835s_Load(object sender,EventArgs e) {
 			base.SetFilterControlsAndAction((() => FilterAndFillGrid()),
-				textRangeMin,textRangeMax,textControlId,textCarrier,textCheckTrace,comboClinics,checkShowFinalizedOnly,listStatus,checkAutomatableCarriersOnly,dateRangePicker
+				textRangeMin,textRangeMax,textControlId,textCarrier,textCheckTrace,comboClinics,checkShowFinalizedOnly,checkAutomatableCarriersOnly,dateRangePicker
 			);
 			dateRangePicker.SetDateTimeFrom(DateTime.Today.AddDays(-7));
 			dateRangePicker.SetDateTimeTo(DateTime.Today);
@@ -224,6 +224,10 @@ namespace OpenDental {
 			}
 			EtransL.ViewFormForEra(etrans,this);
 			Cursor=Cursors.Default;
+		}
+
+		private void listStatus_MouseUp(object sender,MouseEventArgs e) {
+			FilterAndFillGrid();
 		}
 
 		///<summary>User will be blocked if they don't have permission to access the EraAutoProcessed report.</summary>

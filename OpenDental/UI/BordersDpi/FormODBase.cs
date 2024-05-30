@@ -1876,7 +1876,8 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					((UI.ComboBox)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;
 				}
 				else if(control.GetType().IsSubclassOf(typeof(UI.ListBox)) || control.GetType()==typeof(UI.ListBox)) {
-					((UI.ListBox)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;
+					//if we make any changes here, we should also consider the same code in Wpf FilterControlsAndAction
+					((UI.ListBox)control).MouseUp+=Control_FilterCommitImmediate;
 				}
 				else {
 					throw new NotImplementedException("Filter control of type "+control.GetType().Name+" is undefined.  Define it in ODForm.AddFilterControl().");

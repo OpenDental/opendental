@@ -103,7 +103,8 @@ but understand that RefreshFromDb will happen on the main thread in this case, w
 				return;
 			}
 			if(frameworkElement is ListBox listBox){
-				listBox.SelectionChangeCommitted+=Control_ChangedImmediate;
+				//if we make any changes here, we should also consider the same code in FormODBase
+				listBox.MouseUp+=Control_ChangedImmediate;
 				return;
 			}
 			if(frameworkElement is TextBox textBox){

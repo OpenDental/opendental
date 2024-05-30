@@ -70,6 +70,7 @@
 			this.listStatus.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listStatus.Size = new System.Drawing.Size(120, 56);
 			this.listStatus.TabIndex = 106;
+			this.listStatus.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listStatus_MouseUp);
 			// 
 			// butRefresh
 			// 
