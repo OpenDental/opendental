@@ -11,6 +11,7 @@ namespace OpenDental
     {
         public static bool USE_ODSMS = true; // Set to false to disable ODSMS
         public static bool wasSmsBroken = false; // Default this to false, so that we don't panic if SMS starts working
+        public static bool initialStartup = true; // Set to false after the first call to the hourly job
         public static string AUTH;  // username/password for diafaan
         public static string URL;   // URL for diafaan
         public static bool RECEIVE_SMS = false;   // should we receive text on this computer?
