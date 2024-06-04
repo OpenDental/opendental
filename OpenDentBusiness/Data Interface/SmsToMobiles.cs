@@ -389,8 +389,8 @@ namespace OpenDentBusiness
                     {
 						msg.MobilePhoneNumber = msg.MobilePhoneNumber.Substring(1);
 					}
-					else if (msg.MobilePhoneNumber[0] == '0') // Replace the leading 0 with 64
-                    {
+					else if (msg.MobilePhoneNumber[0] == '0') // Replace the lea
+					{
 						msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
 					}
 
