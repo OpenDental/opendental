@@ -45,6 +45,7 @@ namespace OpenDental {
 			this.timerShutdownInstance = new System.Windows.Forms.Timer(this.components);
 			this.labelFilterName = new System.Windows.Forms.Label();
 			this.textFilterName = new System.Windows.Forms.TextBox();
+			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// butOK
@@ -101,7 +102,7 @@ namespace OpenDental {
 			// 
 			// checkShowCEMTUsers
 			// 
-			this.checkShowCEMTUsers.Location = new System.Drawing.Point(291, 64);
+			this.checkShowCEMTUsers.Location = new System.Drawing.Point(291, 95);
 			this.checkShowCEMTUsers.Name = "checkShowCEMTUsers";
 			this.checkShowCEMTUsers.Size = new System.Drawing.Size(213, 24);
 			this.checkShowCEMTUsers.TabIndex = 9;
@@ -131,10 +132,20 @@ namespace OpenDental {
 			this.textFilterName.TabIndex = 27;
 			this.textFilterName.TextChanged += new System.EventHandler(this.textFilterName_TextChanged);
 			// 
+			// label3
+			// 
+			this.label3.Location = new System.Drawing.Point(288, 60);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(214, 18);
+			this.label3.TabIndex = 28;
+			this.label3.Text = "or swipe your badge";
+			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// FormLogOn
 			// 
 			this.AcceptButton = this.butOK;
 			this.ClientSize = new System.Drawing.Size(532, 367);
+			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textFilterName);
 			this.Controls.Add(this.labelFilterName);
 			this.Controls.Add(this.checkShowCEMTUsers);
@@ -150,6 +161,7 @@ namespace OpenDental {
 			this.Name = "FormLogOn";
 			this.Text = "Log On";
 			this.Load += new System.EventHandler(this.FormLogOn_Load);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormLogOn_KeyDown);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -165,5 +177,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Timer timerShutdownInstance;
 		private System.Windows.Forms.Label labelFilterName;
 		private System.Windows.Forms.TextBox textFilterName;
+		private System.Windows.Forms.Label label3;
 	}
 }

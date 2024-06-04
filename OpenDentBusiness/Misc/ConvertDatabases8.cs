@@ -1446,5 +1446,12 @@ namespace OpenDentBusiness {
 			//End B54068
 		}//End of 24_1_33()
 
+		private static void To24_1_36() {
+			//Start S54250
+			string command="ALTER TABLE userod ADD BadgeId int NOT NULL";
+			Db.NonQ(command);
+			//End S54250
+		}//End of 24_1_36()
+
 	}
 }

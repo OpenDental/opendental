@@ -28,6 +28,9 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormUserEdit));
 			this.tabControl1 = new OpenDental.UI.TabControl();
 			this.tabUser = new OpenDental.UI.TabPage();
+			this.label9 = new System.Windows.Forms.Label();
+			this.textBadgeId = new System.Windows.Forms.TextBox();
+			this.labelBadgeId = new System.Windows.Forms.Label();
 			this.textLogOffAfterMinutes = new System.Windows.Forms.TextBox();
 			this.labelAutoLogoff = new System.Windows.Forms.Label();
 			this.securityTreeUser = new OpenDental.UserControlSecurityTree();
@@ -81,13 +84,15 @@ namespace OpenDental {
 			this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControl1.Location = new System.Drawing.Point(12, 13);
 			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(979, 641);
 			this.tabControl1.TabIndex = 0;
 			// 
 			// tabUser
 			// 
 			this.tabUser.BackColor = System.Drawing.SystemColors.Control;
+			this.tabUser.Controls.Add(this.label9);
+			this.tabUser.Controls.Add(this.textBadgeId);
+			this.tabUser.Controls.Add(this.labelBadgeId);
 			this.tabUser.Controls.Add(this.textLogOffAfterMinutes);
 			this.tabUser.Controls.Add(this.labelAutoLogoff);
 			this.tabUser.Controls.Add(this.securityTreeUser);
@@ -117,6 +122,34 @@ namespace OpenDental {
 			this.tabUser.TabIndex = 0;
 			this.tabUser.Text = "User";
 			// 
+			// label9
+			// 
+			this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.label9.Location = new System.Drawing.Point(116, 50);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(91, 20);
+			this.label9.TabIndex = 270;
+			this.label9.Text = "last 1-4 digits";
+			this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// textBadgeId
+			// 
+			this.textBadgeId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBadgeId.Location = new System.Drawing.Point(63, 50);
+			this.textBadgeId.Name = "textBadgeId";
+			this.textBadgeId.Size = new System.Drawing.Size(49, 20);
+			this.textBadgeId.TabIndex = 269;
+			// 
+			// labelBadgeId
+			// 
+			this.labelBadgeId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelBadgeId.Location = new System.Drawing.Point(0, 50);
+			this.labelBadgeId.Name = "labelBadgeId";
+			this.labelBadgeId.Size = new System.Drawing.Size(63, 20);
+			this.labelBadgeId.TabIndex = 268;
+			this.labelBadgeId.Text = "BadgeId";
+			this.labelBadgeId.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// textLogOffAfterMinutes
 			// 
 			this.textLogOffAfterMinutes.Location = new System.Drawing.Point(568, 53);
@@ -140,6 +173,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.securityTreeUser.BackColor = System.Drawing.Color.Transparent;
+			this.securityTreeUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.securityTreeUser.Location = new System.Drawing.Point(603, 11);
 			this.securityTreeUser.Name = "securityTreeUser";
 			this.securityTreeUser.ReadOnly = true;
@@ -148,7 +182,7 @@ namespace OpenDental {
 			// 
 			// butDoseSpotAdditional
 			// 
-			this.butDoseSpotAdditional.Location = new System.Drawing.Point(400, 67);
+			this.butDoseSpotAdditional.Location = new System.Drawing.Point(375, 25);
 			this.butDoseSpotAdditional.Name = "butDoseSpotAdditional";
 			this.butDoseSpotAdditional.Size = new System.Drawing.Size(23, 21);
 			this.butDoseSpotAdditional.TabIndex = 173;
@@ -157,19 +191,19 @@ namespace OpenDental {
 			// 
 			// textDoseSpotUserID
 			// 
-			this.textDoseSpotUserID.Location = new System.Drawing.Point(217, 68);
+			this.textDoseSpotUserID.Location = new System.Drawing.Point(274, 26);
 			this.textDoseSpotUserID.Name = "textDoseSpotUserID";
-			this.textDoseSpotUserID.Size = new System.Drawing.Size(180, 20);
+			this.textDoseSpotUserID.Size = new System.Drawing.Size(96, 20);
 			this.textDoseSpotUserID.TabIndex = 172;
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(217, 47);
+			this.label8.Location = new System.Drawing.Point(159, 26);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(177, 20);
+			this.label8.Size = new System.Drawing.Size(117, 20);
 			this.label8.TabIndex = 171;
 			this.label8.Text = "DoseSpot User ID";
-			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkRequireReset
 			// 
@@ -182,7 +216,7 @@ namespace OpenDental {
 			// 
 			// butPickDomainUser
 			// 
-			this.butPickDomainUser.Location = new System.Drawing.Point(400, 25);
+			this.butPickDomainUser.Location = new System.Drawing.Point(376, 2);
 			this.butPickDomainUser.Name = "butPickDomainUser";
 			this.butPickDomainUser.Size = new System.Drawing.Size(23, 21);
 			this.butPickDomainUser.TabIndex = 169;
@@ -191,38 +225,38 @@ namespace OpenDental {
 			// 
 			// textDomainUser
 			// 
-			this.textDomainUser.Location = new System.Drawing.Point(217, 26);
+			this.textDomainUser.Location = new System.Drawing.Point(274, 3);
 			this.textDomainUser.Name = "textDomainUser";
 			this.textDomainUser.ReadOnly = true;
-			this.textDomainUser.Size = new System.Drawing.Size(180, 20);
+			this.textDomainUser.Size = new System.Drawing.Size(96, 20);
 			this.textDomainUser.TabIndex = 168;
 			// 
 			// labelDomainUser
 			// 
-			this.labelDomainUser.Location = new System.Drawing.Point(217, 6);
+			this.labelDomainUser.Location = new System.Drawing.Point(194, 2);
 			this.labelDomainUser.Name = "labelDomainUser";
-			this.labelDomainUser.Size = new System.Drawing.Size(177, 20);
+			this.labelDomainUser.Size = new System.Drawing.Size(81, 20);
 			this.labelDomainUser.TabIndex = 167;
 			this.labelDomainUser.Text = "Domain User";
-			this.labelDomainUser.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labelDomainUser.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textUserNum
 			// 
 			this.textUserNum.BackColor = System.Drawing.SystemColors.Control;
-			this.textUserNum.Location = new System.Drawing.Point(24, 27);
+			this.textUserNum.Location = new System.Drawing.Point(63, 2);
 			this.textUserNum.Name = "textUserNum";
 			this.textUserNum.ReadOnly = true;
-			this.textUserNum.Size = new System.Drawing.Size(182, 20);
+			this.textUserNum.Size = new System.Drawing.Size(72, 20);
 			this.textUserNum.TabIndex = 165;
 			// 
 			// label27
 			// 
-			this.label27.Location = new System.Drawing.Point(24, 9);
+			this.label27.Location = new System.Drawing.Point(1, 4);
 			this.label27.Name = "label27";
-			this.label27.Size = new System.Drawing.Size(72, 17);
+			this.label27.Size = new System.Drawing.Size(62, 17);
 			this.label27.TabIndex = 166;
-			this.label27.Text = "User ID";
-			this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label27.Text = "UserNum";
+			this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkIsHidden
 			// 
@@ -283,9 +317,9 @@ namespace OpenDental {
 			// 
 			// textUserName
 			// 
-			this.textUserName.Location = new System.Drawing.Point(24, 68);
+			this.textUserName.Location = new System.Drawing.Point(63, 26);
 			this.textUserName.Name = "textUserName";
-			this.textUserName.Size = new System.Drawing.Size(182, 20);
+			this.textUserName.Size = new System.Drawing.Size(90, 20);
 			this.textUserName.TabIndex = 152;
 			// 
 			// listUserGroup
@@ -311,12 +345,12 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(24, 47);
+			this.label1.Location = new System.Drawing.Point(-2, 26);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(72, 20);
+			this.label1.Size = new System.Drawing.Size(65, 20);
 			this.label1.TabIndex = 151;
 			this.label1.Text = "Name";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// tabClinics
 			// 
@@ -524,5 +558,8 @@ namespace OpenDental {
 		private UserControlSecurityTree securityTreeUser;
 		private Label labelAutoLogoff;
 		private TextBox textLogOffAfterMinutes;
+		private TextBox textBadgeId;
+		private Label labelBadgeId;
+		private Label label9;
 	}
 }

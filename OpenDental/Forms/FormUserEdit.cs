@@ -201,6 +201,7 @@ namespace OpenDental{
 				butUnlock.Enabled=false;
 				butJobRoles.Enabled=false;
 			}
+			textBadgeId.Text=UserodCur.BadgeId.ToString();
 		}
 
 		///<summary>Refreshes the security tree in the "Users" tab.</summary>
@@ -420,6 +421,13 @@ namespace OpenDental{
 					Providers.Update(provider);
 				}
 				UserodCur.ProvNum=_listProviders[listProv.SelectedIndex-1].ProvNum;
+			}
+			try {
+				UserodCur.BadgeId=int.Parse(textBadgeId.Text);
+			}
+			catch {
+				MsgBox.Show("The BadgeId entered must be an integer.");
+				return;
 			}
 			if(IsNew) {
 				try {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using CodeBase;
+using System.Windows.Threading;
 
 namespace OpenDental {
 	///<summary></summary>
@@ -23,6 +24,10 @@ namespace OpenDental {
 		private bool _doRefreshSecurityCache=false;
 		///<summary>Set to true if we should clear out ALL caches prior to the user getting logged in</summary>
 		private bool _doClearCaches=false;
+		///<summary>Tracks the amount of time since start of keydown input. On the timer tick, attempt to log in.</summary>
+		private DispatcherTimer _dispatcherTimer;
+		///<summary>Keeps track of keyboard inputs. Will be cleared if any input entered is not a number as it is looking for an employee badge Id. Will also be cleared if the key inputs come in too slow to prevent users from typing out an Id manually. The correct way to fill this string is by using a badge scanner.</summary>
+		private string _keyboardInput="";
 
 		///<summary>Set userNumSelected to automatically select the corresponding user in the list (if available).  Set isSimpleSwitch true if temporarily switching users for some reason.  This will leave Security.CurUser alone and will instead indicate which user was chosen / successfully logged in via CurUserSimpleSwitch.</summary>
 		public FormLogOn(long userNumSelected=0,bool isSimpleSwitch=false,bool doRefreshSecurityCache=true,bool doClearCaches=false) {
@@ -39,6 +44,11 @@ namespace OpenDental {
 			_isSimpleSwitch=isSimpleSwitch;
 			_doRefreshSecurityCache=doRefreshSecurityCache;
 			_doClearCaches=doClearCaches;
+			_dispatcherTimer=new DispatcherTimer();
+			_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(300);
+			//Faster than someone could type 8 digits.
+			//The card typically completes its input in 120ms.
+			_dispatcherTimer.Tick+=_dispatcherTimer_Tick;
 		}
 
 		private void FormLogOn_Load(object sender,EventArgs e) {
@@ -100,6 +110,58 @@ namespace OpenDental {
 			//If the timer ticks that means IsWeb() is enabled and the user has sat at the login window too long. We want this to behave exactly like
 			//the user clicked Exit to shut down the software.
 			DialogResult=DialogResult.Cancel;
+		}
+
+		///<summary>Looks for input from badge reader. Will open FrmUserodHistory if there is a user matching the input ID. The timer interval should be faster a user could type.</summary>
+		private void _dispatcherTimer_Tick(object sender,EventArgs e) {
+			//Fires 300 ms after beginning of swipe, by which time, all 8 characters should be present.
+			_dispatcherTimer.Stop();
+			if(_keyboardInput.Length<8) {//IDs will always come in as 8 digits from the reader no matter the badge ID length
+				_keyboardInput="";
+				return;
+			}
+			_keyboardInput=_keyboardInput.Substring(4);//First 4 digits from the reader don't matter as Lenel OnGuard doesn't use them
+			_keyboardInput=_keyboardInput.TrimStart('0');//Remove leading 0s from IDs that have less than 4 employee digits
+			int keyboardInputNum=0;
+			try {
+				keyboardInputNum=int.Parse(_keyboardInput);
+			}
+			catch(Exception ex) {//Kickout if something went wrong with the input
+				_keyboardInput="";
+				return;
+			}
+			Userod userod=Userods.GetUserByBadgeId(keyboardInputNum);//Find the user
+			if(userod==null) {//Kickout if no user was found
+				_keyboardInput="";
+				return;
+			}
+			_keyboardInput="";//Clear out input after user has been found
+			if(_isSimpleSwitch) {
+				UserodSimpleSwitch=userod;
+			}
+			else {//Not a temporary login.
+				Security.CurUser=userod;
+				Security.IsUserLoggedIn=true;
+				SecurityLogs.MakeLogEntry(EnumPermType.UserLogOnOff,0,Lan.g(this,"User:")+" "+Security.CurUser.UserName+" "+Lan.g(this,"has logged on."));
+			}
+			DialogResult=DialogResult.OK;
+		}
+
+		///<summary>Starts dispatch timer and determines what keys are being pressed. Focus must be on this frm to work.</summary>
+		private void FormLogOn_KeyDown(object sender,KeyEventArgs e) {
+			//When scanning a card, we will see a series of KeyDown and KeyUp events,
+			//just like if someone was typing in.
+			if(_keyboardInput=="") {
+				//this happens when user first swipes card
+				_dispatcherTimer.Start();
+			}
+			//numbers come in from the card as Key.D0, etc.
+			bool isNumber=(e.KeyCode>=Keys.D0 && e.KeyCode<=Keys.D9);//
+			if(!isNumber) { //If obvious keyboard input clear the string
+				_keyboardInput="";
+				return;
+			}
+			_keyboardInput+=e.KeyCode.ToString().Substring(1);//Get the key number pressed
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
