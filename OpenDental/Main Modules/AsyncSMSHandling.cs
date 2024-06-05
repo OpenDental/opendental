@@ -324,7 +324,7 @@ namespace OpenDental.Main_Modules
                         PatNum = patient.PatNum, // Assuming Patient class has PatNum property
                         SmsPhoneNumber = "+64275598699", // Set to your sending phone number in international format
                         MobilePhoneNumber = patient.WirelessPhone, // Assuming Patient class has PhoneNumber property
-                        MsgText = birthdayMessageTemplate.Replace("[?NamePreferredOrFirst]", patient.GetNameFirstOrPreferred()).Replace("[?FName]", patient.FName),
+                        MsgText = renderReminder(birthdayMessageTemplate, patient, null),
                         MsgType = SmsMessageSource.GeneralMessage, // Set the source based on your SmsMessageSource enum
                         SmsStatus = SmsDeliveryStatus.Pending, // Initial status, assuming you have a Pending status
                         MsgParts = 1, // Assuming the message fits into one part
@@ -404,10 +404,11 @@ namespace OpenDental.Main_Modules
 
             string where_mobile_phone = "AND LENGTH(COALESCE(p.WirelessPhone,'')) > 7 ";
 
-            string where_appointment = $"AND ({aptDateTimeRange} AND a.Confirmed = {defNumUnconfirmed}) ";
+            string where_appointment_date = $"AND {aptDateTimeRange} ";
+            string where_appointment_confirmed = $"AND a.Confirmed = {defNumUnconfirmed}) ";
 
             // Combine all parts to form the final command
-            string command = select + from + where_true + where_appointment + where_mobile_phone + where_allow_sms + where_confirm_not_sms;
+            string command = select + from + where_true + where_appointment_date + where_appointment_confirmed + where_mobile_phone + where_allow_sms + where_confirm_not_sms;
             Console.WriteLine(command);
             List<PatientAppointment> listPatAppts = OpenDentBusiness.Crud.PatientApptCrud.SelectMany(command);
             return listPatAppts;
