@@ -319,6 +319,7 @@
     <Compile Include="Crud\ERoutingCrud.cs" />
     <Compile Include="Crud\ERoutingDefCrud.cs" />
     <Compile Include="Crud\ERoutingDefLinkCrud.cs" />
+    <Compile Include="Crud\PatientApptCrud.cs" />
     <Compile Include="Crud\PayConnectResponseWebCrud.cs" />
     <Compile Include="Crud\PayPlanLinkCrud.cs" />
     <Compile Include="Crud\PayPlanTemplateCrud.cs" />
@@ -720,6 +721,7 @@
     <Compile Include="TableTypes\ERoutingActionDef.cs" />
     <Compile Include="TableTypes\ERoutingDef.cs" />
     <Compile Include="TableTypes\ERoutingDefLink.cs" />
+    <Compile Include="TableTypes\PatientAppointment.cs" />
     <Compile Include="TableTypes\PayConnectResponseWeb.cs" />
     <Compile Include="TableTypes\PayPlanTemplate.cs" />
     <Compile Include="TableTypes\PayPlanLink.cs" />
