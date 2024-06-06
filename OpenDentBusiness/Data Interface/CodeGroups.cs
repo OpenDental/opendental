@@ -125,12 +125,12 @@ namespace OpenDentBusiness {
 			return codeGroup.CodeGroupNum;
 		}
 
-		public static List<long> GetCodeNums(long codeGroupNum,bool isExactMatch=false) {
+		public static List<long> GetCodeNums(long codeGroupNum) {
 			//No need to check MiddleTierRole; no call to db.
 			List<long> listCodeNums=new List<long>();
 			CodeGroup codeGroup=GetOne(codeGroupNum,isShort:false);
 			if(codeGroup!=null) {
-				listCodeNums=ProcedureCodes.GetCodeNumsForProcCodes(codeGroup.ProcCodes,isExactMatch:isExactMatch);
+				listCodeNums=ProcedureCodes.GetCodeNumsForProcCodes(codeGroup.ProcCodes);
 			}
 			return listCodeNums;
 		}

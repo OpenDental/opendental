@@ -161,11 +161,12 @@ namespace UnitTestsCore {
 		}
 
 		public static Benefit CreateFrequencyCategory(long planNum,EbenefitCategory category,BenefitQuantity quantityQualifier,Byte quantity,
-			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0) 
+			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0,long codeGroupNum=0) 
 		{
 			Benefit ben=new Benefit();
 			ben.PlanNum=planNum;
 			ben.BenefitType=InsBenefitType.Limitations;
+			ben.CodeGroupNum=codeGroupNum;
 			ben.CodeNum=codeNum;
 			ben.CovCatNum=CovCats.GetForEbenCat(category)?.CovCatNum??0;
 			ben.CoverageLevel=coverageLevel;
@@ -192,9 +193,9 @@ namespace UnitTestsCore {
 		}
 
 		public static Benefit CreateAgeLimitation(long planNum,EbenefitCategory category,int ageThrough,
-			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0) 
+			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0,long codeGroupNum=0) 
 		{
-			return CreateFrequencyCategory(planNum,category,BenefitQuantity.AgeLimit,(byte)ageThrough,coverageLevel,codeNum);
+			return CreateFrequencyCategory(planNum,category,BenefitQuantity.AgeLimit,(byte)ageThrough,coverageLevel,codeNum,codeGroupNum);
 		}
 
 		public static void CreateOrthoMax(long planNum,double amt) {
