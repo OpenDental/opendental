@@ -604,7 +604,6 @@ namespace OpenDental{
 			//This will contain one row per patient.
 			//Excludes patients that we don't want to reassign because they are already set to the correct provider.
 			List<PatProv> listPatProvsSeen=new List<PatProv>();
-			List<PatProv> listPatProvsDistinct=new List<PatProv>();
 			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				List<long> listPatNums=listPatProvsFrom.Select(x => x.PatNum).ToList();
@@ -615,7 +614,7 @@ namespace OpenDental{
 					PatProv patProv=new PatProv();
 					patProv.PatNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
 					patProv.ProvNum=PIn.Long(table.Rows[i]["ProvNum"].ToString());
-					if(listPatProvsSeen.Contains(patProv)){ 
+					if(listPatProvsSeen.Any(x => x.PatNum==patProv.PatNum)) {
 						continue;// exclude Patients already added
 					}
 					PatProv patProvOld=listPatProvsFrom.Find(x=>x.PatNum==patProv.PatNum);//guaranteed to work

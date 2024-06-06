@@ -581,6 +581,7 @@ namespace OpenDental{
 			Logger.LogToPath("RefreshLocalData Prefs",LogPath.Startup,LogPhase.Unspecified);
 			RefreshLocalData(InvalidType.Prefs);//should only refresh preferences so that SignalLastClearedDate preference can be used in ClearOldSignals()
 			Signalods.ClearOldSignals();
+			_=PrefC.IsAppStream;//calling this as soon as the pref cache is refreshed so ODCloudClient.IsAppStream will be set right away
 			//We no longer do this shotgun approach because it can slow the loading time.
 			//RefreshLocalData(InvalidType.AllLocal);
 			List<InvalidType> listInvalidTypes=new List<InvalidType>();

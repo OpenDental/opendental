@@ -13,6 +13,7 @@ using AFORMAUTLib;//Acrobat forms
 using System.Linq;
 using CodeBase;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace OpenDental {
 	public partial class FormSheetImport:FormODBase {
@@ -696,13 +697,21 @@ namespace OpenDental {
 					_listSheetImportRows.Add(row);
 				}
 				//State---------------------------------------------
-				fieldVal=GetInputValue("State");
+				fieldVal=GetInputValue("State").Trim();
 				if(fieldVal!=null) {
 					row=new SheetImportRow();
 					row.FieldName="State";
 					row.OldValDisplay=_patient.State;
 					row.OldValObj=_patient.State;
 					row.NewValDisplay=fieldVal;
+					string pattern="^"//start of string
+						+"[a-zA-Z][a-zA-Z]"//exactly two letters
+						+"$";//end of string
+					if(Regex.IsMatch(fieldVal,pattern)) {
+						if(CultureInfo.CurrentCulture.Name.EndsWith("US") || CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+							row.NewValDisplay=fieldVal.ToUpper();
+						}
+					}
 					row.NewValObj=row.NewValDisplay;
 					row.ImpValDisplay=row.NewValDisplay;
 					row.ImpValObj=row.NewValObj;
