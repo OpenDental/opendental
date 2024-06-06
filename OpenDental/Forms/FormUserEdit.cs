@@ -422,13 +422,7 @@ namespace OpenDental{
 				}
 				UserodCur.ProvNum=_listProviders[listProv.SelectedIndex-1].ProvNum;
 			}
-			try {
-				UserodCur.BadgeId=int.Parse(textBadgeId.Text);
-			}
-			catch {
-				MsgBox.Show("The BadgeId entered must be an integer.");
-				return;
-			}
+			UserodCur.BadgeId=textBadgeId.Text;
 			if(IsNew) {
 				try {
 					Userods.Insert(UserodCur,listUserGroup.GetListSelected<UserGroup>().Select(x => x.UserGroupNum).ToList());

@@ -1453,5 +1453,14 @@ namespace OpenDentBusiness {
 			//End S54250
 		}//End of 24_1_36()
 
+		private static void To24_1_37() {
+			//Start S54250
+			string command="INSERT INTO preference(PrefName,ValueString) VALUES('SecurityBadgesRequirePassword','1')";
+			Db.NonQ(command);
+			command="ALTER TABLE userod MODIFY BadgeId VARCHAR(255) NOT NULL";
+			Db.NonQ(command);
+			//End S54250
+		}//End of 24_1_37()
+
 	}
 }

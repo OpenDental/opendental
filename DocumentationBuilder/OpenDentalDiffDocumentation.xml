@@ -370,6 +370,12 @@
       </Enumeration>
     </column>
   </table>
+  <table name="userod">
+    <summary></summary>
+    <column order="23" name="BadgeId" type="int(11)">
+      <summary>A unique number that corresponds to the number on an employee badge. The last numbers on an employee badge. Will be 1 to 4 digits. These numbers are assigned to the badges by the factory. We order a specific range of badges, such as 1801-2000, which are assigned in order and not reused to avoid duplicates. The first four digits on the badges are not used by the Lenel OnGuard software, so we do not use them here either.</summary>
+    </column>
+  </table>
   <table name="periomeasure">
     <summary></summary>
     <column order="2" name="SequenceType" type="tinyint">

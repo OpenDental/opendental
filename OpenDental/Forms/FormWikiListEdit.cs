@@ -140,6 +140,7 @@ namespace OpenDental {
 			formWikiListItemEdit.WikiListName=WikiListCurName;
 			formWikiListItemEdit.ItemNum=PIn.Long(_table.Rows[(int)gridMain.ListGridRows[e.Row].Tag][0].ToString());
 			formWikiListItemEdit.ListWikiListHeaderWidths=_listWikiListHeaderWidths;
+			formWikiListItemEdit.ShowHidden=checkBoxIncludeHiddenColumns.Checked;
 			//saving occurs from within the form.
 			if(formWikiListItemEdit.ShowDialog()!=DialogResult.OK) {
 				return;
@@ -242,6 +243,7 @@ namespace OpenDental {
 			formWikiListItemEdit.WikiListName=WikiListCurName;
 			formWikiListItemEdit.ItemNum=WikiLists.AddItem(WikiListCurName);
 			formWikiListItemEdit.ListWikiListHeaderWidths=_listWikiListHeaderWidths;
+			formWikiListItemEdit.ShowHidden=checkBoxIncludeHiddenColumns.Checked;
 			if(formWikiListItemEdit.ShowDialog()!=DialogResult.OK) {
 				//delete new item because dialog was not OK'ed.
 				WikiLists.DeleteItem(formWikiListItemEdit.WikiListName,formWikiListItemEdit.ItemNum,formWikiListItemEdit.ListWikiListHeaderWidths.ElementAtOrDefault(0)?.ColName);

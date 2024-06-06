@@ -13,12 +13,16 @@ namespace OpenDental {
 	public partial class FormCloudUserEdit:FormODBase {
 		private CloudUser _cloudUserCur;
 		private List<CloudGroup> _listGroups;
-		private AmazonIdentityStoreClient _awsClient=new AmazonIdentityStoreClient(new AmazonIdentityStoreConfig() { Profile = new Profile("appstream_machine_role") });
+		private AmazonIdentityStoreClient _awsClient;
 		private List<TmZoneInfo> _listTimeZones=new List<TmZoneInfo>();
 
 		public FormCloudUserEdit(List<CloudGroup> listGroups,CloudUser cloudUserCur,List<TmZoneInfo> listTimeZones) {
 			InitializeComponent();
 			InitializeLayoutManager();
+			AmazonIdentityStoreConfig _amazonIdentityStoreConfig = new AmazonIdentityStoreConfig();
+			_amazonIdentityStoreConfig.Profile=new Profile("appstream_machine_role");
+			_amazonIdentityStoreConfig.RegionEndpoint=RegionEndpoint.USWest2;
+			_awsClient=new AmazonIdentityStoreClient(_amazonIdentityStoreConfig);
 			Lan.F(this);
 			_listGroups=listGroups;
 			_cloudUserCur=cloudUserCur;

@@ -295,10 +295,8 @@ namespace OpenDental{
 				butPreview.Enabled=false;
 				butPatPortal.Enabled=false;
 				checkExportCSV.Enabled=false;
-				//Users are not allowed to "send" statements in bulk, hence the email, print, etc buttons were disabled.
-				//Therefore, users should not be able to flag or unflag statements in bulk as sent.
-				//If they should be able to do so, make sure to enhance the checkIsSent Click event handler to delete archived statements (aka PDFs).
-				checkIsSent.Enabled=false;
+				//Consider enhancing the checkIsSent Click event handler to delete archived statements (aka PDFs).
+				//checkIsSent.Enabled=false; NO this is the only way to unsend in bulk and must stay enabled
 				//Send Text Message-------------------------------------------------------------------------------
 				checkSendSms.ThreeState=true;
 				checkSendSms.CheckState=CheckState.Indeterminate;

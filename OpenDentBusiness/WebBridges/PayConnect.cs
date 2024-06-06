@@ -179,7 +179,7 @@ namespace OpenDentBusiness {
 		}
 
 		public static string BuildReceiptString(PayConnectService.transType transType,string refNum,string nameOnCard,string cardNumber,
-			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum,string cardType="") 
+			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum,string cardType="",decimal surchargeAmount=0) 
 		{
 			string result="";
 			cardNumber=cardNumber??""; //Prevents null reference exceptions when PayConnectPortal transactions don't have an associated card number
@@ -221,11 +221,11 @@ namespace OpenDentBusiness {
 				}
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
-			if(transType.In(PayConnectService.transType.RETURN,PayConnectService.transType.VOID)) {
-				result+="Total Amt".PadRight(xright-xleft,'.')+(amount*-1).ToString("c")+Environment.NewLine;
+			if(transType==PayConnectService.transType.VOID) {
+				result+=GetAmountStringForReceipt((amount*-1),(surchargeAmount*-1),xleft,xright);
 			}
 			else {
-				result+="Total Amt".PadRight(xright-xleft,'.')+amount.ToString("c")+Environment.NewLine;
+				result+=GetAmountStringForReceipt(amount,surchargeAmount,xleft,xright);
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
 			result+="I agree to pay the above total amount according to my card issuer/bank agreement."+Environment.NewLine;
@@ -237,6 +237,19 @@ namespace OpenDentBusiness {
 				result+="Electronically signed";
 			}
 			return result;
+		}
+
+		private static string GetAmountStringForReceipt(decimal amount,decimal surchargeAmount,int xleft,int xright) {
+			string receiptString="";
+			if(surchargeAmount!=0) {
+				receiptString+="Amt".PadRight(xright-xleft,'.')+amount.ToString("c")+Environment.NewLine;
+				receiptString+="Surcharge".PadRight(xright-xleft,'.')+surchargeAmount.ToString("c")+Environment.NewLine;
+				receiptString+="Total Amt".PadRight(xright-xleft,'.')+(amount+surchargeAmount).ToString("c")+Environment.NewLine;
+			}
+			else {
+				receiptString+="Total Amt".PadRight(xright-xleft,'.')+amount.ToString("c")+Environment.NewLine;
+			}
+			return receiptString;
 		}
 
 		#region Patient Portal Interface

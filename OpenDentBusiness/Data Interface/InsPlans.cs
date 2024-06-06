@@ -740,7 +740,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Used in FormFeesForIns</summary>
 		public static DataTable GetListFeeCheck(string carrierName,string carrierNameNot,long feeSchedWithout,long feeSchedWith,
-			FeeScheduleType feeSchedType)
+			FeeScheduleType feeSchedType, string insPlanType="none")
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),carrierName,carrierNameNot,feeSchedWithout,feeSchedWith,feeSchedType);
@@ -764,6 +764,9 @@ namespace OpenDentBusiness {
 				+"LEFT JOIN carrier ON carrier.CarrierNum = insplan.CarrierNum "
 				+"LEFT JOIN feesched ON feesched.FeeSchedNum = insplan."+pFeeSched+" "
 				+"WHERE carrier.CarrierName LIKE '%"+POut.String(carrierName)+"%' ";
+			if(insPlanType!="none") {
+				command+="AND insplan.PlanType = '"+POut.String(insPlanType)+"' ";
+			}
 			if(carrierNameNot!=""){
 				command+="AND carrier.CarrierName NOT LIKE '%"+POut.String(carrierNameNot)+"%' ";
 			}
@@ -777,7 +780,7 @@ namespace OpenDentBusiness {
 			return Db.GetTable(command);
 		}
 
-		///<summary>Used only in FormFeesForIns. Used to update the passed in list of insurance plans to a few fee schedule</summary>
+		///<summary>Used only in FormFeesForIns. Used to update the passed in list of insurance plans to a new fee schedule</summary>
 		public static long ChangeFeeScheds(List<long> listInsPlanNums,long newFeeSchedNum,FeeScheduleType feeSchedType,bool disableBlueBook,bool enableBlueBook) {
 			if(listInsPlanNums.IsNullOrEmpty()) {
 				return 0;//Count of rows changed.
@@ -827,6 +830,33 @@ namespace OpenDentBusiness {
 				PIn.Long(plan.PlanNum.ToString())
 				,0
 				,plan.GroupNum.ToString()+" - "+plan.GroupName.ToString())
+			);
+			return Db.NonQ(command);
+		}
+
+		///<summary>Used only in FormFeesForIns. Used to update the passed in list of insurance plans to a new insurance plan type</summary>
+		public static long ChangeInsPlanTypes(List<long> listInsPlanNums,string newInsPlanType,bool enableBlueBook) {
+			if(listInsPlanNums.IsNullOrEmpty()) {
+				return 0;//Count of rows changed.
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),listInsPlanNums,newInsPlanType);
+			}
+			string command = "UPDATE insplan SET PlanType='"+POut.String(newInsPlanType)+"'";
+			command+=", insplan.IsBlueBookEnabled="+POut.Bool(enableBlueBook);
+			command+=" WHERE insplan.PlanNum IN ("+String.Join(",",listInsPlanNums.Select(x => POut.Long(x)))+")";
+			List<InsPlan> listInsPlans = InsPlans.GetPlans(listInsPlanNums);
+			//log InsPlan's Insurance Plan Type update.
+			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
+			listInsPlans.ForEach(plan =>
+			InsEditLogs.MakeLogEntry(POut.String("PlanType"),
+				Security.CurUser.UserNum,
+				POut.String(plan.PlanType),
+				newInsPlanType,
+				InsEditLogType.InsPlan,
+				PIn.Long(plan.PlanNum.ToString()),
+				0,
+				plan.GroupNum+" - "+plan.GroupName)
 			);
 			return Db.NonQ(command);
 		}

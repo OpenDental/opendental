@@ -482,6 +482,7 @@ namespace OpenDentBusiness {
 					payConnectResponse.StatusCode="0";//0 indicates success
 					payConnectResponse.RefNumber=refundResponse.ReferenceId;
 					payConnectResponse.Amount=((decimal)refundResponse.AmountRefunded)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AmountSurcharged=((decimal)refundResponse.AmountAuthorized-refundResponse.Amount)/100;//This response type doesn't include a line item for surcharge, so we have to subtract the difference to get it.
 					payConnectResponse.AuthCode=refundResponse.AuthCode;
 					payConnectResponse.MerchantId=refundResponse.MerchantId.ToString();
 					if(refundResponse.PaymentMethod!=null) {

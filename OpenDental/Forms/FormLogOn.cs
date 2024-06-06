@@ -64,6 +64,9 @@ namespace OpenDental {
 				//Only show the show CEMT user check box if not manually typing user names and there are CEMT users present in the db.
 				checkShowCEMTUsers.Visible=Userods.HasUsersForCEMTNoCache();
 			}
+			if(PrefC.GetBool(PrefName.SecurityBadgesRequirePassword)) {
+				labelSwipeBadge.Visible=false;
+			}
 			if(ODEnvironment.IsCloudServer) {
 				timerShutdownInstance.Enabled=true;
 			}
@@ -122,20 +125,21 @@ namespace OpenDental {
 			}
 			_keyboardInput=_keyboardInput.Substring(4);//First 4 digits from the reader don't matter as Lenel OnGuard doesn't use them
 			_keyboardInput=_keyboardInput.TrimStart('0');//Remove leading 0s from IDs that have less than 4 employee digits
-			int keyboardInputNum=0;
-			try {
-				keyboardInputNum=int.Parse(_keyboardInput);
-			}
-			catch(Exception ex) {//Kickout if something went wrong with the input
-				_keyboardInput="";
-				return;
-			}
-			Userod userod=Userods.GetUserByBadgeId(keyboardInputNum);//Find the user
+			Userod userod=Userods.GetUserByBadgeId(_keyboardInput);//Find the user
 			if(userod==null) {//Kickout if no user was found
 				_keyboardInput="";
 				return;
 			}
 			_keyboardInput="";//Clear out input after user has been found
+			if(PrefC.GetBool(PrefName.SecurityBadgesRequirePassword)) {
+				if(PrefC.GetBool(PrefName.UserNameManualEntry)) {
+					textUser.Text=userod.UserName;//Manual entry does not user a listbox
+					return;
+				}
+				textPassword.Text="";//because the numbers from the card ended up here
+				textFilterName.Text=userod.UserName;//Use the filter to set the name
+				return;
+			}
 			if(_isSimpleSwitch) {
 				UserodSimpleSwitch=userod;
 			}

@@ -47,6 +47,7 @@ namespace OpenDental{
 			_listFixedBenefitFeeSchedNums=FeeScheds.GetListForType(FeeScheduleType.FixedBenefit,includeHidden:true).Select(x => x.FeeSchedNum).ToList();
 			listType.SelectedIndex=0;
 			ResetSelections();
+			FillComboInsPlanTypes();
 			FillGrid();
 		}
 
@@ -68,6 +69,23 @@ namespace OpenDental{
 			}
 		}
 
+		private void FillComboInsPlanTypes() {
+			comboInsPlanTypeWith.Items.Clear();
+			comboInsPlanTypeWith.Items.Add(Lan.g(this,"none"),"none");//"none"
+			comboInsPlanTypeWith.Items.Add(Lan.g(this,"PPO Percentage"),"p");//"p"
+			comboInsPlanTypeWith.Items.Add(Lan.g(this,"Category Percentage"),"");//""
+			comboInsPlanTypeWith.Items.Add(Lan.g(this,"Capitation (HMO/DMO)"),"c");//"c"
+			comboInsPlanTypeWith.Items.Add(Lan.g(this,"Medicaid or Flat Copay"),"f");//"f"
+			comboInsPlanTypeWith.SelectedIndex=0;
+			comboInsPlanType.Items.Clear();
+			comboInsPlanType.Items.Add(Lan.g(this,"none"),"none");//"none"
+			comboInsPlanType.Items.Add(Lan.g(this,"PPO Percentage"),"p");//"p"
+			comboInsPlanType.Items.Add(Lan.g(this,"Category Percentage"),"");//""
+			comboInsPlanType.Items.Add(Lan.g(this,"Capitation (HMO/DMO)"),"c");//"c"
+			comboInsPlanType.Items.Add(Lan.g(this,"Medicaid or Flat Copay"),"f");//"f"
+			comboInsPlanType.SelectedIndex=0;
+		}
+
 		private void listType_Click(object sender,EventArgs e) {
 			ResetSelections();
 			FillGrid();
@@ -76,14 +94,18 @@ namespace OpenDental{
 		private void FillGrid() {
 			long feeSchedWithout=0;
 			long feeSchedWith=0;
+			string strInsPlanType="none";
 			if(comboFeeSchedWithout.SelectedIndex!=0) {
 				feeSchedWithout=_listFeeSchedsForType[comboFeeSchedWithout.SelectedIndex-1].FeeSchedNum;
 			}
 			if(comboFeeSchedWith.SelectedIndex!=0) {
 				feeSchedWith=_listFeeSchedsForType[comboFeeSchedWith.SelectedIndex-1].FeeSchedNum;
 			}
+			if(comboInsPlanTypeWith.SelectedIndex>0) {
+				strInsPlanType=comboInsPlanTypeWith.GetSelected<string>();
+			}
 			_table=InsPlans.GetListFeeCheck(textCarrier.Text,textCarrierNot.Text,feeSchedWithout,feeSchedWith,
-				(FeeScheduleType)(listType.SelectedIndex));
+				(FeeScheduleType)listType.SelectedIndex,strInsPlanType);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col=new GridColumn("Employer",170);
@@ -226,6 +248,10 @@ namespace OpenDental{
 			FillGrid();
 		}
 
+		private void comboInsPlanTypeWith_SelectionChangeCommitted(object sender,EventArgs e) {
+			FillGrid();
+		}
+
 		private void butSelectAll_Click(object sender,EventArgs e) {
 			gridMain.SetAll(true);
 		}
@@ -289,7 +315,35 @@ namespace OpenDental{
 			g.Dispose();
 		}
 
-		private void butChange_Click(object sender,System.EventArgs e) {
+		private void butChangeInsPlanType_Click(object sender,EventArgs e) {
+			if(gridMain.SelectedGridRows.Count==0) {
+				MsgBox.Show(this,"No rows selected to change.");
+				return;
+			}
+			if(comboInsPlanType.SelectedIndex==0) {
+				MsgBox.Show(this,"Must choose a new Insurance Plan Type.");
+				return;
+			}
+			if(!GetPasswordFromUser()) {
+				return;
+			}
+			Cursor=Cursors.WaitCursor;
+			string newInsPlanType = comboInsPlanType.GetSelected<string>();
+			bool enableBlueBook=newInsPlanType=="" //new plan type is Cat%
+					&& PrefC.GetEnum<AllowedFeeSchedsAutomate>(PrefName.AllowedFeeSchedsAutomate)==AllowedFeeSchedsAutomate.BlueBook;
+			List<long> listInsPlanNumsToChange=gridMain.SelectedTags<InsPlanRow>().Where(x=>x.PlanType!=newInsPlanType).Select(x=>x.PlanNum).ToList();
+			InsPlans.ChangeInsPlanTypes(listInsPlanNumsToChange,newInsPlanType,enableBlueBook);
+			for(int i = 0;i<listInsPlanNumsToChange.Count;i++) {
+				List<Benefit> listBenefits=Benefits.GetForPlanOrPatPlan(listInsPlanNumsToChange[i],0);
+				listBenefits.Where(x=>x.Percent>0).ForEach(x=>Benefits.Delete(x));
+			}
+			FillGrid();
+			comboInsPlanType.SelectedIndex=0;
+			Cursor=Cursors.Default;
+			MessageBox.Show(Lan.g(this,"Plans changed: ")+listInsPlanNumsToChange.Count.ToString());
+		}
+
+		private void butChangeFeeSchedule_Click(object sender,System.EventArgs e) {
 			if(gridMain.SelectedIndices.Length==0) {
 				gridMain.SetAll(true);
 			}

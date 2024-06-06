@@ -51,6 +51,7 @@ namespace OpenDental{
 			this.checkAllowLogoffOverride = new OpenDental.UI.CheckBox();
 			this.checkCannotEditPastPayPeriods = new OpenDental.UI.CheckBox();
 			this.checkMaintainPatient = new OpenDental.UI.CheckBox();
+			this.checkBadgeLogIn = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -58,7 +59,7 @@ namespace OpenDental{
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(279, 498);
+			this.butSave.Location = new System.Drawing.Point(279, 519);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
@@ -141,7 +142,7 @@ namespace OpenDental{
 			// 
 			// textLogOffAfterMinutes
 			// 
-			this.textLogOffAfterMinutes.Location = new System.Drawing.Point(321, 268);
+			this.textLogOffAfterMinutes.Location = new System.Drawing.Point(320, 284);
 			this.textLogOffAfterMinutes.Name = "textLogOffAfterMinutes";
 			this.textLogOffAfterMinutes.Size = new System.Drawing.Size(29, 20);
 			this.textLogOffAfterMinutes.TabIndex = 253;
@@ -149,7 +150,7 @@ namespace OpenDental{
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(76, 269);
+			this.label3.Location = new System.Drawing.Point(76, 284);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(245, 18);
 			this.label3.TabIndex = 263;
@@ -243,7 +244,7 @@ namespace OpenDental{
 			this.groupBox1.Controls.Add(this.checkDomainLoginEnabled);
 			this.groupBox1.Controls.Add(this.textDomainLoginPath);
 			this.groupBox1.Controls.Add(this.labelDomainPath);
-			this.groupBox1.Location = new System.Drawing.Point(90, 317);
+			this.groupBox1.Location = new System.Drawing.Point(90, 332);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(264, 71);
 			this.groupBox1.TabIndex = 273;
@@ -258,7 +259,7 @@ namespace OpenDental{
 			this.groupBox2.Controls.Add(this.label2);
 			this.groupBox2.Controls.Add(this.textDaysLock);
 			this.groupBox2.Controls.Add(this.labelGlobalDateLockDisabled);
-			this.groupBox2.Location = new System.Drawing.Point(90, 396);
+			this.groupBox2.Location = new System.Drawing.Point(90, 411);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(264, 93);
 			this.groupBox2.TabIndex = 274;
@@ -267,14 +268,14 @@ namespace OpenDental{
 			// 
 			// comboGroups
 			// 
-			this.comboGroups.Location = new System.Drawing.Point(199, 241);
+			this.comboGroups.Location = new System.Drawing.Point(199, 256);
 			this.comboGroups.Name = "comboGroups";
 			this.comboGroups.Size = new System.Drawing.Size(151, 21);
 			this.comboGroups.TabIndex = 275;
 			// 
 			// labelPermission
 			// 
-			this.labelPermission.Location = new System.Drawing.Point(38, 242);
+			this.labelPermission.Location = new System.Drawing.Point(38, 257);
 			this.labelPermission.Name = "labelPermission";
 			this.labelPermission.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.labelPermission.Size = new System.Drawing.Size(159, 19);
@@ -284,7 +285,7 @@ namespace OpenDental{
 			// 
 			// checkAllowLogoffOverride
 			// 
-			this.checkAllowLogoffOverride.Location = new System.Drawing.Point(95, 295);
+			this.checkAllowLogoffOverride.Location = new System.Drawing.Point(94, 310);
 			this.checkAllowLogoffOverride.Name = "checkAllowLogoffOverride";
 			this.checkAllowLogoffOverride.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkAllowLogoffOverride.Size = new System.Drawing.Size(255, 17);
@@ -293,6 +294,7 @@ namespace OpenDental{
 			// 
 			// checkCannotEditPastPayPeriods
 			// 
+			this.checkAllowLogoffOverride.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkCannotEditPastPayPeriods.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkCannotEditPastPayPeriods.Location = new System.Drawing.Point(1, 56);
 			this.checkCannotEditPastPayPeriods.Name = "checkCannotEditPastPayPeriods";
@@ -304,15 +306,25 @@ namespace OpenDental{
 			// checkMaintainPatient
 			// 
 			this.checkMaintainPatient.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkMaintainPatient.Location = new System.Drawing.Point(1, 208);
+			this.checkMaintainPatient.Location = new System.Drawing.Point(1, 228);
 			this.checkMaintainPatient.Name = "checkMaintainPatient";
 			this.checkMaintainPatient.Size = new System.Drawing.Size(348, 17);
 			this.checkMaintainPatient.TabIndex = 279;
 			this.checkMaintainPatient.Text = "Maintain selected patient when changing users";
 			// 
+			// checkBadgeLogIn
+			// 
+			this.checkBadgeLogIn.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkBadgeLogIn.Location = new System.Drawing.Point(1, 207);
+			this.checkBadgeLogIn.Name = "checkBadgeLogIn";
+			this.checkBadgeLogIn.Size = new System.Drawing.Size(348, 18);
+			this.checkBadgeLogIn.TabIndex = 280;
+			this.checkBadgeLogIn.Text = "When logging in with a badge, require a password";
+			// 
 			// FormGlobalSecurity
 			// 
-			this.ClientSize = new System.Drawing.Size(370, 534);
+			this.ClientSize = new System.Drawing.Size(370, 555);
+			this.Controls.Add(this.checkBadgeLogIn);
 			this.Controls.Add(this.checkMaintainPatient);
 			this.Controls.Add(this.checkCannotEditPastPayPeriods);
 			this.Controls.Add(this.checkAllowLogoffOverride);
@@ -373,5 +385,6 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkAllowLogoffOverride;
 		private OpenDental.UI.CheckBox checkCannotEditPastPayPeriods;
 		private OpenDental.UI.CheckBox checkMaintainPatient;
+		private UI.CheckBox checkBadgeLogIn;
 	}
 }

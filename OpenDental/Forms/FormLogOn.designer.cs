@@ -45,7 +45,7 @@ namespace OpenDental {
 			this.timerShutdownInstance = new System.Windows.Forms.Timer(this.components);
 			this.labelFilterName = new System.Windows.Forms.Label();
 			this.textFilterName = new System.Windows.Forms.TextBox();
-			this.label3 = new System.Windows.Forms.Label();
+			this.labelSwipeBadge = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// butOK
@@ -132,20 +132,20 @@ namespace OpenDental {
 			this.textFilterName.TabIndex = 27;
 			this.textFilterName.TextChanged += new System.EventHandler(this.textFilterName_TextChanged);
 			// 
-			// label3
+			// labelSwipeBadge
 			// 
-			this.label3.Location = new System.Drawing.Point(288, 60);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(214, 18);
-			this.label3.TabIndex = 28;
-			this.label3.Text = "or swipe your badge";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labelSwipeBadge.Location = new System.Drawing.Point(288, 60);
+			this.labelSwipeBadge.Name = "labelSwipeBadge";
+			this.labelSwipeBadge.Size = new System.Drawing.Size(214, 18);
+			this.labelSwipeBadge.TabIndex = 28;
+			this.labelSwipeBadge.Text = "or swipe your badge";
+			this.labelSwipeBadge.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FormLogOn
 			// 
 			this.AcceptButton = this.butOK;
 			this.ClientSize = new System.Drawing.Size(532, 367);
-			this.Controls.Add(this.label3);
+			this.Controls.Add(this.labelSwipeBadge);
 			this.Controls.Add(this.textFilterName);
 			this.Controls.Add(this.labelFilterName);
 			this.Controls.Add(this.checkShowCEMTUsers);
@@ -177,6 +177,6 @@ namespace OpenDental {
 		private System.Windows.Forms.Timer timerShutdownInstance;
 		private System.Windows.Forms.Label labelFilterName;
 		private System.Windows.Forms.TextBox textFilterName;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label labelSwipeBadge;
 	}
 }

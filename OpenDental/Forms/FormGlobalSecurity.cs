@@ -36,6 +36,7 @@ namespace OpenDental {
 			textDomainLoginPath.Text=PrefC.GetString(PrefName.DomainLoginPath);
 			checkLogOffWindows.Checked=PrefC.GetBool(PrefName.SecurityLogOffWithWindows);
 			checkUserNameManualEntry.Checked=PrefC.GetBool(PrefName.UserNameManualEntry);
+			checkBadgeLogIn.Checked=PrefC.GetBool(PrefName.SecurityBadgesRequirePassword);
 			checkMaintainPatient.Checked=PrefC.GetBool(PrefName.PatientMaintainedOnUserChange);
 			if(!PrefC.HasClinicsEnabled) {
 				//This pref only matters when clinics are turned on. When clinics are off it behaves the same as if the pref were on. 
@@ -193,6 +194,7 @@ namespace OpenDental {
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.TimecardUsersDontEditOwnCard,checkCannotEditOwn.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.SecurityLogOffWithWindows,checkLogOffWindows.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.UserNameManualEntry,checkUserNameManualEntry.Checked);
+			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.SecurityBadgesRequirePassword,checkBadgeLogIn.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.PasswordsStrongIncludeSpecial,checkPasswordsStrongIncludeSpecial.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.PasswordsWeakChangeToStrong,checkPasswordForceWeakToStrong.Checked);
 			doInvalidatePrefs |=Prefs.UpdateInt(PrefName.SecurityLogOffAfterMinutes,PIn.Int(textLogOffAfterMinutes.Text));

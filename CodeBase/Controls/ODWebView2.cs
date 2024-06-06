@@ -68,6 +68,7 @@ namespace CodeBase.Controls {
 		public void CoreWebView2_InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e) {
 			this.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled=false;
 			this.CoreWebView2.Settings.AreDevToolsEnabled=false;
+			this.CoreWebView2.NewWindowRequested+=CoreWebView2_NewWindowRequested;
 		}
 
 		/// <summary>on attempting to navigate, if DoBlockNavigation is true, cancel the event.</summary>
@@ -79,6 +80,13 @@ namespace CodeBase.Controls {
 
 		public void CoreWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e) { 
 			_doBlockNavigation=DoBlockNavigation;
+		}
+
+		public void CoreWebView2_NewWindowRequested(object sender,CoreWebView2NewWindowRequestedEventArgs e) {
+			if(_doBlockNavigation) {
+				//Stop the default Microsoft Edge add-on from launching a new window when a user tries to open hyperlink
+				e.Handled=true;
+			}
 		}
 
 		///<summary>This method will always be allowed to navigate.</summary>

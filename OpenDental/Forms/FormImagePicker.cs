@@ -28,7 +28,7 @@ namespace OpenDental {
 		}
 
 		/// <summary></summary>
-		private void FillGrid() {
+		private void FillGrid(string fileNameToSelect=null) {
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g(this,"Image Name"),70);
@@ -54,15 +54,24 @@ namespace OpenDental {
 					_listImageNames.Add(listFileNames[i]);
 				}
 			}
+			int index=-1;
 			for(int i=0;i<_listImageNames.Count;i++) {
 				GridRow row=new GridRow();
-				row.Cells.Add(Path.GetFileName(_listImageNames[i]));
+				string fileName=Path.GetFileName(_listImageNames[i]);
+				row.Cells.Add(fileName);
+				if(fileNameToSelect!=null && fileName==fileNameToSelect) {
+					index=i;
+				}
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
 			labelImageSize.Text=Lan.g(this,"Image Size")+":";
 			picturePreview.Image=null;
 			picturePreview.Invalidate();
+			if(index>-1) {//if importing exactly one image, select it upon returning.
+				gridMain.SetSelected(index);
+				paintPreviewPicture();
+			}
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
@@ -110,7 +119,7 @@ namespace OpenDental {
 				string destinationPath=FileAtoZ.CombinePaths(_imageFolder,Path.GetFileName(stringArrayFileNames[i]));
 				if(!FileAtoZ.Exists(destinationPath)){
 					FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
-					return;
+					continue;
 				}
 				//from here down, file already exists
 				InputBoxParam inputBoxParam=new InputBoxParam();
@@ -144,10 +153,11 @@ namespace OpenDental {
 				FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
 				stringArrayFileNames[i]=stringResult;
 			}
-			FillGrid();
+			string fileName=null;
 			if(stringArrayFileNames.Length==1) {//if importing exactly one image, select it upon returning.
-				textSearch.Text=Path.GetFileName(stringArrayFileNames[0]);
+				fileName=Path.GetFileName(stringArrayFileNames[0]);
 			}
+			FillGrid(fileNameToSelect:fileName);
 		}
 
 		private void textSearch_TextChanged(object sender,EventArgs e) {

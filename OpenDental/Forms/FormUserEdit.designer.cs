@@ -28,7 +28,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormUserEdit));
 			this.tabControl1 = new OpenDental.UI.TabControl();
 			this.tabUser = new OpenDental.UI.TabPage();
-			this.label9 = new System.Windows.Forms.Label();
+			this.labelBadgeInstruction = new System.Windows.Forms.Label();
 			this.textBadgeId = new System.Windows.Forms.TextBox();
 			this.labelBadgeId = new System.Windows.Forms.Label();
 			this.textLogOffAfterMinutes = new System.Windows.Forms.TextBox();
@@ -90,7 +90,7 @@ namespace OpenDental {
 			// tabUser
 			// 
 			this.tabUser.BackColor = System.Drawing.SystemColors.Control;
-			this.tabUser.Controls.Add(this.label9);
+			this.tabUser.Controls.Add(this.labelBadgeInstruction);
 			this.tabUser.Controls.Add(this.textBadgeId);
 			this.tabUser.Controls.Add(this.labelBadgeId);
 			this.tabUser.Controls.Add(this.textLogOffAfterMinutes);
@@ -122,22 +122,22 @@ namespace OpenDental {
 			this.tabUser.TabIndex = 0;
 			this.tabUser.Text = "User";
 			// 
-			// label9
+			// labelBadgeInstruction
 			// 
-			this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label9.Location = new System.Drawing.Point(116, 50);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(91, 20);
-			this.label9.TabIndex = 270;
-			this.label9.Text = "last 1-4 digits";
-			this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labelBadgeInstruction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelBadgeInstruction.Location = new System.Drawing.Point(116, 50);
+			this.labelBadgeInstruction.Name = "labelBadgeInstruction";
+			this.labelBadgeInstruction.Size = new System.Drawing.Size(91, 20);
+			this.labelBadgeInstruction.TabIndex = 270;
+			this.labelBadgeInstruction.Text = "8 digits or less";
+			this.labelBadgeInstruction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// textBadgeId
 			// 
 			this.textBadgeId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.textBadgeId.Location = new System.Drawing.Point(63, 50);
 			this.textBadgeId.Name = "textBadgeId";
-			this.textBadgeId.Size = new System.Drawing.Size(49, 20);
+			this.textBadgeId.Size = new System.Drawing.Size(58, 20);
 			this.textBadgeId.TabIndex = 269;
 			// 
 			// labelBadgeId
@@ -147,7 +147,7 @@ namespace OpenDental {
 			this.labelBadgeId.Name = "labelBadgeId";
 			this.labelBadgeId.Size = new System.Drawing.Size(63, 20);
 			this.labelBadgeId.TabIndex = 268;
-			this.labelBadgeId.Text = "BadgeId";
+			this.labelBadgeId.Text = "Badge ID";
 			this.labelBadgeId.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textLogOffAfterMinutes
@@ -560,6 +560,6 @@ namespace OpenDental {
 		private TextBox textLogOffAfterMinutes;
 		private TextBox textBadgeId;
 		private Label labelBadgeId;
-		private Label label9;
+		private Label labelBadgeInstruction;
 	}
 }

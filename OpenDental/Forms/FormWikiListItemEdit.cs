@@ -13,6 +13,7 @@ namespace OpenDental {
 		public string WikiListName;
 		public long ItemNum;
 		public bool IsNew;
+		public bool ShowHidden;
 		///<summary>A list of all possible column headers for the current wiki list.  Each header contains additional information (e.g. PickList) that can be useful.</summary>
 		public List<WikiListHeaderWidth> ListWikiListHeaderWidths;
 		///<summary>Creating a data table containing only one item allows us to use column names.</summary>
@@ -38,7 +39,14 @@ namespace OpenDental {
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Column"),200));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Value"),400,true));
 			gridMain.ListGridRows.Clear();
-			gridMain.ListGridRows.AddRange(_tableWikiList.Columns.OfType<DataColumn>().Skip(1).Select(x => new GridRow(x.ColumnName,_tableWikiList.Rows[0][x].ToString())));
+			if(ShowHidden) {
+				gridMain.ListGridRows.AddRange(ListWikiListHeaderWidths.Skip(1)
+					.Select(x => new GridRow(x.ColName,_tableWikiList.Rows[0][x.ColName].ToString())));
+			}
+			else {
+				gridMain.ListGridRows.AddRange(ListWikiListHeaderWidths.Where(x => !x.IsHidden).Skip(1)
+					.Select(x => new GridRow(x.ColName,_tableWikiList.Rows[0][x.ColName].ToString())));
+			}
 			gridMain.EndUpdate();
 			gridMain.Title=Lan.g(this,"Edit List Item");
 		}

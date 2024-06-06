@@ -2070,6 +2070,9 @@ namespace OpenDentBusiness {
 		///<summary>Boolean. Off by default so that users will have to opt into utilizing the screening with sheets feature.
 		///Screening with sheets is extremely customized for Dental3 (D3)</summary>
 		ScreeningsUseSheets,
+		///<summary>Default true. When logging in with a badge, require a password. If false, then swiping the badge gets you directly in without further action. This is lower security, but some offices might like it.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		SecurityBadgesRequirePassword,
 		///<summary>UserGroupNum for Instructors.  Set only for dental schools in dental school setup.</summary>
 		SecurityGroupForInstructors,
 		///<summary>UserGroupNum for Students.  Set only for dental schools in dental school setup.</summary>

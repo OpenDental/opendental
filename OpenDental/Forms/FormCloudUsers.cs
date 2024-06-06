@@ -13,12 +13,16 @@ namespace OpenDental {
 	public partial class FormCloudUsers:FormODBase {
 		private const string IDENTITY_STORE_ID="d-92674b4f05";
 		private List<CloudUser> _listUsers;
-		private AmazonIdentityStoreClient _awsClient=new AmazonIdentityStoreClient(new AmazonIdentityStoreConfig() { Profile=new Profile("appstream_machine_role") });
+		private AmazonIdentityStoreClient _awsClient;
 		private List<TmZoneInfo> _listTimeZones=new List<TmZoneInfo>();
 
 		public FormCloudUsers() {
 			InitializeComponent();
 			InitializeLayoutManager();
+			AmazonIdentityStoreConfig _amazonIdentityStoreConfig = new AmazonIdentityStoreConfig();
+			_amazonIdentityStoreConfig.Profile=new Profile("appstream_machine_role");
+			_amazonIdentityStoreConfig.RegionEndpoint=RegionEndpoint.USWest2;
+			_awsClient=new AmazonIdentityStoreClient(_amazonIdentityStoreConfig);
 			Lan.F(this);
 			_waitFilterMs=200;//because we are not doing any database calls, we want a lower time to make the application feel more responsive
 			FillTimeZones();

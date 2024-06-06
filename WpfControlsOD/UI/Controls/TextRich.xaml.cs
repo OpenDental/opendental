@@ -24,6 +24,7 @@ using OpenDentBusiness;
 using CodeBase;
 using NHunspell;
 using OpenDental;
+using Newtonsoft.Json;
 
 namespace WpfControls.UI{
 	/*
@@ -618,12 +619,22 @@ namespace WpfControls.UI{
 				TextPointer textPointerRunEnd=textPointer.GetPositionAtOffset(run.Length);
 				TextRange textRange=new TextRange(textPointer,textPointerRunEnd);
 				TextDecorationCollection textDecorationCollection=(TextDecorationCollection)textRange.GetPropertyValue(Inline.TextDecorationsProperty);
-				textDecorationCollection.Remove(_textDecorationSpellCheck);
 				if(textDecorationCollection.Count==0) {
-					//Even if the collection of decorations is empty, there can still be an invisible tag around the range indicating empty collection.
-					//This may need further refinement if we start trying to support rich text. Example: if one word is partially bold.
-					textRange.ClearAllProperties();
+					textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
+					continue; //No decorations to clean up.
 				}
+				//While the code did work, the documentations says that it's immutable and changing it could result in unexpected behavior, so:
+				TextDecorationCollection textDecorationCollectionModifiable = textDecorationCollection.CloneCurrentValue();
+				//We have text decorations to look at.
+				//We need to compare the serialized version of the TextDecorations because "TextDecorationCollection.Remove()" compares memory addresses, not field values.
+				string jsonSpellingUnderline=JsonConvert.SerializeObject(_textDecorationSpellCheck);
+				TextDecoration textDecoration=textDecorationCollectionModifiable.ToList<TextDecoration>().Find(x=>JsonConvert.SerializeObject(x)==jsonSpellingUnderline);
+				if(textDecoration==null) {
+					textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
+					continue;//None of the text decorations on this range are spell check
+				}
+				textDecorationCollectionModifiable.Remove(textDecoration);
+				textRange.ApplyPropertyValue(Inline.TextDecorationsProperty,textDecorationCollectionModifiable);
 				textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
 			}
 			if(isCalledFromTextChanged) {
@@ -1007,10 +1018,15 @@ namespace WpfControls.UI{
 			if(IsUsingSpellCheck()) {
 				ClearWavyAll();
 			}
+			TextRange textRangeAll=new TextRange(richTextBox.Document.ContentStart,richTextBox.Document.ContentEnd);
+			string textAll=textRangeAll.Text;
 			List<QuickPasteCat> listQuickPasteCatsForType=QuickPasteCats.GetCategoriesForType(QuickPasteType).OrderBy(x => x.ItemOrder).ToList();
-			List<QuickPasteNote> listQuickPasteNotes=QuickPasteNotes.GetForCats(listQuickPasteCatsForType);
+			List<QuickPasteNote> listQuickPasteNotes=QuickPasteNotes.GetForCats(listQuickPasteCatsForType).FindAll(x=>x.Abbreviation!="" && GetQuickPasteNoteMatch(textAll,x).Success);
 			TextPointer textPointer=richTextBox.Document.ContentStart;
 			while(true){
+				if(listQuickPasteNotes.Count==0) {
+					break;//No matches to look for.
+				}
 				if(textPointer is null){
 					break;//end of content
 				}
@@ -1022,15 +1038,7 @@ namespace WpfControls.UI{
 				string run=textPointer.GetTextInRun(LogicalDirection.Forward);
 				//process the run
 				for(int i=0;i<listQuickPasteNotes.Count;i++) {
-					if(listQuickPasteNotes[i].Abbreviation=="") {
-						continue;
-					}
-					string pattern= @"(?<="//zero-width lookbehind 
-						+@"^|[\W])"//Either the beginning or a non-word character such as whitespace or punctuation.
-						+Regex.Escape("?"+listQuickPasteNotes[i].Abbreviation)//Example ?med (escaped to \?med). This handles anything like a $ that would otherwise be treated as a special character.
-						+@"(?="//zero-width lookahead 
-						+@"$|[\W])";//Either the end or a non-word character such as whitespace or punctuation.
-					Match match=Regex.Match(run,pattern);
+					Match match=GetQuickPasteNoteMatch(run,listQuickPasteNotes[i]);
 					if(!match.Success) {
 						continue;
 					}
@@ -1268,6 +1276,16 @@ namespace WpfControls.UI{
 			textSelection=richTextBox.Selection;
 			TextPointer textPointerEnd=textSelection.End;
 			richTextBox.Selection.Select(textPointerEnd,textPointerEnd);
+		}
+
+		///<summary>Formats the abbreviation of a provided QuickPasteNote into RegEx and finds a match in the given text string.</summary>
+		private Match GetQuickPasteNoteMatch(string text,QuickPasteNote quickPasteNote) {
+			string pattern= @"(?<="//zero-width lookbehind 
+				+@"^|[\W])"//Either the beginning or a non-word character such as whitespace or punctuation.
+				+Regex.Escape("?"+quickPasteNote.Abbreviation)//Example ?med (escaped to \?med). This handles anything like a $ that would otherwise be treated as a special character.
+				+@"(?="//zero-width lookahead 
+				+@"$|[\W])";//Either the end or a non-word character such as whitespace or punctuation.
+			return Regex.Match(text,pattern);
 		}
 
 		private bool IsUsingSpellCheck(){

@@ -358,11 +358,11 @@ namespace OpenDentBusiness {
 		}
 		
 		///<summary>Gets the first user with the matching badgeId passed in. Expecting int with 4 digits or less.  Returns null if not found.</summary>
-		public static Userod GetUserByBadgeId(int badgeId) {
+		public static Userod GetUserByBadgeId(string badgeId) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Userod>(MethodBase.GetCurrentMethod(),badgeId);
 			}
-			string command="SELECT * FROM userod WHERE BadgeId ='"+POut.Int(badgeId)+"'";
+			string command="SELECT * FROM userod WHERE BadgeId ='"+POut.String(badgeId)+"'";
 				//"LPAD(BadgeId,8,0) ='" +POut.Int(badgeId)+"'";
 			List<Userod> listUserods=Crud.UserodCrud.TableToList(Db.GetTable(command));
 			return listUserods.FirstOrDefault();
