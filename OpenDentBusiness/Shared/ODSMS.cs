@@ -9,14 +9,18 @@ namespace OpenDental
 {
     public static class ODSMS
     {
-        public static bool USE_ODSMS = true; // Set to false to disable ODSMS
+        public static bool USE_ODSMS = true; // Set to false to disable ODSMS completely, and try to use the Open Dental eServices
+        public static bool SEND_SMS = true;   // Set to false for disabling all sending.  Not set anywhere except here
+
         public static bool wasSmsBroken = false; // Default this to false, so that we don't panic if SMS starts working
-        public static bool initialStartup = true; // Set to false after the first call to the hourly job
+        public static bool initialStartup = true; // Set to false after the first call to the hourly/daily job
+
         public static string AUTH;  // username/password for diafaan
         public static string URL;   // URL for diafaan
-        public static bool RECEIVE_SMS = false;   // should we receive text on this computer?
-        public static bool SEND_SMS = false;   // Set to false for disabling all sending
-        public static string DEBUG_NUMBER = "";   // Set to true and everything works like normal, but all sent SMS are sent straight to 
+        public static string DEBUG_NUMBER = "";   // Set in the config.  Leave empty and everything works like normal.  If not empty all SMS go to this number 
+        public static bool RECEIVE_SMS = false;   // should we receive text on this computer?  Set based on the configuration file
+
+        public static string PRACTICE_PHONE_NUMBER = ""; // The phone number of the practice in international format
 
         public static HttpClient sharedClient = null;
 
@@ -50,6 +54,10 @@ namespace OpenDental
                         AUTH = line.Replace("AUTH:", "");
                     else if (line.StartsWith("DISABLE:"))
                         USE_ODSMS = false;
+                    else if (line.StartsWith("DEBUG:"))
+                        DEBUG_NUMBER = line.Replace("DEBUG:", "");
+                    else if (line.StartsWith("PHONE:"))
+                        PRACTICE_PHONE_NUMBER = line.Replace("PHONE:", "");
                     else if (line.StartsWith("URL:"))
                         URL = line.Replace("URL:", "");
                     if (line.StartsWith("RECEIVER:"))
@@ -70,6 +78,12 @@ namespace OpenDental
             if (AUTH == null || URL == null)
             {
                 throw new ArgumentNullException("AUTH or URL", "One or both of AUTH or URL was not set in odsms.txt");
+            }
+
+
+            if (PRACTICE_PHONE_NUMBER.IsNullOrEmpty())
+            {
+                throw new ArgumentNullException("Forgot to sent PHONE: in the configuraton file");
             }
 
             sharedClient = new HttpClient();

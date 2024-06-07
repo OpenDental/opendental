@@ -142,10 +142,8 @@ namespace OpenDental {
 				{
                     MsgBox.Show("DEBUG MODE!!");
 
-                    OpenDental.Main_Modules.AsyncSMSHandling.smsDebugTasks();
-                }
-
-                if (ODSMS.RECEIVE_SMS) // True if this is the computer that actually does the work
+                    OpenDental.Main_Modules.AsyncSMSHandling.SmsDebugTasks();
+                } else if (ODSMS.RECEIVE_SMS) // True if this is the computer that actually does the work
 				{
 					OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
                     OpenDental.Main_Modules.AsyncSMSHandling.smsHourlyTasks();

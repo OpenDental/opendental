@@ -324,7 +324,7 @@ namespace OpenDentBusiness
             }
             return queueSizeInt;
         }
-        async static void SmsGo(string url, string err, string authedpath)
+        async static Task<bool> SmsGo(string url, string mobilePhoneNumber, string authedpath)
 		{
 			if (sharedClient == null)
 			{
@@ -335,8 +335,12 @@ namespace OpenDentBusiness
 			try
 			{
 				response.EnsureSuccessStatusCode();
-				var res = await response.Content.ReadAsStringAsync();
-				if (res[0] != 'O') { throw new Exception(); } // OK
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    throw new Exception($"Unexpected status code: {response.StatusCode}");
+                }
+
+                var res = await response.Content.ReadAsStringAsync();
 				var queueSize = await getQueueSizeAsync();
 
                 // Wait for 120 seconds + 20 seconds per message in the queue.  This should give enough time for the queue to clear
@@ -347,22 +351,58 @@ namespace OpenDentBusiness
 				responseUpdate.EnsureSuccessStatusCode();
 				var resUpdate = await responseUpdate.Content.ReadAsStringAsync();
                 Console.WriteLine($"Result from SMS send attempt: {resUpdate}");
-				if (!resUpdate.Contains("200 Success")) {  // Success str (not http codes because not http error)
-					// TODO: Add in an update to the comm log marking it as failed
-					throw new Exception(); 
-				} 
-				
-			}
-			catch
-			{
-				MessageBox.Show("text to: +" + err + " failed");
-			}
-		}
+                if (resUpdate.Contains("200 Success")) // Success string (not HTTP codes because not HTTP error)
+                {
+                    return true; // SMS sent successfully
+                }
+                else
+                {
+                    // TODO: Add an update to the comm log marking it as failed
+                    return false; // SMS send failed
+                }
+
+            }
+            catch (Exception ex)
+            {
+                EventLog.WriteEntry("ODSMS", $"Error sending SMS to {mobilePhoneNumber}: {ex.Message}", EventLogEntryType.Error, 101, 1, new byte[10]);
+                MessageBox.Show("text to: +" + mobilePhoneNumber + " failed");
+                return false; // SMS send failed
+
+            }
+        }
 
 
-		///<summary>Surround with try/catch. Returns list of SmsToMobiles that were sent, (some may have failed), throws exception if no messages sent. 
-		///All Integrated Texting should use this method, CallFire texting does not use this method.</summary>
-		public static List<SmsToMobile> SendSms(List<SmsToMobile> listMessages)
+        private static async Task<bool> SendSmsMessageAsync(SmsToMobile msg)
+        {
+            if (!string.IsNullOrEmpty(ODSMS.DEBUG_NUMBER))  // Do not send to a real patient if debug is set
+            {
+                msg.MobilePhoneNumber = ODSMS.DEBUG_NUMBER;
+            }
+
+            if (msg.MobilePhoneNumber[0] == '+')  // Remove the + from the phone number
+            {
+                msg.MobilePhoneNumber = msg.MobilePhoneNumber.Substring(1);
+            }
+            else if (msg.MobilePhoneNumber[0] == '0') // Replace the leading 0 with country code
+            {
+                msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
+            }
+
+            string auth = ODSMS.AUTH;
+            string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
+            EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
+            Console.WriteLine(send);
+
+            // Call SmsGo and update the SmsStatus based on the result
+            bool isSuccess = await SmsGo(send, msg.MobilePhoneNumber, "http/request-status-update?" + auth + "&message-id=");
+            msg.SmsStatus = isSuccess ? SmsDeliveryStatus.DeliveryConf : SmsDeliveryStatus.FailNoCharge;  // Corrin 2024-06-07 .  It's not quite confirmed but this is the closest we get
+			return isSuccess;
+        }
+
+
+        ///<summary>Surround with try/catch. Returns list of SmsToMobiles that were sent, (some may have failed), throws exception if no messages sent. 
+        ///All Integrated Texting should use this method, CallFire texting does not use this method.</summary>
+        public static List<SmsToMobile> SendSms(List<SmsToMobile> listMessages)
 		{
 			Console.WriteLine("sending sms!");
 			EventLog.WriteEntry("ODSMS", "Sending SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
@@ -378,32 +418,10 @@ namespace OpenDentBusiness
 			}
 			if (ODSMS.USE_ODSMS)
 			{
-				foreach (SmsToMobile msg in listMessages)
-				{
-                    if (!string.IsNullOrEmpty(ODSMS.DEBUG_NUMBER))  // Do not send to a real patient if debug is set
-                    {
-                        msg.MobilePhoneNumber = ODSMS.DEBUG_NUMBER;
-                    }
-
-                    if (msg.MobilePhoneNumber[0] == '+')  // Remove the + from the phone number
-                    {
-						msg.MobilePhoneNumber = msg.MobilePhoneNumber.Substring(1);
-					}
-					else if (msg.MobilePhoneNumber[0] == '0') // Replace the lea
-					{
-						msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
-					}
-
-					// msg.MobilePhoneNumber = "6421467784"; // BUG: REMOVE SOON! 2024-02-06
-
-                    string auth = ODSMS.AUTH;
-					string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
-					EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
-					Console.WriteLine(send);
-					// http://localhost:9710/http/send-message?username=admin&password=password&to=%6421467784&message-type=sms.automatic&message=Message+Text
-					SmsGo(send, msg.MobilePhoneNumber, "http/request-status-update?" + auth + "&message-id=");
-				}
-			} else
+                var tasks = listMessages.Select(msg => System.Threading.Tasks.Task.Run(() => SendSmsMessageAsync(msg))).ToList();
+                System.Threading.Tasks.Task.WhenAll(tasks).GetAwaiter().GetResult();
+            }
+            else
 			{
                 System.Xml.Serialization.XmlSerializer xmlListSmsToMobileSerializer = new System.Xml.Serialization.XmlSerializer(typeof(List<SmsToMobile>));
                 StringBuilder strbuild = new StringBuilder();
