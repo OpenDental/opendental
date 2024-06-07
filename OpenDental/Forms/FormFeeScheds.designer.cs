@@ -105,7 +105,7 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(380, 6);
+			this.label1.Location = new System.Drawing.Point(380, 12);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(100, 18);
 			this.label1.TabIndex = 18;
@@ -165,10 +165,10 @@ namespace OpenDental {
 			// 
 			// listType
 			// 
-			this.listType.Location = new System.Drawing.Point(383, 27);
+			this.listType.Location = new System.Drawing.Point(383, 33);
 			this.listType.Name = "listType";
 			this.listType.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listType.Size = new System.Drawing.Size(120, 78);
+			this.listType.Size = new System.Drawing.Size(120, 69);
 			this.listType.TabIndex = 12;
 			this.listType.SelectionChangeCommitted += new System.EventHandler(this.listType_SelectionChangeCommitted);
 			// 
@@ -221,7 +221,7 @@ namespace OpenDental {
 			// 
 			// checkBoxShowHidden
 			// 
-			this.checkBoxShowHidden.Location = new System.Drawing.Point(383, 109);
+			this.checkBoxShowHidden.Location = new System.Drawing.Point(383, 108);
 			this.checkBoxShowHidden.Name = "checkBoxShowHidden";
 			this.checkBoxShowHidden.Size = new System.Drawing.Size(120, 17);
 			this.checkBoxShowHidden.TabIndex = 28;

@@ -194,10 +194,9 @@ namespace OpenDental{
 			// 
 			this.label11.Location = new System.Drawing.Point(258, 248);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(368, 46);
+			this.label11.Size = new System.Drawing.Size(368, 62);
 			this.label11.TabIndex = 104;
-			this.label11.Text = "Typically checked. This will prevent user queries with CREATE TABLE or DROP TABLE" +
-    " from running. This is useful because they can cause replication to crash.";
+			this.label11.Text = resources.GetString("label11.Text");
 			// 
 			// checkTempTablesAllowedServer
 			// 
