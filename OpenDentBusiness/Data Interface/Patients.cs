@@ -5090,7 +5090,11 @@ namespace OpenDentBusiness {
 			return new DateSpan(birthdate,dateCompare).YearsDiff<minorAge;
 		}
 
-	}
+        public static Patient GetOne(long patNum)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 	///<summary>A helper class to keep track of changes made to clone demographics when synching.</summary>
 	[Serializable]
