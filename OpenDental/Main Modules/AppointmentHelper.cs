@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Dicom;
+using OpenDentBusiness;
+using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 
 namespace OpenDental.Main_Modules
@@ -7,24 +10,46 @@ namespace OpenDental.Main_Modules
 
     internal static class AppointmentHelper
     {
+
+        public static DateTime? ParseDate(string datePart)
+        {
+            string transformedDatePart = Regex.Replace(datePart, @"\b(\d+)(st|nd|rd|th)\b", "$1");
+            transformedDatePart = transformedDatePart.Replace(" at ", " ");
+
+            string[] formats = {
+                "dddd, d MMMM yyyy h:mm tt",  // Monday, 3 June 2024 8:00 am
+                "dddd, d MMMM yyyy, h:mm tt",   // Monday, 3 June 2024, 8:00 am
+                "dddd, dd MMMM yyyy h:mm tt",  // Monday, 03 June 2024 8:00 am
+                "dddd, dd MMMM yyyy, h:mm tt"   // Monday, 03 June 2024, 8:00 am
+    };
+
+            foreach (string format in formats)
+            {
+                if (DateTime.TryParseExact(transformedDatePart, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                {
+                    return parsedDate;
+                }
+            }
+
+            Console.WriteLine("Error parsing date: The input did not match any expected format.");
+            return null;
+        }
+        
         public static DateTime? ExtractAppointmentDate(string note)
         {
-            string pattern = "on ddd, d MMM yyyy at h:mm tt";
-            int index = note.IndexOf("on");
-            if (index == -1)
-            {
-                return null;
-            }
+            var regex = new Regex(@"(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), (.+?)(?: am| pm)", RegexOptions.IgnoreCase);
+            var match = regex.Match(note);
 
-            string dateStr = note.Substring(index);
-
-            try
+            if (match.Success)
             {
-                DateTime appointmentTime = DateTime.ParseExact(dateStr, pattern, CultureInfo.InvariantCulture);
-                return appointmentTime;
+                string datePart = match.Groups[0].Value.Trim(); // Extract the date part
+                                                                // Try to parse the extracted date string
+                DateTime? parsedDate = ParseDate(datePart);
+                return parsedDate;
             }
-            catch (FormatException)
+            else
             {
+                Console.WriteLine("Error extracting date: The regex could not match the string.");
                 return null;
             }
         }
@@ -36,7 +61,7 @@ namespace OpenDental.Main_Modules
             {
             "Hi Riana, Your dental appointment is on Saturday, 8 June 2024 at 4:20 pm at Massey Smiles. Please reply \"YES\" ASAP to confirm  (or call 09 833 8182 immediately if there are any issues).  Please reschedule if you are at all unwell.  We're looking forward to seeing you. Massey Smiles",
             "Hi Riana, Could you please urgently confirm your dental appointment for tomorrow, Saturday, 8th June 2024, at 4:20 pm? Please reply ASAP YES  or call us on 833 8182. Thanks, Leanne Massey Smiles. Massey Smiles",
-            "Hi Bhawesh, This is Leanne from Massey Smiles. Could you please confirm your dental appointment for tomorrow, Friday, 7 June 2024, at 4:20 pm at Massey Smiles? Please reply \"YES\" ASAP to confirm  (or call 09 833 8182 )",
+            "Hi Bhawesh, This is Leanne from Massey Smiles. Could you please confirm your dental appointment for tomorrow, Friday, 7 June 2024, at 4:20 pm at Maalssey Smiles? Please reply \"YES\" ASAP to confirm  (or call 09 833 8182 )",
             "Hi Todd, Massey Smiles here; this is a two-week reminder for your pre-booked dental appointment on Monday, 17 June 2024 at 9:20 am. Please check your schedule now, and let us know if there are any issues via text or phone at 098338182. We will send another text reminder next week and a final one the day before confirmation. We ask for a minimum of 48 hours notice should you wish to reschedule, as this gives us time to offer the appointment to others in need. , regards Leanne",
             "Hi Todd, a sooner appointment has come up on Monday, 10 June 2024 at 8:00 am at Massey Smiles . Please call (09) 833 8182 if you'd like this slot.  This appointment time may have been offered to more than one person and will be allocated on a first come, first served basis"
             };

@@ -197,11 +197,20 @@ namespace OpenDental.Main_Modules
 
             if (a != null)
             {
-                s = s.Replace("[date]", a.AptDateTime.ToString("d MMMM yyyy"))
-                     .Replace("[time]", a.AptDateTime.ToString("HH:mm"));
+                s = s.Replace("[date]", a.AptDateTime.ToString("dddd, d MMMM yyyy"))
+                     .Replace("[time]", a.AptDateTime.ToString("h:mm tt"));
             }
             return s;
         }
+
+        private static void GetReminderTemplateCheck(string reminderType, string preferenceName)
+        {
+            string errorMessage = $"The {reminderType} reminder text ({preferenceName}) is missing or invalid";
+            EventLog.WriteEntry("ODSMS", errorMessage, EventLogEntryType.Error, 101, 1, new byte[10]);
+            MsgBox.Show(errorMessage);
+            throw new Exception(errorMessage); // or raiseError, depending on your framework
+        }
+
         private static async Task<bool> sendReminderTexts()
         {
             var currentTime = DateTime.Now; // Using local time
@@ -215,13 +224,7 @@ namespace OpenDental.Main_Modules
             List<Def> _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
             long defNumTexted = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "texted")?.DefNum ?? 0;
 
-            if (defNumTexted == 0)
-            {
-                // Handle the case where the "Texted" status is not found
-                EventLog.WriteEntry("ODSMS", "The 'Texted' status is not defined in the ApptConfirmed definition category.", EventLogEntryType.Warning);
-                MsgBox.Show("Could not find texted as an appointment status.");
-                return patientsTexted;
-            }
+            checkAppointmentTypeFound("Texted", defNumTexted);
 
 
             // Get all enum values
@@ -239,12 +242,24 @@ namespace OpenDental.Main_Modules
                 {
                     case ReminderFilterType.OneDay:
                         reminderMessageTemplate = PrefC.GetString(PrefName.ConfirmTextMessage);
+                        if (reminderMessageTemplate.Length < 10)
+                        {
+                            GetReminderTemplateCheck("One Day", "ConfirmTextMessage");
+                        }
                         break;
                     case ReminderFilterType.OneWeek:
                         reminderMessageTemplate = PrefC.GetString(PrefName.ConfirmPostcardMessage);
+                        if (reminderMessageTemplate.Length < 10)
+                        {
+                            GetReminderTemplateCheck("One Week", "ConfirmPostcardMessage");
+                        }
                         break;
                     case ReminderFilterType.TwoWeeks:
                         reminderMessageTemplate = PrefC.GetString(PrefName.ConfirmPostcardFamMessage);
+                        if (reminderMessageTemplate.Length < 10)
+                        {
+                            GetReminderTemplateCheck("Two Weeks", "ConfirmPostcardFamMessage");
+                        }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -376,6 +391,9 @@ namespace OpenDental.Main_Modules
             long defNumUnconfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "not called")?.DefNum ?? 0;
             string aptDateTimeRange;
 
+            checkAppointmentTypeFound("not called", defNumUnconfirmed);
+
+
             switch (filterType)
             {
                 case ReminderFilterType.OneDay:
@@ -503,14 +521,14 @@ namespace OpenDental.Main_Modules
 
             if (msgText.ToUpper() == "YES" || msgText.ToUpper() == "Y")
             {
-                if (patients.Count == 1)  // Only consider automated replies if a single patient matches
+                if (patients.Count < 10)  // Only consider automated replies if a single patient matches
                 {
-                    bool wasHandled = handleAutomatedConfirmation(patients[0]);
+                    bool wasHandled = handleAutomatedConfirmation(patients);
                     if (wasHandled) 
                         sms.SmsStatus = SmsFromStatus.ReceivedRead;
                 } else
                 {
-                    EventLog.WriteEntry("ODSMS", "'YES' received matching multiple patients - process manually", EventLogEntryType.Information, 101, 1, new byte[10]);
+                    EventLog.WriteEntry("ODSMS", "'YES' received matching more than ten patients - process manually", EventLogEntryType.Information, 101, 1, new byte[10]);
 
                 }
             }
@@ -523,18 +541,36 @@ namespace OpenDental.Main_Modules
             Console.WriteLine("Finished ODM New Text Message");
         }
 
-        private static bool handleAutomatedConfirmation(Patient p)
+        private static void checkAppointmentTypeFound(string name, long status)
         {
-            // Patient p has just texted YES. Let's see the most recent text to work out what they're confirming
+            if (status == 0)
+            {
+                string s = $"The '{name}' appointment status was not found.";
+                EventLog.WriteEntry("ODSMS", s, EventLogEntryType.Error, 101, 1, new byte[10]);
+                MsgBox.Show(s);
+                throw new Exception(s); // or raiseError, depending on your framework
+            }
+        }
+
+
+        private static bool handleAutomatedConfirmation(List<Patient> patientList)
+        {
+            // One of hte patients in patientLIst has just texted YES. Let's see the most recent text to work out what they're confirming
             // We need to find the appointment that they're confirming and mark it as confirmed
             // If we are unsure then it's safer to return false and leave it to the receptionist
 
-            long PatNum = p.PatNum;
+            string patNums = String.Join(",", patientList.Select(p => p.PatNum.ToString()).ToArray());
+
 
             List<Def> _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
             long defNumTwoWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "2 week confirmed")?.DefNum ?? 0;
             long defNumOneWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "1 week confirmed")?.DefNum ?? 0;
-            long defConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "confirmed")?.DefNum ?? 0;
+            long defConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "appointment confirmed")?.DefNum ?? 0;
+
+            checkAppointmentTypeFound("2 week confirmed", defNumTwoWeekConfirmed);
+            checkAppointmentTypeFound("1 week confirmed", defNumOneWeekConfirmed);
+            checkAppointmentTypeFound("Appointment Confirmed", defConfirmed);
+
 
             if (!AppointmentHelper.TestAppointmentHelper())
             {
@@ -545,11 +581,26 @@ namespace OpenDental.Main_Modules
             // Firstly we want to get the most recent text we sent that includes the appointment details
             // Then we need to look in Appointment for that appointment and make sure it matches
 
-            string latestSMS = "SELECT * from CommLog where PatNum = " + PatNum + " AND Note LIKE 'Text message sent%reply%YES%' ORDER BY CommDateTime DESC LIMIT 1";
+            string latestSMS = "SELECT * from CommLog where PatNum IN (" + patNums + ") AND Note LIKE 'Text message sent%reply%YES%' AND CommDateTime >= DATE_SUB(NOW(), INTERVAL 21 DAY) ORDER BY CommDateTime DESC LIMIT 1";
             Commlog latestComm = OpenDentBusiness.Crud.CommlogCrud.SelectOne(latestSMS);
 
             if (latestComm != null)
             {
+                long PatNum = latestComm.PatNum;
+                Patient p = patientList.FirstOrDefault(p => p.PatNum == latestComm.PatNum);
+                if (p != null)
+                {
+                    // Patient found, proceed with further processing
+                    Console.WriteLine("Matched Patient: " + p.GetNameFirstOrPreferred());
+                }
+                else
+                {
+                    // No match found, handle accordingly
+                    Console.WriteLine("No matching patient found.");
+                    return false;
+                }
+
+
                 DateTime? appointmentTime = AppointmentHelper.ExtractAppointmentDate(latestComm.Note);
 
                 if (appointmentTime.HasValue)
@@ -618,7 +669,7 @@ namespace OpenDental.Main_Modules
             }
             else
             {
-                string logMessage = $"'Yes' received, but no matching appointment found for patient {PatNum}.";
+                string logMessage = $"'Yes' received, but no matching appointment found for any of the patients {patNums}.";
                 EventLog.WriteEntry("ODSMS", logMessage, EventLogEntryType.Warning, 101, 1, new byte[10]);
             }
 
@@ -665,7 +716,7 @@ namespace OpenDental.Main_Modules
             int count = getAllCount;
             int offset = 0;
             string removeStr = "&remove=1";
-            removeStr = ""; // Stop removing messages, it doesn't seem to help
+            // removeStr = ""; // Stop removing messages, it doesn't seem to help
             string checkSMSstring = "http/request-received-messages?&order=newest&" + auth;
 
             var request = checkSMSstring + "&limit=" + count.ToString() + removeStr;
@@ -749,7 +800,7 @@ namespace OpenDental.Main_Modules
             }
 
             await PerformDailySMSTasks();
-            // OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
+            OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
             await Task.Delay(TimeSpan.FromMinutes(3));
         }
         async public static void smsHourlyTasks()
