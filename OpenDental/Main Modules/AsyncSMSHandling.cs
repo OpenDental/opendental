@@ -514,15 +514,33 @@ namespace OpenDental.Main_Modules
             sms.MatchCount = patients.Count;
             sms.ClinicNum = 0;
             sms.MsgPart = 1;
-
+            sms.Flags = " ";
 
             if (msgText.ToUpper() == "YES" || msgText.ToUpper() == "Y")
             {
                 if (patients.Count < 10)  // Only consider automated replies if a single patient matches
                 {
                     bool wasHandled = handleAutomatedConfirmation(patients);
-                    if (wasHandled) 
+                    if (wasHandled)
+                    {
                         sms.SmsStatus = SmsFromStatus.ReceivedRead;
+                    }
+                    else
+                    {
+                        // We're not sure what they're confirming, so we'll ask them to call the practice
+                        string matchSMSmessage = "Thank you for your reply but we've had trouble matching it to an appointment. Could you please give us a call?";
+                        SmsToMobile matchSMS = new SmsToMobile
+                        {
+                            PatNum = patients[0].PatNum,
+                            SmsPhoneNumber = ODSMS.PRACTICE_PHONE_NUMBER,
+                            MobilePhoneNumber = msgFrom,
+                            MsgText = matchSMSmessage,
+                            MsgType = SmsMessageSource.GeneralMessage,
+                            SmsStatus = SmsDeliveryStatus.Pending,
+                            MsgParts = 1
+                        };
+                        await SmsToMobiles.SendSmsMessageAsync(matchSMS);
+                    }
                 } else
                 {
                     EventLog.WriteEntry("ODSMS", "'YES' received matching more than ten patients - process manually", EventLogEntryType.Information, 101, 1, new byte[10]);
@@ -532,10 +550,11 @@ namespace OpenDental.Main_Modules
 
             OpenDentBusiness.SmsFromMobiles.Insert(sms);
 
+            // Temporary - re-enable!!
 
             //Alert ODMobile where applicable.
-            PushNotificationUtils.ODM_NewTextMessage(sms, sms.PatNum);
-            Console.WriteLine("Finished ODM New Text Message");
+            // PushNotificationUtils.ODM_NewTextMessage(sms, sms.PatNum);
+            Console.WriteLine("Finished OD New Text Message");
         }
 
         private static void checkAppointmentTypeFound(string name, long status)
@@ -563,16 +582,18 @@ namespace OpenDental.Main_Modules
             long defNumTwoWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "2 week confirmed")?.DefNum ?? 0;
             long defNumOneWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "1 week confirmed")?.DefNum ?? 0;
             long defConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "appointment confirmed")?.DefNum ?? 0;
+            long defTexted = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "texted")?.DefNum ?? 0;
 
             checkAppointmentTypeFound("2 week confirmed", defNumTwoWeekConfirmed);
             checkAppointmentTypeFound("1 week confirmed", defNumOneWeekConfirmed);
             checkAppointmentTypeFound("Appointment Confirmed", defConfirmed);
+            checkAppointmentTypeFound("texted", defTexted);
 
 
             // Firstly we want to get the most recent text we sent that includes the appointment details
             // Then we need to look in Appointment for that appointment and make sure it matches
 
-            string latestSMS = "SELECT * from CommLog where PatNum IN (" + patNums + ") AND Note LIKE 'Text message sent%reply%YES%' AND CommDateTime >= DATE_SUB(NOW(), INTERVAL 21 DAY) ORDER BY CommDateTime DESC LIMIT 1";
+            string latestSMS = "SELECT * from CommLog where PatNum IN (" + patNums + ") AND Note REGEXP 'Text message sent.*(reply|respond).*YES' AND CommDateTime >= DATE_SUB(NOW(), INTERVAL 21 DAY) ORDER BY CommDateTime DESC LIMIT 1";
             Commlog latestComm = OpenDentBusiness.Crud.CommlogCrud.SelectOne(latestSMS);
 
             if (latestComm != null)
@@ -601,21 +622,22 @@ namespace OpenDental.Main_Modules
                     // Calculate the difference between the appointment time and the message sent time
                     DateTime messageSentTime = latestComm.CommDateTime;
                     TimeSpan timeUntilAppointment = appointmentTime.Value - messageSentTime;
+                    int daysUntilAppointment = (int)Math.Ceiling(timeUntilAppointment.TotalDays);
                     Console.WriteLine($"Time until appointment: {timeUntilAppointment.TotalDays} days");
 
                     // Determine the confirmation status based on the appointment time
                     long confirmationStatus;
-                    if (timeUntilAppointment.TotalDays >= 14 && timeUntilAppointment.TotalDays < 21)
+                    if (daysUntilAppointment >= 14 && daysUntilAppointment < 21)
                     {
                         confirmationStatus = defNumTwoWeekConfirmed;
                     }
-                    else if (timeUntilAppointment.TotalDays >= 7)
+                    else if (daysUntilAppointment >= 7)
                     {
                         confirmationStatus = defNumOneWeekConfirmed; 
                     }
-                    else if (timeUntilAppointment.TotalDays <= 3)
+                    else if (daysUntilAppointment >= 0 && daysUntilAppointment <= 3)
                     {
-                        confirmationStatus = defConfirmed; 
+                        confirmationStatus = defConfirmed;
                     }
                     else
                     {
@@ -631,7 +653,7 @@ namespace OpenDental.Main_Modules
 
                     if (originalAppt != null)
                     {
-                        if (originalAppt.Confirmed == defConfirmed)
+                        if (originalAppt.Confirmed != defTexted)
                         {
                             EventLog.WriteEntry("ODSMS", "OOPS! Patient just replied yes to an appointment that is already confirmed.  Ignoring", EventLogEntryType.Warning, 101, 1, new byte[10]);
                             return false;
@@ -799,9 +821,11 @@ namespace OpenDental.Main_Modules
                 await Task.Delay(5000); // Wait for 5 seconds before checking again
             }
 
-            PerformDailySMSTasks();
-            // OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
-            await Task.Delay(TimeSpan.FromMinutes(3));
+            while (true)
+            {
+                PerformDailySMSTasks();
+                await Task.Delay(TimeSpan.FromMinutes(3));
+            }
         }
 
         // Note you'll find me flipping between calling these hourly and daily.  They are daily tasks but I do them every hour to handle the comptuer being down or similar
