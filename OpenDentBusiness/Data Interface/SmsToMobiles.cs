@@ -372,7 +372,7 @@ namespace OpenDentBusiness
         }
 
 
-        private static async Task<bool> SendSmsMessageAsync(SmsToMobile msg)
+        public static async Task<bool> SendSmsMessageAsync(SmsToMobile msg)
         {
             if (!string.IsNullOrEmpty(ODSMS.DEBUG_NUMBER))  // Do not send to a real patient if debug is set
             {
