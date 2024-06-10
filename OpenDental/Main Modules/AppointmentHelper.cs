@@ -10,6 +10,7 @@ namespace OpenDental.Main_Modules
 
     internal static class AppointmentHelper
     {
+        private static bool _hasBeenTested;
 
         public static DateTime? ParseDate(string datePart)
         {
@@ -35,7 +36,7 @@ namespace OpenDental.Main_Modules
             return null;
         }
         
-        public static DateTime? ExtractAppointmentDate(string note)
+        private static DateTime? ExtractAppointmentDateInternal(string note)
         {
             var regex = new Regex(@"(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), (.+?)(?: am| pm)", RegexOptions.IgnoreCase);
             var match = regex.Match(note);
@@ -53,6 +54,20 @@ namespace OpenDental.Main_Modules
                 return null;
             }
         }
+
+        public static DateTime? ExtractAppointmentDate(string note)
+        {
+            if (!_hasBeenTested)
+            {
+                if (!TestAppointmentHelper())
+                {
+                    throw new Exception("AppointmentHelper tests failed");
+                }
+                _hasBeenTested = true;
+            }
+            return ExtractAppointmentDateInternal(note);
+        }
+
 
         public static bool TestAppointmentHelper()
         {
@@ -77,7 +92,7 @@ namespace OpenDental.Main_Modules
 
             for (int i = 0; i < testNotes.Length; i++)
             {
-                DateTime? actualDate = ExtractAppointmentDate(testNotes[i]);
+                DateTime? actualDate = ExtractAppointmentDateInternal(testNotes[i]);
                 Console.WriteLine($"Test {i + 1}:");
                 Console.WriteLine($"Expected: {expectedDates[i]}");
                 Console.WriteLine($"Actual: {actualDate}");
