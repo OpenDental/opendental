@@ -138,7 +138,9 @@ namespace OpenDental {
 
 			if (ODSMS.USE_ODSMS)  // Check The module is enabled
 			{
-				if (!ODSMS.DEBUG_NUMBER.IsNullOrEmpty()) // Debug number is set.  We're running in debug mode
+                OpenDental.Main_Modules.AsyncSMSHandling.InitializeAsyncSMSHandling();
+
+                if (!ODSMS.DEBUG_NUMBER.IsNullOrEmpty()) // Debug number is set.  We're running in debug mode
 				{
                     MsgBox.Show("DEBUG MODE!!");
 
@@ -147,7 +149,7 @@ namespace OpenDental {
                 } else if (ODSMS.RECEIVE_SMS) // True if this is the computer that actually does the work
 				{
 					OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
-                    OpenDental.Main_Modules.AsyncSMSHandling.smsHourlyTasks();
+                    OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks();
                 }
             }
 

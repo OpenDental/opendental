@@ -74,6 +74,46 @@ namespace OpenDental.Main_Modules
         private static HttpClient sharedClient = ODSMS.sharedClient;
         private static string auth = ODSMS.AUTH;
         private static String sms_folder_path = @"L:\msg_guids\";
+        private static List<Def> _listDefsApptConfirmed;
+        private static long _defNumTwoWeekConfirmed;
+        private static long _defNumOneWeekConfirmed;
+        private static long _defNumConfirmed;
+        private static long _defNumNotCalled;
+        private static long _defNumUnconfirmed;
+        private static long _defNumTwoWeekSent;
+        private static long _defNumOneWeekSent;
+        private static long _defNumTexted;
+
+        public static async Task InitializeAsyncSMSHandling()
+        {
+
+            while (!DataConnection.HasDatabaseConnection)
+            {
+                Console.WriteLine("Waiting for database connection...");
+                await Task.Delay(5000); // Wait for 5 seconds before checking again
+            }
+
+            _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
+            _defNumTexted = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "texted")?.DefNum ?? 0;
+            _defNumTwoWeekSent = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "2 week sent")?.DefNum ?? 0;
+            _defNumOneWeekSent = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "1 week sent")?.DefNum ?? 0;
+            _defNumTwoWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "2 week confirmed")?.DefNum ?? 0;
+            _defNumOneWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "1 week confirmed")?.DefNum ?? 0;
+            _defNumConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "appointment confirmed")?.DefNum ?? 0;
+            _defNumNotCalled = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "not called")?.DefNum ?? 0;
+            _defNumUnconfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "unconfirmed")?.DefNum ?? 0;
+
+
+            checkAppointmentTypeFound("2 week confirmed", _defNumTwoWeekConfirmed);
+            checkAppointmentTypeFound("1 week confirmed", _defNumOneWeekConfirmed);
+            checkAppointmentTypeFound("Appointment Confirmed", _defNumConfirmed);
+            checkAppointmentTypeFound("2 week sent", _defNumTwoWeekConfirmed);
+            checkAppointmentTypeFound("1 week sent", _defNumOneWeekConfirmed);
+            checkAppointmentTypeFound("texted", _defNumTexted);
+            checkAppointmentTypeFound("not called", _defNumNotCalled);
+            checkAppointmentTypeFound("unconfirmed", _defNumUnconfirmed);
+        }
+
 
         public enum ReminderFilterType
         {
@@ -159,6 +199,7 @@ namespace OpenDental.Main_Modules
 
                 remindersSent = await SendReminderTexts();
                 birthdaySent = await SendBirthdayTexts(); // Yes, I'm ignoring hte return value for now
+
             }
             else
             {
@@ -182,7 +223,6 @@ namespace OpenDental.Main_Modules
             ODSMS.wasSmsBroken = !smsIsWorking;
             return;
         }
-
 
         public static string renderReminder(string reminderTemplate, Patient p, Appointment a)
         {
@@ -217,12 +257,6 @@ namespace OpenDental.Main_Modules
             {
                 return patientsTexted; // It's before 7 AM, do not proceed
             }
-
-            List<Def> _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
-            long defNumTexted = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "texted")?.DefNum ?? 0;
-
-            checkAppointmentTypeFound("Texted", defNumTexted);
-
 
             // Get all enum values
             var potentialReminderMessages = Enum.GetValues(typeof(ReminderFilterType));
@@ -296,7 +330,18 @@ namespace OpenDental.Main_Modules
                         foreach (Appointment originalAppt in appts)
                         {
                             Appointment updatedAppt = originalAppt.Copy();
-                            updatedAppt.Confirmed = (int) defNumTexted;
+                            if (currentReminder == ReminderFilterType.OneDay)
+                            {
+                                updatedAppt.Confirmed = (int)AsyncSMSHandling._defNumTexted;
+                            }
+                            else if (currentReminder == ReminderFilterType.OneWeek)
+                            {
+                                updatedAppt.Confirmed = (int)AsyncSMSHandling._defNumOneWeekSent;
+                            }
+                            else if (currentReminder == ReminderFilterType.TwoWeeks)
+                            {
+                                updatedAppt.Confirmed = (int)AsyncSMSHandling._defNumTwoWeekSent;
+                            }
                             bool updateSucceeded = AppointmentCrud.Update(updatedAppt, originalAppt);
                             if (updateSucceeded)
                             {
@@ -376,19 +421,11 @@ namespace OpenDental.Main_Modules
 
         public static List<PatientAppointment> GetPatientsWithAppointmentsTwoWeeks(ReminderFilterType filterType)
         {
-            /* I can't get this working
-             *  long defNumAppointmentConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "appointment confirmed")?.DefNum ?? 0;
-            */
-
-            List<Def> _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
+           
             int textMessageValue = (int)ContactMethod.TextMessage;
             int noPreferenceValue = (int)ContactMethod.None;
 
-            // Get the DefNum for the "Unconfirmed" status
-            long defNumUnconfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "not called")?.DefNum ?? 0;
             string aptDateTimeRange;
-
-            checkAppointmentTypeFound("not called", defNumUnconfirmed);
 
 
             switch (filterType)
@@ -414,25 +451,34 @@ namespace OpenDental.Main_Modules
             string where_confirm_not_sms = $"AND p.PreferConfirmMethod IN  ({noPreferenceValue}, {textMessageValue}) "; // Prefearred confirm method = SMS OR NOT SET
 
 
-            // Filter to exclude patients who have been contacted in the last 24 hours
-            // Note: This is both unnecessary and can lead to bugs
-            // It refuses to send a reminder if the patient has been contacted in the last day.
-            // It does that as a safety net.  Let's say the update to set the appointmnet status to texted fails  
-            //string where_not_contacted = "AND NOT EXISTS (" +
-            //                             "SELECT 1 " +
-            //                             "FROM CommLog m " +
-            //                             "WHERE m.PatNum = p.PatNum " +
-            //                             "AND m.Note LIKE 'Text message sent%reminder%' " +
-            //                             "AND m.CommType = m.CommType " + // // TODO: Something like m.CommType = Commlogs.GetTypeAuto(CommItemTypeAuto.APPT);
-            //                             "AND m.CommDateTime > DATE_SUB(NOW(), INTERVAL 1 DAY)) ";
+            string where_no_intermediate_appointments = $"AND NOT EXISTS (SELECT 1 FROM Appointment a2 WHERE a2.AptDateTime > NOW() AND a2.AptDateTime < a.AptDateTime AND a2.PatNum = a.PatNum) ";
 
             string where_mobile_phone = "AND LENGTH(COALESCE(p.WirelessPhone,'')) > 7 ";
 
             string where_appointment_date = $"AND {aptDateTimeRange} ";
-            string where_appointment_confirmed = $"AND a.Confirmed = {defNumUnconfirmed} ";
+            string where_appointment_confirmed = "" ;
+            
+            if (filterType == ReminderFilterType.OneDay)
+            {
+                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}, {AsyncSMSHandling._defNumOneWeekConfirmed}, {AsyncSMSHandling._defNumTwoWeekConfirmed}, {AsyncSMSHandling._defNumOneWeekSent}, {AsyncSMSHandling._defNumTwoWeekSent}) ";
+            }
+            else if (filterType == ReminderFilterType.OneWeek)
+            {
+                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}, {AsyncSMSHandling._defNumTwoWeekConfirmed}, {AsyncSMSHandling._defNumTwoWeekSent}) ";
+            }
+            else if (filterType == ReminderFilterType.TwoWeeks)
+            {
+                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}) ";
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value.");
+            }
 
+
+            
             // Combine all parts to form the final command
-            string command = select + from + where_true + where_appointment_date + where_appointment_confirmed + where_mobile_phone + where_allow_sms + where_confirm_not_sms;
+            string command = select + from + where_true + where_appointment_date + where_appointment_confirmed + where_mobile_phone + where_allow_sms + where_confirm_not_sms + where_no_intermediate_appointments;
             Console.WriteLine(command);
             List<PatientAppointment> listPatAppts = OpenDentBusiness.Crud.PatientApptCrud.SelectMany(command);
             return listPatAppts;
@@ -578,16 +624,6 @@ namespace OpenDental.Main_Modules
             string patNums = String.Join(",", patientList.Select(p => p.PatNum.ToString()).ToArray());
 
 
-            List<Def> _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
-            long defNumTwoWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "2 week confirmed")?.DefNum ?? 0;
-            long defNumOneWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "1 week confirmed")?.DefNum ?? 0;
-            long defConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "appointment confirmed")?.DefNum ?? 0;
-            long defTexted = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "texted")?.DefNum ?? 0;
-
-            checkAppointmentTypeFound("2 week confirmed", defNumTwoWeekConfirmed);
-            checkAppointmentTypeFound("1 week confirmed", defNumOneWeekConfirmed);
-            checkAppointmentTypeFound("Appointment Confirmed", defConfirmed);
-            checkAppointmentTypeFound("texted", defTexted);
 
 
             // Firstly we want to get the most recent text we sent that includes the appointment details
@@ -629,15 +665,15 @@ namespace OpenDental.Main_Modules
                     long confirmationStatus;
                     if (daysUntilAppointment >= 14 && daysUntilAppointment < 21)
                     {
-                        confirmationStatus = defNumTwoWeekConfirmed;
+                        confirmationStatus = _defNumTwoWeekConfirmed;
                     }
                     else if (daysUntilAppointment >= 7)
                     {
-                        confirmationStatus = defNumOneWeekConfirmed; 
+                        confirmationStatus = _defNumOneWeekConfirmed; 
                     }
                     else if (daysUntilAppointment >= 0 && daysUntilAppointment <= 3)
                     {
-                        confirmationStatus = defConfirmed;
+                        confirmationStatus = _defNumConfirmed;
                     }
                     else
                     {
@@ -653,7 +689,7 @@ namespace OpenDental.Main_Modules
 
                     if (originalAppt != null)
                     {
-                        if (originalAppt.Confirmed != defTexted)
+                        if (originalAppt.Confirmed != AsyncSMSHandling._defNumTexted)
                         {
                             EventLog.WriteEntry("ODSMS", "OOPS! Patient just replied yes to an appointment that is already confirmed.  Ignoring", EventLogEntryType.Warning, 101, 1, new byte[10]);
                             return false;
@@ -829,7 +865,7 @@ namespace OpenDental.Main_Modules
         }
 
         // Note you'll find me flipping between calling these hourly and daily.  They are daily tasks but I do them every hour to handle the comptuer being down or similar
-        async public static void smsHourlyTasks()
+        async public static void SMSDailyTasks()
         {
             while (Security.CurUser == null || Security.CurUser.UserNum == 0) // Assuming UserNum is an integer and 0 or null indicates uninitialized
             {
@@ -848,7 +884,7 @@ namespace OpenDental.Main_Modules
             while (true)
             {
                 DateTime currentTime = DateTime.Now;
-                bool isNewDay = currentTime.Date != lastRunDate.Date;
+                bool isNewDay = currentTime.Date != lastRunDate.Date;   // Note that this logic doesn't do anything currently.  It's there from when I wanted a safety net on sending birthday texts multiple times a day.
 
                 if (isNewDay)
                 {
