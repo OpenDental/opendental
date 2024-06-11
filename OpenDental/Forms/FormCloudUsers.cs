@@ -19,10 +19,10 @@ namespace OpenDental {
 		public FormCloudUsers() {
 			InitializeComponent();
 			InitializeLayoutManager();
-			AmazonIdentityStoreConfig _amazonIdentityStoreConfig = new AmazonIdentityStoreConfig();
-			_amazonIdentityStoreConfig.Profile=new Profile("appstream_machine_role");
-			_amazonIdentityStoreConfig.RegionEndpoint=RegionEndpoint.USWest2;
-			_awsClient=new AmazonIdentityStoreClient(_amazonIdentityStoreConfig);
+			AmazonIdentityStoreConfig amazonIdentityStoreConfig = new AmazonIdentityStoreConfig();
+			amazonIdentityStoreConfig.Profile=new Profile("appstream_machine_role");
+			amazonIdentityStoreConfig.RegionEndpoint=RegionEndpoint.USWest2;
+			_awsClient=new AmazonIdentityStoreClient(amazonIdentityStoreConfig);
 			Lan.F(this);
 			_waitFilterMs=200;//because we are not doing any database calls, we want a lower time to make the application feel more responsive
 			FillTimeZones();
