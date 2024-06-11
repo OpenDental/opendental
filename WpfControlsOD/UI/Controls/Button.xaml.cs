@@ -88,7 +88,14 @@ How to use the Button control:
 					return;
 				}
 				Uri uri=new Uri("pack://application:,,,/WPFControlsOD;component/Resources/"+_bitmapFileName);
-				BitmapImage bitmapImage = new BitmapImage(uri);
+				BitmapImage bitmapImage;
+				//This can fail for a few bitmaps for a very small number of computers for unknown reasons
+				try{
+					bitmapImage = new BitmapImage(uri);
+				}
+				catch{
+					bitmapImage = new BitmapImage();
+				}
 				Image image=new Image();
 				image.Source=bitmapImage;
 				gridImage.Children.Add(image);

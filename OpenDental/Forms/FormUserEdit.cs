@@ -201,7 +201,7 @@ namespace OpenDental{
 				butUnlock.Enabled=false;
 				butJobRoles.Enabled=false;
 			}
-			textBadgeId.Text=UserodCur.BadgeId.ToString();
+			textBadgeId.Text=UserodCur.BadgeId;
 		}
 
 		///<summary>Refreshes the security tree in the "Users" tab.</summary>

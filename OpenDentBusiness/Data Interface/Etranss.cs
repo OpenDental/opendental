@@ -497,7 +497,8 @@ namespace OpenDentBusiness{
 			Etrans etrans=CreateEtransForClaim(claimNum,patNum,clearinghouseNum,etype,batchNumber,userNum);
 			etrans=SetCanadianEtransFields(etrans);//etrans.CarrierNum, etrans.CarrierNum2 and etrans.EType all set prior to calling this.
 			string claimStatusReceived=ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true);
-			if(claimStatus!=claimStatusReceived) { //We don't want to change the claim's status unnecessarily when printing / viewing
+			string claimStatusInProcess=ClaimStatus.HoldForInProcess.GetDescription(useShortVersionIfAvailable:true);
+			if(claimStatus!=claimStatusReceived && claimStatus!=claimStatusInProcess) { //We don't want to change the claim's status unnecessarily when printing / viewing
 				Claims.SetClaimSent(claimNum);
 			}
 			Insert(etrans);

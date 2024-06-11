@@ -718,7 +718,9 @@ namespace OpenDental {
 				return;
 			}
 			//The UI enforces a backup to occur above when optimize is checked
-			Shared.RepairAndOptimize(true);
+			if(checkOptimize.Checked) {
+				Shared.RepairAndOptimize(true);
+			}
 		}
 
 		private void butSaveArchive_Click(object sender,EventArgs e) {

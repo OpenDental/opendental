@@ -1,0 +1,29 @@
+<local:FrmODBase x:Class="OpenDental.FrmChildEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="421" Height="316" 
+             Text="Edit Child" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" Margin="0,0,0,0" >
+		<ui:Label x:Name="labelLastName" Width="92" Height="18" Margin="18,49,0,0" Text="Last Name" HAlign="Right" />
+		<ui:Label x:Name="labelBirthdate" Width="77" Height="18" Margin="33,80,0,0" Text="Birthdate" HAlign="Right" />
+		<ui:Label x:Name="labelFirstName" Width="95" Height="18" Margin="15,18,0,0" Text="First Name" HAlign="Right" />
+		<ui:TextBox x:Name="textLastName" Width="127" Height="20" Margin="110,48,0,0" TabIndexOD="1" />
+		<ui:TextVDate x:Name="textBirthdate" Width="97" Height="20" Margin="110,79,0,0" TabIndexOD="2" />
+		<ui:TextBox x:Name="textFirstName" Width="127" Height="20" Margin="110,17,0,0" TabIndexOD="0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+		<ui:Label x:Name="labelNotes" Width="77" Height="18" Margin="32,204,0,0" Text="Notes" HAlign="Right" />
+		<ui:TextRich x:Name="textNotes" Width="180" Margin="109,204,0,0" Height="58" />
+		<ui:Label x:Name="labelTeacher" Width="100" Height="18" Margin="10,173,0,0" Text="Primary Teacher" HAlign="Right" />
+		<ui:TextBox x:Name="textTeacher" Width="127" Height="20" Margin="110,172,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
+		<ui:Label x:Name="labelParent1" Width="77" Height="18" Margin="33,111,0,0" Text="Parent 1" HAlign="Right" />
+		<ui:TextBox x:Name="textParent1" Width="127" Height="20" Margin="110,110,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
+		<ui:Label x:Name="labelParent2" Width="77" Height="18" Margin="33,142,0,0" Text="Parent 2" HAlign="Right" />
+		<ui:TextBox x:Name="textParent2" Width="127" Height="20" Margin="110,141,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
+		<ui:Button x:Name="butDelete" VerticalAlignment="Bottom" Height="24" Margin="18,0,0,10" Text="_Delete" Click="butDelete_Click" Width="75" />
+	</Grid>
+</local:FrmODBase>
