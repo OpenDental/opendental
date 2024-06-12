@@ -9,20 +9,22 @@ namespace OpenDental
 {
     public static class ODSMS
     {
+        // Set variables here and they'll be used by the program.    
         public static bool USE_ODSMS = true; // Set to false to disable ODSMS completely, and try to use the Open Dental eServices
         public static bool SEND_SMS = true;   // Set to false for disabling all sending.  Not set anywhere except here
+        public static bool WRITE_TO_DATABASE = true;   // Set to false for disabling writing in the comm log, or updating appointments. Generally try to 'say we are doing something but not actually do it', as much as we can.
 
+        // These are maintained internal state.  You shouldn't need to touch them
         public static bool wasSmsBroken = false; // Default this to false, so that we don't panic if SMS starts working
         public static bool initialStartup = true; // Set to false after the first call to the hourly/daily job
+        public static HttpClient sharedClient = null;
 
+        // Variables from the configuraton file
         public static string AUTH;  // username/password for diafaan
         public static string URL;   // URL for diafaan
         public static string DEBUG_NUMBER = "";   // Set in the config.  Leave empty and everything works like normal.  If not empty all SMS go to this number 
-        public static bool RECEIVE_SMS = false;   // should we receive text on this computer?  Set based on the configuration file
-
+        public static bool RUN_SCHEDULED_TASKS = false;   // should we receive text on this computer? Send birthday reminders? Set based on the configuration file
         public static string PRACTICE_PHONE_NUMBER = ""; // The phone number of the practice in international format
-
-        public static HttpClient sharedClient = null;
 
         static ODSMS()
         {
@@ -65,7 +67,7 @@ namespace OpenDental
                         string receiver_name = line.Replace("RECEIVER:", "");
                         if (receiver_name == MachineName)
                         {
-                            RECEIVE_SMS = true;
+                            RUN_SCHEDULED_TASKS = true;
                         }
                     }
                 }
@@ -89,7 +91,7 @@ namespace OpenDental
             sharedClient = new HttpClient();
             sharedClient.BaseAddress = new Uri(URL);
 
-            if (RECEIVE_SMS)
+            if (RUN_SCHEDULED_TASKS)
             {
                 EventLog.WriteEntry("ODSMS", "Name matches, enabling SMS reception", EventLogEntryType.Information, 101, 1, new byte[10]);
             } else
