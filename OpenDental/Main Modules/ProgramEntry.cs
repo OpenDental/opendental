@@ -144,12 +144,14 @@ namespace OpenDental {
 				{
                     MsgBox.Show("DEBUG MODE!!");
 
-                    OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
-                    OpenDental.Main_Modules.AsyncSMSHandling.SmsDebugTasks();
-                } else if (ODSMS.RECEIVE_SMS) // True if this is the computer that actually does the work
+                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks());
+                }
+                else if (ODSMS.RUN_SCHEDULED_TASKS) // True if this is the computer that actually does the work
 				{
-					OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever();
-                    OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks();
+                    MsgBox.Show("This computer will send/receive SMS");
+                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks());
                 }
             }
 

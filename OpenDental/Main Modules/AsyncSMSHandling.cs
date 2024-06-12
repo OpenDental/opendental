@@ -22,6 +22,7 @@ using Serilog.Events;
 using DataConnectionBase;
 using System.Windows.Forms;
 using System.Runtime.Serialization;
+using CodeBase;
 
 // Questions for Nathan
 //
@@ -197,7 +198,7 @@ namespace OpenDental.Main_Modules
                     ODSMS.initialStartup = false;
                 }
 
-                remindersSent = await SendReminderTexts();
+                remindersSent = SendReminderTexts();
                 birthdaySent = await SendBirthdayTexts(); // Yes, I'm ignoring hte return value for now
 
             }
@@ -248,7 +249,7 @@ namespace OpenDental.Main_Modules
             throw new Exception(errorMessage); // or raiseError, depending on your framework
         }
 
-        private static async Task<bool> SendReminderTexts()
+        private static bool SendReminderTexts()
         {
             var currentTime = DateTime.Now; // Using local time
             var patientsTexted = false;  // Have we successfully set patients to texted?
@@ -318,7 +319,7 @@ namespace OpenDental.Main_Modules
                     }
                     if (ODSMS.SEND_SMS)
                     {
-                        List<SmsToMobile> sentMessages = SmsToMobiles.SendSmsMany(messagesToSend);
+                        List<SmsToMobile> sentMessages = SmsToMobiles.SendSmsMany(listMessages: messagesToSend, makeCommLog: ODSMS.WRITE_TO_DATABASE);
                         List<Appointment> appts = patientsNeedingApptReminder
                             .Where(patapt => sentMessages.Any(msg => msg.PatNum == patapt.Patient.PatNum &&
                                 (msg.SmsStatus == SmsDeliveryStatus.Pending ||
@@ -342,7 +343,17 @@ namespace OpenDental.Main_Modules
                             {
                                 updatedAppt.Confirmed = (int)AsyncSMSHandling._defNumTwoWeekSent;
                             }
-                            bool updateSucceeded = AppointmentCrud.Update(updatedAppt, originalAppt);
+
+                            bool updateSucceeded = true;
+
+                            if (ODSMS.WRITE_TO_DATABASE)
+                            {
+                                updateSucceeded = AppointmentCrud.Update(updatedAppt, originalAppt);
+                            } 
+                            else
+                            {
+                                EventLog.WriteEntry("ODSMS", $"Not updating appointment {originalAppt.AptNum} on patient {originalAppt.PatNum} from {originalAppt.Confirmed} to {updatedAppt.Confirmed} as running in debug mode", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                            }
                             if (updateSucceeded)
                             {
                                 patientsTexted = true;
@@ -361,7 +372,7 @@ namespace OpenDental.Main_Modules
                 }
 
             }
-            return patientsTexted; // It's before 7 AM, do not proceed
+            return patientsTexted; 
         }
 
         private static async Task<bool> SendBirthdayTexts()
@@ -842,28 +853,6 @@ namespace OpenDental.Main_Modules
         }
 
 
-        async public static void SmsDebugTasks()
-        {
-            // We need the database and user informaton to be setup before we can do anything
-            while (Security.CurUser == null || Security.CurUser.UserNum == 0) // Assuming UserNum is an integer and 0 or null indicates uninitialized
-            {
-                Console.WriteLine("Waiting for user information to be initialized...");
-                await Task.Delay(5000); // Wait for 5 seconds before checking again
-            }
-
-            while (!DataConnection.HasDatabaseConnection)
-            {
-                Console.WriteLine("Waiting for database connection...");
-                await Task.Delay(5000); // Wait for 5 seconds before checking again
-            }
-
-            while (true)
-            {
-                PerformDailySMSTasks();
-                await Task.Delay(TimeSpan.FromMinutes(3));
-            }
-        }
-
         // Note you'll find me flipping between calling these hourly and daily.  They are daily tasks but I do them every hour to handle the comptuer being down or similar
         async public static void SMSDailyTasks()
         {
@@ -910,8 +899,15 @@ namespace OpenDental.Main_Modules
                 }
 
                 // Always wait for an hour between checks
-                await Task.Delay(TimeSpan.FromHours(1));
-            }
+                if (ODSMS.DEBUG_NUMBER.IsNullOrEmpty())
+                {
+                    await Task.Delay(TimeSpan.FromHours(1));
+                }
+                else
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(3));
+                }
+                }
         }
 
 

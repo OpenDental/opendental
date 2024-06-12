@@ -14,6 +14,7 @@ using System.Net.Http;
 using OpenDental;
 using System.Windows;
 using System.Threading.Tasks;
+using Word;
 
 
 namespace OpenDentBusiness
@@ -418,7 +419,7 @@ namespace OpenDentBusiness
 			}
 			if (ODSMS.USE_ODSMS)
 			{
-                var tasks = listMessages.Select(msg => System.Threading.Tasks.Task.Run(() => SendSmsMessageAsync(msg))).ToList();
+                var tasks = listMessages.Select(msg => SendSmsMessageAsync(msg)).ToList();
                 System.Threading.Tasks.Task.WhenAll(tasks).GetAwaiter().GetResult();
             }
             else
