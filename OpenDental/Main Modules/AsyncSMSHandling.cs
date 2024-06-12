@@ -1,7 +1,5 @@
 ﻿using OpenDentBusiness;
-using OpenDentBusiness.Shared;
 
-using OpenDentBusiness.WebTypes;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -11,24 +9,11 @@ using Task = System.Threading.Tasks.Task;
 using System.Diagnostics;
 using OpenDentBusiness.Crud;
 
-using Dicom.Imaging.LUT;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using System.Security.Policy;
 using System.Collections.Generic;
 using System.Linq;
-using Serilog.Events;
 using DataConnectionBase;
-using System.Windows.Forms;
 using System.Runtime.Serialization;
 using CodeBase;
-
-// Questions for Nathan
-//
-// We have Open Dental\ Main Modules\ Async SMS Handling
-// This currently only has receive SMS async (and the Check SMS connection I wrote)
-// Where to put the once-an-hour tasks (check for birthday texts, check SMS connection, check missing SMS)
 
 namespace OpenDental.Main_Modules
 {
@@ -85,6 +70,10 @@ namespace OpenDental.Main_Modules
         private static long _defNumOneWeekSent;
         private static long _defNumTexted;
 
+        /// <summary>
+        /// This sets up the constants which map 'texted' to the Appointment Confirmed category for texted, etc.
+        /// </summary>
+        /// <returns></returns>
         public static async Task InitializeAsyncSMSHandling()
         {
 
@@ -123,6 +112,10 @@ namespace OpenDental.Main_Modules
             TwoWeeks
         }
 
+        /// <summary>
+        /// This queries Diafaan to ask if the modem is connected.  IF not it puts up an alert and stops sending/receiving texts.
+        /// </summary>
+        /// <returns></returns>
         public static async System.Threading.Tasks.Task<bool> CheckSMSConnection()
         {
             try
@@ -174,6 +167,10 @@ namespace OpenDental.Main_Modules
 
         }
 
+        /// <summary>
+        /// This sends out the daily reminders and birthday texts.
+        /// It's called once an hour from SMSDailyTasks.  I.e. it's the expensive part of the hourly loop
+        /// </summary>
         async public static void PerformDailySMSTasks()
         {
             bool smsIsWorking = await CheckSMSConnection();
@@ -199,7 +196,7 @@ namespace OpenDental.Main_Modules
                 }
 
                 remindersSent = SendReminderTexts();
-                birthdaySent = await SendBirthdayTexts(); // Yes, I'm ignoring hte return value for now
+                birthdaySent = SendBirthdayTexts(); // Yes, I'm ignoring hte return value for now
 
             }
             else
@@ -225,6 +222,14 @@ namespace OpenDental.Main_Modules
             return;
         }
 
+        /// <summary>
+        /// Friendly helper function, should really go to a different file.
+        /// Replaces [?FName] with the patient's first name, etc.
+        /// </summary>
+        /// <param name="reminderTemplate"></param>
+        /// <param name="p">The patient.  Fields like name, DOB, etc</param>
+        /// <param name="a">The appointment.  Fields like time, provider, etc.</param>
+        /// <returns></returns>
         public static string renderReminder(string reminderTemplate, Patient p, Appointment a)
         {
             string s = reminderTemplate
@@ -241,6 +246,12 @@ namespace OpenDental.Main_Modules
             return s;
         }
 
+        /// <summary>
+        /// Helper function.  Checks that we were able to get a value from the database.  So that if one is renamed etc then we break very obviously
+        /// </summary>
+        /// <param name="reminderType"></param>
+        /// <param name="preferenceName"></param>
+        /// <exception cref="Exception"></exception>
         private static void GetReminderTemplateCheck(string reminderType, string preferenceName)
         {
             string errorMessage = $"The {reminderType} reminder text ({preferenceName}) is missing or invalid";
@@ -249,6 +260,11 @@ namespace OpenDental.Main_Modules
             throw new Exception(errorMessage); // or raiseError, depending on your framework
         }
 
+        /// <summary>
+        /// This is where the logic around sending reminders is handled.  Loops through 2w, 1w and 1d, and calls SendSmsMany.  Then marks the appointment confirmaton status as sent
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         private static bool SendReminderTexts()
         {
             var currentTime = DateTime.Now; // Using local time
@@ -375,7 +391,11 @@ namespace OpenDental.Main_Modules
             return patientsTexted; 
         }
 
-        private static async Task<bool> SendBirthdayTexts()
+        /// <summary>
+        /// THis sends the birthday messages. Similar to SendReminderTexts but simpler.
+        /// </summary>
+        /// <returns></returns>
+        private static bool SendBirthdayTexts()
         {
             // Step 1: Check time
             var currentTime = DateTime.Now; // Using local time
@@ -430,6 +450,12 @@ namespace OpenDental.Main_Modules
 
         }
 
+        /// <summary>
+        /// A helper function for SendReminderTexts.  This queries the database for people with upcoming appointments.
+        /// </summary>
+        /// <param name="filterType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static List<PatientAppointment> GetPatientsWithAppointmentsTwoWeeks(ReminderFilterType filterType)
         {
            
@@ -495,6 +521,10 @@ namespace OpenDental.Main_Modules
             return listPatAppts;
         }
 
+        /// <summary>
+        /// A helper function for SendReminderTexts. This queries the databaes for people with a birthday today.
+        /// </summary>
+        /// <returns></returns>        
         public static List<Patient> GetPatientsWithBirthdayToday()
         {
             string select = "SELECT p.* ";
@@ -526,7 +556,15 @@ namespace OpenDental.Main_Modules
             return listPats;
         }
 
-        async public static Task processOneSMS(string msgText, string msgTime, string msgFrom, string msgGUID)
+        /// <summary>
+        /// This is the main function that receives a single SMS.  It writes the SMS to a file, then looks up the patient and creates a CommLog and SmsFromMobile entry.
+        /// </summary>
+        /// <param name="msgText"></param>
+        /// <param name="msgTime"></param>
+        /// <param name="msgFrom"></param>
+        /// <param name="msgGUID"></param>
+        /// <returns></returns>
+        async public static Task processOneReceivedSMS(string msgText, string msgTime, string msgFrom, string msgGUID)
         {
 
             EventLog.WriteEntry("ODSMS", "SMS inner loop - downloaded a single SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
@@ -614,6 +652,12 @@ namespace OpenDental.Main_Modules
             Console.WriteLine("Finished OD New Text Message");
         }
 
+        /// <summary>
+        /// Another helper function to check the appointment type doesn't have a typo or has been renamed.  Similar to GetReminderTemplateCheck
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="status"></param>
+        /// <exception cref="Exception"></exception>
         private static void checkAppointmentTypeFound(string name, long status)
         {
             if (status == 0)
@@ -625,7 +669,12 @@ namespace OpenDental.Main_Modules
             }
         }
 
-
+        /// <summary>
+        /// If attempts to update the appointment status to Confirmed, 1w_confirmed, etc when a patient texts back yes
+        /// Complications come because we need to use the text to work out which appointment is referenced.
+        /// </summary>
+        /// <param name="patientList"></param>
+        /// <returns></returns>
         private static bool handleAutomatedConfirmation(List<Patient> patientList)
         {
             // One of hte patients in patientLIst has just texted YES. Let's see the most recent text to work out what they're confirming
@@ -744,8 +793,10 @@ namespace OpenDental.Main_Modules
             return false;
         }
 
-
-
+        /// <summary>
+        /// Checks that the ODSMS class has been initialized.  Handy in case we call things out of order.
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
         private static void EnsureInitialized()
         {
             if (String.IsNullOrEmpty(auth))
@@ -754,6 +805,9 @@ namespace OpenDental.Main_Modules
             }
         }
 
+        /// <summary>
+        /// Checks that the L:\msg_guids folder is found.  Handy in case the network path is down, etc.
+        /// </summary>
         private static void EnsureSmsFolderExists()
         {
             if (!Directory.Exists(sms_folder_path))
@@ -765,7 +819,7 @@ namespace OpenDental.Main_Modules
         }
 
         /// <summary>
-        /// 
+        /// This processes all the SMS messages received since it as last called (5 minutes is the default timer) - typically just 1 SMS.  It calls ProcessSmsMessage for each SMS
         /// </summary>
         /// <returns></returns>
         private static async Task FetchAndProcessSmsMessages()
@@ -822,6 +876,15 @@ namespace OpenDental.Main_Modules
             }
         }
 
+        /// <summary>
+        /// Probably shouldn't exist as a seperate method - lasagne code and all that.  Called in one place.  Calls just one thing.
+        /// This does a bit of sanity testing / logging, and the calls processOneReceivedSMS with the message.
+        /// </summary>
+        /// <param name="msgFrom"></param>
+        /// <param name="msgText"></param>
+        /// <param name="msgTime"></param>
+        /// <param name="msgGUID"></param>
+        /// <returns></returns>
         private static async Task ProcessSmsMessage(string msgFrom, string msgText, string msgTime, string msgGUID)
         {
             string logMessage = $"SMS from {msgFrom} at time {msgTime} with body {msgText} - GUID: {msgGUID}";
@@ -840,7 +903,7 @@ namespace OpenDental.Main_Modules
             {
                 try
                 {
-                    await processOneSMS(msgText, msgTime, msgFrom, msgGUID);
+                    await processOneReceivedSMS(msgText, msgTime, msgFrom, msgGUID);
                 }
                 catch (Exception ex)
                 {
@@ -853,7 +916,11 @@ namespace OpenDental.Main_Modules
         }
 
 
-        // Note you'll find me flipping between calling these hourly and daily.  They are daily tasks but I do them every hour to handle the comptuer being down or similar
+        /// <summary>
+        ///  This is the outermost loop for the hourly (=daily) job.  
+        ///  It's the one responsible for actually doing a while(true) 
+        ///  Internally it calls PerformDailySMSTasks
+        /// </summary>
         async public static void SMSDailyTasks()
         {
             while (Security.CurUser == null || Security.CurUser.UserNum == 0) // Assuming UserNum is an integer and 0 or null indicates uninitialized
@@ -910,7 +977,10 @@ namespace OpenDental.Main_Modules
                 }
         }
 
-
+        /// <summary>
+        /// Similar to SMSDailyTasks, this is the outermost loop for the five minute job.
+        /// Internally it calls FetchAndProcessSmsMessages and then waits for 5 minutes.
+        /// </summary>
         async public static void receiveSMSforever()
         {
             bool smsIsWorking = await CheckSMSConnection();
