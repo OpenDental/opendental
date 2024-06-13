@@ -248,8 +248,8 @@ namespace OpenDental {
 			}
 			formWebBrowserPrefs=new FormWebBrowserPrefs();
 			formWebBrowserPrefs.HtmlContent=html;
-			Point pointWindowR=panelMain.PointToScreen(new Point(LayoutManager.Scale(476),0));//we only care about x
-			Point pointControlUR=control.PointToScreen(new Point(0,control.Top-LayoutManager.Scale(50)));//we only care about y
+			Point pointWindowR=panelMain.PointToScreen(new Point(LayoutManager.Scale(476),0));//we only care about x (# of pixels moved to the right from left of panelMain)
+			Point pointControlUR=control.PointToScreen(new Point(0,panelMain.Top-LayoutManager.Scale(50)));//we only care about y (# of pixels moved upwards from top of control)
 			Point pointShow=new Point(pointWindowR.X,pointControlUR.Y);
 			formWebBrowserPrefs.PointStart=pointShow;
 			if(prefInf.WidthWindow>0 && prefInf.HeightWindow>0){

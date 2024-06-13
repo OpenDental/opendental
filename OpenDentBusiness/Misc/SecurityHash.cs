@@ -1,4 +1,4 @@
-﻿/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
+/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
 using CodeBase;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2023,4,24);
+		public static DateTime DateStart=new DateTime(2024,6,6);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -19,7 +19,8 @@ namespace OpenDentBusiness.Misc {
 		private static bool _arePatientsUpdated=false;
 		private static bool _arePayPlansUpdated=false;
 
-		///<summary>This method is allowed anywhere in the ConvertDatabase scripts.  It's specially written to never crash. It does not affect the schema. It can be called multiple times during a conversion and will only run once.  Updates the SecurityHash fields of all tables for which Open Dental is enforcing database integrity. First clears out all existing SecurityHashes, then creates new ones for recent entries. </summary>
+		///<summary>This method is NOT safe to invoke during database conversions. It is only to be called AFTER all conversions have taken place in order to avoid a rare table lockup. 
+		///Runs a hashing algorithm over all tables for which Open Dental is enforcing database integrity. Overwrites any existing SecurityHashes with new ones for recent entries. </summary>
 		public static void UpdateHashing() {
 			RunPaysplit();
 			RunAppointment();
@@ -138,7 +139,6 @@ namespace OpenDentBusiness.Misc {
 			_areAppointmentsUpdated=true;
 		}
 
-		///<summary>Hashes ALL patients with an empty SecurityHash field. Does not use the DateStart like other table hashing methods. </summary>
 		private static void RunPatient() {
 			if(_arePatientsUpdated) {
 				return;
@@ -165,11 +165,9 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PatientWorker() {
-			//Get all ALL unhashed patients and any with duplicate SecurityHash values
-			string command="SELECT PatNum FROM patient LEFT JOIN (SELECT SecurityHash FROM patient GROUP BY SecurityHash HAVING COUNT(*)>1) "+
-				"patDup ON patDup.SecurityHash=patient.SecurityHash WHERE patient.SecurityHash='' OR patDup.SecurityHash IS NOT NULL";
+			//Update hashes for patients that have been added or changed since DateStart.
+			string command="SELECT PatNum FROM patient WHERE DateTStamp >= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
-			//Do not clear current hashes
 			long patNum;
 			string unhashedText="";
 			string hashedText="";
@@ -183,7 +181,6 @@ namespace OpenDentBusiness.Misc {
 					ex.DoNothing();
 					hashedText=ex.GetType().Name;
 				}
-				//This loop takes 7 minutes for 1M patients when run locally, but it's taking too long for customers.
 				command=$@"UPDATE patient SET SecurityHash='{POut.String(hashedText)}' WHERE PatNum={POut.Long(patNum)}";
 				Db.NonQ(command);
 			}

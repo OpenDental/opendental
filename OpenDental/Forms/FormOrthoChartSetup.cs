@@ -31,10 +31,8 @@ namespace OpenDental {
 			gridTabNames.BeginUpdate();
 			gridTabNames.ListGridRows.Clear();
 			gridTabNames.Columns.Clear();
-			int isHiddenWidth=100;
-			int tabNameWidth=gridTabNames.Width-10-isHiddenWidth;//10 for scrollbar.
-			gridTabNames.Columns.Add(new UI.GridColumn("Tab Name",tabNameWidth,HorizontalAlignment.Left));
-			gridTabNames.Columns.Add(new UI.GridColumn("Is Hidden",isHiddenWidth,HorizontalAlignment.Center));
+			gridTabNames.Columns.Add(new UI.GridColumn("Tab Name",160,HorizontalAlignment.Left){ IsWidthDynamic=true });
+			gridTabNames.Columns.Add(new UI.GridColumn("Is Hidden",100,HorizontalAlignment.Center));
 			for(int i=0;i<_listOrthoChartTabsNew.Count;i++) {
 				UI.GridRow row=new UI.GridRow();
 				row.Tag=_listOrthoChartTabsNew[i];

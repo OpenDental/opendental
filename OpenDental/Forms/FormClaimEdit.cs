@@ -116,9 +116,16 @@ namespace OpenDental{
 				listCanadianAttachments.ContextMenu=contextMenuAttachments;
 			}
 			gridProc.ContextMenu=contextAdjust;
+			DoCalculateClientArea=false;
 		}
 
 		private void FormClaimEdit_Shown(object sender,EventArgs e) {
+			List<ClaimProc> listClaimProcsForClaim=_listClaimProcsForClaim.ToList();
+			AutomationTrigger automationTrigger=AutomationTrigger.OpenClaim;
+			if(IsNew) {
+				automationTrigger=AutomationTrigger.CreateClaim;
+			}
+			AutomationL.Trigger(automationTrigger,null,_claim.PatNum,triggerObj:listClaimProcsForClaim);
 			if(!_isForOrthoAutoPay) {
 				return;
 			}
@@ -364,13 +371,8 @@ namespace OpenDental{
 				fillGridSentAttachments();
 				tabControlAttach.SelectedTab=tabDXC;
 			}
+			DoCalculateClientArea=true;
 			SetBounds();
-			List<ClaimProc> listClaimProcsForClaim=_listClaimProcsForClaim.ToList();
-			AutomationTrigger automationTrigger=AutomationTrigger.OpenClaim;
-			if(IsNew) {
-				automationTrigger=AutomationTrigger.CreateClaim;
-			}
-			AutomationL.Trigger(automationTrigger,null,_claim.PatNum,triggerObj:listClaimProcsForClaim);
 		}
 
 		private void SetBounds(){
@@ -384,7 +386,11 @@ namespace OpenDental{
 			}
 			if(Height<heightAvail){
 				Height=heightAvail;
-			}	
+			}
+			else{
+				//This is just here to make sure that we set the client area of the window in either case by adjusting the height of the window. See "DoCalculateClientArea" in FormODBase.
+				Height=Height-1;
+			}
 			//Center the window on the parent.
 			Location=new Point(rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-Width/2,
 				y:rectangleWorkingArea.Top+rectangleWorkingArea.Height/2-Height/2);

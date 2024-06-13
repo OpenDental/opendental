@@ -78,6 +78,7 @@ namespace OpenDental{
 			// 
 			// butNone
 			// 
+			this.butNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butNone.Location = new System.Drawing.Point(368, 38);
 			this.butNone.Name = "butNone";
 			this.butNone.Size = new System.Drawing.Size(75, 24);

@@ -30,8 +30,6 @@ namespace OpenDentBusiness {
 				string[] stringArrayPatNumForeignKeys=new string[]{
 					"adjustment.PatNum",
 					"allergy.PatNum",
-					"anestheticrecord.PatNum",
-					"anesthvsdata.PatNum",
 					"appointment.PatNum",
 					"apptgeneralmessagesent.PatNum",
 					"apptremindersent.PatNum",
@@ -56,7 +54,7 @@ namespace OpenDentBusiness {
 					"ehrcareplan.PatNum",
 					"ehrlab.PatNum",
 					"ehrmeasureevent.PatNum",
-					"ehrnotperformed.PatNum",				
+					"ehrnotperformed.PatNum",
 					//"ehrpatient.PatNum",  //This is handled below.  We do not want to change patnum here because there can only be one entry per patient.
 					"ehrprovkey.PatNum",
 					"ehrquarterlykey.PatNum",
@@ -136,7 +134,6 @@ namespace OpenDentBusiness {
 					"registrationkey.PatNum",
 					"repeatcharge.PatNum",
 					"reqstudent.PatNum",
-					"reseller.PatNum",
 					"rxpat.PatNum",
 					//"screen.ScreenPatNum", //IS NOT a PatNum so it is should not be merged.  FKey to screenpat.ScreenPatNum.
 					"screenpat.PatNum",
@@ -2789,6 +2786,9 @@ namespace OpenDentBusiness {
 			//if patient was re-activated, then re-enable any recalls
 			else if(patNew.PatStatus!=patOld.PatStatus && patNew.PatStatus==PatientStatus.Patient) {//if changed patstatus, and new status is Patient
 				List<Recall> recalls=Recalls.GetList(patNew.PatNum);
+				if(recalls.Count==0) {
+					return; //This patient does not have any recalls to 're-activate'.
+				}
 				for(int i=0;i<recalls.Count;i++) {
 					if(recalls[i].IsDisabled) {
 						recalls[i].IsDisabled=false;
@@ -5036,8 +5036,9 @@ namespace OpenDentBusiness {
 			if(patient.SecurityHash==null) {//When a patient is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
 				return true;
 			}
-			//Do not check date, all patients are subject to validation
-			//SecDateEntry only get set on Insert, so once or never. It's useless.
+			if(patient.DateTStamp < Misc.SecurityHash.DateStart) {//Old
+				return true;
+			}
 			if(patient.SecurityHash==HashFields(patient)) {
 				return true;
 			}

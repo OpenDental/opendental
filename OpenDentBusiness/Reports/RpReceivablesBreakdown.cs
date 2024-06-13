@@ -18,6 +18,7 @@ namespace OpenDentBusiness {
 			List<long> listHiddenUnearnedDefNums=ReportsComplex.RunFuncOnReportServer(() => 
 				Defs.GetDefsNoCache(DefCat.PaySplitUnearnedType).FindAll(x => !string.IsNullOrEmpty(x.ItemValue)).Select(x => x.DefNum).ToList()
 			);
+			bool isAgingProcLifo=ReportsComplex.RunFuncOnReportServer(() => Prefs.GetYNNoCache(PrefName.AgingProcLifo));
 			string query="";
 			string whereProv="";//used as the provider portion of the where clauses.
 											//each whereProv needs to be set up separately for each query
@@ -158,29 +159,41 @@ namespace OpenDentBusiness {
 					if(listProvNums.Count != 0) {
 						whereProv+=" AND ProvNum IN("+string.Join(",",listProvNums)+") ";
 					}
-					//Aging will utilize the ProcDate column when a ProcNum value is set.
-					//This report should do the same since our manual gives instructions on "Matching Receivables Breakdown and Aging of A/R Totals".
-					//Union two separate sub-queries together instead of using a complicated conditional where clause for speed purposes.
-					query=$@"SELECT TranDate, SUM(Amt) Amt
-						FROM (
-							SELECT AdjDate TranDate, SUM(AdjAmt) Amt
+					//This report should do the same thing as aging since our manual gives instructions on "Matching Receivables Breakdown and Aging of A/R Totals".
+					if(isAgingProcLifo) {
+						//Aging will utilize the ProcDate column when a ProcNum value is set.
+						//Union two separate sub-queries together instead of using a complicated conditional where clause for speed purposes.
+						query=$@"SELECT TranDate, SUM(Amt) Amt
+							FROM (
+								SELECT AdjDate TranDate, SUM(AdjAmt) Amt
+								FROM adjustment
+								WHERE ProcNum = 0
+								AND AdjDate >= '{bDate}'
+								AND AdjDate < '{eDate}'
+								{whereProv}
+								GROUP BY AdjDate
+							UNION ALL 
+								SELECT ProcDate TranDate, SUM(AdjAmt) Amt
+								FROM adjustment
+								WHERE ProcNum != 0
+								AND ProcDate >= '{bDate}'
+								AND ProcDate < '{eDate}'
+								{whereProv}
+								GROUP BY ProcDate
+							) tranadjustment
+							GROUP BY TranDate
+							ORDER BY TranDate";
+					}
+					else {
+						//Aging will utilize the AdjDate column regardless if it is associated with a ProcNum.
+						query=$@"SELECT AdjDate TranDate, SUM(AdjAmt)
 							FROM adjustment
-							WHERE ProcNum = 0
-							AND AdjDate >= '{bDate}'
+							WHERE  AdjDate >= '{bDate}'
 							AND AdjDate < '{eDate}'
 							{whereProv}
 							GROUP BY AdjDate
-						UNION ALL 
-							SELECT ProcDate TranDate, SUM(AdjAmt) Amt
-							FROM adjustment
-							WHERE ProcNum != 0
-							AND ProcDate >= '{bDate}'
-							AND ProcDate < '{eDate}'
-							{whereProv}
-							GROUP BY ProcDate
-						) tranadjustment
-						GROUP BY TranDate
-						ORDER BY TranDate";
+							ORDER BY AdjDate";
+					}
 					break;
 				case "TableProduction":
 					whereProv="";

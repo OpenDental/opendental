@@ -1422,7 +1422,11 @@ namespace OpenDental {
 			List<long> listPayPlanChargeNums=gridAccount.SelectedIndices
 				.Where(x => table.Rows[x]["PayPlanChargeNum"].ToString()!="0")
 				.Select(x => PIn.Long(table.Rows[x]["PayPlanChargeNum"].ToString())).ToList();//Debits attached to insurance payplans do not get shown in the account module.
-			Statement statement=Statements.CreateLimitedStatement(listPatNums,_patient.Guarantor,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
+			long patNumStatement=_patient.Guarantor;
+			if(listPatNums.Count==1) {//If only one patient is selected
+				patNumStatement=_patient.PatNum; //Use the patient's info on statement instead of the guarantor's.
+			}
+			Statement statement=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
 			//All printing and emailing will be done from within the form:
 			using FormStatementOptions formStatementOptions=new FormStatementOptions();
 			formStatementOptions.StatementCur=statement;
@@ -1582,9 +1586,15 @@ namespace OpenDental {
 				patNumStatement=_patient.SuperFamily;
 				superFamNum=_patient.SuperFamily;
 			}
-			else if(listPatNums.Count==1 && listPatNums[0]==_patient.Guarantor) {
-				//This is NOT a super family statement. Therefore, if the patient is the guarantor this is a patient statement.
-				limitedCustomFamily=EnumLimitedCustomFamily.Patient;
+			else if(listPatNums.Count==1) {
+				if(listPatNums[0]==_patient.Guarantor) {
+					//This is NOT a super family statement. Therefore, if the patient is the guarantor this is a patient statement.
+					limitedCustomFamily=EnumLimitedCustomFamily.Patient;
+				}
+				else if(listPatNums[0]==_patient.PatNum) {
+					//Use patient name on statement.
+					patNumStatement=_patient.PatNum;
+				}
 			}
 			statementLimited=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums,superFamily:superFamNum,limitedCustomFamily:limitedCustomFamily);
 			//All printing and emailing will be done from within the form:
@@ -2210,10 +2220,10 @@ namespace OpenDental {
 			textQuickProcs.MouseDown+=textQuickCharge_MouseClick;
 			textQuickProcs.MouseCaptureChanged+=textQuickCharge_CaptureChange;
 			textQuickProcs.LostFocus+=textQuickCharge_FocusLost;
-			splitContainerAccountCommLog.SplitterDistance=splitContainerParent.Panel2.Height * 3/5;//Make Account grid slightly bigger than commlog
 			//This just makes the patient information grid show up or not.
 			_listDisplayFieldsPatInfo=DisplayFields.GetForCategory(DisplayFieldCategory.AccountPatientInformation);
 			LayoutPanels();//Only place that we call this outside of LayoutPanelsAndRefreshMainGrids() since no grid data has been loaded yet
+			splitContainerAccountCommLog.SplitterDistance=splitContainerParent.Panel2.Height * 3/5;//Make Account grid slightly bigger than commlog
 			checkShowFamilyComm.Checked=PrefC.GetBoolSilent(PrefName.ShowAccountFamilyCommEntries,true);
 			checkShowCompletePayPlans.Checked=PrefC.GetBool(PrefName.AccountShowCompletedPaymentPlans);
 			Plugins.HookAddCode(this,"ContrAccount.InitializeOnStartup_end");
@@ -2539,7 +2549,7 @@ namespace OpenDental {
 				return;
 			}
 			//Main QuickCharge button was clicked.  Create a textbox that can be entered so users can insert manually entered proc codes.
-			if(!Security.IsAuthorized(Permissions.ProcComplCreate,true)) {//Button doesn't show up unless they have AccountQuickCharge permission. 
+			if(!Security.IsAuthorized(Permissions.ProcComplCreate,DateTime.Today,true)) {//Button doesn't show up unless they have AccountQuickCharge permission. 
 				//user can still use dropdown, just not type in codes.
 				contextMenuQuickProcs.Show(this,new Point(_butQuickProcs.Bounds.X,_butQuickProcs.Bounds.Y+_butQuickProcs.Bounds.Height));
 				return; 

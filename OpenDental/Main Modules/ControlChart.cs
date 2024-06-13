@@ -59,6 +59,8 @@ namespace OpenDental {
 		private int _chartScrollValue;
 		///<summary>Can be null if user has not set up any views.  Defaults to first in list when starting up.</summary>
 		private ChartView _chartViewDisplay;
+		/// <summary>The default 96 dpi width of the columnHeader stored within the listViewButtons control prior to applying any zoom adjustments.</summary>
+		private int _columnHeaderDefaultSize;
 		///<summary>The time that we started our last prog note search.</summary>
 		private DateTime _dateTimeLastSearch;
 		//private Family _family;
@@ -181,6 +183,8 @@ namespace OpenDental {
 			//no need to remove event handler... ContrChart always exists 1:1 per instance of the program.
 			ODEvent.Fired+=ErxBrowserClosed;
 			Logger.LogToPath("Ctor",LogPath.Startup,LogPhase.End);
+			_columnHeaderDefaultSize=listViewButtons.Width-10;//10 pixels leaves a buffer to prevent text from being cutoff on the right-hand side of the listView
+			columnHeader1.Width=LayoutManager.Scale(_columnHeaderDefaultSize);
 		}
 		#endregion Constructor
 
@@ -1955,6 +1959,14 @@ namespace OpenDental {
 			e.HasMorePages=false;
 		}
 		#endregion Methods - Event Handlers - Printing
+
+		#region Methods - Event Handlers - Resizing
+		private void tabControlProc_Resize(object sender,EventArgs e) {
+			//Couldn't get this to work if used listViewButtons_Resize.
+			//Hscroll was visible until clicked.
+			columnHeader1.Width=LayoutManager.Scale(_columnHeaderDefaultSize);
+		}
+		#endregion
 
 		#region Methods - Event Handlers - Tabs General
 		private void tabControlImages_Selecting(object sender,int e) {
@@ -9439,6 +9451,16 @@ namespace OpenDental {
 				}
 				return;//cancelled insert
 			}
+			if(procedure.ProcStatus==ProcStat.TP || procedure.ProcStatus==ProcStat.TPi) {//Now that a procedure is selected, attach it to the correct TP or TPi
+				long priorityNum=0;
+				if(comboPriority.SelectedIndex!=0) {
+					priorityNum=comboPriority.GetSelectedDefNum();
+				}
+				if(gridTreatPlans.GetSelectedIndex()>=0) {
+					List<long> listTpNums=gridTreatPlans.SelectedIndices.Select(x => _listTreatPlans[x].TreatPlanNum).ToList();
+					ChartModules.AttachProcToTPs(procedure,_listTreatPlans,listTpNums,Pd,priorityNum);
+				}
+			}
 			//The status may have been edited in formProcEdit, should rely on ProcCur.ProcStatus
 			ChartModules.AddProcSetCompleteHelper(procedure);
 			logComplCreate(procedure);
@@ -11225,6 +11247,13 @@ namespace OpenDental {
 		}
 
 		private void FillGridOrthoHardware(){
+			if(IsPatientNull()) {
+				gridOrtho.BeginUpdate();
+				gridOrtho.ListGridRows.Clear();
+				gridOrtho.Columns.Clear();
+				gridOrtho.EndUpdate();
+				return;
+			}
 			Cursor=Cursors.WaitCursor;
 			gridOrtho.SelectionMode=GridSelectionMode.MultiExtended;
 			ContextMenu contextMenu=new ContextMenu();
@@ -11289,6 +11318,13 @@ namespace OpenDental {
 		}
 
 		private void FillGridOrthoChart(){
+			if(IsPatientNull()) {
+				gridOrtho.BeginUpdate();
+				gridOrtho.ListGridRows.Clear();
+				gridOrtho.Columns.Clear();
+				gridOrtho.EndUpdate();
+				return;
+			}
 			Cursor=Cursors.WaitCursor;
 			gridOrtho.SelectionMode=GridSelectionMode.None;
 			//Get all the corresponding fields from the OrthoChartTabLink table that are associated with the currently selected ortho tab.

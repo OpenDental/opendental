@@ -125,12 +125,12 @@ namespace OpenDentBusiness {
 			return codeGroup.CodeGroupNum;
 		}
 
-		public static List<long> GetCodeNums(long codeGroupNum,bool isExactMatch=false) {
+		public static List<long> GetCodeNums(long codeGroupNum) {
 			//No need to check MiddleTierRole; no call to db.
 			List<long> listCodeNums=new List<long>();
 			CodeGroup codeGroup=GetOne(codeGroupNum,isShort:false);
 			if(codeGroup!=null) {
-				listCodeNums=ProcedureCodes.GetCodeNumsForProcCodes(codeGroup.ProcCodes,isExactMatch:isExactMatch);
+				listCodeNums=ProcedureCodes.GetCodeNumsForProcCodes(codeGroup.ProcCodes);
 			}
 			return listCodeNums;
 		}
@@ -164,6 +164,17 @@ namespace OpenDentBusiness {
 		public static CodeGroup GetOneForCodeGroupFixed(EnumCodeGroupFixed codeGroupFixed,bool isShort=true) {
 			//No need to check MiddleTierRole; no call to db.
 			return GetFirstOrDefault(x => x.CodeGroupFixed==codeGroupFixed,isShort);
+		}
+
+		///<summary>Used by the API to get a list of codegroups. Returns an empty list if none are found.</summary>
+		public static List<CodeGroup> GetCodeGroupsForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<CodeGroup>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM codegroup ";
+			command+="ORDER BY CodeGroupNum " //Ensure order for limit and offset
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.CodeGroupCrud.SelectMany(command);
 		}
 
 		///<summary>Returns true if there is a code group with at least one valid procedure code associated with each EnumCodeGroupFixed. Otherwise; false.</summary>

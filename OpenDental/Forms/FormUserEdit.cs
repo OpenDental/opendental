@@ -354,45 +354,6 @@ namespace OpenDental{
 				MsgBox.Show(this,"Users must have at least one user group associated. Please select a user group to continue.");
 				return;
 			}
-			List<UserOdPref> listUserOdPrefs=UserOdPrefs.GetByFkeyAndFkeyType(Programs.GetCur(ProgramName.eRx).ProgramNum,UserOdFkeyType.Program);
-			List<UserOdPref> listUserOdPrefsNotEmpty=listUserOdPrefs.FindAll(x => !x.ValueString.IsNullOrEmpty()
-				&& x.UserNum!=UserodCur.UserNum);//Allow user to reuse their ID at the different clinics
-			List<string> listValueStrings=listUserOdPrefsNotEmpty.Select(x => x.ValueString).ToList();
-			//if the default DoseSpotID is changed not from the FormUserPrefAdditional, check that textDoseSpotUserID.Text is not a duplicate
-			//and change the _userOdPrefDoseSpotDefault.ValueString
-			if(textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString && !listValueStrings.Contains(textDoseSpotUserID.Text)) {
-				_userOdPrefDoseSpotDefault.ValueString=textDoseSpotUserID.Text;
-			}
-			List<UserOdPref> listUserOdPrefsDuplicateIDs=_listUserOdPrefsDoseSpotNew.FindAll(x => listValueStrings.Contains(x.ValueString));
-			if((textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString || _userOdPrefDoseSpotDefault.IsNew)
-				&& listValueStrings.Contains(textDoseSpotUserID.Text)
-				|| !listUserOdPrefsDuplicateIDs.IsNullOrEmpty())
-			{
-				string msg="One or more of your DoseSpot User IDs is already in use.\r\n" +
-					"The following list shows the users and the DoseSpot User ID aleady in use.\r\n\n";
-				msg +="DoseSpot User ID\tUser\r\n";
-				listUserOdPrefsNotEmpty=listUserOdPrefsNotEmpty.DistinctBy(x => x.UserNum)
-					.OrderBy(x => PIn.Long(x.ValueString,hasExceptions:false)).ToList();//Sorting the list by value string(DoseSpot ID). ex set to false to return 0 if the input string is not a long, currently letters are allowed in value string(DoseSpot ID).
-				for(int i=0;i<listUserOdPrefsNotEmpty.Count;i++) {
-					//Add the DoseSpotIDs and corresponding user name to the msg to be displayed in the msgBox.
-					//\t\t used for layout. \r\n used to create new line.
-					msg+=String.Format("{0}\t\t{1}\r\n",listUserOdPrefsNotEmpty[i].ValueString,Userods.GetName(listUserOdPrefsNotEmpty[i].UserNum));
-				}
-				MessageBox.Show(this,msg);
-				//reset the DoseSpotIDs back to what the values before a duplicate was entered
-				for(int i=0;i<_listUserOdPrefsDoseSpotNew.Count;i++) {
-					//new user set the DoseSpotIDs back to blank
-					if(_listUserOdPrefsDoseSpotNew[i].IsNew) {
-						_listUserOdPrefsDoseSpotNew[i].ValueString="";
-					}
-					//only changes the duplicate DoseSpotIDs that were entered back, but keeps the entered DoseSpotIDs that are not duplicates
-					if(listValueStrings.Contains(_listUserOdPrefsDoseSpotNew[i].ValueString) && !_listUserOdPrefsDoseSpotNew[i].IsNew) {
-						_listUserOdPrefsDoseSpotNew[i].ValueString=_listUserOdPrefsDoseSpotOld[i].ValueString;//change _listUserOdPrefsDoseSpotNew back to what it was previously
-					}
-				}
-				textDoseSpotUserID.Text=_userOdPrefDoseSpotDefault.ValueString;
-				return;
-			}
 			if(_isFromAddUser && !Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				if(listUserGroup.SelectedIndices.Count!=1
 					|| !listUserGroup.GetListSelected<UserGroup>().Select(x => x.UserGroupNum).Contains(PrefC.GetLong(PrefName.DefaultUserGroup))) 

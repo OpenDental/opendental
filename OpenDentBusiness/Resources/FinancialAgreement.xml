@@ -287,7 +287,13 @@
 			<SheetDefNum>0</SheetDefNum>
 			<FieldType>StaticText</FieldType>
 			<FieldName/>
-			<FieldValue>* For my convenience, this office may release my information to my insurance company, and receive payment directly from them. * I understand that if I begin major treatment that involves lab work, I will be responsible for the fee at that time. * If sent to collections, I agree to pay all related fees and court costs. * Every effort will be made to help me with my insurance, but if they do not pay as expected, I will still be responsible. * I agree to pay finance charges of 1.5% per month (18% APR) on any balance 90 days past due. * I will pay a fee for appointments broken without 24 hours notice. * Treatment plans may change, and I will be responsible for the work actually done.</FieldValue>
+      <FieldValue>* For my convenience, this office may release my information to my insurance company, and receive payment directly from them.
+        * I understand that if I begin major treatment that involves lab work, I will be responsible for the fee at that time.
+        * If sent to collections, I agree to pay all related fees and court costs.
+        * Every effort will be made to help me with my insurance, but if they do not pay as expected, I will still be responsible.
+        * I agree to pay finance charges of 1.5% per month (18% APR) on any balance 90 days past due.
+        * I will pay a fee for appointments broken without 24 hours notice.
+        * Treatment plans may change, and I will be responsible for the work actually done.</FieldValue>
 			<FontSize>10</FontSize>
 			<FontName>Microsoft Sans Serif</FontName>
 			<FontIsBold>false</FontIsBold>
