@@ -34,6 +34,14 @@ namespace OpenDental {
 			//not implemented
 		}
 
+		private void butAdd_Click(object sender,EventArgs e) {
+			//not implemented
+		}
+
+		private void butRoomSelect_Click(object sender,EventArgs e) {
+			//not implemented
+		}
+
 		private void butDelete_Click(object sender,EventArgs e) {
 			//not implemented
 		}

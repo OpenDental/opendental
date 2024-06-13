@@ -362,8 +362,8 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Userod>(MethodBase.GetCurrentMethod(),badgeId);
 			}
-			string command="SELECT * FROM userod WHERE BadgeId ='"+POut.String(badgeId)+"'";
-				//"LPAD(BadgeId,8,0) ='" +POut.Int(badgeId)+"'";
+			string command="SELECT * FROM userod WHERE BadgeId <> '' AND BadgeId = RIGHT('"+POut.String(badgeId)+"', LENGTH(BadgeId))";
+			//Example BadgeId in db="123". Select compares "123" with RIGHT('00000123',3)
 			List<Userod> listUserods=Crud.UserodCrud.TableToList(Db.GetTable(command));
 			return listUserods.FirstOrDefault();
 		}

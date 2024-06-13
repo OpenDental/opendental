@@ -56,7 +56,7 @@
 		private UI.Button butClear;
 		private UI.Button butDelete;
 		private OpenDental.UI.ComboBox comboGroupBy;
-		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Label labelGroupBy;
 		private System.Windows.Forms.TextBox textChargeTotal;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textFilterProcCodes;
@@ -175,7 +175,7 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.comboGroupBy = new OpenDental.UI.ComboBox();
-			this.label7 = new System.Windows.Forms.Label();
+			this.labelGroupBy = new System.Windows.Forms.Label();
 			this.groupBoxFilteringOutstanding = new OpenDental.UI.GroupBox();
 			this.comboProviderOutstandingFilter = new OpenDental.UI.ComboBox();
 			this.datePickTo = new System.Windows.Forms.DateTimePicker();
@@ -693,7 +693,7 @@
 			this.gridCharges.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridCharges.Location = new System.Drawing.Point(26, 18);
+			this.gridCharges.Location = new System.Drawing.Point(1, 22);
 			this.gridCharges.Name = "gridCharges";
 			this.gridCharges.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
 			this.gridCharges.Size = new System.Drawing.Size(602, 249);
@@ -875,15 +875,15 @@
 			this.comboGroupBy.TabIndex = 153;
 			this.comboGroupBy.SelectionChangeCommitted += new System.EventHandler(this.comboGroupBy_SelectionChangeCommitted);
 			// 
-			// label7
+			// labelGroupBy
 			// 
-			this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label7.Location = new System.Drawing.Point(717, 387);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(77, 18);
-			this.label7.TabIndex = 154;
-			this.label7.Text = "Group By";
-			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.labelGroupBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.labelGroupBy.Location = new System.Drawing.Point(717, 387);
+			this.labelGroupBy.Name = "labelGroupBy";
+			this.labelGroupBy.Size = new System.Drawing.Size(77, 18);
+			this.labelGroupBy.TabIndex = 154;
+			this.labelGroupBy.Text = "Group By";
+			this.labelGroupBy.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// groupBoxFilteringOutstanding
 			// 
@@ -1169,7 +1169,7 @@
 			this.panelSplits.Controls.Add(this.textChargeTotal);
 			this.panelSplits.Controls.Add(this.groupBoxFilteringOutstanding);
 			this.panelSplits.Controls.Add(this.butCreatePartial);
-			this.panelSplits.Controls.Add(this.label7);
+			this.panelSplits.Controls.Add(this.labelGroupBy);
 			this.panelSplits.Controls.Add(this.label8);
 			this.panelSplits.Controls.Add(this.comboGroupBy);
 			this.panelSplits.Controls.Add(this.butDelete);

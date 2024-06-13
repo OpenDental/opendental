@@ -26,6 +26,8 @@ namespace OpenDental {
 		private DataTable _table;
 		private bool _isInitial=true;
 		public List<long> ClinicNumsSelectedInitial=new List<long>();
+		/// <summary>Determined based upon choice made in comboClinic from formBillingOptions</summary>
+		public bool IsAllSelected=false;
 		private List<long> _listStatementNumsSent;
 		///<summary>If progress is paused and then resumed, it checks db for any that got deleted and puts in this variable.</summary>
 		private List<long> _listStatementNumsToSkipAfterPause=new List<long>();
@@ -61,7 +63,7 @@ namespace OpenDental {
 			comboOrder.Items.Add(Lan.g(this,"BillingType"));
 			comboOrder.Items.Add(Lan.g(this,"PatientName"));
 			comboOrder.SelectedIndex=0;
-			if(ClinicNumsSelectedInitial.Any(x => x<=0)) {
+			if(IsAllSelected) {
 				comboClinic.IsAllSelected=true;
 			}
 			else {

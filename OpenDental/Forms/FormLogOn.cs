@@ -123,8 +123,6 @@ namespace OpenDental {
 				_keyboardInput="";
 				return;
 			}
-			_keyboardInput=_keyboardInput.Substring(4);//First 4 digits from the reader don't matter as Lenel OnGuard doesn't use them
-			_keyboardInput=_keyboardInput.TrimStart('0');//Remove leading 0s from IDs that have less than 4 employee digits
 			Userod userod=Userods.GetUserByBadgeId(_keyboardInput);//Find the user
 			if(userod==null) {//Kickout if no user was found
 				_keyboardInput="";

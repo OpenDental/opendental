@@ -8,7 +8,6 @@ namespace OpenDentBusiness{
 	///<summary></summary>
 	public class ChildRooms{
 		//If this table type will exist as cached data, uncomment the Cache Pattern region below and edit.
-		/*
 		#region Cache Pattern
 		//This region can be eliminated if this is not a table type with cached data.
 		//If leaving this region in place, be sure to add GetTableFromCache and FillCacheFromTable to the Cache.cs file with all the other Cache types.
@@ -100,7 +99,7 @@ namespace OpenDentBusiness{
 			return _childRoomCache.GetTableFromCache(doRefreshCache);
 		}
 		#endregion Cache Pattern
-		*/
+
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.
 		#region Methods - Get

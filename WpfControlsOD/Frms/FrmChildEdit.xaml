@@ -18,12 +18,12 @@
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
 		<ui:Label x:Name="labelNotes" Width="77" Height="18" Margin="32,204,0,0" Text="Notes" HAlign="Right" />
 		<ui:TextRich x:Name="textNotes" Width="180" Margin="109,204,0,0" Height="58" />
-		<ui:Label x:Name="labelTeacher" Width="100" Height="18" Margin="10,173,0,0" Text="Primary Teacher" HAlign="Right" />
-		<ui:TextBox x:Name="textTeacher" Width="127" Height="20" Margin="110,172,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
-		<ui:Label x:Name="labelParent1" Width="77" Height="18" Margin="33,111,0,0" Text="Parent 1" HAlign="Right" />
-		<ui:TextBox x:Name="textParent1" Width="127" Height="20" Margin="110,110,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
-		<ui:Label x:Name="labelParent2" Width="77" Height="18" Margin="33,142,0,0" Text="Parent 2" HAlign="Right" />
-		<ui:TextBox x:Name="textParent2" Width="127" Height="20" Margin="110,141,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
-		<ui:Button x:Name="butDelete" VerticalAlignment="Bottom" Height="24" Margin="18,0,0,10" Text="_Delete" Click="butDelete_Click" Width="75" />
+		<ui:Label x:Name="labelPrimaryRoom" Width="100" Height="18" Margin="10,173,0,0" Text="Primary Room" HAlign="Right" />
+		<ui:TextBox x:Name="textPrimaryRoom" Width="127" Height="20" Margin="110,172,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
+		<ui:Label x:Name="labelAuthorized" Width="95" Height="35" Margin="15,111,0,0" Text="Authorized for Pickup" HAlign="Right" />
+		<ui:Button x:Name="butDelete" VerticalAlignment="Bottom" Height="24" Margin="18,0,0,10" Text="_Delete" Click="butDelete_Click" Width="75" Icon="DeleteX" />
+		<ui:ListBox x:Name="listAuthorized" Margin="110,111,0,0" Height="47" Width="127"/>
+		<ui:Button x:Name="butAdd" Margin="242,122,0,0" Text="Add" Click="butAdd_Click" Width="54" Height="24" />
+		<ui:Button x:Name="butRoomSelect" Margin="242,170,0,0" Text="Select" Click="butRoomSelect_Click" Width="54" Height="24" />
 	</Grid>
 </local:FrmODBase>

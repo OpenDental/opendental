@@ -672,7 +672,7 @@ namespace OpenDental {
 		private void butArchive_Click(object sender,EventArgs e) {
 			#region Validation
 			if(checkArchiveDoBackupFirst.Checked) { //We only need to validate the backup settings if the user wants to make a backup first
-				if(!MsgBox.Show(MsgBoxButtons.YesNo,"To make a backup of the database, ensure no other machines are currently using OpenDental. Proceed?")) {
+				if(!MsgBox.Show(MsgBoxButtons.YesNo,"To make a backup of the database, ensure no other machines are currently using Open Dental. Proceed?")) {
 					return;
 				}
 				//Validation
@@ -714,7 +714,7 @@ namespace OpenDental {
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("An error occurred backing up the old database. Old data was not removed from the database. "+
-					"Ensure no other machines are currently using OpenDental and try again.",ex);
+					"Ensure no other machines are currently using Open Dental and try again.",ex);
 				return;
 			}
 			//The UI enforces a backup to occur above when optimize is checked

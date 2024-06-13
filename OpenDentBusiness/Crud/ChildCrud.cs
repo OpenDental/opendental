@@ -47,13 +47,12 @@ namespace OpenDentBusiness.Crud{
 			Child child;
 			foreach(DataRow row in table.Rows) {
 				child=new Child();
-				child.ChildNum      = PIn.Long  (row["ChildNum"].ToString());
-				child.TeacherPrimary= PIn.Long  (row["TeacherPrimary"].ToString());
-				child.ChildRoomNum  = PIn.Long  (row["ChildRoomNum"].ToString());
-				child.FName         = PIn.String(row["FName"].ToString());
-				child.LName         = PIn.String(row["LName"].ToString());
-				child.BirthDate     = PIn.Date  (row["BirthDate"].ToString());
-				child.Notes         = PIn.String(row["Notes"].ToString());
+				child.ChildNum           = PIn.Long  (row["ChildNum"].ToString());
+				child.ChildRoomNumPrimary= PIn.Long  (row["ChildRoomNumPrimary"].ToString());
+				child.FName              = PIn.String(row["FName"].ToString());
+				child.LName              = PIn.String(row["LName"].ToString());
+				child.BirthDate          = PIn.Date  (row["BirthDate"].ToString());
+				child.Notes              = PIn.String(row["Notes"].ToString());
 				retVal.Add(child);
 			}
 			return retVal;
@@ -66,8 +65,7 @@ namespace OpenDentBusiness.Crud{
 			}
 			DataTable table=new DataTable(tableName);
 			table.Columns.Add("ChildNum");
-			table.Columns.Add("TeacherPrimary");
-			table.Columns.Add("ChildRoomNum");
+			table.Columns.Add("ChildRoomNumPrimary");
 			table.Columns.Add("FName");
 			table.Columns.Add("LName");
 			table.Columns.Add("BirthDate");
@@ -75,8 +73,7 @@ namespace OpenDentBusiness.Crud{
 			foreach(Child child in listChilds) {
 				table.Rows.Add(new object[] {
 					POut.Long  (child.ChildNum),
-					POut.Long  (child.TeacherPrimary),
-					POut.Long  (child.ChildRoomNum),
+					POut.Long  (child.ChildRoomNumPrimary),
 					            child.FName,
 					            child.LName,
 					POut.DateT (child.BirthDate,false),
@@ -100,13 +97,12 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ChildNum,";
 			}
-			command+="TeacherPrimary,ChildRoomNum,FName,LName,BirthDate,Notes) VALUES(";
+			command+="ChildRoomNumPrimary,FName,LName,BirthDate,Notes) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(child.ChildNum)+",";
 			}
 			command+=
-				     POut.Long  (child.TeacherPrimary)+","
-				+    POut.Long  (child.ChildRoomNum)+","
+				     POut.Long  (child.ChildRoomNumPrimary)+","
 				+"'"+POut.String(child.FName)+"',"
 				+"'"+POut.String(child.LName)+"',"
 				+    POut.Date  (child.BirthDate)+","
@@ -135,13 +131,12 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ChildNum,";
 			}
-			command+="TeacherPrimary,ChildRoomNum,FName,LName,BirthDate,Notes) VALUES(";
+			command+="ChildRoomNumPrimary,FName,LName,BirthDate,Notes) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(child.ChildNum)+",";
 			}
 			command+=
-				     POut.Long  (child.TeacherPrimary)+","
-				+    POut.Long  (child.ChildRoomNum)+","
+				     POut.Long  (child.ChildRoomNumPrimary)+","
 				+"'"+POut.String(child.FName)+"',"
 				+"'"+POut.String(child.LName)+"',"
 				+    POut.Date  (child.BirthDate)+","
@@ -158,12 +153,11 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one Child in the database.</summary>
 		public static void Update(Child child) {
 			string command="UPDATE child SET "
-				+"TeacherPrimary=  "+POut.Long  (child.TeacherPrimary)+", "
-				+"ChildRoomNum  =  "+POut.Long  (child.ChildRoomNum)+", "
-				+"FName         = '"+POut.String(child.FName)+"', "
-				+"LName         = '"+POut.String(child.LName)+"', "
-				+"BirthDate     =  "+POut.Date  (child.BirthDate)+", "
-				+"Notes         = '"+POut.String(child.Notes)+"' "
+				+"ChildRoomNumPrimary=  "+POut.Long  (child.ChildRoomNumPrimary)+", "
+				+"FName              = '"+POut.String(child.FName)+"', "
+				+"LName              = '"+POut.String(child.LName)+"', "
+				+"BirthDate          =  "+POut.Date  (child.BirthDate)+", "
+				+"Notes              = '"+POut.String(child.Notes)+"' "
 				+"WHERE ChildNum = "+POut.Long(child.ChildNum);
 			Db.NonQ(command);
 		}
@@ -171,13 +165,9 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one Child in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
 		public static bool Update(Child child,Child oldChild) {
 			string command="";
-			if(child.TeacherPrimary != oldChild.TeacherPrimary) {
+			if(child.ChildRoomNumPrimary != oldChild.ChildRoomNumPrimary) {
 				if(command!="") { command+=",";}
-				command+="TeacherPrimary = "+POut.Long(child.TeacherPrimary)+"";
-			}
-			if(child.ChildRoomNum != oldChild.ChildRoomNum) {
-				if(command!="") { command+=",";}
-				command+="ChildRoomNum = "+POut.Long(child.ChildRoomNum)+"";
+				command+="ChildRoomNumPrimary = "+POut.Long(child.ChildRoomNumPrimary)+"";
 			}
 			if(child.FName != oldChild.FName) {
 				if(command!="") { command+=",";}
@@ -207,10 +197,7 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Returns true if Update(Child,Child) would make changes to the database.
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
 		public static bool UpdateComparison(Child child,Child oldChild) {
-			if(child.TeacherPrimary != oldChild.TeacherPrimary) {
-				return true;
-			}
-			if(child.ChildRoomNum != oldChild.ChildRoomNum) {
+			if(child.ChildRoomNumPrimary != oldChild.ChildRoomNumPrimary) {
 				return true;
 			}
 			if(child.FName != oldChild.FName) {

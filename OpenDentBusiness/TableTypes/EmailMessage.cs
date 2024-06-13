@@ -189,7 +189,7 @@ namespace OpenDentBusiness {
 		///<summary>4 - Hide email from ContrChart ProgNotes grid</summary>
 		[Description("Chart Progress Notes")]
 		ChartProgNotes=4,
-		///<summary>8 - Hide email from ContrAccount gridProg grid</summary>
+		///<summary>8 - No Longer Used - Was used to hide email from ContrAcount ProgNotes grid</summary>
 		[Description("Account Progress Notes")]
 		AccountProgNotes=8,
 		///<summary>16 - Hide email from ContrAcount CommLog grid</summary>

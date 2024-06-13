@@ -1560,10 +1560,23 @@ namespace OpenDental {
 			groupReminder.Enabled=!doSetReadOnly;
 			listCategory.Enabled=!doSetReadOnly;
 			long taskListNum= Security.CurUser.TaskListInBox;
-			//If this task is in the current users task list, or they created it, or they have permission, allow them to mark it done. 
+			//Always block deleting tasks if they don't have permission
+			if(!Security.IsAuthorized(EnumPermType.TaskDelete,suppressMessage: true)){
+				butDelete.Enabled=false;
+			}
+			//If this task is in the current users task list, or they created it, or they have permission, allow them to mark it done.
 			if((TaskCur.TaskListNum==taskListNum && taskListNum!=0) || Tasks.IsAuthorizedOrOwner(TaskCur)) {
 				checkDone.Enabled=true;
 				return;
+			}
+			//Otherwise we know it's not in their list, and that they didn't create it, so check their permission.
+			if(!Security.IsAuthorized(EnumPermType.TaskEdit,suppressMessage: true)) {
+				butAutoNote.Enabled=false;
+				butEditAutoNote.Enabled=false;
+				textDescript.ReadOnly=true;
+				textDescript.BackColor=System.Drawing.SystemColors.Window;
+				textDescriptOverride.ReadOnly=true;
+				textDescriptOverride.BackColor=System.Drawing.SystemColors.Window;
 			}
 			if(checkIsReadOnly.Checked) {
 				//Only disable the done checkbox if the task is read only, isn't in the current user's task list, and wasn't created by the current user.

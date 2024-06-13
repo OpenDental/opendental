@@ -14,7 +14,7 @@ namespace OpenDentBusiness{
 		///<summary>The description or prompt for this property.  Blank for workstation overrides of program path.
 		///Many bridges use this description as an "internal description". This way it can act like a FK in order to look up this particular property.  Users cannot edit.</summary>
 		public string PropertyDesc;
-		///<summary>The value.  </summary>
+		///<summary>The value. Could contain FK to other tables.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string PropertyValue;
 		///<summary>The human-readable name of the computer on the network (not the IP address).  Only used when overriding program path.  Blank for typical Program Properties.</summary>

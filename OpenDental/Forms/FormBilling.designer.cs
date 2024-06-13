@@ -323,6 +323,7 @@ namespace OpenDental {
 			this.comboClinic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboClinic.IncludeAll = true;
+			this.comboClinic.IncludeUnassigned = true;
 			this.comboClinic.IsMultiSelect = true;
 			this.comboClinic.Location = new System.Drawing.Point(390, 8);
 			this.comboClinic.Name = "comboClinic";

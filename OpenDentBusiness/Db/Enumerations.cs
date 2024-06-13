@@ -411,6 +411,8 @@ namespace OpenDentBusiness{
 		BillingList,
 		///<summary>112. Indicates that database connection settings have changed and the cached connections should be reinitialized.</summary>
 		ConnectionStoreClear,
+		///<summary>113. Used internally by OD HQ for the daycare.</summary>
+		Children,
 	}
 	//<summary></summary>
 	/*public enum ButtonType{

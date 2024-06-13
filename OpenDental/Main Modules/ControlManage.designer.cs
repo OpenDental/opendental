@@ -80,6 +80,7 @@ namespace OpenDental {
 			this.butTimeCard = new OpenDental.UI.Button();
 			this.labelTime = new System.Windows.Forms.Label();
 			this.butClockIn = new OpenDental.UI.Button();
+			this.butDaycare = new OpenDental.UI.Button();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -590,9 +591,20 @@ namespace OpenDental {
 			this.butClockIn.Text = "Clock In";
 			this.butClockIn.Click += new System.EventHandler(this.butClockIn_Click);
 			// 
+			// butDaycare
+			// 
+			this.butDaycare.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butDaycare.Location = new System.Drawing.Point(801, 130);
+			this.butDaycare.Name = "butDaycare";
+			this.butDaycare.Size = new System.Drawing.Size(79, 25);
+			this.butDaycare.TabIndex = 33;
+			this.butDaycare.Text = "Daycare";
+			this.butDaycare.Click += new System.EventHandler(this.butDaycare_Click);
+			// 
 			// ControlManage
 			// 
 			this.BackColor = System.Drawing.Color.White;
+			this.Controls.Add(this.butDaycare);
 			this.Controls.Add(this.butSchedule);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
@@ -661,6 +673,6 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textFilterName;
 		private System.Windows.Forms.Timer timerUpdateTime;
 		#endregion Fields - Private - Windows Forms
-
+		private UI.Button butDaycare;
 	}
 }

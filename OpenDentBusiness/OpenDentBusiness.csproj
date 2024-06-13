@@ -271,6 +271,8 @@
     <Compile Include="Crud\ChildCrud.cs" />
     <Compile Include="Crud\ChildParentCrud.cs" />
     <Compile Include="Crud\ChildRoomCrud.cs" />
+    <Compile Include="Crud\ChildRoomLogCrud.cs" />
+    <Compile Include="Crud\ChildTeacherCrud.cs" />
     <Compile Include="Crud\CloudAddressCrud.cs" />
     <Compile Include="Crud\CodeGroupCrud.cs" />
     <Compile Include="Crud\CommlogHistCrud.cs" />
@@ -387,8 +389,10 @@
     <Compile Include="Data Interface\AdvertisingPostcards.cs" />
     <Compile Include="Data Interface\AutoCommActives.cs" />
     <Compile Include="Data Interface\ChildParents.cs" />
+    <Compile Include="Data Interface\ChildRoomLogs.cs" />
     <Compile Include="Data Interface\ChildRooms.cs" />
-    <Compile Include="Data Interface\Children.cs" />
+    <Compile Include="Data Interface\Childs.cs" />
+    <Compile Include="Data Interface\ChildTeachers.cs" />
     <Compile Include="Data Interface\CodeGroups.cs" />
     <Compile Include="Data Interface\MobileBrandingProfiles.cs" />
     <Compile Include="Data Interface\CloudAddresses.cs" />
@@ -685,6 +689,8 @@
     <Compile Include="TableTypes\ApptGeneralMessageSent.cs" />
     <Compile Include="TableTypes\ApptNewPatThankYouSent.cs" />
     <Compile Include="TableTypes\AutoCommExcludeDate.cs" />
+    <Compile Include="TableTypes\ChildTeacher.cs" />
+    <Compile Include="TableTypes\ChildRoomLog.cs" />
     <Compile Include="TableTypes\Child.cs" />
     <Compile Include="TableTypes\ChildParent.cs" />
     <Compile Include="TableTypes\ChildRoom.cs" />

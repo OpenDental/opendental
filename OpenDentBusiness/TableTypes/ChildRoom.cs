@@ -3,10 +3,10 @@ using System.Collections;
 using System.Drawing;
 
 namespace OpenDentBusiness{
-		///<summary>HQ only table. Represents one of the physical rooms teachers and children will be located in. Teachers get assigned to childroom in userod.ChildRoomNum. Children get assigned to the childroom in child.ChildRoomNum.</summary>
-		[Serializable]
-		[CrudTable(IsMissingInGeneral=true)]
-		public class ChildRoom:TableBase{
+	///<summary>HQ only table for daycare. Represents one of the physical rooms teachers and children will be located in. Teachers and Children all get attached to ChildRooms in ChildRoomLog. Cache this table.</summary>
+	[Serializable]
+	[CrudTable(IsMissingInGeneral=true)]
+	public class ChildRoom:TableBase{
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long ChildRoomNum;
@@ -31,3 +31,5 @@ namespace OpenDentBusiness{
 		*/
 	}
 }
+
+//We need a new Enumerations.InvalidType: Child

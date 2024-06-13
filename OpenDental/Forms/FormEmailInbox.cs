@@ -500,7 +500,9 @@ namespace OpenDental {
 
 		///<summary>Loads HideInFlags into listEmailHideInFlags and adds them listHideInFlags.</summary>
 		private void InitEmailHideInFlags() {
-			_listHideInFlags=Enum.GetValues(typeof(HideInFlags)).Cast<HideInFlags>().Where(x => x!=HideInFlags.None).ToList();
+			_listHideInFlags=Enum.GetValues(typeof(HideInFlags)).Cast<HideInFlags>().ToList();
+			_listHideInFlags.Remove(HideInFlags.None);
+			_listHideInFlags.Remove(HideInFlags.AccountProgNotes);
 			for(int i=0;i<_listHideInFlags.Count;i++) {
 				listShowIn.Items.Add(Lan.g("enumHideInFlags",(_listHideInFlags[i]).GetDescription()));
 			}

@@ -15,6 +15,8 @@ namespace OpenDental{
 		//private FormQuery FormQuery2;
 		private List<Dunning> _listDunnings;
 		public List<long> ListClinicNumsSelected=new List<long>();
+		/// <summary>This is used to pass information from comboClinic to formBilling</summary>
+		public bool IsAllSelected=false;
 		///<summary>Key: ClinicNum, Value: List of ClinicPrefs for clinic.
 		///List contains all existing ClinicPrefs.</summary>
 		private Dictionary<long,List<ClinicPref>> _dictionaryClinicPrefsOld;
@@ -683,6 +685,7 @@ namespace OpenDental{
 			}
 			if(countCreated>0){
 				ListClinicNumsSelected=comboClinic.ListClinicNumsSelected; 
+				IsAllSelected=comboClinic.IsAllSelected;
 				DialogResult=DialogResult.OK;
 			}
 		}
