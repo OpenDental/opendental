@@ -697,7 +697,7 @@ namespace OpenDental {
 					_listSheetImportRows.Add(row);
 				}
 				//State---------------------------------------------
-				fieldVal=GetInputValue("State").Trim();
+				fieldVal=GetInputValue("State");
 				if(fieldVal!=null) {
 					row=new SheetImportRow();
 					row.FieldName="State";

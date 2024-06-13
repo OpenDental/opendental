@@ -214,8 +214,10 @@ namespace OpenDental{
 			Object objectFalse=false;
 			//Create an instance of Word.
 			Word.Application word_Application;
-			word_Application=LetterMerges.WordApp;
-			if(word_Application==null){
+			try {
+				word_Application=LetterMerges.WordApp;
+			}
+			catch {
 				MsgBox.Show(this,"Error. Is MS Word installed?");
 				return;
 			}

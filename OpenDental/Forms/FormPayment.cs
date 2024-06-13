@@ -939,11 +939,13 @@ namespace OpenDental {
 			if(checkPayTypeNone.Checked) {
 				listPayType.Visible=false;
 				butPay.Text=Lan.g(this,"Transfer");
-				if(PrefC.HasClinicsEnabled) {
-					comboGroupBy.SelectedIndex=2;
-				}
-				else {
-					comboGroupBy.SelectedIndex=1;
+				if(tabControlCharges.SelectedTab==tabPageOutstanding) {
+					if(PrefC.HasClinicsEnabled) {
+						comboGroupBy.SelectedIndex=2;
+					}
+					else {
+						comboGroupBy.SelectedIndex=1;
+					}
 				}
 				butCreatePartial.Visible=false;
 				checkIncludeExplicitCreditsOnly.Enabled=false;
@@ -1340,7 +1342,7 @@ namespace OpenDental {
 
 		///<summary>A method which, for a given grid, allows the user to split a payment between procedures on it.</summary>
 		private void CreatePartialSplitClickHelper(GridOD grid) {
-			if(comboGroupBy.SelectedIndex > 0) {
+			if(comboGroupBy.Visible && comboGroupBy.SelectedIndex > 0) {
 				List<List<AccountEntry>> listListsAccountEntriesSelected=grid.SelectedTags<List<AccountEntry>>();
 				for(int i = 0;i<listListsAccountEntriesSelected.Count;i++) {
 					CreatPartialSplitForAccountEntries(listListsAccountEntriesSelected[i].ToArray());
@@ -3198,13 +3200,13 @@ namespace OpenDental {
 			//Thus, on the first FillGridTreatPlan() during load, the vScroll is not taken into account when computing column widths, causing some visual differences.
 			//Forcing the grid to re-fill and draw when we change tabs will compute the column widths again, but with vScroll.Visible updated to being true.
 			if(tabControlCharges.SelectedTab==tabPageOutstanding) {
-				comboGroupBy.SelectedIndex=0;
-				comboGroupBy.Enabled=true;
+				labelGroupBy.Visible=true;
+				comboGroupBy.Visible=true;
 				FillGridCharges();
 			}
 			else {//Treat' Plan
-				comboGroupBy.SelectedIndex=0;
-				comboGroupBy.Enabled=false;
+				labelGroupBy.Visible=false;
+				comboGroupBy.Visible=false;
 				FillGridTreatPlan();
 			}
 			UpdateChargeTotalWithSelectedEntries();
