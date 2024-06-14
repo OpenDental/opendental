@@ -459,8 +459,8 @@ namespace OpenDental.Main_Modules
         public static List<PatientAppointment> GetPatientsWithAppointmentsTwoWeeks(ReminderFilterType filterType)
         {
            
-            int textMessageValue = (int)ContactMethod.TextMessage;
-            int noPreferenceValue = (int)ContactMethod.None;
+            int textMessageValue = (int)OpenDentBusiness.ContactMethod.TextMessage;
+            int noPreferenceValue = (int)OpenDentBusiness.ContactMethod.None;
 
             string aptDateTimeRange;
 
@@ -513,9 +513,11 @@ namespace OpenDental.Main_Modules
             }
 
 
-            
+            string where_scheduled = $"AND a.AptStatus = {(int)OpenDentBusiness.ApptStatus.Scheduled} ";
+
+
             // Combine all parts to form the final command
-            string command = select + from + where_true + where_appointment_date + where_appointment_confirmed + where_mobile_phone + where_allow_sms + where_confirm_not_sms + where_no_intermediate_appointments;
+            string command = select + from + where_true + where_appointment_date + where_appointment_confirmed + where_mobile_phone + where_allow_sms + where_confirm_not_sms + where_no_intermediate_appointments + where_scheduled;
             Console.WriteLine(command);
             List<PatientAppointment> listPatAppts = OpenDentBusiness.Crud.PatientApptCrud.SelectMany(command);
             return listPatAppts;
@@ -531,7 +533,7 @@ namespace OpenDental.Main_Modules
             string from = "FROM patient AS p ";
             // Start with a WHERE TRUE to allow all subsequent conditions to use AND
             string where_true = "WHERE TRUE ";
-            string where_active = $"AND p.PatStatus IN ({(int)PatientStatus.Patient}) "; // Only text active patients
+            string where_active = $"AND p.PatStatus IN ({(int)OpenDentBusiness.PatientStatus.Patient}) "; // Only text active patients
             string where_allow_sms = $"AND p.TxtMsgOk < 2 "; // Do not text people that have opted out
 
             // Filter for patients with a birthday today
@@ -749,7 +751,9 @@ namespace OpenDental.Main_Modules
 
                     if (originalAppt != null)
                     {
-                        if (originalAppt.Confirmed != AsyncSMSHandling._defNumTexted)
+                        if (originalAppt.Confirmed != AsyncSMSHandling._defNumTexted &&
+                            originalAppt.Confirmed != AsyncSMSHandling._defNumOneWeekSent &&
+                            originalAppt.Confirmed != AsyncSMSHandling._defNumTwoWeekSent)
                         {
                             EventLog.WriteEntry("ODSMS", "OOPS! Patient just replied yes to an appointment that is already confirmed.  Ignoring", EventLogEntryType.Warning, 101, 1, new byte[10]);
                             return false;
