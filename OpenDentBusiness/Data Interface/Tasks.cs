@@ -472,6 +472,15 @@ namespace OpenDentBusiness{
 			return Crud.TaskCrud.SelectMany(command);
 		}
 
+		///<summary>Gets all tasks for a supplied AptNum.</summary>
+		public static List<Task> GetMany(long AptNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Task>>(MethodBase.GetCurrentMethod(),AptNum);
+			}
+			string command=$@"SELECT * FROM task WHERE ObjectType={POut.Int((int)TaskObjectType.Appointment)} AND task.KeyNum={POut.Long(AptNum)}";
+			return Crud.TaskCrud.SelectMany(command);
+		}
+
 		///<summary>Gets multiple Tasks from database. Returns empty list if not found.</summary>
 		public static List<Task> GetTasksForApi(int limit,int offset,long taskListNum,long keyNum,int objectType,int taskStatus,DateTime dateTimeOriginal) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

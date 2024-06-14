@@ -1363,7 +1363,7 @@ namespace OpenDental{
 			if(_isInsertRequired && !UpdateListAndDB(isClosing: false)) {
 				return;
 			}
-			using FormTaskListSelect formTaskListSelect=new FormTaskListSelect(TaskObjectType.Appointment);//,_appointment.AptNum);
+			using FormTaskListSelect formTaskListSelect=new FormTaskListSelect(TaskObjectType.Appointment,IsTaskNew:true);//,_appointment.AptNum);
 			formTaskListSelect.Text=Lan.g(formTaskListSelect,"Add Task")+" - "+formTaskListSelect.Text;
 			formTaskListSelect.ShowDialog();
 			if(formTaskListSelect.DialogResult!=DialogResult.OK) {
@@ -1380,6 +1380,9 @@ namespace OpenDental{
 			using FormTaskEdit formTaskEdit=new FormTaskEdit(task,taskOld);
 			formTaskEdit.IsNew=true;
 			formTaskEdit.ShowDialog();
+			if(formTaskEdit.DialogResult==DialogResult.OK) {
+				formTaskEdit.SaveCopy(formTaskListSelect.ListSelectedLists.Skip(1).ToList());//Skip one because tasks was saved to first task list
+			}
 		}
 
 		private void butPin_Click(object sender,System.EventArgs e) {

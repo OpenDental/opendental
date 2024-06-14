@@ -1480,7 +1480,7 @@ namespace OpenDental {
 			if(!SaveCur()) {
 				return;
 			}
-			SaveCopy(formTaskListSelect.ListSelectedLists.Skip(1).ToList());//Copies/Inserts task and sends to inboxes if multiple lists were selected.
+			SaveCopy(formTaskListSelect.ListSelectedLists.Skip(1).ToList());//Skip one because tasks was saved to first task list
 			//Check for changes.  If something changed, send a signal.
 			if(DidNotesChange || !TaskCur.Equals(_taskOld) || _hasStatusChanged) {
 				Signalods.SetInvalid(InvalidType.TaskPopup,KeyType.Task,TaskCur.TaskNum);//popup
@@ -1491,8 +1491,8 @@ namespace OpenDental {
 			Close();
 		}
 
-		///<summary>Saves a copy of the task</summary>
-		private bool SaveCopy(List<long> listTaskListNums) {
+		///<summary>Copies/Inserts task and sends to inboxes if multiple lists were selected.</summary>
+		public bool SaveCopy(List<long> listTaskListNums) {
 			for(int i=0;i< listTaskListNums.Count;i++) {
 				Task taskCopy=TaskCur.Copy();
 				taskCopy.TaskListNum=listTaskListNums[i];

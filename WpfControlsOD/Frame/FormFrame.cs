@@ -408,13 +408,13 @@ namespace OpenDental {
 		}
 
 		///<summary>Before minimizing or maximizing a window, we need to reduce width and height by 16 and 39 pixels.  This allows the subsequent restore to be the correct size.  Otherwise, window gets slightly bigger with each restore.</summary>
-		public void ShrinkWindowBeforeMinMax() {
-			if(AreBordersMS){
-				return;//No need to shrink when we don't control the layout
-			}
-			//Size=new Size(Width-16,Height-39);//these numbers are the MS border widths.
-			Size=new Size(Width,Height-31);
-		}
+		//public void ShrinkWindowBeforeMinMax() {
+		//	if(AreBordersMS){
+		//		return;//No need to shrink when we don't control the layout
+		//	}
+		//	//Size=new Size(Width-16,Height-39);//these numbers are the MS border widths.
+		//	Size=new Size(Width,Height-31);
+		//}
 		#endregion Methods - Public
 
 		#region Border Drawing
@@ -718,9 +718,6 @@ namespace OpenDental {
 				MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 				return;
 			}
-			//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
-			//This does not cause any flicker
-			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Maximized;
 		}
 
@@ -756,9 +753,6 @@ namespace OpenDental {
 					MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 					return;
 				}
-				//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
-				//This does not cause any flicker
-				ShrinkWindowBeforeMinMax();
 				if(this.GetType().ToString()=="FormImageFloat"){
 					IsImageFloatDocked=false;
 					IsImageFloatLocked=false;
@@ -1111,9 +1105,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				Point pointDelta =new Point(Control.MousePosition.X-_pointMouseDownScreen.X,Control.MousePosition.Y-_pointMouseDownScreen.Y);
 				if(Bounds.Top<screen.Bounds.Top+1 && MaximizeBox && (Math.Abs(pointDelta.X)>3 || Math.Abs(pointDelta.Y)>3)){
 					//snap to top to maximize. Only allow if there's a Maximize button.
-					//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
-					//This does not cause any flicker
-					ShrinkWindowBeforeMinMax();
 					WindowState=FormWindowState.Maximized;
 				}
 				else if(screen.Primary && pointMouse.X==screen.WorkingArea.Right-1){
@@ -1169,11 +1160,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				if(this.GetType().ToString()=="FormImageFloat" && IsImageFloatLocked){
 					MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 					return;
-				}
-				if(WindowState!=FormWindowState.Maximized){//not an issue if starting maximized
-					//Windows will not reliably restore the size after minimize.  It gets bigger each time.  We need to trick it by resizing the window before minimizing.
-					//This does not cause any flicker
-					ShrinkWindowBeforeMinMax();
 				}
 				WindowState=FormWindowState.Minimized;
 				if(this.GetType().ToString()=="FormImageFloat"){

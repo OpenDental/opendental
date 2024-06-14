@@ -1573,7 +1573,6 @@ namespace OpenDental {
 			if(!Security.IsAuthorized(EnumPermType.FamilyModule)) {
 				return;
 			}
-			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			GlobalFormOpenDental.GotoFamily(_patNumCur);
 		}
@@ -1587,7 +1586,6 @@ namespace OpenDental {
 			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
 				return;
 			}
-			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			GlobalFormOpenDental.GotoAccount(_patNumCur);
 		}
@@ -2036,7 +2034,6 @@ namespace OpenDental {
 			if(listAppointmentsPinned.Count<1) {
 				return;
 			}
-			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			if(isRecall && listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime>=DateTime.Today) { //we're dealing with a future recall(s), so pin it and jump to it's date
 				GlobalFormOpenDental.PinAndGoToAppt(listAppointmentsPinned.Select(x=>x.AptNum).ToList(),_patNumCur,listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime);

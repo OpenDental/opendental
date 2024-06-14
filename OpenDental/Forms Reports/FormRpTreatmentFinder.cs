@@ -316,7 +316,6 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
-			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			long patNum=PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString());
 			GlobalFormOpenDental.GotoFamily(patNum);
@@ -330,7 +329,6 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
-			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			long patNum=PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString());
 			GlobalFormOpenDental.GotoAccount(patNum);

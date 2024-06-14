@@ -72,6 +72,10 @@ namespace OpenDentBusiness {
 			DataSet ds=new DataSet();
 			//All Internal OD Tables that are cached go here
 			if(PrefC.IsODHQ) {
+				if(listITypes.Contains(InvalidType.Children) || isAll) {
+					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Children.ToString());
+					ds.Tables.Add(ChildRooms.GetTableFromCache(doRefreshServerCache));
+				}
 				if(listITypes.Contains(InvalidType.JobPermission) || isAll) {
 					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.JobPermission.ToString());
 					ds.Tables.Add(JobPermissions.RefreshCache());
@@ -132,10 +136,6 @@ namespace OpenDentBusiness {
 			if(listITypes.Contains(InvalidType.Carriers) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Carriers.ToString());
 				ds.Tables.Add(Carriers.GetTableFromCache(doRefreshServerCache));//run on startup, after telephone reformat, after list edit.
-			}
-			if(listITypes.Contains(InvalidType.Children) || isAll) {
-				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Children.ToString());
-				ds.Tables.Add(ChildRooms.GetTableFromCache(doRefreshServerCache));
 			}
 			if(listITypes.Contains(InvalidType.ClaimForms) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.ClaimForms.ToString());
@@ -459,6 +459,10 @@ namespace OpenDentBusiness {
 			}
 			//All Internal OD Tables that are cached go here
 			if(PrefC.IsODHQ) {
+				if(listITypes.Contains(InvalidType.Children) || isAll) {
+					ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Children.ToString());
+					ChildRooms.FillCacheFromTable(ds.Tables["ChildRoom"]);
+				}
 				if(listITypes.Contains(InvalidType.JobPermission) || isAll) {
 					ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.JobPermission.ToString());
 					JobPermissions.FillCache(ds.Tables["JobRole"]);
@@ -518,10 +522,6 @@ namespace OpenDentBusiness {
 			if(listITypes.Contains(InvalidType.Carriers) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Carriers.ToString());
 				Carriers.FillCacheFromTable(ds.Tables["Carrier"]);//run on startup, after telephone reformat, after list edit.
-			}
-			if(listITypes.Contains(InvalidType.Children) || isAll) {
-				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Children.ToString());
-				ChildRooms.FillCacheFromTable(ds.Tables["ChildRoom"]);
 			}
 			if(listITypes.Contains(InvalidType.ClaimForms) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.ClaimForms.ToString());
@@ -954,6 +954,10 @@ namespace OpenDentBusiness {
 			}
 			//All Internal OD Tables that are cached go here
 			if(PrefC.IsODHQ) {
+				if(listITypes.Contains(InvalidType.Children) || isAll) {
+					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Children.ToString());
+					ChildRooms.ClearCache();
+				}
 				if(listITypes.Contains(InvalidType.JobPermission) || isAll) {
 					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.JobPermission.ToString());
 					JobPermissions.ClearCache(); //Required special attention, may need to re-visit.
@@ -1011,10 +1015,6 @@ namespace OpenDentBusiness {
 			if(listITypes.Contains(InvalidType.Carriers) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Carriers.ToString());
 				Carriers.ClearCache();
-			}
-			if(listITypes.Contains(InvalidType.Children) || isAll) {
-				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Children.ToString());
-				ChildRooms.ClearCache();
 			}
 			if(listITypes.Contains(InvalidType.ClaimForms) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.ClaimForms.ToString());

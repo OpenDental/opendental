@@ -490,6 +490,11 @@ namespace OpenDental {
 				menuJobs.DropDownItems.AddRange(listJobs.Select(x => new ToolStripMenuItem(x.ToString(),null,menuJobs_GoToJob) { Tag=x.JobNum }).ToArray());
 				menuApt.Items.Add(menuJobs);
 			}
+			menuApt.Items.RemoveByKey(MenuItemNames.Tasks);
+			menuApt.Items.RemoveByKey(MenuItemNames.TasksSpacer);
+			menuApt.Items.Add(new ToolStripSeparator() { Name=MenuItemNames.TasksSpacer });
+			ToolStripMenuItem menuTasks=new ToolStripMenuItem(Lan.g(this,"Appointment Tasks"),null,menuTasks_Click,MenuItemNames.Tasks);
+			menuApt.Items.Add(menuTasks);
 			menuApt.Items.RemoveByKey(MenuItemNames.PhoneDiv);
 			menuApt.Items.RemoveByKey(MenuItemNames.HomePhone);
 			menuApt.Items.RemoveByKey(MenuItemNames.WorkPhone);
@@ -2626,6 +2631,13 @@ namespace OpenDental {
 				FormOpenDental.S_GoToJob(((long)((ToolStripMenuItem)sender).Tag));
 		}
 		#endregion Methods - Event Handlers Menu Jobs
+
+		#region Methods - Event Handlers Menu Tasks
+		private void menuTasks_Click(object sender,System.EventArgs e) {
+			using FormTasksForAppt formTasksForAppt=new FormTasksForAppt(contrApptPanel.SelectedAptNum);
+			formTasksForAppt.ShowDialog();
+		}
+		#endregion Methods - Event Handlers Menu Tasks
 
 		#region Methods - Event Handlers Search
 		private void ButAdvSearch_Click(object sender, EventArgs e){
@@ -5101,6 +5113,8 @@ namespace OpenDental {
 		public const string OrthoChart="Ortho Chart";
 		public const string Jobs="Jobs";
 		public const string JobsSpacer="Jobs Spacer";
+		public const string Tasks="Tasks";
+		public const string TasksSpacer="Tasks Spacer";
 		public const string TextApptsForDayOp="Text Appointments for Day, Op only";
 		public const string TextApptsForDayView="Text Appointments for Day, Current View only";
 		public const string TextApptsForDay="Text Appointments for Day";

@@ -596,6 +596,12 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormTasksForAppt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormTasksForAppt.Designer.cs">
+      <DependentUpon>FormTasksForAppt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormBenefitFrequencyEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7033,6 +7039,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormTasksForAppt.resx">
+      <DependentUpon>FormTasksForAppt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormBenefitFrequencyEdit.resx">
       <DependentUpon>FormBenefitFrequencyEdit.cs</DependentUpon>

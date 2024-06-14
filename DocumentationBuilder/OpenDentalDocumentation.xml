@@ -6245,7 +6245,7 @@
         <EnumValue name="EmailInbox">1 - Hide email from EmailInbox grids</EnumValue>
         <EnumValue name="ApptEdit">2 - Hide email from Appointment Edit grid</EnumValue>
         <EnumValue name="ChartProgNotes">4 - Hide email from ContrChart ProgNotes grid</EnumValue>
-        <EnumValue name="AccountProgNotes">8 - Hide email from ContrAccount gridProg grid</EnumValue>
+        <EnumValue name="AccountProgNotes">8 - No Longer Used - Was used to hide email from ContrAcount ProgNotes grid</EnumValue>
         <EnumValue name="AccountCommLog">16 - Hide email from ContrAcount CommLog grid</EnumValue>
       </Enumeration>
     </column>
@@ -13305,7 +13305,7 @@
             Many bridges use this description as an "internal description". This way it can act like a FK in order to look up this particular property.  Users cannot edit.</summary>
     </column>
     <column order="3" name="PropertyValue" type="text">
-      <summary>The value.  </summary>
+      <summary>The value. Could contain FK to other tables.</summary>
     </column>
     <column order="4" name="ComputerName" type="varchar(255)">
       <summary>The human-readable name of the computer on the network (not the IP address).  Only used when overriding program path.  Blank for typical Program Properties.</summary>
@@ -16208,6 +16208,7 @@
         <EnumValue name="CodeGroups">110. Group of codes used with frequency limitations.</EnumValue>
         <EnumValue name="BillingList">111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</EnumValue>
         <EnumValue name="ConnectionStoreClear">112. Indicates that database connection settings have changed and the cached connections should be reinitialized.</EnumValue>
+        <EnumValue name="Children">113. Used internally by OD HQ for the daycare.</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="RemoteRole" type="tinyint(4)">

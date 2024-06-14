@@ -359,6 +359,16 @@
       <summary>Only set when this sheet was created from a Web Form. FK to webforms_sheet.SheetID within the Web Forms server. Used to determine if this particular Web Form has been retrieved before in order to avoid creating duplicate sheet entries for a single Web Form.</summary>
     </column>
   </table>
+  <table name="signalod">
+    <summary></summary>
+    <column order="5" name="IType" type="tinyint(4)">
+      <summary>Enum:InvalidType Indicates what cache or entity has been changed.</summary>
+      <Enumeration name="InvalidType">
+        <summary>When the autorefresh message is sent to the other computers, this is the type.</summary>
+        <EnumValue name="Children">113. Used internally by OD HQ for the daycare.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="smstomobile">
     <summary></summary>
     <column order="7" name="MsgType" type="tinyint(4)">
