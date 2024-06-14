@@ -133,10 +133,23 @@ namespace OpenDental {
 			Application.ThreadException+=new ThreadExceptionEventHandler((object s,ThreadExceptionEventArgs e) => {
 				actionUnhandled(e.Exception,"ProgramEntry");
 			});
-			//OpenDentalCloud.dll references Dropbox.Api.dll which references Newtonsoft.Json.dll version 7.0.0.0. Sometimes it also says it can't find 
-			//9.0.0.0.
+            //OpenDentalCloud.dll references Dropbox.Api.dll which references Newtonsoft.Json.dll version 7.0.0.0. Sometimes it also says it can't find 
+            //9.0.0.0.
 
-			if (ODSMS.USE_ODSMS)  // Check The module is enabled
+            try  // Print a better message of ODSMS is unavailable.
+            {
+                if (ODSMS.USE_ODSMS)  // Check if the module is enabled
+                {
+                    // Empty block, do nothing.  
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ODSMS module is not initialized or an error occurred while accessing it. Please check your VPN connection. The program is about to crash.");
+                throw new ApplicationException("ODSMS module is not initialized or an error occurred while accessing it. Please check your VPN connection.", ex);
+            }
+
+            if (ODSMS.USE_ODSMS)  // Check The module is enabled
 			{
                 OpenDental.Main_Modules.AsyncSMSHandling.InitializeAsyncSMSHandling();
 

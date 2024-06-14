@@ -29,25 +29,36 @@ namespace OpenDental
         static ODSMS()
         {
 
-            string MachineName = Environment.MachineName; 
+            string MachineName = Environment.MachineName;
             // Not ODEnvironment.MachineNmae - if you remote into a machine and run OD there, treat it as that machine
 
             // Set up event log -- must be run as Administrator
-            try
+
+            if (!EventLog.SourceExists("ODSMS"))
             {
                 EventLog.CreateEventSource("ODSMS", "Application");
+                Console.WriteLine("Event source 'ODSMS' created successfully.");
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine("Event source already exists, or we don't have permission to create it.");
-                EventLog.WriteEntry("ODSMS", "Event source already exists, or we don't have permission to create it", EventLogEntryType.Information, 101, 1, new byte[10]);
+                Console.WriteLine("Event source 'ODSMS' already exists.");
             }
 
             EventLog.WriteEntry("ODSMS", "Running custom build of Open Dental on " + MachineName, EventLogEntryType.Information, 101, 1, new byte[10]);
 
 
             string configPath = @"L:\odsms.txt";
+
+            if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(configPath)))
+            {
+                throw new DirectoryNotFoundException($"Directory not found: {System.IO.Path.GetDirectoryName(configPath)}");
+            }
+
+            if (!System.IO.File.Exists(configPath))
+            {
+                throw new FileNotFoundException("Config file not found", configPath);
+            }
+
             try
             {
                 foreach (string line in System.IO.File.ReadLines(configPath))
@@ -73,7 +84,7 @@ namespace OpenDental
                 }
             }
             catch (FileNotFoundException) {
-                EventLog.WriteEntry("ODSMS", "odsms.txt config file not found - stuff is about to break", EventLogEntryType.Error, 101, 1, new byte[10]);
+                EventLog.WriteEntry("ODSMS", "odsms.txt config file could not be read - stuff is about to break", EventLogEntryType.Error, 101, 1, new byte[10]);
                 throw;
             }
 

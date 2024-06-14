@@ -419,9 +419,13 @@ namespace OpenDentBusiness
 			}
 			if (ODSMS.USE_ODSMS)
 			{
-                var tasks = listMessages.Select(msg => SendSmsMessageAsync(msg)).ToList();
-                System.Threading.Tasks.Task.WhenAll(tasks).GetAwaiter().GetResult();
-            }
+                foreach (var msg in listMessages)
+                {
+                    System.Threading.Tasks.Task.Run(() => SendSmsMessageAsync(msg));
+                }
+				// var tasks = listMessages.Select(msg => SendSmsMessageAsync(msg)).ToList();
+				// System.Threading.Tasks.Task.WhenAll(tasks).GetAwaiter().GetResult();
+			}
             else
 			{
                 System.Xml.Serialization.XmlSerializer xmlListSmsToMobileSerializer = new System.Xml.Serialization.XmlSerializer(typeof(List<SmsToMobile>));
