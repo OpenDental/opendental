@@ -1,0 +1,16 @@
+using System;
+using System.Windows.Media;
+using OpenDentBusiness;
+
+namespace WpfControls.UI{
+	//---------------This file is generated automatically from the IconOrganizer project.  Do not edit manually.
+	public class Gen_Copy{
+
+		public static void Draw(DrawSvg drawSvg,double scale){
+		}
+
+		public static string GetBase64(){
+			return "R0lGODlhFgAWAOYAAP////f//+////f3//f39+b3/973/+/v7+bv9+bv797v/97v99bv/+bm9+bm5vfvhN7m997m79bm987m/97e5tbe79be5s7e78Xe/73e/9bW3tbW1s7W5s7W3sXW5rXW/87O3q3W/8XO3sXO1r3O3r3F1rXF3q3F5q3F1pzF76W93py93q21zqW1zpy11pytxZStzqWlrZSlxYSlxXulzoScxYScvXucxZyUlHucvXuUxXuUvXOUvYyMlIyMjISMlHOMvXOMtWuMtWOMvYSEhHuElGOEtYR7e1qEtXt7e3N7jHtzc1J7rXNzc2tzc2trc2tra2trY2Nra2Nja2NjY1pja1pjY1paWlJSUgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAAA8ALAAAAAAWABYAAAj+AB8IHEiwoMGDCBM+CLKj4Y4cQVooJLiDgEUCAGQYYTFRoA0AIEHCEGLkRYmTIBDuCAlSRo2XMINoOFjDAREiSTbUqMCSA5MdIwzWOACh6IEaFliSgHGCR1CCNZskSRKlBgSlNBg0LUHQBtGiEHYuuYIFRwUkL4UEgUqBSpQpVKyChZDAQgcRF3Z0/Vp05xEqUKgIpnKlRA22VKTAlTsXrAe9A2skmFsjgo8mmJ04eSIFxQ2oHaZIUcy4MQQTkAXuEBBAgAEDSGP0+EG7SBElKlIvhAmzgumiLnSfHG74gmzaP2wrWaFbqIcCChhMwJDhQ4gUQBTWcOiQh3ceazsFih9vMCAAOw==";
+		}
+	}
+}

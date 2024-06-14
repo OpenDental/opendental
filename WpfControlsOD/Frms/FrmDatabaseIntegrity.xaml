@@ -1,0 +1,18 @@
+<local:FrmODBase x:Class="OpenDental.FrmDatabaseIntegrity"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="464" Height="201" 
+             Text="Database Integrity" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="labelUrl" Width="126" Height="13" Margin="12,172,0,0" Text="For more information visit:" />
+		<ui:Label x:Name="labelMessage" Width="430" Height="152" Margin="12,18,0,0" Text="Message" />
+		<ui:LinkLabel x:Name="linkLabel" Width="303" Height="18
+						  " Margin="139,172,0,0" Text="https://www.opendental.com/site/integrity.html" LinkLength="46" LinkStart="0"
+				LinkClicked="linkLabel_LinkClicked" />
+	</Grid>
+</local:FrmODBase>

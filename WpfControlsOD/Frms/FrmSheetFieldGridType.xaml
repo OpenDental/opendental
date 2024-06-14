@@ -1,0 +1,16 @@
+<local:FrmODBase x:Class="OpenDental.FrmSheetFieldGridType"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="356" Height="145" 
+             Text="Select Grid Type" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_OK" Click="butOK_Click" />
+		<ui:ComboBox x:Name="comboGridType" Width="196" Height="21" Margin="119,51,0,0" />
+		<ui:Label x:Name="label3" Width="106" Height="13" Margin="12,54,0,0" Text="Grid Type" HAlign="Right" VAlign="Center" />
+	</Grid>
+</local:FrmODBase>

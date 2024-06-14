@@ -1,0 +1,42 @@
+CDT Content End User License
+
+Definitions
+
+“CDT” means the textual, graphic and other editorial content included in the ADA developed publications titled CDT-2007/2008: Current Dental Terminology (“CDT-2007”) and all Updates as defined herein. The CDT content includes, but is not limited to, the Code on Dental Procedures and Nomenclature, a glossary, the ADA dental claim form and other dental information. 
+“Code” means the Code on Dental Procedures and Nomenclature, whether delivered in print or machine-readable format. Each individual dental procedure is comprised of at least the following two components: (1) a five character alphanumeric sequence called the “code” that identifies a specific dental procedure and (2) a short, written literal definition of the dental procedure called the “nomenclature.” Some but not all individual dental procedures have a third component, (3) a written narrative that provides a more detailed definition and the intended use of the procedure code, called the “descriptor.” 
+
+“End User” means a dental office or other health care facility licensed to use Open Dental Software solely for internal business purposes, and not for redistribution.
+
+“Output” means any electronic or printed copy of the CDT, or portions thereof (including without limitation any complete or partial listings of the CDT codes, nomenclature or descriptors), created by using the Bundled Products. 
+
+1. End User License Grant 
+End User is hereby granted a non-exclusive, non-transferable right to use the CDT at End User Sites solely as part of the Open Dental Software and solely for End User’s internal business purposes. “End User Site” means each separate geographic location where End User maintains a dental office. This License grants End-User the right: 
+
+(a) to install and use the CDT on a computer system located at End User Site; 
+(b) to retrieve CDT codes, descriptors and nomenclature via commands contained in the Bundled Products for the exclusive use of End User; 
+(c) to reproduce and distribute partial listings of the CDT codes, nomenclature and descriptors in various printed and electronic documents for purposes of claims processing, billing and patient treatment, via commands contained in the Bundled Product; 
+(d) to print limited portions of the CDT solely for the exclusive use of End User; and 
+(e) to print a complete listing of the CDT codes, nomenclature and descriptors solely for the exclusive use of End User. 
+
+As used herein, End User shall mean End User and End User’s employees. 
+
+2. End User License Restrictions 
+
+Except as expressly permitted in the “License Grant,” End User may not and may not permit anyone else to (a) copy the CDT; (b) alter, amend, change or modify the CDT, including the CDT codes, nomenclature and descriptors or other content of the CDT; (c) remove any copyright or other proprietary notices, labels or marks from the CDT or from Output created by using the Bundled Product; (d) distribute, sell, assign, lease or otherwise transfer the CDT, including the Code or any portion thereof, in any printed, machine-readable or other form to any other person, firm or entity, including but not limited to, as Output; or (e) use the CDT, whether on a time-sharing, remote job entry or other multiple user arrangement. End User shall take reasonable measures to maintain the security of the CDT. 
+The restriction set forth in section 2(b) shall not limit End User’s right to add additional content to the Open Dental Software (“End User Content”), provided: End User does not alter, amend, change or modify existing CDT codes, nomenclature and descriptors or other CDT content, and End User’s Output does not claim or otherwise imply that such End User Content is owned, created, approved or endorsed by ADA. 
+IN NO EVENT SHALL END USER USE OPEN DENTAL SOFTWARE FOR OR ON BEHALF OF ANY THIRD PARTY, INCLUDING BUT NOT LIMITED TO USE OF OPEN DENTAL SOFTWARE TO PROVIDE CONSULTING, TIME-SHARING OR OUTSOURCING SERVICES OR TO ACT AS A SERVICE BUREAU OPERATION. END USER IS EXPRESSLY PROHIBITED FROM DISTRIBUTING OUTPUT, INCLUDING THE CODE OR PORTIONS THEREOF, TO ANY PERSON, FIRM OR ENTITY. 
+
+3. Ownership of Intellectual Property 
+End User acknowledges and agrees that ADA owns all right, title and interest (including all copyrights and other intellectual property rights) in the CDT (in all print and machine readable forms), all other rights of commercialization, rental or sale of the CDT or any part thereof, the right to make derivatives of the CDT and the right to distribute the CDT and copies thereof. End user acquires no proprietary interest in the CDT, or any portion thereof. Except for the limited rights expressly granted to End User herein this Agreement, all other rights in the CDT are owned and retained by ADA.  ADA’s proprietary Code and Claim Form are not available as part of any “shareware” or other open-source offering, and that unauthorized use as such or otherwise shall constitute willful copyright infringement. 
+
+4. Warranty 
+EXCEPT AS EXPRESSLY STATED HEREIN, THE CDT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF PERFORMANCE OR MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. END USER BEARS ALL RISK RELATING TO QUALITY, ACCURACY AND PERFORMANCE OF THE CDT. 
+
+5. Limitation of Liability 
+IN NO EVENT WILL ADA BE LIABLE FOR ANY LOST PROFITS OR ANY DAMAGES, INCLUDING DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR ANY OTHER TYPE OF DAMAGES, ARISING OUT OF THIS LICENSE AGREEMENT OR THE USE OF OR INABILITY TO USE THE CDT OR DOCUMENTATION, EVEN IF ADA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THIS LIMITATION OF LIABILITY SHALL APPLY TO ANY CLAIM OR CAUSE WHATSOEVER WHETHER SUCH CLAIM OR CAUSE IS IN CONTRACT, TORT OR OTHERWISE. 
+
+6. Indemnification 
+End User agrees to indemnify ADA (including reasonable attorneys' fees and costs of litigation) against and hold ADA harmless from any and all claims, liability, losses, damages and expenses resulting from End User's use of the CDT, in breach of any of the terms of this Agreement, or End User's use of any data or documentation received from ADA, regardless of the form of action. 
+
+7. Third Party Beneficiary 
+ADA is a direct and intended third party beneficiary of the End User License between Open Dental and End User; provided, however, ADA’s rights as a third party beneficiary are limited solely to the End User’s use of the CDT outside the scope of the End User License. 

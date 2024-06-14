@@ -1,0 +1,185 @@
+﻿{
+"TrainingTime": 180,
+"Scenario": "Classification",
+"DataSource": {
+"Type": "TabularFile",
+"Version": 1,
+"FilePath": "C:\\development\\Versioned\\OpenDental\\SlowQueryLogTool\\SlowQueryMLData.txt",
+"Delimiter": "\t",
+"DecimalMarker": ".",
+"HasHeader": true,
+"ColumnProperties": [
+{
+"ColumnName": "Query Text",
+"ColumnPurpose": "Feature",
+"ColumnDataFormat": "String",
+"IsCategorical": false,
+"Type": "Column",
+"Version": 2
+},
+{
+"ColumnName": "IsThirdParty",
+"ColumnPurpose": "Label",
+"ColumnDataFormat": "Single",
+"IsCategorical": true,
+"Type": "Column",
+"Version": 2
+}
+]
+},
+"Environment": {
+"Type": "LocalCPU",
+"Version": 1
+},
+"RunHistory": {
+"Version": 1,
+"Type": "Result",
+"Trials": [
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "SdcaMaximumEntropyMulti",
+"Score": 0.96095691387636539,
+"RuntimeInSeconds": 8.2110004425048828
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "FastTreeOva",
+"Score": 0.977351096512978,
+"RuntimeInSeconds": 11.227999687194824
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "FastForestOva",
+"Score": 0.984735449103814,
+"RuntimeInSeconds": 15.739999771118164
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "SdcaLogisticRegressionOva",
+"Score": 0.96095691387636539,
+"RuntimeInSeconds": 16.645999908447266
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "LbfgsLogisticRegressionOva",
+"Score": 0.98607377661656881,
+"RuntimeInSeconds": 10.770999908447266
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "LightGbmMulti",
+"Score": 0.98010796016187951,
+"RuntimeInSeconds": 8.2340002059936523
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "LbfgsMaximumEntropyMulti",
+"Score": 0.98839590123476029,
+"RuntimeInSeconds": 8.869999885559082
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "SdcaMaximumEntropyMulti",
+"Score": 0.96095691387636539,
+"RuntimeInSeconds": 10.347000122070313
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "FastTreeOva",
+"Score": 0.98222990513394615,
+"RuntimeInSeconds": 14.328000068664551
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "FastForestOva",
+"Score": 0.98701298365945578,
+"RuntimeInSeconds": 18.924999237060547
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "LbfgsLogisticRegressionOva",
+"Score": 0.9917643558889262,
+"RuntimeInSeconds": 20.856000900268555
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "SdcaLogisticRegressionOva",
+"Score": 0.96095691387636539,
+"RuntimeInSeconds": 16.405000686645508
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "LbfgsMaximumEntropyMulti",
+"Score": 0.96095691387636539,
+"RuntimeInSeconds": 5.0289998054504395
+},
+{
+"Version": 0,
+"Type": "Trial",
+"TrainerName": "SdcaMaximumEntropyMulti",
+"Score": 0.96095691387636539,
+"RuntimeInSeconds": 7.1579999923706055
+}
+],
+"Pipeline": {
+"parameter": {
+"0": {
+"InputColumnName": "Query Text",
+"OutputColumnName": "Query Text"
+},
+"1": {
+"InputColumnNames": [
+"Query Text"
+],
+"OutputColumnName": "Features"
+},
+"2": {
+"OutputColumnName": "IsThirdParty",
+"InputColumnName": "IsThirdParty"
+},
+"3": {
+"OutputColumnNames": [
+"Features"
+],
+"InputColumnNames": [
+"Features"
+]
+},
+"4": {
+"L1Regularization": 0.4049083,
+"L2Regularization": 0.0378870443,
+"LabelColumnName": "IsThirdParty",
+"FeatureColumnName": "Features"
+},
+"5": {
+"OutputColumnName": "PredictedLabel",
+"InputColumnName": "PredictedLabel"
+}
+},
+"estimators": [
+"FeaturizeText",
+"Concatenate",
+"MapValueToKey",
+"NormalizeMinMax",
+"LbfgsLogisticRegressionOva",
+"MapKeyToValue"
+]
+},
+"MetricName": "MicroAccuracy"
+},
+"Type": "TrainingConfig",
+"Version": 2
+}

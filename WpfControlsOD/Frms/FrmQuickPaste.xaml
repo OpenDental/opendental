@@ -1,0 +1,33 @@
+<local:FrmODBase x:Class="OpenDental.FrmQuickPaste"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="986" Height="677" 
+             Text="Quick Paste Notes" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="184,28,12,48" Title="Notes" TranslationName="TableNotes" />
+		<ui:Button x:Name="butDate" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,174,10" Text="Date" Click="butDate_Click" />
+		<ui:Button x:Name="butEditNote" Width="79" VerticalAlignment="Bottom" Height="26" Margin="269,0,0,10" Text="Edit" Click="butEditNote_Click" BitmapFileName="editPencil.gif" />
+		<ui:Button x:Name="butAddNote" Width="79" VerticalAlignment="Bottom" Height="26" Margin="184,0,0,10" Text="Add" Icon="Add" Click="butAddNote_Click" />
+		<ui:Button x:Name="butDownNote" Width="79" VerticalAlignment="Bottom" Height="26" Margin="439,0,0,10" Text="Down" Click="butDownNote_Click" BitmapFileName="down.gif" />
+		<ui:Button x:Name="butUpNote" Width="79" VerticalAlignment="Bottom" Height="26" Margin="354,0,0,10" Text="Up" Click="butUpNote_Click" BitmapFileName="up.gif" />
+		<ui:Button x:Name="butDeleteCat" Width="79" Height="26" Margin="8,386,0,0" Text="Delete" Icon="DeleteX" Click="butDeleteCat_Click" />
+		<ui:Button x:Name="butAddCat" Width="79" Height="26" Margin="8,351,0,0" Text="Add" Icon="Add" Click="butAddCat_Click" />
+		<ui:Button x:Name="butDownCat" Width="79" Height="26" Margin="98,386,0,0" Text="Down" Click="butDownCat_Click" BitmapFileName="down.gif" />
+		<ui:Button x:Name="butUpCat" Width="79" Height="26" Margin="98,351,0,0" Text="Up" Click="butUpCat_Click" BitmapFileName="up.gif" />
+		<ui:Label x:Name="label2" Width="100" Height="19" Margin="181,5,0,0" Text="Note" VAlign="Bottom" />
+		<ui:Label x:Name="label1" Width="100" Height="19" Margin="6,7,0,0" Text="Category" VAlign="Bottom" />
+		<ui:Label Width="167" Height="36" Margin="4,424,0,0" Text="Categories are saved as changes are made" />
+		<ui:ListBox x:Name="listCat" Width="169" Height="316" Margin="8,28,0,0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,12,10" Text="_Save" Click="butSave_Click" />
+		<ui:GroupBox x:Name="groupBox1" Width="207" VerticalAlignment="Bottom" Height="39" Margin="524,0,0,4" Text="  " >
+			<ui:RadioButton x:Name="radioSortByNote" Width="85" Height="17" Margin="88,19,0,0" Text="Note" CheckAlign="MiddleLeft" />
+			<ui:RadioButton x:Name="radioSortByAbbrev" Width="113" Height="17" Margin="88,2,0,0" Text="Abbreviation" CheckAlign="MiddleLeft" Checked="True" />
+			<ui:Button x:Name="butAlphabetize" Width="75" Height="26" Margin="6,6,0,0" Text="Alphabetize" Click="butAlphabetize_Click" />
+		</ui:GroupBox>
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="WpfControls.UI.ToolBar"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		d:DesignWidth="100" d:DesignHeight="24" >
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:ToolBar.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:ToolBar.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	
+	<Grid>
+		<Border Name="border" x:FieldModifier="internal" BorderBrush="Silver" BorderThickness="0,0,0,1" Background="#FFEEF5FD"/>
+		<StackPanel Name="stackPanel" x:FieldModifier="internal" Orientation="Horizontal">
+			<TextBlock Margin="6,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">ToolBar</TextBlock>
+		</StackPanel>
+		
+	
+
+	</Grid>
+</UserControl>

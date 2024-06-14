@@ -1,0 +1,17 @@
+<local:FrmODBase x:Class="OpenDental.FrmMessageReplacements"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="787" Height="726" 
+             Text="Message Replacement Fields" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_OK" Click="butOK_Click" />
+		<ui:Label x:Name="labelExplanation" Width="661" VerticalAlignment="Bottom" Height="40" Margin="12,0,0,12" Text="Replacement fields are case-sensitive, and must be an exact match of what is shown here.
+Fields that are supported from this specific location are shown in black.  Fields in red are not supported." />
+		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,12,59" Title="" TranslationName="TableMessageReplacement" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ConnectionSettings>
+  <DatabaseConnection>
+    <ComputerName>localhost</ComputerName>
+    <Database>development233_0</Database>
+    <User>root</User>
+    <Password>
+    </Password>
+    <UserLow>root</UserLow>
+    <PasswordLow>
+    </PasswordLow>
+    <DatabaseType>MySql</DatabaseType>
+    <ApplicationName>/OpenDentalServer</ApplicationName>
+    <VerboseLogging>false</VerboseLogging>
+    <LogDirectory></LogDirectory>
+  </DatabaseConnection>
+</ConnectionSettings>

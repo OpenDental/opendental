@@ -1,0 +1,22 @@
+<local:FrmODBase x:Class="OpenDental.FrmApptViewItemEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="454" Height="215" 
+             Text="Appointment View Item Edit" MinMaxBoxes="False">
+    <Grid Background="#FFFCFDFE" >
+        <ui:ListBox x:Name="listAlignment" Width="120" Height="43" Margin="139,97,0,0" />
+        <ui:Label x:Name="label2" Width="117" Height="17" Margin="14,97,0,0" Text="Alignment" HAlign="Right" VAlign="Bottom" />
+        <ui:TextBox x:Name="textDesc" Width="264" Height="20" Margin="139,23,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+        <ui:Label x:Name="label1" Width="117" Height="17" Margin="14,23,0,0" Text="Description" HAlign="Right" VAlign="Bottom" />
+        <ui:Button x:Name="butColor" Width="75" Height="24" Margin="176,57,0,0" Text="Change" Click="butColor_Click" />
+        <ui:Panel x:Name="panelColor" Width="24" Height="24" Margin="139,57,0,0" ColorBack="#FF404040" >
+        </ui:Panel>
+        <ui:Label x:Name="labelBeforeTime" Width="117" Height="17" Margin="14,59,0,0" Text="Text Color" HAlign="Right" VAlign="Bottom" />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,21,21" Text="_Save" Click="butSave_Click" />
+    </Grid>
+</local:FrmODBase>

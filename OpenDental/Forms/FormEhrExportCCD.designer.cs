@@ -1,0 +1,320 @@
+namespace OpenDental{
+	partial class FormEhrExportCCD {
+		/// <summary>
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing) {
+			if(disposing && (components != null)) {
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
+		#region Windows Form Designer generated code
+
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent() {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrExportCCD));
+			this.checkEncounter = new OpenDental.UI.CheckBox();
+			this.checkFunctionalStatus = new OpenDental.UI.CheckBox();
+			this.checkImmunization = new OpenDental.UI.CheckBox();
+			this.checkMedication = new OpenDental.UI.CheckBox();
+			this.checkAllergy = new OpenDental.UI.CheckBox();
+			this.checkPlanOfCare = new OpenDental.UI.CheckBox();
+			this.checkProblem = new OpenDental.UI.CheckBox();
+			this.checkProcedure = new OpenDental.UI.CheckBox();
+			this.checkResult = new OpenDental.UI.CheckBox();
+			this.checkSocialHistory = new OpenDental.UI.CheckBox();
+			this.checkVitalSign = new OpenDental.UI.CheckBox();
+			this.labelSections = new System.Windows.Forms.Label();
+			this.textInstructions = new System.Windows.Forms.TextBox();
+			this.labelInstructions = new System.Windows.Forms.Label();
+			this.checkReferral = new OpenDental.UI.CheckBox();
+			this.groupBox1 = new OpenDental.UI.GroupBox();
+			this.butCheckNone = new OpenDental.UI.Button();
+			this.butCheckAll = new OpenDental.UI.Button();
+			this.textDate = new OpenDental.ValidDate();
+			this.dateLabel = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.butSave = new OpenDental.UI.Button();
+			this.groupBox1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// checkEncounter
+			// 
+			this.checkEncounter.Checked = true;
+			this.checkEncounter.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkEncounter.Location = new System.Drawing.Point(19, 40);
+			this.checkEncounter.Name = "checkEncounter";
+			this.checkEncounter.Size = new System.Drawing.Size(150, 18);
+			this.checkEncounter.TabIndex = 120;
+			this.checkEncounter.Text = "Encounter";
+			// 
+			// checkFunctionalStatus
+			// 
+			this.checkFunctionalStatus.Checked = true;
+			this.checkFunctionalStatus.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkFunctionalStatus.Location = new System.Drawing.Point(19, 64);
+			this.checkFunctionalStatus.Name = "checkFunctionalStatus";
+			this.checkFunctionalStatus.Size = new System.Drawing.Size(150, 18);
+			this.checkFunctionalStatus.TabIndex = 121;
+			this.checkFunctionalStatus.Text = "Functional Status";
+			// 
+			// checkImmunization
+			// 
+			this.checkImmunization.Checked = true;
+			this.checkImmunization.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkImmunization.Location = new System.Drawing.Point(19, 88);
+			this.checkImmunization.Name = "checkImmunization";
+			this.checkImmunization.Size = new System.Drawing.Size(150, 18);
+			this.checkImmunization.TabIndex = 122;
+			this.checkImmunization.Text = "Immunization";
+			// 
+			// checkMedication
+			// 
+			this.checkMedication.Checked = true;
+			this.checkMedication.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkMedication.Location = new System.Drawing.Point(19, 112);
+			this.checkMedication.Name = "checkMedication";
+			this.checkMedication.Size = new System.Drawing.Size(150, 18);
+			this.checkMedication.TabIndex = 123;
+			this.checkMedication.Text = "Medication";
+			// 
+			// checkAllergy
+			// 
+			this.checkAllergy.Checked = true;
+			this.checkAllergy.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkAllergy.Location = new System.Drawing.Point(19, 16);
+			this.checkAllergy.Name = "checkAllergy";
+			this.checkAllergy.Size = new System.Drawing.Size(150, 18);
+			this.checkAllergy.TabIndex = 124;
+			this.checkAllergy.Text = "Allergy";
+			// 
+			// checkPlanOfCare
+			// 
+			this.checkPlanOfCare.Checked = true;
+			this.checkPlanOfCare.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkPlanOfCare.Location = new System.Drawing.Point(19, 136);
+			this.checkPlanOfCare.Name = "checkPlanOfCare";
+			this.checkPlanOfCare.Size = new System.Drawing.Size(150, 18);
+			this.checkPlanOfCare.TabIndex = 125;
+			this.checkPlanOfCare.Text = "Plan of Care";
+			// 
+			// checkProblem
+			// 
+			this.checkProblem.Checked = true;
+			this.checkProblem.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkProblem.Location = new System.Drawing.Point(175, 16);
+			this.checkProblem.Name = "checkProblem";
+			this.checkProblem.Size = new System.Drawing.Size(150, 18);
+			this.checkProblem.TabIndex = 126;
+			this.checkProblem.Text = "Problem";
+			// 
+			// checkProcedure
+			// 
+			this.checkProcedure.Checked = true;
+			this.checkProcedure.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkProcedure.Location = new System.Drawing.Point(175, 40);
+			this.checkProcedure.Name = "checkProcedure";
+			this.checkProcedure.Size = new System.Drawing.Size(150, 18);
+			this.checkProcedure.TabIndex = 127;
+			this.checkProcedure.Text = "Procedure";
+			// 
+			// checkResult
+			// 
+			this.checkResult.Checked = true;
+			this.checkResult.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkResult.Location = new System.Drawing.Point(175, 64);
+			this.checkResult.Name = "checkResult";
+			this.checkResult.Size = new System.Drawing.Size(150, 18);
+			this.checkResult.TabIndex = 129;
+			this.checkResult.Text = "Result";
+			// 
+			// checkSocialHistory
+			// 
+			this.checkSocialHistory.Checked = true;
+			this.checkSocialHistory.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkSocialHistory.Location = new System.Drawing.Point(175, 112);
+			this.checkSocialHistory.Name = "checkSocialHistory";
+			this.checkSocialHistory.Size = new System.Drawing.Size(150, 18);
+			this.checkSocialHistory.TabIndex = 130;
+			this.checkSocialHistory.Text = "Social History";
+			// 
+			// checkVitalSign
+			// 
+			this.checkVitalSign.Checked = true;
+			this.checkVitalSign.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkVitalSign.Location = new System.Drawing.Point(175, 136);
+			this.checkVitalSign.Name = "checkVitalSign";
+			this.checkVitalSign.Size = new System.Drawing.Size(150, 18);
+			this.checkVitalSign.TabIndex = 131;
+			this.checkVitalSign.Text = "Vital Sign";
+			// 
+			// labelSections
+			// 
+			this.labelSections.Location = new System.Drawing.Point(12, 35);
+			this.labelSections.Name = "labelSections";
+			this.labelSections.Size = new System.Drawing.Size(339, 16);
+			this.labelSections.TabIndex = 132;
+			this.labelSections.Text = "Choose the sections to include in the Continuity of Care Document.";
+			// 
+			// textInstructions
+			// 
+			this.textInstructions.Location = new System.Drawing.Point(17, 272);
+			this.textInstructions.Multiline = true;
+			this.textInstructions.Name = "textInstructions";
+			this.textInstructions.Size = new System.Drawing.Size(338, 73);
+			this.textInstructions.TabIndex = 136;
+			// 
+			// labelInstructions
+			// 
+			this.labelInstructions.Location = new System.Drawing.Point(14, 249);
+			this.labelInstructions.Name = "labelInstructions";
+			this.labelInstructions.Size = new System.Drawing.Size(275, 20);
+			this.labelInstructions.TabIndex = 135;
+			this.labelInstructions.Text = "Instructions";
+			this.labelInstructions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// checkReferral
+			// 
+			this.checkReferral.Checked = true;
+			this.checkReferral.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkReferral.Location = new System.Drawing.Point(175, 88);
+			this.checkReferral.Name = "checkReferral";
+			this.checkReferral.Size = new System.Drawing.Size(150, 18);
+			this.checkReferral.TabIndex = 137;
+			this.checkReferral.Text = "Referral";
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.checkAllergy);
+			this.groupBox1.Controls.Add(this.checkReferral);
+			this.groupBox1.Controls.Add(this.checkEncounter);
+			this.groupBox1.Controls.Add(this.checkFunctionalStatus);
+			this.groupBox1.Controls.Add(this.checkImmunization);
+			this.groupBox1.Controls.Add(this.butCheckNone);
+			this.groupBox1.Controls.Add(this.checkMedication);
+			this.groupBox1.Controls.Add(this.butCheckAll);
+			this.groupBox1.Controls.Add(this.checkPlanOfCare);
+			this.groupBox1.Controls.Add(this.checkProblem);
+			this.groupBox1.Controls.Add(this.checkVitalSign);
+			this.groupBox1.Controls.Add(this.checkProcedure);
+			this.groupBox1.Controls.Add(this.checkSocialHistory);
+			this.groupBox1.Controls.Add(this.checkResult);
+			this.groupBox1.Location = new System.Drawing.Point(15, 48);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(338, 198);
+			this.groupBox1.TabIndex = 138;
+            this.groupBox1.TabStop = false;
+			// 
+			// textDate
+			// 
+			this.textDate.Location = new System.Drawing.Point(80, 9);
+			this.textDate.Name = "textDate";
+			this.textDate.Size = new System.Drawing.Size(82, 20);
+			this.textDate.TabIndex = 139;
+			// 
+			// dateLabel
+			// 
+			this.dateLabel.Location = new System.Drawing.Point(12, 9);
+			this.dateLabel.Name = "dateLabel";
+			this.dateLabel.Size = new System.Drawing.Size(67, 20);
+			this.dateLabel.TabIndex = 138;
+			this.dateLabel.Text = "Visit Date:";
+			this.dateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(186, 9);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(137, 20);
+			this.label1.TabIndex = 140;
+			this.label1.Text = "(clear to show all dates)";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butSave
+			// 
+			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butSave.Location = new System.Drawing.Point(280, 360);
+			this.butSave.Name = "butSave";
+			this.butSave.Size = new System.Drawing.Size(75, 24);
+			this.butSave.TabIndex = 3;
+			this.butSave.Text = "&Save";
+			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			// 
+			// butCheckNone
+			// 
+			this.butCheckNone.Location = new System.Drawing.Point(244, 163);
+			this.butCheckNone.Name = "butCheckNone";
+			this.butCheckNone.Size = new System.Drawing.Size(60, 24);
+			this.butCheckNone.TabIndex = 134;
+			this.butCheckNone.Text = "None";
+			this.butCheckNone.Click += new System.EventHandler(this.butCheckNone_Click);
+			// 
+			// butCheckAll
+			// 
+			this.butCheckAll.Location = new System.Drawing.Point(177, 163);
+			this.butCheckAll.Name = "butCheckAll";
+			this.butCheckAll.Size = new System.Drawing.Size(61, 24);
+			this.butCheckAll.TabIndex = 133;
+			this.butCheckAll.Text = "All";
+			this.butCheckAll.Click += new System.EventHandler(this.butCheckAll_Click);
+			// 
+			// FormEhrExportCCD
+			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(365, 396);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.dateLabel);
+			this.Controls.Add(this.textDate);
+			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.textInstructions);
+			this.Controls.Add(this.labelInstructions);
+			this.Controls.Add(this.labelSections);
+			this.Controls.Add(this.butSave);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Name = "FormEhrExportCCD";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "Export CCD";
+			this.Load += new System.EventHandler(this.FormEhrExportCCD_Load);
+			this.groupBox1.ResumeLayout(false);
+			this.ResumeLayout(false);
+			this.PerformLayout();
+
+		}
+
+		#endregion
+
+		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.CheckBox checkEncounter;
+		private OpenDental.UI.CheckBox checkFunctionalStatus;
+		private OpenDental.UI.CheckBox checkImmunization;
+		private OpenDental.UI.CheckBox checkMedication;
+		private OpenDental.UI.CheckBox checkAllergy;
+		private OpenDental.UI.CheckBox checkPlanOfCare;
+		private OpenDental.UI.CheckBox checkProblem;
+		private OpenDental.UI.CheckBox checkProcedure;
+		private OpenDental.UI.CheckBox checkResult;
+		private OpenDental.UI.CheckBox checkSocialHistory;
+		private OpenDental.UI.CheckBox checkVitalSign;
+		private System.Windows.Forms.Label labelSections;
+		private UI.Button butCheckAll;
+		private UI.Button butCheckNone;
+		private System.Windows.Forms.TextBox textInstructions;
+		private System.Windows.Forms.Label labelInstructions;
+		private OpenDental.UI.CheckBox checkReferral;
+        private OpenDental.UI.GroupBox groupBox1;
+		private ValidDate textDate;
+		private System.Windows.Forms.Label dateLabel;
+        private System.Windows.Forms.Label label1;
+	}
+}

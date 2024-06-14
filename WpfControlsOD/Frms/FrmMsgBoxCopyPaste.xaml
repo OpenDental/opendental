@@ -1,0 +1,17 @@
+﻿<local:FrmODBase x:Class="OpenDental.FrmMsgBoxCopyPaste"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="718" Height="683" 
+             Text="Providers" MinMaxBoxes="False" >
+    <Grid Background="#FFF0F0F0" >
+        <ui:TextBox x:Name="textMain" Margin="20,25,20,70" HorizontalAlignment="Stretch" IsMultiline="True" TabIndexOD="2" VerticalAlignment="Stretch"/>
+        <ui:Button x:Name="butOK" Margin="0,0,20,37" RenderTransformOrigin="0.467,-0.688" Text="_OK" Click="butOK_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="24" Width="76"/>
+        <ui:Button x:Name="butPrint" Margin="0,0,110,37" RenderTransformOrigin="0.467,-0.688" Text="_Print" Click="butPrint_Click" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="24" Width="79"/>
+        <ui:Button x:Name="butCopyAll" Margin="0,0,502,37" RenderTransformOrigin="0.467,-0.688" Text="Copy All" Click="butCopyAll_Click" VerticalAlignment="Bottom" HorizontalAlignment="Right" Height="24" Width="79"/>
+    </Grid>
+</local:FrmODBase>

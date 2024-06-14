@@ -1,0 +1,26 @@
+<local:FrmODBase x:Class="OpenDental.FrmCommReferral"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="626" Height="431" 
+             Text="Communication Item for Referral" >
+    <Grid Background="#FFFCFDFE" >
+        <ui:CheckBox x:Name="checkHidden" Width="115" Height="18" Margin="13,9,0,0" Text="Hidden  " CheckAlign="MiddleRight" />
+        <ui:CheckBox x:Name="checkAnchored" Width="115" Height="18" Margin="13,33,0,0" Text="Anchored to top" CheckAlign="MiddleRight" />
+        <ui:ListBox x:Name="listSentOrReceived" Width="101" Height="43" Margin="258,107,0,0" RenderTransformOrigin="0.475,1.884" />
+        <ui:Label x:Name="labelSentorReceived" Width="142" Height="18" Margin="258,87,0,0" Text="Sent or Received" VAlign="Bottom" RenderTransformOrigin="0.373,-0.056" />
+        <ui:ListBox x:Name="listMode" Width="125" Height="108" Margin="116,107,0,0" RenderTransformOrigin="-0.184,0.815" />
+        <ui:Label x:Name="labelMode" Width="82" Height="18" Margin="115,84,0,0" Text="Mode" VAlign="Bottom" />
+        <ui:Label x:Name="labelNote" Margin="115,223,0,0" Text="Note" VAlign="Bottom" Height="18" Width="82" />
+        <ui:TextRich x:Name="textNote" Margin="116,246,0,80" HasAutoNotes="True" QuickPasteType="CommLog" TabIndexOD="0" Width="451" VerticalAlignment="Stretch" />
+        <ui:TextBox x:Name="textUser" HorizontalAlignment="Right" Width="119" Height="20" Margin="0,12,12,0" ColorBack="#FFF0F0F0" ReadOnly="True" TabIndexOD="2" />
+        <ui:Label x:Name="labelUser" HorizontalAlignment="Right" Width="60" Height="18" Margin="0,13,137,0" Text="User" HAlign="Right" VAlign="Center" />
+        <ui:Label x:Name="labelDateTimeCreated" Width="116" Height="18" Margin="0,58,0,0" Text="Date/Time Created" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textDateTimeCreated" Width="205" Height="20" Margin="116,57,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" TabIndexOD="1" />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+    </Grid>
+</local:FrmODBase>

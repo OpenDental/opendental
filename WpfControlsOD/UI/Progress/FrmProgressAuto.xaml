@@ -1,0 +1,19 @@
+﻿<local:FrmODBase x:Class="WpfControls.UI.FrmProgressAuto"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OpenDental"
+        xmlns:ui="clr-namespace:WpfControls.UI"
+        mc:Ignorable="d"
+        Text="Progress"
+        Height="406" Width="597">
+	<Grid Background="#FFFCFDFE">
+		<ui:Button x:Name="butCancel" Width="75" Height="24" Margin="0,72,20,0" Text="Cancel" HorizontalAlignment="Right" Click="butCancel_Click"/>
+		<ui:Label x:Name="labelMsg" Margin="48,31,0,0" HorizontalContentAlignment="Right" Width="366" Text="Please Wait..." VAlign="Bottom" Height="36"/>
+		<ui:TextBox x:Name="textHistoryMsg" Margin="51,105,128,21" Text="" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsMultiline="True"/>
+		<ui:Button x:Name="butCopy" Width="75" Height="24" Margin="0,0,20,94" Text="Copy to CB" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="butCopy_Click"/>
+		<ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="23" Margin="51,72,0,0" VerticalAlignment="Top" Width="363"/>
+		<ui:Label x:Name="labelError" Margin="48,7,0,0" HorizontalContentAlignment="Right" Width="492" Text="Error Message" VAlign="Bottom" Height="20" FontSize="13" Foreground="#FFB51212"/>
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="WpfControls.UI.RadioButton"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		 d:DesignWidth="100" d:DesignHeight="20">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:CheckBox.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:CheckBox.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<Grid Name="grid" x:FieldModifier="internal">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Border Name="border" x:FieldModifier="internal" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="1">
+			<Canvas>
+				<Ellipse Name="ellipseOutline" x:FieldModifier="internal" Width="12" Height="12" Fill="White" Stroke="#FF6F6F6F" StrokeThickness="1"/>
+				<Ellipse Name="ellipseSmallBlack" x:FieldModifier="internal" Width="6" Height="6" Canvas.Left="3" Canvas.Top="3" Fill="Black" Visibility="Collapsed"/>
+			</Canvas>
+		</Border>
+		<TextBlock Grid.Column="1" Name="textBlock" x:FieldModifier="internal" Margin="4,0,4,0" TextWrapping="Wrap" TextAlignment="Left" VerticalAlignment="Center">
+		RadioButton
+		</TextBlock>
+	</Grid>
+</UserControl>

@@ -1,0 +1,333 @@
+using System;
+using System.Drawing;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Windows.Forms;
+using OpenDentBusiness;
+using CodeBase;
+using System.Text;
+
+namespace OpenDental{
+	/// <summary>
+	/// Summary description for FormBasicTemplate.
+	/// </summary>
+	public partial class FormCarrierEdit : FormODBase {
+		///<summary></summary>
+		public bool IsNew;
+		public Carrier CarrierCur;
+
+		protected override string GetHelpOverride() {
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
+				return "FormCarrierEditCanada";
+			}
+			return "FormCarrierEdit";
+		}
+
+		///<summary></summary>
+		public FormCarrierEdit(){
+			//
+			// Required for Windows Form Designer support
+			//
+			InitializeComponent();
+			InitializeLayoutManager();
+			Lan.F(this);
+		}
+
+		private void FormCarrierEdit_Load(object sender,System.EventArgs e) {
+			if(CarrierCur.CarrierNum!=0) {
+				textCarrierNum.Text=CarrierCur.CarrierNum.ToString();
+			}
+			textCarrierName.Text=CarrierCur.CarrierName;
+			textPhone.Text=CarrierCur.Phone;
+			textAddress.Text=CarrierCur.Address;
+			textAddress2.Text=CarrierCur.Address2;
+			textCity.Text=CarrierCur.City;
+			textState.Text=CarrierCur.State;
+			textZip.Text=CarrierCur.Zip;
+			textElectID.Text=CarrierCur.ElectID;
+			List<Def> listDefsCarrierGroupNames=Defs.GetDefsForCategory(DefCat.CarrierGroupNames,true);//Only Add non hidden definitions
+				//new List<Def> { new Def() { DefNum=0,ItemName=Lan.g(this,"Unspecified") } };
+			//listDefsCarrierGroupNames.AddRange(Defs.GetDefsForCategory(DefCat.CarrierGroupNames,true));
+			if(listDefsCarrierGroupNames.Count>0) {//only show if at least one CarrierGroupName definition
+				labelCarrierGroupName.Visible=true;
+				comboCarrierGroupName.Visible=true;
+				comboCarrierGroupName.Items.Add(Lan.g(this,"Unspecified"),new Def());//defNum 0
+				comboCarrierGroupName.Items.AddDefs(listDefsCarrierGroupNames);
+				comboCarrierGroupName.SetSelectedDefNum(CarrierCur.CarrierGroupName);
+			}
+			comboCobSendPaidByInsAt.Items.AddEnums<EclaimCobInsPaidBehavior>();
+			comboCobSendPaidByInsAt.SetSelectedEnum(CarrierCur.CobInsPaidBehaviorOverride);
+			comboSendElectronically.Items.AddEnums<NoSendElectType>();
+			comboSendElectronically.SetSelectedEnum(CarrierCur.NoSendElect);
+			comboEraAutomation.Items.AddEnums<EraAutomationMode>();
+			comboEraAutomation.SetSelectedEnum(CarrierCur.EraAutomationOverride);
+			string strOrthoConsolidatePref=$" ({(PrefC.GetBool(PrefName.OrthoInsPayConsolidated) ? "On" : "Off")})";
+			comboOrthoConsolidate.Items.Add(Lan.g("enumOrthoInsPayConsolidate",EnumOrthoInsPayConsolidate.Global.GetDescription()+strOrthoConsolidatePref),
+				EnumOrthoInsPayConsolidate.Global);
+			comboOrthoConsolidate.Items.Add(Lan.g("enumOrthoInsPayConsolidate",EnumOrthoInsPayConsolidate.ForceConsolidateOn.GetDescription()),
+				EnumOrthoInsPayConsolidate.ForceConsolidateOn);
+			comboOrthoConsolidate.Items.Add(Lan.g("enumOrthoInsPayConsolidate",EnumOrthoInsPayConsolidate.ForceConsolidateOff.GetDescription()),
+				EnumOrthoInsPayConsolidate.ForceConsolidateOff);
+			comboOrthoConsolidate.SetSelectedEnum(CarrierCur.OrthoInsPayConsolidate);
+			checkIsHidden.Checked=CarrierCur.IsHidden;
+			checkRealTimeEligibility.Checked=CarrierCur.TrustedEtransFlags.HasFlag(TrustedEtransTypes.RealTimeEligibility);
+			radioBenefitSendsPat.Checked=(!CarrierCur.IsCoinsuranceInverted);//Default behaviour.
+			radioBenefitSendsIns.Checked=(CarrierCur.IsCoinsuranceInverted);
+			List<string> listDependentPlans=Carriers.DependentPlans(CarrierCur);
+			textPlans.Text=listDependentPlans.Count.ToString();
+			comboPlans.Items.Clear();
+			for(int i=0;i<listDependentPlans.Count;i++){
+				comboPlans.Items.Add(listDependentPlans[i]);
+			}
+			if(listDependentPlans.Count>0){
+				comboPlans.SelectedIndex=0;
+			}
+			//textTemplates.Text=Carriers.DependentTemplates().ToString();
+			checkIsCDAnet.Checked=CarrierCur.IsCDA;//Can be checked but not visible.
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				labelCitySt.Text="City,Province,PostalCode";
+				labelElectID.Text="Carrier Identification Number";
+				groupCDAnet.Visible=checkIsCDAnet.Checked;
+			}
+			else{//everyone but Canada
+				checkIsCDAnet.Visible=false;
+				groupCDAnet.Visible=false;
+				int newHeight=(this.Height-groupCDAnet.Height-checkIsCDAnet.Height);//Dynamically hide the CDAnet groupbox and Is CDAnet Carrier checkbox.
+				this.Size=new Size(LayoutManager.Scale(560),newHeight);
+			}
+			//Canadian stuff is filled in for everyone, because a Canadian user might sometimes have a computer set to American.
+			//So a computer set to American would not be able to SEE the Canadian fields, but they at least would not be damaged.
+			comboNetwork.Items.Add(Lan.g(this,"none"));
+			comboNetwork.SelectedIndex=0;
+			List<CanadianNetwork> listCanadianNetworks=CanadianNetworks.GetDeepCopy();
+			for(int i=0;i<listCanadianNetworks.Count;i++) {
+				comboNetwork.Items.Add(listCanadianNetworks[i].Abbrev+" - "+listCanadianNetworks[i].Descript);
+				if(CarrierCur.CanadianNetworkNum==listCanadianNetworks[i].CanadianNetworkNum) {
+					comboNetwork.SelectedIndex=i+1;
+				}
+			}
+			textVersion.Text=CarrierCur.CDAnetVersion;
+			textEncryptionMethod.Text=CarrierCur.CanadianEncryptionMethod.ToString();
+			check08.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.EligibilityTransaction_08);
+			check07.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07);
+			check02.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.ClaimReversal_02);
+			check03.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.PredeterminationSinglePage_03);
+			check03m.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.PredeterminationMultiPage_03);
+			check04.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForOutstandingTrans_04);
+			check05.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForSummaryReconciliation_05);
+			check06.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForPaymentReconciliation_06);
+			check09.Checked=CarrierCur.CanadianSupportedTypes.HasFlag(CanSupTransTypes.Attachment_09);
+			odColorPickerBack.AllowTransparentColor=true;
+			if(CarrierCur.IsNew) {
+				odColorPickerBack.BackgroundColor=Color.Black;//Black means no color
+			}
+			else {
+				odColorPickerBack.BackgroundColor=CarrierCur.ApptTextBackColor;
+			}
+			if(!Security.IsAuthorized(EnumPermType.CarrierEdit,true) && !IsNew) {
+				TurnOffUI();
+			}
+			else if(!Security.IsAuthorized(EnumPermType.CarrierCreate,true) && IsNew) {
+				TurnOffUI();
+			}
+		}
+
+		private void TurnOffUI() {
+			butSave.Enabled=false;
+			butDelete.Enabled=false;
+			textCarrierName.ReadOnly=true;
+			textPhone.ReadOnly=true;
+			textAddress.ReadOnly=true;
+			textAddress2.ReadOnly=true;
+			textCity.ReadOnly=true;
+			textState.ReadOnly=true;
+			textZip.ReadOnly=true;
+			textElectID.ReadOnly=true;
+			comboSendElectronically.Enabled=false;
+			comboCobSendPaidByInsAt.Enabled=false;
+			comboEraAutomation.Enabled=false;
+			comboOrthoConsolidate.Enabled=false;
+			comboCarrierGroupName.Enabled=false;
+			groupBox2.Enabled=false;
+			groupBox1.Enabled=false;
+			groupCDAnet.Enabled=false;
+			checkRealTimeEligibility.Enabled=false;
+			checkIsHidden.Enabled=false;
+			checkIsCDAnet.Enabled=false;
+			odColorPickerBack.Enabled=false;
+		}
+
+		private string GetSecurityLogMessage(Carrier carrierOld) {
+			StringBuilder stringBuilder=new StringBuilder();
+			if(IsNew) {
+				stringBuilder.AppendLine($"Carrier {CarrierCur.CarrierName}:");
+			}
+			else {
+				stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.CarrierName,carrierOld.CarrierName,"name",IsNew));
+			}
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.Phone,carrierOld.Phone,"phone",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.Address,carrierOld.Address,"address",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.Address2,carrierOld.Address2,"address2",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.City,carrierOld.City,"city",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.State,carrierOld.State,"state",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.Zip,carrierOld.Zip,"zip",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.ElectID,carrierOld.ElectID,"electID",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.NoSendElect.ToString(),carrierOld.NoSendElect.ToString(),"send electronically",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.CobInsPaidBehaviorOverride.ToString(),carrierOld.CobInsPaidBehaviorOverride.ToString(),"send paid by other insurance",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.EraAutomationOverride.ToString(),carrierOld.EraAutomationOverride.ToString(),"ERA automation",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.OrthoInsPayConsolidate.ToString(),carrierOld.OrthoInsPayConsolidate.ToString(),"consolidate ortho ins payments",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.CarrierGroupName.ToString(),carrierOld.CarrierGroupName.ToString(),"carrier group",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.IsHidden.ToString(),carrierOld.IsHidden.ToString(),"is hidden",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.TrustedEtransFlags.ToString(),carrierOld.TrustedEtransFlags.ToString(),"is trusted",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.IsCDA.ToString(),carrierOld.IsCDA.ToString(),"is CDA",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.ApptTextBackColor.ToString(),carrierOld.ApptTextBackColor.ToString(),"text back color",IsNew));
+			stringBuilder.Append(SecurityLogMessageHelper(CarrierCur.IsCoinsuranceInverted.ToString(),carrierOld.IsCoinsuranceInverted.ToString(),"import benefit coinsurance inverted",IsNew));
+			return stringBuilder.ToString();
+		}
+
+		private string SecurityLogMessageHelper(string newVal,string oldVal,string colVal,bool isNew) {
+			if(isNew) {
+				return $"{colVal} initialized with value '{newVal}'\r\n";
+			}
+			else if(oldVal!=newVal) {
+				return $"Carrier {colVal} changed from '{oldVal}' to '{newVal}'\r\n";
+			}
+			return "";
+		}
+
+		private void textCarrierName_TextChanged(object sender, System.EventArgs e) {
+			if(textCarrierName.Text.Length==1){
+				textCarrierName.Text=textCarrierName.Text.ToUpper();
+				textCarrierName.SelectionStart=1;
+			}
+		}
+
+		private void textAddress_TextChanged(object sender, System.EventArgs e) {
+			if(textAddress.Text.Length==1){
+				textAddress.Text=textAddress.Text.ToUpper();
+				textAddress.SelectionStart=1;
+			}
+		}
+
+		private void textAddress2_TextChanged(object sender, System.EventArgs e) {
+			if(textAddress2.Text.Length==1){
+				textAddress2.Text=textAddress2.Text.ToUpper();
+				textAddress2.SelectionStart=1;
+			}
+		}
+
+		private void textCity_TextChanged(object sender, System.EventArgs e) {
+			if(textCity.Text.Length==1){
+				textCity.Text=textCity.Text.ToUpper();
+				textCity.SelectionStart=1;
+			}
+		}
+
+		private void textState_TextChanged(object sender, System.EventArgs e) {
+			int cursor=textState.SelectionStart;
+			//for all countries, capitalize the first letter
+			if(textState.Text.Length==1){
+				textState.Text=textState.Text.ToUpper();
+				textState.SelectionStart=cursor;
+				return;
+			}
+			//for US and Canada, capitalize second letter as well.
+			if(CultureInfo.CurrentCulture.Name=="en-US"
+				|| CultureInfo.CurrentCulture.Name=="en-CA"){
+				if(textState.Text.Length==2){
+					textState.Text=textState.Text.ToUpper();
+					textState.SelectionStart=cursor;
+				}
+			}
+		}
+
+		private void checkIsCDAnet_Click(object sender,EventArgs e) {
+			groupCDAnet.Visible=checkIsCDAnet.Checked;
+		}
+
+		private void butDelete_Click(object sender, System.EventArgs e) {
+			if(MessageBox.Show(Lan.g(this,"Delete Carrier?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
+				return;
+			}
+			try{
+				Carriers.Delete(CarrierCur);
+			}
+			catch(ApplicationException ex){
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butSave_Click(object sender, System.EventArgs e) {
+			if(textCarrierName.Text==""){
+				MessageBox.Show(Lan.g(this,"Carrier Name cannot be blank."));
+				return;
+			}
+			Carrier carrierOld=CarrierCur.Copy();
+			CarrierCur.CarrierName=textCarrierName.Text;
+			CarrierCur.Phone=textPhone.Text;
+			CarrierCur.Address=textAddress.Text;
+			CarrierCur.Address2=textAddress2.Text;
+			CarrierCur.City=textCity.Text;
+			CarrierCur.State=textState.Text;
+			CarrierCur.Zip=textZip.Text;
+			CarrierCur.ElectID=textElectID.Text;
+			//DefNum will be 0 if "Unspecified" is selected. 
+			CarrierCur.CarrierGroupName=comboCarrierGroupName.GetSelectedDefNum();
+			CarrierCur.CobInsPaidBehaviorOverride=comboCobSendPaidByInsAt.GetSelected<EclaimCobInsPaidBehavior>();
+			CarrierCur.NoSendElect=comboSendElectronically.GetSelected<NoSendElectType>();
+			CarrierCur.EraAutomationOverride=comboEraAutomation.GetSelected<EraAutomationMode>();
+			CarrierCur.IsHidden=checkIsHidden.Checked;
+			if(checkRealTimeEligibility.Checked) {
+				CarrierCur.TrustedEtransFlags=TrustedEtransTypes.RealTimeEligibility;
+			}
+			else {
+				CarrierCur.TrustedEtransFlags=TrustedEtransTypes.None;
+			}
+			CarrierCur.IsCDA=checkIsCDAnet.Checked;
+			CarrierCur.ApptTextBackColor=odColorPickerBack.BackgroundColor;
+			CarrierCur.IsCoinsuranceInverted=radioBenefitSendsIns.Checked;
+			CarrierCur.OrthoInsPayConsolidate=comboOrthoConsolidate.GetSelected<EnumOrthoInsPayConsolidate>();
+			if(IsNew){
+				try{
+					Carriers.Insert(CarrierCur);
+					SecurityLogs.MakeLogEntry(EnumPermType.CarrierCreate,0,Lan.g(this,"Carrier ")+CarrierCur.CarrierName+Lan.g(this," manually created."));
+				}
+				catch(ApplicationException ex){
+					MessageBox.Show(ex.Message);
+					return;
+				}
+			}
+			else{
+				try{
+					Carriers.Update(CarrierCur,carrierOld);
+					//If the carrier name has changed loop through all the insplans that use this carrier and make a securitylog entry.
+					if(carrierOld.CarrierName!=CarrierCur.CarrierName) {
+						SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeCarrierName,0,Lan.g(this,"Carrier name changed in Edit Carrier window from")+" "
+							+carrierOld.CarrierName+" "+Lan.g(this,"to")+" "+CarrierCur.CarrierName);
+					}
+				}
+				catch(ApplicationException ex){
+					MessageBox.Show(ex.Message);
+					return;
+				}
+			}
+			string logMessage=GetSecurityLogMessage(carrierOld);
+			EnumPermType permissionType;
+			if(IsNew) {
+				permissionType=EnumPermType.CarrierCreate;
+			}
+			else {
+				permissionType=EnumPermType.CarrierEdit;
+			}
+			if(!string.IsNullOrEmpty(logMessage)) {
+				SecurityLogs.MakeLogEntry(permissionType,0,logMessage);
+			}
+			DialogResult=DialogResult.OK;
+		}
+
+	}
+}

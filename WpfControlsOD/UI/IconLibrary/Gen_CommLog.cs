@@ -1,0 +1,13 @@
+using System;
+using OpenDentBusiness;
+
+namespace WpfControls.UI{
+	//---------------This file is generated automatically from the IconOrganizer project.  Do not edit manually.
+	public class Gen_CommLog{
+
+
+		public static string GetBase64(){
+			return "iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsSAAALEgHS3X78AAAB+klEQVQ4jZVVu0oDQRQ9BsFEzKtSMC9QLBQkNmqhJoUQsQg2sRMEHz9gI9hYKNhIeh8gWKYRCzVdQAsVhEQSLEyRBAWtNFEMqVbuMBt2R3cmubAwc+bM2Tt3Lmc6NE2DLByBqAfAAoAQh0oAzuqVzKdsn1TYEYiGSQRAUFgq08/qlUy2bWGeadbt6gqmDucxPdHP8Ou7VyTWLlCtNUg8bJW5TXIaOr5JlILGhPFTLFhtlgmHdSExDFjIarNMWBpBn0u6/q8wr+8MeE3FIKz8UiM0zrlqYU7MABjzepzsoozi+uXRGnE4929QVxg/uz+ybfdHtNPUpZbLP2tDk4sazY0fYbRGHI5vizqmduPZfiwl5nCwv8mwau0b5+kblF/e2Dzo60M8NgW3q4fN1zf2cJq6oqHX1HpCtsuUQa5Q1FoN4vKsl41aYo1Z+4wODyi7Qg8D19R6nUIZZmm8kzz5c2QxxBJR35OGXg5WYytPCPT3InW0i9GRQZPsY6GIxOoWKq/v4v+aHtJh90eknuB2enCfPm5mTpmOx1ZQ/fqEzENsKk+grOjIetCYMJWH2FrxBEMdWRlUfLpIpVeoPMGKT13BzJpqJGahe8LtQx67yROGPRVLUPHplVFeXrXW+AHQLST243Z1dcsuT9puVk9QK/ymV7T7aEr5AH4B88hy0afVaIoAAAAASUVORK5CYII=";
+		}
+	}
+}

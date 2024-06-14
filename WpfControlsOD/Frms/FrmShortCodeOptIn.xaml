@@ -1,0 +1,17 @@
+<local:FrmODBase x:Class="OpenDental.FrmShortCodeOptIn"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="545" Height="241" 
+             Text="Appointment Texts" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:CheckBox x:Name="checkOptIn" Width="440" VerticalAlignment="Bottom" Height="19" Margin="12,0,0,12" Text="Patient agrees to receive appointment texts." CheckAlign="TopLeft" />
+		<ui:Label x:Name="label1" Width="521" Height="150" Margin="9,33,0,0" Text="Would you like to receive Appointment Texts?
+You can cancel at any time by texting STOP to 25975." />
+		<ui:Menu x:Name="menuMain" HorizontalAlignment="Stretch" Height="24" Margin="0,0,0,0" />
+	</Grid>
+</local:FrmODBase>

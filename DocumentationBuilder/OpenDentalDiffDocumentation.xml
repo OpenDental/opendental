@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type='text/xsl' href='OpenDentalDiffDocumentation.xsl'?>
+<database version="24.2.0.0">
+  <table name="appointment">
+    <summary></summary>
+    <column order="34" name="ItemOrderPlanned" type="int(11)">
+      <summary>One-indexed order of patnum specific planned appointments. Column moved from the deprecated table plannedappt.</summary>
+    </column>
+  </table>
+  <table name="apptview">
+    <summary></summary>
+    <column order="15" name="OnlyScheduledProvDays" type="tinyint(4)">
+      <summary>If set to true, then the only days that will show in Week view will be days that have providers scheduled or an appointment scheduled.</summary>
+    </column>
+  </table>
+  <table name="eform">
+    <summary></summary>
+    <column order="0" name="EFormNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="FormType" type="tinyint(4)">
+      <summary>Enum:EnumEFormType 0=None, 1=PatientForm, 2=MedicalHistory, 3=Consent.</summary>
+      <Enumeration name="EnumEFormType">
+        <summary>Different types of EForms that can be used. They don't actually do anything, and all fields are available from all types, but that might eventually change if more types are added.</summary>
+        <EnumValue name="PatientForm">0 - Includes patient information and insurance information.</EnumValue>
+        <EnumValue name="MedicalHistory">1 - </EnumValue>
+        <EnumValue name="Consent">2 - .</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="2" name="PatNum" type="bigint(20)" fk="o patient">
+      <summary>FKey to patient.PatNum.</summary>
+    </column>
+    <column order="3" name="DateTimeShown" type="datetime">
+      <summary>The date and time that show in the UI. It will be editable at some point.</summary>
+    </column>
+    <column order="4" name="Description" type="varchar(255)">
+      <summary>The title of the EForm. Copied from EFormDef.Description.</summary>
+    </column>
+    <column order="5" name="DateTEdited" type="datetime">
+      <summary>The date and time when the EForm was lasted edited. Not editable by the user in the UI.</summary>
+    </column>
+  </table>
+  <table name="eformdef">
+    <summary></summary>
+    <column order="0" name="EFormDefNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="FormType" type="tinyint(4)">
+      <summary>Enum:EnumEFormType 0=None, 1=PatientForm, 2=MedicalHistory, 3=Consent.</summary>
+      <Enumeration name="EnumEFormType">
+        <summary>Different types of EForms that can be used. They don't actually do anything, and all fields are available from all types, but that might eventually change if more types are added.</summary>
+        <EnumValue name="PatientForm">0 - Includes patient information and insurance information.</EnumValue>
+        <EnumValue name="MedicalHistory">1 - </EnumValue>
+        <EnumValue name="Consent">2 - .</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="2" name="Description" type="varchar(255)">
+      <summary>The title of the EFormDef. Set by the user.</summary>
+    </column>
+    <column order="3" name="DateTCreated" type="datetime">
+      <summary>The date and time when the EFormDef was created. Not editable by the user in the UI.</summary>
+    </column>
+    <column order="4" name="IsInternalHidden" type="tinyint(4)">
+      <summary>This is set to true when a user "deletes" an internal form. That way, it won't show anymore. This is the only way to hide an internal form. It gets done automatically when a user "edits" an internal form so that only the custom form will show. The linkage to the internal form is done by matching the Description. So a row where this was set to true would have a description and nothing else. No EFormFieldDefs. Once the user hides an internal eForm in this manner, they can't ever get it back other than by using Add.</summary>
+    </column>
+  </table>
+  <table name="eformfield">
+    <summary></summary>
+    <column order="0" name="EFormFieldNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="EFormNum" type="bigint(20)" fk="o eform">
+      <summary>FKey to eform.EFormNum</summary>
+    </column>
+    <column order="2" name="PatNum" type="bigint(20)" fk="o patient">
+      <summary>FKey to patient.PatNum to let us quickly grab all for a patient, and then loop later.</summary>
+    </column>
+    <column order="3" name="FieldType" type="tinyint(4)">
+      <summary>Enum:EFormFieldType 0-TextField, 1-Label, 2-DateField, etc.</summary>
+      <Enumeration name="EFormFieldType">
+        <summary></summary>
+      </Enumeration>
+    </column>
+    <column order="4" name="DbLink" type="varchar(255)">
+      <summary>If this field is importable, then this links to a db field. The list of available fields for each type is in EFormFieldsAvailable. Users can pick from that list. Identical list as in Sheets. It's string-based instead of enum, just like Sheets, because it's too complex to use an enum, even for our reduced number of items. None is always represented in UI as "None" and in db as empty string. All DbLinks are available on all form types to give users more flexibility. Checkboxes can have DBLinks that look like "allergy:..." or "problem:..."</summary>
+    </column>
+    <column order="5" name="ValueLabel" type="text">
+      <summary>Used differently for different types:
+            TextField, DateField, CheckBox: The label next to or above the textbox, or checkbox.RadioButtons: This label next to or above the group of radiobuttons. Labels on each radiobutton are in SelectionList.Label: This label is the only thing that shows. A label is always a WPF FlowDocument, which is an XML format. This allows extensive rich text formatting, like bold, color, paragraph formatting, etc. This format can be used directly in OD proper, but it will need to be converted for some other languages using external tools. BUT, prior to that, it must be run through a method that adjusts all the font sizes. FlowDocuments only support absolute font sizes instead of relative font sizes. We use 11.5 as the base font size and all other fonts are considered to be relative to this base. So if a font size of 13.8 is present in the FlowDocument, that does not mean to use 13.8; it instead means to use 120%. If your chosen base font size on a mobile device is 16, then the conversion method needs to convert the 13.8 to 19.2 prior to using the FlowDocument.PageBreak: Not used.SigBox: Optional label above sig box.MedicationList: This holds an EFormMedListLayout object, serialized as json, including the Title, column headers, column widths, etc.</summary>
+    </column>
+    <column order="6" name="ValueString" type="text">
+      <summary>The data as entered by patient or pulled from the db. We do not need this in EFormFieldDef because that has no patient or db data. Used differently for different types:
+            TextField: value in textBox. For allergiesOther, medsOther, and problemsOther, this is a comma-delimited list. Spaces by commas are ok. Like this: "Aspirin, Iodine, Latex"Label: Not used because no patient input.DateField: date in culture format, like 4/25/2024.Checkbox: "X" or blank "".RadioButton: String value chosen by patient. Pulled from PickListDb, not PickListVis. When importing, empty signifies that patient did not enter any choice, so do not import.ComboBox (not yet added): String value chosen by patient.SigBox: Just the raw drawing info. Example: 45,68;48,70;49,72;0,0;55,88;etc. It's simply a sequence of points, separated by semicolons. 0,0 represents pen up. Same format as used for all signatures in OD, but here we do not subsequently encrypt based on a hash of data. Does not get imported.MedicationList: This holds a list of EFormMed objects, serialized as json.</summary>
+    </column>
+    <column order="7" name="ItemOrder" type="int(11)">
+      <summary>0 based.</summary>
+    </column>
+    <column order="8" name="PickListVis" type="varchar(255)">
+      <summary>Comma delimited list of strings, used for radioButtons, future comboBoxes, etc. This is the list of items that are visible to the patient. Setup enforces same number of items in PickListDb for 1:1 match. This list allows customization of what the patient sees vs what's in the db. Example: Vis=Hispanic, Db=2135-2. Example: Vis=Do Not Call, Db=DoNotCall. For radiobuttons, the number of items in the lists determines the number of radiobuttons to show to the patient. These editable lists also allow excluding some db options from being visible to patient. Example: Ins Relationship has 9 options, but only 4 of them are really used in dentistry. Just leave the other 5 off and force them to pick one of the 4. But it is also not required for them to pick one. Example: For Marital Status, you might only show Married and Child, excluding Divorced and Single from the pick list. The unselected state then represents no change, so an existing patient could leave both radio buttons unchecked and their status would remain Divorced or Single. However, we currently lack a feature to let them uncheck a radiobutton that is already checked. This is a rare edge case that nearly nobody will care about. These lists also allow two radioButtons to represent one db item. Example: Gender Other in db can be expanded to show patient both Nonbinary and Other. When patient picks either of these, it goes into the db as Other. The lists also allow any or all items to be empty with no label. Example: Y/N radiobuttons for a series of allergies. Y/N label at top, but none of the radiobuttons need labels. When translation is added later, it will translate this list, not the PickListDb. PickListVis will, by default, simply be exactly the same as PickListDb. In this state, what the patient sees is the same as what's in the db. Must have at least two items for now.</summary>
+    </column>
+    <column order="9" name="PickListDb" type="varchar(255)">
+      <summary>Comma delimited list of strings, used for radioButtons, future comboBoxes, etc. This is the list of items as they would be stored in the database. See PickListVis above for examples of how to use. The value chosen from this list is what will be stored in the ValueString field. Never show this value to the patient.</summary>
+    </column>
+    <column order="10" name="IsHorizStacking" type="tinyint(4)">
+      <summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone.</summary>
+    </column>
+    <column order="11" name="IsTextWrap" type="tinyint(4)">
+      <summary>Only applies when this is a TextField. Default is false, which creates a single row textbox that scrolls horizontally if text is too long. Set to true to cause text to wrap instead. This will cause the box to grow to fit the text.</summary>
+    </column>
+    <column order="12" name="Width" type="int(11)">
+      <summary>If this is blank/0, then width will be 100% of what's available. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". For Android phones that use 1/160" per DIP, we must scale it while taking into account the font size used for 100% FontScale. So assuming we use 16 Android DIPs for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*16. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original.</summary>
+    </column>
+    <column order="13" name="FontScale" type="int(11)">
+      <summary>Applies to both the label on the field and the field itself. Never 0. Does not apply to Label types, though, since those are only handled by editing the rich text. Always has a valid value between 50 and 300. Default is 100, indicating normal size. WPF defines a DIP as 1/96". Open Dental uses 11.5 DIPs for nearly all fonts on desktop version. Old Microsoft font sizes were based on 1/72", so 11.5 converts to old 8.6. Android defines a DIP as 1/160". Typical recommended font size on Android seems to be about 16, which translates to 9.6 MS DIPs or 7.2 old Windows font. In other words, recommended phone fonts are physically slightly smaller than desktop fonts. EForms uses font sizes based on 100% being a standard normal size. 100% equates to 11.5 on desktop, probably about 16 on Android phones, and whatever our engineers come up with for tablets. By doing it this way, we do not have to explain anything complicated to users, and they also have very good control over font sizes.</summary>
+    </column>
+    <column order="14" name="IsRequired" type="tinyint(4)">
+      <summary>False by default. If this is set to true, the patient will be required to fill out the field. If conditional logic causes a required field to not show, it will not enforce the requirement.</summary>
+    </column>
+    <column order="15" name="ConditionalParent" type="varchar(255)">
+      <summary>This string is the label of the field that acts as the parent for conditional logic. Empty string by default indicates no parent. Truncated to the first 255 characters. </summary>
+    </column>
+    <column order="16" name="ConditionalValue" type="varchar(255)">
+      <summary>When this field has a conditional parent, it will only show if the value of this field matches the value of the parent. For radio buttons, it matches the value of one of the radiobuttons. For checkboxes, a match is "X". If radiobutton text is too long, it matches the first 255 characters.</summary>
+    </column>
+  </table>
+  <table name="eformfielddef">
+    <summary></summary>
+    <column order="0" name="EFormFieldDefNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="EFormDefNum" type="bigint(20)" fk="o eformdef">
+      <summary>FKey to eformdef.EFormDefNum</summary>
+    </column>
+    <column order="2" name="FieldType" type="tinyint(4)">
+      <summary>Enum:EnumEFormFieldType 0-TextField, 1-Label, 2-CheckBox, etc.</summary>
+      <Enumeration name="EnumEFormFieldType">
+        <summary></summary>
+        <EnumValue name="TextField">0-A textbox that the user can type into. Frequently tied to a database field. Can frequently be prefilled from database if desired. In Sheets, this was two different field types: InputField and OutputField.</EnumValue>
+        <EnumValue name="Label">1-This can be used for a label, heading, title, paragraph, etc. These also support the exact same replacement fields as in sheets StaticText. See the extensive comments on the ValueLabel field.</EnumValue>
+        <EnumValue name="DateField">2-Some sort of textbox that's optimized for date input.</EnumValue>
+        <EnumValue name="CheckBox">3-Simple checkbox that can be tied to a db field.</EnumValue>
+        <EnumValue name="RadioButtons">4-Not a single radiobutton, but a group of them.</EnumValue>
+        <EnumValue name="SigBox">5-A signature box, directly on the screen with stylus/mouse. Just the drawing, no encryption to tie it to the data yet.</EnumValue>
+        <EnumValue name="PageBreak">6-.</EnumValue>
+        <EnumValue name="MedicationList">7-A Medication List is a complex field. It consists of a list of medications with an optional second column for strength and frequency. Each medication has a Delete button to its right. There is also an Add button and a None checkbox at the bottom. The None checkbox only shows when the list is empty and allows satisfying a 'required' flag. There is no way to indicate 'no changes', but the office is free to add a separate No Changes checkbox below this list which doesn't actually do anything but which can serve as a visual indicator.</EnumValue>
+      </Enumeration>
+    </column>
+    <column order="3" name="DbLink" type="varchar(255)">
+      <summary>If this field is importable, then this links to a db field. The list of available fields for each type is in EFormFieldsAvailable. Users can pick from that list. Identical list as in Sheets. It's string-based instead of enum, just like Sheets, because it's too complex to use an enum, even for our reduced number of items. None is always represented in UI as "None" and in db as empty string. All DbLinks are available on all form types to give users more flexibility. Checkboxes can have DBLinks that look like "allergy:...", "med:...", or "problem:..."</summary>
+    </column>
+    <column order="4" name="ValueLabel" type="text">
+      <summary>Used differently for different types:
+            TextField, DateField, CheckBox: The label next to or above the textbox, or checkbox.RadioButtons: The label above the group of radiobuttons. Labels on each radiobutton are in SelectionList.Label: This label is the only thing that shows. A label is always a WPF FlowDocument, which is an XML format. This allows extensive rich text formatting, like bold, color, paragraph formatting, etc. This format can be used directly in OD proper, but it will need to be converted for some other languages using external tools. BUT, prior to that, it must be run through a method that adjusts all the font sizes. FlowDocuments only support absolute font sizes instead of relative font sizes. We use 11.5 as the base font size and all other fonts are considered to be relative to this base. So if a font size of 13.8 is present in the FlowDocument, that does not mean to use 13.8; it instead means to use 120%. If your chosen base font size on a mobile device is 16, then the conversion method needs to convert the 13.8 to 19.2 prior to using the FlowDocument.PageBreak: Not used.SigBox: Optional label above sig box.MedicationList: This holds an EFormMedListLayout object, serialized as json, including the Title, column headers, column widths, etc.</summary>
+    </column>
+    <column order="5" name="ItemOrder" type="int(11)">
+      <summary>0 based.</summary>
+    </column>
+    <column order="6" name="PickListVis" type="varchar(255)">
+      <summary>Comma delimited list of strings, used for radioButtons, future comboBoxes, etc. This is the list of items that are visible to the patient. Setup enforces same number of items in PickListDb for 1:1 match. This list allows customization of what the patient sees vs what's in the db. Example: Vis=Hispanic, Db=2135-2. Example: Vis=Do Not Call, Db=DoNotCall. For radiobuttons, the number of items in the lists determines the number of radiobuttons to show to the patient. These editable lists also allow excluding some db options from being visible to patient. Example: Ins Relationship has 9 options, but only 4 of them are really used in dentistry. Just leave the other 5 off and force them to pick one of the 4. But it is also not required for them to pick one. Example: For Marital Status, you might only show Married and Child, excluding Divorced and Single from the pick list. The unselected state then represents no change, so an existing patient could leave both radio buttons unchecked and their status would remain Divorced or Single. However, we currently lack a feature to let them uncheck a radiobutton that is already checked. This is a rare edge case that nearly nobody will care about. These lists also allow two radioButtons to represent one db item. Example: Gender Other in db can be expanded to show patient both Nonbinary and Other. When patient picks either of these, it goes into the db as Other. The lists also allow any or all items to be empty with no label. Example: Y/N radiobuttons for a series of allergies. Y/N label at top, but none of the radiobuttons need labels. When translation is added later, it will translate this list, not the PickListDb. PickListVis will, by default, simply be exactly the same as PickListDb. In this state, what the patient sees is the same as what's in the db. Must have at least two items for now. </summary>
+    </column>
+    <column order="7" name="PickListDb" type="varchar(255)">
+      <summary>Comma delimited list of strings, used for radioButtons, future comboBoxes, etc. This is the list of items as they would be stored in the database. See PickListVis above for examples of how to use. The value chosen from this list is what will be stored in the ValueString field. Never show this value to the patient.</summary>
+    </column>
+    <column order="8" name="IsHorizStacking" type="tinyint(4)">
+      <summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone. We don't allow this option for RadioButtons because they already stack horizontally, and that would be confusing.</summary>
+    </column>
+    <column order="9" name="IsTextWrap" type="tinyint(4)">
+      <summary>Only applies when this is a TextField. Default is false, which creates a single row textbox that scrolls horizontally if text is too long. Set to true to cause text to wrap instead. This will cause the box to grow to fit the text.</summary>
+    </column>
+    <column order="10" name="Width" type="int(11)">
+      <summary>If this is blank/0, then width will be 100% of what's available. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". For Android phones that use 1/160" per DIP, we must scale it while taking into account the font size used for 100% FontScale. So assuming we use 16 Android DIPs for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*16. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original.</summary>
+    </column>
+    <column order="11" name="FontScale" type="int(11)">
+      <summary>Applies to both the label on the field and the field itself. Never 0. Does not apply to Label types, though, since those are only handled by editing the rich text. Always has a valid value between 50 and 300. Default is 100, indicating normal size. WPF defines a DIP as 1/96". Open Dental uses 11.5 DIPs for nearly all fonts on desktop version. Old Microsoft font sizes were based on 1/72", so 11.5 converts to old 8.6. Android defines a DIP as 1/160". Typical recommended font size on Android seems to be about 16, which translates to 9.6 MS DIPs or 7.2 old Windows font. In other words, recommended phone fonts are physically slightly smaller than desktop fonts. EForms uses font sizes based on 100% being a standard normal size. 100% equates to 11.5 on desktop, probably about 16 on Android phones, and whatever our engineers come up with for tablets. By doing it this way, we do not have to explain anything complicated to users, and they also have very good control over font sizes.</summary>
+    </column>
+    <column order="12" name="IsRequired" type="tinyint(4)">
+      <summary>False by default. If this is set to true, the patient will be required to fill out the field. If conditional logic causes a required field to not show, it will not enforce the requirement.</summary>
+    </column>
+    <column order="13" name="ConditionalParent" type="varchar(255)">
+      <summary>This string is the label of the field that acts as the parent for conditional logic. Empty string by default indicates no parent. Truncated to the first 255 characters. </summary>
+    </column>
+    <column order="14" name="ConditionalValue" type="varchar(255)">
+      <summary>When this field has a conditional parent, it will only show if the value of this field matches the value of the parent. For radio buttons, it matches the value of one of the radiobuttons. For checkboxes, a match is "X". If radiobutton text is too long, it matches the first 255 characters.</summary>
+    </column>
+  </table>
+  <table name="eroutingaction">
+    <summary></summary>
+    <column order="7" name="ForeignKeyType" type="tinyint(4)">
+      <summary> Enum:EnumERoutingFKType Indicates the type of object that ForeignKey references. None=0, Sheet=1 </summary>
+    </column>
+    <column order="8" name="ForeignKey" type="bigint(20)">
+      <summary> FK to attached object. Type is indicated by ForeignKeyType. Sheet for Consent forms. </summary>
+    </column>
+  </table>
+  <table name="eroutingactiondef">
+    <summary></summary>
+    <column order="6" name="ForeignKeyType" type="tinyint(4)">
+      <summary> Enum:EnumERoutingDefFKType Indicates the type of object that ForeignKey references. None=0, SheetDef=1 </summary>
+    </column>
+    <column order="7" name="ForeignKey" type="bigint(20)">
+      <summary> FK to attached object. Type is indicated by ForeignKeyType. SheetDef for Consent forms. </summary>
+    </column>
+  </table>
+  <table name="eserviceshortguid">
+    <summary></summary>
+    <column order="1" name="EServiceCode" type="varchar(255)">
+      <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+      <Enumeration name="eServiceCode">
+        <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+        <EnumValue name="OCR">48 - OCR Scans</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="grouppermission">
+    <summary></summary>
+    <column order="4" name="PermType" type="tinyint">
+      <summary>Enum:EnumPermType Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+      <Enumeration name="EnumPermType">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="ChanSpy">251 - Only used at OD HQ. Ability to listen to live calls.</EnumValue>
+        <EnumValue name="ClaimProcFeeBilledToInsEdit">252 - Ability to edit Fee Billed to Insurance in FormClaimProc</EnumValue>
+        <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
+        <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="histappointment">
+    <summary></summary>
+    <column order="39" name="ItemOrderPlanned" type="int(11)">
+      <summary>Copied from Appointment.</summary>
+    </column>
+  </table>
+  <table name="imagedraw">
+    <summary></summary>
+    <column order="11" name="PearlLayer" type="tinyint(4)">
+      <summary>Enum:Pearl.EnumCategoryOD This is how we hide and show layers for Pearl objects in the Imaging module.</summary>
+      <Enumeration name="Pearl.EnumCategoryOD">
+        <summary>This is for showing/hiding layers.</summary>
+        <EnumValue name="None">0 - None.</EnumValue>
+        <EnumValue name="Crown">1 - Crown.</EnumValue>
+        <EnumValue name="PeriapicalRadiolucency">2 - Periapical Radiolucency.</EnumValue>
+        <EnumValue name="Filling">3 - Filling.</EnumValue>
+        <EnumValue name="Anatomy">4 - Anatomy.</EnumValue>
+        <EnumValue name="Caries">5 - Caries.</EnumValue>
+        <EnumValue name="MarginDiscrepancy">6 - Margin Discrepancy.</EnumValue>
+        <EnumValue name="Implant">7 - Implant.</EnumValue>
+        <EnumValue name="RootCanal">8 - Root Canal.</EnumValue>
+        <EnumValue name="Bridge">9 - Bridge.</EnumValue>
+        <EnumValue name="Calculus">10 - Calculus.</EnumValue>
+        <EnumValue name="ToothParts">11 - Tooth Parts.</EnumValue>
+        <EnumValue name="Measurements">12 - Measurements.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="languagepat">
+    <summary></summary>
+    <column order="0" name="LanguagePatNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="PrefName" type="varchar(255)" fk="pref">
+      <summary>FK to pref.PrefName. There are about 30 of these in use. This allows us to translate the value stored for templates like email, postcard, text, etc./&gt;</summary>
+    </column>
+    <column order="2" name="Language" type="varchar(255)">
+      <summary>Three-letter language name or custom language name.  The custom language name is the full string name and is not necessarily supported by Microsoft.
+            This will typically be matched to the patient's preferred language to select the appropriate translation.
+            Three-letter language name examples: eng (English), spa (Spanish), fra (French).Custom language name examples: Tahitian, American Sign Language, Morse Code.
+            The LanguagesUsedByPatients preference stores the three-letter names that the practice chooses to support.
+            </summary>
+    </column>
+    <column order="3" name="Translation" type="text">
+      <summary>The translated text. Max 65,000 characters. Might store complex email templates.</summary>
+    </column>
+  </table>
+  <table name="program">
+    <summary></summary>
+    <column order="4" name="Path" type="text">
+      <summary>The path of the executable to run or file to open. Text since 255 is the largest VARCHAR supported and some softwares have long paths that can easily exceed 255 characters.</summary>
+    </column>
+    <column order="5" name="CommandLine" type="text">
+      <summary>Some programs will accept command line arguments. Text since 255 is the largest VARCHAR supported and some softwares have long command line arguments that can easily exceed 255 characters.</summary>
+    </column>
+  </table>
+  <table name="repeatcharge">
+    <summary></summary>
+    <column order="16" name="Frequency" type="tinyint(4)">
+      <summary>Enum:EnumRepeatChargeFrequency 0-Monthly, 1-Quarterly, 2-Annually.</summary>
+      <Enumeration name="EnumRepeatChargeFrequency">
+        <summary></summary>
+        <EnumValue name="Monthly">0 - Monthly</EnumValue>
+        <EnumValue name="Quarterly">1 - Quarterly</EnumValue>
+        <EnumValue name="Annually">2 - Annually</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="rxpat">
+    <summary></summary>
+    <column order="24" name="RxType" type="tinyint(4)">
+      <summary>Enum:RxTypes to check what bridge is being used to access pdmp. Indexed in database</summary>
+      <Enumeration name="RxTypes">
+        <summary>RxType used to determine which bridge accesses patient history from PDMP. Rx is the default</summary>
+        <EnumValue name="BambooAccess">2 - </EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="securitylog">
+    <summary></summary>
+    <column order="1" name="PermType" type="tinyint">
+      <summary>Enum:EnumPermType</summary>
+      <Enumeration name="EnumPermType">
+        <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
+        <EnumValue name="ChanSpy">251 - Only used at OD HQ. Ability to listen to live calls.</EnumValue>
+        <EnumValue name="ClaimProcFeeBilledToInsEdit">252 - Ability to edit Fee Billed to Insurance in FormClaimProc</EnumValue>
+        <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
+        <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="signalod">
+    <summary></summary>
+    <column order="4" name="FKeyType" type="varchar(255)">
+      <summary>Enum:KeyType Describes the type of object referenced by the FKey.</summary>
+      <Enumeration name="KeyType">
+        <summary>Do not combine with SignalType, they must be seperate. Stored as string, safe to reorder enum values.</summary>
+        <EnumValue name="ChanSpy">This is HQ specific and will be used to listen in on live calls</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="supplyorderitem">
+    <summary></summary>
+    <column order="5" name="DateReceived" type="date">
+      <summary>Optional. The order itself already has this field. But if a partial order comes in, and if the user wants to track item dates separately, then they can do it here.</summary>
+    </column>
+  </table>
+  <table name="plannedappt">
+    <summary></summary>
+    <column order="0" name="PlannedApptNum" type="bigint(20)" deleted="true">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="PatNum" type="bigint(20)" deleted="true" fk="patient">
+      <summary>FK to patient.PatNum.</summary>
+    </column>
+    <column order="2" name="AptNum" type="bigint(20)" deleted="true" fk="appointment">
+      <summary>FK to appointment.AptNum.</summary>
+    </column>
+    <column order="3" name="ItemOrder" type="int(11)" deleted="true">
+      <summary>One-indexed order of item in group of planned appts.</summary>
+    </column>
+  </table>
+  <table name="program">
+    <summary></summary>
+    <column order="4" name="Path" type="varchar(255)">
+      <summary>The path of the executable to run or file to open. Text since 255 is the largest VARCHAR supported and some softwares have long paths that can easily exceed 255 characters.</summary>
+    </column>
+    <column order="5" name="CommandLine" type="varchar(255)">
+      <summary>Some programs will accept command line arguments. Text since 255 is the largest VARCHAR supported and some softwares have long command line arguments that can easily exceed 255 characters.</summary>
+    </column>
+  </table>
+  <table name="rxpat">
+    <summary></summary>
+    <column order="24" name="RxType" type="tinyint(4)">
+      <summary>Enum:RxTypes to check what bridge is being used to access pdmp. Indexed in database</summary>
+      <Enumeration name="RxTypes">
+        <summary>RxType used to determine which bridge accesses patient history from PDMP. Rx is the default</summary>
+      </Enumeration>
+    </column>
+  </table>
+</database>

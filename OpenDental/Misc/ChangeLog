@@ -1,0 +1,7 @@
+2007-03-31  Frederik Carlier <frederik.carlier@carlier-online.be>
+
+    * ClassConvertDatabase.cs: 
+        - Rewrote the ExecuteFile function to always prefix the file name with "ConversionFiles", avoiding the need to repeat this in every call. 
+        - Used Path.Combine instead of backslashes in directory names
+        - Removed some comments to make the file more readable
+        - Rewrote the ExecuteFile function to make use of File.ReadAllText. This simplifies the ExecuteFile function logic.

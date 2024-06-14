@@ -1,0 +1,24 @@
+<local:FrmODBase x:Class="OpenDental.FrmEFormLabelEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="845" Height="605" 
+             Text="Edit Label" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+		<ui:ToolBar x:Name="toolBarMain" Height="25" Width="627"/>
+		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="13,0,0,12" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,14,12" Text="_Save" Click="butSave_Click" />
+		<ui:TextRich x:Name="textLabel" Height="288" Margin="0,25,0,0" FormattedTextAllowed="True" SpellCheckIsEnabled="False" Width="627"/>
+		<ui:CheckBox x:Name="checkIsHorizontal" Height="20" Margin="20,326,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
+		<ui:Label Height="18" Margin="155,327,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
+		<ui:Label Width="98" Height="18" Margin="38,357,0,0" Text="Width" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="194,357,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
+		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="137,356,0,0" ShowZero="False"/>
+		<ui:ListBox x:Name="listBoxFields" Width="198" Margin="637,26,0,48" VerticalAlignment="Stretch"/>
+		<ui:Label Height="57" Margin="484,323,0,0" Text="Click on the list to the right to insert a Field into the main text above" Width="147" HAlign="Right" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,18 @@
+<local:FrmODBase x:Class="OpenDental.FrmEFormDef"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="467" Height="175" 
+             Text="Module Form Def Edit" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+		<ui:TextBox x:Name="textDescription" Height="20" RenderTransformOrigin="0.371,0.78" Width="285" Margin="122,26,0,0"/>
+		<ui:Label x:Name="labelModFormTitle" Height="18" Margin="34,27,0,0" Text="Description" Width="88" VAlign="Center" HAlign="Right" />
+		<ui:ListBox x:Name="listBoxType" Height="51" Margin="122,52,0,0" Width="224"/>
+		<ui:Label x:Name="labelModFormTitle_Copy" Height="18" Margin="34,51,0,0" Text="Type" Width="88" VAlign="Center" HAlign="Right" />
+	</Grid>
+</local:FrmODBase>

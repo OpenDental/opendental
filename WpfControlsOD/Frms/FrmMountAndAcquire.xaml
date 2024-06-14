@@ -1,0 +1,20 @@
+<local:FrmODBase x:Class="OpenDental.FrmMountAndAcquire"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="957" Height="527" 
+             Text="Select Mount and Acquire" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butMountAndAcquire" HorizontalAlignment="Right" Width="87" VerticalAlignment="Bottom" Height="35" Margin="0,0,19,12" Text="Create Mount and Acquire" Click="butMountAndAcquire_Click" />
+		<ui:Label x:Name="label1" Width="60" Height="18" Margin="25,19,0,0" Text="Mount" VAlign="Bottom" />
+		<ui:ListBox x:Name="listDevices" HorizontalAlignment="Right" Width="187" VerticalAlignment="Stretch" Margin="0,40,19,135" />
+		<ui:Button x:Name="butAcquire" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,19,105" Text="Acquire" Click="butAcquire_Click" />
+		<ui:Label x:Name="label2" HorizontalAlignment="Right" Width="60" Height="18" Margin="0,19,149,0" Text="Device" VAlign="Bottom" />
+		<ui:ListView x:Name="listViewMounts" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="28,40,222,42" />
+		<ui:Button x:Name="butMount" HorizontalAlignment="Right" Width="84" VerticalAlignment="Bottom" Height="24" Margin="0,0,222,12" Text="Create Mount" Click="butMount_Click" />
+	</Grid>
+</local:FrmODBase>

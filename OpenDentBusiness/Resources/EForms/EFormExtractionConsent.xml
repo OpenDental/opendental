@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EFormDef xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <IsNew>false</IsNew>
+  <EFormDefNum>0</EFormDefNum>
+  <FormType>Consent</FormType>
+  <Description>Extraction Consent</Description>
+  <DateTCreated>2024-05-08T14:36:58</DateTCreated>
+  <IsInternalHidden>false</IsInternalHidden>
+  <ListEFormFieldDefs>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>4129</EFormFieldDefNum>
+      <EFormDefNum>0</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;&lt;Paragraph&gt;Extraction Consent&lt;/Paragraph&gt;&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>0</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+      <ConditionalParent />
+      <ConditionalValue />
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>4130</EFormFieldDefNum>
+      <EFormDefNum>11</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;&lt;Paragraph&gt;[dateToday]&lt;/Paragraph&gt;&lt;Paragraph&gt;[nameFL]&lt;/Paragraph&gt;&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>1</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+      <ConditionalParent />
+      <ConditionalValue />
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>4131</EFormFieldDefNum>
+      <EFormDefNum>11</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Tooth number(s):</ValueLabel>
+      <ItemOrder>2</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>200</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+      <ConditionalParent />
+      <ConditionalValue />
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>4132</EFormFieldDefNum>
+      <EFormDefNum>11</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;Extraction(s) are to be performed on the tooth/teeth listed above.  While we expect no complications, there are some risks involved with this procedure.  The more common complications are: &lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;&lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;Pain, infection, swelling, bruising, and discoloration.  Adjacent teeth may be chipped or damaged during the extraction. &lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;&lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;Nerves that run near the area of extraction may be bruised or damaged.  You may experience some temporary numbness and tingling of the lip and chin, or in rare cases, the tongue.  In some extremely rare instances, the lack of sensation could be permanent. &lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;&lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;In the upper arch, sinus complications can occur because the roots of some upper teeth extend near or into the sinuses.  After extraction, a hole may be present between the sinus and the mouth.  If this happens, you will be informed and the area repaired. &lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left" xml:space="preserve"&gt;&lt;/Paragraph&gt;&lt;Paragraph TextIndent="25" Margin="0,0,0,0" TextAlignment="Left"&gt;By signing below you acknowledge that you understand the information presented, have had all your questions answered satisfactorily, and give consent to perform this procedure.&lt;/Paragraph&gt;&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>3</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+      <ConditionalParent />
+      <ConditionalValue />
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>4133</EFormFieldDefNum>
+      <EFormDefNum>11</EFormDefNum>
+      <FieldType>SigBox</FieldType>
+      <DbLink />
+      <ValueLabel>Signature</ValueLabel>
+      <ItemOrder>4</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+      <ConditionalParent />
+      <ConditionalValue />
+    </EFormFieldDef>
+  </ListEFormFieldDefs>
+  <IsInternal>false</IsInternal>
+</EFormDef>
