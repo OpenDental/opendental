@@ -14,8 +14,6 @@ using WpfControls.UI;
 namespace OpenDental {
 
 	public partial class FrmParentEdit:FrmODBase {
-		///<summary>Set true if this is a new Child-Parent relationship.</summary>
-		public bool IsNew=false;
 		///<summary>Assigned by calling frm. The Parent can be unassigned intially if IsNew and can change. ChildNum does not change.</summary>
 		public ChildParent ChildParentCur;
 
@@ -27,9 +25,6 @@ namespace OpenDental {
 		private void FrmGuardianEdit_Load(object sender,EventArgs e) {
 			Child child=Children.GetOne(ChildParentCur.ChildNum);
 			textChild.Text=child.FName+" "+child.LName;
-			if(IsNew) {//No parent selected yet
-				return;
-			}
 			textParent.Text=Userods.GetName(ChildParentCur.Parent);
 		}
 		private void butPick_Click(object sender,EventArgs e) {
@@ -39,13 +34,22 @@ namespace OpenDental {
 				return;//No user was selected
 			}
 			Userod userodSelected=Userods.GetUser(frmParentSelect.UserNumSelected);
+			//Stop users from creating duplicate ChildParent relationships
+			List<ChildParent> listChildParents=ChildParents.GetChildParentsByChildNum(ChildParentCur.ChildNum);
+			if(listChildParents.Any(x => x.Parent==userodSelected.UserNum)) {
+				MsgBox.Show("A relationship between this child and parent already exists. Duplicates are not allowed.");
+				return;
+			}
 			textParent.Text=userodSelected.UserName;
 			ChildParentCur.Parent=userodSelected.UserNum;//Assign parent selected in FrmParentSelect
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
-			if(IsNew) {//Kickout if new relationship
+			if(ChildParentCur.IsNew) {//Kick out if new relationship
 				IsDialogCancel=true;
+				return;
+			}
+			if(!MsgBox.Show(MsgBoxButtons.YesNo,"Delete?")){
 				return;
 			}
 			ChildParents.Delete(ChildParentCur.ChildParentNum);
@@ -57,7 +61,7 @@ namespace OpenDental {
 				MsgBox.Show("An authorized user must be selected.");
 				return;
 			}
-			if(IsNew) {
+			if(ChildParentCur.IsNew) {
 				ChildParents.Insert(ChildParentCur);
 			}
 			else {

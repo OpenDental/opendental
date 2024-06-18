@@ -99,6 +99,14 @@ namespace OpenDentBusiness{
 			return _childRoomCache.GetTableFromCache(doRefreshCache);
 		}
 		#endregion Cache Pattern
+
+		public static string GetRoomId(long childRoomNum){
+			ChildRoom childRoom=GetFirstOrDefault(x=>x.ChildRoomNum==childRoomNum);
+			if(childRoom is null){
+				return "";
+			}
+			return childRoom.RoomId;
+		}
 		
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.

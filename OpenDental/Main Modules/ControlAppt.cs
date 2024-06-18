@@ -4221,6 +4221,9 @@ namespace OpenDental {
 		///<summary>Used for the UpdateProvs tool to reassign all future appointments for one op to another prov.
 		///Returns true if appointments were updated successfully.</summary>
 		public bool MoveAppointments(List<Appointment> listAppts,List<Appointment> listApptsOld,Operatory operatoryCur){
+			if(listAppts.Count==0) {//no appointments to update, so we're done
+				return true;
+			}
 			List<Schedule> listSchedulesForOp=Schedules.GetSchedsForOp(operatoryCur,listAppts.Select(x => x.AptDateTime).ToList());
 			List<Operatory> listOperatoriesForClinic=contrApptPanel.ListOpsVisible.Select(x => x.Copy()).ToList();
 			if(((ApptSchedEnforceSpecialty)PrefC.GetInt(PrefName.ApptSchedEnforceSpecialty)).In(

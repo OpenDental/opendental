@@ -74,6 +74,11 @@ namespace OpenDental {
 		///Words cannot be removed from the spelling dictionary and thus also cannot be removed from this dictionary.
 		///Is a concurrent dictionary so multiple odtextboxes can add words at the same time safely.</summary>
 		private static ConcurrentDictionary<string,SpellingType> _dictAllWords=new ConcurrentDictionary<string,SpellingType>();
+		///<summary>Check with Jordan before using. Only used in one place at HQ. When this is set then it will show as grey text when Text is null or empty and the user has not clicked into the textbox.</summary>
+		[Category("OD")]
+		[Description("Check with Jordan before using. Only used in one place at HQ. When this is set then it will show as grey text when Text is null or empty and the user has not clicked into the textbox.")]
+		[DefaultValue(null)]
+		public string PlaceholderText { get; set; }
 
 		[Category("OD"), Description("Set true to enable context menu to detect links.")]
 		[DefaultValue(true)]//Jordan This should be false because there's only a handful that use true, but too hard to change now.
@@ -268,6 +273,8 @@ namespace OpenDental {
 			this.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.ContentsResized += new System.Windows.Forms.ContentsResizedEventHandler(this.ODtextBox_ContentsResized);
 			this.VScroll += new System.EventHandler(this.ODtextBox_VScroll);
+			this.Enter += new System.EventHandler(this.ODtextBox_Enter);
+			this.Leave += new System.EventHandler(this.ODtextBox_Leave);
 			this.ResumeLayout(false);
 
 		}
@@ -324,9 +331,14 @@ namespace OpenDental {
 			}
 			else {//End IME check.
 				base.WndProc(ref m);
+				//Draw placeholder text when defined and there is no text entered.
+				if(m.Msg==(int)WindowsApiWrapper.WinMessagesOther.WM_PAINT && !string.IsNullOrEmpty(PlaceholderText) && !this.Focused && string.IsNullOrEmpty(this.Text)) {
+					using(Graphics g=Graphics.FromHwnd(Handle)) {
+						TextRenderer.DrawText(g,PlaceholderText,Font,ClientRectangle,SystemColors.GrayText,BackColor,TextFormatFlags.Top | TextFormatFlags.Left);
+					}
+				}
 			}
 		}
-
 
 		protected override void OnReadOnlyChanged(EventArgs e) {
 			base.OnReadOnlyChanged(e);
@@ -712,6 +724,20 @@ namespace OpenDental {
 			}
 			if(IsUsingSpellCheck()) {//Only spell check if enabled
 				timerSpellCheck.Start();
+			}
+		}
+
+		///<summary>Clears the placeholder text when defined.</summary>
+		private void ODtextBox_Enter(object sender, EventArgs e) {
+			if(string.IsNullOrEmpty(this.Text) && !string.IsNullOrEmpty(PlaceholderText)) {//Hide placeholder text when user clicks into empty textbox.
+				this.Invalidate();//Clear placeholder
+			}
+		}
+
+		///<summary>Redraws the placeholdertext if needed.</summary>
+		private void ODtextBox_Leave(object sender, EventArgs e) {
+			if(string.IsNullOrEmpty(this.Text) && !string.IsNullOrEmpty(PlaceholderText)) {//User did not enter text and we have a placeholder defined.
+				this.Invalidate();//Redraw placeholder
 			}
 		}
 

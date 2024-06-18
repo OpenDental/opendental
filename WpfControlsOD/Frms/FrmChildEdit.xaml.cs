@@ -21,8 +21,6 @@ namespace OpenDental {
 	public partial class FrmChildEdit:FrmODBase {
 		///<summary></summary>
 		public Child ChildCur;
-		///<summary>True if the child is a new entry.</summary>
-		public bool IsNew;
 
 		///<summary></summary>
 		public FrmChildEdit() {
@@ -32,7 +30,12 @@ namespace OpenDental {
 		}
 
 		private void FrmChildEdit_Load(object sender,EventArgs e) {
+			textFirstName.Text=ChildCur.FName;
+			textLastName.Text=ChildCur.LName;
+			textBirthdate.Value=ChildCur.BirthDate;
 			FillListBox();
+			textPrimaryRoom.Text=ChildRooms.GetRoomId(ChildCur.ChildRoomNumPrimary);
+			textNotes.Text=ChildCur.Notes;
 		}
 
 		private void FillListBox() {
@@ -50,9 +53,9 @@ namespace OpenDental {
 
 		private void butAdd_Click(object sender,EventArgs e) {
 			FrmParentEdit frmParentEdit=new FrmParentEdit();
-			frmParentEdit.IsNew=true;
 			ChildParent childParent=new ChildParent();
 			childParent.ChildNum=ChildCur.ChildNum;//Assign child
+			childParent.IsNew=true;
 			frmParentEdit.ChildParentCur=childParent;
 			frmParentEdit.ShowDialog();
 			if(!frmParentEdit.IsDialogOK) {
@@ -65,13 +68,27 @@ namespace OpenDental {
 			//not implemented
 		}
 
-		private void butDelete_Click(object sender,EventArgs e) {
-			//not implemented
-			//also delete ChildParent relationships
-		}
-
 		private void butSave_Click(object sender, System.EventArgs e) {
-			//not implemented
+			if(textFirstName.Text=="") {
+				MsgBox.Show("This child must have a first name.");
+				return;
+			}
+			if(textLastName.Text=="") {
+				MsgBox.Show("This child must have a last name.");
+				return;
+			}
+			if(!textBirthdate.IsValid() || textBirthdate.Text=="") {
+				MsgBox.Show("This child must have a birthdate.");
+				return;
+			}
+			ChildCur.FName=textFirstName.Text;
+			ChildCur.LName=textLastName.Text;
+			ChildCur.BirthDate=textBirthdate.Value;
+			ChildCur.Notes=textNotes.Text;
+			//ChildRoomNumPrimary will be set in the room selection window
+			//Only need to update as new children will already be inserted by the parent FrmChildren
+			Children.Update(ChildCur);
+			IsDialogOK=true;
 		}
 
 

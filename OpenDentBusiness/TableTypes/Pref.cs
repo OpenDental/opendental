@@ -562,6 +562,9 @@ namespace OpenDentBusiness {
 		///<summary>If true, then checkboxes for Tooth Chart Ortho Mode and Show Ortho Grids will get automatically checked and unchecked</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		ChartOrthoTabAutomaticCheckboxes,
+		///<summary>Used by HQ only. True if this is the Daycare database. For this to work properly, the ODHQ flag must also be set.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		ChildDaycare,
 		ClaimAttachExportPath,
 		///<summary>If true, we will display the Patient Repsonsibility in the claim edit and claim payment windows.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]

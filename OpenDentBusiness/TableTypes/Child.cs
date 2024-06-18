@@ -40,3 +40,7 @@ namespace OpenDentBusiness{
 		*/
 	}
 }
+
+/*
+The daycare will be given its own database. There is information in the live customers database that the daycare database will need to have and be synced with. Specifically this will be information from the userod table for the ChildTeacher and ChildParent tables in the daycare database. It should also be noted that a "parent" is an employee over in the live Customers db, but could also just be an entry for a badge given to another user authorized to pickup a child. In that case, the UserNum will not be present in Customers db and will be outside their normal range.
+*/

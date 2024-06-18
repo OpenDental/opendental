@@ -29,6 +29,8 @@ Jordan is the only one allowed to edit this file.
 		public Point PointAnchor1;
 		///<summary>These are the lower two points of the button that launched this window, in screen coordinates.  This window will roughly center its top edge on these anchor points and will also omit the outline between these two points so that it looks more like a menu.</summary>
 		public Point PointAnchor2;
+		///<summary>This lets us get a list of all floater windows from ControlImages at the moment when we open this window.</summary>
+		public Func<List<string>> FuncListFloaters;
 		#endregion Fields - Public
 
 		#region Fields - Private
@@ -223,23 +225,15 @@ Jordan is the only one allowed to edit this file.
 			y+=20;
 			listBoxWindows.Margin=new Thickness(x,y,0,0);
 			listBoxWindows.Width=_marginOuter+_sizeScreen.Width*2;
-			/*
-			List<string> listFormImageFloats=null;
-			if(_formImageFloat!=null){
-				listFormImageFloats=_formImageFloat.FuncListFloaters();
-			}
-			if(_controlImageDock!=null){
-				listFormImageFloats=_controlImageDock.FuncListFloaters();
-			}
-			for(int i = 0;i<listFormImageFloats.Count;i++) {
+			List<string> listFormImageFloats=FuncListFloaters();
+			for(int i=0;i<listFormImageFloats.Count;i++) {
 				listBoxWindows.Items.Add(listFormImageFloats[i]);
 				//todo: set selected
 				//if(listFormImageFloats[i]==_formImageFloat) {
 				//	listBoxWindows.SetSelected(i);
 				//}
 			}
-			listBoxWindows.Height=(int)LayoutManager.ScaleMS(font.Height)*listFormImageFloats.Count+4;//pulled from ListBoxOD.IntegralHeight.
-			*/
+//listBoxWindows.Height=(int)LayoutManager.ScaleMS(font.Height)*listFormImageFloats.Count+4;//pulled from ListBoxOD.IntegralHeight.
 			//Size and Location of window ==========================================================================
 			PresentationSource presentationSource = PresentationSource.FromVisual(this);
 			double scaleWindows=presentationSource.CompositionTarget.TransformToDevice.M11;//example 1.5. For this screen only.

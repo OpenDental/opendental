@@ -1782,6 +1782,18 @@ namespace OpenDentBusiness {
 			command="ALTER TABLE supplyorderitem ADD DateReceived date NOT NULL DEFAULT '0001-01-01'";
 			Db.NonQ(command);
 		}//End of 24_2_1() method
-		
+
+		private static void To24_2_2() {
+			string command="SELECT COUNT(*) FROM preference WHERE PrefName='OCRClinicsSignedUp'";
+			long count=Db.GetLong(command);
+			if(count==0) {//missing
+				command="INSERT INTO preference (PrefName,ValueString) VALUES('OCRClinicsSignedUp','')";
+				Db.NonQ(command);
+			}
+			//Start S54250
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('ChildDaycare','0')";
+			Db.NonQ(command);
+			//End S54250
+		}//End of 24_2_2() method
 	}
 }

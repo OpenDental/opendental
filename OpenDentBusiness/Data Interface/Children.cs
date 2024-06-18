@@ -114,37 +114,6 @@ namespace OpenDentBusiness{
 		}
 		
 		#endregion Methods - Get
-		#region Methods - Modify
-		///<summary></summary>
-		public static long Insert(Child child){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				child.ChildNum=Meth.GetLong(MethodBase.GetCurrentMethod(),child);
-				return child.ChildNum;
-			}
-			return Crud.ChildCrud.Insert(child);
-		}
-		///<summary></summary>
-		public static void Update(Child child){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),child);
-				return;
-			}
-			Crud.ChildCrud.Update(child);
-		}
-		///<summary></summary>
-		public static void Delete(long childNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),childNum);
-				return;
-			}
-			Crud.ChildCrud.Delete(childNum);
-		}
-		#endregion Methods - Modify
-		#region Methods - Misc
-		
-
-		
-		#endregion Methods - Misc
 		*/
 
 		///<summary>Gets one Child from the db.</summary>
@@ -154,6 +123,46 @@ namespace OpenDentBusiness{
 			}
 			return Crud.ChildCrud.SelectOne(childNum);
 		}
+
+		///<summary>Returns a list containing all children.</summary>
+		public static List<Child> GetAll() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Child>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM child ORDER BY FName";
+			return Crud.ChildCrud.SelectMany(command);
+		}
+
+		#region Methods - Modify
+
+		///<summary></summary>
+		public static long Insert(Child child){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				child.ChildNum=Meth.GetLong(MethodBase.GetCurrentMethod(),child);
+				return child.ChildNum;
+			}
+			return Crud.ChildCrud.Insert(child);
+		}
+
+		///<summary></summary>
+		public static void Update(Child child){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),child);
+				return;
+			}
+			Crud.ChildCrud.Update(child);
+		}
+
+		///<summary></summary>
+		public static void Delete(long childNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),childNum);
+				return;
+			}
+			Crud.ChildCrud.Delete(childNum);
+		}
+
+		#endregion Methods - Modify
 
 	}
 }

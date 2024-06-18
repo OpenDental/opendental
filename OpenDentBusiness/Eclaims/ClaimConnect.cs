@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -1185,8 +1185,15 @@ namespace OpenDentBusiness.Eclaims {
 		}
 
 		public static bool IsEnabled(Clearinghouse clearinghouseClin) {
-			//The XConnect API Key is entered into the ClaimConnect clearinghouse LoginID field.
-			return clearinghouseClin.CommBridge==EclaimsCommBridge.ClaimConnect && !string.IsNullOrWhiteSpace(clearinghouseClin.LoginID);
+			//The XConnect API Key is entered into the ClaimConnect clearinghouse LocationID field.
+			if(clearinghouseClin.CommBridge!=EclaimsCommBridge.ClaimConnect){
+				return false;
+			}
+			if(string.IsNullOrWhiteSpace(clearinghouseClin.LocationID)){
+				
+				return false;
+			}
+			return true;
 		}
 
 		///<summary>Call before making any API call. This fills necessary fields to complete creation of objects for the call.</summary>

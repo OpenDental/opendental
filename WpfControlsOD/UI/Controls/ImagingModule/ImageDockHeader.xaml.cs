@@ -128,7 +128,7 @@ Jordan is the only one allowed to edit this file.
 			Color colorHoverMinMax;
 			Color colorFloatBase=Color.FromRgb(65, 94, 154);//This is the default dark blue-gray, same as grid titles
 			Color colorHoverX=Color.FromRgb(232,17,35);;
-			if(_isEmpty){
+			if(IsEmpty){
 				colorBorder=Colors.White;
 				colorBorderText=Colors.White;
 				colorHoverMinMax=Colors.White;
@@ -157,7 +157,7 @@ Jordan is the only one allowed to edit this file.
 			else{
 				rectangleMin.Fill=new SolidColorBrush(colorBorder);
 			}
-			if(_isEmpty){
+			if(IsEmpty){
 				rectangleWindows.Fill=Brushes.White;
 				labelWin.Foreground=Brushes.White;
 			}
@@ -205,7 +205,7 @@ Jordan is the only one allowed to edit this file.
 		}
 
 		private void RectangleClose_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
-			if(_isEmpty){
+			if(IsEmpty){
 				return;
 			}
 			Close?.Invoke(this,new EventArgs());

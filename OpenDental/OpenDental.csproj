@@ -1030,12 +1030,6 @@
     <Compile Include="Forms\FormImageFloat.Designer.cs">
       <DependentUpon>FormImageFloat.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormImageFloatWindows.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormImageFloatWindows.Designer.cs">
-      <DependentUpon>FormImageFloatWindows.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\FormAllocationsSetup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7299,9 +7293,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormImageFloat.resx">
       <DependentUpon>FormImageFloat.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormImageFloatWindows.resx">
-      <DependentUpon>FormImageFloatWindows.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormAllocationsSetup.resx">
       <DependentUpon>FormAllocationsSetup.cs</DependentUpon>
