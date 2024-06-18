@@ -172,6 +172,12 @@ namespace OpenDental{
 					checkIsSent.ThreeState=false;
 					checkIsSent.CheckState=CheckState.Unchecked;
 					checkIsSent.Checked=ListStatements[0].IsSent;
+					if(ListStatements[0].IsSent){
+						SetEnabled(false);//Disable controls if all selected statements are sent
+						//User will still be able to uncheck the Sent box, which is the only way to mark a statement unsent so it will show again in list.
+						//Unlike with single edit, this wll not delete the existing pdfs. 
+						//It's always been like that and is no big deal.
+					}
 				}
 				//Mode------------------------------------------------------------------------------------------
 				allSame=true;
@@ -411,6 +417,7 @@ namespace OpenDental{
 			}
 		}
 
+		///<summary>This does not currently affect the Sent checkbox because users need to be able to mark statements unsent.</summary>
 		private void SetEnabled(bool boolval){
 			textDate.Enabled=boolval;
 			listMode.Enabled=boolval;
@@ -423,6 +430,7 @@ namespace OpenDental{
 			textNoteBold.ReadOnly=!boolval;
 			groupInvoice.Enabled=boolval;
 			checkSuperStatement.Enabled=boolval;
+			checkSendSms.Enabled=boolval;
 			//These checkboxes don't store their state in the DB. Therefore, they are only helpful for unsent statements and would be misleading if left visible and disabled.
 			//E.g. Editing a limited statement that was generated with last names showing would display checkShowLName as unchecked and disabled (which is misleading).
 			checkShowLName.Visible=boolval;
