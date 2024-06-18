@@ -680,7 +680,7 @@ namespace OpenDental {
 			if(countSubs>10000) {//10,000 per Nathan.
 				comboLinked.Visible=false;
 				butOtherSubscribers.Visible=true;
-				butOtherSubscribers.Location=comboLinked.Location;
+				LayoutManager.MoveLocation(butOtherSubscribers,comboLinked.Location);
 				return;
 			}
 			comboLinked.Visible=true;

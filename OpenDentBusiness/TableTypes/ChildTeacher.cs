@@ -25,7 +25,7 @@ namespace OpenDentBusiness{
 		command=@"CREATE TABLE childteacher (
 			ChildTeacherNum bigint NOT NULL auto_increment PRIMARY KEY,
 			UserNum bigint NOT NULL,
-			Notes varchar(255) NOT NULL,
+			Notes varchar(255) NOT NULL
 			) DEFAULT CHARSET=utf8";
 		Db.NonQ(command);
 		*/

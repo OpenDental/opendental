@@ -1,0 +1,15 @@
+<local:FrmODBase x:Class="OpenDental.FrmParentSelect"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="400" Height="563" 
+             Text="Select Authorized User" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butSave" Margin="0,0,10,12" Text="_Save" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Click="butSave_Click" />
+		<ui:ListBox x:Name="listUsers" Margin="10,10,92,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+	</Grid>
+</local:FrmODBase>

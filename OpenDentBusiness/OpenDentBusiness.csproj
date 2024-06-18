@@ -391,7 +391,7 @@
     <Compile Include="Data Interface\ChildParents.cs" />
     <Compile Include="Data Interface\ChildRoomLogs.cs" />
     <Compile Include="Data Interface\ChildRooms.cs" />
-    <Compile Include="Data Interface\Childs.cs" />
+    <Compile Include="Data Interface\Children.cs" />
     <Compile Include="Data Interface\ChildTeachers.cs" />
     <Compile Include="Data Interface\CodeGroups.cs" />
     <Compile Include="Data Interface\MobileBrandingProfiles.cs" />

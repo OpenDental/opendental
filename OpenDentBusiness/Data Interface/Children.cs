@@ -113,13 +113,6 @@ namespace OpenDentBusiness{
 			return Crud.ChildCrud.SelectMany(command);
 		}
 		
-		///<summary>Gets one Child from the db.</summary>
-		public static Child GetOne(long childNum){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<Child>(MethodBase.GetCurrentMethod(),childNum);
-			}
-			return Crud.ChildCrud.SelectOne(childNum);
-		}
 		#endregion Methods - Get
 		#region Methods - Modify
 		///<summary></summary>
@@ -154,7 +147,13 @@ namespace OpenDentBusiness{
 		#endregion Methods - Misc
 		*/
 
-
+		///<summary>Gets one Child from the db.</summary>
+		public static Child GetOne(long childNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<Child>(MethodBase.GetCurrentMethod(),childNum);
+			}
+			return Crud.ChildCrud.SelectOne(childNum);
+		}
 
 	}
 }

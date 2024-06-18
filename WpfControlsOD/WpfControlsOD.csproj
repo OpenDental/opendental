@@ -237,6 +237,12 @@
     <Compile Include="Frms\FrmChildCareMap.xaml.cs">
       <DependentUpon>FrmChildCareMap.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frms\FrmParentSelect.xaml.cs">
+      <DependentUpon>FrmParentSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmParentEdit.xaml.cs">
+      <DependentUpon>FrmParentEdit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\FrmChildren.xaml.cs">
       <DependentUpon>FrmChildren.xaml</DependentUpon>
     </Compile>
@@ -684,6 +690,14 @@
     <Compile Include="UI\ToothChart\Sparks3DInterface.cs" />
     <Compile Include="UI\ToothChart\ToothChartRelay.cs" />
     <Page Include="Frms\FrmChildCareMap.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmParentSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmParentEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -40,7 +40,7 @@ namespace OpenDentBusiness{
 			ChildTeacherNum bigint NOT NULL,
 			IsComing tinyint NOT NULL,
 			ChildRoomNum bigint NOT NULL,
-			INDEX(DateTDisplay)
+			INDEX(DateTDisplayed)
 			) DEFAULT CHARSET=utf8";
 		Db.NonQ(command);
 		*/

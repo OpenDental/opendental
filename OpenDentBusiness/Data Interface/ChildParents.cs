@@ -121,6 +121,19 @@ namespace OpenDentBusiness{
 			return Crud.ChildParentCrud.SelectOne(childParentNum);
 		}
 		#endregion Methods - Get
+		*/
+
+		#region Methods - Get
+		///<summary>Returns a list of all ChildParents with the given childNum.</summary>
+		public static List<ChildParent> GetChildParentsByChildNum(long childNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildParent>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM childparent WHERE ChildNum="+POut.Long(childNum);
+			return Crud.ChildParentCrud.SelectMany(command);
+		}
+		#endregion Methods - Get
+
 		#region Methods - Modify
 		///<summary></summary>
 		public static long Insert(ChildParent childParent){
@@ -130,6 +143,7 @@ namespace OpenDentBusiness{
 			}
 			return Crud.ChildParentCrud.Insert(childParent);
 		}
+
 		///<summary></summary>
 		public static void Update(ChildParent childParent){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
@@ -138,6 +152,7 @@ namespace OpenDentBusiness{
 			}
 			Crud.ChildParentCrud.Update(childParent);
 		}
+
 		///<summary></summary>
 		public static void Delete(long childParentNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -147,14 +162,6 @@ namespace OpenDentBusiness{
 			Crud.ChildParentCrud.Delete(childParentNum);
 		}
 		#endregion Methods - Modify
-		#region Methods - Misc
-		
-
-		
-		#endregion Methods - Misc
-		*/
-
-
 
 	}
 }

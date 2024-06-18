@@ -28,14 +28,37 @@ namespace OpenDental {
 		public FrmChildEdit() {
 			InitializeComponent();
 			Load+=FrmChildEdit_Load;
+			listAuthorized.MouseDoubleClick+=listAuthorized_MouseDoubleClick;
 		}
 
 		private void FrmChildEdit_Load(object sender,EventArgs e) {
+			FillListBox();
+		}
+
+		private void FillListBox() {
+			List<ChildParent> listChildParents=ChildParents.GetChildParentsByChildNum(ChildCur.ChildNum);
+			listAuthorized.Items.Clear();
+			for(int i=0;i<listChildParents.Count;i++) {
+				Userod userod=Userods.GetUser(listChildParents[i].Parent);
+				listAuthorized.Items.Add(userod.UserName,userod);
+			}
+		}
+
+		private void listAuthorized_MouseDoubleClick(object sender,MouseButtonEventArgs e) {
 			//not implemented
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			//not implemented
+			FrmParentEdit frmParentEdit=new FrmParentEdit();
+			frmParentEdit.IsNew=true;
+			ChildParent childParent=new ChildParent();
+			childParent.ChildNum=ChildCur.ChildNum;//Assign child
+			frmParentEdit.ChildParentCur=childParent;
+			frmParentEdit.ShowDialog();
+			if(!frmParentEdit.IsDialogOK) {
+				return;
+			}
+			FillListBox();//Refill to show changes
 		}
 
 		private void butRoomSelect_Click(object sender,EventArgs e) {
@@ -44,6 +67,7 @@ namespace OpenDental {
 
 		private void butDelete_Click(object sender,EventArgs e) {
 			//not implemented
+			//also delete ChildParent relationships
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {

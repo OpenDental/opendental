@@ -12,7 +12,7 @@ namespace OpenDentBusiness{
 		public long ChildParentNum;
 		///<summary>FK to child.ChildNum.</summary>
 		public long ChildNum;
-		///<summary>FK to userod.UserNum. Typically an employee, but could also just be for a badge given to another guardian.</summary>
+		///<summary>FK to userod.UserNum. Typically an employee over in the Customers db, but could also just be for a badge given to another guardian. In that case, the UserNum will not be present in Customers db and will be outside their normal range.</summary>
 		public long Parent;
 		//We will probably soon add a Name field here for when we don't want to actually link to a usernum and they don't need a card.
 
