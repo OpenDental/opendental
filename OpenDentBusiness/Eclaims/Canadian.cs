@@ -1040,72 +1040,74 @@ namespace OpenDentBusiness.Eclaims {
 					subList,patient,patNote,listSelectedProcs,"",insPlan2,insSub2,patRelat2);
 				}
 				catch{}
-				if(claim.ProvBill!=claim2.ProvBill || claim.ProvTreat!=claim2.ProvTreat) {
-					//The billing and treating providers need to be the same on the secondary claim as they were on the primary claim.
-					//This is particularly necessary when the primary claim has a secondary provider set as the Treating Provider.
-					claim2.ProvBill=claim.ProvBill;
-					claim2.ProvTreat=claim.ProvTreat;
-					Claims.Update(claim2);
-				}
-				queueItem2=Claims.GetQueueList(claim2.ClaimNum,claim2.ClinicNum,0)[0];
-				if(embeddedMsg.IsNullOrEmpty()) {//No embedded secondary response
-					string responseMessageVersion=result.Substring(18,2);//Field A03 always exists on all messages and is always in the same location.
-					//We can only send an electronic secondary claim when the EOB received from the primary insurance is a version 04 message and when
-					//the secondary carrier accepts secondary claims electronically (COBs). Otherwise, the user must send the claim by paper.
-					if(responseMessageVersion!="02" && carrier2.IsCDA && carrier2.NoSendElect==NoSendElectType.SendElect
-						&& carrier2.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07))
-					{
-						SendClaim(clearinghouseClin,queueItem2,doPrint,isAutomatic,formCCDPrint,showProviderTransferWindow,
-							printCdaClaimFormDelegate);//recursive
-						return queueItem2.ClaimNum;
+				if(claim2.ClaimNum > 0) {//ClaimNum will be set if the secondary claim was created successfully.
+					if(claim.ProvBill!=claim2.ProvBill || claim.ProvTreat!=claim2.ProvTreat) {
+						//The billing and treating providers need to be the same on the secondary claim as they were on the primary claim.
+						//This is particularly necessary when the primary claim has a secondary provider set as the Treating Provider.
+						claim2.ProvBill=claim.ProvBill;
+						claim2.ProvTreat=claim.ProvTreat;
+						Claims.Update(claim2);
 					}
-					//The secondary carrier does not support COB claim transactions. We must print a manual claim form so the user can send manually.
-					if(doPrint) {
-						printCdaClaimFormDelegate(claim2);
-					}
-				}
-				else {//Embedded secondary response
-					Etrans etrans2=CreateEtransForSendClaim(queueItem2.ClaimNum,queueItem2.PatNum,clearinghouseClin.HqClearinghouseNum,EtransType.ClaimCOB_CA);//Can throw exception
-					Etrans etransAck2=new Etrans();
-					etransAck2.PatNum=etrans2.PatNum;
-					etransAck2.PlanNum=etrans2.PlanNum;
-					etransAck2.InsSubNum=etrans2.InsSubNum;
-					etransAck2.CarrierNum=etrans2.CarrierNum;
-					etransAck2.ClaimNum=etrans2.ClaimNum;
-					etransAck2.DateTimeTrans=DateTime.Now;
-					etransAck2.UserNum=Security.CurUser.UserNum;
-					//embedded response occurs when patient has the same carrier for primary and secondary so an embedded response is a COB by default
-					etransAck2.Etype=EtransType.ClaimCOB_CA;
-					Claims.SetClaimSent(queueItem2.ClaimNum);//No error, safe to set sent.
-					claim2.DateSent=MiscData.GetNowDateTime();
-					claim2.DateSentOrig=claim2.DateSent;
-					claim2.ClaimStatus="S";//Reflect changes in cached object.
-					CCDField embeddedFieldG05=fieldInputter2.GetFieldById("G05");
-					if(embeddedFieldG05!=null) {
-						etransAck.AckCode=embeddedFieldG05.valuestr;
-						if(etransAck.AckCode=="M") { //Manually print the claim form.
+					queueItem2=Claims.GetQueueList(claim2.ClaimNum,claim2.ClinicNum,0)[0];
+					if(embeddedMsg.IsNullOrEmpty()) {//No embedded secondary response
+						string responseMessageVersion=result.Substring(18,2);//Field A03 always exists on all messages and is always in the same location.
+						//We can only send an electronic secondary claim when the EOB received from the primary insurance is a version 04 message and when
+						//the secondary carrier accepts secondary claims electronically (COBs). Otherwise, the user must send the claim by paper.
+						if(responseMessageVersion!="02" && carrier2.IsCDA && carrier2.NoSendElect==NoSendElectType.SendElect
+							&& carrier2.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07))
+						{
+							SendClaim(clearinghouseClin,queueItem2,doPrint,isAutomatic,formCCDPrint,showProviderTransferWindow,
+								printCdaClaimFormDelegate);//recursive
+							return queueItem2.ClaimNum;
+						}
+						//The secondary carrier does not support COB claim transactions. We must print a manual claim form so the user can send manually.
+						if(doPrint) {
 							printCdaClaimFormDelegate(claim2);
 						}
 					}
-					Etranss.Insert(etransAck2);
-					Etranss.SetMessage(etransAck2.EtransNum,embeddedMsg);//Save incomming history.
-					etrans2.AckEtransNum=etransAck2.EtransNum;
-					Etranss.Update(etrans2);
-					Etranss.SetMessage(etrans2.EtransNum,strb.ToString());//Save outgoing history.  Same as sent primary eclaim.
-					//This mimics logic earlier in SendClaim(...) to make sure we're handling the embedded response appropriately
-					bool assignBenInsSub2=Claims.GetAssignmentOfBenefits(claim,insSub2);
-					if(assignBenInsSub2 && clearinghouseClin.IsEraDownloadAllowed!=EraBehaviors.None && fieldInputter2.MsgType.In("21","23")) {
-						benefitList=Benefits.Refresh(patPlansForPatient,subList);
-						claimProcList=ClaimProcs.Refresh(queueItem2.PatNum);
-						List<ClaimProc> claimProcsClaim2=ClaimProcs.GetForSendClaim(claimProcList,claim2.ClaimNum);
-						EOBImportHelper(fieldInputter2,claimProcsClaim2,procListAll,claimProcList,claim2,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
-							,planList,benefitList,subList,patient);
-						SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,claim2.PatNum
-							,"Claim for service date "+POut.Date(claim2.DateService)+" amounts overwritten using received EOB amounts."
-							,LogSources.CanadaEobAutoImport);
-					}
-					if(doPrint && formCCDPrint!=null) {
-						formCCDPrint(etrans2,embeddedMsg,true);//Physically print the form.
+					else {//Embedded secondary response
+						Etrans etrans2=CreateEtransForSendClaim(queueItem2.ClaimNum,queueItem2.PatNum,clearinghouseClin.HqClearinghouseNum,EtransType.ClaimCOB_CA);//Can throw exception
+						Etrans etransAck2=new Etrans();
+						etransAck2.PatNum=etrans2.PatNum;
+						etransAck2.PlanNum=etrans2.PlanNum;
+						etransAck2.InsSubNum=etrans2.InsSubNum;
+						etransAck2.CarrierNum=etrans2.CarrierNum;
+						etransAck2.ClaimNum=etrans2.ClaimNum;
+						etransAck2.DateTimeTrans=DateTime.Now;
+						etransAck2.UserNum=Security.CurUser.UserNum;
+						//embedded response occurs when patient has the same carrier for primary and secondary so an embedded response is a COB by default
+						etransAck2.Etype=EtransType.ClaimCOB_CA;
+						Claims.SetClaimSent(queueItem2.ClaimNum);//No error, safe to set sent.
+						claim2.DateSent=MiscData.GetNowDateTime();
+						claim2.DateSentOrig=claim2.DateSent;
+						claim2.ClaimStatus="S";//Reflect changes in cached object.
+						CCDField embeddedFieldG05=fieldInputter2.GetFieldById("G05");
+						if(embeddedFieldG05!=null) {
+							etransAck.AckCode=embeddedFieldG05.valuestr;
+							if(etransAck.AckCode=="M") { //Manually print the claim form.
+								printCdaClaimFormDelegate(claim2);
+							}
+						}
+						Etranss.Insert(etransAck2);
+						Etranss.SetMessage(etransAck2.EtransNum,embeddedMsg);//Save incomming history.
+						etrans2.AckEtransNum=etransAck2.EtransNum;
+						Etranss.Update(etrans2);
+						Etranss.SetMessage(etrans2.EtransNum,strb.ToString());//Save outgoing history.  Same as sent primary eclaim.
+						//This mimics logic earlier in SendClaim(...) to make sure we're handling the embedded response appropriately
+						bool assignBenInsSub2=Claims.GetAssignmentOfBenefits(claim,insSub2);
+						if(assignBenInsSub2 && clearinghouseClin.IsEraDownloadAllowed!=EraBehaviors.None && fieldInputter2.MsgType.In("21","23")) {
+							benefitList=Benefits.Refresh(patPlansForPatient,subList);
+							claimProcList=ClaimProcs.Refresh(queueItem2.PatNum);
+							List<ClaimProc> claimProcsClaim2=ClaimProcs.GetForSendClaim(claimProcList,claim2.ClaimNum);
+							EOBImportHelper(fieldInputter2,claimProcsClaim2,procListAll,claimProcList,claim2,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
+								,planList,benefitList,subList,patient);
+							SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,claim2.PatNum
+								,"Claim for service date "+POut.Date(claim2.DateService)+" amounts overwritten using received EOB amounts."
+								,LogSources.CanadaEobAutoImport);
+						}
+						if(doPrint && formCCDPrint!=null) {
+							formCCDPrint(etrans2,embeddedMsg,true);//Physically print the form.
+						}
 					}
 				}
 			}
