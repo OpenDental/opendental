@@ -1,4 +1,4 @@
-﻿/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
+/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
 using CodeBase;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2023,4,24);
+		public static DateTime DateStart=new DateTime(2024,6,19);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
