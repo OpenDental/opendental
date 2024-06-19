@@ -146,6 +146,7 @@ namespace OpenDental {
             catch (Exception ex)
             {
                 Console.WriteLine("ODSMS module is not initialized or an error occurred while accessing it. Please check your VPN connection. The program is about to crash.");
+				MsgBox.Show("Please check your VPN connection");
                 throw new ApplicationException("ODSMS module is not initialized or an error occurred while accessing it. Please check your VPN connection.", ex);
             }
 

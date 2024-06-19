@@ -325,52 +325,69 @@ namespace OpenDentBusiness
             }
             return queueSizeInt;
         }
+
         async static Task<bool> SmsGo(string url, string mobilePhoneNumber, string authedpath)
-		{
-			if (sharedClient == null)
-			{
-				sharedClient = new HttpClient();
-				sharedClient.BaseAddress = new Uri(ODSMS.URL);
-			}
-			var response = await sharedClient.GetAsync(url);
-			try
-			{
-				response.EnsureSuccessStatusCode();
+        {
+            if (sharedClient == null)
+            {
+                sharedClient = new HttpClient();
+                sharedClient.BaseAddress = new Uri(ODSMS.URL);
+            }
+
+            try
+            {
+                var response = await sharedClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
                     throw new Exception($"Unexpected status code: {response.StatusCode}");
                 }
 
                 var res = await response.Content.ReadAsStringAsync();
-				var queueSize = await getQueueSizeAsync();
+                var message_id = res.Substring(4).Trim(); // Assuming the message_id is at the end of the response
 
-                // Wait for 120 seconds + 20 seconds per message in the queue.  This should give enough time for the queue to clear
-                await System.Threading.Tasks.Task.Delay((120 + (queueSize * 20)) * 1000);
-				var message_id = res.Substring(4);
+                // Poll the status until the message is processed or a maximum number of retries is reached
+                const int maxRetries = 30;
+                const int delayBetweenRetries = 15000; // 15 seconds
 
-                var responseUpdate = await sharedClient.GetAsync(authedpath + message_id);
-				responseUpdate.EnsureSuccessStatusCode();
-				var resUpdate = await responseUpdate.Content.ReadAsStringAsync();
-                Console.WriteLine($"Result from SMS send attempt: {resUpdate}");
-                if (resUpdate.Contains("200 Success")) // Success string (not HTTP codes because not HTTP error)
+                for (int attempt = 0; attempt < maxRetries; attempt++)
                 {
-                    return true; // SMS sent successfully
-                }
-                else
-                {
-                    // TODO: Add an update to the comm log marking it as failed
-                    return false; // SMS send failed
+                    await System.Threading.Tasks.Task.Delay(delayBetweenRetries); // Wait before polling the status
+
+                    var responseUpdate = await sharedClient.GetAsync($"{authedpath}{message_id}&info=status");
+                    responseUpdate.EnsureSuccessStatusCode();
+
+                    var resUpdate = await responseUpdate.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Result from SMS send attempt: {resUpdate}");
+
+                    if (resUpdate.Contains("STATUS:200 Success")) // Success string (not HTTP codes because not HTTP error)
+                    {
+                        return true; // SMS sent successfully
+                    }
+                    else if (resUpdate.Contains("ERROR:")) // Check for errors
+                    {
+                        EventLog.WriteEntry("ODSMS", $"Error updating SMS status for {mobilePhoneNumber}: {resUpdate}", EventLogEntryType.Error, 103, 1, new byte[10]);
+                        return false; // SMS send failed
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Attempt {attempt + 1}/{maxRetries}: Message status is still pending.");
+                    }
                 }
 
+                // If the status is still not confirmed after maxRetries
+                EventLog.WriteEntry("ODSMS", $"SMS send status for {mobilePhoneNumber} could not be confirmed after {maxRetries} attempts.", EventLogEntryType.Warning, 104, 1, new byte[10]);
+                return false; // SMS send failed
             }
             catch (Exception ex)
             {
                 EventLog.WriteEntry("ODSMS", $"Error sending SMS to {mobilePhoneNumber}: {ex.Message}", EventLogEntryType.Error, 101, 1, new byte[10]);
                 MessageBox.Show("text to: +" + mobilePhoneNumber + " failed");
                 return false; // SMS send failed
-
             }
         }
+
 
 
         public static async Task<bool> SendSmsMessageAsync(SmsToMobile msg)
