@@ -35,23 +35,25 @@ namespace OpenDentBusiness {
 	///<summary>Enum representing different escalation groups. Adding a new value will also create a new escalation tab in FormMap/FormMapHQ and FormPhoneEmpDefaultEscalationEdit.  But do NOT change the order or add a new value in the middle.</summary>
 	public enum PhoneEmpSubGroupType {
 		///<summary>Default view. Should always be first value if we ever need to change this enum.</summary>
-		Escal,
+		Escalation,
 		///<summary>Eservices.</summary>
-		Eserv,
+		Eservices,
 		///<summary>Conversions.</summary>
-		Conv,
+		Conversions,
 		///<summary>Management.</summary>
-		Mgmt,
+		Management,
 		///<summary>Engineers.</summary>
-		Eng,
+		Engineers,
 		///<summary>Clinical.</summary>
-		Clin,
+		Clinical,
 		///<summary>Available. Shows the first tech who is available to take a phone call. Shows first in the list of tabs.</summary>
-		Avail,
+		Available,
 		///<summary>Replication.</summary>
-		Repl,
+		Replication,
 		///<summary>Database Engineers.</summary>
-		DbEn,
+		DatabaseEngineers,
+		///<summary>eRx.</summary>
+		eRx,
 	}
 
 }

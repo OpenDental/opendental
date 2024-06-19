@@ -31,13 +31,9 @@
 			this.butRight = new OpenDental.UI.Button();
 			this.butLeft = new OpenDental.UI.Button();
 			this.butSave = new OpenDental.UI.Button();
-			this.tabMain = new OpenDental.UI.TabControl();
-			this.tabPage1 = new OpenDental.UI.TabPage();
-			this.tabPage2 = new OpenDental.UI.TabPage();
-			this.tabPage3 = new OpenDental.UI.TabPage();
-			this.tabPage4 = new OpenDental.UI.TabPage();
 			this.labelAvail = new System.Windows.Forms.Label();
-			this.tabMain.SuspendLayout();
+			this.comboEscalationViewEdit = new OpenDental.UI.ComboBox();
+			this.labelEscalationGroup = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// gridEscalation
@@ -115,54 +111,6 @@
 			this.butSave.Text = "&Save";
 			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
-			// tabMain
-			// 
-			this.tabMain.Controls.Add(this.tabPage1);
-			this.tabMain.Controls.Add(this.tabPage2);
-			this.tabMain.Controls.Add(this.tabPage3);
-			this.tabMain.Controls.Add(this.tabPage4);
-			this.tabMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tabMain.Location = new System.Drawing.Point(12, 9);
-			this.tabMain.Name = "tabMain";
-			this.tabMain.Size = new System.Drawing.Size(410, 20);
-			this.tabMain.TabIndex = 90;
-			this.tabMain.Selected += new System.EventHandler(this.tabMain_Selected);
-			this.tabMain.SelectedIndexChanged += new System.EventHandler(this.tabMain_SelectedIndexChanged);
-			// 
-			// tabPage1
-			// 
-			this.tabPage1.Location = new System.Drawing.Point(2, 21);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(406, 0);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "tabPage1";
-			// 
-			// tabPage2
-			// 
-			this.tabPage2.Location = new System.Drawing.Point(2, 21);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(406, 0);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "tabPage2";
-			// 
-			// tabPage3
-			// 
-			this.tabPage3.Location = new System.Drawing.Point(2, 21);
-			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(406, 0);
-			this.tabPage3.TabIndex = 2;
-			this.tabPage3.Text = "tabPage3";
-			// 
-			// tabPage4
-			// 
-			this.tabPage4.Location = new System.Drawing.Point(2, 21);
-			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(406, 0);
-			this.tabPage4.TabIndex = 3;
-			this.tabPage4.Text = "tabPage4";
-			// 
 			// labelAvail
 			// 
 			this.labelAvail.Location = new System.Drawing.Point(428, 265);
@@ -173,13 +121,31 @@
     " time in this status to least then by those in Train status then by those in Bac" +
     "kup status.";
 			// 
+			// comboEscalationViewEdit
+			// 
+			this.comboEscalationViewEdit.Location = new System.Drawing.Point(135, 9);
+			this.comboEscalationViewEdit.Name = "comboEscalationViewEdit";
+			this.comboEscalationViewEdit.Size = new System.Drawing.Size(175, 21);
+			this.comboEscalationViewEdit.TabIndex = 92;
+			this.comboEscalationViewEdit.Text = "comboBox1";
+			this.comboEscalationViewEdit.SelectionChangeCommitted += new System.EventHandler(this.comboEscalationViewEdit_SelectionChangeCommitted);
+			// 
+			// labelEscalationGroup
+			// 
+			this.labelEscalationGroup.Location = new System.Drawing.Point(15, 11);
+			this.labelEscalationGroup.Name = "labelEscalationGroup";
+			this.labelEscalationGroup.Size = new System.Drawing.Size(120, 18);
+			this.labelEscalationGroup.TabIndex = 93;
+			this.labelEscalationGroup.Text = "Escalation Group";
+			this.labelEscalationGroup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// FormPhoneEmpDefaultEscalationEdit
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(529, 514);
+			this.Controls.Add(this.labelEscalationGroup);
+			this.Controls.Add(this.comboEscalationViewEdit);
 			this.Controls.Add(this.butSave);
 			this.Controls.Add(this.labelAvail);
-			this.Controls.Add(this.tabMain);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.gridEscalation);
@@ -189,7 +155,6 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPhoneEmpDefaultEscalationEdit";
 			this.Text = "Escalation Edit";
-			this.tabMain.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -203,11 +168,8 @@
 		private UI.GridOD gridEscalation;
 		private UI.Button butUp;
 		private UI.Button butDown;
-		private OpenDental.UI.TabControl tabMain;
-		private OpenDental.UI.TabPage tabPage1;
-		private OpenDental.UI.TabPage tabPage2;
-		private OpenDental.UI.TabPage tabPage3;
-		private OpenDental.UI.TabPage tabPage4;
 		private System.Windows.Forms.Label labelAvail;
+		private UI.ComboBox comboEscalationViewEdit;
+		private System.Windows.Forms.Label labelEscalationGroup;
 	}
 }

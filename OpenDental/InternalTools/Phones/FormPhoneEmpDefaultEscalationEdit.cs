@@ -15,11 +15,11 @@ namespace OpenDental {
 		///<summary>On load this becomes a copy of _dictSubGroupsOld. Then as we make changes this is updated and used to sync with _dictSubGroupsOld.</summary>
 		private Dictionary<PhoneEmpSubGroupType,List<PhoneEmpSubGroup>> _dictSubGroupsNew;
 
-		public FormPhoneEmpDefaultEscalationEdit(PhoneEmpSubGroupType phoneEmpSubGroupType=PhoneEmpSubGroupType.Avail) {
+		public FormPhoneEmpDefaultEscalationEdit(PhoneEmpSubGroupType phoneEmpSubGroupType=PhoneEmpSubGroupType.Available) {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			FillTabs();
+			FillComboEscalationViewEdit();
 			List<PhoneEmpSubGroup> listGroupsAll = PhoneEmpSubGroups.GetAll();
 			_dictSubGroupsOld=Enum.GetValues(typeof(PhoneEmpSubGroupType)).Cast<PhoneEmpSubGroupType>().ToDictionary(x=>x,x=>listGroupsAll.FindAll(y=>y.SubGroupType==x));
 			_dictSubGroupsNew=_dictSubGroupsOld.ToDictionary(x=>x.Key,x=>x.Value.Select(y=>y.Copy()).ToList());
@@ -28,41 +28,27 @@ namespace OpenDental {
 			//Sort by name.
 			_listPED.Sort(new PhoneEmpDefaults.PhoneEmpDefaultComparer(PhoneEmpDefaults.PhoneEmpDefaultComparer.SortBy.name));
 			FillGrids();
-			//This can change to a switch statement on tabDefault if we ever add custom named tabs.
-			tabMain.SelectTab(phoneEmpSubGroupType.ToString());
+			comboEscalationViewEdit.SetSelectedEnum(phoneEmpSubGroupType);
 		}
 		
-		///<summary>Clears tabs and populates with values from enum PhoneEmpSubGroupType.</summary>
-		private void FillTabs() {
-			UI.TabPage tabPage;
-			tabMain.TabPages.Clear();
-			//foreach(System.Windows.Forms.TabPage tab in tabMain.TabPages) {//Equivalent to tabMain.TabPages.Clear()
-			//	LayoutManager.Remove(tab);
-			//	tab.Dispose();
-			//}
-			tabPage=new UI.TabPage(PhoneEmpSubGroupType.Avail.ToString());
-			tabPage.Name=PhoneEmpSubGroupType.Avail.ToString();
-			tabPage.Tag=PhoneEmpSubGroupType.Avail;
-			LayoutManager.Add(tabPage,tabMain);
-			//tabMain.TabPages[PhoneEmpSubGroupType.Avail.ToString()].Tag=PhoneEmpSubGroupType.Avail;
-			List<PhoneEmpSubGroupType> listPhoneempSubGroupTypes=Enum.GetValues(typeof(PhoneEmpSubGroupType)).Cast<PhoneEmpSubGroupType>().ToList();
-			for(int i=0;i<listPhoneempSubGroupTypes.Count;i++){
-				if(listPhoneempSubGroupTypes[i]==PhoneEmpSubGroupType.Avail) {
-					continue;//Already added above
-				}
-				tabPage=new UI.TabPage(listPhoneempSubGroupTypes[i].ToString());
-				tabPage.Name=listPhoneempSubGroupTypes[i].ToString();
-				tabPage.Tag=listPhoneempSubGroupTypes[i];
-				LayoutManager.Add(tabPage,tabMain);
-			}
+		///<summary>Clears combobox and populates with values from enum PhoneEmpSubGroupType.</summary>
+		private void FillComboEscalationViewEdit() {
+			comboEscalationViewEdit.Items.Clear();
+			List<PhoneEmpSubGroupType> listPhoneEmpSubGroupTypes=Enum.GetValues(typeof(PhoneEmpSubGroupType))
+				.Cast<PhoneEmpSubGroupType>()
+				//move Available to head of list to match previous map tab structure rather than enum list order
+				.OrderBy(x => x!=PhoneEmpSubGroupType.Available)
+				.ToList();
+			comboEscalationViewEdit.Items.AddListEnum(listPhoneEmpSubGroupTypes);
+			comboEscalationViewEdit.SetSelectedEnum(PhoneEmpSubGroupType.Available); //set initial selection to Available
 			//Disable the Up and Down buttons when Avail is selected.
 			butUp.Enabled=false;
 			butDown.Enabled=false;
 		}
 
-		///<summary>Fills both grids for currently selected tab.</summary>
+		///<summary>Fills both grids for currently selected escalation view.</summary>
 		private void FillGrids() {
-			PhoneEmpSubGroupType typeCur=(PhoneEmpSubGroupType)tabMain.TabPages[tabMain.SelectedIndex].Tag;
+			PhoneEmpSubGroupType typeCur=comboEscalationViewEdit.GetSelected<PhoneEmpSubGroupType>();
 			List<PhoneEmpSubGroup> listEsc=_dictSubGroupsNew[typeCur];
 			listEsc=listEsc.OrderBy(x => x.EscalationOrder).ToList();
 			//Fill escalation grid.
@@ -104,20 +90,13 @@ namespace OpenDental {
 			}
 			gridEmployees.EndUpdate();	
 		}
-		
-		private void tabMain_SelectedIndexChanged(object sender,EventArgs e) {
-			
-		}
 
-		private void tabMain_Selected(object sender,EventArgs e) {
-			//if(tabMain.SelectedIndex==-1){//Control has not been initialized.
-			//	return;
-			//}
+		private void comboEscalationViewEdit_SelectionChangeCommitted(object sender,EventArgs e) {
 			gridEmployees.ScrollValue=0;//scroll to top
 			gridEscalation.ScrollValue=0;//scroll to top
 			FillGrids();
-			PhoneEmpSubGroupType typeCur=(PhoneEmpSubGroupType)tabMain.TabPages[tabMain.SelectedIndex].Tag;
-			if(typeCur==PhoneEmpSubGroupType.Avail) {
+			PhoneEmpSubGroupType typeCur=comboEscalationViewEdit.GetSelected<PhoneEmpSubGroupType>();
+			if(typeCur==PhoneEmpSubGroupType.Available) {
 				butUp.Enabled=false;
 				butDown.Enabled=false;
 				labelAvail.Visible=true;
@@ -133,7 +112,7 @@ namespace OpenDental {
 			if(gridEmployees.SelectedIndices.Length<=0) {
 				return;
 			}
-			PhoneEmpSubGroupType typeCur=(PhoneEmpSubGroupType)tabMain.TabPages[tabMain.SelectedIndex].Tag;
+			PhoneEmpSubGroupType typeCur=comboEscalationViewEdit.GetSelected<PhoneEmpSubGroupType>();
 			foreach(int i in gridEmployees.SelectedIndices) {
 				PhoneEmpDefault pedKeep=(PhoneEmpDefault)gridEmployees.ListGridRows[i].Tag;
 				_dictSubGroupsNew[typeCur].Add(new PhoneEmpSubGroup(pedKeep.EmployeeNum,typeCur,0));
@@ -145,7 +124,7 @@ namespace OpenDental {
 			if(gridEscalation.SelectedIndices.Length<=0) {
 				return;
 			}
-			PhoneEmpSubGroupType typeCur=(PhoneEmpSubGroupType)tabMain.TabPages[tabMain.SelectedIndex].Tag;
+			PhoneEmpSubGroupType typeCur=comboEscalationViewEdit.GetSelected<PhoneEmpSubGroupType>();
 			foreach(int i in gridEscalation.SelectedIndices) {
 				if(gridEscalation.ListGridRows[i].Tag is PhoneEmpDefault) {
 					PhoneEmpDefault pedCur=(PhoneEmpDefault)gridEscalation.ListGridRows[i].Tag;
@@ -169,7 +148,7 @@ namespace OpenDental {
 			}
 			//Retain current selection.
 			int curSelectedIndex=Math.Max(gridEscalation.SelectedIndices[0]-1,0);
-			PhoneEmpSubGroupType typeCur=(PhoneEmpSubGroupType)tabMain.TabPages[tabMain.SelectedIndex].Tag;
+			PhoneEmpSubGroupType typeCur=comboEscalationViewEdit.GetSelected<PhoneEmpSubGroupType>();
 			List<int> selectedIndices=new List<int>(gridEscalation.SelectedIndices);
 			for(int i=0;i<gridEscalation.ListGridRows.Count;i++) {
 				if(gridEscalation.ListGridRows[i].Tag is PhoneEmpDefault) {
@@ -208,7 +187,7 @@ namespace OpenDental {
 			}
 			//Retain current selection.
 			int curSelectedIndex=Math.Min(gridEscalation.SelectedIndices[0]+1,(gridEscalation.ListGridRows.Count-1));
-			PhoneEmpSubGroupType typeCur=(PhoneEmpSubGroupType)tabMain.TabPages[tabMain.SelectedIndex].Tag;
+			PhoneEmpSubGroupType typeCur=comboEscalationViewEdit.GetSelected<PhoneEmpSubGroupType>();
 			List<int> selectedIndices=new List<int>(gridEscalation.SelectedIndices);
 			for(int i=0;i<gridEscalation.ListGridRows.Count;i++) {
 				if(gridEscalation.ListGridRows[i].Tag is PhoneEmpDefault) {

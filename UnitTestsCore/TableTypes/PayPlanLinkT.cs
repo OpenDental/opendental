@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace UnitTestsCore {
 	public class PayPlanLinkT {
 
-		///<summary>For use with Dynamic Payment Plans. Production (proceudres and adjustments) is attached via PayPlanLinks.</summary>
+		///<summary>For use with Dynamic Payment Plans. Production (procedures and adjustments) is attached via PayPlanLinks.</summary>
 		public static PayPlanLink CreatePayPlanLink(PayPlan payplan,long fKey,PayPlanLinkType linkType,double amountOverride=0) {
 			return CreatePayPlanLink(payplan.PayPlanNum,fKey,linkType,amountOverride);
 		}
 
-		///<summary>For use with Dynamic Payment Plans. Production (proceudres and adjustments) is attached via PayPlanLinks.</summary>
+		///<summary>For use with Dynamic Payment Plans. Production (procedures and adjustments) is attached via PayPlanLinks.</summary>
 		public static PayPlanLink CreatePayPlanLink(long payPlanNum,long fKey,PayPlanLinkType linkType,double amountOverride=0) {
 			PayPlanLink link=new PayPlanLink() {
 				AmountOverride=amountOverride,

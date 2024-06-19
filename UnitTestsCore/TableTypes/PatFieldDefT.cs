@@ -51,7 +51,7 @@ namespace UnitTestsWeb {
 
 		///<summary>Deletes (almost) everything from the patfielddef table. Preserves dump file's CareCredit PatFieldDefs.</summary>
 		public static void ClearPatFieldDefTable() {
-			string command="DELETE FROM patfielddef WHERE PatFieldDefNum > 3";
+			string command="DELETE FROM patfielddef WHERE FieldName NOT IN ('CareCredit Pre-Approval Status','CareCredit Pre-Approval Amount','CareCredit Available Credit')";
 			DataCore.NonQ(command);
 		}
 	}

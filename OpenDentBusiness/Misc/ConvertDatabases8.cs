@@ -1704,7 +1704,7 @@ namespace OpenDentBusiness {
 					command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue" 
 						 +") VALUES(" 
 						 +"'"+POut.Long(programNum)+"', " 
-						 +"'Enter 0 to use the 5th and 6th digits, or 1 to use the last 2 digits, of the Patient Number for folder creation in Numbered Mode', "
+						 +"'Enter 0 to use the 5th and 6th digits, or 1 to use the last 2 digits of the Patient Number for folder creation in Numbered Mode', "
 						 +"'"+programPropertyValue.ToString()+"')";
 					Db.NonQ(command);
 				}
@@ -1724,61 +1724,10 @@ namespace OpenDentBusiness {
 				command="ALTER TABLE histappointment ADD INDEX (HistDateTStamp)";
 				Db.NonQ(command);
 			}
-			// Start S47726 PearlAI bridge
-			command="INSERT INTO program (ProgName,ProgDesc,Enabled,Path,CommandLine,Note"
-					+") VALUES("
-					+"'Pearl', "
-					+"'Pearl AI', "
-					+"'0', "
-					+"'', "
-					+"'', "
-					+"'For \"Show Pearl annotations by default\", enter true or false.')"; 
-			programNum=Db.NonQ(command,true); 
-			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue" 
-					+") VALUES(" 
-					+"'"+POut.Long(programNum)+"', " 
-					+"'"+POut.String(Bridges.Pearl.PEARL_FONT_SIZE_PROPERTY)+"', "
-					+"'18')"; 
-			Db.NonQ(command); 
-			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue" 
-					+") VALUES(" 
-					+"'"+POut.Long(programNum)+"', " 
-					+"'"+POut.String(Bridges.Pearl.PEARL_CLIENT_ID_PROPERTY)+"', "
-					+"'')"; 
-			Db.NonQ(command);  
-			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue" 
-					+") VALUES(" 
-					+"'"+POut.Long(programNum)+"', " 
-					+"'"+POut.String(Bridges.Pearl.PEARL_CLIENT_SECRET_PROPERTY)+"', "
-					+"'')"; 
-			Db.NonQ(command);  
-			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue" 
-					+") VALUES(" 
-					+"'"+POut.Long(programNum)+"', " 
-					+"'"+POut.String(Bridges.Pearl.PEARL_ORGANIZATION_ID_PROPERTY)+"', "
-					+"'')"; 
-			Db.NonQ(command);
-			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue" 
-					+") VALUES(" 
-					+"'"+POut.Long(programNum)+"', " 
-					+"'"+POut.String(Bridges.Pearl.PEARL_OFFICE_ID_PROPERTY)+"', "
-					+"'')"; 
-			Db.NonQ(command); 
-			command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue" 
-					+") VALUES(" 
-					+"'"+POut.Long(programNum)+"', " 
-					+"'"+POut.String(Bridges.Pearl.PEARL_SHOW_ANNOTATIONS_BY_DEFAULT_PROPERTY)+"', "
-					+"'true')"; 
-			Db.NonQ(command); 
-			command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) " 
-					+"VALUES (" 
-					+"'"+POut.Long(programNum)+"', " 
-					+"'3', "//ToolBarsAvail.ImagesModule 
-					+"'Send to Pearl')"; 
-			Db.NonQ(command);
+			//Start S47726
 			command="ALTER TABLE imagedraw ADD PearlLayer tinyint NOT NULL";
 			Db.NonQ(command);
-			//End S47726 PearlAI bridge
+			//End S47726
 			command="ALTER TABLE supplyorderitem ADD DateReceived date NOT NULL DEFAULT '0001-01-01'";
 			Db.NonQ(command);
 		}//End of 24_2_1() method
@@ -1795,5 +1744,19 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End S54250
 		}//End of 24_2_2() method
+
+		private static void To24_2_3() {
+			//Start 54624
+			string command="SELECT DISTINCT UserGroupNum FROM grouppermission WHERE PermType=24";//SecurityAdmin - Pulling all security admins
+			DataTable table=Db.GetTable(command);
+			long groupNum;
+			for(int i=0;i<table.Rows.Count;i++) {
+				groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
+				command="INSERT INTO grouppermission (UserGroupNum,PermType) "
+					+"VALUES("+POut.Long(groupNum)+",255)";//BadgeIdEdit - Setting permission for security admins
+				Db.NonQ(command);
+			}
+			//End 54624
+		}//End of 24_2_3() method
 	}
 }

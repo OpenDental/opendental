@@ -156,7 +156,7 @@ namespace OpenDental.InternalTools.Phones {
 			mapNumberTriageOpsTotal.Text=triageStaffCountTotal.ToString();
 			#endregion
 			mapPanel.SetPhoneList(listPhones, listChatUsers,listWebChatSessions,listPeerInfosRemoteSupportSessions);
-			RefreshCurrentTabHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
+			RefreshCurrentComboHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
 		}
 
 		///<summary></summary>
@@ -312,7 +312,7 @@ namespace OpenDental.InternalTools.Phones {
 			labelCurrentTime.Text=DateTime.Now.ToShortTimeString();
 			LayoutMenu();
 			FillMaps();
-			FillTabs();
+			FillComboEscalationView();
 			FillCombo();
 			FillMapPanel();
 			FillTriagePreferences();
@@ -321,13 +321,6 @@ namespace OpenDental.InternalTools.Phones {
 			//refresh immediately instead of waiting a second for a new signal.
 			ODThread.WakeUpThreadsByGroupName(FormOpenDental.FormODThreadNames.HqMetrics.GetDescription());
 			//ProcessHqMetricsPhones();
-		}
-
-		private void tabMain_SelectedIndexChanged(object sender,EventArgs e) {
-			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
-			List<Phone> listPhones=OpenDentBusiness.Phones.GetPhoneList();
-			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=PhoneEmpSubGroups.GetAll();
-			RefreshCurrentTabHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
 		}
 		#endregion Methods - Private, Event Handlers
 
@@ -357,7 +350,7 @@ namespace OpenDental.InternalTools.Phones {
 			using FormPhoneEmpDefaultEscalationEdit formPhoneEmpDefaultEscalationEdit=new FormPhoneEmpDefaultEscalationEdit();
 			formPhoneEmpDefaultEscalationEdit.ShowDialog();
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
-			RefreshCurrentTabHelper(listPhoneEmpDefaults,OpenDentBusiness.Phones.GetPhoneList(),PhoneEmpSubGroups.GetAll());
+			RefreshCurrentComboHelper(listPhoneEmpDefaults,OpenDentBusiness.Phones.GetPhoneList(),PhoneEmpSubGroups.GetAll());
 			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Escalation team changed");
 		}
 
@@ -416,8 +409,9 @@ namespace OpenDental.InternalTools.Phones {
 			if(phone==null || phone.Description!="") { //Filter out invalid employees or employees that are already on the phone.
 				return false;
 			}
-			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
-			if(phoneEmpSubGroupTypeSelected==PhoneEmpSubGroupType.Avail) {//Special rules for the Avail escalation view
+			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=new PhoneEmpSubGroupType();
+			phoneEmpSubGroupTypeSelected=comboEscalationView.GetSelected<PhoneEmpSubGroupType>();
+			if(phoneEmpSubGroupTypeSelected==PhoneEmpSubGroupType.Available) {//Special rules for the Available escalation view
 				if(!phone.IsProxVisible() && !Employees.GetEmp(phoneEmpDefault.EmployeeNum).IsWorkingHome) {
 					return false;
 				}
@@ -586,22 +580,15 @@ namespace OpenDental.InternalTools.Phones {
 			}
 		}
 
-		private void FillTabs() {
-			tabMain.TabPages.Clear();
-			UI.TabPage tabPage=new UI.TabPage(PhoneEmpSubGroupType.Avail.ToString());
-			tabPage.Name=PhoneEmpSubGroupType.Avail.ToString();
-			tabPage.Tag=PhoneEmpSubGroupType.Avail;
-			LayoutManager.Add(tabPage,tabMain);
-			List<PhoneEmpSubGroupType> listPhoneEmpSubGroupTypes=Enum.GetValues(typeof(PhoneEmpSubGroupType)).Cast<PhoneEmpSubGroupType>().ToList();
-			for(int i=0;i<listPhoneEmpSubGroupTypes.Count;i++){
-				if(listPhoneEmpSubGroupTypes[i]==PhoneEmpSubGroupType.Avail) {
-					continue;//Already added above
-				}
-				tabPage=new UI.TabPage(listPhoneEmpSubGroupTypes[i].ToString());
-				tabPage.Name=listPhoneEmpSubGroupTypes[i].ToString();
-				tabPage.Tag=listPhoneEmpSubGroupTypes[i];
-				LayoutManager.Add(tabPage,tabMain);
-			}
+		private void FillComboEscalationView() {
+			comboEscalationView.Items.Clear();
+			List<PhoneEmpSubGroupType> listPhoneEmpSubGroupTypes=Enum.GetValues(typeof(PhoneEmpSubGroupType))
+				.Cast<PhoneEmpSubGroupType>()
+				//move Available to head of list to match previous map tab structure rather than enum list order
+				.OrderBy(x => x!=PhoneEmpSubGroupType.Available)
+				.ToList();
+			comboEscalationView.Items.AddListEnum(listPhoneEmpSubGroupTypes);
+			comboEscalationView.SetSelectedEnum(PhoneEmpSubGroupType.Available); //set initial view to 'available'
 		}
 
 		private void FillTriageLabelColors() {
@@ -648,8 +635,9 @@ namespace OpenDental.InternalTools.Phones {
 			}
 		}
 
-		private void RefreshCurrentTabHelper(List<PhoneEmpDefault> listPhoneEmpDefaultsIn,List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroupsIn) {
-			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
+		private void RefreshCurrentComboHelper(List<PhoneEmpDefault> listPhoneEmpDefaultsIn,List<Phone> listPhones,List<PhoneEmpSubGroup> listPhoneEmpSubGroupsIn) {
+			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=new PhoneEmpSubGroupType();
+			phoneEmpSubGroupTypeSelected=comboEscalationView.GetSelected<PhoneEmpSubGroupType>();
 			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=listPhoneEmpSubGroupsIn.FindAll(x => x.SubGroupType==phoneEmpSubGroupTypeSelected);
 			//List of EmployeeNums to show for current tab.
 			List<long> listEmployeeNums=listPhoneEmpSubGroups.Select(y => y.EmployeeNum).ToList();
@@ -660,9 +648,9 @@ namespace OpenDental.InternalTools.Phones {
 			//Set Escalation List------------------------------------------------------------------------------
 			List<EscalationItem> listEscalationItems=new List<EscalationItem>();
 			escalationView.BeginUpdate();
-			if(escalationView.Tag==null || (((int)escalationView.Tag)!=tabMain.SelectedIndex)) {
+			if(escalationView.Tag==null || (((PhoneEmpSubGroupType)escalationView.Tag)!=comboEscalationView.GetSelected<PhoneEmpSubGroupType>())) {
 				escalationView.IsNewItems=true;
-				escalationView.Tag=tabMain.SelectedIndex;
+				escalationView.Tag=comboEscalationView.GetSelected<PhoneEmpSubGroupType>();
 			}
 			List<PhoneEmpDefault> listPhoneEmpDefaultsEscalation=listPhoneEmpDefaultsInGroup.FindAll(x => DoAddToEscalationView(x,listPhones));
 			List<PhoneEmpDefault> listPhoneEmpDefaults=SortForEscalationView(listPhoneEmpDefaultsEscalation,listPhones);
@@ -704,8 +692,9 @@ namespace OpenDental.InternalTools.Phones {
 
 		///<summary>Sorts the list of PhoneEmpDefaults in the appropriate way for the selected escalation view.</summary>
 		private List<PhoneEmpDefault> SortForEscalationView(List<PhoneEmpDefault> listPhoneEmpDefaults,List<Phone> listPhones) {
-			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=(PhoneEmpSubGroupType)(tabMain.SelectedTab?.Tag??PhoneEmpSubGroupType.Escal);
-			if(phoneEmpSubGroupTypeSelected==PhoneEmpSubGroupType.Avail) {
+			PhoneEmpSubGroupType phoneEmpSubGroupTypeSelected=new PhoneEmpSubGroupType();
+				phoneEmpSubGroupTypeSelected=comboEscalationView.GetSelected<PhoneEmpSubGroupType>();
+			if(phoneEmpSubGroupTypeSelected==PhoneEmpSubGroupType.Available) {
 				Func<PhoneEmpDefault,Phone> funcGetPhone=new Func<PhoneEmpDefault,Phone>((phoneEmpDef) => {
 					Phone phone=listPhones.Find(x=>x.EmployeeNum==phoneEmpDef.EmployeeNum);
 					if(phone is null){
@@ -725,10 +714,15 @@ namespace OpenDental.InternalTools.Phones {
 				.ThenBy(x => x.EmpName).ToList();
 		}
 
+		private void comboEscalationView_SelectionChangeCommitted(object sender,EventArgs e) {
+			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
+			List<Phone> listPhones=OpenDentBusiness.Phones.GetPhoneList();
+			List<PhoneEmpSubGroup> listPhoneEmpSubGroups=PhoneEmpSubGroups.GetAll();
+			RefreshCurrentComboHelper(listPhoneEmpDefaults,listPhones,listPhoneEmpSubGroups);
+		}
 
 		#endregion Methods - Private
 
-		
 	}
 }
 

@@ -43,11 +43,6 @@ namespace OpenDental.InternalTools.Phones{
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.tabMain = new OpenDental.UI.TabControl();
-			this.tabPage1 = new OpenDental.UI.TabPage();
-			this.tabPage2 = new OpenDental.UI.TabPage();
-			this.tabPage3 = new OpenDental.UI.TabPage();
-			this.tabPage4 = new OpenDental.UI.TabPage();
 			this.escalationView = new OpenDental.InternalTools.Phones.EscalationView();
 			this.escalationViewOfficesDown = new OpenDental.InternalTools.Phones.EscalationView();
 			this.labelTirageOpLocal = new System.Windows.Forms.Label();
@@ -64,8 +59,8 @@ namespace OpenDental.InternalTools.Phones{
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
 			this.label8 = new System.Windows.Forms.Label();
 			this.butZoomFit = new OpenDental.UI.Button();
+			this.comboEscalationView = new OpenDental.UI.ComboBox();
 			this.groupPhoneMetrics.SuspendLayout();
-			this.tabMain.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuMain
@@ -259,61 +254,12 @@ namespace OpenDental.InternalTools.Phones{
 			this.label6.TabIndex = 10;
 			this.label6.Text = "Triage";
 			// 
-			// tabMain
-			// 
-			this.tabMain.Controls.Add(this.tabPage1);
-			this.tabMain.Controls.Add(this.tabPage2);
-			this.tabMain.Controls.Add(this.tabPage3);
-			this.tabMain.Controls.Add(this.tabPage4);
-			this.tabMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tabMain.Location = new System.Drawing.Point(0, 331);
-			this.tabMain.Name = "tabMain";
-			this.tabMain.Size = new System.Drawing.Size(57, 282);
-			this.tabMain.SizeTabsLeft = new System.Drawing.Size(57, 28);
-			this.tabMain.TabAlignment = OpenDental.UI.EnumTabAlignment.LeftHorizontal;
-			this.tabMain.TabIndex = 90;
-			this.tabMain.SelectedIndexChanged += new System.EventHandler(this.tabMain_SelectedIndexChanged);
-			// 
-			// tabPage1
-			// 
-			this.tabPage1.Location = new System.Drawing.Point(58, 2);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(0, 278);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "Avail";
-			// 
-			// tabPage2
-			// 
-			this.tabPage2.Location = new System.Drawing.Point(58, 2);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(0, 278);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Escal";
-			// 
-			// tabPage3
-			// 
-			this.tabPage3.Location = new System.Drawing.Point(58, 2);
-			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(0, 278);
-			this.tabPage3.TabIndex = 2;
-			this.tabPage3.Text = "Eserv";
-			// 
-			// tabPage4
-			// 
-			this.tabPage4.Location = new System.Drawing.Point(58, 2);
-			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(0, 278);
-			this.tabPage4.TabIndex = 3;
-			this.tabPage4.Text = "etc...";
-			// 
 			// escalationView
 			// 
 			this.escalationView.Font = new System.Drawing.Font("Calibri", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.escalationView.Location = new System.Drawing.Point(58, 331);
+			this.escalationView.Location = new System.Drawing.Point(4, 352);
 			this.escalationView.Name = "escalationView";
-			this.escalationView.Size = new System.Drawing.Size(304, 282);
+			this.escalationView.Size = new System.Drawing.Size(358, 261);
 			this.escalationView.TabIndex = 91;
 			this.escalationView.Text = "escalationView1";
 			// 
@@ -460,9 +406,20 @@ namespace OpenDental.InternalTools.Phones{
 			this.butZoomFit.Text = "Zoom Fit";
 			this.butZoomFit.Click += new System.EventHandler(this.butZoomFit_Click);
 			// 
+			// comboEscalationView
+			// 
+			this.comboEscalationView.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.comboEscalationView.Location = new System.Drawing.Point(4, 326);
+			this.comboEscalationView.Name = "comboEscalationView";
+			this.comboEscalationView.Size = new System.Drawing.Size(358, 25);
+			this.comboEscalationView.TabIndex = 110;
+			this.comboEscalationView.Text = "comboBox1";
+			this.comboEscalationView.SelectionChangeCommitted += new System.EventHandler(this.comboEscalationView_SelectionChangeCommitted);
+			// 
 			// FormMap
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
+			this.Controls.Add(this.comboEscalationView);
 			this.Controls.Add(this.butZoomFit);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.mapPanel);
@@ -479,7 +436,6 @@ namespace OpenDental.InternalTools.Phones{
 			this.Controls.Add(this.labelTirageOpTotal);
 			this.Controls.Add(this.escalationViewOfficesDown);
 			this.Controls.Add(this.escalationView);
-			this.Controls.Add(this.tabMain);
 			this.Controls.Add(this.groupPhoneMetrics);
 			this.Controls.Add(this.comboRoom);
 			this.Controls.Add(this.labelCurrentTime);
@@ -493,7 +449,6 @@ namespace OpenDental.InternalTools.Phones{
 			this.Load += new System.EventHandler(this.FormMap_Load);
 			this.groupPhoneMetrics.ResumeLayout(false);
 			this.groupPhoneMetrics.PerformLayout();
-			this.tabMain.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -519,11 +474,6 @@ namespace OpenDental.InternalTools.Phones{
 		private MapNumber mapNumberTriageRedTime;
 		private MapNumber mapNumberChatTime;
 		private MapNumber mapNumberVoicemailTime;
-		private UI.TabControl tabMain;
-		private UI.TabPage tabPage1;
-		private UI.TabPage tabPage2;
-		private UI.TabPage tabPage3;
-		private UI.TabPage tabPage4;
 		private EscalationView escalationView;
 		private EscalationView escalationViewOfficesDown;
 		private System.Windows.Forms.Label labelTirageOpLocal;
@@ -540,5 +490,6 @@ namespace OpenDental.InternalTools.Phones{
 		private OpenDental.InternalTools.Phones.MapPanel mapPanel;
 		private System.Windows.Forms.Label label8;
 		private UI.Button butZoomFit;
+		private UI.ComboBox comboEscalationView;
 	}
 }

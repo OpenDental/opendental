@@ -212,6 +212,7 @@ namespace OpenDental{
 			menuItemSetup.Add("Schedules",menuItemSched_Click);
 			menuItemSetup.Add("Security",menuItemSecurity_Click);
 			menuItemSetup.Add("Security Add User",menuItemSecurityAddUser_Click);
+			menuItemSetup.Add("Security Badges",menuItemSecurityBadges_Click);
 			menuItemSetup.Add("Sheets",menuItemSheets_Click);
 			menuItemSetup.Add("Spell Check",menuItemSpellCheck_Click);
 			menuItemSetup.Add("Tasks",menuItemTask_Click);

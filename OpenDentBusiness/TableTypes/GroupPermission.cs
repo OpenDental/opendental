@@ -799,6 +799,9 @@ namespace OpenDentBusiness{
 		///<summary>254 - Only used at OD HQ. Ability to open the AI chat window.</summary>
 		[Description("AI Chat window")]
 		AiChatSession,
+		///<summary>255 - Allow users to edit BadgeIds in the userod table.</summary>
+		[Description("BadgeId Edit")]
+		BadgeIdEdit,
 	}
 }
 

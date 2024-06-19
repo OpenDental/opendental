@@ -261,6 +261,9 @@
     <Compile Include="Frms\FrmChildEdit.xaml.cs">
       <DependentUpon>FrmChildEdit.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frms\FrmBadgeEdit.xaml.cs">
+      <DependentUpon>FrmBadgeEdit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\Frm_BasicTemplate.xaml.cs">
       <DependentUpon>Frm_BasicTemplate.xaml</DependentUpon>
     </Compile>
@@ -793,6 +796,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frms\FrmChildEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmBadgeEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

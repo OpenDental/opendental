@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="530" Height="361" 
-             Text="Preview" MinMaxBoxes="False" >
+             Text="Preview" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:TextRich x:Name="textMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,12,42" TabIndexOD="1" QuickPasteType="AutoNotePrompt" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,11,10" Text="_Save" Click="butSave_Click" />

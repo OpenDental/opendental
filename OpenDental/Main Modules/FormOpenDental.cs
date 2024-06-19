@@ -5725,6 +5725,30 @@ namespace OpenDental{
 			formUserEdit.ShowDialog();
 		}
 
+		private void menuItemSecurityBadges_Click(object sender,EventArgs e) {
+			//Check if user is authorized
+			if(!Security.IsAuthorized(EnumPermType.BadgeIdEdit)) {
+				return;
+			}
+			//Allow selection of userod with a combobox
+			InputBoxParam inputBoxParam=new InputBoxParam();
+			inputBoxParam.InputBoxType_=InputBoxType.ComboSelect;//Not multiselect
+			inputBoxParam.LabelText="Select a user.";
+			List<Userod> listUserods=Userods.GetAll();//Already orders by username
+			inputBoxParam.ListSelections=listUserods.Select(x => x.UserName).ToList();
+			inputBoxParam.SizeParam=new System.Windows.Size(width:200,height:20);
+			InputBox inputBox=new InputBox(inputBoxParam);
+			inputBox.ShowDialog();
+			if(inputBox.IsDialogCancel) {
+				return;
+			}
+			Userod userodSelected=listUserods[inputBox.SelectedIndex];
+			//Edit badge window now that user has been selected
+			FrmBadgeEdit frmBadgeEdit=new FrmBadgeEdit();
+			frmBadgeEdit.UserodCur=userodSelected;
+			frmBadgeEdit.ShowDialog();
+		}
+
 		private void menuItemSheets_Click(object sender,EventArgs e) {
 			if(!Security.IsAuthorized(EnumPermType.Setup)) {
 				return;

@@ -115,6 +115,8 @@ namespace OpenDental {
 						node3.Nodes.Add(node4);
 						node4=SetNode(EnumPermType.UpdateInstall);
 						node3.Nodes.Add(node4);
+						node4=SetNode(EnumPermType.BadgeIdEdit);
+						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				#endregion

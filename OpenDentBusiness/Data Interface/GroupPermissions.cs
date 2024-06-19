@@ -649,6 +649,7 @@ namespace OpenDentBusiness{
 				//case Permissions.ChanSpy
 				case EnumPermType.ClaimProcFeeBilledToInsEdit:
 				//case Permissions.AllergyMerge
+				//case Permissions.BadgeIdEdit
 				return false;//Does not have audit Trail if uncommented.
 			}
 			if(!PrefC.IsODHQ && permType.In(

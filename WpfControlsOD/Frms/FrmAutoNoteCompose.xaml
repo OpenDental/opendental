@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="834" Height="611" 
-             Text="Compose Auto Note" MinMaxBoxes="False" >
+             Text="Compose Auto Note" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butInsert" Width="75" Height="24" Margin="283,292,0,0" Text="_Insert" ImageAlign="Right" Click="butInsert_Click" Icon="ArrowRight" />
 		<ui:TreeView x:Name="treeView" Width="250" VerticalAlignment="Stretch" Margin="13,28,0,43" />

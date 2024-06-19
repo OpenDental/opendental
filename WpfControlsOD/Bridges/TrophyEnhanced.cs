@@ -46,7 +46,7 @@ namespace OpenDental.Bridges{
 				bool isNumberedMode=ProgramProperties.GetPropVal(ProgramCur.ProgramNum,"Enter 1 to enable Numbered Mode")=="1";
 				try{
 					if(isNumberedMode){
-						bool doUseLastDigits=ProgramProperties.GetPropVal(ProgramCur.ProgramNum,"Enter 0 to use the 5th and 6th digits, or 1 to user the last 2 digits, of the Patient Number for folder creation in Numbered Mode")=="1";
+						bool doUseLastDigits=ProgramProperties.GetPropVal(ProgramCur.ProgramNum,"Enter 0 to use the 5th and 6th digits, or 1 to use the last 2 digits of the Patient Number for folder creation in Numbered Mode")=="1";
 						patFolder=AutomaticallyGetTrophyFolderNumbered(pat,storagePath,doUseLastDigits);
 					}
 					else{

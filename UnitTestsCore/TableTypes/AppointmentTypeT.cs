@@ -25,8 +25,9 @@ namespace UnitTestsCore {
 			return appointmentType;
 		}
 
+		///<summary>dump_dentaloffice inserts 'WebSched New Patient Default' AppointmentType. Delete everything else.</summary>
 		public static void ClearAppointmentTypeTableAdditions() {
-			string command="DELETE FROM appointmenttype WHERE AppointmentTypeNum > 2";
+			string command="DELETE FROM appointmenttype WHERE AppointmentTypeNum > 1";
 			DataCore.NonQ(command);
 		}
 

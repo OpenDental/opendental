@@ -1868,7 +1868,8 @@ namespace OpenDentBusiness{
 			while(listMimeParts.Count > 0) {//Traverse all branches of the mime tree to locate all attachment mime parts.
 				Health.Direct.Common.Mime.MimeEntity mimeEntity=listMimeParts[0];
 				listMimeParts.RemoveAt(0);
-				if(mimeEntity.ContentDisposition!=null && mimeEntity.ContentDisposition.ToLower().Contains("attachment")) {//An email attachment.  Leaf node.
+				//An email attachment. Leaf node. https://www.ietf.org/rfc/rfc2183.txt we treat both 'attachment' and 'inline' the same. No other options.
+				if(mimeEntity.ContentDisposition!=null) {
 					if(mimeEntity.HasBody) {
 						//Clear out the body or content of the attachment as to reduce the amount of space we take up in the database.
 						//This is safe to do at this point because we have already extracted the attachments and they are stored in the AtoZ folder or db already.
@@ -2282,10 +2283,11 @@ namespace OpenDentBusiness{
 			List<Health.Direct.Common.Mime.MimeEntity> listMimeAttachParts=new List<Health.Direct.Common.Mime.MimeEntity>();
 			for(int i=0;i<listMimePartLeafNodes.Count;i++) {
 				Health.Direct.Common.Mime.MimeEntity mimePart=listMimePartLeafNodes[i];
-				if(mimePart.ContentDisposition==null || !mimePart.ContentDisposition.ToLower().Contains("attachment")) {//Not an email attachment.  Treat as body text.
+				if(mimePart.ContentDisposition==null) {//Not an email attachment.  Treat as body text.
 					listMimeBodyTextParts.Add(mimePart);
 				}
 				else {
+					//An email attachment. Leaf node. https://www.ietf.org/rfc/rfc2183.txt we treat both 'attachment' and 'inline' the same. No other options.
 					listMimeAttachParts.Add(mimePart);
 				}
 			}

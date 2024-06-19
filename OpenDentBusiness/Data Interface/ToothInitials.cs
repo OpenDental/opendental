@@ -127,6 +127,30 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 		}
 
+		///<summary>Gets a ToothInitial by ToothInitialNum from the database. Returns null if not found.</summary>
+		public static ToothInitial GetOne(long toothInitialNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<ToothInitial>(MethodBase.GetCurrentMethod(),toothInitialNum);
+			}
+			string command="SELECT * FROM toothinitial "
+				+"WHERE ToothInitialNum = "+POut.Long(toothInitialNum);
+			return Crud.ToothInitialCrud.SelectOne(command);
+		}
+
+		///<summary>Gets a list of ToothInitials from the database. Returns an empty list if not found.</summary>
+		public static List<ToothInitial> GetToothInitialsForApi(int limit,int offset,long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ToothInitial>>(MethodBase.GetCurrentMethod(),limit,offset,patNum);
+			}
+			string command="SELECT * from toothinitial";
+			if(patNum>0) {
+				command+=" WHERE PatNum="+POut.Long(patNum);
+			}
+			command+=" ORDER BY ToothInitialNum"
+				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ToothInitialCrud.SelectMany(command);
+		}
+
 		///<summary>Gets a list of missing teeth as strings. Includes "1"-"32", and "A"-"Z".</summary>
 		public static List<string> GetMissingOrHiddenTeeth(List<ToothInitial> listToothInitials) {
 			//No need to check MiddleTierRole; no call to db.
