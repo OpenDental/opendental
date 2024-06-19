@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="530" Height="361" 
-             Text="Prompt List" MinMaxBoxes="False" 
+             Text="Prompt List" 
              Focusable="True" >
     <Grid Background="#FFFCFDFE" >
         <ui:Button x:Name="butNext" HorizontalAlignment="Right" Width="77" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,57" Text="_Next" Click="butNext_Click" Icon="ArrowRight" ImageAlign="Right" />
