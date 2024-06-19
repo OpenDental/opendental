@@ -14,6 +14,7 @@ using System.Linq;
 using DataConnectionBase;
 using System.Runtime.Serialization;
 using CodeBase;
+using OpenDentBusiness.Mobile;
 
 namespace OpenDental.Main_Modules
 {
@@ -69,6 +70,7 @@ namespace OpenDental.Main_Modules
         private static long _defNumTwoWeekSent;
         private static long _defNumOneWeekSent;
         private static long _defNumTexted;
+        private static long _defNumWebSched;
 
         /// <summary>
         /// This sets up the constants which map 'texted' to the Appointment Confirmed category for texted, etc.
@@ -83,25 +85,17 @@ namespace OpenDental.Main_Modules
                 await Task.Delay(5000); // Wait for 5 seconds before checking again
             }
 
+            // The ToLower on both sides is because I keep forgetting and copy/pasting text with capitals.
             _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
-            _defNumTexted = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "texted")?.DefNum ?? 0;
-            _defNumTwoWeekSent = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "2 week sent")?.DefNum ?? 0;
-            _defNumOneWeekSent = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "1 week sent")?.DefNum ?? 0;
-            _defNumTwoWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "2 week confirmed")?.DefNum ?? 0;
-            _defNumOneWeekConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "1 week confirmed")?.DefNum ?? 0;
-            _defNumConfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "appointment confirmed")?.DefNum ?? 0;
-            _defNumNotCalled = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "not called")?.DefNum ?? 0;
-            _defNumUnconfirmed = _listDefsApptConfirmed.FirstOrDefault(d => d.ItemName.ToLower() == "unconfirmed")?.DefNum ?? 0;
-
-
-            checkAppointmentTypeFound("2 week confirmed", _defNumTwoWeekConfirmed);
-            checkAppointmentTypeFound("1 week confirmed", _defNumOneWeekConfirmed);
-            checkAppointmentTypeFound("Appointment Confirmed", _defNumConfirmed);
-            checkAppointmentTypeFound("2 week sent", _defNumTwoWeekConfirmed);
-            checkAppointmentTypeFound("1 week sent", _defNumOneWeekConfirmed);
-            checkAppointmentTypeFound("texted", _defNumTexted);
-            checkAppointmentTypeFound("not called", _defNumNotCalled);
-            checkAppointmentTypeFound("unconfirmed", _defNumUnconfirmed);
+            _defNumTexted = GetAndCheckDefNum("texted", _listDefsApptConfirmed);
+            _defNumTwoWeekSent = GetAndCheckDefNum("2 week sent", _listDefsApptConfirmed);
+            _defNumOneWeekSent = GetAndCheckDefNum("1 week sent", _listDefsApptConfirmed);
+            _defNumTwoWeekConfirmed = GetAndCheckDefNum("2 week confirmed", _listDefsApptConfirmed);
+            _defNumOneWeekConfirmed = GetAndCheckDefNum("1 week confirmed", _listDefsApptConfirmed);
+            _defNumConfirmed = GetAndCheckDefNum("Appointment Confirmed", _listDefsApptConfirmed);
+            _defNumNotCalled = GetAndCheckDefNum("not called", _listDefsApptConfirmed);
+            _defNumUnconfirmed = GetAndCheckDefNum("unconfirmed", _listDefsApptConfirmed);
+            _defNumWebSched = GetAndCheckDefNum("Created from Web Sched", _listDefsApptConfirmed);
         }
 
 
@@ -463,12 +457,20 @@ namespace OpenDental.Main_Modules
             int noPreferenceValue = (int)OpenDentBusiness.ContactMethod.None;
 
             string aptDateTimeRange;
+            DateTime now = DateTime.Now; // used to handle Friday as a special case
 
 
             switch (filterType)
             {
                 case ReminderFilterType.OneDay:
-                    aptDateTimeRange = $"DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 DAY))";
+                    if (now.DayOfWeek == DayOfWeek.Friday)
+                    {
+                        aptDateTimeRange = "DATE(a.AptDateTime) IN (DATE(DATE_ADD(NOW(), INTERVAL 1 DAY)), DATE(DATE_ADD(NOW(), INTERVAL 3 DAY)))";
+                    }
+                    else
+                    {
+                        aptDateTimeRange = "DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 DAY))";
+                    }
                     break;
                 case ReminderFilterType.OneWeek:
                     aptDateTimeRange = $"DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 WEEK))";
@@ -497,15 +499,15 @@ namespace OpenDental.Main_Modules
             
             if (filterType == ReminderFilterType.OneDay)
             {
-                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}, {AsyncSMSHandling._defNumOneWeekConfirmed}, {AsyncSMSHandling._defNumTwoWeekConfirmed}, {AsyncSMSHandling._defNumOneWeekSent}, {AsyncSMSHandling._defNumTwoWeekSent}) ";
+                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumWebSched},{AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}, {AsyncSMSHandling._defNumOneWeekConfirmed}, {AsyncSMSHandling._defNumTwoWeekConfirmed}, {AsyncSMSHandling._defNumOneWeekSent}, {AsyncSMSHandling._defNumTwoWeekSent}) ";
             }
             else if (filterType == ReminderFilterType.OneWeek)
             {
-                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}, {AsyncSMSHandling._defNumTwoWeekConfirmed}, {AsyncSMSHandling._defNumTwoWeekSent}) ";
+                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumWebSched},{AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}, {AsyncSMSHandling._defNumTwoWeekConfirmed}, {AsyncSMSHandling._defNumTwoWeekSent}) ";
             }
             else if (filterType == ReminderFilterType.TwoWeeks)
             {
-                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}) ";
+                where_appointment_confirmed = $"AND a.Confirmed IN ({AsyncSMSHandling._defNumWebSched},{AsyncSMSHandling._defNumNotCalled}, {AsyncSMSHandling._defNumUnconfirmed}) ";
             }
             else
             {
@@ -637,6 +639,18 @@ namespace OpenDental.Main_Modules
                             MsgParts = 1
                         };
                         await SmsToMobiles.SendSmsMessageAsync(matchSMS);
+                        Commlogs.Insert(new Commlog()
+                        {
+                            CommDateTime = matchSMS.DateTimeSent,
+                            Mode_ = CommItemMode.Text,
+                            Note = "Text message sent: " + matchSMS.MsgText,
+                            PatNum = matchSMS.PatNum,
+                            CommType = Commlogs.GetTypeAuto(CommItemTypeAuto.TEXT),
+                            SentOrReceived = CommSentOrReceived.Sent,
+                            UserNum = 0
+                        });
+
+
                     }
                 } else
                 {
@@ -669,6 +683,24 @@ namespace OpenDental.Main_Modules
                 MsgBox.Show(s);
                 throw new Exception(s); // or raiseError, depending on your framework
             }
+        }
+
+        private static long GetAndCheckDefNum(string itemName, List<OpenDentBusiness.Def> listDefs)
+        {
+            var def = listDefs
+                .FirstOrDefault(d => string.Equals(d.ItemName, itemName, StringComparison.OrdinalIgnoreCase));
+
+            long defNum = def?.DefNum ?? 0;
+
+            if (defNum == 0)
+            {
+                string s = $"The '{itemName}' appointment status was not found.";
+                EventLog.WriteEntry("ODSMS", s, EventLogEntryType.Error, 101, 1, new byte[10]);
+                MsgBox.Show(s);
+                throw new Exception(s); // or raiseError, depending on your framework
+            }
+
+            return defNum;
         }
 
         /// <summary>
