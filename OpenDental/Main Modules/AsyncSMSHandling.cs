@@ -757,7 +757,7 @@ namespace OpenDental.Main_Modules
 
                     // Determine the confirmation status based on the appointment time
                     long confirmationStatus;
-                    if (daysUntilAppointment >= 14 && daysUntilAppointment < 21)
+                    if (daysUntilAppointment >= 14 && daysUntilAppointment < 22)
                     {
                         confirmationStatus = _defNumTwoWeekConfirmed;
                     }
@@ -765,7 +765,7 @@ namespace OpenDental.Main_Modules
                     {
                         confirmationStatus = _defNumOneWeekConfirmed; 
                     }
-                    else if (daysUntilAppointment >= 0 && daysUntilAppointment <= 3)
+                    else if (daysUntilAppointment >= 0 && daysUntilAppointment <= 4)
                     {
                         confirmationStatus = _defNumConfirmed;
                     }
@@ -959,18 +959,7 @@ namespace OpenDental.Main_Modules
         /// </summary>
         async public static void SMSDailyTasks()
         {
-            while (Security.CurUser == null || Security.CurUser.UserNum == 0) // Assuming UserNum is an integer and 0 or null indicates uninitialized
-            {
-                Console.WriteLine("Waiting for user information to be initialized...");
-                await Task.Delay(5000); // Wait for 5 seconds before checking again
-            }
-
-            while (!DataConnection.HasDatabaseConnection)
-            {
-                Console.WriteLine("Waiting for database connection...");
-                await Task.Delay(5000); // Wait for 5 seconds before checking again
-            }
-
+            await WaitForDatabaseAndUserInitialization();
             DateTime lastRunDate = DateTime.MinValue;
 
             while (true)
@@ -1014,14 +1003,11 @@ namespace OpenDental.Main_Modules
         }
 
         /// <summary>
-        /// Similar to SMSDailyTasks, this is the outermost loop for the five minute job.
-        /// Internally it calls FetchAndProcessSmsMessages and then waits for 5 minutes.
+        /// OD needs the database connected and the user set before we can do anything useful.  This function waits for that to happen.
         /// </summary>
-        async public static void receiveSMSforever()
+        /// <returns></returns>
+        public static async Task WaitForDatabaseAndUserInitialization()
         {
-            bool smsIsWorking = await CheckSMSConnection();
-
-
             while (!DataConnection.HasDatabaseConnection)
             {
                 Console.WriteLine("Waiting for database connection...");
@@ -1033,6 +1019,18 @@ namespace OpenDental.Main_Modules
                 Console.WriteLine("Waiting for user information to be initialized...");
                 await Task.Delay(5000); // Wait for 5 seconds before checking again
             }
+        }
+
+        /// <summary>
+        /// Similar to SMSDailyTasks, this is the outermost loop for the five minute job.
+        /// Internally it calls FetchAndProcessSmsMessages and then waits for 5 minutes.
+        /// </summary>
+        async public static void receiveSMSforever()
+        {
+            bool smsIsWorking = await CheckSMSConnection();
+
+
+            await WaitForDatabaseAndUserInitialization();
 
             while (true)
             {
