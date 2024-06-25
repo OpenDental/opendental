@@ -276,6 +276,7 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod());
 				return;
 			}
+			//Jordan Bad pattern
 			string command=@"UPDATE feesched,(SELECT @neworder:=-1) a,
 				(SELECT FeeSchedNum,(@neworder := @neworder+1) AS NewOrderCol
 				FROM feesched
@@ -291,6 +292,7 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod());
 				return;
 			}
+			//Jordan Bad pattern
 			string command=@"UPDATE feesched,(SELECT @neworder:=-1) a,
 				(SELECT FeeSchedNum,(@neworder := @neworder+1) AS NewOrderCol
 				FROM feesched

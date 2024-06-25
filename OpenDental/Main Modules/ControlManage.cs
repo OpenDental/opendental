@@ -570,6 +570,8 @@ namespace OpenDental{
 		private void ControlManage_Load(object sender,EventArgs e) {
 			if(!PrefC.IsODHQ) {
 				butSchedule.Visible=false;
+			}
+			if(!PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
 				butDaycare.Visible=false;
 			}
 		}

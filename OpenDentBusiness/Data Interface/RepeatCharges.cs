@@ -242,6 +242,9 @@ namespace OpenDentBusiness {
 			Prefs.UpdateDateT(PrefName.RepeatingChargesBeginDateTime,dateRun);
 			try {
 				List<RepeatCharge> listRepeatingCharges=RepeatCharges.Refresh(0).ToList();
+				if(listRepeatingCharges.Count==0) {
+					return new RepeatChargeResult();
+				}
 				//Filling a 'cache' of insplan information for all patnums to avoid queries later in a loop
 				List<long> listRepeatChargePatNums=listRepeatingCharges.Select(x=>x.PatNum).Distinct().ToList(); //Get list of all repeating charge PatNums
 				List<PatPlan> listAllPatPlans=PatPlans.GetPatPlansForPats(listRepeatChargePatNums); //Get patplans with PatNum in our list of repeating charge PatNums.

@@ -100,14 +100,14 @@ namespace OpenDentBusiness {
 					//This is the first time since startup that this ServerMT instance has processed signals for itself.
 					_dateTimeProcessSignals=DateTime.Now;
 					//Don't process any signals. Instead, update Signalods.SignalLastRefreshed with the latest signal time from the database.
-					Signalods.DateTSignalLastRefreshed=Signalods.GetLatestSignalTime();
+					Signalods.DateTRegularPrioritySignalLastRefreshed=Signalods.GetLatestSignalTime();
 				}
 				else if((DateTime.Now - _dateTimeProcessSignals).TotalSeconds > 6) {//Process signals every 6 seconds.
 					//Process all of the signals since the time of the last signal=============================
-					List<Signalod> listSignalods=Signalods.RefreshTimed(Signalods.DateTSignalLastRefreshed);
+					List<Signalod> listSignalods=Signalods.RefreshTimed(Signalods.DateTRegularPrioritySignalLastRefreshed);
 					if(listSignalods.Count > 0) {
 						//Update the date and time of the last signal that was processed.
-						Signalods.DateTSignalLastRefreshed=listSignalods.Max(x => x.SigDateTime);
+						Signalods.DateTRegularPrioritySignalLastRefreshed=listSignalods.Max(x => x.SigDateTime);
 					}
 					//Update the date and time that this ServerMT processed signals so that it doesn't happen again within the next 6 seconds.
 					_dateTimeProcessSignals=DateTime.Now;

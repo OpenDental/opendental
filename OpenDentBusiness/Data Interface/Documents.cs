@@ -586,7 +586,7 @@ namespace OpenDentBusiness {
 
 		public static DataTable GetTreeListTableForPatient(long patNum,bool isImagingOrderDescending){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum,isImagingOrderDescending);
 			}
 			DataConnection dcon=new DataConnection();
 			DataTable table=new DataTable("DocumentList");

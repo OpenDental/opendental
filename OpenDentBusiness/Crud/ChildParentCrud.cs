@@ -48,8 +48,10 @@ namespace OpenDentBusiness.Crud{
 			foreach(DataRow row in table.Rows) {
 				childParent=new ChildParent();
 				childParent.ChildParentNum= PIn.Long  (row["ChildParentNum"].ToString());
-				childParent.ChildNum      = PIn.Long  (row["ChildNum"].ToString());
-				childParent.Parent        = PIn.Long  (row["Parent"].ToString());
+				childParent.FName         = PIn.String(row["FName"].ToString());
+				childParent.LName         = PIn.String(row["LName"].ToString());
+				childParent.Notes         = PIn.String(row["Notes"].ToString());
+				childParent.IsHidden      = PIn.Bool  (row["IsHidden"].ToString());
 				retVal.Add(childParent);
 			}
 			return retVal;
@@ -62,13 +64,17 @@ namespace OpenDentBusiness.Crud{
 			}
 			DataTable table=new DataTable(tableName);
 			table.Columns.Add("ChildParentNum");
-			table.Columns.Add("ChildNum");
-			table.Columns.Add("Parent");
+			table.Columns.Add("FName");
+			table.Columns.Add("LName");
+			table.Columns.Add("Notes");
+			table.Columns.Add("IsHidden");
 			foreach(ChildParent childParent in listChildParents) {
 				table.Rows.Add(new object[] {
 					POut.Long  (childParent.ChildParentNum),
-					POut.Long  (childParent.ChildNum),
-					POut.Long  (childParent.Parent),
+					            childParent.FName,
+					            childParent.LName,
+					            childParent.Notes,
+					POut.Bool  (childParent.IsHidden),
 				});
 			}
 			return table;
@@ -88,13 +94,15 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ChildParentNum,";
 			}
-			command+="ChildNum,Parent) VALUES(";
+			command+="FName,LName,Notes,IsHidden) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(childParent.ChildParentNum)+",";
 			}
 			command+=
-				     POut.Long  (childParent.ChildNum)+","
-				+    POut.Long  (childParent.Parent)+")";
+				 "'"+POut.String(childParent.FName)+"',"
+				+"'"+POut.String(childParent.LName)+"',"
+				+"'"+POut.String(childParent.Notes)+"',"
+				+    POut.Bool  (childParent.IsHidden)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -119,13 +127,15 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ChildParentNum,";
 			}
-			command+="ChildNum,Parent) VALUES(";
+			command+="FName,LName,Notes,IsHidden) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(childParent.ChildParentNum)+",";
 			}
 			command+=
-				     POut.Long  (childParent.ChildNum)+","
-				+    POut.Long  (childParent.Parent)+")";
+				 "'"+POut.String(childParent.FName)+"',"
+				+"'"+POut.String(childParent.LName)+"',"
+				+"'"+POut.String(childParent.Notes)+"',"
+				+    POut.Bool  (childParent.IsHidden)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -138,8 +148,10 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one ChildParent in the database.</summary>
 		public static void Update(ChildParent childParent) {
 			string command="UPDATE childparent SET "
-				+"ChildNum      =  "+POut.Long  (childParent.ChildNum)+", "
-				+"Parent        =  "+POut.Long  (childParent.Parent)+" "
+				+"FName         = '"+POut.String(childParent.FName)+"', "
+				+"LName         = '"+POut.String(childParent.LName)+"', "
+				+"Notes         = '"+POut.String(childParent.Notes)+"', "
+				+"IsHidden      =  "+POut.Bool  (childParent.IsHidden)+" "
 				+"WHERE ChildParentNum = "+POut.Long(childParent.ChildParentNum);
 			Db.NonQ(command);
 		}
@@ -147,13 +159,21 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one ChildParent in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
 		public static bool Update(ChildParent childParent,ChildParent oldChildParent) {
 			string command="";
-			if(childParent.ChildNum != oldChildParent.ChildNum) {
+			if(childParent.FName != oldChildParent.FName) {
 				if(command!="") { command+=",";}
-				command+="ChildNum = "+POut.Long(childParent.ChildNum)+"";
+				command+="FName = '"+POut.String(childParent.FName)+"'";
 			}
-			if(childParent.Parent != oldChildParent.Parent) {
+			if(childParent.LName != oldChildParent.LName) {
 				if(command!="") { command+=",";}
-				command+="Parent = "+POut.Long(childParent.Parent)+"";
+				command+="LName = '"+POut.String(childParent.LName)+"'";
+			}
+			if(childParent.Notes != oldChildParent.Notes) {
+				if(command!="") { command+=",";}
+				command+="Notes = '"+POut.String(childParent.Notes)+"'";
+			}
+			if(childParent.IsHidden != oldChildParent.IsHidden) {
+				if(command!="") { command+=",";}
+				command+="IsHidden = "+POut.Bool(childParent.IsHidden)+"";
 			}
 			if(command=="") {
 				return false;
@@ -167,10 +187,16 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Returns true if Update(ChildParent,ChildParent) would make changes to the database.
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
 		public static bool UpdateComparison(ChildParent childParent,ChildParent oldChildParent) {
-			if(childParent.ChildNum != oldChildParent.ChildNum) {
+			if(childParent.FName != oldChildParent.FName) {
 				return true;
 			}
-			if(childParent.Parent != oldChildParent.Parent) {
+			if(childParent.LName != oldChildParent.LName) {
+				return true;
+			}
+			if(childParent.Notes != oldChildParent.Notes) {
+				return true;
+			}
+			if(childParent.IsHidden != oldChildParent.IsHidden) {
 				return true;
 			}
 			return false;

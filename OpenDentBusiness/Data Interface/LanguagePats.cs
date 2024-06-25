@@ -109,7 +109,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets a translation for a preference value from the cache. Returns the pref's value directly if language matches the practice's language/region. Otherwise returns an empty string.</summary>
 		public static string GetPrefTranslation(PrefName prefName,string language,bool defaultToBlank=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),prefName,language);
+				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),prefName,language,defaultToBlank);
 			}
 			LanguagePat languagePat=GetFirstOrDefault(x => x.Language==language && x.PrefName==prefName.ToString());
 			if(languagePat==null || string.IsNullOrWhiteSpace(languagePat.Translation)) {

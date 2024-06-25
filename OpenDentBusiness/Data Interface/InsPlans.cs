@@ -743,7 +743,7 @@ namespace OpenDentBusiness {
 			FeeScheduleType feeSchedType, string insPlanType="none")
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),carrierName,carrierNameNot,feeSchedWithout,feeSchedWith,feeSchedType);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),carrierName,carrierNameNot,feeSchedWithout,feeSchedWith,feeSchedType,insPlanType);
 			}
 			string pFeeSched="FeeSched";
 			if(feeSchedType==FeeScheduleType.OutNetwork){
@@ -840,7 +840,7 @@ namespace OpenDentBusiness {
 				return 0;//Count of rows changed.
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),listInsPlanNums,newInsPlanType);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),listInsPlanNums,newInsPlanType,enableBlueBook);
 			}
 			string command = "UPDATE insplan SET PlanType='"+POut.String(newInsPlanType)+"'";
 			command+=", insplan.IsBlueBookEnabled="+POut.Bool(enableBlueBook);

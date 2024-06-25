@@ -221,6 +221,7 @@
         <EnumValue name="ClaimProcFeeBilledToInsEdit">252 - Ability to edit Fee Billed to Insurance in FormClaimProc</EnumValue>
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
+        <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -312,6 +313,7 @@
         <EnumValue name="ClaimProcFeeBilledToInsEdit">252 - Ability to edit Fee Billed to Insurance in FormClaimProc</EnumValue>
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
+        <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
       </Enumeration>
     </column>
   </table>

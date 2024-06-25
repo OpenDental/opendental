@@ -129,15 +129,15 @@ namespace OpenDental{
 			zoomSlider.Zoomed+=zoomSlider_Zoomed;
 			toolBarMain=new WpfControls.UI.ToolBar();
 			elementHostToolBarMain.Child=toolBarMain;
-			controlImageDock.Enter+=ControlImageDock_Enter;
-			//todo: equivalent of FormClosed.
-			//todo: copy all these to LaunchFloater in addition to here.
+			//controlImageDock.Enter+=ControlImageDock_Enter;//doesn't work for clicking. Also, when user changes focus to OD, we don't necessarily need this to focus.
+			controlImageDock.EventGotODFocus+=ControlImageDock_GotODFocus;
+			controlImageDock.EventImageClosed+=ControlImageDock_ImageClosed;
 			controlImageDock.EventButClicked+=DockOrFloat_EventButClicked;
-			controlImageDock.FuncListFloaters=GetListFloaters;
+			controlImageDock.EventWinPicked+=DockOrFloat_EventWinClicked;
+			controlImageDock.EventPopFloater+=Docker_EventPopFloater;
+			controlImageDock.FuncListFloaters=()=>_listFormImageFloats;
 			Logger.LogToPath("Ctor",LogPath.Startup,LogPhase.End);
 		}
-
-		
 		#endregion Constructor
 
 		#region Events
@@ -491,7 +491,7 @@ namespace OpenDental{
 			}
 			RefreshModuleScreen();
 			if(docNum!=0) {
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,docNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,docNum));
 			}
 			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Imaging)) {
 				List<Claim> listClaims=Claims.GetForPat(_patient.PatNum);
@@ -534,31 +534,19 @@ namespace OpenDental{
 			}
 		}
 
-		public List<string> GetListFloaters(){
-			List<string> listStrings=new List<string>();
-			if(controlImageDock.ControlImageDisplay_ is null){
-				listStrings.Add(null);
-			}
-			else{
-				listStrings.Add(controlImageDock.Text);
-			}
-			for(int i=0;i<_listFormImageFloats.Count;i++){
-				listStrings.Add(_listFormImageFloats[i].Text);
-			}
-			return listStrings;
-		}
-
 		///<summary>Launches a new floater. Does not reuse any existing floater or dock. Pass in an existing controlImageDisplay that already has an image in it. This is used when popping a dock to a floater. </summary>
-		public void LaunchFloater(ControlImageDisplay controlImageDisplay,int x,int y,int w,int h,bool isMin=false,bool isMax=false){
+		private void LaunchFloater(ControlImageDisplay controlImageDisplay,int x,int y,int w,int h,bool isMin=false,bool isMax=false){
 			//controlImageDisplay is already filled, which means the rest of the module is also already set up properly with the correct patient, etc.
 			FormImageFloat formImageFloat=new FormImageFloat();
 			formImageFloat.IsImageFloatSelected=true;
-			formImageFloat.FuncListFloaters=GetListFloaters;
+			formImageFloat.FuncListFloaters=()=>_listFormImageFloats;
+			formImageFloat.FuncDockedTitle=()=>controlImageDock.Text;
 			formImageFloat.SetControlImageDisplay(controlImageDisplay);
 			SetTitle(controlImageDisplay,formImageFloat);
 			formImageFloat.Activated +=FormImageFloat_Activated;
 			formImageFloat.FormClosed += FormImageFloat_FormClosed;
 			formImageFloat.EventButClicked+=DockOrFloat_EventButClicked;
+			formImageFloat.EventWinPicked+=DockOrFloat_EventWinClicked;
 			_listFormImageFloats.Add(formImageFloat);
 			formImageFloat.Show();//triggers Activated, then imageSelector.SetSelected 
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);
@@ -569,8 +557,14 @@ namespace OpenDental{
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);//#2
 			//the above line can trigger a resize due to dpi change, so once more:
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);//#3
+			Point pointMousePos=MousePosition;//for debugging
+			formImageFloat.SimulateMouseDown(pointMousePos,formImageFloat.Bounds);
 			controlImageDisplay.SetZoomSlider();
-			controlImageDock.SetControlImageDisplay(null);
+			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
+			controlImageDock.SetControlImageDisplay(null);//this unfortunately clears the selected item in the image selector
+			//controlImageDisplay.ClearObjects();
+			//SelectTreeNode must come before Show. Must come after bounds are set for the zoom to be correct.
+			SelectTreeNode1(nodeTypeAndKey);
 			if(isMin){
 				formImageFloat.WindowState=FormWindowState.Minimized;
 			}
@@ -588,8 +582,12 @@ namespace OpenDental{
 			controlImageDisplay.DidLaunchFromChartModule=true;
 			FormImageFloat formImageFloat=new FormImageFloat();
 			formImageFloat.IsImageFloatSelected=true;
+			formImageFloat.FuncListFloaters=()=>_listFormImageFloats;
+			formImageFloat.FuncDockedTitle=()=>controlImageDock.Text;
 			formImageFloat.Activated +=FormImageFloat_Activated;
 			formImageFloat.FormClosed += FormImageFloat_FormClosed;
+			formImageFloat.EventButClicked+=DockOrFloat_EventButClicked;
+			formImageFloat.EventWinPicked+=DockOrFloat_EventWinClicked;
 			_listFormImageFloats.Add(formImageFloat);
 			System.Windows.Forms.Screen[] screenArray=System.Windows.Forms.Screen.AllScreens;
 			Size size=new Size();
@@ -625,7 +623,7 @@ namespace OpenDental{
 			}
 			controlImageDisplay.ClearObjects();
 			//SelectTreeNode must come before Show. Must come after bounds are set for the zoom to be correct.
-			controlImageDisplay.SelectTreeNode(nodeTypeAndKey);//must come before Show, but after bounds set.
+			controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);//must come before Show, but after bounds set.
 			formImageFloat.Show();//triggers Activated, then imageSelector.SetSelected
 			formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);//#2
 			//the above line can trigger a resize due to dpi change, so once more:
@@ -636,7 +634,7 @@ namespace OpenDental{
 		}
 
 		///<summary>Fired when user clicks on tree and also for automated selection that's not by mouse, such as image import, image paste, etc.  Can pass in NULL.  localPathImported will be set only if using Cloud storage and an image was imported.  We want to use the local version instead of re-downloading what was just uploaded.  nodeObjTag does not need to be ref to same object, but must match type and priKey.</summary>
-		public void SelectTreeNode(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
+		public void SelectTreeNode1(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
 			//Select the node always, but perform additional tasks when necessary (i.e. load an image, or mount).	
 			if(nodeTypeAndKey!=null && nodeTypeAndKey.NodeType!=EnumImageNodeType.None){	
 				imageSelector.SetSelected(nodeTypeAndKey.NodeType,nodeTypeAndKey.PriKey);//this is redundant when user is clicking, but harmless 
@@ -645,7 +643,8 @@ namespace OpenDental{
 			if(controlImageDock.ControlImageDisplay_!=null && controlImageDock.ControlImageDisplay_.GetNodeTypeAndKey().IsMatching(nodeTypeAndKey)){
 				//The one we want is docked
 				controlImageDisplay=controlImageDock.ControlImageDisplay_;
-				controlImageDock.Select();//This triggers ControlImageDock_Enter which enables toolbar buttons, etc
+				controlImageDock.Select();
+				ControlImageDock_GotODFocus(controlImageDock,new EventArgs());//This enables toolbar buttons, etc
 			}
 			FormImageFloat formImageFloat=null;
 			if(controlImageDisplay==null){
@@ -657,6 +656,8 @@ namespace OpenDental{
 					if(formImageFloat.WindowState==FormWindowState.Minimized){
 						formImageFloat.Restore();
 					}
+					formImageFloat.BringToFront();
+					//when this is called by from imageSelector_SelectionChangeCommitted, additional effort is made there to keep the floater on top.
 				}
 			}
 			if(controlImageDisplay!=null){//found the doc/mount we're after already showing
@@ -664,7 +665,7 @@ namespace OpenDental{
 				panelDraw.Visible=false;
 				controlImageDisplay.ClearObjects();
 				SetDocumentOrMount(nodeTypeAndKey,controlImageDisplay,formImageFloat);
-				controlImageDisplay.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
+				controlImageDisplay.SelectTreeNode2(nodeTypeAndKey,localPathImportedCloud);
 				SetTitle(controlImageDisplay,formImageFloat);
 				if(controlImageDisplay.IsDisposed){
 					//see note 35 lines down
@@ -683,6 +684,7 @@ namespace OpenDental{
 				FillSignature();
 				controlImageDisplay.EnableToolBarButtons();
 				EnableMenuItemTreePrintHelper(controlImageDisplay);
+				//Debug.WriteLine("End of SelectTreeNode");
 				return;
 			}
 			//From here down, the doc/mount was not found, so we need to load it up.
@@ -704,14 +706,16 @@ namespace OpenDental{
 				controlImageDisplay.ZoomSliderValue=zoomSlider.Value;
 				controlImageDock.SetControlImageDisplay(controlImageDisplay);
 				controlImageDock.IsImageFloatSelected=true;
-//todo: move this so it's called only once instead of repeatedly.
-				controlImageDock.Enter+=ControlImageDock_Enter;
-	//todo: equivalent of FormClosed.
+				//deactivate all floaters
+				for(int i=0;i<_listFormImageFloats.Count;i++){
+					_listFormImageFloats[i].IsImageFloatSelected=false;
+				}
 				controlImageDisplay.ClearObjects();
 				SetDocumentOrMount(nodeTypeAndKey,controlImageDisplay);
-				controlImageDisplay.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
+				controlImageDisplay.SelectTreeNode2(nodeTypeAndKey,localPathImportedCloud);
 				SetTitle(controlImageDisplay);
-				controlImageDock.Select();//This triggers ControlImageDock_Enter which enables toolbar buttons, etc
+				controlImageDock.Select();
+				ControlImageDock_GotODFocus(controlImageDock,new EventArgs());//This enables toolbar buttons, etc
 				if(IsMountShowing()){
 					unmountedBar.SetObjects(controlImageDisplay.GetUmountedObjs());
 					unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));
@@ -912,22 +916,68 @@ namespace OpenDental{
 					screenThis.WorkingArea.Top+screenThis.WorkingArea.Height/4,//centered up and down
 					width,
 					width);
+				if(sender is FormImageFloat){
+					if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Minimize){
+						formImageFloat.WindowState=FormWindowState.Minimized;
+					}
+					else if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Maximize){
+						formImageFloat.WindowState=FormWindowState.Maximized;
+					}
+					controlImageDisplay.SetZoomSlider();
+				}
+				else{
+					if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Minimize){
+						LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height,isMin:true);
+					}
+					if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Maximize){
+						LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height,isMax:true);
+					}
+				}
+				return;
 			}
 			if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.CloseOthers){
-
+				//if(sender is FormImageFloat){
+					//controlImageDock.SetControlImageDisplay(null);
+					//I decided that it felt better for this button to not close the docked image.
+					//So it's implied that it means "other floaters".
+				//}
+				for(int i=_listFormImageFloats.Count-1;i>=0;i--){//go backwards
+					if(_listFormImageFloats[i]==formImageFloat){
+						continue;
+					}
+					if(!_listFormImageFloats[i].IsDisposed){
+						_listFormImageFloats[i].Close();//remove gets handled automatically here
+					}
+				}
+				return;
 			}
 			if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.DockThis){
-				if(formImageFloat!=null){
+				if(sender is FormImageFloat){
 					//controlImageDisplay is already filled, which means the rest of the module is also already set up properly with the correct patient, etc.
 					controlImageDock.SetControlImageDisplay(controlImageDisplay);
 					controlImageDisplay.SetZoomSlider();
-//todo: does this remove the form from our list?
-					formImageFloat.Close();
+					formImageFloat.Close();//remove gets handled automatically here
+					//The above causes formImageFloat.Activated to fire, maybe because _windowImageFloatWindows is still open at this point?
+					//controlImageDock.IsImageFloatSelected=true;
+					NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
+					controlImageDock.SetControlImageDisplay(null);//this unfortunately clears the selected item in the image selector
+					//controlImageDisplay.ClearObjects();
+					//SelectTreeNode must come before Show. Must come after bounds are set for the zoom to be correct.
+					SelectTreeNode1(nodeTypeAndKey);
 				}
 				return;
 			}
 			if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.ShowAll){
-
+				for(int i=0;i<_listFormImageFloats.Count;i++){
+					if(_listFormImageFloats[i].WindowState==FormWindowState.Minimized){
+						_listFormImageFloats[i].Restore();
+					}
+					_listFormImageFloats[i].BringToFront();
+				}
+				if(sender is FormImageFloat){
+					formImageFloat.BringToFront();
+				}
+				return;
 			}
 			if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Half_L){
 				rectangle=new Rectangle(
@@ -1027,30 +1077,48 @@ namespace OpenDental{
 					screen2.WorkingArea.Width/2,
 					screen2.WorkingArea.Height/2);
 			}
-			if(formImageFloat is null){
-				if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Minimize){
-					LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height,isMin:true);
-					return;
+			if(sender is FormImageFloat){
+				if(formImageFloat.WindowState==FormWindowState.Maximized){
+					formImageFloat.WindowState=FormWindowState.Normal;
 				}
-				if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Maximize){
-					LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height,isMax:true);
-					return;
-				}
-				LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height);
-				return;
-			}
-			else{
-				if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Minimize){
-					formImageFloat.WindowState=FormWindowState.Minimized;
-				}
-				else if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Maximize){
-					formImageFloat.WindowState=FormWindowState.Maximized;
-				}
-				else{
-					formImageFloat.Bounds=rectangle;
-				}
+				formImageFloat.Bounds=rectangle;
 				controlImageDisplay.SetZoomSlider();
 			}
+			else{
+				LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height);
+			}
+		}
+
+		private void DockOrFloat_EventWinClicked(object sender,int idx) {
+			if(idx==0){//idx docker
+				//It would be hard to bring OD to the front, so we won't do anything.
+				return;
+			}
+			int idxInList=idx-1;
+			if(idxInList<0) {
+				return;
+			}
+			if(idxInList>_listFormImageFloats.Count-1) {
+				return;
+			}
+			if(_listFormImageFloats[idxInList].WindowState==FormWindowState.Minimized) {
+				_listFormImageFloats[idxInList].Restore();
+			}
+			_listFormImageFloats[idxInList].BringToFront();
+			_listFormImageFloats[idxInList].Select();
+		}
+
+		private void Docker_EventPopFloater(object sender,EventArgs e) {
+			//calculate rectangle in screen coords
+			Point pointUL=PointToScreen(controlImageDock.Location);
+			Point pointBR=PointToScreen(new Point(controlImageDock.Right,controlImageDock.Bottom));
+			Rectangle rectangle=new Rectangle(
+				pointUL.X,
+				pointUL.Y,
+				pointBR.X-pointUL.X,
+				pointBR.Y-pointUL.Y);
+			ControlImageDisplay controlImageDisplay=controlImageDock.ControlImageDisplay_;
+			LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height);
 		}
 
 		private void imageSelector_DragDropImport(object sender,DragDropImportEventArgs e) {
@@ -1065,7 +1133,7 @@ namespace OpenDental{
 			}
 			FillImageSelector(false);
 			NodeTypeAndKey nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
-			SelectTreeNode(nodeTypeAndKey);
+			SelectTreeNode1(nodeTypeAndKey);
 		}
 
 		private void imageSelector_DraggedToCategory(object sender,DragEventArgsOD e) {
@@ -1129,7 +1197,7 @@ namespace OpenDental{
 				imageSelector.SetSelected(EnumImageNodeType.Mount,GetMountShowing().MountNum);//Need to update _nodeObjTagSelected in case category changed
 				controlImageDisplay.ClearObjects();
 				NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
-				controlImageDisplay.SelectTreeNode(nodeTypeAndKey);
+				controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);
 				unmountedBar.SetObjects(controlImageDisplay.GetUmountedObjs());
 				unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));
 				return;			
@@ -1203,10 +1271,12 @@ namespace OpenDental{
 		}
 
 		private void FormImageFloat_Activated(object sender, EventArgs e){
-			//There is analogous event handler for controlImageDock called ControlImageDock_Enter.
+			//There is an analogous event handler for controlImageDock called ControlImageDock_GotODFocus.
+			//The purpose of this is to react when the floater gets focus.
+			//This gets hit frequently, though: every time user clicks a button in toolbar and then goes back in here.
+			//So this usually needs to not really do anything.
 			FormImageFloat formImageFloat=(FormImageFloat)sender;
-			//Debug.WriteLine(DateTime.Now.ToString()+" IsImageFloatSelected:"+formImageFloat.IsImageFloatSelected.ToString());
-			//Based on the above debug testing, this gets hit fairly frequently: every time you use a button in the toolbar and then go back into the floater.
+			//Debug.WriteLine(DateTime.Now.ToString()+" FormImageFloat_Activated");
 			//We want to SetDrawMode(EnumDrawMode.None) and hide the draw toobar, but only if we change the selected floater.
 			if(!formImageFloat.IsImageFloatSelected){
 				SetCropPanAdj(EnumCropPanAdj.Pan);
@@ -1225,6 +1295,8 @@ namespace OpenDental{
 			ControlImageDisplay controlImageDisplay=formImageFloat.ControlImageDisplay_;
 			controlImageDisplay.EnableToolBarButtons();
 			EnumImageNodeType imageNodeType=controlImageDisplay.GetSelectedType();
+			string parent=controlImageDisplay.Parent.GetType().ToString();
+			//Debug.WriteLine("ControlImages.FormImageFloat_Activated, Parent:"+parent);
 			long priKey=controlImageDisplay.GetSelectedPriKey();
 			imageSelector.SetSelected(imageNodeType,priKey);
 			ZoomSliderState zoomSliderState=controlImageDisplay.ZoomSliderStateInitial;
@@ -1235,10 +1307,14 @@ namespace OpenDental{
 			controlImageDisplay.SetWindowingSlider();
 		}
 		
-		private void ControlImageDock_Enter(object sender, EventArgs e){
-			//There is analogous event handler for each formImageFloat called FormImageFloat_Activated.
-			//Debug.WriteLine(DateTime.Now.ToString()+" IsImageFloatSelected:"+formImageFloat.IsImageFloatSelected.ToString());
-			//Based on the above debug testing, this gets hit fairly frequently: every time you use a button in the toolbar and then go back into the floater.
+		private void ControlImageDock_GotODFocus(object sender, EventArgs e){
+			//There is an analogous event handler for each formImageFloat called FormImageFloat_Activated.
+			//The purpose of this is to react when the floater gets focus.
+			//This gets hit frequently, though: every time user clicks a button in toolbar and then goes back in here.
+			//So this usually needs to not really do anything.
+			//Also, this does not automatically get raised like FormImageFloat_Activated. We must always manually trigger it,
+			//whether through click events or otherwise.
+			//Debug.WriteLine(DateTime.Now.ToString()+" ControlImageDock_GotODFocus");
 			//We want to SetDrawMode(EnumDrawMode.None) and hide the draw toobar, but only if we change the selected floater.
 			if(!controlImageDock.IsImageFloatSelected){
 				SetCropPanAdj(EnumCropPanAdj.Pan);
@@ -1269,11 +1345,28 @@ namespace OpenDental{
 		}
 
 		private void FormImageFloat_FormClosed(object sender, FormClosedEventArgs e){
+			//There is analogous event handler for controlImageDock called ControlImageDock_ImageClosed
+			//The goal here is to clear out the rest of the UI when an image truly closes.
+			//Hopefully, we have done this without causing annoyance when user is switching to another image.
 			FormImageFloat formImageFloat=(FormImageFloat)sender;
 			SetDrawMode(EnumDrawMode.None);
 			panelDraw.Visible=false;
-			LayoutControls();
 			_listFormImageFloats.Remove(formImageFloat);
+			DisableAllToolBarButtons();
+			FillImageSelector(false);
+			//In case the image had a signature or note:
+			SetPanelNoteVisibility();
+			SetUnmountedBarVisibility();
+			LayoutControls();
+			FillSignature();
+		}
+
+		private void ControlImageDock_ImageClosed(object sender, EventArgs e){
+			//There is analogous event handler for each formImageFloat called FormImageFloat_FormClosed
+			//The goal here is to clear out the rest of the UI when an image truly closes.
+			//Hopefully, we have done this without causing annoyance when user is switching to another image.
+			SetDrawMode(EnumDrawMode.None);
+			panelDraw.Visible=false;
 			DisableAllToolBarButtons();
 			FillImageSelector(false);
 			//In case the image had a signature or note:
@@ -1346,7 +1439,7 @@ namespace OpenDental{
 			controlImageDisplay.SetZoomSlider();
 			formImageFloat.Close();//since controlImageDisplay is no longer a child, it will not be disposed.
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);//This is necessary when this window replaces an old docked window
+			SelectTreeNode1(nodeTypeAndKey);//This is necessary when this window replaces an old docked window
 		}
 
 		private void FormImageFloat_WindowShowAll(object sender, EventArgs e){
@@ -1371,7 +1464,7 @@ namespace OpenDental{
 			FormImageFloat formImageFloat=_listFormImageFloats
 				.FirstOrDefault(x=>x.ControlImageDisplay_==controlImageDisplay);//will be null if docked
 			SetDocumentOrMount(nodeTypeAndKey,controlImageDisplay,formImageFloat);
-			controlImageDisplay.SelectTreeNode(nodeTypeAndKey);
+			controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);
 			SetTitle(controlImageDisplay,formImageFloat);
 			if(imageSelector.GetSelectedType()==EnumImageNodeType.Mount) {
 				unmountedBar.SetObjects(controlImageDisplay.GetUmountedObjs());
@@ -1384,7 +1477,25 @@ namespace OpenDental{
 			EnumImageNodeType nodeType=imageSelector.GetSelectedType();
 			long priKey=imageSelector.GetSelectedKey();
 			NodeTypeAndKey nodeTypeAndKey=new NodeTypeAndKey(nodeType,priKey);
-			SelectTreeNode(nodeTypeAndKey);
+			SelectTreeNode1(nodeTypeAndKey);
+			Application.DoEvents();
+			FormImageFloat formImageFloat=_listFormImageFloats.FirstOrDefault(x=>x.ControlImageDisplay_.GetNodeTypeAndKey().IsMatching(nodeTypeAndKey));
+			if(formImageFloat!=null){
+				//The one we want is in a floater
+				//There is an unknown event that internally causes main window to come to front.
+				//The code below overcomes that.
+				formImageFloat.BringToFront();
+				formImageFloat.Focus();
+				formImageFloat.TopMost=true;
+				System.Windows.Forms.Timer timer=new System.Windows.Forms.Timer();
+				timer.Interval=100;
+				timer.Tick+=(sender,e)=>{
+					formImageFloat.TopMost=false;
+					timer.Stop();
+					timer.Dispose();
+				};
+				timer.Start();
+			}
 		}
 
 		private void _fileSystemWatcher_FileCreated(object sender,FileSystemEventArgs e) {
@@ -1429,7 +1540,7 @@ namespace OpenDental{
 			if(!IsMountShowing()){//single
 				File.Delete(e.FullPath);
 				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				return;//user can take another single
 			}
 			//From here down is mount-----------------------------------------------------------------------------
@@ -1506,7 +1617,7 @@ namespace OpenDental{
 				return;
 			}
 			FillImageSelector(false);
-			SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+			SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
 			ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
 			FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,doc,isDocCreate:true);
 			frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
@@ -1714,7 +1825,7 @@ namespace OpenDental{
 				return;
 			}
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
+			SelectTreeNode1(nodeTypeAndKey);
 		}
 
 		private void unmountedBar_Remount(object sender, WpfControls.UI.UnmountedObj e){
@@ -1747,7 +1858,7 @@ namespace OpenDental{
 			Documents.Update(e.Document_);
 			MountItems.Delete(e.MountItem_);
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
+			SelectTreeNode1(nodeTypeAndKey);
 		}
 
 		private void unmountedBar_Retake(object sender, EventArgs e){
@@ -1797,7 +1908,7 @@ namespace OpenDental{
 			document.MountItemNum=mountItemUnmounted.MountItemNum;
 			Documents.Update(document);
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
+			SelectTreeNode1(nodeTypeAndKey);
 			//There is now a new mountItem in the unmounted list, so we have to add 1 to the idx just to keep it in the same spot as it already is.
 			controlImageDisplay.SetIdxSelectedInMount(idx+1);
 			idx=controlImageDisplay.GetIdxSelectedInMount();
@@ -2043,11 +2154,11 @@ namespace OpenDental{
 			NodeTypeAndKey nodeTypeAndKeyCat;
 			if(document!=null){
 				nodeTypeAndKeyCat=new NodeTypeAndKey(EnumImageNodeType.Category,document.DocCategory);
-				SelectTreeNode(nodeTypeAndKeyCat);
+				SelectTreeNode1(nodeTypeAndKeyCat);
 			}
 			if(mount!=null){
 				nodeTypeAndKeyCat=new NodeTypeAndKey(EnumImageNodeType.Category,mount.DocCategory);
-				SelectTreeNode(nodeTypeAndKeyCat);
+				SelectTreeNode1(nodeTypeAndKeyCat);
 			}
 			//Get the new docked floater for this patient
 			controlImageDisplay=GetControlImageDisplaySelected();
@@ -2163,7 +2274,7 @@ namespace OpenDental{
 				EnumImageNodeType enumImageNodeType=imageSelector.GetSelectedType();
 				long priKey=imageSelector.GetSelectedKey();
 				NodeTypeAndKey nodeTypeAndKey=new NodeTypeAndKey(enumImageNodeType,priKey);
-				SelectTreeNode(nodeTypeAndKey);
+				SelectTreeNode1(nodeTypeAndKey);
 			}
 			else{
 				WpfControls.ProgramL.Execute(program.ProgramNum,_patient);
@@ -2291,7 +2402,7 @@ namespace OpenDental{
 			Cursor=Cursors.Default;
 			if(saved) {
 				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
 				ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
 				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,GetDocumentShowing(0),isDocCreate:true);
 				frmDocInfo.ShowDialog();
@@ -2393,7 +2504,7 @@ namespace OpenDental{
 			}
 			if(copied) {
 				FillImageSelector(false);
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
 				ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
 				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,doc,isDocCreate:true);
 				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename 
@@ -2410,7 +2521,7 @@ namespace OpenDental{
 			);
 			//Reselect the last successfully added node when necessary. js This code seems to be copied from import multi.  Simplify it.
 			if(doc!=null && !new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum).Equals(nodeTypeAndKey)) {
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
 			}
 			FillImageSelector(true);
 		}
@@ -2444,7 +2555,7 @@ namespace OpenDental{
 			}
 			if(copied) {
 				FillImageSelector(false);
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
 				ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
 				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,doc,isDocCreate:true);
 				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename 
@@ -2461,7 +2572,7 @@ namespace OpenDental{
 			);
 			//Reselect the last successfully added node when necessary. js This code seems to be copied from import multi.  Simplify it.
 			if(doc!=null && !new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum).Equals(nodeTypeAndKey)) {
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
 			}
 			FillImageSelector(true);
 		}
@@ -2517,7 +2628,7 @@ namespace OpenDental{
 			}//===========================
 			if(saved) {
 				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
 				ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
 				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,GetDocumentShowing(0),isDocCreate:true);
 				frmDocInfo.ShowDialog();
@@ -2586,7 +2697,7 @@ namespace OpenDental{
 			document.MountItemNum=mountItemCopy.MountItemNum;
 			Documents.Update(document);
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
+			SelectTreeNode1(nodeTypeAndKey);
 		}
 
 		private void ToolBarVideo_Click(object sender,EventArgs e){
@@ -2642,7 +2753,7 @@ namespace OpenDental{
 				if(nodeTypeAndKey is null){
 					nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
 				}
-				SelectTreeNode(nodeTypeAndKey);
+				SelectTreeNode1(nodeTypeAndKey);
 			};
 			controlImageDisplay.EventSetCropPanEditAdj+=(sender,cropPanAdj)=>SetCropPanAdj(cropPanAdj);
 			controlImageDisplay.EventSetDrawMode+=(sender,drawMode)=>SetDrawMode(drawMode);
@@ -2655,6 +2766,7 @@ namespace OpenDental{
 			controlImageDisplay.EventZoomSliderSetByWheel+=FormImageFloat_ZoomSliderSetByWheel;
 			controlImageDisplay.EventZoomSliderSetValueAndMax+=(sender,newVal)=>zoomSlider.SetValueAndMax(newVal);
 //todo: The property and event are both gone. A lot more needs to happen besides just changing a bool.
+//I think this is mostly done.
 			//controlImageDisplay.IsImageFloatDockedChanged+=FormImageFloat_IsImageFloatDockedChanged;
 			return controlImageDisplay;
 		}
@@ -2869,7 +2981,7 @@ namespace OpenDental{
 			}
 			//make one
 //todo: this isn't properly making one:
-			SelectTreeNode(null);
+			SelectTreeNode1(null);
 			controlImageDisplay=GetControlImageDisplaySelected();
 			return controlImageDisplay;
 		}
@@ -3010,13 +3122,13 @@ namespace OpenDental{
 			if(patNum==0) {
 				_familyCur=null;
 				_patient=null;
-				SelectTreeNode(null);//Clear selection and image and reset visibilities. Example: clear PDF when switching patients.
+				SelectTreeNode1(null);//Clear selection and image and reset visibilities. Example: clear PDF when switching patients.
 				return;
 			}
 			_familyCur=Patients.GetFamily(patNum);
 			_patient=_familyCur.GetPatient(patNum);
 			_patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());//This is where the pat folder gets created if it does not yet exist.
-			SelectTreeNode(null);//needs _patCur, etc.
+			SelectTreeNode1(null);//needs _patCur, etc.
 			if(_patNumLastSecurityLog!=patNum) {
 				SecurityLogs.MakeLogEntry(EnumPermType.ImagingModule,patNum,"");
 				_patNumLastSecurityLog=patNum;
@@ -3289,7 +3401,7 @@ namespace OpenDental{
 					+defDocCategory.ItemName;
 				SecurityLogs.MakeLogEntry(EnumPermType.ImageCreate,_patient.PatNum,logText);
 				FillImageSelector(false);
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Mount,mount.MountNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Mount,mount.MountNum));
 			}
 			ImagingDevice imagingDevice=frmMountAndAcquire.ImagingDeviceSelected;
 			if(imagingDevice is null){
@@ -3482,7 +3594,7 @@ namespace OpenDental{
 			}
 			if(!IsMountShowing()){//single
 				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				bitmap?.Dispose();
 				return true;
 			}
@@ -3698,11 +3810,7 @@ namespace OpenDental{
 }
 
 
-//2022-03-26 Todo:
-
-
-
-//Bug?
+//Old Bug?
 //Mount thumbnails not refreshing?
 
 //Need to document how XVWeb and Suni use the old Images module. (might be done)

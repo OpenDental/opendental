@@ -25,8 +25,9 @@
 			<ColumnDefinition Width="30"/><!--max-->
 			<ColumnDefinition Width="30"/><!--close-->
 		</Grid.ColumnDefinitions>
-		<local:Label x:Name="labelTitle" x:FieldModifier="internal" Foreground="White" Height="18" Text="4/6/2024 Patient Photo" Margin="12,1,152,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" VAlign="Center"/>
-		<Rectangle x:Name="rectangleWindows"  Grid.Column="1" x:FieldModifier="internal" Margin="0,3,0,0" Fill="#FF6C718C" />
+		<Border x:Name="borderDrag"  x:FieldModifier="internal" Background="#7186b3" IsHitTestVisible="True"/>
+		<local:Label x:Name="labelTitle" x:FieldModifier="internal" Foreground="White" Height="18" Text="4/6/2024 Patient Photo" Margin="12,1,152,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" VAlign="Center" IsHitTestVisible="False"/>
+		<Rectangle x:Name="rectangleWindows" Grid.Column="1" x:FieldModifier="internal" Margin="0,3,0,0" Fill="#FF6C718C" />
 		<local:Label x:Name="labelWin" Grid.Column="1" x:FieldModifier="internal" Foreground="White" Height="18" Text="Windows" IsHitTestVisible="False" Margin="2,1,1,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" VAlign="Center"/>
 		<Rectangle x:Name="rectangleMin" Grid.Column="3" x:FieldModifier="internal" Margin="0,2,0,0" Fill="#FFA3A8C5" />
 		<Canvas Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,1,0,0">

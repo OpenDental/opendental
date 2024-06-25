@@ -5,16 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControls.UI"
         mc:Ignorable="d"
-        Height="240" Width="264" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="Manual" FontSize="11.5">
-	<Border x:Name="border" Background="White" BorderThickness="1" BorderBrush="#808080" Focusable="True" >
-		<Grid x:Name="grid">
-			<local:Button x:Name="butDockThis" Width="77" Height="24" Margin="14,83,0,0" Text="Dock This" Click="butDockThis_Click"  />
-			<local:Button x:Name="butCloseOthers" Width="77" Height="24" Margin="14,112,0,0" Text="Close Others" Click="butCloseOthers_Click"  />
-			<local:Button x:Name="butShowAll" Width="77" Height="24" Margin="14,141,0,0" Text="Show All" Click="butShowAll_Click" />
-			<local:ListBox x:Name="listBoxWindows" Width="209" Height="20" Margin="15,193,0,0" />
-			<local:Label x:Name="labelWindows" Width="100" Height="18" Margin="14,173,0,0" Text="Open Windows" VAlign="Bottom" />
+        Height="195" Width="345" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="Manual" FontSize="11.5">
+	<Grid x:Name="grid">
+		<Border x:Name="borderMain" BorderThickness="1" BorderBrush="#808080" Background="White" Focusable="True"/>
+		<Border x:Name="borderWhiteBlock" Width="100" Height="5" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="200,0,0,0"/>
+		<local:Button x:Name="butDockThis" Width="77" Height="24" Margin="14,83,0,0" Text="Dock This" Click="butDockThis_Click"  />
+		<local:Button x:Name="butCloseOthers" Width="77" Height="24" Margin="14,112,0,0" Text="Close Others" Click="butCloseOthers_Click"  />
+		<local:Button x:Name="butShowAll" Width="77" Height="24" Margin="14,141,0,0" Text="Show All" Click="butShowAll_Click" />
+		<local:ListBox x:Name="listBoxWindows" Width="209" Height="20" Margin="115,104,0,0" />
+		<local:Label x:Name="labelWindows" Width="191" Height="18" Margin="114,84,0,0" Text="Open Images" VAlign="Bottom" />
+	</Grid>
 
-
-		</Grid>
-	</Border>
 </Window>

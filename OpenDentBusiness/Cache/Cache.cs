@@ -16,7 +16,7 @@ namespace OpenDentBusiness {
 	The Cache Pattern region might already exist and be commented out.
 	If that region is missing, you can run the CRUD generator, Create Snippet button, with "EntireSclass" selected in the combobox and your class selected in the listbox.
 	See wiki page Programming Pattern - Cache.
-	To only update your local cache, call the RefreshCache() method in the S-Class, e.g.: DisplayFields.RefreshCache(). 
+	To only update your local cache, call the RefreshCache() method in the S-Class, e.g.: DisplayFields.RefreshCache() (ignore the returned table) If the type includes multiple tables, you will need to do this for each table you're interested in.
 	To update your local cache and also tell all other workstations to update their cache, call DataValid.SetInvalid(), e.g. DataValid.SetInvalid((InvalidType.DisplayFields).
 	*/
 

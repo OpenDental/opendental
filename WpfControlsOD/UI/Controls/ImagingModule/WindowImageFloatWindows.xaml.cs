@@ -29,8 +29,9 @@ Jordan is the only one allowed to edit this file.
 		public Point PointAnchor1;
 		///<summary>These are the lower two points of the button that launched this window, in screen coordinates.  This window will roughly center its top edge on these anchor points and will also omit the outline between these two points so that it looks more like a menu.</summary>
 		public Point PointAnchor2;
-		///<summary>This lets us get a list of all floater windows from ControlImages at the moment when we open this window.</summary>
-		public Func<List<string>> FuncListFloaters;
+		///<summary>This gets set to a list of all floater windows from ControlImages at the moment when we open this window.</summary>
+		public List<string> ListFloaterTitles;
+		public int idxParent;
 		#endregion Fields - Public
 
 		#region Fields - Private
@@ -70,7 +71,8 @@ Jordan is the only one allowed to edit this file.
 		#region Constructor
 		public WindowImageFloatWindows() {
 			InitializeComponent();
-			border.LostKeyboardFocus+=border_LostKeyboardFocus;
+			borderMain.LostKeyboardFocus+=border_LostKeyboardFocus;
+			listBoxWindows.SelectionChangeCommitted+=ListBoxWindows_SelectionChangeCommitted;
 			Closing+=WindowImageFloatWindows_Closing;
 			Loaded+=WindowImageFloatWindows_Loaded;
 			MouseMove+=WindowImageFloatWindows_MouseMove;
@@ -83,6 +85,11 @@ Jordan is the only one allowed to edit this file.
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public event EventHandler<EnumImageFloatWinButton> EventButClicked=null;
+
+		///<summary>User clicked on the list to pick a new window.  Bubbles up to FormImageFloat or ControlImageDock, and then to ControlImages, where it's handled. The index passed includes the docker in position 0.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler<int> EventWinPicked=null;
 		#endregion Events
 
 		#region Properties
@@ -112,12 +119,18 @@ Jordan is the only one allowed to edit this file.
 			EventButClicked?.Invoke(this,EnumImageFloatWinButton.ShowAll);
 		}
 
+		private void ListBoxWindows_SelectionChangeCommitted(object sender,EventArgs e) {
+			//We have to bubble this up with a new event 
+			//We can't handle it from here because we can't get a ref to FormImageFloat because it's in OD
+			EventWinPicked?.Invoke(this,listBoxWindows.SelectedIndex);
+		}
+
 		private void WindowImageFloatWindows_Closing(object sender,CancelEventArgs e) {
 			_isClosed=true;
 		}
 
 		private void WindowImageFloatWindows_Loaded(object sender,RoutedEventArgs e) {
-			Keyboard.Focus(border);
+			Keyboard.Focus(borderMain);
 			System.Drawing.Point drawing_PointScreen=new System.Drawing.Point((int)PointAnchor1.X,(int)PointAnchor1.Y);
 			System.Windows.Forms.Screen screenThis=System.Windows.Forms.Screen.FromPoint(drawing_PointScreen);
 			System.Windows.Forms.Screen screen2=null;
@@ -225,15 +238,13 @@ Jordan is the only one allowed to edit this file.
 			y+=20;
 			listBoxWindows.Margin=new Thickness(x,y,0,0);
 			listBoxWindows.Width=_marginOuter+_sizeScreen.Width*2;
-			List<string> listFormImageFloats=FuncListFloaters();
-			for(int i=0;i<listFormImageFloats.Count;i++) {
-				listBoxWindows.Items.Add(listFormImageFloats[i]);
-				//todo: set selected
-				//if(listFormImageFloats[i]==_formImageFloat) {
-				//	listBoxWindows.SetSelected(i);
-				//}
+			for(int i=0;i<ListFloaterTitles.Count;i++) {
+				listBoxWindows.Items.Add(ListFloaterTitles[i]);
+				if(i==idxParent) {
+					listBoxWindows.SetSelected(i);
+				}
 			}
-//listBoxWindows.Height=(int)LayoutManager.ScaleMS(font.Height)*listFormImageFloats.Count+4;//pulled from ListBoxOD.IntegralHeight.
+			listBoxWindows.Height=heightFont*ListFloaterTitles.Count+5;
 			//Size and Location of window ==========================================================================
 			PresentationSource presentationSource = PresentationSource.FromVisual(this);
 			double scaleWindows=presentationSource.CompositionTarget.TransformToDevice.M11;//example 1.5. For this screen only.
@@ -247,7 +258,7 @@ Jordan is the only one allowed to edit this file.
 			else{
 				Height=bottomButtons+_marginOuter;
 			}
-			//Math from here down must use desktop pixels, not 96 DIPs:
+			//This little section must use desktop pixels, not 96 DIPs:
 			double width=Width*scaleWindows;
 			double left=(PointAnchor1.X+PointAnchor2.X)/2-width/2;
 			System.Drawing.Rectangle drawing_RectangleBounds=System.Windows.Forms.Screen.GetWorkingArea(drawing_PointScreen);
@@ -259,7 +270,12 @@ Jordan is the only one allowed to edit this file.
 			Point pointDIP=new Point(left/scaleWindows,top/scaleWindows);
 			Left=pointDIP.X;
 			Top=pointDIP.Y;
-			
+			//Now calculate where to block out the main outline for the "tab" effect.
+			Point point1=grid.PointFromScreen(PointAnchor1);
+			Point point2=grid.PointFromScreen(PointAnchor2);
+			borderWhiteBlock.Margin=new Thickness(point1.X,0,0,0);
+			borderWhiteBlock.Width=point2.X-point1.X;
+			//there is a slight blemish on the left. I'll have to come back around to it.
 		}
 
 		private void WindowImageFloatWindows_MouseDown(object sender,MouseButtonEventArgs e) {
@@ -323,10 +339,11 @@ Jordan is the only one allowed to edit this file.
 			if(_pathQuarter_LR2.Data.FillContains(point)){
 				enumImageFloatWinButton=EnumImageFloatWinButton.Quarter_LR2;
 			}
-			if(enumImageFloatWinButton!=EnumImageFloatWinButton.None){
-				EventButClicked?.Invoke(this,enumImageFloatWinButton);
-				//MessageBox.Show(this,enumImageFloatWinClick.ToString());//this doesn't work because this window closes
+			if(enumImageFloatWinButton==EnumImageFloatWinButton.None){
+				return;
 			}
+			EventButClicked?.Invoke(this,enumImageFloatWinButton);
+			//MessageBox.Show(this,enumImageFloatWinClick.ToString());//this doesn't work because this window closes
 			_isClosed=true;
 			Close();//this is needed when the event moves a form to a new location, which doesn't cause a focus change
 		}

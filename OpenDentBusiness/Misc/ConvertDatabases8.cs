@@ -12,6 +12,7 @@ using System.Threading;
 using System.IO;
 using System.Windows.Controls.Primitives;
 using static OpenDentBusiness.LargeTableHelper;
+using ADODB;
 
 namespace OpenDentBusiness {
 	public partial class ConvertDatabases {
@@ -1758,5 +1759,14 @@ namespace OpenDentBusiness {
 			}
 			//End 54624
 		}//End of 24_2_3() method
+		
+		private static void To24_2_4() {
+			//Start 50988
+			string command="ALTER TABLE printer ADD FileExtension varchar(255) NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE printer ADD IsVirtualPrinter tinyint NOT NULL";
+			Db.NonQ(command);
+			//End 50988
+		}//End of 24_2_4() method
 	}
 }

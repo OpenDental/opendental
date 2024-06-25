@@ -2187,7 +2187,9 @@ namespace OpenDentBusiness.Eclaims {
 			XConnectAddress xconnectAddressBilling=XConnectAddress.BillingAddressFromClinic(clinic,provider);
 			listXConnectAddresses.Add(xconnectAddressBilling);
 			XConnectAddress xconnectAdddressPayTo;
-			if(type==EnumXConnectProviderType.BILLING && (clinic.PayToAddress!="" || PrefC.GetString(PrefName.PracticePayToAddress)!="")) {//Add PayToAddress for the billing provider
+			if(type==EnumXConnectProviderType.BILLING 
+				&& (clinic!=null) 
+				&& (clinic.PayToAddress!="" || PrefC.GetString(PrefName.PracticePayToAddress)!="")) {//Add PayToAddress for the billing provider
 				xconnectAdddressPayTo=XConnectAddress.PayToAddressFromClinic(clinic,provider);
 				listXConnectAddresses.Add(xconnectAdddressPayTo);
 			}

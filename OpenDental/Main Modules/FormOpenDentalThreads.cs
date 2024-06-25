@@ -30,6 +30,11 @@ namespace OpenDental {
 		private ODThread _odThreadMiddleTierConnectionLost;
 		private ODThread _odThreadDataReaderNullMonitor;
 		#endregion
+		
+		///<summary>Signal processing timer. Gets started in FormOpenDental.FormOpenDentalShown(), 
+		///and should not be shut off unless signal polling frequency gets set to 0, or already was 0.
+		///When enabled, high priority signals will always get processed. Low priority signals will get backlogged until _hasSignalProcessingPaused is false.</summary>
+		private System.Windows.Forms.Timer timerSignals;
 
 		///<summary>Starts or stops all local timers and threads that should be started and stopped.
 		///Only starts signal timer if interval preference is set to non-zero value.
@@ -46,19 +51,10 @@ namespace OpenDental {
 		///or marshal / invoke the call onto another thread.</summary>
 		private void SetTimers(bool doStart) {
 			if(doStart) {
-				if(PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)==0) {
-					_hasSignalProcessingPaused=true;
-				}
-				else {
-					timerSignals.Interval=PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)*1000;
-					timerSignals.Start();
-				}
 				timerTimeIndic.Start();
 			}
 			else {
-				timerSignals.Stop();
 				timerTimeIndic.Stop();
-				_hasSignalProcessingPaused=true;
 			}
 		}
 

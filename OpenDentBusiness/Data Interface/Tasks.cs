@@ -823,6 +823,9 @@ namespace OpenDentBusiness{
 			if(isTaskSortApptDateTime) {
 				command+="LEFT JOIN appointment ON task.ObjectType="+POut.Int((int)TaskObjectType.Appointment)+" AND task.KeyNum=appointment.AptNum ";
 			}
+			else {
+				command+=BuildFilterJoins(hasPatientJoinAlready:true,listClinicNumsFilter,listDefNumsRegionFilter,dateStartFilter,dateEndFilter,patientFilter);
+			}
 			command+="WHERE TaskListNum="+POut.Long(listNum)+" ";
 			if(taskType==TaskType.Reminder) {
 				command+="AND COALESCE(task.ReminderGroupId,'') != '' ";//reminders only

@@ -172,6 +172,25 @@ How to:
 -Mouse Cursors
 		Some slight changes. Use Cursors.Wait instead of Cursors.WaitCursor.
 		Use Cursors.Arrow instead of Cursors.Default.
+-Mouse Down
+		We must frequently track mouse down in two independent ways, and combine them to avoid certain bugs.
+		1. _isMouseDown gets set in the mouse down event. This proves that mouse down was performed in our control, not somewhere else.
+		2. bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed. This proves that mouse is still actually down.
+		Without #1, a bug example is a combobox above our control has a dropdown that user clicks on. This causes the dropdown to close, triggering a mouse move in our control while mouse is still down. Using _isMouseDown lets us ignore this because we didn't actually mouse down in our control.
+		Without #2, a bug example is that a mouse down triggers a dialog. The mouse up then happens inside that dialog, leaving our boolean stuck in the wrong state. 
+		The reason for using a bool variable with #2 is that the state is not preserved during debugging. Mouse events in VS will actually change it for example.
+-Mouse Capture
+		In WPF, if you drag outside your control, it will stop registered mouse move. This is different than WinForms.
+		When you use the suggested solution of CaptureMouse, the capture itself triggers an unwanted mouse move.
+		The solution is to do this in mouse down:
+				_ignoreMouseMove=true;
+				((IInputElement)sender).CaptureMouse();
+				_ignoreMouseMove=false;
+		and this in mouse move:
+				if(_ignoreMouseMove){
+					return;
+				}
+
 */
 	/// <summary>All WPF windows inherit from this base class.</summary>
 	public partial class FrmODBase:System.Windows.Controls.UserControl {

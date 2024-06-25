@@ -47,11 +47,13 @@ namespace OpenDentBusiness.Crud{
 			Printer printer;
 			foreach(DataRow row in table.Rows) {
 				printer=new Printer();
-				printer.PrinterNum   = PIn.Long  (row["PrinterNum"].ToString());
-				printer.ComputerNum  = PIn.Long  (row["ComputerNum"].ToString());
-				printer.PrintSit     = (CodeBase.PrintSituation)PIn.Int(row["PrintSit"].ToString());
-				printer.PrinterName  = PIn.String(row["PrinterName"].ToString());
-				printer.DisplayPrompt= PIn.Bool  (row["DisplayPrompt"].ToString());
+				printer.PrinterNum      = PIn.Long  (row["PrinterNum"].ToString());
+				printer.ComputerNum     = PIn.Long  (row["ComputerNum"].ToString());
+				printer.PrintSit        = (CodeBase.PrintSituation)PIn.Int(row["PrintSit"].ToString());
+				printer.PrinterName     = PIn.String(row["PrinterName"].ToString());
+				printer.DisplayPrompt   = PIn.Bool  (row["DisplayPrompt"].ToString());
+				printer.FileExtension   = PIn.String(row["FileExtension"].ToString());
+				printer.IsVirtualPrinter= PIn.Bool  (row["IsVirtualPrinter"].ToString());
 				retVal.Add(printer);
 			}
 			return retVal;
@@ -68,6 +70,8 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("PrintSit");
 			table.Columns.Add("PrinterName");
 			table.Columns.Add("DisplayPrompt");
+			table.Columns.Add("FileExtension");
+			table.Columns.Add("IsVirtualPrinter");
 			foreach(Printer printer in listPrinters) {
 				table.Rows.Add(new object[] {
 					POut.Long  (printer.PrinterNum),
@@ -75,6 +79,8 @@ namespace OpenDentBusiness.Crud{
 					POut.Int   ((int)printer.PrintSit),
 					            printer.PrinterName,
 					POut.Bool  (printer.DisplayPrompt),
+					            printer.FileExtension,
+					POut.Bool  (printer.IsVirtualPrinter),
 				});
 			}
 			return table;
@@ -94,7 +100,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="PrinterNum,";
 			}
-			command+="ComputerNum,PrintSit,PrinterName,DisplayPrompt) VALUES(";
+			command+="ComputerNum,PrintSit,PrinterName,DisplayPrompt,FileExtension,IsVirtualPrinter) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(printer.PrinterNum)+",";
 			}
@@ -102,7 +108,9 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (printer.ComputerNum)+","
 				+    POut.Int   ((int)printer.PrintSit)+","
 				+"'"+POut.String(printer.PrinterName)+"',"
-				+    POut.Bool  (printer.DisplayPrompt)+")";
+				+    POut.Bool  (printer.DisplayPrompt)+","
+				+"'"+POut.String(printer.FileExtension)+"',"
+				+    POut.Bool  (printer.IsVirtualPrinter)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -127,7 +135,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="PrinterNum,";
 			}
-			command+="ComputerNum,PrintSit,PrinterName,DisplayPrompt) VALUES(";
+			command+="ComputerNum,PrintSit,PrinterName,DisplayPrompt,FileExtension,IsVirtualPrinter) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(printer.PrinterNum)+",";
 			}
@@ -135,7 +143,9 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (printer.ComputerNum)+","
 				+    POut.Int   ((int)printer.PrintSit)+","
 				+"'"+POut.String(printer.PrinterName)+"',"
-				+    POut.Bool  (printer.DisplayPrompt)+")";
+				+    POut.Bool  (printer.DisplayPrompt)+","
+				+"'"+POut.String(printer.FileExtension)+"',"
+				+    POut.Bool  (printer.IsVirtualPrinter)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -148,10 +158,12 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one Printer in the database.</summary>
 		public static void Update(Printer printer) {
 			string command="UPDATE printer SET "
-				+"ComputerNum  =  "+POut.Long  (printer.ComputerNum)+", "
-				+"PrintSit     =  "+POut.Int   ((int)printer.PrintSit)+", "
-				+"PrinterName  = '"+POut.String(printer.PrinterName)+"', "
-				+"DisplayPrompt=  "+POut.Bool  (printer.DisplayPrompt)+" "
+				+"ComputerNum     =  "+POut.Long  (printer.ComputerNum)+", "
+				+"PrintSit        =  "+POut.Int   ((int)printer.PrintSit)+", "
+				+"PrinterName     = '"+POut.String(printer.PrinterName)+"', "
+				+"DisplayPrompt   =  "+POut.Bool  (printer.DisplayPrompt)+", "
+				+"FileExtension   = '"+POut.String(printer.FileExtension)+"', "
+				+"IsVirtualPrinter=  "+POut.Bool  (printer.IsVirtualPrinter)+" "
 				+"WHERE PrinterNum = "+POut.Long(printer.PrinterNum);
 			Db.NonQ(command);
 		}
@@ -175,6 +187,14 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="DisplayPrompt = "+POut.Bool(printer.DisplayPrompt)+"";
 			}
+			if(printer.FileExtension != oldPrinter.FileExtension) {
+				if(command!="") { command+=",";}
+				command+="FileExtension = '"+POut.String(printer.FileExtension)+"'";
+			}
+			if(printer.IsVirtualPrinter != oldPrinter.IsVirtualPrinter) {
+				if(command!="") { command+=",";}
+				command+="IsVirtualPrinter = "+POut.Bool(printer.IsVirtualPrinter)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -197,6 +217,12 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(printer.DisplayPrompt != oldPrinter.DisplayPrompt) {
+				return true;
+			}
+			if(printer.FileExtension != oldPrinter.FileExtension) {
+				return true;
+			}
+			if(printer.IsVirtualPrinter != oldPrinter.IsVirtualPrinter) {
 				return true;
 			}
 			return false;

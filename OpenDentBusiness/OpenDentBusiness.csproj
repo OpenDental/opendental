@@ -286,6 +286,7 @@
     <Compile Include="Crud\CertEmployeeCrud.cs" />
     <Compile Include="Crud\ChildCrud.cs" />
     <Compile Include="Crud\ChildParentCrud.cs" />
+    <Compile Include="Crud\ChildParentLinkCrud.cs" />
     <Compile Include="Crud\ChildRoomCrud.cs" />
     <Compile Include="Crud\ChildRoomLogCrud.cs" />
     <Compile Include="Crud\ChildTeacherCrud.cs" />
@@ -409,6 +410,7 @@
     <Compile Include="Data Interface\CareCreditWebResponses.cs" />
     <Compile Include="Data Interface\AdvertisingPostcards.cs" />
     <Compile Include="Data Interface\AutoCommActives.cs" />
+    <Compile Include="Data Interface\ChildParentLinks.cs" />
     <Compile Include="Data Interface\ChildParents.cs" />
     <Compile Include="Data Interface\ChildRoomLogs.cs" />
     <Compile Include="Data Interface\ChildRooms.cs" />
@@ -457,6 +459,7 @@
     <Compile Include="Db Multi Table\OrthoCaseProcedureLinker.cs" />
     <Compile Include="Db Multi Table\PatientData.cs" />
     <Compile Include="Db Multi Table\PatientDataGenerated.cs" />
+    <Compile Include="Db Multi Table\PrintRemoteRequest.cs" />
     <Compile Include="Eclaims\Lantek.cs" />
     <Compile Include="Eclaims\VyneDental.cs" />
     <Compile Include="EForms\EFormFieldsAvailable.cs" />
@@ -737,6 +740,7 @@
     <Compile Include="TableTypes\ApptGeneralMessageSent.cs" />
     <Compile Include="TableTypes\ApptNewPatThankYouSent.cs" />
     <Compile Include="TableTypes\AutoCommExcludeDate.cs" />
+    <Compile Include="TableTypes\ChildParentLink.cs" />
     <Compile Include="TableTypes\ChildRoomLog.cs" />
     <Compile Include="TableTypes\ChildTeacher.cs" />
     <Compile Include="TableTypes\Child.cs" />

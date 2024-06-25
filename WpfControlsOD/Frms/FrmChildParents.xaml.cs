@@ -1,0 +1,75 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using OpenDentBusiness;
+using WpfControls.UI;
+
+namespace OpenDental {
+	///<summary></summary>
+	public partial class FrmChildParents:FrmODBase {
+
+		///<summary></summary>
+		public FrmChildParents() {
+			InitializeComponent();
+			Load+=FrmChildParents_Load;
+			gridMain.CellDoubleClick+=gridMain_CellDoubleClick;
+		}
+
+		private void FrmChildParents_Load(object sender,EventArgs e) {
+			FillGrid();
+		}
+
+		private void FillGrid() {
+			List<ChildParent> listChildParents=ChildParents.GetAll();
+			gridMain.BeginUpdate();
+			gridMain.Columns.Clear();
+			GridColumn gridColumn=new GridColumn("First Name",150);
+			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Last Name",150);
+			gridMain.Columns.Add(gridColumn);
+			gridMain.ListGridRows.Clear();
+			for(int i=0;i<listChildParents.Count;i++) {
+				GridRow gridRow=new GridRow();
+				gridRow.Cells.Add(listChildParents[i].FName);
+				gridRow.Cells.Add(listChildParents[i].LName);
+				gridRow.Tag=listChildParents[i];
+				gridMain.ListGridRows.Add(gridRow);
+			}
+			gridMain.EndUpdate();
+		}
+
+		private void gridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			FrmChildParentEdit frmChildParentEdit=new FrmChildParentEdit();
+			frmChildParentEdit.ChildParentCur=gridMain.SelectedTag<ChildParent>();
+			frmChildParentEdit.ShowDialog();
+			if(frmChildParentEdit.IsDialogOK) {
+				FillGrid();
+			}
+		}
+
+		private void butAdd_Click(object sender,EventArgs e) {
+			FrmChildParentEdit frmChildParentEdit=new FrmChildParentEdit();
+			ChildParent childParent=new ChildParent();
+			childParent.IsNew=true;
+			frmChildParentEdit.ChildParentCur=childParent;
+			frmChildParentEdit.ShowDialog();
+			if(frmChildParentEdit.IsDialogOK) {
+				FillGrid();
+			}
+		}
+
+	
+	}
+}

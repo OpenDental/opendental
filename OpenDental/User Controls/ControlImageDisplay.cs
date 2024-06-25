@@ -172,59 +172,27 @@ namespace OpenDental {
 		#endregion Constructor
 
 		#region Events
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<ToolBarButtonState> EventEnableToolBarButtons=null;
-
+		public event EventHandler<ToolBarButtonState> EventEnableToolBarButtons;
 		///<summary>Use this to trigger a FillTree in the parent. Bool true to keep selection, or false to not select anything.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<bool> EventFillTree=null;
-
-		///<summary></summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler EventLaunchFloater=null;
-
+		public event EventHandler<bool> EventFillTree;
+		///<summary>With the various nested WPF and Winforms controls, focus wasn't working reliably, so this is an alternative built from scratch.</summary>
+		public event EventHandler EventGotODFocus;
 		///<summary>Use this to trigger a SelectTreeNode in the parent. When refreshing a mount, it must be done at parent level instead of here in order to include unmounted bar, etc. Pass null to reselect current node.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<NodeTypeAndKey> EventSelectTreeNode=null;
-
+		public event EventHandler<NodeTypeAndKey> EventSelectTreeNode;
 		///<summary>This event bubbles up to the parent, which then sets the property here.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<EnumCropPanAdj> EventSetCropPanEditAdj=null;
-
+		public event EventHandler<EnumCropPanAdj> EventSetCropPanEditAdj;
 		///<summary>This event bubbles up to the parent, which then calls SetDrawMode() here.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<EnumDrawMode> EventSetDrawMode=null;
-
+		public event EventHandler<EnumDrawMode> EventSetDrawMode;
 		///<summary>This event is fired from SetWindowingSlider, which makes the decisions about the windowing for what's showing.  The event bubbles up to the parent to set windowingSlider min and max.  But there is no property here to affect.  Separately, the parent can call SetWindowingSlider, which will then also fire this event like normal. Finally, in windowingSlider_Scroll, the parent directly sets min and max on the document within this window.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<WindowingEventArgs> EventSetWindowingSlider=null;
-
+		public event EventHandler<WindowingEventArgs> EventSetWindowingSlider;
 		///<summary>This event bubbles up to the parent, which then sets the property here.  This sets the zoom slider so that the middle tick will be at the "fit" zoom.  This is needed any time the image is rotated or cropped, or if the form size changes.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<ZoomSliderState> EventSetZoomSlider=null;
-
+		public event EventHandler<ZoomSliderState> EventSetZoomSlider;
 		///<summary>This event is fired when the thumbnail needs to be refreshed.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler EventThumbnailNeedsRefresh=null;
-
+		public event EventHandler EventThumbnailNeedsRefresh;
 		///<summary>This event bubbles up to the parent, which then sets the property here.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<float> EventZoomSliderSetByWheel=null;
-
+		public event EventHandler<float> EventZoomSliderSetByWheel;
 		///<summary>If you use this event, you must also set the ZoomSliderValue.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<int> EventZoomSliderSetValueAndMax=null;
+		public event EventHandler<int> EventZoomSliderSetValueAndMax;
 		#endregion Events
 
 		#region Properties
@@ -312,7 +280,7 @@ namespace OpenDental {
 			if(IsDocumentShowing()){
 				EventFillTree?.Invoke(this,false);
 				ClearObjects();
-				SelectTreeNode(null);
+				SelectTreeNode2(null);
 				panelMain.Invalidate();
 			}
 			if(IsMountItemSelected()){
@@ -668,11 +636,6 @@ namespace OpenDental {
 			EventFillTree?.Invoke(this,keepSelection);
 		}
 
-		///<summary>This raises EventLaunchFloater, which bubbles up to ControlImages.LaunchFloater. Only used to pop a dock into a floater.</summary>
-		public void OnLaunchFloater(){
-			EventLaunchFloater?.Invoke(this,new EventArgs());
-		}
-
 		public void Parent_KeyDown(Keys keys){
 			//because FormImageFloat_KeyDown would not be reliable enough on its own. This form might not have focus.
 			if(keys==Keys.ShiftKey){
@@ -909,7 +872,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Must run ClearObjects before calling this.</summary>
-		public void SelectTreeNode(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
+		public void SelectTreeNode2(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
 			_pointTranslation=new Point();
 			panelMain.Visible=true;
 			_cloudIframe?.HideIframe();
@@ -1900,7 +1863,7 @@ namespace OpenDental {
 				else{
 					EventFillTree?.Invoke(this,false);
 					ClearObjects();
-					SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+					SelectTreeNode2(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				}
 			}
 			else if(nodeTypeAndKey.NodeType==EnumImageNodeType.Mount){
@@ -2385,6 +2348,7 @@ namespace OpenDental {
 			//PointF pointF=ControlPointToBitmapPointF(e.Location);
 			//MsgBox.Show(idxT.ToString());
 			//return;
+			EventGotODFocus?.Invoke(this,new EventArgs());
 			if(IsDocumentShowing() && _cropPanAdj==EnumCropPanAdj.Crop) {
 				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[0].DateCreated)) {
 					return;
@@ -3404,15 +3368,15 @@ namespace OpenDental {
 			if(GetSelectedType()==EnumImageNodeType.Category) {
 				return;
 			}
-			if(_cropPanAdj==EnumCropPanAdj.Pan){
-				//there's another mouseWheel event handler in FormImageFloat that takes focus.
-				float deltaZoom=ZoomSliderValue*(float)e.Delta/SystemInformation.MouseWheelScrollDelta/8f;//For example, -15
-				EventZoomSliderSetByWheel?.Invoke(this,deltaZoom);
-				panelMain.Invalidate();
+			if(_cropPanAdj!=EnumCropPanAdj.Pan){
+				return;
 			}
-			if(_cropPanAdj==EnumCropPanAdj.Adj){
-				//no
-			}
+			//There's another mouseWheel event handler in FormImageFloat that takes focus for floaters
+			EventGotODFocus?.Invoke(this,new EventArgs());//This handles focus for docker, but is not quite good enough for floater.
+			float deltaZoom=ZoomSliderValue*(float)e.Delta/SystemInformation.MouseWheelScrollDelta/8f;//For example, -15
+			EventZoomSliderSetByWheel?.Invoke(this,deltaZoom);
+			panelMain.Invalidate();
+			
 		}
 		#endregion Methods - Event Handlers
 
@@ -4662,12 +4626,17 @@ namespace OpenDental {
 	}
 }
 
-//2024-03-29 Todo
-//test if mouse wheel over panelMain while in Pan mode shifts focus and selection to this control.
-//Total review and test of KeyDown events, including Ctrl-P to select patient
-//FormImageFloatWindows is completely broken because that's where most of the change happens
-//Test LaunchFloater, especially setting title text
-//Wherever controlImageDisplay.SelectTreeNode is used, test if title was getting set properly
+//2024-06-23 Todo
+/*
+When clicking on a floater header, the zoom resets.
+Mouse wheel over floater frequently does not change selection in selector, does not unselect docked header, and uses wrong zoom level, although it does zoom the correct image.
+ControlImages.CreateControlImageDisplay, research that todo
+Fix stuck mouse when dragging images in this control get interrupted.
+Drag to pop a floater, need to capture mouse.
+Total review and test of KeyDown events, including Ctrl-P to select patient
+Wherever controlImageDisplay.SelectTreeNode is used, test if title was getting set properly
+When opening the Window dropdown from docked, the tab is smaller width than floaters, and the bottom edge is not perfect.
+*/
 
 //2021-10-01-todo:
 //(done) Hide device type because XDR is not functional

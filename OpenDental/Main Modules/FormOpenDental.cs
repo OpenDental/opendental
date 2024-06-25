@@ -151,8 +151,8 @@ namespace OpenDental{
 		private FormLoginFailed _formLoginFailed=null;
 		///<summary>We will send a maximum of 1 exception to HQ that occurs when processing signals.</summary>
 		private Exception _exceptionSignalsTick;
-		///<summary>This will be set to true if signal processing has been paused due to inactivity.  When signal processing resumes, the current Application.ProductVersion will be compared to the db value of PrefName.ProgramVersion and if these two versions don't match, the user will get a message box informing them that OD will have to shutdown and the user will have to relaunch to correct the version mismatch.  We will also check the UpdateInProgressOnComputerName and CorruptedDatabase prefs.</summary>
-		private bool _hasSignalProcessingPaused=false;
+		///<summary>This will be set to true if regular signal processing has been paused due to inactivity, or if a user is logged out.  When signal processing resumes, the current Application.ProductVersion will be compared to the db value of PrefName.ProgramVersion and if these two versions don't match, the user will get a message box informing them that OD will have to shutdown and the user will have to relaunch to correct the version mismatch.  We will also check the UpdateInProgressOnComputerName and CorruptedDatabase prefs.</summary>
+		private bool _onlyProcessHighPrioritySignals=false;
 		///<summary>This is the location of the splitter at 96dpi. That way, it can be reliably and consistently redrawn, regardless of the current dpi.  Either X or Y will be ignored.  For example, if it's docked to the bottom, then only Y will be used.</summary>
 		private PointF _pointFPanelSplitter96dpi;
 		private FormCareCreditTransactions _formCareCreditTransactions;
@@ -271,6 +271,8 @@ namespace OpenDental{
 			GlobalFormOpenDental.SendTextMessage=toolButTxtMsg_Click;
 			GlobalFormOpenDental.GoToModule=GotoModule_ModuleSelected;
 			FormLauncher.EventLaunch+=FormLauncherHelper.Launch;
+			//Hook up the signal processing event to the timerSignal.
+			timerSignals.Tick+=timerSignals_Tick;
 			Logger.LogToPath("Ctor",LogPath.Startup,LogPhase.End);
 			//Plugins.HookAddCode(this,"FormOpenDental.Constructor_end");//Can't do this because no plugins loaded.
 			formSplash.Close();
@@ -636,6 +638,13 @@ namespace OpenDental{
 			//This is placed before login on pupose so it will run even when the user does not login properly.
 			BeginODServiceStarterThread();
 			formSplash.Close();
+			//We are about to start signal processing high priority signals for the first time so set the initial refresh timestamp.
+			//Low priority signal processing doesn't start until a user logs in.
+			Signalods.DateTHighPrioritySignalLastRefreshed=MiscData.GetNowDateTime();
+			timerSignals.Interval=PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)*1000;
+			if(PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)>0){
+				timerSignals.Start();
+			}
 			Logger.LogToPath("LogOnOpenDentalUser",LogPath.Startup,LogPhase.Start);
 			LogOnOpenDentalUser(odUser,odPassword,domainUser);
 			Logger.LogToPath("LogOnOpenDentalUser",LogPath.Startup,LogPhase.End);
@@ -762,6 +771,7 @@ namespace OpenDental{
 				_menuItemWebChatTools.Available=false;
 				_menuItemResellers.Available=false;
 				_menuItemXChargeReconcile.Available=false;
+				_menuItemEForms.Available=false;
 			}
 			if(PrefC.IsODHQ) {
 				if(!ODBuild.IsDebug()) {
@@ -891,9 +901,10 @@ namespace OpenDental{
 			Tasks.NavTaskDelegate=S_TaskNumLoad;
 			Jobs.NavJobDelegate=S_GoToJob;
 			Logger.LogToPath("SignalLastRefreshed",LogPath.Startup,LogPhase.Unspecified);
-			//We are about to start signal processing for the first time so set the initial refresh timestamp.
-			Signalods.DateTSignalLastRefreshed=MiscData.GetNowDateTime();
-			Signalods.DateTApptSignalLastRefreshed=Signalods.DateTSignalLastRefreshed;
+			//We are about to start signal processing regular priority signals for the first time so set the initial refresh timestamp.
+			//High priority signal processing was started earlier
+			Signalods.DateTRegularPrioritySignalLastRefreshed=MiscData.GetNowDateTime();
+			Signalods.DateTApptSignalLastRefreshed=Signalods.DateTRegularPrioritySignalLastRefreshed;
 			SetTimersAndThreads(true);//Safe to start timers since this method call is on the main thread.
 			if(PrefC.IsAppStream) {
 				ODCloudClient.FileWatcherDirectory=PrefC.GetString(PrefName.CloudFileWatcherDirectory);
@@ -3155,7 +3166,7 @@ namespace OpenDental{
 				if(signalodSmsCount==null) {
 					//If we are here because the user changed clinics, then get the absolute most recent sms notification signal.
 					//Otherwise, use DateTime since last signal refresh.
-					DateTime timeSignalStart=doUseSignalInterval ? Signalods.DateTSignalLastRefreshed : DateTime.MinValue;
+					DateTime timeSignalStart=doUseSignalInterval ? Signalods.DateTRegularPrioritySignalLastRefreshed : DateTime.MinValue;
 					//Get the most recent SmsTextMsgReceivedUnreadCount. Should only be one, but just in case, order desc.
 					signalodSmsCount=Signalods.RefreshTimed(timeSignalStart,new List<InvalidType>() { InvalidType.SmsTextMsgReceivedUnreadCount })
 						.OrderByDescending(x => x.SigDateTime)
@@ -3498,7 +3509,7 @@ namespace OpenDental{
 				//Acknowledge all sigmessages in the database which correspond with the button that was just clicked.
 				//Only acknowledge sigmessages which have a MessageDateTime prior to the last time we processed signals in the singal timer.
 				//This is so that we don't accidentally acknowledge any sigmessages that we are currently unaware of.
-				SigMessages.AckButton(e.ButtonIndex+1,Signalods.DateTSignalLastRefreshed);
+				SigMessages.AckButton(e.ButtonIndex+1,Signalods.DateTRegularPrioritySignalLastRefreshed);
 				//Immediately update the signal button instead of waiting on our instance to process its own signals.
 				e.ActiveSignal.AckDateTime=DateTime.Now;
 				FillSignalButtons(new List<SigMessage>() { e.ActiveSignal });//Does not run query.
@@ -3546,57 +3557,10 @@ namespace OpenDental{
 			return true;
 		}
 
-		///<summary>Checks for shutdown signals while inactive and closes program if any are found</summary>
-		private void SignalsTickWhileInactive() {//(but not currently while logged out)
-			/*
-			Strategy for processing certain high priority signals while inactive or logged out:
-			Currently, during that time, the code below causes a few queries to get signals that we are interested in.
-			Our problem is that if we add Printing here, then those signals will get processed again when we become active.
-			Also, when logged out, this section isn't even run.
-			This section currently uses the same timer, whether active or inactive.
-			SignalInactiveMinutes pref was added in 2015 with no comments about why.
-			This pref is much less useful since we optimized clearing caches a few years ago.
-			Plan
-			1. Probably just keep using the same existing timer.
-			2. Inside of FormODBase.SignalsTick:
-				if(active){
-					Signalods.RefreshTimed(dateTimeLowPriority,invalidTypesSkip:invalidTypesHighPriority)
-				}
-				Signalods.RefreshTimed(dateTimeHighPriorty,invalidTypesHighPriority)
-				//the two dateTimes above will the same when you are active.
-				//They will be different if inactive or if you just became active.
-			Things to consider:
-			_hasSignalProcessingPaused
-			*/
-			DateTime dateTimeNow=MiscData.GetNowDateTime();//update signal to this time after checking
-			if(Signalods.DoesNeedToShutDown(_dateTimeSignalShutdownLastChecked)) {
-				Logger.WriteLine("Shutdown signal found while inactive. Closing Open Dental.","Signals");
-				timerSignals.Stop();
-				ProcessKillCommand();
-				return;
-			}
-			if(PrefC.IsODHQ) {//HQ stores important information within the sitelink table and should always process signals for the 'Sites' invalid type.
-				if(Signalods.DoesNeedToRefreshSitesCache(_dateTimeSignalShutdownLastChecked)) {
-					SiteLinks.RefreshCache();
-				}
-			}
-			_dateTimeSignalShutdownLastChecked=dateTimeNow;
-		}
-
 		///<summary>Usually set at 4 to 6 second intervals.</summary>
 		private void timerSignals_Tick(object sender,System.EventArgs e) {
 			try {
-				//This is to check if we receive a shutdown signal while the client is inactive.
-				//If logged out, this will not get hit.
-				if(_hasSignalProcessingPaused && !IsWorkStationActive()) {
-					SignalsTickWhileInactive();
-					if(PrefC.IsODHQ) {
-						_dateTimeLastSignalTickInactiveHq=DateTime.Now;
-					}
-				}
-				else { //Otherwise, process signals normally. This is where _hasSignalProcessingPaused gets set back to false. 
-					SignalsTick();
-				}
+				SignalsTick();
 			}
 			catch(Exception ex) {
 				SignalsTickExceptionHandler(ex);
@@ -3609,29 +3573,29 @@ namespace OpenDental{
 				Logger.LogToPath("",LogPath.Signals,LogPhase.Start);
 				if(PrefC.IsODHQ) {
 					TimeSpan timeSpan=DateTime.Now-_dateTimeLastSignalTickInactiveHq;
-					//If 15 seconds have not passed, kick out.
+					//If 15 seconds have not passed, kick out. This is to prevent clock-ins at hq from being interrupted by tasks.
 					if(timeSpan.TotalSeconds<15) {
 						return;
 					}
 				}
 				//This checks if any forms are open that make us want to continue processing signals even if inactive. Currently only FormTerminal.
-				if(Application.OpenForms.OfType<FormTerminal>().Count()==0) {
-					//check if we're inactive and if so, pause regular signal processing and set the private shutdown signal check variable
-					//this gets checked frequently, with each tick.
-					if(!IsWorkStationActive()) {
-						_hasSignalProcessingPaused=true;
-						_dateTimeSignalShutdownLastChecked=Signalods.DateTSignalLastRefreshed;
-						return;
+				//Then check if we're inactive and if so, pause regular signal processing and set the private shutdown signal check variable
+				//this gets checked frequently, with each tick.
+				if(Application.OpenForms.OfType<FormTerminal>().Count()==0 && !IsWorkStationActive()) {
+					_onlyProcessHighPrioritySignals=true;
+					if(PrefC.IsODHQ) { 
+						//Set the most recent time of inactivity to now.
+						//This variable is used to give users at HQ a time window of 15 seconds, from when this was last set, to clock back in before processing tasks.
+						_dateTimeLastSignalTickInactiveHq=DateTime.Now;
 					}
 				}
 				if(Security.CurUser==null) {
 					//User must be at the log in screen, so no need to process signals. We will need to look for shutdown signals since the last refreshed time when the user attempts to log in.
-					_hasSignalProcessingPaused=true;
-					return;
+					_onlyProcessHighPrioritySignals=true;
 				}
 				//If signal processing was paused due to inactivity or due to Security.CurUser being null (i.e. login screen visible)
 				//and we are now going to process signals again, we need to set _hasSignalProcessingPaused to false
-				if(_hasSignalProcessingPaused) {
+				if(_onlyProcessHighPrioritySignals && IsWorkStationActive() && Security.CurUser!=null) {
 					string errorMsg;
 					//When trying to start signal processing back up again, we will shut down OD if:
 					//1. there is a mismatch between the current software version and the program version stored in the db (ProgramVersion pref)
@@ -3643,19 +3607,21 @@ namespace OpenDental{
 						ProcessKillCommand();
 						return;
 					}
-					_hasSignalProcessingPaused=false;
+					_onlyProcessHighPrioritySignals=false;
 				}
 			}
 			catch {
 				//Currently do nothing.
 			}
 			#region Task Preprocessing
-			PreprocessForTasks();
+			if(!_onlyProcessHighPrioritySignals){
+				PreprocessForTasks();
+			}
 			#endregion Task Preprocessing
 			//Signal Processing
 			timerSignals.Stop();
 			Action<bool> actionOnShutdown=(value) => this.Invoke(() => InitiateShutdown(value));
-			SignalsTick2(
+			GetAndProcessSignals(
 				actionOnShutdown,
 				(listODForms,listSignals) => {
 					//Synchronize the thread static Security.CurUser on the main thread if the Userod cache was refreshed.
@@ -3694,7 +3660,7 @@ namespace OpenDental{
 						this.Invoke(timerSignals.Start);//Either not a ClientWeb instance or the credentials are still valid, continue processing signals.
 					}
 				},
-				isAllInvalidTypes
+				isAllInvalidTypes: !_onlyProcessHighPrioritySignals && isAllInvalidTypes
 			);
 			//Be careful about doing anything that takes a long amount of computation time after the SignalsTick.
 			//The UI will appear invalid for the time it takes any methods to process.
@@ -3798,49 +3764,67 @@ namespace OpenDental{
 
 		///<summary>Spawns a new thread to retrieve new signals from the DB. If isAllInvalidTypes is true, update all caches and broadcast signals to all subscribed forms.
 		///Otherwise if isAllInvalidTypes is false, only process important signals</summary>
-		public static void SignalsTick2(Action<bool> onShutdown,Action<List<FormODBase>,List<Signalod>> onProcess,Action onDone,bool isAllInvalidTypes=true) {
+		public static void GetAndProcessSignals(Action<bool> onShutdown,Action<List<FormODBase>,List<Signalod>> onProcess,Action onDone,bool isAllInvalidTypes) {
 			//No need to check MiddleTierRole; no call to db.
 			Logger.LogToPath("",LogPath.Signals,LogPhase.Start);
 			List<Signalod> listSignals=new List<Signalod>();
+			//Sets the list of high priority signal types that are always processed.
+			List<InvalidType> listInvalidTypesHighPriority=new List<InvalidType>();
+			listInvalidTypesHighPriority.Add(InvalidType.ShutDownNow);
+			listInvalidTypesHighPriority.Add(InvalidType.ActiveInstance);
+			listInvalidTypesHighPriority.Add(InvalidType.Print);
+			if(PrefC.IsODHQ) {
+				listInvalidTypesHighPriority.Add(InvalidType.Sites);
+			}
+			//Create thread to handle getting and processing signals.
 			ODThread threadRefreshSignals=new ODThread((o) => {
 				//Get new signals from DB.
 				Logger.LogToPath("RefreshTimed",LogPath.Signals,LogPhase.Start);
+				DateTime dateTimeHighPrioritySignalRefresh=MiscData.GetNowDateTime();
+				listSignals=Signalods.RefreshTimed(Signalods.DateTHighPrioritySignalLastRefreshed,listInvalidTypesHighPriority);
+				Signalods.DateTHighPrioritySignalLastRefreshed=dateTimeHighPrioritySignalRefresh;
 				if(isAllInvalidTypes) {
 					//when coming back from inactive state, this could result in a very large list.
-					listSignals=Signalods.RefreshTimed(Signalods.DateTSignalLastRefreshed);
-				}
-				else {//only during log off.
-					//We MUST ALWAYS process and ShutDownNow and ActiveInstance signals that occurred since SignalLastRefreshed
-					List<InvalidType> listInvalidTypesHighPriority=new List<InvalidType>();
-					listInvalidTypesHighPriority.Add(InvalidType.ShutDownNow);
-					listInvalidTypesHighPriority.Add(InvalidType.ActiveInstance);
-					listSignals=Signalods.RefreshTimed(Signalods.DateTSignalLastRefreshed,listInvalidTypes:listInvalidTypesHighPriority);
+					listSignals.AddRange(Signalods.RefreshTimed(Signalods.DateTRegularPrioritySignalLastRefreshed,listInvalidTypesExclude:listInvalidTypesHighPriority));
 				}
 				Logger.LogToPath("RefreshTimed",LogPath.Signals,LogPhase.End);
 				//Only update the time stamp with signals retreived from the DB. Do NOT use listLocalSignals to set timestamp.
 				if(listSignals.Count>0) {
 					if(isAllInvalidTypes) {
-						Signalods.DateTSignalLastRefreshed=listSignals.Max(x => x.SigDateTime);
+						Signalods.DateTRegularPrioritySignalLastRefreshed=listSignals.Max(x => x.SigDateTime);
 					}
-					else {
-						//If isAllInvalidTypes is false, listSignals won't contain the most recent signal necessarily, so get the most recent signal time from the DB instead.
-						Signalods.DateTSignalLastRefreshed=Signalods.GetLatestSignalTime();
-					}
-					Signalods.DateTApptSignalLastRefreshed=Signalods.DateTSignalLastRefreshed;
+					//There was an else statement here that got removed. 
+					//If isAllInvalidTypes is false, listSignals will only contain our high priority signals.
+					//There is no need to update Signalods.DateTSignalLastRefreshed until isAllInvalidTypes returns to true,
+					//so we can process the entire backlog of low priority signals that accumulated during inactivity.
+					//This is how this code would have behaved before we allowed signals to be accumulated and processed while inactive.
+
+					//This happens to keep DateTSignalLastRefreshed in sync with DateTAppySignalLastRefreshed. 
+					//The signals that depend on DateTApptSignalLastRefreshed are processed in 2 places, using 2 timers. This one timerSignal, and timerTimeIndic.
+					//Both tick events handle InvalidType.Appointments and InvalidType.Schedule.
+					//What this does mean though is those signals do get double processed, and they always have. This results in extra refreshes of the appt module.
+					Signalods.DateTApptSignalLastRefreshed=Signalods.DateTRegularPrioritySignalLastRefreshed; 
 				}
 				Logger.LogToPath("Found "+listSignals.Count.ToString()+" signals",LogPath.Signals,LogPhase.Unspecified);
 				if(listSignals.Count==0) {
 					return;
 				}
 				Logger.LogToPath("Signal count(s)",LogPath.Signals,LogPhase.Unspecified,string.Join(" - ",listSignals.GroupBy(x => x.IType).Select(x => x.Key.ToString()+": "+x.Count())));
+				//The shutdown method can be shared between inactive and active instances.
+				//The only difference between how shutdowns are handled in the two cases is when a user is inactive a thread doesn't start
+				//and UI is not shown to indicate a shutdown.
 				if(listSignals.Exists(x => x.IType==InvalidType.ShutDownNow)) {
 					onShutdown(true);
 					return;
 				}
-				if(listSignals.Exists(x => x.IType==InvalidType.ActiveInstance && x.FKey==ActiveInstances.GetActiveInstance().ActiveInstanceNum)){
+				//Shut down this machine if the last active instance matches the targeted signal.
+				if(listSignals.Exists(x => x.IType==InvalidType.ActiveInstance && ActiveInstances.GetActiveInstance()!=null && x.FKey==ActiveInstances.GetActiveInstance().ActiveInstanceNum)){
 					onShutdown(false);
 					return;
 				}
+				//Print signal to be processed from this machine
+				List<Signalod> listSignalodsToPrint=listSignals.FindAll(x=>x.IType==InvalidType.Print && x.FKey==Computers.GetCur().ComputerNum);
+				PrintRemoteRequestL.ProcessCompPrintSignal(listSignalodsToPrint);//can handle empty list
 				//Create a distinct list of undefined invalid types which are from signals invalidating entire cache classes.
 				//Include the UserOdPrefs invalid type if there is a signal for the currently logged in user.
 				List<InvalidType> listInvalidTypes=listSignals.Where(x => (x.FKey==0 && x.FKeyType==KeyType.Undefined)
@@ -3871,7 +3855,7 @@ namespace OpenDental{
 					dateTimeRefreshed=DateTime.Now;
 					Logger.LogToPath("Failed getting the server time: "+ex.Message,LogPath.Signals,LogPhase.Unspecified);
 				}
-				Signalods.DateTSignalLastRefreshed=dateTimeRefreshed;
+				Signalods.DateTRegularPrioritySignalLastRefreshed=dateTimeRefreshed;
 				Signalods.DateTApptSignalLastRefreshed=dateTimeRefreshed;
 				Logger.LogToPath(MiscUtils.GetExceptionText(e),LogPath.Signals,LogPhase.Unspecified);
 			});
@@ -5047,7 +5031,7 @@ namespace OpenDental{
 			if(formPreferences.ShowDialog()==DialogResult.OK) {
 				if(PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)==0){
 					timerSignals.Enabled=false;
-					_hasSignalProcessingPaused=true;
+					_onlyProcessHighPrioritySignals=true;
 				}
 				else{
 					timerSignals.Interval=PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)*1000;
@@ -5435,7 +5419,7 @@ namespace OpenDental{
 			}
 			if(PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)==0){
 				timerSignals.Enabled=false;
-				_hasSignalProcessingPaused=true;
+				_onlyProcessHighPrioritySignals=true;
 			}
 			else{
 				timerSignals.Interval=PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)*1000;
@@ -6489,7 +6473,7 @@ namespace OpenDental{
 				return;
 			}
 			//turn off signal reception for 5 seconds so this workstation will not shut down.
-			Signalods.DateTSignalLastRefreshed=MiscData.GetNowDateTime().AddSeconds(5);
+			Signalods.DateTHighPrioritySignalLastRefreshed=MiscData.GetNowDateTime().AddSeconds(5);
 			Signalod signalod=new Signalod();
 			signalod.IType=InvalidType.ShutDownNow;
 			Signalods.Insert(signalod);
@@ -8104,6 +8088,12 @@ namespace OpenDental{
 		#region Closing
 		///<summary>Called when a shutdown signal is found.</summary>
 		private void InitiateShutdown(bool doShutdownAll=true) {
+			//If no user is logged in, simply process the kill command immediately.
+			if(Security.CurUser==null) {
+				Logger.WriteLine("Shutdown signal found while logged out. Closing Open Dental.","Signals");
+				ProcessKillCommand();
+				return;
+			}
 			if(timerSignals.Tag?.ToString()=="shutdown") {
 				//We have already responded to the shutdown signal.
 				return;
@@ -8355,7 +8345,7 @@ namespace OpenDental{
 		}
 		#endregion Closing
 
-		
+
 	}
 
 	#region Classes

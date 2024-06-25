@@ -18,6 +18,10 @@ namespace OpenDentBusiness{
 		public string PrinterName;
 		///<summary>If true, then user will be prompted for printer.  Otherwise, print directly with little user interaction.</summary>
 		public bool DisplayPrompt;
+		///<summary>String that holds the file extension type for this printer. No leading period. Example pdf or xps. Only used when IsVirtualPrinter is true.</summary>
+		public string FileExtension;
+		///<summary>Bool that indicates if this printer is a virtual  printer (pdf, xps, etc).</summary>
+		public bool IsVirtualPrinter;
 
 		///<summary>Returns a copy of the printer.</summary>
     public Printer Clone(){

@@ -41,6 +41,10 @@ namespace OpenDental {
 		private int _yPosPrevious;
 		///<summary>Used for determining page breaks. When moving to next page, use this Y value to determine the next field to print.</summary>
 		private int _yPosPrint;
+		///<summary>Set this to true to bypass UI checks when printing.</summary>
+		public bool IsRemotePrintingJob=false;
+		///<summary>Set this to the PK of a printer to override the higherarchy call to printers for print situations.</summary>
+		public long PrinterNumOverride=0;
 		#endregion Fields
 
 		#region Properties
@@ -181,7 +185,10 @@ namespace OpenDental {
 		///<summary>Performs validation on the given Rx before printing.  Returns false if validation failed.</summary>
 		public bool PrintRx(Sheet sheet,RxPat rx){
 			string validationErrors=SheetPrinting.ValidateRxForSheet(rx);
-			if(validationErrors!="") {
+			if(validationErrors!="" && IsRemotePrintingJob) {
+				return false;
+			}
+			else if(validationErrors!=""){
 				MessageBox.Show(Lan.g("Sheets","Cannot print until missing info is fixed: ")+validationErrors);
 				return false;
 			}
@@ -279,7 +286,9 @@ namespace OpenDental {
 				totalPages:pageCount,
 				isForcedPreview:isPreviewMode,//Ignored when running in DEBUG, will show preview.
 				auditPatNum:sheet.PatNum,
-				paperSize:paperSize
+				paperSize:paperSize,
+				isRemotePrint:IsRemotePrintingJob,
+				printerNumOverride:PrinterNumOverride
 			);
 			_isPrinting=false;
 			//This seems wrong:

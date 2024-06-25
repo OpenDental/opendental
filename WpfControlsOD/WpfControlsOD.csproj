@@ -237,17 +237,23 @@
     <Compile Include="Frms\FrmChildCareMap.xaml.cs">
       <DependentUpon>FrmChildCareMap.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frms\FrmChildParents.xaml.cs">
+      <DependentUpon>FrmChildParents.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmChildParentEdit.xaml.cs">
+      <DependentUpon>FrmChildParentEdit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\FrmEFormFieldChildren.xaml.cs">
       <DependentUpon>FrmEFormFieldChildren.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frms\FrmEFormMedicationListEdit.xaml.cs">
       <DependentUpon>FrmEFormMedicationListEdit.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frms\FrmParentEdit.xaml.cs">
-      <DependentUpon>FrmParentEdit.xaml</DependentUpon>
+    <Compile Include="Frms\FrmChildParentLinkEdit.xaml.cs">
+      <DependentUpon>FrmChildParentLinkEdit.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Frms\FrmParentSelect.xaml.cs">
-      <DependentUpon>FrmParentSelect.xaml</DependentUpon>
+    <Compile Include="Frms\FrmChildParentLinkSelect.xaml.cs">
+      <DependentUpon>FrmChildParentLinkSelect.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frms\FrmParagraph.xaml.cs">
       <DependentUpon>FrmParagraph.xaml</DependentUpon>
@@ -263,6 +269,12 @@
     </Compile>
     <Compile Include="Frms\FrmBadgeEdit.xaml.cs">
       <DependentUpon>FrmBadgeEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmChildRoomEdit.xaml.cs">
+      <DependentUpon>FrmChildRoomEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmChildRooms.xaml.cs">
+      <DependentUpon>FrmChildRooms.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frms\Frm_BasicTemplate.xaml.cs">
       <DependentUpon>Frm_BasicTemplate.xaml</DependentUpon>
@@ -767,6 +779,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Frms\FrmChildParents.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmChildParentEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Frms\FrmEFormFieldChildren.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -775,11 +795,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Frms\FrmParentEdit.xaml">
+    <Page Include="Frms\FrmChildParentLinkEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Frms\FrmParentSelect.xaml">
+    <Page Include="Frms\FrmChildParentLinkSelect.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -800,6 +820,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frms\FrmBadgeEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmChildRoomEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmChildRooms.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

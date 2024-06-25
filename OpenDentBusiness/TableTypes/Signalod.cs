@@ -110,6 +110,8 @@ namespace OpenDentBusiness {
 		EmailAddress,
 		///<summary>This is HQ specific and will be used to listen in on live calls</summary>
 		ChanSpy,
+		///<summary>Used to speficy that the passed-in computerNum is what the signal is for.</summary>
+		Computer,
 	}
 
 

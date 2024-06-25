@@ -3,6 +3,7 @@ using System.Collections;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.IO;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.UI;
@@ -94,7 +95,7 @@ namespace OpenDental {
 		///<returns>Returns true if succesfully printed, or if preview is shown and OK is clicked.</returns>
 		public static bool TryPrintOrDebugClassicPreview(PrintPageEventHandler printPageEventHandler,string auditDescription,Margins margins=null
 			,int totalPages=1,PrintSituation printSituation=PrintSituation.Default,PrintoutOrigin printoutOrigin=PrintoutOrigin.Default
-			,PrintoutOrientation printoutOrientation=PrintoutOrientation.Default,bool isForcedPreview=false,long auditPatNum=0,PaperSize paperSize=null)
+			,PrintoutOrientation printoutOrientation=PrintoutOrientation.Default,bool isForcedPreview=false,long auditPatNum=0,PaperSize paperSize=null,bool isRemotePrint=false,long printerNumOverride=0)
 		{
 			ODprintout printout=new ODprintout(
 				printPageEventHandler,
@@ -107,10 +108,10 @@ namespace OpenDental {
 				printoutOrientation,
 				totalPages:totalPages
 			);
-			if(ODBuild.IsDebug() || isForcedPreview) {
+			if((ODBuild.IsDebug() || isForcedPreview) && !isRemotePrint) {
 				return PreviewClassic(printout);
 			}
-			return TryPrint(printout);
+			return TryPrint(printout,isRemotePrint:isRemotePrint,printerNumOverride:printerNumOverride);
 		}
 
 		///<summary>Attempts to print a PrintDocument that has some added functionality.  All printing in Open Dental should use this method (or an ODprintout object) for printing.</summary>
@@ -141,9 +142,12 @@ namespace OpenDental {
 		}
 
 		///<summary>Whenever we are printing we should eventually go through this method.</summary>
-		public static bool TryPrint(ODprintout printout) {
-			if(!TrySetPrinter(printout)) {
+		public static bool TryPrint(ODprintout printout,bool isRemotePrint=false,long printerNumOverride=0) {
+			if(!TrySetPrinter(printout,isRemotePrint:isRemotePrint,printerNumOverride:printerNumOverride)) {
 				return false;
+			}
+			if(isRemotePrint){
+				return printout.TryPrintNoUI();
 			}
 			return printout.TryPrint();
 		}
@@ -183,22 +187,34 @@ namespace OpenDental {
 		///and tests to see if the selected printer is valid, and if not then it gives user the option to print to an available printer.  
 		///Also creates an audit trail entry with the AuditDescription text that is set within printDocument.
 		///Debug mode will not display the print dialog but will instead prefer the default printer.</summary>
-		public static bool TrySetPrinter(ODprintout printout) {
-			if(printout.SettingsErrorCode!=PrintoutErrorCode.Success) {
+		public static bool TrySetPrinter(ODprintout printout,bool isRemotePrint=false,long printerNumOverride=0) {
+			if(printout.SettingsErrorCode!=PrintoutErrorCode.Success && !isRemotePrint) {
 				ShowError(printout);
 				return false;
 			}
-			return SetPrinter(printout.PrintDoc.PrinterSettings,printout.Situation,printout.AuditPatNum,printout.AuditDescription);
+			return SetPrinter(printout.PrintDoc.PrinterSettings,printout.Situation,printout.AuditPatNum,printout.AuditDescription,isRemotePrint,printerNumOverride:printerNumOverride);
 		}
 		
 		///<summary>DEPRECATED.</summary>
 		public static bool SetPrinter(PrintDocument printDocument,PrintSituation printSituation,long patNum,string auditDescription) {
-			return SetPrinter(printDocument.PrinterSettings,printSituation,patNum,auditDescription);
+			return SetPrinter(printDocument.PrinterSettings,printSituation,patNum,auditDescription,false);
 		}
-
-		private static bool SetPrinter(PrinterSettings printerSettings,PrintSituation printSituation,long patNum,string auditDescription) {
+			
+		private static bool SetPrinter(PrinterSettings printerSettings,PrintSituation printSituation,long patNum,string auditDescription,bool isRemotePrint,long printerNumOverride=0) {
 			if(!HasComputerTable) {
 				return true;//Kickout so it doesn't break when looking for a Computer table
+			}
+			//If an override is passed in we should try to absolutely honor that override, or fail.
+			if(printerNumOverride!=0){
+				Printer printerOverride=Printers.GetFirstOrDefault(x=>x.PrinterNum==printerNumOverride);
+				if(Printers.PrinterIsInstalled(printerOverride.PrinterName)) {
+					//Set the printer name so the print request uses the appropriate printer.
+					printerSettings.PrinterName=printerOverride.PrinterName;
+					printerSettings.PrintFileName=GetFilePrinterPath(printerOverride);
+					printerSettings.PrintToFile=printerOverride.IsVirtualPrinter;
+					return true;
+				}
+				return false;
 			}
 			#region 1 - Set default printer if available from this computer.
 			//pSet will always be new when this function is called.
@@ -212,6 +228,8 @@ namespace OpenDental {
 			string printerName="";
 			if(printerForSit!=null){
 				printerName=printerForSit.PrinterName;
+				printerSettings.PrintFileName=GetFilePrinterPath(printerForSit);
+				printerSettings.PrintToFile=printerForSit.IsVirtualPrinter;
 				showPrompt=printerForSit.DisplayPrompt;
 				if(Printers.PrinterIsInstalled(printerName)) {
 					printerSettings.PrinterName=printerName;
@@ -227,12 +245,14 @@ namespace OpenDental {
 					showPrompt=printerForSit.DisplayPrompt;
 					if(Printers.PrinterIsInstalled(printerName)) {
 						printerSettings.PrinterName=printerName;
+						printerSettings.PrintFileName=GetFilePrinterPath(printerForSit);
+						printerSettings.PrintToFile=printerForSit.IsVirtualPrinter;
 					}
 				}
 			}
 			#endregion 2
 			#region 3 - Present the dialog
-			if(showPrompt && !ODEnvironment.IsCloudServer) {
+			if(showPrompt && !ODEnvironment.IsCloudServer && !isRemotePrint) {
 				PrintDialog printDialog=new PrintDialog();
 				printDialog.AllowSomePages=true;
 				printDialog.PrinterSettings=printerSettings;
@@ -252,6 +272,15 @@ namespace OpenDental {
 				SecurityLogs.MakeLogEntry(EnumPermType.Printing,patNum,auditDescription);
 			}
 			return true;
+		}
+
+		private static string GetFilePrinterPath(Printer printer){
+			if(!printer.IsVirtualPrinter){
+				return "";
+			}
+			string aToZFullPath=ODFileUtils.RemoveTrailingSeparators(ImageStore.GetPreferredAtoZpath());
+			string aToZDirectory=aToZFullPath.Substring(aToZFullPath.LastIndexOf(Path.DirectorySeparatorChar)+1);
+			return Path.Combine(aToZFullPath,DateTime.Now.ToString("MM_dd_yy_H_mm_ss_fff")+"."+printer.FileExtension);
 		}
 
 		///<summary>Returns a translated error code description.</summary>

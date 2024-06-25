@@ -1214,6 +1214,9 @@ namespace UnitTests.MiddleTier {
 					if(xCrudGenerator.CrudGenHelper.IsMissingInGeneral(tableType)) {
 						continue;//Ignore testing the Insert method for table types that are missing in general.  The table is probably missing from unit test db
 					}
+					if(tableType==typeof(PlannedAppt)) {
+						continue;//PlannedAppt table was dropped in v24.2.1
+					}
 					//Call the method.
 					insertMethod.Invoke(null,arrayObjs);
 					//Pull out the object from the list.
@@ -1306,6 +1309,9 @@ namespace UnitTests.MiddleTier {
 			string retVal="";
 			if(sClassName.ToLower()=="lans") {
 				retVal="Language";
+			}
+			else if(sClassName.ToLower()=="children") {
+				retVal="Child";
 			}
 			else if(sClassName.EndsWith("ies")) {
 				retVal=sClassName.Substring(0,sClassName.Length-3)+"y";

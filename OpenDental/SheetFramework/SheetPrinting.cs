@@ -33,16 +33,16 @@ namespace OpenDental {
 
 		#region Methods - Public Printing
 		///<summary>If printing a statement, use the polymorphism that takes a DataSet otherwise this method will make another call to the db.</summary>
-		public static void Print(Sheet sheet,int copies=1,bool isRxControlled=false,Statement stmt=null,MedLab medLab=null,bool isPrintDocument=true,bool isPreviewMode=false) {
-			SheetPrintingJob sheetPrintingJob=new SheetPrintingJob();
+		public static void Print(Sheet sheet,int copies=1,bool isRxControlled=false,Statement stmt=null,MedLab medLab=null,bool isPrintDocument=true,bool isPreviewMode=false,bool isPrintRemote=false,long printerNumOverride=0) {
+			SheetPrintingJob sheetPrintingJob=new SheetPrintingJob{IsRemotePrintingJob=isPrintRemote,PrinterNumOverride=printerNumOverride};
 			sheetPrintingJob.Print(sheet,copies,isRxControlled,stmt,medLab,isPrintDocument,isPreviewMode);
 		}
 
 		///<Summary>DataSet should be prefilled with AccountModules.GetAccount() before calling this method if printing a statement.  Returns null if document failed to print.</Summary>
 		public static void Print(Sheet sheet,DataSet dataSet,int copies=1,bool isRxControlled=false,Statement stmt=null,MedLab medLab=null,
-			bool isPrintDocument=true,bool isPreviewMode=false)
+			bool isPrintDocument=true,bool isPreviewMode=false,bool isPrintRemote=false,long printerNumOverride=0)
 		{
-			SheetPrintingJob sheetPrintingJob=new SheetPrintingJob();
+			SheetPrintingJob sheetPrintingJob=new SheetPrintingJob{IsRemotePrintingJob=isPrintRemote,PrinterNumOverride=printerNumOverride};
 			sheetPrintingJob.Print(sheet,dataSet,copies,isRxControlled,stmt,medLab);
 		}
 
@@ -58,8 +58,8 @@ namespace OpenDental {
 		}
 
 		///<summary>Performs validation on the given Rx before printing.  Returns false if validation failed.</summary>
-		public static bool PrintRx(Sheet sheet,RxPat rx){
-			SheetPrintingJob sheetPrintingJob=new SheetPrintingJob();
+		public static bool PrintRx(Sheet sheet,RxPat rx,bool isRemotePrint=false,long printerNumOverride=0){
+			SheetPrintingJob sheetPrintingJob=new SheetPrintingJob{IsRemotePrintingJob=isRemotePrint,PrinterNumOverride=printerNumOverride};
 			return sheetPrintingJob.PrintRx(sheet,rx);
 		}
 

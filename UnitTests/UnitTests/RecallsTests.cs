@@ -62,5 +62,39 @@ namespace UnitTests {
 			bool result=Recalls.HasTooManyReminders(numberOfReminders:6,DateTime.Today.AddDays(-10),maxReminders:4);
 			Assert.AreEqual(true,result);
 		}
+
+		///<summary>When a patient has two insurance plans, they should only have one entry in the Recall List for each recall appointment type they have.</summary>
+		[TestMethod]
+		public void Recalls_MultipleInsSubsAndRecallTypes() {
+			//Set up a patient with two insurance plans.
+			Patient patient=PatientT.CreatePatient();
+			string nameInsPri="ABC Health";
+			string nameInsSec="DEF Medical";
+			InsuranceInfo insInfoAbc=InsuranceT.AddInsurance(patient,nameInsPri);
+			InsuranceInfo insInfoDef=InsuranceT.AddInsurance(patient,nameInsSec);
+			//Create two unique trigger procedures for recall.
+			ProcedureCodeT.CreateProcCode("T1234");
+			ProcedureCodeT.CreateProcCode("T5678");
+			RecallType recallTypeObs=RecallTypeT.CreateRecallType("Observing","T1234");
+			RecallType recallTypeExa=RecallTypeT.CreateRecallType("Examining","T5678",defaultInterval:new Interval(0,1,0,0));
+			//Create recalls as though the patient had completed the recall-triggering procedures.
+			RecallT.CreateRecall(patient.PatNum,recallTypeObs.RecallTypeNum,DateTime_.Now.AddDays(7),new Interval(0,1,0,0));
+			RecallT.CreateRecall(patient.PatNum,recallTypeExa.RecallTypeNum,DateTime_.Now.AddDays(7),new Interval(0,1,0,0));
+			DataTable table=Recalls.GetRecallList(DateTime_.Now.AddDays(-14),DateTime_.Now.AddDays(14),false,0,0,0,
+				RecallListSort.Alphabetical,RecallListShowNumberReminders.All,0,listRecallTypes:RecallTypes.GetDeepCopy());
+			//Find the recall rows unique to the patient.
+			List<DataRow> listRows=table.Rows.OfType<DataRow>().ToList().FindAll(x=>PIn.Long((string)x["PatNum"])==patient.PatNum);
+			//Confirm there's only two.
+			Assert.AreEqual(2,listRows.Count);
+			//Confirm they're different appointments.
+			List<long> listRecallNums=listRows.Select(x=>PIn.Long((string)x["RecallNum"])).Distinct().ToList();
+			Assert.AreEqual(2,listRecallNums.Count);
+			//Confirm that both insurance carriers' names will show in the grid.
+			for(int i=0;i<listRows.Count;i++) {
+				string carrierNamesConcatenated=(string)listRows[i]["CarrierName"];
+				Assert.IsTrue(carrierNamesConcatenated.Contains(nameInsPri));
+				Assert.IsTrue(carrierNamesConcatenated.Contains(nameInsSec));
+			}
+		}
 	}
 }

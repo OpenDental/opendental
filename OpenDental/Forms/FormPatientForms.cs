@@ -24,6 +24,9 @@ namespace OpenDental {
 		}
 
 		private void FormPatientForms_Load(object sender,EventArgs e) {
+			if(!PrefC.IsODHQ) {//Temp. EForms is WIP.
+				butAddEForm.Visible=false;
+			}
 			Patient patient=Patients.GetLim(PatNum);
 			Text=Lan.g(this,"Patient Forms for")+" "+patient.GetNameFL();
 			LayoutMenu();
@@ -35,7 +38,9 @@ namespace OpenDental {
 			MenuItemOD menuItemSetup=new MenuItemOD("Setup");
 			menuMain.Add(menuItemSetup);
 			menuItemSetup.Add("Sheets",menuItemSheets_Click);
-			menuItemSetup.Add("eForms",menuItemEForms_Click);
+			if(PrefC.IsODHQ) {
+				menuItemSetup.Add("eForms",menuItemEForms_Click);
+			}
 			menuItemSetup.Add("Image Categories",menuItemImageCats_Click);
 			menuItemSetup.Add("Options",menuItemOptions_Click);
 			menuMain.EndUpdate();

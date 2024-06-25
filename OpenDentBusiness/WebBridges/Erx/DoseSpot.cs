@@ -384,7 +384,9 @@ namespace OpenDentBusiness {
 					else {
 						provider=Providers.GetProv(patient.PriProv);
 					}
-					rxPat.ProvNum=provider.ProvNum;
+					if(provider==null && rxPatOld!=null) {//Provide a fallback in case the provider is 'missing' due to being detached from the userod
+						rxPat.ProvNum=rxPatOld.ProvNum;
+					}
 				}
 				//These fields are possibly set above, preserve old values if they are not.
 				if(rxPatOld!=null) {

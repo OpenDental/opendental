@@ -105,7 +105,7 @@ namespace OpenDental {
 			// 
 			// dateRangePicker
 			// 
-			this.dateRangePicker.BackColor = System.Drawing.SystemColors.Control;
+			this.dateRangePicker.BackColor = System.Drawing.SystemColors.Window;
 			this.dateRangePicker.Location = new System.Drawing.Point(3, 6);
 			this.dateRangePicker.MaximumSize = new System.Drawing.Size(0, 185);
 			this.dateRangePicker.MinimumSize = new System.Drawing.Size(453, 22);

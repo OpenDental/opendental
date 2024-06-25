@@ -50,6 +50,7 @@ namespace OpenDentBusiness.Crud{
 				childRoom.ChildRoomNum= PIn.Long  (row["ChildRoomNum"].ToString());
 				childRoom.RoomId      = PIn.String(row["RoomId"].ToString());
 				childRoom.Notes       = PIn.String(row["Notes"].ToString());
+				childRoom.Ratio       = PIn.Double(row["Ratio"].ToString());
 				retVal.Add(childRoom);
 			}
 			return retVal;
@@ -64,11 +65,13 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ChildRoomNum");
 			table.Columns.Add("RoomId");
 			table.Columns.Add("Notes");
+			table.Columns.Add("Ratio");
 			foreach(ChildRoom childRoom in listChildRooms) {
 				table.Rows.Add(new object[] {
 					POut.Long  (childRoom.ChildRoomNum),
 					            childRoom.RoomId,
 					            childRoom.Notes,
+					POut.Double(childRoom.Ratio),
 				});
 			}
 			return table;
@@ -88,13 +91,14 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ChildRoomNum,";
 			}
-			command+="RoomId,Notes) VALUES(";
+			command+="RoomId,Notes,Ratio) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(childRoom.ChildRoomNum)+",";
 			}
 			command+=
 				 "'"+POut.String(childRoom.RoomId)+"',"
-				+"'"+POut.String(childRoom.Notes)+"')";
+				+"'"+POut.String(childRoom.Notes)+"',"
+				+		 POut.Double(childRoom.Ratio)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -119,13 +123,14 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ChildRoomNum,";
 			}
-			command+="RoomId,Notes) VALUES(";
+			command+="RoomId,Notes,Ratio) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(childRoom.ChildRoomNum)+",";
 			}
 			command+=
 				 "'"+POut.String(childRoom.RoomId)+"',"
-				+"'"+POut.String(childRoom.Notes)+"')";
+				+"'"+POut.String(childRoom.Notes)+"',"
+				+	   POut.Double(childRoom.Ratio)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -139,7 +144,8 @@ namespace OpenDentBusiness.Crud{
 		public static void Update(ChildRoom childRoom) {
 			string command="UPDATE childroom SET "
 				+"RoomId      = '"+POut.String(childRoom.RoomId)+"', "
-				+"Notes       = '"+POut.String(childRoom.Notes)+"' "
+				+"Notes       = '"+POut.String(childRoom.Notes)+"', "
+				+"Ratio       =  "+POut.Double(childRoom.Ratio)+" "
 				+"WHERE ChildRoomNum = "+POut.Long(childRoom.ChildRoomNum);
 			Db.NonQ(command);
 		}
@@ -154,6 +160,10 @@ namespace OpenDentBusiness.Crud{
 			if(childRoom.Notes != oldChildRoom.Notes) {
 				if(command!="") { command+=",";}
 				command+="Notes = '"+POut.String(childRoom.Notes)+"'";
+			}
+			if(childRoom.Ratio != oldChildRoom.Ratio) {
+				if(command!="") { command+=",";}
+				command+="Ratio = "+POut.Double(childRoom.Ratio)+"";
 			}
 			if(command=="") {
 				return false;
@@ -171,6 +181,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(childRoom.Notes != oldChildRoom.Notes) {
+				return true;
+			}
+			if(childRoom.Ratio != oldChildRoom.Ratio) {
 				return true;
 			}
 			return false;

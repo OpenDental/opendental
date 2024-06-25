@@ -610,6 +610,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			_windowComboPicker=new WindowComboPicker();
 			ElementHost.EnableModelessKeyboardInterop(_windowComboPicker);
 			_windowComboPicker.Closed+=_windowComboPicker_Closed;
+			_windowComboPicker.PreviewMouseLeftButtonUp+=_windowComboPicker_PreviewLeftButtonUp;
 			List<string> listStrings=new List<string>();
 			List<string> listAbbrevs=new List<string>();
 			List<int> selectedIndices=new List<int>();
@@ -697,6 +698,12 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			SelectionChangeCommitted?.Invoke(this,e);
 			SelectedIndexChanged?.Invoke(this,e);
 			SetText();
+		}
+
+		private void _windowComboPicker_PreviewLeftButtonUp(object sender, MouseButtonEventArgs e){
+			//This prevents clicks from "going through" the item list and clicking on whatever is below the dropdown.
+			e.Handled=true;
+			_windowComboPicker.Close();
 		}
 
 		private void _windowComboPicker_SelectionChanged(object sender,EventArgs e) {

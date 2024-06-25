@@ -36,6 +36,10 @@ namespace OpenDental {
 			gridColumn.IsWidthDynamic=true;
 			gridMain.Columns.Add(gridColumn);
 			List<long> listTaskNums=Tasks.GetMany(_aptNum).Select(x => x.TaskNum).ToList();
+			if(listTaskNums.Count==0) {
+				gridMain.EndUpdate();
+				return;
+			}
 			DataTable table=Tasks.GetDataSet(0,new List<long>(),listTaskNums,"","","","","","",0,0,
 				doIncludeTaskNote:false,doIncludeCompleted:true,doIncludeAttachments:false,reachedLimit:false,doRunOnReportServer:false);//GetDataSet orders in descending order by DateTimeOriginal if it exists, DateTimeEntry if not
 			if(table==null) {

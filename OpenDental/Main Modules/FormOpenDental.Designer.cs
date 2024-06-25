@@ -78,10 +78,6 @@ namespace OpenDental{
 			this.menuItem14.Index = -1;
 			this.menuItem14.Text = "-";
 			// 
-			// timerSignals
-			// 
-			this.timerSignals.Tick += new System.EventHandler(this.timerSignals_Tick);
-			// 
 			// panelSplitter
 			// 
 			this.panelSplitter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -409,7 +405,6 @@ namespace OpenDental{
 		#endregion
 
 		private System.Windows.Forms.Timer timerTimeIndic;
-		private System.Windows.Forms.Timer timerSignals;
 		private OpenDental.UI.LightSignalGrid lightSignalGrid1;
 		private Panel panelSplitter;
 		private ContextMenu menuSplitter;

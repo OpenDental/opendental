@@ -275,6 +275,10 @@ namespace OpenDentBusiness {
 		#endregion
 
 		#region ODTouch 
+		public static void InsertPrintError(long mobileAppDeviceNum,EnumAppTarget enumAppTarget,string message){
+			InsertMobileNotification(MobileNotificationType.ODT_PrintError,mobileAppDeviceNum,enumAppTarget,listTags:new List<string>{$"{message}"});
+		}
+
 		public static bool ODT_ExamSheet(long patNum,long sheetNum,long mobileAppDeviceNum,out string errorMsg) {
 			errorMsg="";
 			try {

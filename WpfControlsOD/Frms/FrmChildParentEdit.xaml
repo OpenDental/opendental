@@ -1,0 +1,19 @@
+<local:FrmODBase x:Class="OpenDental.FrmChildParentEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="350" Height="125" 
+             Text="Edit Parent" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" Margin="0,0,0,0" >
+		<ui:Label x:Name="labelLastName" Width="92" Height="18" Margin="18,42,0,0" Text="Last Name" HAlign="Right" />
+		<ui:Label x:Name="labelFirstName" Width="95" Height="18" Margin="15,18,0,0" Text="First Name" HAlign="Right" />
+		<ui:TextBox x:Name="textLastName" Width="127" Height="20" Margin="110,41,0,0" TabIndexOD="1" />
+		<ui:TextBox x:Name="textFirstName" Width="127" Height="20" Margin="110,17,0,0" TabIndexOD="0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+		<ui:CheckBox x:Name="checkHidden" Margin="38,62,0,0" CheckAlign="MiddleRight" Text="Hidden" Width="85" Height="20"/>
+	</Grid>
+</local:FrmODBase>

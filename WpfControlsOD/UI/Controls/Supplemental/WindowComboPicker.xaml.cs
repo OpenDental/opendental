@@ -226,7 +226,7 @@ Jordan is the only one allowed to edit this file.
 			}
 			else{//single
 				_listIndicesSelected=new List<int>(){_mouseDownIndex};
-				Close();
+				//Close(); //This is handled from the combobox, otherwise the _windowComboPicker_PreviewLeftButtonUp event won't fire 
 			}
 			SetColors();
 //todo: test this issue

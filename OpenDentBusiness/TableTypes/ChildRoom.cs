@@ -14,6 +14,8 @@ namespace OpenDentBusiness{
 		public string RoomId;
 		///<summary>Any notes for a classroom.</summary>
 		public string Notes;
+		///<summary>Tracks the ratio of children to teachers for a given classroom. Example: A room with 21 children and 2 teachers would have a ratio of 10.5/1. We will always do over 1 so the ratio will be stored as 10.5.</summary>
+		public double Ratio;
 
 		public ChildRoom Copy(){
 			return (ChildRoom)this.MemberwiseClone();
@@ -25,7 +27,8 @@ namespace OpenDentBusiness{
 		command=@"CREATE TABLE childroom (
 			ChildRoomNum bigint NOT NULL auto_increment PRIMARY KEY,
 			RoomId varchar(255) NOT NULL,
-			Notes varchar(255) NOT NULL
+			Notes varchar(255) NOT NULL,
+			Ratio double NOT NULL
 			) DEFAULT CHARSET=utf8";
 		Db.NonQ(command);
 		*/

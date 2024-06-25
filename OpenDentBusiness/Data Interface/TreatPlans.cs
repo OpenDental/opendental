@@ -280,6 +280,53 @@ namespace OpenDentBusiness{
 			return stringBuilder.ToString();
 		}
 
+		///<summary>Used to fill the grid on a TP sheet.</summary>
+		public static TreatPlan GetTreatPlanListProcTP(TreatPlan treatPlan){
+			TPModuleData tpModuleData=TreatmentPlanModules.GetModuleData(treatPlan.PatNum,true);
+			LoadActiveTPData loadActiveTPData=TreatmentPlanModules.GetLoadActiveTpData(tpModuleData.Pat,
+				treatPlan.TreatPlanNum,
+				tpModuleData.BenefitList,
+				tpModuleData.PatPlanList,
+				tpModuleData.InsPlanList,
+				treatPlan.DateTP,
+				tpModuleData.SubList,
+				PrefC.GetBool(PrefName.InsChecksFrequency),
+				isTreatPlanSortByTooth:false,
+				tpModuleData.ListSubstLinks);
+			if(treatPlan.TPStatus==TreatPlanStatus.Saved){
+				treatPlan.ListProcTPs=tpModuleData.ListProcTPs;
+			}
+			else {
+				List<TpRow> listTpRows=TreatmentPlanModules.GetActiveTpPlanTpRows(
+					showMaxDeductions:true,
+					showDiscounts:true,
+					showSubTotals:true,
+					showTotals:true,
+					treatPlan,
+					tpModuleData.Pat,
+					treatPlan.DateTP,
+					loadActiveTPData,
+					tpModuleData.InsPlanList,
+					tpModuleData.BenefitList,
+					tpModuleData.PatPlanList,
+					tpModuleData.ListSubstLinks,
+					tpModuleData.SubList,
+					tpModuleData.DiscountPlanSub,
+					tpModuleData.DiscountPlan,
+					tpModuleData.ListProcedures,
+					ref loadActiveTPData.ClaimProcList,
+					loadActiveTPData.HistList,
+					doProritizeTotals:true);
+				treatPlan.ListProcTPs=ProcTPs.GetProcTPsFromTpRows(
+					tpModuleData.Pat.PatNum,
+					listTpRows.FindAll(x=>x.RowType==TpRowType.TpRow),
+					loadActiveTPData.listProcForTP,
+					loadActiveTPData.ListTreatPlanAttaches);
+			}
+			return treatPlan;
+		}
+
+
 		///<summary>Gets the hashstring from the provided string that is typically generated from GetStringForSignatureHash().
 		///This is done seperate of building the string so that new line replacements can be done when validating signatures before hashing.</summary>
 		public static string GetHashStringForSignature(string str) {

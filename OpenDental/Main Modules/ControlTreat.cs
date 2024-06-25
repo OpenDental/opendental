@@ -1896,7 +1896,7 @@ namespace OpenDental{
 			_listTpRowsMain=TreatmentPlanModules.GetActiveTpPlanTpRows(checkShowMaxDed.Checked,checkShowDiscount.Checked,checkShowSubtotals.Checked,checkShowTotals.Checked,treatPlan,PatientCur,dateTimeTP.Value,_loadActiveTPData,_listInsPlans,_listBenefits,
 				_listPatPlans,_listSubstitutionLinks,_listInsSubs,_tpModuleData.DiscountPlanSub,_tpModuleData.DiscountPlan,_listProcedures,ref _listClaimProcs,_listClaimProcHists);
 			//Disable the discount check box if there is no discount
-			if(checkShowDiscount.Checked && CompareDecimal.IsZero(_listTpRowsMain.FirstOrDefault(x=>x.RowType==TpRowType.Total)?.Discount??0)) { //mimics Saved TP logic
+			if(checkShowDiscount.Checked && CompareDecimal.IsZero(_listTpRowsMain.Sum(x=>x.Discount))) {
 				checkShowDiscount.Checked=false;
 			}			
 			//Change the note

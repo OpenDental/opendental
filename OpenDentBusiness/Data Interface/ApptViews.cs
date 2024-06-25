@@ -108,7 +108,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
 		public static DataTable RefreshCache() {
-			return GetTableFromCache(true);
+			return GetTableFromCache(refreshCache:true);
 		}
 
 		///<summary>Fills the local cache with the passed in DataTable.</summary>

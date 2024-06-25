@@ -113,6 +113,19 @@ namespace OpenDentBusiness{
 			return Crud.ChildParentCrud.SelectMany(command);
 		}
 		
+		#endregion Methods - Get
+		#region Methods - Modify
+		///<summary></summary>
+		public static void Delete(long childParentNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),childParentNum);
+				return;
+			}
+			Crud.ChildParentCrud.Delete(childParentNum);
+		}
+		#endregion Methods - Modify
+		*/
+
 		///<summary>Gets one ChildParent from the db.</summary>
 		public static ChildParent GetOne(long childParentNum){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
@@ -120,21 +133,26 @@ namespace OpenDentBusiness{
 			}
 			return Crud.ChildParentCrud.SelectOne(childParentNum);
 		}
-		#endregion Methods - Get
-		*/
 
-		#region Methods - Get
-		///<summary>Returns a list of all ChildParents with the given childNum.</summary>
-		public static List<ChildParent> GetChildParentsByChildNum(long childNum) {
+		public static string GetName(long childParentNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),childParentNum);
+			}
+			ChildParent childParent=Crud.ChildParentCrud.SelectOne(childParentNum);
+			if(childParent==null) {
+				return "";
+			}
+			return childParent.FName+" "+childParent.LName;
+		}
+
+		public static List<ChildParent> GetAll() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ChildParent>>(MethodBase.GetCurrentMethod());
 			}
-			string command="SELECT * FROM childparent WHERE ChildNum="+POut.Long(childNum);
-			return Crud.ChildParentCrud.SelectMany(command);
+			string command="SELECT * FROM childparent ORDER BY FName";
+			return Crud.ChildParentCrud.TableToList(Db.GetTable(command));
 		}
-		#endregion Methods - Get
 
-		#region Methods - Modify
 		///<summary></summary>
 		public static long Insert(ChildParent childParent){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
@@ -152,16 +170,6 @@ namespace OpenDentBusiness{
 			}
 			Crud.ChildParentCrud.Update(childParent);
 		}
-
-		///<summary></summary>
-		public static void Delete(long childParentNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),childParentNum);
-				return;
-			}
-			Crud.ChildParentCrud.Delete(childParentNum);
-		}
-		#endregion Methods - Modify
 
 	}
 }

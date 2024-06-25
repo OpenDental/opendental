@@ -75,7 +75,7 @@ namespace OpenDental {
 		private void butAdd_Click(object sender, System.EventArgs e) {
 			FrmChildEdit frmChildEdit=new FrmChildEdit();
 			Child child=new Child();
-			//Insert here so that a ChildNum FK exists when users create a ChildParent link
+			//Insert here so that a ChildNum FK exists when users create a ChildParentLink
 			child.ChildNum=Children.Insert(child);
 			frmChildEdit.ChildCur=child;
 			frmChildEdit.ShowDialog();
@@ -84,10 +84,10 @@ namespace OpenDental {
 				return;
 			}
 			//Cleanup the child that was initially created before opening FrmChildEdit
-			//Delete ChildParent relationships
-			List<ChildParent> listChildParents=ChildParents.GetChildParentsByChildNum(frmChildEdit.ChildCur.ChildNum);
-			for(int i=0;i<listChildParents.Count;i++) {
-				ChildParents.Delete(listChildParents[i].ChildParentNum);
+			//Delete ChildParentLink relationships
+			List<ChildParentLink> listChildParentLinks=ChildParentLinks.GetChildParentLinksByChildNum(frmChildEdit.ChildCur.ChildNum);
+			for(int i=0;i<listChildParentLinks.Count;i++) {
+				ChildParentLinks.Delete(listChildParentLinks[i].ChildParentLinkNum);
 			}
 			//Delete child
 			Children.Delete(frmChildEdit.ChildCur.ChildNum);

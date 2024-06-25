@@ -101,6 +101,7 @@ namespace OpenDentBusiness{
 		#endregion Cache Pattern
 
 		public static string GetRoomId(long childRoomNum){
+			//No need to check MiddleTierRole; no call to db.
 			ChildRoom childRoom=GetFirstOrDefault(x=>x.ChildRoomNum==childRoomNum);
 			if(childRoom is null){
 				return "";
@@ -130,22 +131,6 @@ namespace OpenDentBusiness{
 		#endregion Methods - Get
 		#region Methods - Modify
 		///<summary></summary>
-		public static long Insert(ChildRoom childRoom){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				childRoom.ChildRoomNum=Meth.GetLong(MethodBase.GetCurrentMethod(),childRoom);
-				return childRoom.ChildRoomNum;
-			}
-			return Crud.ChildRoomCrud.Insert(childRoom);
-		}
-		///<summary></summary>
-		public static void Update(ChildRoom childRoom){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoom);
-				return;
-			}
-			Crud.ChildRoomCrud.Update(childRoom);
-		}
-		///<summary></summary>
 		public static void Delete(long childRoomNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoomNum);
@@ -161,7 +146,32 @@ namespace OpenDentBusiness{
 		#endregion Methods - Misc
 		*/
 
+		///<summary></summary>
+		public static List<ChildRoom> GetAll() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildRoom>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM childroom ORDER BY RoomId";
+			return Crud.ChildRoomCrud.TableToList(Db.GetTable(command));
+		}
 
+		///<summary></summary>
+		public static long Insert(ChildRoom childRoom){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				childRoom.ChildRoomNum=Meth.GetLong(MethodBase.GetCurrentMethod(),childRoom);
+				return childRoom.ChildRoomNum;
+			}
+			return Crud.ChildRoomCrud.Insert(childRoom);
+		}
+
+		///<summary></summary>
+		public static void Update(ChildRoom childRoom){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoom);
+				return;
+			}
+			Crud.ChildRoomCrud.Update(childRoom);
+		}
 
 	}
 }

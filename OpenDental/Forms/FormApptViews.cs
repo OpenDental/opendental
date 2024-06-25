@@ -40,19 +40,25 @@ namespace OpenDental{
 		}
 
 		private void FillViewList(){
-			Cache.Refresh(InvalidType.Views);
+			ApptViews.RefreshCache();
+			ApptViewItems.RefreshCache();
 			listViews.Items.Clear();
 			_listApptViews=new List<ApptView>();
 			List<ApptView> listApptViews=ApptViews.GetDeepCopy();
 			string F;
+			listApptViews=listApptViews.FindAll(x => x.ClinicNum==comboClinic.ClinicNumSelected);
 			for(int i=0;i<listApptViews.Count;i++){
-				if(PrefC.HasClinicsEnabled && comboClinic.ClinicNumSelected!=listApptViews[i].ClinicNum) {
-					continue;//only add views assigned to the clinic selected
+				if(listApptViews[i].ItemOrder!=i){
+					listApptViews[i].ItemOrder=i;
+					ApptViews.Update(listApptViews[i]);
+					_changed=true; //update other computers
 				}
-				if(listViews.Items.Count<12)
+				if(listViews.Items.Count<12){
 					F="F"+(listViews.Items.Count+1).ToString()+"-";
-				else
+				}
+				else{
 					F="";
+				}
 				listViews.Items.Add(F+listApptViews[i].Description);
 				_listApptViews.Add(listApptViews[i]);
 			}

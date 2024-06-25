@@ -351,6 +351,14 @@ namespace OpenDentBusiness {
 			return listUserods.FirstOrDefault(x => !x.IsHidden && x.UserName.ToLower()==userName.ToLower());
 		}
 
+		///<summary>Gets the user by usernum. Skips the cache.</summary>
+		public static Userod GetUserByUserNumNoCache(long userNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Userod>(MethodBase.GetCurrentMethod(),userNum);
+			}
+			return Crud.UserodCrud.SelectOne(userNum);
+		}
+
 		///<summary>Returns null if not found.</summary>
 		public static Userod GetUserByEmployeeNum(long employeeNum) {
 			//No need to check MiddleTierRole; no call to db.

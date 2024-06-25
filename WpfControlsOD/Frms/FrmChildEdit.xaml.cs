@@ -21,6 +21,8 @@ namespace OpenDental {
 	public partial class FrmChildEdit:FrmODBase {
 		///<summary></summary>
 		public Child ChildCur;
+		///<summary>Store the room selected until the child is saved.</summary>
+		private long _childRoomNumSelected;
 
 		///<summary></summary>
 		public FrmChildEdit() {
@@ -34,29 +36,41 @@ namespace OpenDental {
 			textLastName.Text=ChildCur.LName;
 			textBirthdate.Value=ChildCur.BirthDate;
 			FillListBox();
+			_childRoomNumSelected=ChildCur.ChildRoomNumPrimary;
 			textPrimaryRoom.Text=ChildRooms.GetRoomId(ChildCur.ChildRoomNumPrimary);
+			textBadgeId.Text=ChildCur.BadgeId;
+			checkHidden.Checked=ChildCur.IsHidden;
 			textNotes.Text=ChildCur.Notes;
 		}
 
 		private void FillListBox() {
-			List<ChildParent> listChildParents=ChildParents.GetChildParentsByChildNum(ChildCur.ChildNum);
+			List<ChildParentLink> listChildParentLinks=ChildParentLinks.GetChildParentLinksByChildNum(ChildCur.ChildNum);
 			listAuthorized.Items.Clear();
-			for(int i=0;i<listChildParents.Count;i++) {
-				Userod userod=Userods.GetUser(listChildParents[i].Parent);
-				listAuthorized.Items.Add(userod.UserName,userod);
+			for(int i=0;i<listChildParentLinks.Count;i++) {
+				ChildParent childParent=ChildParents.GetOne(listChildParentLinks[i].ChildParentNum);
+				listAuthorized.Items.Add(childParent.FName+" "+childParent.LName,listChildParentLinks[i]);
 			}
 		}
 
 		private void listAuthorized_MouseDoubleClick(object sender,MouseButtonEventArgs e) {
-			//not implemented
+			if(listAuthorized.SelectedIndex==-1) {
+				return;
+			}
+			FrmChildParentLinkEdit frmParentEdit=new FrmChildParentLinkEdit();
+			frmParentEdit.ChildParentLinkCur=(ChildParentLink)listAuthorized.SelectedItem;
+			frmParentEdit.ShowDialog();
+			if(!frmParentEdit.IsDialogOK) {
+				return;
+			}
+			FillListBox();//Refill to show changes
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			FrmParentEdit frmParentEdit=new FrmParentEdit();
-			ChildParent childParent=new ChildParent();
-			childParent.ChildNum=ChildCur.ChildNum;//Assign child
-			childParent.IsNew=true;
-			frmParentEdit.ChildParentCur=childParent;
+			FrmChildParentLinkEdit frmParentEdit=new FrmChildParentLinkEdit();
+			ChildParentLink childParentLink=new ChildParentLink();
+			childParentLink.ChildNum=ChildCur.ChildNum;//Assign child
+			childParentLink.IsNew=true;
+			frmParentEdit.ChildParentLinkCur=childParentLink;
 			frmParentEdit.ShowDialog();
 			if(!frmParentEdit.IsDialogOK) {
 				return;
@@ -65,7 +79,21 @@ namespace OpenDental {
 		}
 
 		private void butRoomSelect_Click(object sender,EventArgs e) {
-			//not implemented
+			//Select a child room using a combobox
+			InputBoxParam inputBoxParam=new InputBoxParam();
+			inputBoxParam.InputBoxType_=InputBoxType.ComboSelect;
+			inputBoxParam.LabelText="Select a child room.";
+			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
+			inputBoxParam.ListSelections=listChildRooms.Select(x => x.RoomId).ToList();
+			inputBoxParam.SizeParam=new Size(width:200,height:20);
+			InputBox inputBox=new InputBox(inputBoxParam);
+			inputBox.ShowDialog();
+			if(inputBox.IsDialogCancel) {
+				return;
+			}
+			ChildRoom childRoomSelected=listChildRooms[inputBox.SelectedIndex];
+			_childRoomNumSelected=childRoomSelected.ChildRoomNum;
+			textPrimaryRoom.Text=childRoomSelected.RoomId;
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
@@ -85,7 +113,9 @@ namespace OpenDental {
 			ChildCur.LName=textLastName.Text;
 			ChildCur.BirthDate=textBirthdate.Value;
 			ChildCur.Notes=textNotes.Text;
-			//ChildRoomNumPrimary will be set in the room selection window
+			ChildCur.ChildRoomNumPrimary=_childRoomNumSelected;
+			ChildCur.BadgeId=textBadgeId.Text;
+			ChildCur.IsHidden=checkHidden.Checked==true;
 			//Only need to update as new children will already be inserted by the parent FrmChildren
 			Children.Update(ChildCur);
 			IsDialogOK=true;

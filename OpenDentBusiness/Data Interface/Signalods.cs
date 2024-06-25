@@ -18,7 +18,12 @@ namespace OpenDentBusiness {
 	public class Signalods {
 		#region Fields - Public
 		///<summary>This is not the actual date/time last refreshed.  It is really the server based date/time of the last item in the database retrieved on previous refreshes.  That way, the local workstation time is irrelevant.</summary>
-		public static DateTime DateTSignalLastRefreshed;
+		///<summary>This is not the actual date/time last refreshed.  It is really the server based date/time of the last item in the database retrieved on previous refreshes.  That way, the local workstation time is irrelevant.
+		///Middle tier also uses this field, however middle tier only processes cache refresh signals.</summary>
+		public static DateTime DateTRegularPrioritySignalLastRefreshed;
+		///<summary>This is the server based date/time of the last item in the database retrieved on a previous refresh. There is an attampt to update this value on every tick, with no conditions.
+		///Middle tier does not uses this field, however middle tier only processes cache refresh signals, and does not need to handle high priority signals (like shutdown, printing, etc).</summary>
+		public static DateTime DateTHighPrioritySignalLastRefreshed;
 		///<summary>Mimics the behavior of DateSignalLastRefreshed, but is used exclusively in ContrAppt.TickRefresh(). The root issue was that when a client came back from being inactive
 		///ContrAppt.TickRefresh() was using DateSignalLastRefreshed, which is only set after we process signals. Therefore, when a client went inactive, we could potentially query the 
 		///SignalOD table for a much larger dataset than intended. E.g.- Client goes inactive for 3 hours, comes back, ContrAppt.TickRefresh() is called and calls RefreshTimed() with a 3 hour old datetime.</summary>
@@ -55,9 +60,9 @@ namespace OpenDentBusiness {
 		///Remeber that the supplied dateTime is server time.  This has to be accounted for.
 		///ListITypes is an optional parameter for querying specific signal types.
 		///ServerMT instances will always be given a chance to process signals being returned from this method.</summary>
-		public static List<Signalod> RefreshTimed(DateTime dateTSince,List<InvalidType> listInvalidTypes=null) {
+		public static List<Signalod> RefreshTimed(DateTime dateTSince,List<InvalidType> listInvalidTypes=null,List<InvalidType> listInvalidTypesExclude=null) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Signalod>>(MethodBase.GetCurrentMethod(),dateTSince,listInvalidTypes);
+				return Meth.GetObject<List<Signalod>>(MethodBase.GetCurrentMethod(),dateTSince,listInvalidTypes,listInvalidTypesExclude);
 			}
 			//This command was written to take into account the fact that MySQL truncates seconds to the the whole second on DateTime columns. (newer versions support fractional seconds)
 			//By selecting signals less than Now() we avoid missing signals the next time this function is called. Without the addition of Now() it was possible
@@ -66,6 +71,9 @@ namespace OpenDentBusiness {
 				+"WHERE (SigDateTime>"+POut.DateT(dateTSince)+" AND SigDateTime< "+DbHelper.Now()+") ";
 			if(!listInvalidTypes.IsNullOrEmpty()) {
 				command+="AND IType IN("+String.Join(",",listInvalidTypes.Select(x => (int)x))+") ";
+			}
+			if(!listInvalidTypesExclude.IsNullOrEmpty()){
+				command+="AND IType NOT IN("+String.Join(",",listInvalidTypesExclude.Select(x => (int)x))+") ";
 			}
 			command+="ORDER BY SigDateTime";
 			//note: this might return an occasional row that has both times newer.

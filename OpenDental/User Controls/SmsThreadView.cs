@@ -194,9 +194,15 @@ namespace OpenDental {
 				richTextBoxMessage.Height=size.Height+4;//Extra vertical padding to ensure that the text will fit when including the border.
 				richTextBoxMessage.ReadOnly=true;
 				Panel panelBorder=new Panel() {
-					Width=richTextBoxMessage.Width+2,
-					Height=richTextBoxMessage.Height+2,
+					Width=richTextBoxMessage.Width+4,
+					Height=richTextBoxMessage.Height+4,
 					BackColor=Color.Black,
+				};
+				Panel panelPadding=new Panel() {
+					Width=panelBorder.Width-2,
+					Height=panelBorder.Height-2,
+					BackColor=smsThreadMessage.BackColor,
+					Location=new Point(1,1)
 				};
 				panelBorder.Name="msgBorder_"+smsThreadMessage.ID;
 				if(smsThreadMessage.IsAlignedLeft) {
@@ -205,11 +211,12 @@ namespace OpenDental {
 				else {//Right aligned
 					panelBorder.Location=new Point(bodyWidth-horizontalMargin-panelBorder.Width,y);
 				}
-				richTextBoxMessage.Location=new Point(panelBorder.Location.X+1,panelBorder.Location.Y+1);
+				richTextBoxMessage.Location=new Point(panelBorder.Location.X+2,panelBorder.Location.Y+2);
 				richTextBoxMessage=(RichTextBox)AddOrUpdatePanelScrollChildControl(richTextBoxMessage);
 				if(smsThreadMessage.IsHighlighted) {
 					controlHighlighted=richTextBoxMessage;
 				}
+				panelBorder.Controls.Add(panelPadding);
 				AddOrUpdatePanelScrollChildControl(panelBorder);
 				y+=panelBorder.Height;
 				//Display 'Delivered'/'Sent' after text message

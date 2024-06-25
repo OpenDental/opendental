@@ -2548,66 +2548,23 @@ namespace OpenDental {
 			return false;
 		}
 
-		///<summary>validates the fonts for use with PDF sharp. If not compatible, sets the font to something that will work.</summary>
-		//This is a workaround due to the fact that PDF Sharp does not support TTC fonts.
+		///<summary>validates the fonts for use with PDF sharp. If not compatible, sets the font to something that will work. This is a workaround due to the fact that PDF Sharp does not support TTC fonts.</summary>
 		private void FixFontsForPdf(Sheet sheetCur,bool isPrinting=false) {
-			if(!isPrinting){
-				return;
-			}
-			bool hasErrors=false;
-			List<string> listStrBadFonts=new List<string>();
-			try {// check if font is compatible with PDFSharp by running it through XFont, if it suceeds, add to the list, otherwise throw error.
-				XFont _=new XFont(sheetCur.FontName,sheetCur.FontSize,XFontStyle.Regular);
-			}
-			catch {
-				hasErrors=true;
-				listStrBadFonts.Add(sheetCur.FontName);
-				sheetCur.FontName=FontFamily.GenericSansSerif.ToString();//font was not compatible with PDFSharp, fill with one we hope is. Same font replacement we use in SheetDrawingJob.cs
-			}
-			//check every font in fields on the sheet
-			for(int i=0;i<SheetCur.SheetFields.Count;i++){
-				if(SheetCur.SheetFields[i].FieldType==SheetFieldType.StaticText
-					||SheetCur.SheetFields[i].FieldType==SheetFieldType.InputField
-					||SheetCur.SheetFields[i].FieldType==SheetFieldType.OutputText) {
-					try {// check if font is compatible with PDFSharp by running it through XFont, if it suceeds, add to the list, otherwise throw error.
-						XFont _=new XFont(SheetCur.SheetFields[i].FontName,SheetCur.SheetFields[i].FontSize,XFontStyle.Regular);
-					}
-					catch {
-						hasErrors=true;
-						if(!listStrBadFonts.Contains(SheetCur.SheetFields[i].FontName)) {
-							listStrBadFonts.Add(SheetCur.SheetFields[i].FontName);
-						}
-						SheetCur.SheetFields[i].FontName=FontFamily.GenericSansSerif.ToString();//font was not compatible with PDFSharp, fill with one we hope is. Same font replacement we use in SheetDrawingJob.cs
-					}
-				}
-			}
-			if(hasErrors) {
-				string str=Lan.g(this,"Form is trying to save or print with unsupported font(s):");
-				str+=" "+string.Join(", ",listStrBadFonts.ToArray())+". ";
-				str+=Lan.g(this,"Font(s) will be replaced with a generic substitute to allow saving and printing.");
-				MsgBox.Show(str);
+			string errorString=SheetUtil.FixFontsForPdf(sheetCur,isPrinting);
+			if(!errorString.IsNullOrEmpty()){
+				MsgBox.Show(errorString);
 			}
 		}
 
 		//Currently only for PatientForms, verify that the InputField of "State" is exactly 2 characters in length. 
 		private bool ValidateStateField() {
-			if(SheetCur.SheetType!=SheetTypeEnum.PatientForm) {
-				return true;
+			try{
+				return SheetUtil.ValidateStateField(SheetCur);
 			}
-			for(int i=0;i<SheetCur.SheetFields.Count;i++){
-				if(SheetCur.SheetFields[i]==null){
-					continue;
-				}
-				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField){
-					continue;
-				}
-				SheetField sheetField=SheetCur.SheetFields[i];
-				if(sheetField.FieldName=="State" && sheetField.FieldValue.Trim().Length!=2 && sheetField.FieldValue.Trim().Length>0) {
-					MessageBox.Show(Lan.g(this,"The State field must be exactly two characters in length."));
-					return false;
-				}
+			catch (ApplicationException ex){
+				MsgBox.Show(Lan.g(this,ex.Message));
+				return false;
 			}
-			return true;
 		}
 		#endregion Methods - private 	
 	}

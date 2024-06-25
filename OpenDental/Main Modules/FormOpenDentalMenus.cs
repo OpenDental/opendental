@@ -28,6 +28,7 @@ namespace OpenDental{
 		private MenuItemOD _menuItemDentalSchoolClass;
 		private MenuItemOD _menuItemDentalSchoolCourses;
 		private MenuItemOD _menuItemDentalSchools;
+		private MenuItemOD _menuItemEForms;
 		///<summary> Only available in OD HQ when Introspection.IsTestingMode is true. </summary>
 		private MenuItemOD _menuItemEditTestModeOverrides;
 		private MenuItemOD _menuItemEvaluations;
@@ -197,7 +198,8 @@ namespace OpenDental{
 			_menuItemDentalSchools=new MenuItemOD("Dental Schools",menuItemDentalSchools_Click);
 			menuItemSetup.Add(_menuItemDentalSchools);
 			menuItemSetup.Add("Display Fields",menuItemDisplayFields_Click);
-			menuItemSetup.Add("eForms",menuItemEForms_Click);
+			_menuItemEForms=new MenuItemOD("eForms",menuItemEForms_Click);	
+			menuItemSetup.Add(_menuItemEForms);
 			menuItemSetup.Add("Fee Schedules",menuItemFeeScheds_Click);
 			_menuItemFeeSchedGroups=new MenuItemOD("Fee Schedule Groups",menuFeeSchedGroups_Click);
 			menuItemSetup.Add(_menuItemFeeSchedGroups);

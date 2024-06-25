@@ -205,7 +205,7 @@ namespace OpenDental{
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			long accountNum=PIn.Long(_tableAccounts.Rows[gridMain.GetSelectedIndex()]["AccountNum"].ToString());
+			long accountNum=PIn.Long(_tableAccounts.Rows[e.Row]["AccountNum"].ToString());
 			if(accountNum==0) {
 				MsgBox.Show(this,"This account is generated automatically, and there is currently no way to view the detail.  It is the sum of all income minus all expenses for all previous years.");
 				return;

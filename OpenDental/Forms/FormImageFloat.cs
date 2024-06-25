@@ -24,7 +24,9 @@ namespace OpenDental {
 		#region Fields - Public
 		public ControlImageDisplay ControlImageDisplay_;
 		///<summary>This lets us get a list of all floater windows from ControlImages at the moment when we pop up the window selector.</summary>
-		public Func<List<string>> FuncListFloaters;
+		public Func<List<FormImageFloat>> FuncListFloaters;
+		///<summary>This lets us get the title of the docker from ControlImages at the moment when we pop up the window selector.This can be null.</summary>
+		public Func<string> FuncDockedTitle;
 		#endregion Fields - Public
 		
 		#region Fields - Private
@@ -54,6 +56,11 @@ namespace OpenDental {
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public event EventHandler<EnumImageFloatWinButton> EventButClicked=null;
+
+		///<summary>User clicked on the list to pick a new window.  Bubbles up to ControlImages, where it's handled. The index passed includes the docker in position 0.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler<int> EventWinPicked=null;
 		#endregion Events
 
 		#region Properties
@@ -64,6 +71,8 @@ namespace OpenDental {
 		public void SetControlImageDisplay(ControlImageDisplay controlImageDisplay){
 			//should only be called once, after load.
 			ControlImageDisplay_=controlImageDisplay;
+			ControlImageDisplay_.EventGotODFocus-=ControlImageDisplay__EventGotODFocus;//safe to use even if that event handler is not attached.
+			ControlImageDisplay_.EventGotODFocus+=ControlImageDisplay__EventGotODFocus;
 			//Size sizeClient=PanelClient.Size;
 			ControlImageDisplay_.Size=ClientRectangle.Size;
 			ControlImageDisplay_.Dock=DockStyle.Fill;
@@ -73,9 +82,28 @@ namespace OpenDental {
 			//Size sizePanel=ControlImageDisplay_.panelMain.Size;
 			//LayoutManager.LayoutControlBoundsAndFonts(ControlImageDisplay_);
 		}
+
+		///<summary>This tricks the form into thinking that the mouse down originated from within this form. Only used when we pop a floater into existence under the mouse and we want it to stick.</summary>
+		public void SimulateMouseDown(Point point,Rectangle rectangleFormBounds){
+			_pointMouseDownScreen=point;
+			_pointMouseScreenPrevious=point;
+			_rectangleOnDesktopMouseDown=rectangleFormBounds;
+		}
 		#endregion Methods - Public
 
 		#region Methods - private Event Handlers
+		private void ControlImageDisplay__EventGotODFocus(object sender,EventArgs e) {
+			ControlImageDisplay controlImageDisplay=sender as ControlImageDisplay;
+			Form form=controlImageDisplay.FindForm();
+			if(form!=this){
+				//The event was still attached even when the controlImageDisplay got moved from this floater
+				//I'm not sure of any way to remove the event when moving the control or I would.
+				return;
+			}
+			IsImageFloatSelected=true;//this is what turns the titlebar blue in the base class
+			Select();
+		}
+
 		private void FormImageFloat_FormClosed(object sender, FormClosedEventArgs e){
 			if(_windowImageFloatWindows!=null){
 				_windowImageFloatWindows.Close();
@@ -138,7 +166,22 @@ namespace OpenDental {
 			}
 			_isButWindowPressed=true;
 			_windowImageFloatWindows=new WindowImageFloatWindows();
+			List<FormImageFloat> listFormImageFloats=FuncListFloaters();
+			List<string> listStrings = new List<string>();
+			string dockedTitle=FuncDockedTitle();
+			if(dockedTitle is null) {
+				listStrings.Add("(no image docked)");
+			}
+			else {
+				listStrings.Add(dockedTitle);
+			}
+			for(int i=0;i<listFormImageFloats.Count;i++) {
+				listStrings.Add(listFormImageFloats[i].Text);
+			}
+			_windowImageFloatWindows.ListFloaterTitles=listStrings;
+			_windowImageFloatWindows.idxParent=listFormImageFloats.IndexOf(this)+1;//plus 1 because first pos is always occupied by docked
 			_windowImageFloatWindows.EventButClicked+=(sender,enumImageFloatWinButton)=> EventButClicked?.Invoke(this,enumImageFloatWinButton);
+			_windowImageFloatWindows.EventWinPicked+=(sender,idx)=>EventWinPicked?.Invoke(this,idx);
 			_windowImageFloatWindows.Closed+=_windowImageFloatWindows_Closed;
 			//Bottom left and right of the button, in screen coords.
 			Point pointL=PointToScreen(new Point(_rectangleButWindows.Left,_rectangleButWindows.Bottom-LayoutManager.Scale(9)));

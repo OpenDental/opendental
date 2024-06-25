@@ -90,6 +90,8 @@ namespace OpenDentBusiness {
 		ODT_ExamSheetsAll,
 		///<summary></summary>
 		ODT_ExamSheet,
+		///<summart>Mobile notification used to inform a specific device of any failures with printing.</summart>
+		ODT_PrintError,
 	}
 
 	///<summary>The mobile apps that support mobile notifications. Must stay synched 1:1 with the ODXamBusiness.ApplicationTarget enum.</summary>

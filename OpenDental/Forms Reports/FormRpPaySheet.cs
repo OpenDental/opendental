@@ -315,12 +315,11 @@ namespace OpenDental{
 			listPayConnectPaySources.Add((long)CreditCardSource.PayConnectPortalLogin);
 			listPayConnectPaySources.Add((long)CreditCardSource.PayConnectPaymentPortal);
 			listPayConnectPaySources.Add((long)CreditCardSource.PayConnectPaymentPortalGuest);
-			//If showing providers on seperate rows, we need to add an extra row for each payment for any MerchantFees. We don't want to be sticking them on a random provider.
-			//We don't need to worry about MerchantFee rows if this isn't checked, since we're pinning all providers on the same line with the MerchantFee anyway.
-			//The goal of this chunk is to not display the same MerchantFee on multiple rows, which compounds their value on the report, and doing so in a way that doesn't single out one provider if multiple were involved.
-			if(checkShowProvSeparate.Checked) {
+			//If at least one of the "Show ___ Fees" boxes is checked, we need to take potential MerchantFees into consideration when making our payment rows.
+			//We need to add an extra, mostly blanked out fee row to each payment that has a MerchantFee, since we don't want to be sticking them on an arbitrary provider or clinic. That's for offices to figure out.
+			if(checkShowCareCreditFees.Checked || checkShowPayConnectFees.Checked) {
 				List<long> listPayNumsVisited=new List<long>();
-				//Start at the end and go backwards, so our Fee rows are added directly after all of their relevant payment rows, and so we can easily scrub MerchantFees off the actual payment rows.
+				//Start at the end and go backwards, so our MerchantFee rows are added directly after all of their relevant payment rows, and so we can easily scrub MerchantFees off the actual payment rows.
 				//Opted to go backwards since I believe there are circumstances where the same payment can have multiple rows scattered apart from each other.
 				for(int i=tablePat.Rows.Count-1;i>=0;i--) {
 					DataRow rowPat=tablePat.Rows[i];
@@ -338,6 +337,9 @@ namespace OpenDental{
 						rowNew.ItemArray=rowPat.ItemArray;
 						rowNew["amt"]=0;
 						rowNew["GROUP_CONCAT(DISTINCT provider.Abbr)"]="";
+						if(PrefC.HasClinicsEnabled) {
+							rowNew["clinicAbbr"]="";
+						}
 						//Insert the new row right after our current one.
 						tablePat.Rows.InsertAt(rowNew,i+1);
 						//We don't want to make the same row for one payment multiple times, so add the PayNum to our visited list.

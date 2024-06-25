@@ -41,11 +41,19 @@ Jordan is the only one allowed to edit this file.
 		private bool _isHoverX;
 		///<summary>Property backer.</summary>
 		private bool _isSelected;
+		private bool _isMouseDown;
+		private Point _pointMouseDownScreen;
 		#endregion Fields - Private
 
 		#region Constructor
 		public ImageDockHeader(){
 			InitializeComponent();
+			Focusable=true;
+			//GotFocus+=ImageDockHeader_GotFocus;
+			//LostFocus+=ImageDockHeader_LostFocus;
+			borderDrag.MouseLeftButtonDown+=BorderDrag_MouseLeftButtonDown;
+			borderDrag.MouseLeftButtonUp+=BorderDrag_MouseLeftButtonUp;
+			borderDrag.MouseMove+=BorderDrag_MouseMove;
 			grid.MouseLeftButtonDown+=Grid_MouseLeftButtonDown;
 			rectangleClose.MouseLeftButtonDown+=RectangleClose_MouseLeftButtonDown;
 			rectangleClose.MouseLeave+=RectangleClose_MouseLeave;
@@ -61,13 +69,29 @@ Jordan is the only one allowed to edit this file.
 			rectangleWindows.MouseMove+=RectangleWin_MouseMove;
 			SetColors();
 		}
+
+		/*
+		private void ImageDockHeader_LostFocus(object sender,RoutedEventArgs e) {
+			bool hasKBFocus=IsFocused;
+			bool hasLFocus=IsKeyboardFocused;
+			return;
+		}
+
+		private void ImageDockHeader_GotFocus(object sender,RoutedEventArgs e) {
+			bool hasKBFocus=IsFocused;
+			bool hasLFocus=IsKeyboardFocused;
+			return;
+		}*/
 		#endregion Constructor
 
 		#region Events - Raise
-		public event EventHandler Close; 
-		public event EventHandler Max; 
-		public event EventHandler Min; 
-		public event EventHandler Win; 
+		public event EventHandler EventClose; 
+		///<summary>With the various nested WPF and Winforms controls, I couldn't get this to focus reliably, so this is an alternative built from scratch.</summary>
+		public event EventHandler EventGotODFocus;
+		public event EventHandler EventMax; 
+		public event EventHandler EventMin; 
+		public event EventHandler EventWin; 
+		public event EventHandler EventPopFloater;
 		#endregion Events - Raise
 
 		#region Properties
@@ -137,7 +161,7 @@ Jordan is the only one allowed to edit this file.
 			else if(IsSelected){
 				colorBorder=ColorOD.Mix_Wpf(colorFloatBase,Colors.White,3,1);
 				colorBorderText=Colors.White;
-				colorHoverMinMax=ColorOD.Mix_Wpf(colorBorder,colorBorderText,4,1);					
+				colorHoverMinMax=ColorOD.Mix_Wpf(colorBorder,colorBorderText,4,1);
 			}
 			else{
 				colorBorder=ColorOD.Mix_Wpf(colorFloatBase,Colors.White,1,3);
@@ -145,6 +169,7 @@ Jordan is the only one allowed to edit this file.
 				colorHoverMinMax=ColorOD.Mix_Wpf(colorBorder,colorBorderText,10,1);
 			}
 			grid.Background=new SolidColorBrush(colorBorder);
+			borderDrag.Background=new SolidColorBrush(colorBorder);//so it can be clickable
 			if(_isHoverMax) {
 				rectangleMax.Fill=new SolidColorBrush(colorHoverMinMax);
 			}
@@ -166,7 +191,8 @@ Jordan is the only one allowed to edit this file.
 				labelWin.Foreground=Brushes.Black;
 			}
 			else{//not pressed
-				labelWin.Foreground=Brushes.White;
+				labelWin.Foreground=new SolidColorBrush(colorBorderText);
+					//Brushes.White;
 				if(_isHoverWin) {
 					rectangleWindows.Fill=new SolidColorBrush(colorHoverMinMax);
 				}
@@ -181,7 +207,6 @@ Jordan is the only one allowed to edit this file.
 				rectangleClose.Fill=new SolidColorBrush(colorBorder);
 			}
 			labelTitle.ColorText=colorBorderText;
-			labelWin.ColorText=colorBorderText;
 			lineMin.Stroke=new SolidColorBrush(colorBorderText);
 			rectangleMaxSmall.Stroke=new SolidColorBrush(colorBorderText);
 			lineX.Stroke=new SolidColorBrush(colorBorderText);
@@ -190,12 +215,40 @@ Jordan is the only one allowed to edit this file.
 		#endregion Methods private
 
 		#region Methods private EventHandlers
+		private void BorderDrag_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
+			_isMouseDown=true;
+			_pointMouseDownScreen=PointToScreen(e.GetPosition(this));
+		}
+
+		private void BorderDrag_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
+			_isMouseDown=false;
+		}
+
+		private void BorderDrag_MouseMove(object sender,MouseEventArgs e) {
+			if(!_isMouseDown){
+				return;
+			}
+			if(Mouse.LeftButton!=MouseButtonState.Pressed){
+				return;
+			}
+			//we are definitely dragging
+			Point pointScreen=PointToScreen(e.GetPosition(this));
+			Point pointDelta=new Point(pointScreen.X-_pointMouseDownScreen.X,pointScreen.Y-_pointMouseDownScreen.Y);
+			if(Math.Abs(pointDelta.X)<3 && Math.Abs(pointDelta.Y)<3){//ignore small drags.
+				return;
+			}
+			EventPopFloater?.Invoke(this,new EventArgs());
+		}
+
 		private void Grid_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
+			//Yes, this also gets hit in addition to any of the other buttons that you click inside the grid.
 			Point point=e.GetPosition(grid);
 			if(point.X>grid.ColumnDefinitions[0].ActualWidth+grid.ColumnDefinitions[1].ActualWidth){
 				return;
 			}
-			IsSelected=true;//This gets done again in 
+			IsSelected=true;//This gets done again in... (finish this thought)
+			//bool success=this.Focus();
+			EventGotODFocus?.Invoke(this,new EventArgs());
 			SetColors();
 		}
 
@@ -208,7 +261,7 @@ Jordan is the only one allowed to edit this file.
 			if(IsEmpty){
 				return;
 			}
-			Close?.Invoke(this,new EventArgs());
+			EventClose?.Invoke(this,new EventArgs());
 		}
 
 		private void RectangleClose_MouseMove(object sender,MouseEventArgs e) {
@@ -222,7 +275,7 @@ Jordan is the only one allowed to edit this file.
 		}
 
 		private void RectangleMax_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
-			Max?.Invoke(this,new EventArgs());
+			EventMax?.Invoke(this,new EventArgs());
 		}
 
 		private void RectangleMax_MouseMove(object sender,MouseEventArgs e) {
@@ -236,7 +289,7 @@ Jordan is the only one allowed to edit this file.
 		}
 
 		private void RectangleMin_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
-			Min?.Invoke(this,new EventArgs());
+			EventMin?.Invoke(this,new EventArgs());
 		}
 
 		private void RectangleMin_MouseMove(object sender,MouseEventArgs e) {
@@ -250,7 +303,7 @@ Jordan is the only one allowed to edit this file.
 		}
 
 		private void RectangleWin_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
-			Win?.Invoke(this,new EventArgs());
+			EventWin?.Invoke(this,new EventArgs());
 		}
 
 		private void RectangleWin_MouseMove(object sender,MouseEventArgs e) {

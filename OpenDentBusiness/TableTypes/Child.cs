@@ -20,6 +20,10 @@ namespace OpenDentBusiness{
 		public DateTime BirthDate;
 		///<summary>Any notes for a child, such as allergies.</summary>
 		public string Notes;
+		///<summary>A unique number that corresponds to the number on a child badge. The last numbers on an child badge. Will be 1 to 4 digits. These numbers are assigned to the badges by the factory.</summary>
+		public string BadgeId;
+		///<summary>Set true to hide a child. False by default.</summary>
+		public bool IsHidden;
 
 		public Child Copy(){
 			return (Child)this.MemberwiseClone();
@@ -34,7 +38,9 @@ namespace OpenDentBusiness{
 			FName varchar(255) NOT NULL,
 			LName varchar(255) NOT NULL,
 			BirthDate date NOT NULL DEFAULT '0001-01-01',
-			Notes varchar(255) NOT NULL
+			Notes varchar(255) NOT NULL,
+			BadgeId varchar(255) NOT NULL,
+			IsHidden tinyint NOT NULL
 			) DEFAULT CHARSET=utf8";
 		Db.NonQ(command);
 		*/
@@ -42,5 +48,7 @@ namespace OpenDentBusiness{
 }
 
 /*
-The daycare will be given its own database. There is information in the live customers database that the daycare database will need to have and be synced with. Specifically this will be information from the userod table for the ChildTeacher and ChildParent tables in the daycare database. It should also be noted that a "parent" is an employee over in the live Customers db, but could also just be an entry for a badge given to another user authorized to pickup a child. In that case, the UserNum will not be present in Customers db and will be outside their normal range.
+The daycare has its own database. They enter their own users from scratch for anyone who needs to use a badge. This can include teachers, kids, parents, and guardians.
+
+The daycare will have 8 classrooms. 5 of the classrooms will support 10 children and staff. The other three will support 20 children and staff. Per Oregon law, there are teacher/child ratios that must be met. Example: 10 preschool kids to 1 teacher equals a ratio of 10. Any more children than the allowed ratio would exceed the legal limit. 
 */

@@ -138,7 +138,7 @@
 			this.tabControl.Controls.Add(this.tabPageReactivations);
 			this.tabControl.Location = new System.Drawing.Point(2, 2);
 			this.tabControl.Name = "tabControl";
-			this.tabControl.Size = new System.Drawing.Size(981, 757);
+			this.tabControl.Size = new System.Drawing.Size(981, 692);
 			this.tabControl.TabIndex = 3;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
 			// 
@@ -167,7 +167,7 @@
 			this.tabPageRecalls.Location = new System.Drawing.Point(2, 21);
 			this.tabPageRecalls.Name = "tabPageRecalls";
 			this.tabPageRecalls.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageRecalls.Size = new System.Drawing.Size(977, 734);
+			this.tabPageRecalls.Size = new System.Drawing.Size(977, 669);
 			this.tabPageRecalls.TabIndex = 0;
 			this.tabPageRecalls.Tag = this.gridRecalls;
 			this.tabPageRecalls.Text = "Recalls";
@@ -193,7 +193,7 @@
 			this.panelWebSched.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.panelWebSched.BackgroundImage = global::OpenDental.Properties.Resources.webSched_PV_Button;
 			this.panelWebSched.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.panelWebSched.Location = new System.Drawing.Point(759, 704);
+			this.panelWebSched.Location = new System.Drawing.Point(759, 639);
 			this.panelWebSched.Name = "panelWebSched";
 			this.panelWebSched.Size = new System.Drawing.Size(120, 24);
 			this.panelWebSched.TabIndex = 138;
@@ -202,7 +202,7 @@
 			// butUndo
 			// 
 			this.butUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butUndo.Location = new System.Drawing.Point(3, 704);
+			this.butUndo.Location = new System.Drawing.Point(3, 639);
 			this.butUndo.Name = "butUndo";
 			this.butUndo.Size = new System.Drawing.Size(119, 24);
 			this.butUndo.TabIndex = 137;
@@ -213,7 +213,7 @@
 			// 
 			this.butGotoFamily.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butGotoFamily.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butGotoFamily.Location = new System.Drawing.Point(443, 678);
+			this.butGotoFamily.Location = new System.Drawing.Point(443, 613);
 			this.butGotoFamily.Name = "butGotoFamily";
 			this.butGotoFamily.Size = new System.Drawing.Size(96, 24);
 			this.butGotoFamily.TabIndex = 136;
@@ -225,7 +225,7 @@
 			this.butCommlog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butCommlog.Icon = OpenDental.UI.EnumIcons.CommLog;
 			this.butCommlog.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butCommlog.Location = new System.Drawing.Point(545, 704);
+			this.butCommlog.Location = new System.Drawing.Point(545, 639);
 			this.butCommlog.Name = "butCommlog";
 			this.butCommlog.Size = new System.Drawing.Size(88, 24);
 			this.butCommlog.TabIndex = 135;
@@ -236,7 +236,7 @@
 			// 
 			this.butGotoAccount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butGotoAccount.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butGotoAccount.Location = new System.Drawing.Point(443, 704);
+			this.butGotoAccount.Location = new System.Drawing.Point(443, 639);
 			this.butGotoAccount.Name = "butGotoAccount";
 			this.butGotoAccount.Size = new System.Drawing.Size(96, 24);
 			this.butGotoAccount.TabIndex = 134;
@@ -248,7 +248,7 @@
 			this.butSchedFam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butSchedFam.Image = global::OpenDental.Properties.Resources.butPin22;
 			this.butSchedFam.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSchedFam.Location = new System.Drawing.Point(639, 704);
+			this.butSchedFam.Location = new System.Drawing.Point(639, 639);
 			this.butSchedFam.Name = "butSchedFam";
 			this.butSchedFam.Size = new System.Drawing.Size(114, 24);
 			this.butSchedFam.TabIndex = 129;
@@ -261,7 +261,7 @@
 			this.butLabelOne.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butLabelOne.Image = global::OpenDental.Properties.Resources.butLabel;
 			this.butLabelOne.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butLabelOne.Location = new System.Drawing.Point(128, 678);
+			this.butLabelOne.Location = new System.Drawing.Point(128, 613);
 			this.butLabelOne.Name = "butLabelOne";
 			this.butLabelOne.Size = new System.Drawing.Size(119, 24);
 			this.butLabelOne.TabIndex = 133;
@@ -273,7 +273,7 @@
 			this.butSchedPat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butSchedPat.Image = global::OpenDental.Properties.Resources.butPin22;
 			this.butSchedPat.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSchedPat.Location = new System.Drawing.Point(639, 678);
+			this.butSchedPat.Location = new System.Drawing.Point(639, 613);
 			this.butSchedPat.Name = "butSchedPat";
 			this.butSchedPat.Size = new System.Drawing.Size(114, 24);
 			this.butSchedPat.TabIndex = 128;
@@ -284,7 +284,7 @@
 			// labelPatientCount
 			// 
 			this.labelPatientCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelPatientCount.Location = new System.Drawing.Point(860, 676);
+			this.labelPatientCount.Location = new System.Drawing.Point(860, 611);
 			this.labelPatientCount.Name = "labelPatientCount";
 			this.labelPatientCount.Size = new System.Drawing.Size(114, 14);
 			this.labelPatientCount.TabIndex = 132;
@@ -295,7 +295,7 @@
 			// 
 			this.butECards.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butECards.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butECards.Location = new System.Drawing.Point(253, 678);
+			this.butECards.Location = new System.Drawing.Point(253, 613);
 			this.butECards.Name = "butECards";
 			this.butECards.Size = new System.Drawing.Size(91, 24);
 			this.butECards.TabIndex = 130;
@@ -308,7 +308,7 @@
 			this.butEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butEmail.Icon = OpenDental.UI.EnumIcons.Email;
 			this.butEmail.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butEmail.Location = new System.Drawing.Point(253, 704);
+			this.butEmail.Location = new System.Drawing.Point(253, 639);
 			this.butEmail.Name = "butEmail";
 			this.butEmail.Size = new System.Drawing.Size(91, 24);
 			this.butEmail.TabIndex = 131;
@@ -320,7 +320,7 @@
 			this.butPostcards.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butPostcards.Image = global::OpenDental.Properties.Resources.butPreview;
 			this.butPostcards.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPostcards.Location = new System.Drawing.Point(3, 678);
+			this.butPostcards.Location = new System.Drawing.Point(3, 613);
 			this.butPostcards.Name = "butPostcards";
 			this.butPostcards.Size = new System.Drawing.Size(119, 24);
 			this.butPostcards.TabIndex = 124;
@@ -332,7 +332,7 @@
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butPrint.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(350, 704);
+			this.butPrint.Location = new System.Drawing.Point(350, 639);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(87, 24);
 			this.butPrint.TabIndex = 127;
@@ -349,7 +349,7 @@
 			this.gridRecalls.Location = new System.Drawing.Point(3, 112);
 			this.gridRecalls.Name = "gridRecalls";
 			this.gridRecalls.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridRecalls.Size = new System.Drawing.Size(971, 561);
+			this.gridRecalls.Size = new System.Drawing.Size(971, 496);
 			this.gridRecalls.TabIndex = 126;
 			this.gridRecalls.Title = "Recall List";
 			this.gridRecalls.TranslationName = "TableRecallList";
@@ -387,7 +387,7 @@
 			this.butLabels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butLabels.Image = global::OpenDental.Properties.Resources.butLabel;
 			this.butLabels.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butLabels.Location = new System.Drawing.Point(128, 704);
+			this.butLabels.Location = new System.Drawing.Point(128, 639);
 			this.butLabels.Name = "butLabels";
 			this.butLabels.Size = new System.Drawing.Size(119, 24);
 			this.butLabels.TabIndex = 122;
@@ -397,7 +397,7 @@
 			// butReport
 			// 
 			this.butReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butReport.Location = new System.Drawing.Point(350, 678);
+			this.butReport.Location = new System.Drawing.Point(350, 613);
 			this.butReport.Name = "butReport";
 			this.butReport.Size = new System.Drawing.Size(87, 24);
 			this.butReport.TabIndex = 121;
@@ -575,7 +575,7 @@
 			this.tabPageReminders.Location = new System.Drawing.Point(2, 21);
 			this.tabPageReminders.Name = "tabPageReminders";
 			this.tabPageReminders.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageReminders.Size = new System.Drawing.Size(977, 734);
+			this.tabPageReminders.Size = new System.Drawing.Size(977, 669);
 			this.tabPageReminders.TabIndex = 1;
 			this.tabPageReminders.Tag = this.gridReminders;
 			this.tabPageReminders.Text = "Reminders";
@@ -589,7 +589,7 @@
 			this.gridReminders.HScrollVisible = true;
 			this.gridReminders.Location = new System.Drawing.Point(3, 76);
 			this.gridReminders.Name = "gridReminders";
-			this.gridReminders.Size = new System.Drawing.Size(971, 652);
+			this.gridReminders.Size = new System.Drawing.Size(971, 587);
 			this.gridReminders.TabIndex = 127;
 			this.gridReminders.Title = "Reminder List";
 			this.gridReminders.TranslationName = "TableReminderList";
@@ -656,7 +656,7 @@
 			this.tabPageReactivations.Location = new System.Drawing.Point(2, 21);
 			this.tabPageReactivations.Name = "tabPageReactivations";
 			this.tabPageReactivations.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageReactivations.Size = new System.Drawing.Size(977, 734);
+			this.tabPageReactivations.Size = new System.Drawing.Size(977, 669);
 			this.tabPageReactivations.TabIndex = 2;
 			this.tabPageReactivations.Tag = this.gridReactivations;
 			this.tabPageReactivations.Text = "Reactivations";
@@ -681,7 +681,7 @@
 			// 
 			this.butReactGoToFam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactGoToFam.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactGoToFam.Location = new System.Drawing.Point(443, 678);
+			this.butReactGoToFam.Location = new System.Drawing.Point(443, 613);
 			this.butReactGoToFam.Name = "butReactGoToFam";
 			this.butReactGoToFam.Size = new System.Drawing.Size(96, 24);
 			this.butReactGoToFam.TabIndex = 162;
@@ -693,7 +693,7 @@
 			this.butReactComm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactComm.Icon = OpenDental.UI.EnumIcons.CommLog;
 			this.butReactComm.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactComm.Location = new System.Drawing.Point(545, 704);
+			this.butReactComm.Location = new System.Drawing.Point(545, 639);
 			this.butReactComm.Name = "butReactComm";
 			this.butReactComm.Size = new System.Drawing.Size(88, 24);
 			this.butReactComm.TabIndex = 161;
@@ -704,7 +704,7 @@
 			// 
 			this.butReactGoToAcct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactGoToAcct.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactGoToAcct.Location = new System.Drawing.Point(443, 704);
+			this.butReactGoToAcct.Location = new System.Drawing.Point(443, 639);
 			this.butReactGoToAcct.Name = "butReactGoToAcct";
 			this.butReactGoToAcct.Size = new System.Drawing.Size(96, 24);
 			this.butReactGoToAcct.TabIndex = 160;
@@ -716,7 +716,7 @@
 			this.butReactSchedFam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactSchedFam.Image = global::OpenDental.Properties.Resources.butPin22;
 			this.butReactSchedFam.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactSchedFam.Location = new System.Drawing.Point(639, 704);
+			this.butReactSchedFam.Location = new System.Drawing.Point(639, 639);
 			this.butReactSchedFam.Name = "butReactSchedFam";
 			this.butReactSchedFam.Size = new System.Drawing.Size(114, 24);
 			this.butReactSchedFam.TabIndex = 156;
@@ -729,7 +729,7 @@
 			this.butReactSingleLabels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactSingleLabels.Image = global::OpenDental.Properties.Resources.butLabel;
 			this.butReactSingleLabels.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactSingleLabels.Location = new System.Drawing.Point(128, 678);
+			this.butReactSingleLabels.Location = new System.Drawing.Point(128, 613);
 			this.butReactSingleLabels.Name = "butReactSingleLabels";
 			this.butReactSingleLabels.Size = new System.Drawing.Size(119, 24);
 			this.butReactSingleLabels.TabIndex = 159;
@@ -741,7 +741,7 @@
 			this.butReactSchedPat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactSchedPat.Image = global::OpenDental.Properties.Resources.butPin22;
 			this.butReactSchedPat.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactSchedPat.Location = new System.Drawing.Point(639, 678);
+			this.butReactSchedPat.Location = new System.Drawing.Point(639, 613);
 			this.butReactSchedPat.Name = "butReactSchedPat";
 			this.butReactSchedPat.Size = new System.Drawing.Size(114, 24);
 			this.butReactSchedPat.TabIndex = 155;
@@ -754,7 +754,7 @@
 			this.butReactEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactEmail.Icon = OpenDental.UI.EnumIcons.Email;
 			this.butReactEmail.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactEmail.Location = new System.Drawing.Point(253, 704);
+			this.butReactEmail.Location = new System.Drawing.Point(253, 639);
 			this.butReactEmail.Name = "butReactEmail";
 			this.butReactEmail.Size = new System.Drawing.Size(91, 24);
 			this.butReactEmail.TabIndex = 158;
@@ -766,7 +766,7 @@
 			this.butReactPostcardPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactPostcardPreview.Image = global::OpenDental.Properties.Resources.butPreview;
 			this.butReactPostcardPreview.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactPostcardPreview.Location = new System.Drawing.Point(3, 678);
+			this.butReactPostcardPreview.Location = new System.Drawing.Point(3, 613);
 			this.butReactPostcardPreview.Name = "butReactPostcardPreview";
 			this.butReactPostcardPreview.Size = new System.Drawing.Size(119, 24);
 			this.butReactPostcardPreview.TabIndex = 153;
@@ -778,7 +778,7 @@
 			this.butReactPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactPrint.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butReactPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactPrint.Location = new System.Drawing.Point(350, 704);
+			this.butReactPrint.Location = new System.Drawing.Point(350, 639);
 			this.butReactPrint.Name = "butReactPrint";
 			this.butReactPrint.Size = new System.Drawing.Size(87, 24);
 			this.butReactPrint.TabIndex = 154;
@@ -790,7 +790,7 @@
 			this.butReactLabelPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butReactLabelPreview.Image = global::OpenDental.Properties.Resources.butLabel;
 			this.butReactLabelPreview.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butReactLabelPreview.Location = new System.Drawing.Point(128, 704);
+			this.butReactLabelPreview.Location = new System.Drawing.Point(128, 639);
 			this.butReactLabelPreview.Name = "butReactLabelPreview";
 			this.butReactLabelPreview.Size = new System.Drawing.Size(119, 24);
 			this.butReactLabelPreview.TabIndex = 152;
@@ -800,7 +800,7 @@
 			// labelReactPatCount
 			// 
 			this.labelReactPatCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelReactPatCount.Location = new System.Drawing.Point(860, 676);
+			this.labelReactPatCount.Location = new System.Drawing.Point(860, 611);
 			this.labelReactPatCount.Name = "labelReactPatCount";
 			this.labelReactPatCount.Size = new System.Drawing.Size(114, 14);
 			this.labelReactPatCount.TabIndex = 151;
@@ -817,7 +817,7 @@
 			this.gridReactivations.Location = new System.Drawing.Point(3, 112);
 			this.gridReactivations.Name = "gridReactivations";
 			this.gridReactivations.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridReactivations.Size = new System.Drawing.Size(971, 561);
+			this.gridReactivations.Size = new System.Drawing.Size(971, 496);
 			this.gridReactivations.TabIndex = 145;
 			this.gridReactivations.Title = "Reactivation List";
 			this.gridReactivations.TranslationName = "TableReactivationList";
@@ -1014,7 +1014,7 @@
 			// 
 			// FormRecallList
 			// 
-			this.ClientSize = new System.Drawing.Size(985, 761);
+			this.ClientSize = new System.Drawing.Size(985, 696);
 			this.Controls.Add(this.tabControl);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRecallList";

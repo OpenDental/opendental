@@ -18,7 +18,7 @@ namespace OpenDental {
 		///<summary>Will be null if no image showing.</summary>
 		public ControlImageDisplay ControlImageDisplay_=null;
 		///<summary>This lets us get a list of all floater windows from ControlImages at the moment when we pop up the window selector.</summary>
-		public Func<List<string>> FuncListFloaters;
+		public Func<List<FormImageFloat>> FuncListFloaters;
 		#endregion Fields - public
 
 		#region Fields - private
@@ -36,11 +36,41 @@ namespace OpenDental {
 			InitializeComponent();
 			imageDockHeader=new WpfControls.UI.ImageDockHeader();
 			elementHostImageDockHeader.Child=imageDockHeader;
-			imageDockHeader.Close+=imageDockHeader_Close;
-			imageDockHeader.Min+=imageDockHeader_Min;
-			imageDockHeader.Max+=imageDockHeader_Max;
-			imageDockHeader.Win+=imageDockHeader_Win;
+			//Enter+=ControlImageDock_Enter;
+			//LostFocus+=ControlImageDock_LostFocus;
+			//elementHostImageDockHeader.Child.GotFocus+=elementHostChild_GotFocus;
+			//elementHostImageDockHeader.Child.LostFocus+=elementHostChild_LostFocus;
+			imageDockHeader.EventClose+=imageDockHeader_Close;
+			imageDockHeader.EventGotODFocus+=(sender,e)=>EventGotODFocus?.Invoke(sender,e);//bubble up
+			imageDockHeader.EventMin+=imageDockHeader_Min;
+			imageDockHeader.EventMax+=imageDockHeader_Max;
+			imageDockHeader.EventWin+=imageDockHeader_Win;
+			imageDockHeader.EventPopFloater+=ImageDockHeader_PopFloater;
 		}
+
+		//private void ControlImageDock_MouseDown(object sender,MouseEventArgs e) {
+			//EventGotODFocus?.Invoke(sender,e);
+			//this didn't work because mousedown was actually on children
+		//}
+
+		/*
+		//none of this was working, so I switched to using EventGotODFocus.
+		private void ControlImageDock_Enter(object sender,EventArgs e) {
+			return;
+		}
+
+		private void ControlImageDock_LostFocus(object sender,EventArgs e) {
+			return;
+		}
+
+		private void elementHostChild_GotFocus(object sender,System.Windows.RoutedEventArgs e) {
+			Focus();
+			return;
+		}
+
+		private void elementHostChild_LostFocus(object sender,System.Windows.RoutedEventArgs e) {
+			return;
+		}*/
 		#endregion Constructor
 
 		#region Events
@@ -48,6 +78,26 @@ namespace OpenDental {
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public event EventHandler<EnumImageFloatWinButton> EventButClicked=null;
+
+		///<summary>With the various nested WPF and Winforms controls, I couldn't get this to focus reliably, so this is an alternative built from scratch.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler EventGotODFocus=null;
+
+		///<summary>This is analogous to FormClosed. Fires when user clicks X or when image is cleared.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler EventImageClosed=null;
+
+		///<summary>User clicked on the list to pick a new window.  Bubbles up to ControlImages, where it's handled. The index passed includes the docker in position 0.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler<int> EventWinPicked=null;
+
+		///<summary></summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public event EventHandler EventPopFloater=null;
 		#endregion Events
 
 		#region Properties
@@ -69,6 +119,9 @@ namespace OpenDental {
 		///<summary>This is what shows in the title bar.</summary>
 		public string Text{
 			get{
+				if(ControlImageDisplay_ is null){
+					return null;
+				}
 				return imageDockHeader.Text;
 			}
 			set{
@@ -89,8 +142,11 @@ namespace OpenDental {
 			if(controlImageDisplay is null){
 				IsImageFloatSelected=false;
 				imageDockHeader.IsEmpty=true;
+				EventImageClosed?.Invoke(this,new EventArgs());
 				return;
 			}
+			ControlImageDisplay_.EventGotODFocus-=ControlImageDisplay__EventGotODFocus;//safe to use even if that event handler is not attached.
+			ControlImageDisplay_.EventGotODFocus+=ControlImageDisplay__EventGotODFocus;
 			imageDockHeader.IsEmpty=false;
 			ControlImageDisplay_.Size=ClientRectangle.Size;
 			ControlImageDisplay_.Dock=DockStyle.Fill;
@@ -106,6 +162,16 @@ namespace OpenDental {
 		#endregion Methods - private
 
 		#region Methods - private event handlers
+		private void ControlImageDisplay__EventGotODFocus(object sender,EventArgs e) {
+			ControlImageDisplay controlImageDisplay=sender as ControlImageDisplay;
+			if(controlImageDisplay.Parent!=this){
+				//The event was still attached even when the controlImageDisplay got moved over to a floater
+				//I'm not sure of any way to remove the event when moving the control or I would.
+				return;
+			}
+			EventGotODFocus?.Invoke(sender,e);//bubble up
+		}
+
 		private void dispatcherTimer_Tick(object sender,EventArgs e) {
 			_dispatcherTimer.Stop();
 			_isClickLocked=false;
@@ -123,7 +189,6 @@ namespace OpenDental {
 			if(ControlImageDisplay_ is null){
 				return;
 			}
-			ControlImageDisplay_.OnLaunchFloater();
 			EventButClicked?.Invoke(this,EnumImageFloatWinButton.Minimize);
 		}
 
@@ -131,8 +196,14 @@ namespace OpenDental {
 			if(ControlImageDisplay_ is null){
 				return;
 			}
-			ControlImageDisplay_.OnLaunchFloater();
 			EventButClicked?.Invoke(this,EnumImageFloatWinButton.Maximize);
+		}
+
+		private void ImageDockHeader_PopFloater(object sender,EventArgs e) {
+			if(ControlImageDisplay_ is null){
+				return;
+			}
+			EventPopFloater?.Invoke(this,e);
 		}
 
 		private void imageDockHeader_Win(object sender,EventArgs e) {
@@ -148,7 +219,16 @@ namespace OpenDental {
 			}
 			imageDockHeader.IsButWinPressed=true;
 			_windowImageFloatWindows=new WindowImageFloatWindows();
+			List<FormImageFloat> listFormImageFloats=FuncListFloaters();
+			List<string> listStrings = new List<string>();
+			listStrings.Add(Text);
+			for(int i = 0;i<listFormImageFloats.Count;i++) {
+				listStrings.Add(listFormImageFloats[i].Text);
+			}
+			_windowImageFloatWindows.ListFloaterTitles=listStrings;
+			_windowImageFloatWindows.idxParent=0;//zero represents docked image
 			_windowImageFloatWindows.EventButClicked+=(sender,enumImageFloatWinButton)=> EventButClicked?.Invoke(this,enumImageFloatWinButton);
+			_windowImageFloatWindows.EventWinPicked+=(sender,idx)=>EventWinPicked?.Invoke(this,idx);
 			_windowImageFloatWindows.Closed+=_windowImageFloatWindows_Closed;
 			//Bottom left and right of the button, in screen coords.
 			//Hard code these for now instead of deriving them from imageDockHeader.
@@ -166,17 +246,13 @@ namespace OpenDental {
 
 		private void _windowImageFloatWindows_Closed(object sender,EventArgs e) {
 			imageDockHeader.IsButWinPressed=false;
-			//if they clicked on the button to close, prevent that same click from opening the window back up again.
+			//if they clicked on the tab/button to close, prevent that same click from opening the window back up again.
 			_isClickLocked=true;
 			_dispatcherTimer=new DispatcherTimer();
 			_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(300);
 			_dispatcherTimer.Tick+=dispatcherTimer_Tick;
 			_dispatcherTimer.Start();
 		}
-
-		
-
-
 		#endregion Methods - private event handlers
 	}
 }

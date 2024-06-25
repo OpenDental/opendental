@@ -68,7 +68,7 @@ namespace OpenDental {
 		private static Color _colorButtonHot=Color.FromArgb(104,128,163);//slightly lighter blue/gray
 		private static Color _colorBorderOutline=Color.Black;
 		///<summary>This is the size and location of the Form when mouse down, based in pixels. If multiple screens, it's coordinates of the entire combined desktop.</summary>
-		private Rectangle _rectangleOnDesktopMouseDown;
+		protected Rectangle _rectangleOnDesktopMouseDown;
 		///<summary>When using UIManager, this is the container for the canvas and all controls. It replaces PanelClient and the client area of the form.</summary>
 		public ElementHost ElementHostUI;
 		///<summary>If isMouseDown, then one of these is used to specify where.</summary>
@@ -93,7 +93,7 @@ namespace OpenDental {
 		///<summary>In screen coordinates.  Prevents drawing events unless mouse moves.</summary>
 		protected Point _pointMouseScreenPrevious;
 		///<summary>In screen coordinates.  For dragging.</summary>
-		private Point _pointMouseDownScreen;
+		protected Point _pointMouseDownScreen;
 		private Rectangle _rectangleButtons;
 		private Rectangle _rectangleButX;
 		private Rectangle _rectangleButMax;

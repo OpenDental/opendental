@@ -6,23 +6,26 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="421" Height="316" 
+             Width="400" Height="324" 
              Text="Edit Child" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" Margin="0,0,0,0" >
-		<ui:Label x:Name="labelLastName" Width="92" Height="18" Margin="18,49,0,0" Text="Last Name" HAlign="Right" />
-		<ui:Label x:Name="labelBirthdate" Width="77" Height="18" Margin="33,80,0,0" Text="Birthdate" HAlign="Right" />
+		<ui:Label x:Name="labelLastName" Width="92" Height="18" Margin="18,42,0,0" Text="Last Name" HAlign="Right" />
+		<ui:Label x:Name="labelBirthdate" Width="77" Height="18" Margin="33,66,0,0" Text="Birthdate" HAlign="Right" />
 		<ui:Label x:Name="labelFirstName" Width="95" Height="18" Margin="15,18,0,0" Text="First Name" HAlign="Right" />
-		<ui:TextBox x:Name="textLastName" Width="127" Height="20" Margin="110,48,0,0" TabIndexOD="1" />
-		<ui:TextVDate x:Name="textBirthdate" Width="97" Height="20" Margin="110,79,0,0" TabIndexOD="2" />
+		<ui:TextBox x:Name="textLastName" Width="127" Height="20" Margin="110,41,0,0" TabIndexOD="1" />
+		<ui:TextVDate x:Name="textBirthdate" Width="97" Height="20" Margin="110,65,0,0" TabIndexOD="2" />
 		<ui:TextBox x:Name="textFirstName" Width="127" Height="20" Margin="110,17,0,0" TabIndexOD="0" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
-		<ui:Label x:Name="labelNotes" Width="77" Height="18" Margin="32,204,0,0" Text="Notes" HAlign="Right" />
-		<ui:TextRich x:Name="textNotes" Width="180" Margin="109,204,0,0" Height="58" />
-		<ui:Label x:Name="labelPrimaryRoom" Width="100" Height="18" Margin="10,173,0,0" Text="Primary Room" HAlign="Right" />
-		<ui:TextBox x:Name="textPrimaryRoom" Width="127" Height="20" Margin="110,172,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
-		<ui:Label x:Name="labelAuthorized" Width="95" Height="35" Margin="15,111,0,0" Text="Authorized for Pickup" HAlign="Right" />
-		<ui:ListBox x:Name="listAuthorized" Margin="110,111,0,0" Height="47" Width="127"/>
-		<ui:Button x:Name="butAdd" Margin="242,122,0,0" Text="Add" Click="butAdd_Click" Width="54" Height="24" />
-		<ui:Button x:Name="butRoomSelect" Margin="242,170,0,0" Text="Select" Click="butRoomSelect_Click" Width="54" Height="24" />
+		<ui:Label x:Name="labelNotes" Width="77" Height="18" Margin="33,210,0,0" Text="Notes" HAlign="Right" />
+		<ui:TextRich x:Name="textNotes" Width="180" Margin="110,210,0,0" Height="58" />
+		<ui:Label x:Name="labelPrimaryRoom" Width="100" Height="18" Margin="10,143,0,0" Text="Primary Room" HAlign="Right" />
+		<ui:TextBox x:Name="textPrimaryRoom" Width="127" Height="20" Margin="110,142,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
+		<ui:Label x:Name="labelAuthorized" Width="95" Height="35" Margin="15,90,0,0" Text="Authorized for Pickup" HAlign="Right" />
+		<ui:ListBox x:Name="listAuthorized" Margin="110,90,0,0" Height="47" Width="127"/>
+		<ui:Button x:Name="butAdd" Margin="242,101,0,0" Text="Add" Click="butAdd_Click" Width="54" Height="24" />
+		<ui:Button x:Name="butRoomSelect" Margin="242,140,0,0" Text="Select" Click="butRoomSelect_Click" Width="54" Height="24" />
+		<ui:Label x:Name="labelBadgeId" Width="92" Height="18" Margin="18,168,0,0" Text="Badge ID" HAlign="Right" />
+		<ui:TextBox x:Name="textBadgeId" Width="58" Height="20" Margin="110,167,0,0" TabIndexOD="1" />
+		<ui:CheckBox x:Name="checkHidden" Margin="39,188,0,0" CheckAlign="MiddleRight" Text="Hidden" Width="85" Height="20"/>
 	</Grid>
 </local:FrmODBase>

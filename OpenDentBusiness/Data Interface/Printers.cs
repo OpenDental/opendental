@@ -63,6 +63,11 @@ namespace OpenDentBusiness{
 		}
 		#endregion
 
+		///<summary>Gets the cached list of printers.</summary>
+		public static List<Printer> GetListPrinters(){
+			return _PrinterCache.GetDeepCopy();
+		}
+
 		///<summary>Gets directly from database</summary>
 		public static Printer GetOnePrinter(PrintSituation sit,long compNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -115,7 +120,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Either does an insert or an update to the database if need to create a Printer object.  Or it also deletes a printer object if needed.</summary>
-		public static void PutForSit(PrintSituation sit,string computerName, string printerName,bool displayPrompt){
+		public static void PutForSit(PrintSituation sit,string computerName, string printerName,bool displayPrompt,bool isVirtual=false,string fileExtension=""){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),sit,computerName,printerName,displayPrompt);
 				return;
@@ -142,11 +147,15 @@ namespace OpenDentBusiness{
 				cur.PrintSit=sit;
 				cur.PrinterName=printerName;
 				cur.DisplayPrompt=displayPrompt;
+				cur.IsVirtualPrinter=isVirtual;
+				cur.FileExtension=fileExtension;
 				Insert(cur);
 			}
 			else{
 				existing.PrinterName=printerName;
 				existing.DisplayPrompt=displayPrompt;
+				existing.IsVirtualPrinter=isVirtual;
+				existing.FileExtension=fileExtension;
 				Update(existing);
 			}
 		}

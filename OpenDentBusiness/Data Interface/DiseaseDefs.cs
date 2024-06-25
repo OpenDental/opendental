@@ -76,6 +76,26 @@ namespace OpenDentBusiness {
 		}
 		#endregion
 
+		///<summary>Gets a DiseaseDef from the database. Returns null if not found.</summary>
+		public static DiseaseDef GetOne(long diseaseDefNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<DiseaseDef>(MethodBase.GetCurrentMethod(),diseaseDefNum);
+			}
+			string command="SELECT * FROM diseasedef WHERE DiseaseDefNum="+POut.Long(diseaseDefNum);
+			return Crud.DiseaseDefCrud.SelectOne(command);
+		}
+
+		///<summary>Gets all DiseaseDefs from the database. Returns empty list if not found.</summary>
+		public static List<DiseaseDef> GetDiseaseDefsForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<DiseaseDef>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM diseasedef ";
+			command+="ORDER BY DiseaseDefNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.DiseaseDefCrud.SelectMany(command);
+		}
+
 		///<summary>Fixes item orders in DB if needed. Returns true if changes were made.</summary>
 		public static bool FixItemOrders() {
 			bool retVal=false;

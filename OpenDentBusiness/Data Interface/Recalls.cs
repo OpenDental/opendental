@@ -331,7 +331,7 @@ namespace OpenDentBusiness {
 				//Guarantor.
 				+"patient.Guarantor,patguar.LName guarLName,patguar.FName guarFName,patguar.Email guarEmail,patguar.InsEst,patguar.BalTotal,"
 				//Insurance Carrier.
-				+"carrier.CarrierName ";
+				+"GROUP_CONCAT(carrier.CarrierName SEPARATOR ',\r\n') AS CarrierName ";
 			if(isAsap) {
 				#region ASAP Query String
 				command+=
@@ -401,8 +401,9 @@ namespace OpenDentBusiness {
 				command+="AND patient.ClinicNum="+POut.Long(clinicNum)+" ";
 			}
 			if(siteNum>0) {
-				command+="AND patient.SiteNum="+POut.Long(siteNum);
+				command+="AND patient.SiteNum="+POut.Long(siteNum)+" ";
 			}
+			command+="GROUP BY recall.RecallNum";
 			#endregion
 			DataTable table=new DataTable();
 			#region Add Columns

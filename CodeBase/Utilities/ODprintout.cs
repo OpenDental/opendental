@@ -191,34 +191,61 @@ namespace CodeBase {
 			}
 			return true;
 		}
+
+		///<summary>Attempts to print, and skips all UI. Used solely for remote printing.</summary>
+		public bool TryPrintNoUI(){
+			if(SettingsErrorCode!=PrintoutErrorCode.Success) {
+				return false;
+			}
+			try {
+				_printDoc.Print();
+			}
+			catch(Exception ex) {
+				ErrorEx=ex;
+				return false;
+			}
+			return true;
+		}
 		
 	}	
 
 	///<summary>Used to identify the printer to use for the given PrintSituation.</summary>
 	public enum PrintSituation {
 		///<summary>0- Covers any printing situation not listed separately.</summary>
+		[Description("Default")]
 		Default,
 		///<summary>1</summary>
+		[Description("Statements")]
 		Statement,
 		///<summary>2</summary>
+		[Description("Labels - Single")]
 		LabelSingle,
 		///<summary>3</summary>
+		[Description("Claims")]
 		Claim,
 		///<summary>4- TP and perio</summary>
+		[Description("Treatment Plans and Perio")]
 		TPPerio,
 		///<summary>5</summary>
+		[Description("Rx's")]
 		Rx,
 		///<summary>6</summary>
+		[Description("Labels - Sheet")]
 		LabelSheet,
 		///<summary>7</summary>
+		[Description("Postcards")]
 		Postcard,
 		///<summary>8</summary>
+		[Description("Appointments")]
 		Appointments,
 		///<summary>9</summary>
+		[Description("Controlled Rx's")]
 		RxControlled,
 		///<summary>10</summary>
+		[Description("Receipts")]
 		Receipt,
 		///<summary>11</summary>
+		[Description("Multi Rx's")]
 		RxMulti
 	}
 	
