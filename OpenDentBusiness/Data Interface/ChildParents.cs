@@ -127,7 +127,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of all ChildParents with the given childNum.</summary>
 		public static List<ChildParent> GetChildParentsByChildNum(long childNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ChildParent>>(MethodBase.GetCurrentMethod());
+				return Meth.GetObject<List<ChildParent>>(MethodBase.GetCurrentMethod(),childNum);
 			}
 			string command="SELECT * FROM childparent WHERE ChildNum="+POut.Long(childNum);
 			return Crud.ChildParentCrud.SelectMany(command);

@@ -134,7 +134,7 @@ namespace OpenDentBusiness{
 		///<summary>Gets all manual page names from database. Excludes entries in the manualpage table that are used for the manual index.</summary>
 		public static List<string> GetAllManualPageNamesForVersions(List<int> listVersions) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
+				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),listVersions);
 			}
 			string command=$@"
 				SELECT manualpage.FileName

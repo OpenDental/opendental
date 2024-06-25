@@ -222,12 +222,18 @@ namespace OpenDentBusiness {
 			}
 			float lineIdx=0;
 			int chars;
+			//this loop adds chars each time, which is one line's worth of text.
 			for(int i=0;i<str.Length;i+=chars) {
-				if(rectangleF.Y+pixelsPerLine*lineIdx>rectangleF.Bottom) {
+				//Example. We have drawn 1 line and we are getting ready to draw the second line.
+				//For this example, with text wrap, this text will only be two lines high, so this is also the last line.
+				//lineIdx=1. if(rect.Y+(heightRow*2)>rect.Bottom) then no room so kick out.
+				if(rectangleF.Y+pixelsPerLine*(lineIdx+1)>rectangleF.Bottom) {//Check if rectangleF is tall enough to show next line.
 					break;
 				}
 				//pixels:
 				//TextRenderer.MeasureText(str.Substring(i),font, //no overload for measuring line by line
+				//sizeLayout is a rectangle one line high, so we are measuring how much will fit in one line.
+				//_lines variable below is thrown away.
 				g.MeasureString(str.Substring(i),font,sizeLayout,stringFormat,out chars,out int _lines);
 				//Newline characters \r\n, \r, and \n will not be recognized in Unicode PDF and will create rectangles on the screen, so since g.MeasureString has
 				//already calculated the next new line that will appear on the screen, we can remove the unneeded newline characters from the current substring.

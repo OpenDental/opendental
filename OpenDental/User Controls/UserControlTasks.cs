@@ -3097,6 +3097,10 @@ namespace OpenDental {
 				return;
 			}
 			TaskList taskList = gridMain.SelectedTag<TaskList>();
+			if(taskList==null) {
+				MsgBox.Show("Could not archive task list.");
+				return;
+			}
 			TaskLists.Archive(taskList);
 			long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskList.Parent);//Signal for source parent tasklist.
 			RefillLocalTaskGrids(taskList,new List<long>() { signalNum });//No db call.

@@ -14,7 +14,8 @@ namespace OpenDentBusiness {
 
 		public static long Insert(MsgToPaySent msgToPaySent) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),msgToPaySent);
+				msgToPaySent.MsgToPaySentNum=Meth.GetLong(MethodBase.GetCurrentMethod(),msgToPaySent);
+				return msgToPaySent.MsgToPaySentNum;
 			}
 			return MsgToPaySentCrud.Insert(msgToPaySent);
 		}
