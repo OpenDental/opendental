@@ -88,7 +88,7 @@ namespace OpenDental {
 			this.butSave.Location = new System.Drawing.Point(840, 663);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 1;
+			this.butSave.TabIndex = 7;
 			this.butSave.Text = "&Save";
 			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
@@ -100,7 +100,7 @@ namespace OpenDental {
 			this.butDelete.Location = new System.Drawing.Point(13, 663);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(87, 24);
-			this.butDelete.TabIndex = 38;
+			this.butDelete.TabIndex = 6;
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
@@ -152,7 +152,7 @@ namespace OpenDental {
 			this.textDescription.Location = new System.Drawing.Point(247, 4);
 			this.textDescription.Name = "textDescription";
 			this.textDescription.Size = new System.Drawing.Size(160, 20);
-			this.textDescription.TabIndex = 44;
+			this.textDescription.TabIndex = 0;
 			// 
 			// butDown
 			// 
@@ -211,7 +211,7 @@ namespace OpenDental {
 			this.textRowsPerIncr.Location = new System.Drawing.Point(247, 25);
 			this.textRowsPerIncr.Name = "textRowsPerIncr";
 			this.textRowsPerIncr.Size = new System.Drawing.Size(46, 20);
-			this.textRowsPerIncr.TabIndex = 55;
+			this.textRowsPerIncr.TabIndex = 1;
 			this.textRowsPerIncr.Validating += new System.ComponentModel.CancelEventHandler(this.textRowsPerIncr_Validating);
 			// 
 			// checkOnlyScheduledProvs
@@ -231,7 +231,7 @@ namespace OpenDental {
 			this.textBeforeTime.Location = new System.Drawing.Point(214, 41);
 			this.textBeforeTime.Name = "textBeforeTime";
 			this.textBeforeTime.Size = new System.Drawing.Size(56, 20);
-			this.textBeforeTime.TabIndex = 57;
+			this.textBeforeTime.TabIndex = 4;
 			// 
 			// groupBox1
 			// 
@@ -272,7 +272,7 @@ namespace OpenDental {
 			this.textAfterTime.Location = new System.Drawing.Point(214, 65);
 			this.textAfterTime.Name = "textAfterTime";
 			this.textAfterTime.Size = new System.Drawing.Size(56, 20);
-			this.textAfterTime.TabIndex = 59;
+			this.textAfterTime.TabIndex = 5;
 			// 
 			// labelBeforeTime
 			// 
@@ -391,7 +391,7 @@ namespace OpenDental {
 			this.textScrollTime.Location = new System.Drawing.Point(247, 67);
 			this.textScrollTime.Name = "textScrollTime";
 			this.textScrollTime.Size = new System.Drawing.Size(56, 20);
-			this.textScrollTime.TabIndex = 134;
+			this.textScrollTime.TabIndex = 3;
 			// 
 			// labelStartTime
 			// 
@@ -425,7 +425,7 @@ namespace OpenDental {
 			this.textWidthOpMinimum.Location = new System.Drawing.Point(247, 46);
 			this.textWidthOpMinimum.Name = "textWidthOpMinimum";
 			this.textWidthOpMinimum.Size = new System.Drawing.Size(46, 20);
-			this.textWidthOpMinimum.TabIndex = 138;
+			this.textWidthOpMinimum.TabIndex = 2;
 			// 
 			// label5
 			// 

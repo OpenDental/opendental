@@ -46,7 +46,6 @@ namespace OpenDental {
 		public FormImageFloat() {
 			InitializeComponent();
 			InitializeLayoutManager();
-			MouseWheel += formImageFloat_MouseWheel;//here because not browsable in designer
 			Size size=this.Size;
 		}
 		#endregion Constructor
@@ -100,8 +99,8 @@ namespace OpenDental {
 				//I'm not sure of any way to remove the event when moving the control or I would.
 				return;
 			}
-			IsImageFloatSelected=true;//this is what turns the titlebar blue in the base class
-			Select();
+			//IsImageFloatSelected=true;//this is what turns the titlebar blue in the base class
+			Select();//Triggers Activated, which then sets IsImageFloatSelected=true
 		}
 
 		private void FormImageFloat_FormClosed(object sender, FormClosedEventArgs e){
@@ -126,13 +125,6 @@ namespace OpenDental {
 			Rectangle rectangleDTB=this.DesktopBounds;
 			Rectangle rectangleB=this.Bounds;
 		}
-		
-		private void formImageFloat_MouseWheel(object sender, MouseEventArgs e){
-			if(!IsImageFloatSelected){
-				Select();//take focus. This will fire the Activated event, and ControlImages will then set this as the active floater.
-			}
-			//there is another mouseWheel eventhandler in ControlImageDisplay that handles actual zooming in and out.
-		}
 
 		private void _formImageFloatWindows_FormClosed(object sender,FormClosedEventArgs e) {
 			_isButWindowPressed=false;
@@ -144,10 +136,11 @@ namespace OpenDental {
 			//This used to be done in a much more complex way in LayoutManager_ZoomChanged.
 			//This cannot be done in ControlImageDisplay because the method does not exist.
 			//Also, we wouldn't need to reset zoom.
-			ControlImageDisplay_.SetZoomSlider();
+			ControlImageDisplay_.SetZoomSliderToFit();
 			//this fires on the mouse up after moving a form or resizing it.
 			//It does not fire while resizing, so that's nice.
 			//The move could have been to a window of a different dpi.
+			//It also fires when simply clicking on the titlebar, which is what resets zoom to fit each time. 
 		}
 
 		private void PanelBorders_MouseDown(object sender, MouseEventArgs e){

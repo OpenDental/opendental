@@ -199,7 +199,9 @@ namespace OpenDental {
 		public static bool SetPrinter(PrintDocument printDocument,PrintSituation printSituation,long patNum,string auditDescription) {
 			return SetPrinter(printDocument.PrinterSettings,printSituation,patNum,auditDescription,false);
 		}
-			
+		
+		///<summary>Attempts to set the printer settings to circumvent showing UI. If no settings exist will result in windows default settings. 
+		///Can throw exceptions when isRemotePrint is true, this is done to display messages on the remote source.</summary>
 		private static bool SetPrinter(PrinterSettings printerSettings,PrintSituation printSituation,long patNum,string auditDescription,bool isRemotePrint,long printerNumOverride=0) {
 			if(!HasComputerTable) {
 				return true;//Kickout so it doesn't break when looking for a Computer table
@@ -207,14 +209,22 @@ namespace OpenDental {
 			//If an override is passed in we should try to absolutely honor that override, or fail.
 			if(printerNumOverride!=0){
 				Printer printerOverride=Printers.GetFirstOrDefault(x=>x.PrinterNum==printerNumOverride);
-				if(Printers.PrinterIsInstalled(printerOverride.PrinterName)) {
+				string printFileName=GetFilePrinterPath(printerOverride);
+				if(Printers.PrinterIsInstalled(printerOverride.PrinterName)){
 					//Set the printer name so the print request uses the appropriate printer.
 					printerSettings.PrinterName=printerOverride.PrinterName;
-					printerSettings.PrintFileName=GetFilePrinterPath(printerOverride);
-					printerSettings.PrintToFile=printerOverride.IsVirtualPrinter;
-					return true;
 				}
-				return false;
+				if(printerOverride.IsVirtualPrinter && !string.IsNullOrWhiteSpace(printFileName)){
+					printerSettings.PrintFileName=printFileName;
+					printerSettings.PrintToFile=printerOverride.IsVirtualPrinter;
+				}
+				//Ensure the printer is installed, and if it is a virtual printer or a valid file path was given.
+				bool isValidPrintConfiguration=Printers.PrinterIsInstalled(printerOverride.PrinterName) && (!printerOverride.IsVirtualPrinter || !string.IsNullOrWhiteSpace(printFileName));
+				if(isRemotePrint && !isValidPrintConfiguration){
+					//Remote print request calls should be wrapped in a try catch.
+					throw new ApplicationException("Invalid printer configuration.");
+				}
+				return isValidPrintConfiguration;
 			}
 			#region 1 - Set default printer if available from this computer.
 			//pSet will always be new when this function is called.
@@ -228,8 +238,6 @@ namespace OpenDental {
 			string printerName="";
 			if(printerForSit!=null){
 				printerName=printerForSit.PrinterName;
-				printerSettings.PrintFileName=GetFilePrinterPath(printerForSit);
-				printerSettings.PrintToFile=printerForSit.IsVirtualPrinter;
 				showPrompt=printerForSit.DisplayPrompt;
 				if(Printers.PrinterIsInstalled(printerName)) {
 					printerSettings.PrinterName=printerName;
@@ -245,13 +253,25 @@ namespace OpenDental {
 					showPrompt=printerForSit.DisplayPrompt;
 					if(Printers.PrinterIsInstalled(printerName)) {
 						printerSettings.PrinterName=printerName;
-						printerSettings.PrintFileName=GetFilePrinterPath(printerForSit);
-						printerSettings.PrintToFile=printerForSit.IsVirtualPrinter;
 					}
 				}
 			}
 			#endregion 2
+			//If this is a virtual printer, set the path, and flag the settings as document printing.
+			if(printerForSit!=null && printerForSit.IsVirtualPrinter){
+				string printerFilePath=GetFilePrinterPath(printerForSit);
+				if(string.IsNullOrWhiteSpace(printerFilePath) && !isRemotePrint){
+					return false;
+				}
+				else if(string.IsNullOrWhiteSpace(printerFilePath) && isRemotePrint){
+					//Remote print request calls should be wrapped in a try catch.
+					throw new ApplicationException("Invalid printer configuration.");
+				}
+				printerSettings.PrintToFile=printerForSit.IsVirtualPrinter;
+				printerSettings.PrintFileName=printerFilePath;
+			}
 			#region 3 - Present the dialog
+			//Remote print requests aren't expected to hit this code.
 			if(showPrompt && !ODEnvironment.IsCloudServer && !isRemotePrint) {
 				PrintDialog printDialog=new PrintDialog();
 				printDialog.AllowSomePages=true;

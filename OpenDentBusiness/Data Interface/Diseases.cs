@@ -52,6 +52,29 @@ namespace OpenDentBusiness {
 			return Crud.DiseaseCrud.SelectOne(diseaseNum);
 		}
 
+		///<summary>Gets a Disease from the database. Returns null if no disease is found.</summary>
+		public static Disease GetDiseaseForApi(long diseaseNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Disease>(MethodBase.GetCurrentMethod(),diseaseNum);
+			}
+			string command="SELECT * FROM disease WHERE DiseaseNum="+POut.Long(diseaseNum);
+			return Crud.DiseaseCrud.SelectOne(command);
+		}
+
+		///<summary>Gets all Diseases from the database. Returns empty list if not found.</summary>
+		public static List<Disease> GetDiseasesForApi(int limit,int offset,long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Disease>>(MethodBase.GetCurrentMethod(),limit,offset,patNum);
+			}
+			string command="SELECT * FROM disease ";
+			if(patNum>0) {
+				command+="WHERE PatNum="+POut.Long(patNum)+" ";
+			}
+			command+="ORDER BY DiseaseNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.DiseaseCrud.SelectMany(command);
+		}
+
 		///<summary>Gets a list of all Diseases for a given patient.  Includes hidden. Sorted by diseasedef.ItemOrder.</summary>
 		public static List<Disease> Refresh(long patNum) {
 			//No need to check MiddleTierRole; no call to db.

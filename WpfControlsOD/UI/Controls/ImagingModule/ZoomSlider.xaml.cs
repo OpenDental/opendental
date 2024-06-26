@@ -135,13 +135,13 @@ Jordan is the only one allowed to edit this file.
 		#region Events
 		///<summary></summary>
 		[Category("OD")]
-		[Description("Occurs when user presses Fit (or 100) button because parent form might need to recenter image.")]
-		public event EventHandler FitPressed=null;
+		[Description("Occurs when user presses Fit or 100 button because parent form needs to recenter image.")]
+		public event EventHandler EventResetTranslation;
 
 		///<summary></summary>
 		[Category("OD")]
 		[Description("Occurs when user changes the zoom level.  It fires repeatedly while dragging.")]
-		public event EventHandler Zoomed=null;
+		public event EventHandler EventZoomed;
 		#endregion Events
 
 		#region Properties - Not Browsable
@@ -166,7 +166,6 @@ Jordan is the only one allowed to edit this file.
 		public void SetValueInitialFit(Size sizeCanvas,Size sizeImage,float degreesRotated){
 			System.Drawing.Size d_sizeCanvas=new System.Drawing.Size(Round(sizeCanvas.Width),Round(sizeCanvas.Height));
 			System.Drawing.Size d_sizeImage=new System.Drawing.Size(Round(sizeImage.Width),Round(sizeImage.Height));
-
 			_fit=ImageTools.CalcScaleFit(d_sizeCanvas,d_sizeImage,degreesRotated)*100;
 			_value=_fit;
 			_maximum=2*_fit;//starting point
@@ -360,7 +359,7 @@ Jordan is the only one allowed to edit this file.
 				catch{}
 				textBoxEdit.Visible=false;
 			}
-			Zoomed?.Invoke(this, new EventArgs());
+			EventZoomed?.Invoke(this, new EventArgs());
 		}
 
 		private void TextBoxEdit_KeyUp(object sender, KeyEventArgs e){
@@ -383,7 +382,7 @@ Jordan is the only one allowed to edit this file.
 			}
 			textBoxEdit.Visible=false;
 			Draw();
-			Zoomed?.Invoke(this, new EventArgs());
+			EventZoomed?.Invoke(this, new EventArgs());
 		}
 
 		private void TextBoxEdit_PreviewKeyDown(object sender, KeyEventArgs e){
@@ -414,21 +413,21 @@ Jordan is the only one allowed to edit this file.
 				if(_value<1) {
 					_value=1;
 				}
-				Zoomed?.Invoke(this,new EventArgs());
+				EventZoomed?.Invoke(this,new EventArgs());
 			}
 			if(HitTest(rectanglePlus,_pointMouseDown)) {
 				SetValueAndMax(_value+_maximum*.25f);
-				Zoomed?.Invoke(this,new EventArgs());
+				EventZoomed?.Invoke(this,new EventArgs());
 			}
 			if(HitTest(rectangleFit,_pointMouseDown)) {
 				SetValueAndMax(_fit);
-				FitPressed?.Invoke(this,new EventArgs());
-				Zoomed?.Invoke(this,new EventArgs());
+				EventResetTranslation?.Invoke(this,new EventArgs());
+				EventZoomed?.Invoke(this,new EventArgs());
 			}
 			if(HitTest(rectangle100,_pointMouseDown)) {
 				SetValueAndMax(100);
-				FitPressed?.Invoke(this,new EventArgs());
-				Zoomed?.Invoke(this,new EventArgs());
+				EventResetTranslation?.Invoke(this,new EventArgs());
+				EventZoomed?.Invoke(this,new EventArgs());
 			}
 			if(_rectTickLineMargin.Contains(_pointMouseDown)) {
 				_isMouseDownTickLineMargin=true;
@@ -441,7 +440,7 @@ Jordan is the only one allowed to edit this file.
 					_xOffsetMouseDownSlider=0;
 					double xPixels = _pointMouseDown.X-_rectTickLine.Left;
 					_value=(float)xPixels/_rectTickLine.Width*_maximum;
-					Zoomed?.Invoke(this,new EventArgs());
+					EventZoomed?.Invoke(this,new EventArgs());
 				}
 			}
 			Draw();
@@ -507,7 +506,7 @@ Jordan is the only one allowed to edit this file.
 						double xPixels = _pointMouse.X+_xOffsetMouseDownSlider-_rectTickLine.Left;
 						_value=xPixels/_rectTickLine.Width*_maximum;
 					}
-					Zoomed?.Invoke(this,new EventArgs());
+					EventZoomed?.Invoke(this,new EventArgs());
 				}
 			}
 			Draw();

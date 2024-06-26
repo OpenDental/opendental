@@ -309,7 +309,7 @@ Jordan is the only one allowed to edit this file.
 			else if(_enumSliderButStateM==EnumSliderButState.Pressed) {
 				_minVal=(int)((_pixLeftStart-deltaPix-_widthBut/2f)/_tick);
 				_maxVal=(int)((_pixRightStart-deltaPix-_widthBut/2f)/_tick);
-				int originalValSpan=(int)((_pixRightStart-_pixLeftStart)/_tick);
+				int originalValSpan=Math.Min((int)((_pixRightStart-_pixLeftStart)/_tick),255);//testing showed it was getting set to 256 sometimes, which would cause out of bounds below.
 				maxAllowedL=maxAllowedR-originalValSpan;
 				minAllowedR=minAllowedL+originalValSpan;
 				if(_minVal<minAllowedL) {

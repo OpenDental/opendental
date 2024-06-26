@@ -717,6 +717,7 @@ namespace OpenDentBusiness {
 				listTag="ul";
 			}
 			string[] lines=s.Split("\n",StringSplitOptions.None);//includes empty elements
+			bool isWithinListTag=false;//Keep track of when we enter a list tag and have yet to close it.
 			for(int i=0;i<lines.Length;i++) {
 				if(!lines[i].Contains(prefixChars)) {
 					continue;
@@ -730,14 +731,18 @@ namespace OpenDentBusiness {
 					//Groups[2] represents the outermost set of parenthesis in the regex above.
 					//Example: In a table row like: <td Width="100"><p>*1<br/>*2</p></td>
 					//Groups[2] refers to the contents ofthe opening and closing <td> tags, namely <p>*1<br/>*2</p>
-					if(!match.Groups[2].Value.StartsWith(prefixChars)) {
+					if(!match.Groups[2].Value.StartsWith(prefixChars) && !match.Groups[2].Value.StartsWith("<br/>")) {
 						continue;//This is not a list and simply contains a # or * E.g. 4*4.
 					}
-					string[] strArrayListItems=match.Groups[2].Value.Split(prefixChars,StringSplitOptions.None);
+					string[] strArrayListItems=match.Groups[2].Value.Split(prefixChars,StringSplitOptions.RemoveEmptyEntries);
 					//Loop through the raw list items and surrround with <li></li>
 					for(int j = 0;j < strArrayListItems.Length;j++) {
+						if(!strArrayListItems[j].StartsWith("<br/>")) {
+							stringBuilder.Append(strArrayListItems[j]);
+							continue;
+						}
 						if(j > 0 || strArrayListItems.Length==1) {
-							stringBuilder.Append("<li>"+strArrayListItems[j]+"</li>");
+							stringBuilder.Append("<li><span class=\"ListItemContent\">"+strArrayListItems[j]+"</span></li>");
 						}
 					}
 					//Replace the following match with the end-result after replacing the list item prefix chars and wrapping it in the item tag.
@@ -767,12 +772,14 @@ namespace OpenDentBusiness {
 					//There is CSS code in our master template that does formatting things on the ListItemContent class specifically.
 					line="<li><span class=\"ListItemContent\">"+line+"</span></li>";
 					//Add the approriate ol/ul tag if this is the beginning of a list (the previous line is not a list item).
-					if(i==0 || (i > 0 && !lines[i-1].Contains(prefixChars) && !lines[i-1].Contains("<li>"))) {
+					if(i==0 || (i > 0 && !isWithinListTag)) {
 						line=$"<{listTag}>{line}";
+						isWithinListTag=true;
 					}
 					//Add the approriate closing ol/ul tag if this is the end of a list (the next line is not a list item).
 					if(i == lines.Length-1 || !lines[i+1].Contains(prefixChars)) {
 						line=$"{line}</{listTag}>";
+						isWithinListTag=false;
 					}
 					//Add in the body tags if we removed them
 					if(addStartBodyTag) {

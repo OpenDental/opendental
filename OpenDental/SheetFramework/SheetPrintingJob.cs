@@ -41,7 +41,8 @@ namespace OpenDental {
 		private int _yPosPrevious;
 		///<summary>Used for determining page breaks. When moving to next page, use this Y value to determine the next field to print.</summary>
 		private int _yPosPrint;
-		///<summary>Set this to true to bypass UI checks when printing.</summary>
+		///<summary>Set this to true to bypass UI checks when printing. Also causes some methods to throw exceptions instead of returning booleans.
+		///Only set to true when used from mobile apps.</summary>
 		public bool IsRemotePrintingJob=false;
 		///<summary>Set this to the PK of a printer to override the higherarchy call to printers for print situations.</summary>
 		public long PrinterNumOverride=0;

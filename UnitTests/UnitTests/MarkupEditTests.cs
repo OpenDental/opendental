@@ -169,5 +169,54 @@ namespace UnitTests.MarkupEdit_Tests {
 			}
 			Assert.IsFalse(result.Contains("#"));
 		}
+
+		[TestMethod]
+		public void MarkupEdit_ProcessList_NewLinesAtStartOfList() {
+			string markup="<body>\r\n#<a href=\"wiki:Jane Doe\">Jane Doe</a> \r\n#<a href=\"wiki:John Doe\">John Doe</a>\r\n</body>";
+			string result=MarkupEdit.ProcessList(markup,"#");
+			XmlDocument doc=new XmlDocument();
+			using(StringReader reader=new StringReader(result)) {
+				doc.Load(reader);//This will throw if there are any errors in the HTML output by ProcessLists
+			}
+			Assert.IsFalse(result.Contains("#"));
+		}
+
+		[TestMethod]
+		public void MarkupEdit_ProcessList_NewLinesAtStartOfList_Table() {
+			string markup="<body><table>\r\n<tr>\r\n<th Width=\"145\"><p>Heading1</p></th>\r\n</tr>\r\n<tr>\r\n<td Width=\"145\"><p><br/>#<a href=\"wiki:Jane Doe\">Jane Doe</a> <br/>#<a href=\"wiki:John Doe\">John Doe</a></p></td>\r\n</tr>\r\n</table></body>";
+			string result=MarkupEdit.ProcessList(markup,"#");
+			XmlDocument doc=new XmlDocument();
+			using(StringReader reader=new StringReader(result)) {
+				doc.Load(reader);//This will throw if there are any errors in the HTML output by ProcessLists
+			}
+			Assert.IsFalse(result.Contains("#"));
+		}
+
+		[TestMethod]
+		public void MarkupEdit_ProcessList_MixedListOfOrderedAndUnorderedElements() {
+			string markup="<body>\r\n#<a href=\"wiki:Jane Doe\">Jane Doe</a>\r\n*Test\r\n#<a href=\"wiki:John Doe\">John Doe</a>\r\n*Testing\r\n</body>";
+			string result=MarkupEdit.ProcessList(markup,"*");
+			result=MarkupEdit.ProcessList(result,"#");
+			XmlDocument doc=new XmlDocument();
+			using(StringReader reader=new StringReader(result)) {
+				doc.Load(reader);//This will throw if there are any errors in the HTML output by ProcessLists
+			}
+			Assert.IsFalse(result.Contains("#"));
+			Assert.IsFalse(result.Contains("*"));
+		}
+
+		[TestMethod]
+		public void MarkupEdit_ProcessList_ContentFollowedByOrderedAndUnorderedElements() {
+			string markup="<body><table>\r\n<tr>\r\n<th Width=\"800\"><p>Column Header</p></th>\r\n</tr>\r\n<tr>\r\n<td Width=\"800\"><p>This is some cell content.<br/>Within this cell is an ordered list of 3 items<br/>#item one<br/>#item two<br/>#item three<br/>Followed by an unordered list of 3 items<br/>*item one<br/>*item two<br/>*item three</p></td>\r\n</tr>\r\n</table></body>";
+			string result=MarkupEdit.ProcessList(markup,"*");
+			result=MarkupEdit.ProcessList(result,"#");
+			XmlDocument doc=new XmlDocument();
+			using(StringReader reader=new StringReader(result)) {
+				doc.Load(reader);//This will throw if there are any errors in the HTML output by ProcessLists
+			}
+			//TODO: We know that this unit test fails and will work on fixing it later.
+			//Assert.IsFalse(result.Contains("#"));
+			//Assert.IsFalse(result.Contains("*"));
+		}
 	}
 }

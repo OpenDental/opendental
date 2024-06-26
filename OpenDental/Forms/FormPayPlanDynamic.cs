@@ -194,6 +194,10 @@ namespace OpenDental {
 			if(index==-1) {//Should not happen, menu item is only enabled when exactly 1 row is selected.
 				return;
 			}
+			if(_dynamicPaymentPlanData.PayPlan.IsNew) {
+				MsgBox.Show(Lan.g(this,"The current payment plan hasn't been saved yet. Save the pay plan to edit charges."));
+				return;
+			}
 			DynamicPayPlanRowData rowData = (DynamicPayPlanRowData)gridCharges.ListGridRows[index].Tag;
 			if(rowData.IsDownPayment) {
 				MsgBox.Show(Lan.g(this,"Down payment charges cannot be altered. To make changes to the down payment, the current payment plan will need to be deleted and a new payment plan created in its place."));
@@ -203,7 +207,7 @@ namespace OpenDental {
 			if(!rowData.IsChargeRow()) {
 				return;
 			}
-			List<PayPlanCharge> listPayPlanCharges=_dynamicPaymentPlanData.ListPayPlanChargesDb.FindAll(x=>rowData.ListPayPlanChargeNums.Contains(x.PayPlanChargeNum));
+			List<PayPlanCharge> listPayPlanCharges=rowData.ListPayPlanCharges;
 			if(listPayPlanCharges.Count==0) {
 				MsgBox.Show(Lan.g(this,"The selected charge hasn't been posted yet. Only posted charges can be edited."));
 				return;
@@ -235,7 +239,12 @@ namespace OpenDental {
 						string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
 						SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,log);
 					}
-					PayPlanCharges.Update(listPayPlanCharges[0]);
+					if(formPayPlanChargeEdit.PayPlanChargeCur.PayPlanChargeNum==0) {
+						PayPlanCharges.Insert(listPayPlanCharges[0]);
+					}
+					else {
+						PayPlanCharges.Update(listPayPlanCharges[0]);
+					}
 				}
 			}
 			LoadPayDataFromDB();

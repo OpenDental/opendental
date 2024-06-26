@@ -125,8 +125,8 @@ namespace OpenDental{
 			windowingSlider.ScrollComplete+=windowingSlider_ScrollComplete;
 			zoomSlider=new WpfControls.UI.ZoomSlider();
 			elementHostZoomSlider.Child=zoomSlider;
-			zoomSlider.FitPressed+=zoomSlider_FitPressed;
-			zoomSlider.Zoomed+=zoomSlider_Zoomed;
+			zoomSlider.EventResetTranslation+=zoomSlider_EventResetTranslation;
+			zoomSlider.EventZoomed+=zoomSlider_EventZoomed;
 			toolBarMain=new WpfControls.UI.ToolBar();
 			elementHostToolBarMain.Child=toolBarMain;
 			//controlImageDock.Enter+=ControlImageDock_Enter;//doesn't work for clicking. Also, when user changes focus to OD, we don't necessarily need this to focus.
@@ -559,7 +559,7 @@ namespace OpenDental{
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);//#3
 			Point pointMousePos=MousePosition;//for debugging
 			formImageFloat.SimulateMouseDown(pointMousePos,formImageFloat.Bounds);
-			controlImageDisplay.SetZoomSlider();
+			controlImageDisplay.SetZoomSliderToFit();
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
 			controlImageDock.SetControlImageDisplay(null);//this unfortunately clears the selected item in the image selector
 			//controlImageDisplay.ClearObjects();
@@ -923,7 +923,7 @@ namespace OpenDental{
 					else if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Maximize){
 						formImageFloat.WindowState=FormWindowState.Maximized;
 					}
-					controlImageDisplay.SetZoomSlider();
+					controlImageDisplay.SetZoomSliderToFit();
 				}
 				else{
 					if(enumImageFloatWinButton==WpfControls.UI.EnumImageFloatWinButton.Minimize){
@@ -955,7 +955,7 @@ namespace OpenDental{
 				if(sender is FormImageFloat){
 					//controlImageDisplay is already filled, which means the rest of the module is also already set up properly with the correct patient, etc.
 					controlImageDock.SetControlImageDisplay(controlImageDisplay);
-					controlImageDisplay.SetZoomSlider();
+					controlImageDisplay.SetZoomSliderToFit();
 					formImageFloat.Close();//remove gets handled automatically here
 					//The above causes formImageFloat.Activated to fire, maybe because _windowImageFloatWindows is still open at this point?
 					//controlImageDock.IsImageFloatSelected=true;
@@ -1082,7 +1082,7 @@ namespace OpenDental{
 					formImageFloat.WindowState=FormWindowState.Normal;
 				}
 				formImageFloat.Bounds=rectangle;
-				controlImageDisplay.SetZoomSlider();
+				controlImageDisplay.SetZoomSliderToFit();
 			}
 			else{
 				LaunchFloater(controlImageDisplay,rectangle.X,rectangle.Y,rectangle.Width,rectangle.Height);
@@ -1388,16 +1388,6 @@ namespace OpenDental{
 			windowingSlider.MaxVal=windowingEventArgs.MaxVal;
 		}
 
-		private void FormImageFloat_SetZoomSlider(object sender,ZoomSliderState zoomSliderState){
-			zoomSlider.SetValueInitialFit(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
-			((ControlImageDisplay)sender).ZoomSliderValue=zoomSlider.Value;
-		}
-
-		private void FormImageFloat_ZoomSliderSetByWheel(object sender,float deltaZoom){
-			zoomSlider.SetByWheel(deltaZoom);
-			((ControlImageDisplay)sender).ZoomSliderValue=zoomSlider.Value;
-		}
-
 		private void FormImageFloat_WindowClicked(object sender, int idx){
 			if(idx>_listFormImageFloats.Count-1){
 				return;
@@ -1436,7 +1426,7 @@ namespace OpenDental{
 			}
 			ControlImageDisplay controlImageDisplay=formImageFloat.ControlImageDisplay_;
 			controlImageDock.SetControlImageDisplay(controlImageDisplay);//This replaces the other docked control
-			controlImageDisplay.SetZoomSlider();
+			controlImageDisplay.SetZoomSliderToFit();
 			formImageFloat.Close();//since controlImageDisplay is no longer a child, it will not be disposed.
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
 			SelectTreeNode1(nodeTypeAndKey);//This is necessary when this window replaces an old docked window
@@ -1947,15 +1937,15 @@ namespace OpenDental{
 			}
 		}
 
-		private void zoomSlider_FitPressed(object sender, EventArgs e){
+		private void zoomSlider_EventResetTranslation(object sender, EventArgs e){
 			ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
 			if(controlImageDisplay is null){
 				return;
 			}
-			controlImageDisplay.ZoomSliderFitPressed();
+			controlImageDisplay.ResetTranslation();
 		}
 
-		private void zoomSlider_Zoomed(object sender, EventArgs e){
+		private void zoomSlider_EventZoomed(object sender, EventArgs e){
 			//fires repeatedly while dragging
 			ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
 			if(controlImageDisplay is null){
@@ -2761,9 +2751,15 @@ namespace OpenDental{
 			controlImageDisplay.EventThumbnailNeedsRefresh+=(sender,e)=>ThumbnailRefresh();
 			//this one now goes through ControlImageDock:
 			//controlImageDisplay.EventLaunchFloater+=(sender,e)=>LaunchFloater((ControlImageDisplay)sender,300,300,500,500);
-			//events moved to constructor because only need to be called once
-			controlImageDisplay.EventSetZoomSlider+=FormImageFloat_SetZoomSlider;
-			controlImageDisplay.EventZoomSliderSetByWheel+=FormImageFloat_ZoomSliderSetByWheel;
+			//events moved to constructor because they only need to be called once
+			controlImageDisplay.EventResetZoomSlider+=(sender,zoomSliderState)=>{
+				zoomSlider.SetValueInitialFit(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
+				((ControlImageDisplay)sender).ZoomSliderValue=zoomSlider.Value;
+			};
+			controlImageDisplay.EventZoomSliderSetByWheel+=(sender,deltaZoom)=>{
+				zoomSlider.SetByWheel(deltaZoom);
+				((ControlImageDisplay)sender).ZoomSliderValue=zoomSlider.Value;
+			};
 			controlImageDisplay.EventZoomSliderSetValueAndMax+=(sender,newVal)=>zoomSlider.SetValueAndMax(newVal);
 //todo: The property and event are both gone. A lot more needs to happen besides just changing a bool.
 //I think this is mostly done.

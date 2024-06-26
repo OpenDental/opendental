@@ -20,12 +20,27 @@ using KnowledgeRequestNotification;
 namespace OpenDental {
 	///<summary>This is the control that shows the actual image or mount for the imaging module. It is always nested either inside FormImageFloat or in ControlImageDock.</summary>
 	public partial class ControlImageDisplay:UserControl {
-		/*
-		ControlImageDisplay is always nested either inside FormImageFloat or in ControlImageDock.
-		There is always only one ControlImageDock, which stays permanently present in ControlImages.
-		There can be 0 or many FormImageFloats, all kept in a list in ControlImages. This list never contains a docked image.
-		When user drags to "undock" an image, what really happens is that a new FormImageFloat is created, and the ControlImageDisplay is moved over to it.
-		*/
+/*
+ControlImageDisplay is always nested either inside FormImageFloat or in ControlImageDock.
+There is always only one ControlImageDock, which stays permanently present in ControlImages.
+There can be 0 or many FormImageFloats, all kept in a list in ControlImages. This list never contains a docked image.
+When user drags to "undock" an image, what really happens is that a new FormImageFloat is created, and the ControlImageDisplay is moved over to it.
+
+How zoom works (or at least once we thoroughly debug it)
+There is a control at the top of ControlImages called ZoomSlider.
+It's nested inside an ElementHost, but that's really irrelevant and is just part of the gradual conversion over to WPF.
+ZoomSlider has 2 events that get raised when the user clicks or drags on it.
+Those events have event handlers in ControlImages: zoomSlider_EventResetTranslation and zoomSlider_EventZoomed which then communicate with controlImageDisplay.
+To pass the zoom from ControlImages down into controlImageDisplay, we generally set controlImageDisplay.ZoomSliderValue.
+It can go the other way also. ControlImageDisplay has 3 zoom events: EventResetZoomSlider, EventZoomSliderSetByWheel, and EventZoomSliderSetValueAndMax.
+There are 3 tiny corresponding event handlers in ControlImages which communicate with both zoomSlider and controlImageDisplay to change the zoom.
+Here is the desired behavior:
+1. Switching between images in any fashion never changes zoom.
+2. Zoom resets if dragged to another monitor with a different dpi.
+3. Zoom does not reset if popping a floater by dragging.
+4. Other forms of dragging do not reset zoom.
+5. Mouse wheel over an image selects that image and accurately starts adjusting the zoom.
+*/
 		#region Fields - Public
 		///<summary>Color for drawing lines and text.</summary>
 		public Color ColorFore;
@@ -186,7 +201,7 @@ namespace OpenDental {
 		///<summary>This event is fired from SetWindowingSlider, which makes the decisions about the windowing for what's showing.  The event bubbles up to the parent to set windowingSlider min and max.  But there is no property here to affect.  Separately, the parent can call SetWindowingSlider, which will then also fire this event like normal. Finally, in windowingSlider_Scroll, the parent directly sets min and max on the document within this window.</summary>
 		public event EventHandler<WindowingEventArgs> EventSetWindowingSlider;
 		///<summary>This event bubbles up to the parent, which then sets the property here.  This sets the zoom slider so that the middle tick will be at the "fit" zoom.  This is needed any time the image is rotated or cropped, or if the form size changes.</summary>
-		public event EventHandler<ZoomSliderState> EventSetZoomSlider;
+		public event EventHandler<ZoomSliderState> EventResetZoomSlider;
 		///<summary>This event is fired when the thumbnail needs to be refreshed.</summary>
 		public event EventHandler EventThumbnailNeedsRefresh;
 		///<summary>This event bubbles up to the parent, which then sets the property here.</summary>
@@ -996,7 +1011,7 @@ namespace OpenDental {
 				EventSetCropPanEditAdj?.Invoke(this,EnumCropPanAdj.Pan);
 				Cursor=Cursors.Default;
 			}
-			SetZoomSlider();
+			SetZoomSliderToFit();
 			panelMain.Invalidate();
 		}
 
@@ -1133,13 +1148,13 @@ namespace OpenDental {
 		}
 
 		///<summary>This sets the zoom slider so that the middle tick will be at the "fit" zoom.  This is needed any time the image is rotate or cropped, or if the form size changes.</summary>
-		public void SetZoomSlider(){
+		public void SetZoomSliderToFit(){
 			LayoutManager.MoveSize(panelMain,ClientSize);//LayoutManager didn't seem to be doing this in some cases.
 			if(IsDocumentShowing()){
 				if(_bitmapRaw==null && _bitmapDicomRaw==null){
 					//pdf. It will be disabled anyway
 					ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height), new System.Windows.Size(panelMain.Width,panelMain.Height),0);//100
-					EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
+					EventResetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 					return;
 				}
 				if(_bitmapRaw!=null){
@@ -1148,7 +1163,7 @@ namespace OpenDental {
 						sizeImage=new System.Windows.Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH);
 					}
 					ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height), sizeImage,GetDocumentShowing(0).DegreesRotated);
-					EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
+					EventResetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 				}
 				if(_bitmapDicomRaw!=null){
 					System.Windows.Size sizeImage=new System.Windows.Size(_bitmapDicomRaw.Width,_bitmapDicomRaw.Height);
@@ -1157,12 +1172,12 @@ namespace OpenDental {
 					}
 					ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height),
 						sizeImage,GetDocumentShowing(0).DegreesRotated);
-					EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
+					EventResetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 				}
 			}
 			if(IsMountShowing()){
 				ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height), new System.Windows.Size(_mountShowing.Width,_mountShowing.Height),0);
-				EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
+				EventResetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 			}
 		}
 
@@ -1920,7 +1935,7 @@ namespace OpenDental {
 				}
 				Documents.Update(GetDocumentShowing(0),documentOld);
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
-				SetZoomSlider();
+				SetZoomSliderToFit();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated left 90 degrees";
@@ -1977,7 +1992,7 @@ namespace OpenDental {
 				GetDocumentShowing(0).DegreesRotated%=360;
 				Documents.Update(GetDocumentShowing(0),documentOld);
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
-				SetZoomSlider();
+				SetZoomSliderToFit();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated right 90 degrees";
@@ -2035,7 +2050,7 @@ namespace OpenDental {
 				}
 				Documents.Update(GetDocumentShowing(0),documentOld);
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
-				SetZoomSlider();
+				SetZoomSliderToFit();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated 180 degrees";
@@ -2139,7 +2154,7 @@ namespace OpenDental {
 			panelMain.Invalidate();
 		}
 
-		public void ZoomSliderFitPressed(){
+		public void ResetTranslation(){
 			_pointTranslation=new Point(0,0);
 			panelMain.Invalidate();
 		}
@@ -3318,7 +3333,7 @@ namespace OpenDental {
 				Documents.Update(GetDocumentShowing(0),documentOld);
 				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),PatFolder);
 				LoadBitmap(0,EnumLoadBitmapType.IdxAndRaw);
-				SetZoomSlider();
+				SetZoomSliderToFit();
 				_pointTranslation=new Point();
 				_rectangleCrop=new Rectangle();
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[0].DocCategory);
@@ -3371,12 +3386,10 @@ namespace OpenDental {
 			if(_cropPanAdj!=EnumCropPanAdj.Pan){
 				return;
 			}
-			//There's another mouseWheel event handler in FormImageFloat that takes focus for floaters
-			EventGotODFocus?.Invoke(this,new EventArgs());//This handles focus for docker, but is not quite good enough for floater.
+			EventGotODFocus?.Invoke(this,new EventArgs());//This handles focus for either docker or floater.
 			float deltaZoom=ZoomSliderValue*(float)e.Delta/SystemInformation.MouseWheelScrollDelta/8f;//For example, -15
 			EventZoomSliderSetByWheel?.Invoke(this,deltaZoom);
 			panelMain.Invalidate();
-			
 		}
 		#endregion Methods - Event Handlers
 
@@ -4626,13 +4639,16 @@ namespace OpenDental {
 	}
 }
 
-//2024-06-23 Todo
+//2024-06-24 Todo
 /*
-When clicking on a floater header, the zoom resets.
-Mouse wheel over floater frequently does not change selection in selector, does not unselect docked header, and uses wrong zoom level, although it does zoom the correct image.
+Zoom is a mess. Old behavior was to reset to fit when changing images by clicking, from selector, or even changing focus through windows. 
+But this was just a side effect of the need to reset zoom if the window had moved to a new screen with different zoom. was done in FormImageFloat.OnResizeEnd
+See the discussion at the top for how it should behave.
+Currently, mouse wheel over floater frequently does not change selection in selector, does not unselect docked header, and uses wrong zoom level, although it does zoom the correct image.
+
+Drag to pop a floater, need to capture mouse.
 ControlImages.CreateControlImageDisplay, research that todo
 Fix stuck mouse when dragging images in this control get interrupted.
-Drag to pop a floater, need to capture mouse.
 Total review and test of KeyDown events, including Ctrl-P to select patient
 Wherever controlImageDisplay.SelectTreeNode is used, test if title was getting set properly
 When opening the Window dropdown from docked, the tab is smaller width than floaters, and the bottom edge is not perfect.
