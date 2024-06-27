@@ -169,7 +169,7 @@ namespace OpenDental {
 			}
 			if(IsNew){
 				if(_procedure.ProcStatus==ProcStat.C){
-					if(!_isQuickAdd && !Security.IsAuthorized(EnumPermType.ProcComplCreate)){
+					if(!_isQuickAdd && !Security.IsAuthorized(EnumPermType.ProcComplCreate,_procedure.ProcDate)){
 						DialogResult=DialogResult.Cancel;
 						return;
 					}

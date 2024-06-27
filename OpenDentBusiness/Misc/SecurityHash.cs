@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into various SecurityHash columns. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2024,6,26);
+		public static DateTime DateStart=new DateTime(2024,6,27);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;

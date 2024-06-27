@@ -154,6 +154,14 @@ namespace OpenDentBusiness{
 		#endregion Methods - Misc
 		*/
 
+		///<summary>Get all the logs for a specified ChildRoom.</summary>
+		public static List<ChildRoomLog> GetChildRoomLogsByChildRoomNum(long childRoomNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),childRoomNum);
+			}
+			string command="SELECT * FROM childroomlog WHERE ChildRoomNum="+POut.Long(childRoomNum);
+			return Crud.ChildRoomLogCrud.SelectMany(command);
+		}
 
 
 	}

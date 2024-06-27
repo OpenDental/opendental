@@ -1670,7 +1670,7 @@ namespace OpenDentBusiness {
 				 + "'BolaAI', "
 				 + "'Bola AI from https://bola.ai', "
 				 + "'0', "//Disabled 
-				 + "'%USERPROFILE%\\AppData\\Local\\bolavoiceassistant\\Bola Voice Assistant.exe', "
+				 + "'"+POut.String(@"%USERPROFILE%\AppData\Local\bolavoiceassistant\Bola Voice Assistant.exe")+"', "
 				 + "'', "//No cmd line args.
 				 + "'Shows in the Perio Chart window when enabled.')";
 			Db.NonQ(command);
@@ -1768,5 +1768,17 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End 50988
 		}//End of 24_2_4() method
+
+		private static void To24_2_6() {
+			//Start B54856
+			string command="SELECT ProgramNum FROM program WHERE ProgName='BolaAI'";
+			long programNum=Db.GetLong(command);
+			command="UPDATE program "+
+				"SET Path='"+POut.String(@"%USERPROFILE%\AppData\Local\bolavoiceassistant\Bola Voice Assistant.exe")+"' "+
+				"WHERE ProgramNum="+POut.Long(programNum)+" "+
+				"AND Path='"+POut.String(@"%USERPROFILE%AppDataLocalolavoiceassistantBola Voice Assistant.exe")+"' ";//This is the incorrect value that I copied over from the database.
+			Db.NonQ(command);
+			//End B54856
+		}//End of 24_2_6()
 	}
 }

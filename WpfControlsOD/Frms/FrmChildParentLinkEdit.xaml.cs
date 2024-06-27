@@ -29,12 +29,13 @@ namespace OpenDental {
 			textRelationship.Text=ChildParentLinkCur.Relationship;
 		}
 		private void butPick_Click(object sender,EventArgs e) {
-			FrmChildParentLinkSelect frmChildParentLinkSelect=new FrmChildParentLinkSelect();
-			frmChildParentLinkSelect.ShowDialog();
-			if(!frmChildParentLinkSelect.IsDialogOK) {
+			FrmChildParents frmChildParents=new FrmChildParents();
+			frmChildParents.IsSelectionMode=true;
+			frmChildParents.ShowDialog();
+			if(!frmChildParents.IsDialogOK) {
 				return;//No user was selected
 			}
-			ChildParent childParentSelected=ChildParents.GetOne(frmChildParentLinkSelect.ChildParentNumSelected);
+			ChildParent childParentSelected=ChildParents.GetOne(frmChildParents.ChildParentNumSelected);
 			//Stop users from creating duplicate ChildParentLink relationships
 			List<ChildParentLink> listChildParentLinks=ChildParentLinks.GetChildParentLinksByChildNum(ChildParentLinkCur.ChildNum);
 			if(listChildParentLinks.Any(x => x.ChildParentNum==childParentSelected.ChildParentNum)) {

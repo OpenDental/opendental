@@ -54,6 +54,7 @@ namespace OpenDentBusiness.Crud{
 				childRoomLog.ChildTeacherNum= PIn.Long  (row["ChildTeacherNum"].ToString());
 				childRoomLog.IsComing       = PIn.Bool  (row["IsComing"].ToString());
 				childRoomLog.ChildRoomNum   = PIn.Long  (row["ChildRoomNum"].ToString());
+				childRoomLog.RatioChange    = PIn.Double(row["RatioChange"].ToString());
 				retVal.Add(childRoomLog);
 			}
 			return retVal;
@@ -72,6 +73,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ChildTeacherNum");
 			table.Columns.Add("IsComing");
 			table.Columns.Add("ChildRoomNum");
+			table.Columns.Add("RatioChange");
 			foreach(ChildRoomLog childRoomLog in listChildRoomLogs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (childRoomLog.ChildRoomLogNum),
@@ -81,6 +83,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Long  (childRoomLog.ChildTeacherNum),
 					POut.Bool  (childRoomLog.IsComing),
 					POut.Long  (childRoomLog.ChildRoomNum),
+					POut.Double(childRoomLog.RatioChange),
 				});
 			}
 			return table;
@@ -100,7 +103,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ChildRoomLogNum,";
 			}
-			command+="DateTEntered,DateTDisplayed,ChildNum,ChildTeacherNum,IsComing,ChildRoomNum) VALUES(";
+			command+="DateTEntered,DateTDisplayed,ChildNum,ChildTeacherNum,IsComing,ChildRoomNum,RatioChange) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(childRoomLog.ChildRoomLogNum)+",";
 			}
@@ -110,7 +113,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (childRoomLog.ChildNum)+","
 				+    POut.Long  (childRoomLog.ChildTeacherNum)+","
 				+    POut.Bool  (childRoomLog.IsComing)+","
-				+    POut.Long  (childRoomLog.ChildRoomNum)+")";
+				+    POut.Long  (childRoomLog.ChildRoomNum)+","
+				+		 POut.Double(childRoomLog.RatioChange)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -135,7 +139,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ChildRoomLogNum,";
 			}
-			command+="DateTEntered,DateTDisplayed,ChildNum,ChildTeacherNum,IsComing,ChildRoomNum) VALUES(";
+			command+="DateTEntered,DateTDisplayed,ChildNum,ChildTeacherNum,IsComing,ChildRoomNum,RatioChange) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(childRoomLog.ChildRoomLogNum)+",";
 			}
@@ -145,7 +149,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (childRoomLog.ChildNum)+","
 				+    POut.Long  (childRoomLog.ChildTeacherNum)+","
 				+    POut.Bool  (childRoomLog.IsComing)+","
-				+    POut.Long  (childRoomLog.ChildRoomNum)+")";
+				+    POut.Long  (childRoomLog.ChildRoomNum)+","
+				+	   POut.Double(childRoomLog.RatioChange)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -163,7 +168,8 @@ namespace OpenDentBusiness.Crud{
 				+"ChildNum       =  "+POut.Long  (childRoomLog.ChildNum)+", "
 				+"ChildTeacherNum=  "+POut.Long  (childRoomLog.ChildTeacherNum)+", "
 				+"IsComing       =  "+POut.Bool  (childRoomLog.IsComing)+", "
-				+"ChildRoomNum   =  "+POut.Long  (childRoomLog.ChildRoomNum)+" "
+				+"ChildRoomNum   =  "+POut.Long  (childRoomLog.ChildRoomNum)+", "
+				+"RatioChange    =  "+POut.Double(childRoomLog.RatioChange)+" "
 				+"WHERE ChildRoomLogNum = "+POut.Long(childRoomLog.ChildRoomLogNum);
 			Db.NonQ(command);
 		}
@@ -192,6 +198,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="ChildRoomNum = "+POut.Long(childRoomLog.ChildRoomNum)+"";
 			}
+			if(childRoomLog.RatioChange != oldChildRoomLog.RatioChange) {
+				if(command!="") { command+=",";}
+				command+="RatioChange = "+POut.Double(childRoomLog.RatioChange)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -218,6 +228,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(childRoomLog.ChildRoomNum != oldChildRoomLog.ChildRoomNum) {
+				return true;
+			}
+			if(childRoomLog.RatioChange != oldChildRoomLog.RatioChange) {
 				return true;
 			}
 			return false;

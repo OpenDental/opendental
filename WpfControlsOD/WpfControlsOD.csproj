@@ -237,6 +237,9 @@
     <Compile Include="Frms\FrmChildCareMap.xaml.cs">
       <DependentUpon>FrmChildCareMap.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frms\FrmChildRoomLogs.xaml.cs">
+      <DependentUpon>FrmChildRoomLogs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\FrmChildParents.xaml.cs">
       <DependentUpon>FrmChildParents.xaml</DependentUpon>
     </Compile>
@@ -251,9 +254,6 @@
     </Compile>
     <Compile Include="Frms\FrmChildParentLinkEdit.xaml.cs">
       <DependentUpon>FrmChildParentLinkEdit.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Frms\FrmChildParentLinkSelect.xaml.cs">
-      <DependentUpon>FrmChildParentLinkSelect.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frms\FrmParagraph.xaml.cs">
       <DependentUpon>FrmParagraph.xaml</DependentUpon>
@@ -779,6 +779,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Frms\FrmChildRoomLogs.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Frms\FrmChildParents.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -796,10 +800,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frms\FrmChildParentLinkEdit.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Frms\FrmChildParentLinkSelect.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

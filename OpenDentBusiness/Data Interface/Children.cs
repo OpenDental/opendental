@@ -133,6 +133,17 @@ namespace OpenDentBusiness{
 			return Crud.ChildCrud.SelectMany(command);
 		}
 
+		public static string GetName(long childNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),childNum);
+			}
+			Child child=Crud.ChildCrud.SelectOne(childNum);
+			if(child==null) {
+				return "";
+			}
+			return child.FName+" "+child.LName;
+		}
+
 		#region Methods - Modify
 
 		///<summary></summary>

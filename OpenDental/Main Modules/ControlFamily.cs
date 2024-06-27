@@ -485,6 +485,17 @@ namespace OpenDental{
 				WpfControls.ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,_patient);
 			}
 		}
+
+		private void pictureBoxPat_DoubleClick(object sender,EventArgs e) {
+			if(Plugins.HookMethod(this,"ControlFamily.pictureBoxPat_DoubleClick",_patient)) {
+				//Example to pop open your own bigger image:
+				//Document document=Documents.GetPatPictFromDb(_patient.PatNum);
+				//string patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
+				//using Bitmap bitmap=ImageStore.OpenImage(document,patFolder);
+				//show the bitmap in your own new window.
+				return;
+			}
+		}
 		#endregion Methods - Event Handlers - Other
 
 		#region Methods - Public

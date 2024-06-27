@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using Bridges;
@@ -295,10 +296,20 @@ namespace OpenDental{
 			return true;
 		}
 
-		///<summary>Checks the value of PrefName.AddressVerifyWithUSPS. If true then checks help key status. Otherwise returns false</summary>
+		///<summary>Returns true when customer is in the USA, has address verification enabled, is not on trial, and is signed up for support. Otherwise returns false</summary>
 		public static bool CanVerifyPatientAddressInteraction() {
-			if(PrefC.GetBool(PrefName.AddressVerifyWithUSPS)) {
-				return ODHelp.IsEncryptedKeyValid();
+			if(!System.Globalization.CultureInfo.CurrentCulture.Name.EndsWith("US")) {
+				//USPS address validation only works for US addresses.
+				return false;
+			}
+			if(!PrefC.GetBool(PrefName.AddressVerifyWithUSPS)) {
+				return false;
+			}
+			if(ODBuild.IsTrial()) {
+				return false;
+			}
+			if(ODHelp.IsEncryptedKeyValid()) {
+				return true;
 			}
 			return false;
 		}
@@ -306,33 +317,29 @@ namespace OpenDental{
 		///<summary>Launches an interaction where a patient address is validated and corrected by USPS. The user is then prompted to choose between the address they provided, the one corrected by USPS, or choosing to return null, and go back to edit. Takes in a sender so that the appropriate information gets set on the message box.</summary>
 		public static OpenDentBusiness.Address VerifyPatientAddressInteraction(OpenDentBusiness.Address address, object sender) {
 			//if state is more than two characters, try to look up the abbreviation for the state with the name they entered.
+			if(string.IsNullOrWhiteSpace(address.State) || string.IsNullOrWhiteSpace(address.Address1)) {
+				if(MsgBox.Show(sender,MsgBoxButtons.YesNo, "State and Address1 are required in order for addresses to be verified with USPS. Import anyways?","Warning")) {
+					//Just return the address they entered.
+					return address;
+				}
+				else {
+					//Returning null means they cancelled the interaction.
+					return null;
+				}
+			}
 			if(address.State!="" && address.State.Length>2) {
 				StateAbbr stateAbbr=USlocales.ListAll.FirstOrDefault(x=>x.Description.ToUpper()==address.State.ToUpper());
 				if(stateAbbr!=null) {
 					//Found matching state Abbreviation.
 					address.State=stateAbbr.Abbr;
 				}
-			}
-			bool isMissingRequiredFieldsForAddressValidation=false;
-			if(string.IsNullOrWhiteSpace(address.State) || address.State.Length>2 || string.IsNullOrWhiteSpace(address.Address1)) {
-				if(MsgBox.Show(sender,MsgBoxButtons.YesNo, "State and Address1 are required in order for addresses to be verified with USPS. Import anyways?","Warning")) {
-					//Skip the address validation, and continue importing
-					isMissingRequiredFieldsForAddressValidation=true;
-				}
 				else {
+					//State could not be matched. show error.
+					MsgBox.Show(sender, "State could not be found. Use the two letter abbreviation instead.","Warning");
 					return null;
 				}
 			}
-			if(!isMissingRequiredFieldsForAddressValidation) {
-				address=PatientL.VerifyPatientAddressInteractionHelper(address,sender);
-				if(address==null) {
-					//User cancelled out
-					return null;
-				}
-				else {
-					return address;
-				}
-			}
+			address=PatientL.VerifyPatientAddressInteractionHelper(address,sender);
 			return address;
 		}
 
@@ -341,44 +348,43 @@ namespace OpenDental{
 			OpenDentBusiness.Address addressResult=new OpenDentBusiness.Address();
 			USPSAddressValidationResponse uspsAddressValidationResponse=USPSAddressValidationDatas.GetUSPSAddressValidationResponse(address);
 			//We want to include zip+4 in zip codes, so we will always show the prompt when we get a response.
-			if(uspsAddressValidationResponse!=null && uspsAddressValidationResponse.address!=null) {
-				//If values do not match, show comparison prompt form.
-				FrmAddressCompare frmAddressCompare=new FrmAddressCompare();
-				frmAddressCompare.AddressFromUserInput=address;
-				frmAddressCompare.USPSAddressValidationResponse_=uspsAddressValidationResponse;
-				bool acceptUSPSCorrections=frmAddressCompare.ShowDialog();
-				if(acceptUSPSCorrections) {
-					//User clicked the yes button. They accept the changes from USPS.
-					//Set the patients fields to the values from USPS	
-					addressResult.Address1=uspsAddressValidationResponse.address.streetAddress;
-					addressResult.Address2=uspsAddressValidationResponse.address.secondaryAddress;
-					addressResult.City=uspsAddressValidationResponse.address.city;
-					addressResult.State=uspsAddressValidationResponse.address.state;
-					//Combine ZIP5 and ZIP+4
-					addressResult.Zip=uspsAddressValidationResponse.address.ZIPCode;
-					if(!string.IsNullOrWhiteSpace(uspsAddressValidationResponse.address.ZIPPlus4)) {
-						addressResult.Zip=addressResult.Zip+"-"+uspsAddressValidationResponse.address.ZIPPlus4;
-					}
+			if(uspsAddressValidationResponse==null || uspsAddressValidationResponse.address==null) { 
+				if(MsgBox.Show(sender, MsgBoxButtons.YesNo, "Failed to verify address with USPS. Save Anyways?", "Warning")) {
+					//Import anyways.
+					return address;
 				}
 				else {
-					//User clicked X button to cancel, or No button to use the address they entered verbatim.
-					if(!frmAddressCompare.UserChoseAddress) {
-						//User clicked X button, return to the import form.
-						return null;
-					}
-					//User Pressed No Button.
-					//Ignore USPS corrections, return the original address.
-					return address;
+					//Cancel import.
+					return null;
+				}
+			}
+			//Show comparison prompt form.
+			FrmAddressCompare frmAddressCompare=new FrmAddressCompare();
+			frmAddressCompare.AddressFromUserInput=address;
+			frmAddressCompare.USPSAddressValidationResponse_=uspsAddressValidationResponse;
+			bool acceptUSPSCorrections=frmAddressCompare.ShowDialog();
+			if(acceptUSPSCorrections) {
+				//User clicked the yes button. They accept the changes from USPS.
+				//Set the patients fields to the values from USPS	
+				addressResult.Address1=uspsAddressValidationResponse.address.streetAddress;
+				addressResult.Address2=uspsAddressValidationResponse.address.secondaryAddress;
+				addressResult.City=uspsAddressValidationResponse.address.city;
+				addressResult.State=uspsAddressValidationResponse.address.state;
+				//Combine ZIP5 and ZIP+4
+				addressResult.Zip=uspsAddressValidationResponse.address.ZIPCode;
+				if(!string.IsNullOrWhiteSpace(uspsAddressValidationResponse.address.ZIPPlus4)) {
+					addressResult.Zip=addressResult.Zip+"-"+uspsAddressValidationResponse.address.ZIPPlus4;
 				}
 			}
 			else {
-				if(MsgBox.Show(sender, MsgBoxButtons.YesNo, "Failed to verify address with USPS. Save Anyways?", "Warning")) {
-					//Cancel import and return to import page.
-					return address;
-				}
-				else {
+				//User clicked X button to cancel, or No button to use the address they entered verbatim.
+				if(!frmAddressCompare.UserChoseAddress) {
+					//User clicked X button, return to the import form.
 					return null;
 				}
+				//User Pressed No Button.
+				//Ignore USPS corrections, return the original address.
+				return address;
 			}
 			return addressResult;
 		}

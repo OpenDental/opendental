@@ -19,6 +19,10 @@ using WpfControls.UI;
 namespace OpenDental {
 	///<summary></summary>
 	public partial class FrmChildParents:FrmODBase {
+		///<summary>This value will be filled when the frm closes with IsDialogOK=true and IsSelectionMode==true.</summary>
+		public long ChildParentNumSelected;
+		///<summary>True if the window is in selection mode.</summary>
+		public bool IsSelectionMode;
 
 		///<summary></summary>
 		public FrmChildParents() {
@@ -28,6 +32,12 @@ namespace OpenDental {
 		}
 
 		private void FrmChildParents_Load(object sender,EventArgs e) {
+			if(IsSelectionMode) {
+				butAdd.Visible=false;
+			}
+			else {
+				butOK.Visible=false;
+			}
 			FillGrid();
 		}
 
@@ -51,6 +61,11 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			if(IsSelectionMode) {//Set select ChildParent and kick out
+				ChildParentNumSelected=gridMain.SelectedTag<ChildParent>().ChildParentNum;
+				IsDialogOK=true;
+				return;
+			}
 			FrmChildParentEdit frmChildParentEdit=new FrmChildParentEdit();
 			frmChildParentEdit.ChildParentCur=gridMain.SelectedTag<ChildParent>();
 			frmChildParentEdit.ShowDialog();
@@ -60,6 +75,7 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
+			//not visible in selection mode
 			FrmChildParentEdit frmChildParentEdit=new FrmChildParentEdit();
 			ChildParent childParent=new ChildParent();
 			childParent.IsNew=true;
@@ -70,6 +86,13 @@ namespace OpenDental {
 			}
 		}
 
-	
+		private void butOK_Click(object sender,EventArgs e) {
+			if(gridMain.GetSelectedIndex()==-1) {
+				MsgBox.Show("Please pick a parent first.");
+				return;
+			}
+			ChildParentNumSelected=gridMain.SelectedTag<ChildParent>().ChildParentNum;
+			IsDialogOK=true;
+		}
 	}
 }

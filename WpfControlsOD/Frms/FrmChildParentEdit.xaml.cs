@@ -21,11 +21,11 @@ namespace OpenDental {
 
 		private void butSave_Click(object sender, System.EventArgs e) {
 			if(textFirstName.Text=="") {
-				MsgBox.Show("This child must have a first name.");
+				MsgBox.Show("This parent must have a first name.");
 				return;
 			}
 			if(textLastName.Text=="") {
-				MsgBox.Show("This child must have a last name.");
+				MsgBox.Show("This parent must have a last name.");
 				return;
 			}
 			ChildParentCur.FName=textFirstName.Text;

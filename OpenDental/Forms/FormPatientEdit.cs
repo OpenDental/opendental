@@ -2809,8 +2809,6 @@ End of Checklist================================================================
 				address.City=textCity.Text;
 				address.State=textState.Text.ToUpper();
 				address.Zip=textZip.Text;
-				//if state is more than two characters, try to look up the abbreviation for the state with the name they entered.
-				//State is required, and must be the capitalized abbreviaton. Use StateAbbr table to pre-validate before sending request.
 				Address addressVerified=PatientL.VerifyPatientAddressInteraction(address,this);
 				if(addressVerified==null) {
 					return; 
