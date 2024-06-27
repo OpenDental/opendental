@@ -956,6 +956,7 @@ namespace OpenDental {
 			// 
 			// comboManualBlueBook
 			// 
+			this.comboManualBlueBook.AllowScroll = false;
 			this.comboManualBlueBook.Location = new System.Drawing.Point(145, 42);
 			this.comboManualBlueBook.Name = "comboManualBlueBook";
 			this.comboManualBlueBook.Size = new System.Drawing.Size(256, 21);
@@ -972,6 +973,7 @@ namespace OpenDental {
 			// 
 			// comboOutOfNetwork
 			// 
+			this.comboOutOfNetwork.AllowScroll = false;
 			this.comboOutOfNetwork.Location = new System.Drawing.Point(145, 19);
 			this.comboOutOfNetwork.Name = "comboOutOfNetwork";
 			this.comboOutOfNetwork.Size = new System.Drawing.Size(256, 21);
@@ -979,6 +981,7 @@ namespace OpenDental {
 			// 
 			// comboFeeSched
 			// 
+			this.comboFeeSched.AllowScroll = false;
 			this.comboFeeSched.Location = new System.Drawing.Point(126, 329);
 			this.comboFeeSched.Name = "comboFeeSched";
 			this.comboFeeSched.Size = new System.Drawing.Size(286, 21);
@@ -1015,6 +1018,7 @@ namespace OpenDental {
 			// 
 			// comboCopay
 			// 
+			this.comboCopay.AllowScroll = false;
 			this.comboCopay.Location = new System.Drawing.Point(145, 36);
 			this.comboCopay.Name = "comboCopay";
 			this.comboCopay.Size = new System.Drawing.Size(256, 21);
@@ -1162,6 +1166,7 @@ namespace OpenDental {
 			// 
 			// comboSendElectronically
 			// 
+			this.comboSendElectronically.AllowScroll = false;
 			this.comboSendElectronically.Location = new System.Drawing.Point(107, 144);
 			this.comboSendElectronically.Name = "comboSendElectronically";
 			this.comboSendElectronically.Size = new System.Drawing.Size(286, 21);
@@ -1195,6 +1200,7 @@ namespace OpenDental {
 			// 
 			// comboElectIDdescript
 			// 
+			this.comboElectIDdescript.AllowScroll = false;
 			this.comboElectIDdescript.Location = new System.Drawing.Point(162, 122);
 			this.comboElectIDdescript.Name = "comboElectIDdescript";
 			this.comboElectIDdescript.Size = new System.Drawing.Size(159, 20);
@@ -1347,6 +1353,7 @@ namespace OpenDental {
 			// 
 			// comboLinked
 			// 
+			this.comboLinked.AllowScroll = false;
 			this.comboLinked.Location = new System.Drawing.Point(155, 254);
 			this.comboLinked.Name = "comboLinked";
 			this.comboLinked.Size = new System.Drawing.Size(248, 21);
@@ -1407,6 +1414,7 @@ namespace OpenDental {
 			// 
 			// comboPlanType
 			// 
+			this.comboPlanType.AllowScroll = false;
 			this.comboPlanType.Location = new System.Drawing.Point(126, 306);
 			this.comboPlanType.Name = "comboPlanType";
 			this.comboPlanType.Size = new System.Drawing.Size(286, 21);

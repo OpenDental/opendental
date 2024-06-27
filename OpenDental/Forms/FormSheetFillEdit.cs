@@ -683,6 +683,16 @@ namespace OpenDental {
 				textShowInTerminal.Text=SheetCur.ShowInTerminal.ToString();
 			}
 			LoadImages();
+			//We need to double check any sheet Input, Output, and Static Text fields for growth behavior. If this sheet was sent over as a webform, the height for a specific field may have been adjusted to conform to a web or mobile web view. If the height was adjusted, we need to re-measure and adjust these fields once they are retreived in OD.
+			for(int i=0;i<SheetCur.SheetFields.Count;i++) {
+				if(!SheetCur.SheetFields[i].FieldType.In(SheetFieldType.InputField,SheetFieldType.OutputText,SheetFieldType.StaticText)) {
+					continue;
+				}
+				if(!SheetCur.SheetFields[i].GrowthBehavior.In(GrowthBehaviorEnum.DownGlobal,GrowthBehaviorEnum.DownLocal)) {
+					continue;
+				}
+				ResizeTextBox(SheetCur.SheetFields[i],SheetCur.SheetFields[i].FieldValue);
+			}
 			string strErr=LayoutFields();
 			if(!string.IsNullOrWhiteSpace(strErr)) {
 				MsgBox.Show(this,strErr);//An invalid SheetField was repaired.
@@ -1115,7 +1125,9 @@ namespace OpenDental {
 					x2:xPosArrowStart-LayoutManager.ScaleF(6),
 					y2:yPosArrowStart-LayoutManager.ScaleF(1.5f));
 				//combobox has no font options like fontname, size, color, bold, or align
-				using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(8.25f));
+				//We need the size of the text to scale with the height of the combobox. This is to match old behavior. Comboboxes have a default size when added, and we want it to look like 11 at that height.
+				//A static textbox field has a default font size of 11 and a height of 19. To create consistency with comboBoxes, we take the default height of the comboBox 19 and multiply it by 0.58 (rounded) = 11 font size.
+				using Font font=new Font(FontFamily.GenericSansSerif,SheetCur.SheetFields[i].Height*.58f);
 				string str=SheetFields.GetComboSelectedOption(SheetCur.SheetFields[i]);
 				g.DrawString(str,font,Brushes.Black,rectangle);
 			}
@@ -1296,7 +1308,7 @@ namespace OpenDental {
 			sheetField.FieldValue=textBox.Text;
 			//int scroll=panelScroll.VerticalScroll.Value;
 			if(sheetField.GrowthBehavior!=GrowthBehaviorEnum.None){
-				ResizeTextBox(textBox,sheetField,sheetField.FieldValue);
+				ResizeTextBox(sheetField,sheetField.FieldValue,textBox);
 			}
 			if(textBox.IsDlgOpen) {
 				return;
@@ -1326,7 +1338,7 @@ namespace OpenDental {
 			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.None){
 				return;
 			}
-			ResizeTextBox(textBox,sheetField,fieldValue);
+			ResizeTextBox(sheetField,fieldValue,textBox);
 		}
 
 		private void timerChangeSaveButtonText(object sender,EventArgs e) {
@@ -1885,8 +1897,8 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>For resizing textBoxes with Growth Behavior set to DownLocal or DownGlobal</summary>
-		private void ResizeTextBox(ODtextBox textBox,SheetField sheetField,string fieldValue){ 
+		///<summary>For resizing textBoxes with Growth Behavior set to DownLocal or DownGlobal. Also necessary on load to re-adjust any webform sheetfield height adjustments to Input, Output, and StaticText fields that had Growth Behavior applied.</summary>
+		private void ResizeTextBox(SheetField sheetField,string fieldValue,ODtextBox textBox=null) { 
 			FontStyle fontstyle=FontStyle.Regular;
 			if(sheetField.FontIsBold){
 				fontstyle=FontStyle.Bold;
@@ -1903,7 +1915,9 @@ namespace OpenDental {
 			//calculate growth in 96dpi
 			int amountOfGrowth=calcH-sheetField.Height;
 			sheetField.Height=calcH;
-			LayoutManager.MoveHeight(textBox,LayoutManager.Scale(calcH));
+			if(textBox!=null){
+				LayoutManager.MoveHeight(textBox,LayoutManager.Scale(calcH));
+			}
 			//Growth of entire form.
 			//seems like we should instead be changing the sheet height, but that's probably handled somewhere else.
 			LayoutManager.MoveHeight(panelMain,panelMain.Height+amountOfGrowth);
