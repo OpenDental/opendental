@@ -235,14 +235,16 @@ namespace OpenDentBusiness {
 			string comboChoice=field.FieldValue.Split(';')[0];
 			string fontName=(string.IsNullOrEmpty(sheet.FontName) ? FontFamily.GenericMonospace.ToString() : sheet.FontName);
 			if(gx==null){
-				Font font=new Font(fontName,field.Height-7,FontStyle.Regular);
+				//The 0.58 is to make it scale with height of the combobox.
+				//See discussion over in FormSheetFillEdit.Paint.
+				Font font=new Font(fontName,field.Height*0.58f,FontStyle.Regular);
 				Rectangle bounds=new Rectangle(field.XPos,field.YPos-_yPosPrint,field.Width,field.Height);
 				GraphicsHelper.DrawString(g,comboChoice,font,Brushes.Black,bounds,HorizontalAlignment.Left);
 				font.Dispose();
 				font=null;
 			}
 			else{
-				XFont xfont=new XFont(fontName,field.Height-10,XFontStyle.Regular);
+				XFont xfont=new XFont(fontName,field.Height*0.58f,XFontStyle.Regular);
 				RectangleF rect=new RectangleF(field.XPos,field.YPos-_yPosPrint,field.Width,field.Height);
 				GraphicsHelper.DrawStringX(gx,comboChoice,xfont,XBrushes.Black,rect,HorizontalAlignment.Left);
 				xfont=null;

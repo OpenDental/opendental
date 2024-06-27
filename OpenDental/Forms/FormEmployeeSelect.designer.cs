@@ -165,7 +165,6 @@ namespace OpenDental {
 			this.textSearch.Name = "textSearch";
 			this.textSearch.Size = new System.Drawing.Size(179, 20);
 			this.textSearch.TabIndex = 0;
-			this.textSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textSearch_KeyUp);
 			// 
 			// label2
 			// 

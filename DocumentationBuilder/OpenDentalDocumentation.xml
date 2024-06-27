@@ -1012,7 +1012,7 @@
       <summary>Description of this view.  Gets displayed in Appt module.</summary>
     </column>
     <column order="2" name="ItemOrder" type="smallint">
-      <summary>0-based order to display in lists. Every view must have a unique itemorder, but it is acceptable to have some missing itemorders in the sequence.</summary>
+      <summary>0-based order to display in lists. This is unique per clinic. So this does allow duplicate numbers if they are in different clinics.</summary>
     </column>
     <column order="3" name="RowsPerIncr" type="tinyint">
       <summary>Number of rows per time increment.  Usually 1 or 2.  Programming note: Value updated to ApptDrawing.RowsPerIncr to track current state.</summary>
