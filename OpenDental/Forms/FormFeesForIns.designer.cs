@@ -188,9 +188,9 @@ namespace OpenDental {
 			this.butChangeFeeSchedule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butChangeFeeSchedule.Location = new System.Drawing.Point(578, 662);
 			this.butChangeFeeSchedule.Name = "butChangeFeeSchedule";
-			this.butChangeFeeSchedule.Size = new System.Drawing.Size(143, 24);
+			this.butChangeFeeSchedule.Size = new System.Drawing.Size(74, 24);
 			this.butChangeFeeSchedule.TabIndex = 2;
-			this.butChangeFeeSchedule.Text = "Change Fee Schedule";
+			this.butChangeFeeSchedule.Text = "Change";
 			this.butChangeFeeSchedule.Click += new System.EventHandler(this.butChangeFeeSchedule_Click);
 			// 
 			// butPrint
@@ -236,9 +236,9 @@ namespace OpenDental {
 			this.butChangeInsPlanType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butChangeInsPlanType.Location = new System.Drawing.Point(578, 635);
 			this.butChangeInsPlanType.Name = "butChangeInsPlanType";
-			this.butChangeInsPlanType.Size = new System.Drawing.Size(143, 24);
+			this.butChangeInsPlanType.Size = new System.Drawing.Size(74, 24);
 			this.butChangeInsPlanType.TabIndex = 33;
-			this.butChangeInsPlanType.Text = "Change Ins. Plan Type";
+			this.butChangeInsPlanType.Text = "Change";
 			this.butChangeInsPlanType.Click += new System.EventHandler(this.butChangeInsPlanType_Click);
 			// 
 			// label8

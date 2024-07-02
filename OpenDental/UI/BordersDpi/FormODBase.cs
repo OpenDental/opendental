@@ -72,7 +72,7 @@ namespace OpenDental {
 		///<summary>When using UIManager, this is the container for the canvas and all controls. It replaces PanelClient and the client area of the form.</summary>
 		public ElementHost ElementHostUI;
 		///<summary>If isMouseDown, then one of these is used to specify where.</summary>
-		private EnumMouseDownRegion _enumMouseDownRegion;
+		protected EnumMouseDownRegion _enumMouseDownRegion;
 		///<summary>Dispose handled automatically when this form closes.</summary>
 		private FormSnap _formSnap;
 		///<summary>The circle around the ?. Disposed.</summary>
@@ -903,7 +903,7 @@ namespace OpenDental {
 		}
 
 		///<summary>If isMouseDown, then one of these is used to specify where.</summary>
-		private enum EnumMouseDownRegion{
+		protected enum EnumMouseDownRegion{
 			///<summary>Dragging entire form</summary>
 			Title,
 			Buttons,
@@ -945,7 +945,7 @@ namespace OpenDental {
 			PanelBorders.Invalidate();
 		}
 
-		private void PanelBorders_MouseDown(object sender, MouseEventArgs e){
+		protected void PanelBorders_MouseDown(object sender, MouseEventArgs e){
 			if(IsBorderLocked){
 				return;
 			}

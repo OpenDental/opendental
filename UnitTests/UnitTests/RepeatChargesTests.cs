@@ -798,5 +798,49 @@ namespace UnitTests.RepeatCharges_Tests {
 			//Assertion
 			Assert.AreEqual(null,proc?.CodeNum);//proc takes repeatCharge.ProcCode, so it should be the same.
 		}
+
+		[TestMethod]
+		public void RepeatCharges_GetBillingDatesHelper_BillingUseBillingCycleDayOff() {
+			PrefT.UpdateBool(PrefName.BillingUseBillingCycleDay,false);
+			//Create a monthly repeating charge that started a long time ago with a BillingCycleDay.
+			RepeatCharge repeatCharge=new RepeatCharge();
+			repeatCharge.DateStart=new DateTime(2021,11,15);
+			repeatCharge.Frequency=EnumRepeatChargeFrequency.Monthly;
+			//Invoke RepeatCharges.GetBillingDatesHelper() as if it was before the 15th of the current month.
+			DateTime dateTimeRun=new DateTime(2024,07,02);
+			//Act like the current patient has a billing cycle day set to the 1st of the month.
+			//This scenario would never happen but it proves a point that this unit test is trying to make.
+			int billingCycleDay=1;//This should get ignored since BillingUseBillingCycleDay is set to false.
+			List<DateTime> listDateTimesActual=RepeatCharges.GetBillingDatesHelper(repeatCharge,dateTimeRun,billingCycleDay);
+			List<DateTime> listDateTimesExpected=new List<DateTime>() {
+				new DateTime(2024,05,15),
+				new DateTime(2024,06,15),
+			};
+			Assert.AreEqual(2,listDateTimesActual.Count);
+			Assert.IsTrue(listDateTimesExpected.Contains(listDateTimesActual[0]));
+			Assert.IsTrue(listDateTimesExpected.Contains(listDateTimesActual[1]));
+		}
+
+		[TestMethod]
+		public void RepeatCharges_GetBillingDatesHelper_BillingUseBillingCycleDayOn() {
+			PrefT.UpdateBool(PrefName.BillingUseBillingCycleDay,true);
+			//Create a monthly repeating charge that started a long time ago with a BillingCycleDay.
+			RepeatCharge repeatCharge=new RepeatCharge();
+			repeatCharge.DateStart=new DateTime(2021,11,15);
+			repeatCharge.Frequency=EnumRepeatChargeFrequency.Monthly;
+			//Invoke RepeatCharges.GetBillingDatesHelper() as if it was before the 15th of the current month.
+			DateTime dateTimeRun=new DateTime(2024,07,02);
+			//Patient has a billing cycle day set to the 1st of the month.
+			int billingCycleDay=1;
+			List<DateTime> listDateTimesActual=RepeatCharges.GetBillingDatesHelper(repeatCharge,dateTimeRun,billingCycleDay);
+			List<DateTime> listDateTimesExpected=new List<DateTime>() {
+				new DateTime(2024,06,01),
+				new DateTime(2024,07,01),
+			};
+			Assert.AreEqual(2,listDateTimesActual.Count);
+			Assert.IsTrue(listDateTimesExpected.Contains(listDateTimesActual[0]));
+			Assert.IsTrue(listDateTimesExpected.Contains(listDateTimesActual[1]));
+		}
+
 	}
 }

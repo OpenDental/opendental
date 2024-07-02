@@ -11,6 +11,7 @@ namespace OpenDentBusiness.OpenAi {
 	public class OpenAiChatSession {
 		#region Public Properties
 		public WebChatSession ChatSession;
+		public EventHandler<SendInfo> OnSendStatusChanged=null;
 		#endregion
 		#region Private Properties
 		///<summary>Values come from preference.</summary>
@@ -20,8 +21,8 @@ namespace OpenDentBusiness.OpenAi {
 		///<summary>Chat thread, not a processing thread.</summary>
 		private OAIThread _thread;
 		private bool _isInitilized => (_thread!=null && ChatSession!=null && !_listAssistantIds.IsNullOrEmpty() && _additionalInstructions!=null);
-		private HttpClient _odSearchClient = new HttpClient() {
-			BaseAddress = new Uri("https://search.opendental.com/")
+		private HttpClient _odSearchClient=new HttpClient() {
+			BaseAddress=new Uri("https://search.opendental.com/")
 		};
 		#endregion
 
@@ -30,32 +31,46 @@ namespace OpenDentBusiness.OpenAi {
 			_additionalInstructions=WebChatPrefs.GetString(WebChatPrefName.OpenAiAdditionalInstructions);
 		}
 
+		///<summary>Translates the description before calling the OnSendStatusChanged event.</summary>
+		private void ReportSendStatus(SendStatus status,string description) {
+			SendInfo sendInfo=new SendInfo();
+			sendInfo.Status=status;
+			sendInfo.Description=Lans.g(this,description);
+			OnSendStatusChanged?.Invoke(this,sendInfo);
+		}
+
 		#region Public Methods
 		///<summary>Returns an error string if there was an issue, otherwise null.</summary>
-		public async Task<string> SendMessagesAsync(string assistantId,params string[] arrayMessages) {
+		public async Task<string> SendMessagesAsync(string assistantId,string msg) {
 			try {
-				for(int i=0;i<arrayMessages.Length;i++) {
-					string msg=arrayMessages[i].Trim();
-					if(_isInitilized) {
-						await OpenAiClient.Inst.CreateMessage(_thread.Id,msg);
-					}
-					else if(i>0) {//Not initilized and we are past the first message, initilization must have failed.
-						return Lans.g(this,"Failed to initilize OpenAI chat session.");
-					}
-					else {
-						await Initialize(msg);
-					}
-					InsertWebChatSessionMsg(msg,WebChatMessageType.Technician);
+				if(ChatSession==null) {
+					ReportSendStatus(SendStatus.InitSession,"Initializing AI chat session");
+					InitializeWebChatSession(msg);
 				}
+				InsertWebChatSessionMsg(msg,WebChatMessageType.Technician);
+				ReportSendStatus(SendStatus.QuestionSaved,"Saved tech question");
+				if(_thread==null) {
+					ReportSendStatus(SendStatus.InitThread,"Initializing AI chat thread");
+					await InitializeOpenAiThread(msg);//The first message is stored in WebChatSession.QuestionText
+				}
+				if(!_isInitilized) {
+					return Lans.g(this,"Failed to initilize OpenAI chat session.");
+				}
+				ReportSendStatus(SendStatus.SendingToAI,"Sending tech question to AI");
+				await OpenAiClient.Inst.CreateMessage(_thread.Id,msg);
+				ReportSendStatus(SendStatus.AwaitingResponse,"Waiting for response from AI");
 				if(await PollForRunCompletion(await OpenAiClient.Inst.CreateRun(_thread.Id,assistantId,_additionalInstructions))) {
 					var response=await OpenAiClient.Inst.GetListMessages(_thread.Id);
 					string aiResponse=response.Data.Last().Content.Last().Text.Value;
-					InsertWebChatSessionMsg(aiResponse,WebChatMessageType.Ai);
+					InsertWebChatSessionMsg(aiResponse,WebChatMessageType.AI);
 					return null;//No errors
 				}
 			}
 			catch(Exception ex) {
 				return Lans.g(this,$"An error occured: {ex.Message}");
+			}
+			finally {
+				ReportSendStatus(SendStatus.Finished,"");
 			}
 			return Lans.g(this,$"The session was initilized, but the response could not be retrieved.");
 		}
@@ -76,11 +91,16 @@ namespace OpenDentBusiness.OpenAi {
 		#endregion
 
 		#region Private Methods
-		///<summary>Throws Exception. Returns true if all mission-critical properties are initialized, otherwise false.</summary>
-		private async Task<bool> Initialize(string msg) {
+		///<summary>Throws Exception. Returns true if OpenAi's thread is created, otherwise false.</summary>
+		private async Task<bool> InitializeOpenAiThread(string msg) {
 			if(_thread==null) {
 				_thread=await OpenAiClient.Inst.CreateThread(msg);
 			}
+			return _thread!=null;
+		}
+
+		///<summary>Creates a ChatSession if one has not already been created.</summary>
+		private void InitializeWebChatSession(string msg) {
 			if(ChatSession==null) {
 				ChatSession=new WebChatSession() {
 					TechName=Security.CurUser.UserName,
@@ -97,7 +117,6 @@ namespace OpenDentBusiness.OpenAi {
 				};
 				ChatSession.WebChatSessionNum=WebChatSessions.Insert(ChatSession);
 			}
-			return _isInitilized;
 		}
 
 		///<summary>Throws Exception. Polls OpenAI for job status changes. Returns true when run.Status is completed, otherwise false.</summary>
@@ -122,6 +141,7 @@ namespace OpenDentBusiness.OpenAi {
 						case OpenAiRunStatus.cancelled:
 						case OpenAiRunStatus.failed:
 						case OpenAiRunStatus.expired:
+							ReportSendStatus(SendStatus.Error, $"An unexpected status has occured: {run.Status}");
 							return false;
 					}
 				}
@@ -140,6 +160,7 @@ namespace OpenDentBusiness.OpenAi {
 			foreach(OAIToolCall toolCall in run.RequiredAction.SubmitToolOutputs.ToolCalls) {
 				switch(toolCall.Function.Name) {
 					case OpenAiFunctionName.get_manual_url:
+						ReportSendStatus(SendStatus.RetrievingManualPages,"Retrieving manual pages from Open Dental");
 						OAIManualUrlFunctionArgs args=JsonConvert.DeserializeObject<OAIManualUrlFunctionArgs>(toolCall.Function.Arguments);
 						string version=args.Version?.ToString().Replace(".", "")??"";
 						string searchUrl=$"manual{version}/index?searchTerm={HttpUtility.UrlEncode(args.Keywords)}";
@@ -149,7 +170,8 @@ namespace OpenDentBusiness.OpenAi {
 								.Take(3).Select(page => 
 									$"https://www.opendental.com/manual{version}/{page.FileName}.html"
 								).ToList();
-							await OpenAiClient.Inst.SubmitToolResult(_thread.Id, run.Id, toolCall.Id, string.Join(",", listPages));
+							ReportSendStatus(SendStatus.RetrievingManualPages, "Providing manual pages to AI");
+							await OpenAiClient.Inst.SubmitToolResult(_thread.Id,run.Id,toolCall.Id,string.Join(",",listPages));
 							return true;
 						}
 						break;
@@ -193,4 +215,22 @@ namespace OpenDentBusiness.OpenAi {
 		///<summary>Output to site folder, but has TOC tree on the left and uses manual style.</summary>
 		SiteWithTree
 	}
+
+	public class SendInfo {
+		public SendStatus Status;
+		///<summary>The human-readable description of the Status.</summary>
+		public string Description;
+	}
+
+	public enum SendStatus {
+		InitSession,
+		QuestionSaved,
+		InitThread,
+		SendingToAI,
+		AwaitingResponse,
+		RetrievingManualPages,
+		Error,
+		Finished
+	}
+
 }

@@ -7,12 +7,12 @@ using System.Text;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class ChildRooms{
+		/*
 		//If this table type will exist as cached data, uncomment the Cache Pattern region below and edit.
 		#region Cache Pattern
 		//This region can be eliminated if this is not a table type with cached data.
 		//If leaving this region in place, be sure to add GetTableFromCache and FillCacheFromTable to the Cache.cs file with all the other Cache types.
 		//Also, consider making an invalid type for this class in Cache.GetAllCachedInvalidTypes() if needed.
-
 		private class ChildRoomCache : CacheListAbs<ChildRoom> {
 			protected override List<ChildRoom> GetCacheFromDb() {
 				string command="SELECT * FROM childroom";
@@ -99,13 +99,13 @@ namespace OpenDentBusiness{
 			return _childRoomCache.GetTableFromCache(doRefreshCache);
 		}
 		#endregion Cache Pattern
+		*/
 
-		public static string GetRoomId(long childRoomNum){
-			//No need to check MiddleTierRole; no call to db.
-			ChildRoom childRoom=GetFirstOrDefault(x=>x.ChildRoomNum==childRoomNum);
-			if(childRoom is null){
-				return "";
+		public static string GetRoomId(long childRoomNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),childRoomNum);
 			}
+			ChildRoom childRoom=Crud.ChildRoomCrud.SelectOne(childRoomNum);
 			return childRoom.RoomId;
 		}
 		

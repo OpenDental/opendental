@@ -23,8 +23,24 @@ namespace OpenDentBusiness{
 
 		/// <summary>Returns true if either the current user created this task, or if they have permission to edit read only tasks, otherwise false.</summary>
 		public static bool IsAuthorizedOrOwner(Task task) {
-			bool isAuthorized=Security.IsAuthorized(EnumPermType.EditReadOnlyTasks, true);
-			bool isOwner=task.UserNum==Security.CurUser.UserNum;
+			bool isAuthorized=Security.IsAuthorized(EnumPermType.EditReadOnlyTasks,suppressMessage:true);
+			//The code below is copied from FormTaskEdit.Load.
+			bool isOwner = true;
+			if(task.UserNum!=Security.CurUser.UserNum) {//current user didn't write this task, so block them.
+				isOwner=false;//Delete will only be enabled if the user has the TaskEdit and TaskNoteEdit permissions.
+			}
+			if(task.TaskListNum!=Security.CurUser.TaskListInBox && task.TaskListNum!=-1) {//the task is not in the logged-in user's inbox or being created
+				isOwner=false;
+			}
+			if(isOwner) {//this just allows getting the NoteList less often
+				List<TaskNote> listTaskNotes = TaskNotes.GetForTask(task.TaskNum);//so we can check so see if other users have added notes
+				for(int i = 0;i<listTaskNotes.Count;i++) {
+					if(Security.CurUser.UserNum!=listTaskNotes[i].UserNum) {
+						isOwner=false;
+						break;
+					}
+				}
+			}
 			return isAuthorized||isOwner;
 		}
 

@@ -25,6 +25,7 @@ namespace OpenDental{
 		}
 
 		private void FormEmployeeSelect_Load(object sender, System.EventArgs e) {
+			FillGrid();
 			SetFilterControlsAndAction(() => FillGrid(),500,textSearch);
 			Height=System.Windows.Forms.Screen.FromControl(this).WorkingArea.Height-2;
 			Top=2;

@@ -133,11 +133,9 @@ namespace OpenDentBusiness{
 			return Crud.ChildCrud.SelectMany(command);
 		}
 
-		public static string GetName(long childNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),childNum);
-			}
-			Child child=Crud.ChildCrud.SelectOne(childNum);
+		///<summary>Returns the full name of the child passed in. Returns an empty string if child is null.</summary>
+		public static string GetName(Child child) {
+			//No remoting role check; no call to db
 			if(child==null) {
 				return "";
 			}

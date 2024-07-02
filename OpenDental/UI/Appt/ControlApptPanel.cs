@@ -4462,6 +4462,11 @@ namespace OpenDental.UI{
 							ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),
 								imageFolder.Substring(0,1).ToUpper(),
 								imageFolder,""));
+						object[] objectArray = { patNum, bitmapPatPict?.Clone() };
+						if(Plugins.HookMethod(null,"ControlApptPanel.BubbleDraw_bitmapPatPict",objectArray)){
+							bitmapPatPict?.Dispose();
+							bitmapPatPict=(Bitmap)objectArray[1];
+						}
 					}
 					catch(Exception ex) { 
 						ex.DoNothing();

@@ -43,16 +43,27 @@ namespace OpenDental {
 				return;
 			}
 			ChildRoomCur.RoomId=textRoomId.Text;
-			ChildRoomCur.Ratio=Math.Round(textVDoubleRatio.Value,1);//Round to 1 decimal
+			double ratio=Math.Round(textVDoubleRatio.Value,1);//Round to 1 decimal
+			bool ratioHasChanged=ChildRoomCur.Ratio!=ratio;
+			ChildRoomCur.Ratio=ratio;
 			ChildRoomCur.Notes=textNotes.Text;
 			if(ChildRoomCur.IsNew) {
-				ChildRooms.Insert(ChildRoomCur);
+				ChildRoomCur.ChildRoomNum=ChildRooms.Insert(ChildRoomCur);//Hold on to PK for log entry
 			}
 			else {
 				ChildRooms.Update(ChildRoomCur);
 			}
+			//If the ratio has changed make a ChildRoomLog entry
+			if(ratioHasChanged) {
+				ChildRoomLog childRoomLog=new ChildRoomLog();
+				childRoomLog.RatioChange=ratio;
+				childRoomLog.ChildRoomNum=ChildRoomCur.ChildRoomNum;
+				childRoomLog.DateTEntered=DateTime.Now;
+				childRoomLog.DateTDisplayed=DateTime.Now;
+				//ChildNum and ChildTeacherNum remain 0 as this is specifically a RatioChange entry
+				ChildRoomLogs.Insert(childRoomLog);
+			}
 			IsDialogOK=true;
-			DataValid.SetInvalid(InvalidType.Children);
 		}
 
 

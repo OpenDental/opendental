@@ -163,7 +163,7 @@ namespace OpenDentBusiness {
 			StaticTextFieldDependency staticTextFieldDependency=StaticTextData.GetStaticTextDependencies(listEnumStaticTextFields);
 			SheetParameter sheetParameterAptNum=GetParamByName(sheet,"AptNum");
 			long aptNum=0;
-			if(sheetParameterAptNum!=null && sheetParameterAptNum.ParamValue!=null && !staticTextData.ListAppts.IsNullOrEmpty()) {
+			if(sheetParameterAptNum!=null && sheetParameterAptNum.ParamValue!=null && staticTextData!=null && !staticTextData.ListAppts.IsNullOrEmpty()) {
 				aptNum=PIn.Long(sheetParameterAptNum.ParamValue.ToString(),hasExceptions:false);
 			}
 			List<StaticTextReplacement> listStaticTextReplacements=GetStaticTextReplacements(listEnumStaticTextFields,patient,family,staticTextData,staticTextFieldDependency,aptNum);
@@ -728,10 +728,10 @@ namespace OpenDentBusiness {
 							ins2Percentages+=",  ";
 						}
 						ins2Percentages+=CovCats.GetDesc(benefitList[j].CovCatNum)+" "+benefitList[j].Percent.ToString()+"%";
-						ins2FreqBW=Benefits.GetFrequencyDisplay(FrequencyType.BW,benefitList,plan.PlanNum);
-						ins2FreqExams=Benefits.GetFrequencyDisplay(FrequencyType.Exam,benefitList,plan.PlanNum);
-						ins2FreqPanoFMX=Benefits.GetFrequencyDisplay(FrequencyType.PanoFMX,benefitList,plan.PlanNum);
 					}
+					ins2FreqBW=Benefits.GetFrequencyDisplay(FrequencyType.BW,benefitList,plan.PlanNum);
+					ins2FreqExams=Benefits.GetFrequencyDisplay(FrequencyType.Exam,benefitList,plan.PlanNum);
+					ins2FreqPanoFMX=Benefits.GetFrequencyDisplay(FrequencyType.PanoFMX,benefitList,plan.PlanNum);
 					ins2Employer=Employers.GetEmployer(plan.EmployerNum).EmpName;//blank if no Employer listed
 				}
 				#endregion

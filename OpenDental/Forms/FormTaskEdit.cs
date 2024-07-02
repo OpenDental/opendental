@@ -119,6 +119,7 @@ namespace OpenDental {
 				//textDescript always editable
 			}
 			else {//trying to edit an existing task, so need to block some things
+				//The code below is duplicated in Tasks.IsAuthorizedOrOwner for when we need to check ownership again.
 				bool isTaskForCurUser=true;
 				if(TaskCur.UserNum!=Security.CurUser.UserNum) {//current user didn't write this task, so block them.
 					isTaskForCurUser=false;//Delete will only be enabled if the user has the TaskEdit and TaskNoteEdit permissions.
@@ -138,6 +139,9 @@ namespace OpenDental {
 				if(!Security.IsAuthorized(EnumPermType.TaskDelete,true)) {//need to block them if they don't have TaskDelete permission
 					butDelete.Enabled=false;
 				}
+				//The statement below is actually permissive, not restrictive.
+				//The intent is that when a user does not have the powerful TaskEdit permission, 
+				//that they can still edit some tasks in special situations, like when it's their own.
 				if(!isTaskForCurUser && !Security.IsAuthorized(EnumPermType.TaskEdit,true)) {
 					butAutoNote.Enabled=false;
 					butEditAutoNote.Enabled=false;

@@ -3038,7 +3038,7 @@ namespace OpenDental{
 					splitContainerSuperClones.Visible=true;
 					if(showPanelForSuperfamilies) {
 						List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
-						_widthGridSuperFam=listDisplayFields.Sum(x=>x.ColumnWidth)+LayoutManager.Scale(SystemInformation.VerticalScrollBarWidth);
+						_widthGridSuperFam=LayoutManager.Scale(listDisplayFields.Sum(x=>x.ColumnWidth)+SystemInformation.VerticalScrollBarWidth);
 						LayoutManager.MoveWidth(splitContainerSuperClones,_widthGridSuperFam);
 					}
 					LayoutManager.MoveLocation(gridIns,new Point(splitContainerSuperClones.Right+2,gridIns.Top));

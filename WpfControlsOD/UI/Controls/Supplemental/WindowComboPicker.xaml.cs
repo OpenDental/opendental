@@ -29,6 +29,7 @@ Jordan is the only one allowed to edit this file.
 		public List<string> ListAbbrevs;
 		///<summary>The initial point where the UL corner of this picker window should start, in Desktop coordinates.  It might grow up from here if it runs out of room below. This point is not in DIPs, but is actual pixels of the entire desktop.  So it could be a very big number if on the righthand monitor at high dpi.</summary>
 		public Point PointInitial;
+		public System.Windows.Controls.Primitives.ScrollBar ScrollBar;
 		#endregion Fields - Public
 
 		#region Fields - Private
@@ -340,6 +341,7 @@ Jordan is the only one allowed to edit this file.
 			Point pointDIP=new Point(pointNewDesktop.X/scaleWindows,pointNewDesktop.Y/scaleWindows);
 			Left=pointDIP.X;
 			Top=pointDIP.Y;
+			ScrollBar = scrollViewer.Template.FindName("PART_VerticalScrollBar", scrollViewer) as System.Windows.Controls.Primitives.ScrollBar;
 		}
 
 		/*

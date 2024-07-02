@@ -268,9 +268,13 @@ namespace OpenDentBusiness {
 				}
 				catch(WebException wex) {
 					string res="";
-					using(var sr=new StreamReader(((HttpWebResponse)wex.Response).GetResponseStream())) {
-						res=sr.ReadToEnd();
-						sr.Close();
+					HttpWebResponse httpWebResponse=(HttpWebResponse)wex.Response;
+					if(httpWebResponse!=null) {
+						Stream stream=httpWebResponse.GetResponseStream();
+						using(StreamReader streamReader=new StreamReader(stream)) {
+							res=streamReader.ReadToEnd();
+							streamReader.Close();
+						}
 					}
 					if(string.IsNullOrWhiteSpace(res)) {
 						//The response didn't contain a body. Unlikely that this would happen but to be safe we can still throw if the error is null

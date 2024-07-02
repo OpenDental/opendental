@@ -557,8 +557,8 @@ namespace OpenDental{
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);//#2
 			//the above line can trigger a resize due to dpi change, so once more:
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);//#3
-			Point pointMousePos=MousePosition;//for debugging
-			formImageFloat.SimulateMouseDown(pointMousePos,formImageFloat.Bounds);
+			Point pointMousePos=Cursor.Position;//for debugging
+			formImageFloat.SimulateMouseDown(pointMousePos,formImageFloat.DesktopBounds);
 			controlImageDisplay.SetZoomSliderToFit();
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
 			controlImageDock.SetControlImageDisplay(null);//this unfortunately clears the selected item in the image selector

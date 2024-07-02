@@ -4565,6 +4565,20 @@ namespace OpenDental.InternalTools.Job_Manager {
 		private void panelLeftTop_SizeChanged(object sender,EventArgs e) {
 			treeRelatedJobs.Height=panelLeftTop.Height-treeRelatedJobs.Top-2;
 		}
+
+		private void gridCustomers_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+			if(!(gridCustomers.ListGridRows[e.Row].Tag is Patient)) {
+				return;
+			}
+			Patient patient=(Patient)gridCustomers.ListGridRows[e.Row].Tag;
+			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
+			frmPatientSelect.PatientInitial=patient;
+			frmPatientSelect.ShowDialog();
+			if(frmPatientSelect.IsDialogOK) {
+				Patient patientSelected=Patients.GetPat(frmPatientSelect.PatNumSelected);
+				GlobalFormOpenDental.PatientSelected(patientSelected,true);
+			}
+		}
 	}//end class
 
 }//end namespace

@@ -155,5 +155,14 @@ namespace OpenDentBusiness{
 			return Crud.ChildTeacherCrud.SelectOne(childTeacherNum);
 		}
 
+		public static List<ChildTeacher> GetAll() {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildTeacher>>(MethodBase.GetCurrentMethod());
+			}
+			string command="SELECT * FROM childteacher";
+			return Crud.ChildTeacherCrud.SelectMany(command);
+		}
+
+
 	}
 }

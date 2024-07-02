@@ -160,6 +160,7 @@
 			this.gridCustomers.TabIndex = 262;
 			this.gridCustomers.Title = "Customers";
 			this.gridCustomers.TranslationName = "FormTaskEdit";
+			this.gridCustomers.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridCustomers_CellDoubleClick);
 			this.gridCustomers.TitleAddClick += new System.EventHandler(this.gridCustomers_TitleAddClick);
 			// 
 			// gridFiles

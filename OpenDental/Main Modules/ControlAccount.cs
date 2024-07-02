@@ -4220,6 +4220,7 @@ namespace OpenDental {
 			procedure.DateTP=DateTime.Now;
 			procedure.PatNum=_patient.PatNum;
 			procedure.ProcDate=DateTime.Now;
+			procedure.DateComplete=DateTime.Now;
 			procedure.ToothRange="";
 			procedure.PlaceService=Clinics.GetPlaceService(procedure.ClinicNum);
 			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth)) {

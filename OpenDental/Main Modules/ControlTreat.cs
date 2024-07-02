@@ -3367,7 +3367,10 @@ namespace OpenDental{
 		/// <summary>Return the clinic specific ClearningHouse based on the preauth the user clicked on. Can return null.</summary>
 		private Clearinghouse GetClearingHouseForClaim() {
 			//SelectionMode is set to OneRow
-			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
+			int idxPreAuthSelected=gridPreAuth.GetSelectedIndex();
+			if(idxPreAuthSelected==-1) {
+				return null;
+			}
 			Claim claimPreAuth=(Claim)_arrayListPreAuth[idxPreAuthSelected];
 			//Finding the clearing house settings for the selected preauth's clinic is from ClaimConnect.cs GetClearingHouseForClaim(). This method is private so the code was copied.
 			InsPlan insPlan=InsPlans.GetPlan(claimPreAuth.PlanNum,null);

@@ -26,7 +26,7 @@ namespace OpenDentBusiness.OpenAi {
 		public async Task<OAIThread> CreateThread(List<WebChatMessage> messages) {
 			string content=JsonConvert.SerializeObject(new {
 				messages=messages.Select(message => new {
-					role=(message.MessageType==WebChatMessageType.Ai)?"assistant":"user",
+					role=(message.MessageType==WebChatMessageType.AI)?"assistant":"user",
 					content=message.MessageText
 				}).ToArray()
 			});

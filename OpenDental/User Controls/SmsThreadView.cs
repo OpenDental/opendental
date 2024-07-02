@@ -71,7 +71,7 @@ namespace OpenDental {
 				LayoutManager.MoveLocation(panelScroll,new Point(0,0));
 				return;
 			}
-			int bodyWidth=panelScroll.Width-SystemInformation.VerticalScrollBarWidth;
+			int bodyWidth=GetBodyWidth();
 			int verticalPadding=5;
 			int horizontalMargin=(int)(bodyWidth*0.02);
 			int y=0;
@@ -219,6 +219,9 @@ namespace OpenDental {
 				panelBorder.Controls.Add(panelPadding);
 				AddOrUpdatePanelScrollChildControl(panelBorder);
 				y+=panelBorder.Height;
+				//We set the tags here so that we can update SMS chat bubbles by index in SetLoadingIndicatorMessage(...)
+				panelBorder.Tag=panelPadding;
+				richTextBoxMessage.Tag=panelBorder;
 				//Display 'Delivered'/'Sent' after text message
 				if(labelMessageStatus.Text=="Sent" || labelMessageStatus.Text=="Delivered") {
 					labelMessageStatus.Location=new Point(0,y);
@@ -245,6 +248,41 @@ namespace OpenDental {
 				panelScroll.VerticalScroll.Value=panelScroll.VerticalScroll.Maximum;//Intentionally set twice.
 			}
 			panelScroll.ResumeLayout();
+		}
+
+		///<summary>Updates the last RichTextBox in the view with the given message. Returns false if there are no messages.</summary>
+		public bool UpdateLastRichTextBoxText(string msg) {
+			if(_listSmsThreadToDisplay.IsNullOrEmpty()) {
+				return false;
+			}
+			return UpdateRichTextBoxText(_listSmsThreadToDisplay.Count-1,msg);
+		}
+
+		///<summary>Updates the RichTextBox for the given index and message. Returns false if index is invalid.</summary>
+		public bool UpdateRichTextBoxText(int index,string msg) {
+			RichTextBox[] richTextBoxes=panelScroll.Controls.AsEnumerable<Control>().OfType<RichTextBox>().ToArray();
+			if(!index.Between(0,richTextBoxes.Length-1)) {
+				return false;
+			}
+			RichTextBox richTextBox=richTextBoxes[index];
+			Size size=TextRenderer.MeasureText(msg,panelScroll.Font,
+				new Size((int)(GetBodyWidth()*0.7),Int32.MaxValue),TextFormatFlags.WordBreak|TextFormatFlags.TextBoxControl);
+			richTextBox.Width=size.Width+4;//Extra horizontal padding to ensure that the text will fit when including the border.
+			richTextBox.Height=size.Height+4;//Extra vertical padding to ensure that the text will fit when including the border.
+			if(richTextBox.Tag is Panel panelBorder) {
+				panelBorder.Width= richTextBox.Width+4;
+				panelBorder.Height= richTextBox.Height+4;
+				if(panelBorder.Tag is Panel panelPadding) {
+					panelPadding.Width=panelBorder.Width-2;
+					panelPadding.Height=panelBorder.Height-2;
+				}
+			}
+			richTextBox.Text=msg;
+			return true;
+		}
+
+		public int GetBodyWidth() {
+			return panelScroll.Width-SystemInformation.VerticalScrollBarWidth;
 		}
 
 		private void FlagButton_Click(object sender, EventArgs e) {

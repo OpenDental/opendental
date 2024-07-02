@@ -123,14 +123,6 @@ namespace OpenDentBusiness{
 		#endregion Methods - Get
 		#region Methods - Modify
 		///<summary></summary>
-		public static long Insert(ChildRoomLog childRoomLog){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				childRoomLog.ChildRoomLogNum=Meth.GetLong(MethodBase.GetCurrentMethod(),childRoomLog);
-				return childRoomLog.ChildRoomLogNum;
-			}
-			return Crud.ChildRoomLogCrud.Insert(childRoomLog);
-		}
-		///<summary></summary>
 		public static void Update(ChildRoomLog childRoomLog){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoomLog);
@@ -154,15 +146,25 @@ namespace OpenDentBusiness{
 		#endregion Methods - Misc
 		*/
 
-		///<summary>Get all the logs for a specified ChildRoom.</summary>
-		public static List<ChildRoomLog> GetChildRoomLogsByChildRoomNum(long childRoomNum) {
+		///<summary>Get all the logs for a specified ChildRoom and filtered by the given date.</summary>
+		public static List<ChildRoomLog> GetChildRoomLogs(long childRoomNum,DateTime date) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),childRoomNum);
 			}
-			string command="SELECT * FROM childroomlog WHERE ChildRoomNum="+POut.Long(childRoomNum);
+			string command="SELECT * FROM childroomlog WHERE ChildRoomNum="+POut.Long(childRoomNum)
+				+" AND CAST(DateTDisplayed as DATE)="+POut.Date(date)
+				+" ORDER BY DateTDisplayed";
 			return Crud.ChildRoomLogCrud.SelectMany(command);
 		}
 
+		///<summary></summary>
+		public static long Insert(ChildRoomLog childRoomLog){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				childRoomLog.ChildRoomLogNum=Meth.GetLong(MethodBase.GetCurrentMethod(),childRoomLog);
+				return childRoomLog.ChildRoomLogNum;
+			}
+			return Crud.ChildRoomLogCrud.Insert(childRoomLog);
+		}
 
 	}
 }

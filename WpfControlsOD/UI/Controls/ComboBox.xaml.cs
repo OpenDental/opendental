@@ -701,6 +701,11 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		}
 
 		private void _windowComboPicker_PreviewLeftButtonUp(object sender, MouseButtonEventArgs e){
+			if(_windowComboPicker.ScrollBar!=null//Scrollbar should never be null, even if it's not showing, but just in case
+				&& _windowComboPicker.ScrollBar.IsMouseOver)
+			{
+				return;//If the user is using the scrollbar, don't close the combo picker.
+			}
 			//This prevents clicks from "going through" the item list and clicking on whatever is below the dropdown.
 			e.Handled=true;
 			_windowComboPicker.Close();

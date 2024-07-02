@@ -35,7 +35,7 @@ namespace OpenDentBusiness{
 		///<summary>Date this paysplit was created.  User not allowed to edit.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateEntry)]
 		public DateTime DateEntry;
-		///<summary>FK to definition.DefNum.  Usually 0 unless this is a special unearned split.</summary>
+		///<summary>FK to definition.DefNum. Usually 0 unless this is an Unearned / Prepayment split. If there is no procedure attached to the paysplit, defaults to the type set in Pref PrepaymentUnearnedType. In the paysplit UI, 0=None. When this is set, it defaults to the first one in the list of defs which is typically Prepayment.</summary>
 		public long UnearnedType;
 		///<summary>FK to clinic.ClinicNum.  Can be 0.  Need not match the ClinicNum of the Payment, because a payment can be split between clinics.</summary>
 		public long ClinicNum;

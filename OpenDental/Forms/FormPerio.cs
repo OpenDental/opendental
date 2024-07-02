@@ -688,6 +688,9 @@ namespace OpenDental{
 				return;
 			}
 			ColRow colRow=contrPerio.ColRowSelected;
+			if(colRow.Col==-1 || colRow.Row==-1) {
+				return;
+			}
 			PerioCell perioCell=contrPerio.GetPerioCellFromColRow(colRow);
 			PerioSequenceType perioSequenceType=contrPerio.GetSequenceForColRow(colRow);
 			string perioSequenceTypeAbbr="";
@@ -1393,9 +1396,10 @@ namespace OpenDental{
 		///<summary>When BolaAi is enabled, this button shows instead of the standard listen button. When clicked it launches their exe.</summary>
 		private void butBolaLaunch_Click(object sender, EventArgs e) {
 			string path=Programs.GetProgramPath(ProgramName.BolaAI);
-			if(!path.IsNullOrEmpty() && File.Exists(path)) {
+			string pathExpanded=Environment.ExpandEnvironmentVariables(path);//This will handle %USERPROFILE% in the path
+			if(File.Exists(pathExpanded)) {
 				try {
-					ODFileUtils.ProcessStart(path);
+					ODFileUtils.ProcessStart(pathExpanded);
 				}
 				catch(Exception ex) {
 					MsgBox.Show(this, "There was an error launching Bola AI.");

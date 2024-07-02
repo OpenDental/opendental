@@ -1778,7 +1778,7 @@ namespace OpenDentBusiness {
 		///<summary>YN_DEFAULT_FALSE. Indicates whether prepayments are allowed on TP procedures.</summary>
 		[PrefName(ValueType=PrefValueType.YN_DEFAULT_FALSE)]
 		PrePayAllowedForTpProcs,
-		///<summary>FK to definition.DefNum for PaySplitUnearnedType defcat (29)</summary>
+		///<summary>FK to definition.DefNum for PaySplitUnearnedType defcat (29). Used to set paysplit.UnearnedType.</summary>
 		PrepaymentUnearnedType,
 		///<summary>Prints statements alphabetically by patients last name then first name within the billing window. If false, it will print each
 		///clinic together and then within each clinic, it will be alphabetized.</summary>

@@ -419,7 +419,6 @@ namespace OpenDental.InternalTools.Phones{
 			// FormMap
 			// 
 			this.ClientSize = new System.Drawing.Size(1884, 1042);
-			this.Controls.Add(this.comboEscalationView);
 			this.Controls.Add(this.butZoomFit);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.mapPanel);
@@ -441,6 +440,7 @@ namespace OpenDental.InternalTools.Phones{
 			this.Controls.Add(this.labelCurrentTime);
 			this.Controls.Add(this.labelTriageCoordinator);
 			this.Controls.Add(this.menuMain);
+			this.Controls.Add(this.comboEscalationView);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMap";
 			this.Text = "Call Center Status Map";

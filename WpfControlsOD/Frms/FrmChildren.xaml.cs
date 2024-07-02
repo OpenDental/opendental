@@ -35,6 +35,7 @@ namespace OpenDental {
 
 		private void FillGrid(){
 			List<Child> listChildren=Children.GetAll();
+			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn gridColumn=new GridColumn("First Name",150);
@@ -51,7 +52,6 @@ namespace OpenDental {
 				gridRow.Cells.Add(listChildren[i].FName);
 				gridRow.Cells.Add(listChildren[i].LName);
 				gridRow.Cells.Add(listChildren[i].BirthDate.ToShortDateString());
-				List<ChildRoom> listChildRooms=ChildRooms.GetDeepCopy();
 				ChildRoom childRoom=listChildRooms.Find(x => x.ChildRoomNum==listChildren[i].ChildRoomNumPrimary);
 				if(childRoom!=null) {
 					gridRow.Cells.Add(childRoom.RoomId);

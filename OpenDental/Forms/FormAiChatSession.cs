@@ -5,6 +5,7 @@ using OpenDentBusiness.OpenAi;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -49,6 +50,7 @@ namespace OpenDental {
 				Close();
 				return;
 			}
+			_openAiChatSession.OnSendStatusChanged+=OnSendStatusChanged;
 			try {
 				if(_openAiChatSession.ChatSession!=null) {
 					if(_openAiChatSession.ChatSession.DateTend.Year > 1880) {//Session has ended?
@@ -120,10 +122,14 @@ namespace OpenDental {
 			if(!listSignalods.Exists(x => x.IType==InvalidType.WebChatSessions && x.FKey==_openAiChatSession.ChatSession.WebChatSessionNum)) {
 				return;
 			}
+			RefreshUIFields(UseWaitCursor);//Maintain "..." if waiting for a response while processing signals.
+		}
+
+		private void RefreshUIFields(bool includeLoadingIndicator=false) {
 			_openAiChatSession.ChatSession=WebChatSessions.GetOne(_openAiChatSession.ChatSession.WebChatSessionNum);//Refresh the session in case the owner changed.
 			FillSession();
 			FillGridODNotes();
-			FillMessageThread();
+			FillMessageThread(includeLoadingIndicator);
 			SetTabColor();
 		}
 
@@ -134,7 +140,7 @@ namespace OpenDental {
 			textOwner.Text=_openAiChatSession.ChatSession.TechName;
 		}
 
-		private void FillMessageThread() {
+		private void FillMessageThread(bool includeLoadingIndicator=false) {
 			if(_openAiChatSession.ChatSession==null) {
 				return;
 			}
@@ -154,15 +160,28 @@ namespace OpenDental {
 					new SmsThreadMessage(message.WebChatMessageNum.ToString(),
 						message.DateT,
 						strMessageText,
-						isAlignedLeft:(message.MessageType==WebChatMessageType.Ai),
+						isAlignedLeft:(message.MessageType==WebChatMessageType.AI),
 						isImportant:false,
 						isHighlighted:false,
 						SmsDeliveryStatus.None,
 						message.UserName,
-						isAiMessage:(message.MessageType==WebChatMessageType.Ai),
+						isAiMessage:(message.MessageType==WebChatMessageType.AI),
 						message
 					)
 				);
+			}
+			if(includeLoadingIndicator) {
+				listSmsThreadMessages.Add(
+					new SmsThreadMessage("-1",//message id
+						DateTime.Now,
+						"...",
+						isAlignedLeft:true,
+						isImportant:false,
+						isHighlighted:false,
+						SmsDeliveryStatus.None,
+						null,//username
+						isAiMessage:false
+					));
 			}
 			webChatThread.ListSmsThreadMessages=listSmsThreadMessages;
 			_countMsgsActual=_listWebChatMessages.Count;
@@ -175,15 +194,22 @@ namespace OpenDental {
 			}
 		}
 
-		private async Task<bool> SendMessage(params string[] msgs) {
+		private void OnSendStatusChanged(object sender,SendInfo sendInfo) {
+			if(sendInfo.Status==SendStatus.QuestionSaved) {
+				RefreshUIFields(true);//To display the question in the chat window immediately after it is saved and before awating AI response.
+			}
+			webChatThread.UpdateLastRichTextBoxText(sendInfo.Description+"...");
+		}
+
+		private async Task<bool> SendMessage(string msg) {
 			if(!(comboVersions.SelectedItem is OAIAssistant selectedAssistant)) {
 				return false;
 			}
-			UseWaitCursor=true;
+			UseWaitCursor=true;//We also use this state to determine if we are awaiting a response as needed in ProcessSignalODs(...)
 			butSend.Enabled=false;
 			textChatMessage.Enabled=false;
 			butSend.Text="Loading...";
-			string error=await _openAiChatSession.SendMessagesAsync(selectedAssistant.Id,msgs);
+			string error=await _openAiChatSession.SendMessagesAsync(selectedAssistant.Id,msg);
 			if(!error.IsNullOrEmpty()) {
 				MessageBox.Show(error);
 			}
@@ -234,6 +260,9 @@ namespace OpenDental {
 		}
 
 		private void TakeOwnership() {
+			if(_openAiChatSession.ChatSession==null) {
+				return;
+			}
 			//Refresh the session in case the owner changed in less than the last signal interval.
 			_openAiChatSession.ChatSession=WebChatSessions.GetOne(_openAiChatSession.ChatSession.WebChatSessionNum);
 			bool isOkToTake=true;

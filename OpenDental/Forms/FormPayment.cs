@@ -2946,7 +2946,10 @@ namespace OpenDental {
 			_isCCDeclined=(bool)objectArrayParameters[2];
 			if(_isCCDeclined) {
 				textAmount.Text=0.ToString("f");//So that a declined transaction does not affect account balance
-				_listPaySplits.ForEach(x => x.SplitAmt=0);
+				for(int i=0;i<_listPaySplits.Count;i++) {
+					_listPaySplits[i].SplitAmt=0;
+					_listPaySplits[i].UnearnedType=0;//Set unearned type to "None"
+				}
 				textSplitTotal.Text=0.ToString("f");
 			}
 			if(IsNew) {

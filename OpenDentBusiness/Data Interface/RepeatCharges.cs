@@ -459,12 +459,9 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns 1 or 2 dates to be billed given the date range. Only filtering based on date range has been performed.</summary>
-		private static List<DateTime> GetBillingDatesHelper(RepeatCharge repeatCharge,DateTime dateRun,int billingCycleDay=0) {
+		public static List<DateTime> GetBillingDatesHelper(RepeatCharge repeatCharge,DateTime dateRun,int billingCycleDay=0) {
 			//No remoting role check; no call to db
 			List<DateTime> retVal=new List<DateTime>();
-			if(!PrefC.GetBool(PrefName.BillingUseBillingCycleDay)) {
-				billingCycleDay=repeatCharge.DateStart.Day;
-			}
 			int monthIncrement=1;//monthly
 			if(repeatCharge.Frequency==EnumRepeatChargeFrequency.Quarterly) {
 				monthIncrement=4;//quarterly
@@ -472,19 +469,28 @@ namespace OpenDentBusiness {
 			else if(repeatCharge.Frequency==EnumRepeatChargeFrequency.Annually) {
 				monthIncrement=12;//annually
 			}
-			DateTime dateTimeBilling=repeatCharge.DateStart;
-			while(dateTimeBilling <= dateRun) {
-				DateTime dateTimeTemp=new DateTime(dateTimeBilling.AddMonths(-0).Year,dateTimeBilling.AddMonths(-0).Month,1);
-				retVal.Add(dateTimeTemp);
-				dateTimeBilling=dateTimeBilling.AddMonths(monthIncrement);
+			//Create a list of dates for the repeating charge passed in where every date starts on the 1st of the month.
+			DateTime dateStart=new DateTime(repeatCharge.DateStart.Year,repeatCharge.DateStart.Month,1);
+			//Stop adding dates to the list once we have reached the 1st of next month.
+			//This will allow for the current month to be considered which is necessary when the BillingUseBillingCycleDay preference is on.
+			DateTime dateStop=new DateTime(dateRun.Year,dateRun.Month,1).AddMonths(1);
+			while(dateStart < dateStop) {
+				retVal.Add(dateStart);
+				dateStart=dateStart.AddMonths(monthIncrement);
 			}
+			//Take the last 3 dates from the list for backdating purposes.
 			retVal=UIHelper.TakeLast(retVal,3).ToList();
 			if(retVal.IsNullOrEmpty()) {
 				return retVal;
 			}
-			//This loop fixes day of month, taking into account billing day past the end of the month.
+			if(!PrefC.GetBool(PrefName.BillingUseBillingCycleDay)) {
+				billingCycleDay=repeatCharge.DateStart.Day;
+			}
+			//This loop fixes the day of the month while taking a billing cycle day that falls past the end of the month.
+			//This is necessary for repeating charges that have a DateStart (or a billing cycle day) after the 28th.
 			for(int i=0;i<retVal.Count;i++) {
-				int billingDay=Math.Min(retVal[i].AddMonths(1).AddDays(-1).Day, billingCycleDay);
+				int daysInMonth=DateTime.DaysInMonth(retVal[i].Year,retVal[i].Month);
+				int billingDay=Math.Min(daysInMonth,billingCycleDay);
 				retVal[i]=new DateTime(retVal[i].Year,retVal[i].Month,billingDay);//This re-adds the billing date with the proper day of month.
 			}
 			//Remove billing dates that are calulated before repeat charge started.

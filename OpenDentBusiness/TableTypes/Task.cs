@@ -11,7 +11,7 @@ namespace OpenDentBusiness{
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long TaskNum;
-		///<summary>FK to tasklist.TaskListNum.  If 0, then it will show in the trunk of a section.  </summary>
+		///<summary>FK to tasklist.TaskListNum.  If 0, then it will show in the trunk of a section.  This is temporarily -1 to indicate that a task is not assigned to a tasklist yet, but -1 never gets saved to the db.</summary>
 		public long TaskListNum;
 		///<summary>Only used if this task is assigned to a dated category.  Children are NOT dated.  Only dated if they should show in the trunk for a date category.  They can also have a parent if they are in the main list as well.</summary>
 		public DateTime DateTask;

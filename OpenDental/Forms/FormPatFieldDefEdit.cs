@@ -154,7 +154,6 @@ namespace OpenDental {
 			gridPickListItems.BeginUpdate();
 			gridPickListItems.Columns.Clear();
 			GridColumn gridColumn;
-			gridPickListItems.AllowSortingByColumn=true;
 			gridColumn=new GridColumn(Lan.g(this,"Hidden"),50,HorizontalAlignment.Center);
 			gridPickListItems.Columns.Add(gridColumn);
 			gridColumn=new GridColumn(Lan.g(this,"Item Name"),200) { IsWidthDynamic=true };
@@ -167,6 +166,7 @@ namespace OpenDental {
 				gridRow.Cells.Add(_listPatFieldPickItems[i].IsHidden?"X":"");
 				gridRow.Cells.Add(_listPatFieldPickItems[i].Name);
 				gridRow.Cells.Add(_listPatFieldPickItems[i].Abbreviation);
+				gridRow.Tag=_listPatFieldPickItems[i];
 				gridPickListItems.ListGridRows.Add(gridRow);
 			}
 			gridPickListItems.EndUpdate();
@@ -179,7 +179,7 @@ namespace OpenDental {
 		}
 
 		private void gridPickListItems_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			PatFieldPickItem patFieldPickItem=_listPatFieldPickItems[e.Row];
+			PatFieldPickItem patFieldPickItem=(PatFieldPickItem)gridPickListItems.ListGridRows[e.Row].Tag;
 			FrmPatFieldPickItem frmPatFieldPickItem=new FrmPatFieldPickItem();
 			frmPatFieldPickItem.PatFieldPickItemCur=patFieldPickItem;
 			frmPatFieldPickItem.ShowDialog();
