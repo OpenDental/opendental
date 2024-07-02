@@ -118,6 +118,7 @@ namespace OpenDental {
 			// 
 			// gridPickListItems
 			// 
+			this.gridPickListItems.AllowSortingByColumn = true;
 			this.gridPickListItems.Location = new System.Drawing.Point(12, 95);
 			this.gridPickListItems.Name = "gridPickListItems";
 			this.gridPickListItems.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;

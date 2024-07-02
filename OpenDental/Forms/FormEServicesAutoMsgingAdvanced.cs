@@ -53,6 +53,7 @@ namespace OpenDental {
 			else {//NO CLINICS
 				checkEnableNoClinic.Visible=false;
 				groupAutomationStatuses.Text=Lan.g(this,"eConfirmation Settings");
+				checkUseDefault.Visible=false;
 			}
 			comboClinic.ClinicNumSelected=0;//To keep consistent with the previous form, start on clinic 0.
 			_clinicNumCur=comboClinic.ClinicNumSelected;
@@ -299,6 +300,8 @@ namespace OpenDental {
 			if(!_doEnableCalendarIcsTitle) {
 				textCalendarIcsTitle.Enabled=false;
 				labelThankYouTitle.Enabled=false;
+				checkUseDefault.Enabled=false;
+				comboClinic.Enabled=false;
 				return;
 			}
 			ClinicPref clinicPrefThankYouTitle=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,_clinicNumCur);

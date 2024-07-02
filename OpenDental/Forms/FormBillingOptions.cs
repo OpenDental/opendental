@@ -1006,6 +1006,9 @@ namespace OpenDental{
 						+"APR: "+(installmentPlan.APR/100).ToString("P")+"\r\n"
 						+"Note: "+installmentPlan.Note);
 				}
+				else {
+					statement.Note=textNote.Text.Replace("[InstallmentPlanTerms]","");
+				}
 				PatAgingData patAgingData;
 				dictionaryPatAgingData.TryGetValue(listPatAgings[i].PatNum,out patAgingData);
 				//appointment reminders are not handled here since it would be too slow.

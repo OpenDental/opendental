@@ -179,10 +179,10 @@ namespace OpenDental {
 			labelActions.Size=new Size(LayoutManager.Scale(100),LayoutManager.Scale(18));
 			y+=LayoutManager.Scale(20);
 			listBoxActions.Location=new Point(x,y);
-			listBoxActions.Size=new Size(LayoutManager.Scale(120),LayoutManager.Scale(43));
+			listBoxActions.Size=new Size(LayoutManager.Scale(120),LayoutManager.Scale(47));
 			listBoxActions.LayoutManager=LayoutManager;
 			listBoxActions.Font=new Font(LayoutManagerForms.FontInitial.FontFamily,LayoutManager.ScaleFontODZoom(8.25f));
-			y+=LayoutManager.Scale(46);
+			y+=LayoutManager.Scale(50);
 			labelWindows.Location=new Point(x,y);
 			labelWindows.Font=new Font(LayoutManagerForms.FontInitial.FontFamily,LayoutManager.ScaleFontODZoom(8.25f));
 			labelWindows.Size=new Size(LayoutManager.Scale(100),LayoutManager.Scale(18));
@@ -198,7 +198,7 @@ namespace OpenDental {
 					listBoxWindows.SetSelected(i);
 				}
 			}
-			listBoxWindows.Height=(int)LayoutManager.ScaleMS(font.Height)*listFormImageFloats.Count+4;//pulled from ListBoxOD.IntegralHeight.
+			listBoxWindows.Height=(int)LayoutManager.ScaleMS(font.Height)*listFormImageFloats.Count+5;//pulled from ListBoxOD.IntegralHeight.
 			//Size and Location of form==========================================================================
 			x=_marginOuter*4+_sizeScreen.Width*3;
 			y=listBoxWindows.Bottom+_marginOuter;

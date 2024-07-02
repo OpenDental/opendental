@@ -50,7 +50,6 @@ namespace OpenDental{
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn gridColumn;
-			gridMain.AllowSortingByColumn=true;
 			gridColumn=new GridColumn(Lan.g(this,"Field Name"),200);
 			gridMain.Columns.Add(gridColumn);
 			gridColumn=new GridColumn(Lan.g(this,"Field Type"),100);
@@ -68,6 +67,7 @@ namespace OpenDental{
 				if(!_isSelectionMode) {
 					gridRow.Cells.Add(_listPatFieldDefs[i].IsHidden?"X":"");
 				}
+				gridRow.Tag=_listPatFieldDefs[i];
 				gridMain.ListGridRows.Add(gridRow);
 			}
 			gridMain.EndUpdate();
@@ -80,7 +80,7 @@ namespace OpenDental{
 				return;
 			}
 			using FormPatFieldDefEdit formPatFieldDefEdit=new FormPatFieldDefEdit();
-			formPatFieldDefEdit.PatFieldDefCur=_listPatFieldDefs[e.Row];
+			formPatFieldDefEdit.PatFieldDefCur=(PatFieldDef)gridMain.ListGridRows[e.Row].Tag;
 			formPatFieldDefEdit.ShowDialog();
 			if(formPatFieldDefEdit.DialogResult==DialogResult.OK) {
 				PatFieldDefs.RefreshCache();
