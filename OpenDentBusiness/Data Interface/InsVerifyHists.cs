@@ -50,7 +50,6 @@ namespace OpenDentBusiness{
 			if(insVerify==null) {
 				return;
 			}
-			Insert(new InsVerifyHist(insVerify));
 			insVerify.UserNum=0;
 			insVerify.DefNum=0;
 			insVerify.Note="";
@@ -63,6 +62,7 @@ namespace OpenDentBusiness{
 				}
 			}
 			InsVerifies.Update(insVerify);
+			Insert(new InsVerifyHist(insVerify));
 		}
 
 		/*

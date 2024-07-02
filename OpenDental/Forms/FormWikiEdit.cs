@@ -13,7 +13,10 @@ namespace OpenDental {
 		public WikiPage WikiPageCur=new WikiPage();
 		///<summary>Need a reference to the form where this was launched from so that we can tell it to refresh later.</summary>
 		public FormWiki FormWiki_;
-		public bool HasSaved;//used to differentiate what action caused the form to close.
+		///<summary>Used to differentiate what action caused the form to close. Public so it can be checked in FormWikiDrafts</summary>
+		public bool HasSaved;
+		///<summary>Used to differentiate what action caused the form to close.</summary>
+		private bool _hasSavedDraft;
 		private int _scrollTop;
 		private bool _isInvalidPreview;
 		private Action<string> _actionWikiSaved;
@@ -423,6 +426,7 @@ namespace OpenDental {
 				WikiPageCur.IsDraft=true;
 				WikiPages.InsertAsDraft(WikiPageCur);
 			}
+			_hasSavedDraft=true;//Used instead of HasSaved so that the user will stay in FormWikiDrafts when this window closes, causing the grid to update.
 			//HasSaved not set so that the user will stay in FormWikiDrafts when this window closes, causing the grid to update.
 			DialogResult=DialogResult.OK;
 			Close();
@@ -627,7 +631,8 @@ namespace OpenDental {
 			if(HasSaved) {
 				return;
 			}
-			if(!WikiPageCur.IsNew && textContent.Text!=WikiPages.GetWikiPageContentWithWikiPageTitles(WikiPageCur.PageContent)){
+			bool doCheckUnsavedChanges=!WikiPageCur.IsNew && !_hasSavedDraft;
+			if(doCheckUnsavedChanges && textContent.Text!=WikiPages.GetWikiPageContentWithWikiPageTitles(WikiPageCur.PageContent)) {
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Unsaved changes will be lost. Would you like to continue?")) {
 					e.Cancel=true;
 				}
