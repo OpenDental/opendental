@@ -11,14 +11,15 @@
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butChildren" Margin="49,22,0,0" Text="Children" RenderTransformOrigin="0.543,1.257" Click="butChildren_Click" Height="24" Width="76" />
 		<ui:Button x:Name="butClassrooms" Margin="49,53,0,0" Text="Classrooms" RenderTransformOrigin="0.543,1.257" Click="butClassrooms_Click" Height="24" Width="76" />
-		<ui:Grid x:Name="gridChildRoom1" Margin="102,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom4" Margin="1164,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom5" Margin="1518,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom2" Margin="456,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom3" Margin="810,600,0,0" Title="" Width="316" Height="335" RenderTransformOrigin="0.669,0.507" />
-		<ui:Grid x:Name="gridChildRoom6" Margin="456,53,0,0" Title="" Height="505" Width="317" />
-		<ui:Grid x:Name="gridChildRoom7" Margin="810,53,0,0" Title="" Height="505" Width="317" />
-		<ui:Grid x:Name="gridChildRoom8" Margin="1164,53,0,0" Title="" Height="505" Width="317" />
+		<ui:Grid x:Name="gridChildRoom4" Margin="102,600,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom7" Margin="1164,600,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom8" Margin="1518,600,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom5" Margin="456,600,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom6" Margin="810,600,0,0" Title="" Width="317" Height="335" RenderTransformOrigin="0.669,0.507" />
+		<ui:Grid x:Name="gridChildRoom1" Margin="0,53,0,0" Title="" Height="505" Width="317" HorizontalAlignment="Center" />
+		<ui:Grid x:Name="gridChildRoom2" Margin="1164,53,0,0" Title="" Height="505" Width="317" />
+		<ui:Grid x:Name="gridChildRoom3" Margin="1518,53,0,0" Title="" Height="505" Width="317" />
 		<ui:Button x:Name="butParents" Margin="49,84,0,0" Text="Parents" RenderTransformOrigin="0.543,1.257" Height="24" Click="butParents_Click" Width="76" />
+		<ui:Grid x:Name="gridChildrenAbsent" Margin="456,53,0,0" Title="Absent Children" Height="505" Width="317" />
 	</Grid>
 </local:FrmODBase>

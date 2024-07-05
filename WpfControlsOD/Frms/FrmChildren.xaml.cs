@@ -19,8 +19,10 @@ using WpfControls.UI;
 namespace OpenDental {
 	///<summary></summary>
 	public partial class FrmChildren:FrmODBase {
-		///<summary></summary>
-		private List<Child> _listChilds;
+		///<summary>This value will be filled when the frm closes with IsDialogOK=true and IsSelectionMode==true.</summary>
+		public long ChildNumSelected;
+		///<summary>True if the window is in selection mode.</summary>
+		public bool IsSelectionMode;
 
 		///<summary></summary>
 		public FrmChildren() {
@@ -30,6 +32,12 @@ namespace OpenDental {
 		}
 
 		private void FrmChildren_Load(object sender, EventArgs e) {
+			if(IsSelectionMode) {
+				butAdd.Visible=false;
+			}
+			else {
+				butOK.Visible=false;
+			}
 			FillGrid();
 		}
 
@@ -48,6 +56,9 @@ namespace OpenDental {
 			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listChildren.Count;i++) {
+				if(checkShowHidden.Checked==false && listChildren[i].IsHidden) {
+					continue;
+				}
 				GridRow gridRow=new GridRow();
 				gridRow.Cells.Add(listChildren[i].FName);
 				gridRow.Cells.Add(listChildren[i].LName);
@@ -63,6 +74,11 @@ namespace OpenDental {
 		}
 
 		private void gridChildren_CellDoubleClick(object sender,GridClickEventArgs e) {
+			if(IsSelectionMode) {
+				ChildNumSelected=gridMain.SelectedTag<Child>().ChildNum;
+				IsDialogOK=true;
+				return;
+			}
 			FrmChildEdit frmChildEdit=new FrmChildEdit();
 			frmChildEdit.ChildCur=gridMain.SelectedTag<Child>();
 			frmChildEdit.ShowDialog();
@@ -93,6 +109,17 @@ namespace OpenDental {
 			Children.Delete(frmChildEdit.ChildCur.ChildNum);
 		}
 
-	
+		private void CheckBox_Click(object sender,EventArgs e) {
+			FillGrid();
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
+			if(gridMain.GetSelectedIndex()==-1) {
+				MsgBox.Show("Please pick a child first.");
+				return;
+			}
+			ChildNumSelected=gridMain.SelectedTag<Child>().ChildNum;
+			IsDialogOK=true;
+		}
 	}
 }

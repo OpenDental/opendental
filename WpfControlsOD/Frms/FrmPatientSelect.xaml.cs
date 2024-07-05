@@ -536,6 +536,9 @@ namespace OpenDental {
 				Country,RegKey,clinicNums,"",InvoiceNum,ListPatNumsExplicit,PatNumInitial,doShowMerged,
 				hasSpecialty,hasNextLastVisit);
 			tablePats=Patients.GetPtDataTable(ptTableSearchParams);
+			if(ListPatNumsExplicit != null && ListPatNumsExplicit.Count>0) {
+				ListPatNumsExplicit=new List<long>();//clear the list so the patient select window isn't stuck on these patients
+			}
 			return tablePats;
 		}
 

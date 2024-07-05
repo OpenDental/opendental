@@ -48,6 +48,10 @@ namespace OpenDental {
 		private bool _isPreview;
 		///<summary>used specifically for checking if the message string in the body text has changed
 		private bool _hasMessageTextChanged=false;
+		///<summary>_patient's PatNum. 0 if _patient is null.</summary>
+		private long _patNum;
+		///<summary>_patient's ClinicNum. 0 if _patient is null.</summary>
+		private long _clinicNum;
 		///<summary>string to return the updated htmlText for a composing or sent email. webBrowser.DocumentText doesn't always work. </summary>
 		public string HtmlText;
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
@@ -132,7 +136,13 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			_emailMessage=emailMessage;
 			_isSecureEmailReply=isSecureEmailReply;
+			_patNum=0;
+			_clinicNum=0;
 			_patient=Patients.GetPat(_emailMessage.PatNum);//we could just as easily pass this in.
+			if(_patient!=null) {
+				_patNum=_patient.PatNum;
+				_clinicNum=_patient.ClinicNum;
+			}
 			if(EmailMessages.IsUnsent(_emailMessage.SentOrReceived)) {//Composing a message
 				_isComposing=true;
 				if(_isSecureEmailReply) {
@@ -165,7 +175,7 @@ namespace OpenDental {
 			DisplayEmail();
 			FillAttachments();
 			if(_isComposing) {
-				LoadEmailAddresses(_patient.ClinicNum);
+				LoadEmailAddresses(_clinicNum);
 				LoadSig();
 				if(PrefC.GetBool(PrefName.EnableEmailAddressAutoComplete)) {
 					SetHistoricContacts(listHistoricEmailMessages);
@@ -336,7 +346,7 @@ namespace OpenDental {
 			if(!_isComposing || !_isSigningEnabled) {
 				return;
 			}
-			EmailAddress emailAddressDefault=EmailAddresses.GetByClinic(_patient.ClinicNum);
+			EmailAddress emailAddressDefault=EmailAddresses.GetByClinic(_clinicNum);
 			if(emailAddressDefault!=null) {//Must have a default emailaddress to be allowed to set a signature/cert.  Presumably 
 				EmailAddress emailAddressSelected=null;
 				if(TryGetFromEmailAddress(out emailAddressSelected)==FromAddressMatchResult.Failed) {
@@ -616,12 +626,12 @@ namespace OpenDental {
 		#region Body
 
 		public void LoadTemplate(string subject,string bodyText,List<EmailAttach> attachments) {
-			List<Appointment> listApts=Appointments.GetFutureSchedApts(_patient.PatNum);
+			List<Appointment> listApts=Appointments.GetFutureSchedApts(_patNum);
 			Appointment aptNext=null;
 			if(listApts.Count > 0){
 				aptNext=listApts[0]; //next sched appt. If none, null.
 			}
-			Clinic clinic=Clinics.GetClinic(_patient.ClinicNum);
+			Clinic clinic=Clinics.GetClinic(_clinicNum);
 			Subject=ReplaceTemplateFields(subject,_patient,aptNext,clinic);;
 			BodyText=ReplaceTemplateFields(bodyText,_patient,aptNext,clinic);
 			_emailMessage.Attachments.AddRange(attachments);
@@ -754,7 +764,7 @@ namespace OpenDental {
 			if(formEA.DialogResult==DialogResult.OK) {
 				EmailAddress emailAccountSelected=EmailAddresses.GetFirstOrDefault(x => x.EmailAddressNum==formEA.EmailAddressNum);
 				if(emailAccountSelected!=null) {
-					emailAccountSelected=EmailAddresses.OverrideSenderAddressClinical(emailAccountSelected,_patient.ClinicNum); //Use clinic's Email Sender Address Override, if present
+					emailAccountSelected=EmailAddresses.OverrideSenderAddressClinical(emailAccountSelected,_clinicNum); //Use clinic's Email Sender Address Override, if present
 					EmailAddressPreview=emailAccountSelected;
 				}
 				else {

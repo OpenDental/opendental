@@ -52,6 +52,7 @@ namespace OpenDentBusiness.Crud{
 				childParent.LName         = PIn.String(row["LName"].ToString());
 				childParent.Notes         = PIn.String(row["Notes"].ToString());
 				childParent.IsHidden      = PIn.Bool  (row["IsHidden"].ToString());
+				childParent.BadgeId       = PIn.String(row["BadgeId"].ToString());
 				retVal.Add(childParent);
 			}
 			return retVal;
@@ -68,6 +69,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("LName");
 			table.Columns.Add("Notes");
 			table.Columns.Add("IsHidden");
+			table.Columns.Add("BadgeId");
 			foreach(ChildParent childParent in listChildParents) {
 				table.Rows.Add(new object[] {
 					POut.Long  (childParent.ChildParentNum),
@@ -75,6 +77,7 @@ namespace OpenDentBusiness.Crud{
 					            childParent.LName,
 					            childParent.Notes,
 					POut.Bool  (childParent.IsHidden),
+					            childParent.BadgeId,
 				});
 			}
 			return table;
@@ -94,7 +97,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ChildParentNum,";
 			}
-			command+="FName,LName,Notes,IsHidden) VALUES(";
+			command+="FName,LName,Notes,IsHidden,BadgeId) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(childParent.ChildParentNum)+",";
 			}
@@ -102,7 +105,8 @@ namespace OpenDentBusiness.Crud{
 				 "'"+POut.String(childParent.FName)+"',"
 				+"'"+POut.String(childParent.LName)+"',"
 				+"'"+POut.String(childParent.Notes)+"',"
-				+    POut.Bool  (childParent.IsHidden)+")";
+				+    POut.Bool  (childParent.IsHidden)+","
+				+"'"+POut.String(childParent.BadgeId)+"')";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -127,7 +131,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ChildParentNum,";
 			}
-			command+="FName,LName,Notes,IsHidden) VALUES(";
+			command+="FName,LName,Notes,IsHidden,BadgeId) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(childParent.ChildParentNum)+",";
 			}
@@ -135,7 +139,8 @@ namespace OpenDentBusiness.Crud{
 				 "'"+POut.String(childParent.FName)+"',"
 				+"'"+POut.String(childParent.LName)+"',"
 				+"'"+POut.String(childParent.Notes)+"',"
-				+    POut.Bool  (childParent.IsHidden)+")";
+				+    POut.Bool  (childParent.IsHidden)+","
+				+"'"+POut.String(childParent.BadgeId)+"')";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -151,7 +156,8 @@ namespace OpenDentBusiness.Crud{
 				+"FName         = '"+POut.String(childParent.FName)+"', "
 				+"LName         = '"+POut.String(childParent.LName)+"', "
 				+"Notes         = '"+POut.String(childParent.Notes)+"', "
-				+"IsHidden      =  "+POut.Bool  (childParent.IsHidden)+" "
+				+"IsHidden      =  "+POut.Bool  (childParent.IsHidden)+", "
+				+"BadgeId       = '"+POut.String(childParent.BadgeId)+"' "
 				+"WHERE ChildParentNum = "+POut.Long(childParent.ChildParentNum);
 			Db.NonQ(command);
 		}
@@ -175,6 +181,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="IsHidden = "+POut.Bool(childParent.IsHidden)+"";
 			}
+			if(childParent.BadgeId != oldChildParent.BadgeId) {
+				if(command!="") { command+=",";}
+				command+="BadgeId = '"+POut.String(childParent.BadgeId)+"'";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -197,6 +207,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(childParent.IsHidden != oldChildParent.IsHidden) {
+				return true;
+			}
+			if(childParent.BadgeId != oldChildParent.BadgeId) {
 				return true;
 			}
 			return false;

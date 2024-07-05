@@ -429,10 +429,10 @@ namespace OpenDental {
 				return;
 			}
 			SheetDef_.PageCount++;
-			panelMain.Height=SheetDef_.HeightTotal;
+			panelMain.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
 			if(SheetDef_.PageCount>1){
-				panelMain.Height-=_margins.Bottom;//first page
-				panelMain.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//remaining pages
+				panelMain.Height-=LayoutManager.Scale(_margins.Bottom);//first page
+				panelMain.Height-=(SheetDef_.PageCount-1)*(LayoutManager.Scale(_margins.Top+_margins.Bottom));//remaining pages
 			}
 			//RefreshBitmapBackground();
 			AddUndoLevel("Page Add");
@@ -463,8 +463,8 @@ namespace OpenDental {
 			}
 			panelMain.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
 			if(SheetDef_.PageCount>1){
-				panelMain.Height-=_margins.Bottom;//-60 first page
-				panelMain.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
+				panelMain.Height-=LayoutManager.Scale(_margins.Bottom);//-60 first page
+				panelMain.Height-=(SheetDef_.PageCount-1)*(LayoutManager.Scale(_margins.Top+_margins.Bottom));//-100 remaining pages
 			}
 			//RefreshBitmapBackground();
 			AddUndoLevel("Page Remove");
@@ -2712,8 +2712,8 @@ namespace OpenDental {
 			}
 			sizeNew.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
 			if(SheetDef_.PageCount>1){
-				sizeNew.Height-=_margins.Bottom;//-60 first page
-				sizeNew.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
+				sizeNew.Height-=LayoutManager.Scale(_margins.Bottom);//-60 first page
+				sizeNew.Height-=(SheetDef_.PageCount-1)*(LayoutManager.Scale(_margins.Top+_margins.Bottom));//-100 remaining pages
 			}
 			if(panelMain.Size==sizeNew){
 				//this is called repeatedly during resize, and we also don't want to resize position unless required

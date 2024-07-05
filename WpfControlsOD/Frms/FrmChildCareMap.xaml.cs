@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CodeBase;
 using OpenDentBusiness;
 using WpfControls.UI;
 
@@ -30,41 +31,26 @@ namespace OpenDental {
 			StartMaximized=true;
 			//TODO: If not a daycare worker, hide buttons
 			//call all fillgrids
+			FillGridChildrenAbsent();
+			FillGridSpecified(gridChildRoom1);
+			FillGridSpecified(gridChildRoom2);
+			FillGridSpecified(gridChildRoom3);
+			FillGridSpecified(gridChildRoom4);
+			FillGridSpecified(gridChildRoom5);
+			FillGridSpecified(gridChildRoom6);
+			FillGridSpecified(gridChildRoom7);
+			FillGridSpecified(gridChildRoom8);
 		}
 
-		private void FillGridChildRoom1() {
-			//Not implemented
-			//Fill first with students
-			//then teachers
-			//final row is child to teacher ratio
-		}
-
-		private void FillGridChildRoom2() {
-			//Not implemented
-		}
-
-		private void FillGridChildRoom3() {
+		private void FillGridChildrenAbsent() {
 			//Not implemented
 		}
 
-		private void FillGridChildRoom4() {
+		private void FillGridSpecified(Grid grid) {
 			//Not implemented
-		}
-
-		private void FillGridChildRoom5() {
-			//Not implemented
-		}
-
-		private void FillGridChildRoom6() {
-			//Not implemented
-		}
-
-		private void FillGridChildRoom7() {
-			//Not implemented
-		}
-
-		private void FillGridChildRoom8() {
-			//Not implemented
+			//Fill teachers
+			//Then students
+			//Final row is child to teacher ratio
 		}
 
 		private void butChildren_Click(object sender,EventArgs e) {

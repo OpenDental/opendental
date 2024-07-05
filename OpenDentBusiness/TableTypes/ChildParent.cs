@@ -18,6 +18,8 @@ namespace OpenDentBusiness{
 		public string Notes;
 		///<summary>Set true to hide a parent. False by default.</summary>
 		public bool IsHidden;
+		///<summary>A unique number that corresponds to the number on a parent badge. The last numbers on an parent badge. Will be 1 to 4 digits. These numbers are assigned to the badges by the factory.</summary>
+		public string BadgeId;
 
 		public ChildParent Copy(){
 			return (ChildParent)this.MemberwiseClone();
@@ -31,7 +33,8 @@ namespace OpenDentBusiness{
 			FName varchar(255) NOT NULL,
 			LName varchar(255) NOT NULL,
 			Notes varchar(255) NOT NULL,
-			IsHidden tinyint NOT NULL
+			IsHidden tinyint NOT NULL,
+			BadgeId varchar(255) NOT NULL
 			) DEFAULT CHARSET=utf8";
 		Db.NonQ(command);
 		*/

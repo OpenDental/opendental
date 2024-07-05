@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="900" Height="590" 
+             Width="530" Height="590" 
              Text="Child Room Logs" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,41,10,10" Title="ChildRoomLog" />

@@ -549,6 +549,7 @@ namespace OpenDental{
 			formImageFloat.EventWinPicked+=DockOrFloat_EventWinClicked;
 			_listFormImageFloats.Add(formImageFloat);
 			formImageFloat.Show();//triggers Activated, then imageSelector.SetSelected 
+			//Note: Must use Bounds here. Using DesktopBounds makes it shift off by about 200px.
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);
 			//formImageFloat.RestoreBounds=new Rectangle(x,y,w,h);//can only get
 			if(isMax){
@@ -557,8 +558,11 @@ namespace OpenDental{
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);//#2
 			//the above line can trigger a resize due to dpi change, so once more:
 			formImageFloat.Bounds=new Rectangle(x,y,w,h);//#3
-			Point pointMousePos=Cursor.Position;//for debugging
-			formImageFloat.SimulateMouseDown(pointMousePos,formImageFloat.DesktopBounds);
+			Point pointMousePosDesktop=Cursor.Position;//variable is for debugging
+			//Point pointMouseDownLocal=formImageFloat.PointToClient(pointMousePosDesktop);
+			//Point pointMouseScreen=formImageFloat.PointToScreen(pointMouseDownLocal);
+			//Must use DesktopBounds below because that's how base does it.
+			formImageFloat.SimulateMouseDown(pointMousePosDesktop,formImageFloat.DesktopBounds);
 			controlImageDisplay.SetZoomSliderToFit();
 			NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
 			controlImageDock.SetControlImageDisplay(null);//this unfortunately clears the selected item in the image selector
@@ -633,7 +637,7 @@ namespace OpenDental{
 			}
 		}
 
-		///<summary>Fired when user clicks on tree and also for automated selection that's not by mouse, such as image import, image paste, etc.  Can pass in NULL.  localPathImported will be set only if using Cloud storage and an image was imported.  We want to use the local version instead of re-downloading what was just uploaded.  nodeObjTag does not need to be ref to same object, but must match type and priKey.</summary>
+		///<summary>Fired when user clicks on tree and also for automated selection that's not by mouse, such as image import, image paste, etc.  Can pass in NULL to clear the image.  localPathImported will be set only if using Cloud storage and an image was imported.  We want to use the local version instead of re-downloading what was just uploaded.  nodeObjTag does not need to be ref to same object, but must match type and priKey.</summary>
 		public void SelectTreeNode1(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
 			//Select the node always, but perform additional tasks when necessary (i.e. load an image, or mount).	
 			if(nodeTypeAndKey!=null && nodeTypeAndKey.NodeType!=EnumImageNodeType.None){	
@@ -693,7 +697,7 @@ namespace OpenDental{
 				|| nodeTypeAndKey.NodeType==EnumImageNodeType.None
 				|| nodeTypeAndKey.NodeType==EnumImageNodeType.Category)
 			{
-				//todo: controlImageDisplay.EnableToolBarButtons();
+//todo: controlImageDisplay.EnableToolBarButtons();
 				controlImageDock.SetControlImageDisplay(null);
 			}
 			else{
@@ -2086,6 +2090,17 @@ namespace OpenDental{
 
 		private void ToolBarImport_Click(object sender, EventArgs e){
 			GetOrMakeControlImageDisplay().ToolBarImport_Click(sender,e);
+			//handle the situation where they click cancel and no previous image was selected
+			if(!controlImageDock.IsImageFloatSelected){
+				return;
+			}
+			NodeTypeAndKey nodeTypeAndKey=controlImageDock.ControlImageDisplay_.GetNodeTypeAndKey();
+			if(nodeTypeAndKey is null){
+				return;//not sure how this would happen
+			}
+			if(nodeTypeAndKey.NodeType==EnumImageNodeType.None){
+				SelectTreeNode1(null);//this makes the ControlImageDisplay go away
+			}
 		}
 		
 		private void ToolBarInfo_Click(object sender, EventArgs e){
@@ -2761,8 +2776,6 @@ namespace OpenDental{
 				((ControlImageDisplay)sender).ZoomSliderValue=zoomSlider.Value;
 			};
 			controlImageDisplay.EventZoomSliderSetValueAndMax+=(sender,newVal)=>zoomSlider.SetValueAndMax(newVal);
-//todo: The property and event are both gone. A lot more needs to happen besides just changing a bool.
-//I think this is mostly done.
 			//controlImageDisplay.IsImageFloatDockedChanged+=FormImageFloat_IsImageFloatDockedChanged;
 			return controlImageDisplay;
 		}
@@ -2975,11 +2988,28 @@ namespace OpenDental{
 			if(controlImageDisplay!=null){
 				return controlImageDisplay;
 			}
+			SelectTreeNode1(null);//probably useless, but also harmless
 			//make one
-//todo: this isn't properly making one:
-			SelectTreeNode1(null);
-			controlImageDisplay=GetControlImageDisplaySelected();
+			//the code below is a few lines taken from SelectTreeNode1.
+			//We may need to add a few more if there are minor bugs
+			controlImageDisplay=CreateControlImageDisplay();
+			controlImageDisplay.PatientCur=_patient;
+			controlImageDisplay.PatFolder=_patFolder;
+			controlImageDisplay.ZoomSliderValue=zoomSlider.Value;
+			controlImageDock.SetControlImageDisplay(controlImageDisplay);
+			controlImageDock.IsImageFloatSelected=true;
+			//so now we have a controlImageDisplay with nothing in it. That seems like a bad idea.
+			controlImageDock.Select();
+			ControlImageDock_GotODFocus(controlImageDock,new EventArgs());//This enables toolbar buttons, etc
+			controlImageDisplay.EnableToolBarButtons();
+			EnableMenuItemTreePrintHelper(controlImageDisplay);
 			return controlImageDisplay;
+			//tested all 5 refs:
+			//Copy is not enabled
+			//Delete is not enabled
+			//Import works. Added code to handle the situation where they cancel.
+			//Info is not enabled
+			//Paste: All three different ways now work, and better than in 24.1. Also tested all three into mount.
 		}
 
 		///<summary>Invalidates the color image setting and recalculates.  This is not on a separate thread.  Instead, it's just designed to run no more than about every 300ms, which completely avoids any lockup.</summary>

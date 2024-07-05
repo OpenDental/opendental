@@ -51,6 +51,9 @@ namespace OpenDental {
 			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listChildParents.Count;i++) {
+				if(checkShowHidden.Checked==false && listChildParents[i].IsHidden) {
+					continue;
+				}
 				GridRow gridRow=new GridRow();
 				gridRow.Cells.Add(listChildParents[i].FName);
 				gridRow.Cells.Add(listChildParents[i].LName);
@@ -94,5 +97,11 @@ namespace OpenDental {
 			ChildParentNumSelected=gridMain.SelectedTag<ChildParent>().ChildParentNum;
 			IsDialogOK=true;
 		}
+
+		private void CheckBox_Click(object sender,EventArgs e) {
+			FillGrid();
+		}
+
+
 	}
 }

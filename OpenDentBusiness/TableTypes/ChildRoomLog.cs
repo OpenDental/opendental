@@ -18,9 +18,9 @@ namespace OpenDentBusiness{
 		public DateTime DateTDisplayed;
 		///<summary>FK to child.ChildNum. Will be 0 if this is for a teacher.</summary>
 		public long ChildNum;
-		///<summary>FK to childteacher.ChildTeacherNum. Will be 0 if this is for a child.</summary>
-		public long ChildTeacherNum;
-		///<summary>True if coming into the room, false if leaving.</summary>
+		///<summary>FK to employee.EmployeeNum. Will be 0 if this is for a child. For the daycare, employee and teacher mean the same thing.</summary>
+		public long EmployeeNum;
+		///<summary>True if coming into the room, false if leaving. Applies to both children and teachers/emps.</summary>
 		public bool IsComing;
 		///<summary>FK to childroom.ChildRoomNum.</summary>
 		public long ChildRoomNum;
@@ -39,7 +39,7 @@ namespace OpenDentBusiness{
 			DateTEntered datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 			DateTDisplayed datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
 			ChildNum bigint NOT NULL,
-			ChildTeacherNum bigint NOT NULL,
+			EmployeeNum bigint NOT NULL,
 			IsComing tinyint NOT NULL,
 			ChildRoomNum bigint NOT NULL,
 			RatioChange double NOT NULL,

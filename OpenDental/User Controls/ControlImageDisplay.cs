@@ -1772,6 +1772,9 @@ Here is the desired behavior:
 					MessageBox.Show(Lan.g(this,"Error saving document."));
 					return;
 				}
+				bool keepSelection=false;
+				EventFillTree?.Invoke(this,keepSelection);
+				EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				FrmDocInfo frmDocInfo = new FrmDocInfo(PatientCur,document,isDocCreate: true);
 				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
 				if(frmDocInfo.IsDialogCancel) {
@@ -1806,6 +1809,15 @@ Here is the desired behavior:
 						MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+stringArrayfileNames[i]);
 						continue;
 					}
+					if(stringArrayfileNames.Length>1){
+						//only show dialog if pasting in a single file. 
+						//For multiple files, repeated dialogs is annoying. They can always edit after the fact.
+						nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
+						continue;
+					}
+					bool keepSelection=false;
+					EventFillTree?.Invoke(this,keepSelection);
+					EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 					FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,document,isDocCreate:true);
 					frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
 					if(frmDocInfo.IsDialogCancel) {
@@ -1816,15 +1828,17 @@ Here is the desired behavior:
 							ODEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
 						}
 						nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
-						SetDocumentShowing(0,document.Copy());
+						//SetDocumentShowing(0,document.Copy());
 					}
 				}//for
 			}//files
+			//these two lines are needed in case they change the category
 			EventFillTree?.Invoke(this,false);
 			//Select the last successful document that was saved.
 			EventSelectTreeNode?.Invoke(this,nodeTypeAndKey);
 		}
 
+		///<summary>This is used when pasting and a previous OD image was copied to the pinboard.</summary>
 		public void ToolBarPasteTypeAndKey(NodeTypeAndKey nodeTypeAndKey){
 			//Always single item, not series.
 			Document document=null;
@@ -1876,9 +1890,25 @@ Here is the desired behavior:
 					EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Mount,_mountShowing.MountNum));
 				}
 				else{
-					EventFillTree?.Invoke(this,false);
-					ClearObjects();
-					SelectTreeNode2(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+					bool keepSelection=false;
+					EventFillTree?.Invoke(this,keepSelection);
+					EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+					FrmDocInfo frmDocInfo = new FrmDocInfo(PatientCur,document,isDocCreate: true);
+					frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
+					if(frmDocInfo.IsDialogCancel) {
+						DeleteDocument(isVerbose:false,doSecurityCheck:false,document);
+						return;
+					}
+					else {
+						nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
+						SetDocumentShowing(0,document.Copy());
+						//these two lines are needed in case they change the category
+						EventFillTree?.Invoke(this,true);
+						EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+					}
+					//EventFillTree?.Invoke(this,false);
+					//ClearObjects();
+					//SelectTreeNode2(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				}
 			}
 			else if(nodeTypeAndKey.NodeType==EnumImageNodeType.Mount){
@@ -4593,12 +4623,13 @@ Here is the desired behavior:
 				if(!ODBuild.IsThinfinity() && i>0){
 					_odWebView2.DoBlockNavigation=false;//Allows previewing of additional PDFs when importing more than one file.
 				}
-				EventFillTree?.Invoke(this,false);
+				bool keepSelection=false;
+				EventFillTree?.Invoke(this,keepSelection);
 				EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,document,isDocCreate:true);
 				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
 				if(frmDocInfo.IsDialogCancel) {
-					DeleteDocument(false,false,document);
+					DeleteDocument(isVerbose:false,doSecurityCheck:false,document);
 				}
 				else {
 					if(document.ImgType==ImageType.Photo) {
@@ -4639,15 +4670,19 @@ Here is the desired behavior:
 	}
 }
 
-//2024-06-24 Todo
+//2024-07-03 Todo
 /*
+Drag to pop a floater, need to capture mouse.
+Bug: Move image to another category question comes up when it shouldn't, when clicking on a recently moved image.
+Need to allow category selection like I think older versions did.
+Imaging toolbar hover is in wrong place
+Other todos
+
 Zoom is a mess. Old behavior was to reset to fit when changing images by clicking, from selector, or even changing focus through windows. 
 But this was just a side effect of the need to reset zoom if the window had moved to a new screen with different zoom. was done in FormImageFloat.OnResizeEnd
 See the discussion at the top for how it should behave.
 Currently, mouse wheel over floater frequently does not change selection in selector, does not unselect docked header, and uses wrong zoom level, although it does zoom the correct image.
 
-Drag to pop a floater, need to capture mouse.
-ControlImages.CreateControlImageDisplay, research that todo
 Fix stuck mouse when dragging images in this control get interrupted.
 Total review and test of KeyDown events, including Ctrl-P to select patient
 Wherever controlImageDisplay.SelectTreeNode is used, test if title was getting set properly

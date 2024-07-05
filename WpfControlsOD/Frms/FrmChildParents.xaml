@@ -6,11 +6,12 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="425" Height="563" 
+             Width="435" Height="563" 
              Text="Parent Select" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
-		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,10,100,10" Title="Parents" />
-		<ui:Button x:Name="butAdd" HorizontalAlignment="Right" Width="75" Margin="0,10,10,0" Text="_Add" Click="butAdd_Click" RenderTransformOrigin="0.543,1.257" Icon="Add" Height="24" />
+		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,10,110,10" Title="Parents" />
+		<ui:Button x:Name="butAdd" HorizontalAlignment="Right" Width="74" Margin="0,10,19,0" Text="_Add" Click="butAdd_Click" RenderTransformOrigin="0.543,1.257" Icon="Add" Height="24" />
 		<ui:Button x:Name="butOK" Margin="0,0,10,10" Text="OK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Click="butOK_Click" />
+		<ui:CheckBox x:Name="checkShowHidden" Margin="0,57,7,0" HorizontalAlignment="Right" Width="92" Height="20" Text="Show Hidden" Click="CheckBox_Click"/>
 	</Grid>
 </local:FrmODBase>

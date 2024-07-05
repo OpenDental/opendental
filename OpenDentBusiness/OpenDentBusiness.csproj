@@ -289,7 +289,6 @@
     <Compile Include="Crud\ChildParentLinkCrud.cs" />
     <Compile Include="Crud\ChildRoomCrud.cs" />
     <Compile Include="Crud\ChildRoomLogCrud.cs" />
-    <Compile Include="Crud\ChildTeacherCrud.cs" />
     <Compile Include="Crud\CloudAddressCrud.cs" />
     <Compile Include="Crud\CodeGroupCrud.cs" />
     <Compile Include="Crud\CommlogHistCrud.cs" />
@@ -415,7 +414,6 @@
     <Compile Include="Data Interface\ChildRoomLogs.cs" />
     <Compile Include="Data Interface\ChildRooms.cs" />
     <Compile Include="Data Interface\Children.cs" />
-    <Compile Include="Data Interface\ChildTeachers.cs" />
     <Compile Include="Data Interface\CodeGroups.cs" />
     <Compile Include="Data Interface\EFormDefs.cs" />
     <Compile Include="Data Interface\EFormFieldDefs.cs" />
@@ -742,7 +740,6 @@
     <Compile Include="TableTypes\AutoCommExcludeDate.cs" />
     <Compile Include="TableTypes\ChildParentLink.cs" />
     <Compile Include="TableTypes\ChildRoomLog.cs" />
-    <Compile Include="TableTypes\ChildTeacher.cs" />
     <Compile Include="TableTypes\Child.cs" />
     <Compile Include="TableTypes\ChildParent.cs" />
     <Compile Include="TableTypes\ChildRoom.cs" />

@@ -44,38 +44,32 @@ namespace OpenDental {
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetChildRoomLogs(
 				comboChildRoom.GetSelectedKey<ChildRoom>(x=>x.ChildRoomNum),textVDateLog.Value);
 			List<Child> listChildren=Children.GetAll();
-			List<ChildTeacher> listChildTeachers=ChildTeachers.GetAll();
-			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
 			double countChildren=0;
-			double countChildTeachers=0;
+			double countEmployees=0;
+			double ratioAllowed=ChildRoomLogs.GetPreviousRatio(comboChildRoom.GetSelectedKey<ChildRoom>(x=>x.ChildRoomNum),textVDateLog.Value);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn gridColumn=new GridColumn("RoomId",60);
+			GridColumn gridColumn=new GridColumn("Child",100);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Child Name",175);
+			gridColumn=new GridColumn("Teacher",100);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Teacher Name",175);
+			gridColumn=new GridColumn("Time",90);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Allowed Ratio",100);
+			gridColumn=new GridColumn("In/Out",50,HorizontalAlignment.Center);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("DateTDisplayed",170);
+			gridColumn=new GridColumn("Allowed Ratio",85,HorizontalAlignment.Center);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("In/Out",50);
-			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Current Ratio",100);
+			gridColumn=new GridColumn("Current Ratio",85,HorizontalAlignment.Center);
 			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listChildRoomLogs.Count;i++) {
 				GridRow gridRow=new GridRow();
-				ChildRoom childRoom=listChildRooms.Find(x => x.ChildRoomNum==listChildRoomLogs[i].ChildRoomNum);
-				gridRow.Cells.Add(childRoom.RoomId);
-				//A row will be for either a child, a teacher, or a ratio change. The two that is it not for will be set to default values
-				//Example: If this is a child row, then the Child Name column will be filled, but the Teacher Name and Allowed Ratio column will be empty strings
+				//A row will be for either a child, an employee(teacher), or a ratio change. The other name row will be set to a default value and the ratio column will be filled
+				//Example: If this is a child row, then the Child column will be filled, but the Teacher be an empty string. The Allowed Ratio column will be filled.
 				if(listChildRoomLogs[i].ChildNum!=0) {//Child entry
 					Child child=listChildren.Find(x => x.ChildNum==listChildRoomLogs[i].ChildNum);
 					string childName=Children.GetName(child);
 					gridRow.Cells.Add(childName);
-					gridRow.Cells.Add("");
 					gridRow.Cells.Add("");
 					//Find the current number of children
 					if(listChildRoomLogs[i].IsComing) {
@@ -85,29 +79,26 @@ namespace OpenDental {
 						countChildren--;
 					}
 				}
-				else if(listChildRoomLogs[i].ChildTeacherNum!=0) {//ChildTeacher entry
+				else if(listChildRoomLogs[i].EmployeeNum!=0) {//Employee entry
 					gridRow.Cells.Add("");
-					ChildTeacher childTeacher=listChildTeachers.Find(x => x.ChildTeacherNum==listChildRoomLogs[i].ChildTeacherNum);
-					Userod userod=Userods.GetFirstOrDefault(x => x.UserNum==childTeacher.UserNum);
-					string teacherName=userod.UserName;
-					gridRow.Cells.Add(teacherName);
-					gridRow.Cells.Add("");
-					//Find the current number of teachers
+					Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listChildRoomLogs[i].EmployeeNum);
+					string employeeName=employee.FName+" "+employee.LName;
+					gridRow.Cells.Add(employeeName);
+					//Find the current number of employees
 					if(listChildRoomLogs[i].IsComing) {
-						countChildTeachers++;
+						countEmployees++;
 					}
 					else {
-						countChildTeachers--;
+						countEmployees--;
 					}
 				}
 				else {//RatioChange entry
 					gridRow.Cells.Add("");
 					gridRow.Cells.Add("");
-					gridRow.Cells.Add(listChildRoomLogs[i].RatioChange.ToString());
 				}
-				GridCell gridCell=new GridCell(listChildRoomLogs[i].DateTDisplayed.ToString());
+				GridCell gridCell=new GridCell(listChildRoomLogs[i].DateTDisplayed.ToLongTimeString());
 				if(listChildRoomLogs[i].DateTDisplayed!=listChildRoomLogs[i].DateTEntered) {
-					gridCell.ColorBackG=Colors.Red;//Color red if the Displayed and Entered dates do not match
+					gridCell.ColorText=Colors.Red;//Color red if the Displayed and Entered dates do not match
 				}
 				gridRow.Cells.Add(gridCell);
 				if(listChildRoomLogs[i].RatioChange!=0) {
@@ -119,17 +110,21 @@ namespace OpenDental {
 				else {
 					gridRow.Cells.Add("Out");
 				}
-				//Calculate current ratio
-				if(countChildTeachers==0 && countChildren==0) {//There are no teachers or children. Stops division by 0.
-					gridRow.Cells.Add("0 children, 0 teachers.");
+				if(listChildRoomLogs[i].RatioChange!=0) {//RatioChange entry
+					ratioAllowed=listChildRoomLogs[i].RatioChange;
 				}
-				else if(countChildTeachers==0) {//There are no teachers. Stops division by 0.
-					gridCell=new GridCell(countChildren+" children, 0 teachers.");
-					gridCell.ColorBackG=Colors.Red;
-					gridRow.Cells.Add(gridCell);
+				gridRow.Cells.Add(ratioAllowed.ToString());
+				//Calculate current ratio
+				if(countEmployees==0) {//There are no employees. Stops division by 0.
+					gridRow.Cells.Add("?");
 				}
 				else {
-					gridRow.Cells.Add((countChildren/countChildTeachers).ToString()+" children per teacher.");
+					double ratioCurrent=countChildren/countEmployees;
+					gridCell=new GridCell(ratioCurrent.ToString());
+					if(ratioCurrent>ratioAllowed) {
+						gridCell.ColorText=Colors.Red;
+					}
+					gridRow.Cells.Add(gridCell);
 				}
 				gridRow.Tag=listChildRoomLogs[i];
 				gridMain.ListGridRows.Add(gridRow);

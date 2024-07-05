@@ -157,6 +157,23 @@ namespace OpenDentBusiness{
 			return Crud.ChildRoomLogCrud.SelectMany(command);
 		}
 
+		///<summary>Get the most recent previous ratio change for a specific child room and date. Returns 0 if no previous ratio change was found.</summary>
+		public static double GetPreviousRatio(long childRoomNum,DateTime date) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<double>(MethodBase.GetCurrentMethod(),childRoomNum,date);
+			}
+			string command="SELECT * FROM childroomlog WHERE ChildRoomNum="+POut.Long(childRoomNum)//Specify room
+				+" AND RatioChange!=0"//Specify RatioChange entry
+				+" AND DateTDisplayed <"+POut.Date(date)//Find previous entries
+				+" ORDER BY DateTDisplayed DESC"//Order so that the first entry is the most recent one
+				+" LIMIT 1";
+			ChildRoomLog childRoomLog=Crud.ChildRoomLogCrud.SelectOne(command);
+			if(childRoomLog==null) {
+				return 0;
+			}
+			return childRoomLog.RatioChange;
+		}
+
 		///<summary></summary>
 		public static long Insert(ChildRoomLog childRoomLog){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
