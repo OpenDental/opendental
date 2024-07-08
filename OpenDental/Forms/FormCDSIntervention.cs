@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using OpenDental.UI;
+using CodeBase;
 
 namespace OpenDental {
 	public partial class FormCDSIntervention:FormODBase {
@@ -71,6 +72,10 @@ namespace OpenDental {
 
 		///<summary>Run after assigning value to DictEhrTriggerResults.  FormCDSIntervention will display if needed, otherwise Dialogresult will be null.</summary>
 		public void ShowIfRequired() {
+			if(ListCDSInterventions.IsNullOrEmpty()) {
+				DialogResult=DialogResult.Cancel;
+				return;//No interventions found
+			}
 			_table=new DataTable();
 			_table.Columns.Add("");//infobutton
 			_table.Columns.Add("");//Conditions = Description and match conditions

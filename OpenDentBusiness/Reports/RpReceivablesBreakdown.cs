@@ -173,9 +173,19 @@ namespace OpenDentBusiness {
 								{whereProv}
 								GROUP BY AdjDate
 							UNION ALL 
+								SELECT AdjDate TranDate, SUM(AdjAmt) Amt
+								FROM adjustment
+								where ProcNum != 0
+								AND AdjAmt >= 0
+								AND AdjDate >= '{bDate}'
+								AND AdjDate < '{eDate}'
+								{whereProv}
+								GROUP BY AdjDate
+							UNION ALL 
 								SELECT ProcDate TranDate, SUM(AdjAmt) Amt
 								FROM adjustment
 								WHERE ProcNum != 0
+								AND AdjAmt < 0
 								AND ProcDate >= '{bDate}'
 								AND ProcDate < '{eDate}'
 								{whereProv}
