@@ -1501,13 +1501,14 @@ namespace OpenDental{
 					return;
 				}
 			}
-			if(!_hasDoubleClickWarningAlreadyBeenDisplayed){
+			ClaimProc claimProc=_listClaimProcsForClaim[e.Row];
+			bool isPendingSupplemental=claimProc.IsOverpay && claimProc.Status==ClaimProcStatus.NotReceived;
+			if(!_hasDoubleClickWarningAlreadyBeenDisplayed && !isPendingSupplemental){
 				_hasDoubleClickWarningAlreadyBeenDisplayed=true;
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"If you are trying to enter payment information, please use the payments buttons at the upper right.\r\nThen, don't forget to finish by creating the check using the button below this section.\r\nYou should probably click cancel unless you are just editing estimates.\r\nContinue anyway?")){
 					return;
 				}
 			}
-			ClaimProc claimProc=_listClaimProcsForClaim[e.Row];
 			if(!CheckRecalcEstimates(claimProc)) {
 				return;
 			}

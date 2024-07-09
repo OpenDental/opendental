@@ -5822,6 +5822,9 @@ namespace OpenDental{
 				_formJobManager=new FormJobManager();
 				//Dpi.SetAware();
 			}
+			else if (!_formJobManager.CanFocus) {
+				return;
+			}
 			_formJobManager.Show();
 			if(_formJobManager.WindowState==FormWindowState.Minimized) {
 				_formJobManager.WindowState=FormWindowState.Normal;
