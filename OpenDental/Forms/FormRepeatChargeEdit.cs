@@ -294,6 +294,9 @@ namespace OpenDental{
 				MessageBox.Show(ex.Message);
 				return;
 			}
+			if(!string.IsNullOrEmpty(chargeManual.Note)) {
+				textNote.Text=chargeManual.Note;
+			}
 			RepeatCharges.AllocateUnearned(chargeManual,procedure,DateTime.Today);
 			Recalls.Synch(_repeatCharge.PatNum);
 			MsgBox.Show(this,"Procedure added.");

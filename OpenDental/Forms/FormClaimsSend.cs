@@ -732,9 +732,10 @@ namespace OpenDental{
 				//If they used the dropdown list, and there still aren't any in the list that match the selected clearinghouse
 				//then ask user if they want to send all of the electronic ones through this clearinghouse.
 				if(hqClearinghouseNum!=0 && gridMain.SelectedTags<ClaimSendQueueItem>().Count==0) {
-					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Send all e-claims through selected clearinghouse?")) {
-						return;
-					}
+					//if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Send all e-claims through selected clearinghouse?")) {
+					//Redundant. Asks again 30 lines down.
+					//	return;
+					//}
 					for(int i=0;i<gridMain.ListGridRows.Count;i++) {//loop through all filtered rows
 						ClaimSendQueueItem queueItem=(ClaimSendQueueItem)gridMain.ListGridRows[i].Tag;
 						if(queueItem.CanSendElect) {

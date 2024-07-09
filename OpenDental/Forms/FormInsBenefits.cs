@@ -1016,12 +1016,9 @@ namespace OpenDental {
 			#region Age Limitation
 			List<Benefit> listBenefitsAgeLim=gridAgeLimits.ListGridRows.Select(x=>(Benefit)x.Tag).ToList();
 			for(int i=0;i<listBenefitsAgeLim.Count;i++) {
-				byte age=PIn.Byte(gridAgeLimits.ListGridRows[i].Cells[2].Text, hasExceptions:false);
-				if(age > 0) {
-					benefit=listBenefitsAgeLim[i];
-					if(benefit.BenefitNum==0) {
-						benefit=MakeAgeLimitBenefit(benefit,age);
-					}
+				byte age=PIn.Byte(gridAgeLimits.ListGridRows[i].Cells[2].Text,hasExceptions:false);
+				if(age>0) {
+					benefit=MakeAgeLimitBenefit(listBenefitsAgeLim[i],age);
 					_listBenefitsAll.Add(benefit);
 				}
 			}
@@ -1035,10 +1032,7 @@ namespace OpenDental {
 				Byte byteProvided=PIn.Byte(gridFrequencies.ListGridRows[i].Cells[2].Text, hasExceptions:false);
 				bool isPatOverride=!String.IsNullOrEmpty(gridFrequencies.ListGridRows[i].Cells[0].Text);
 				if(byteProvided>0) {
-					benefit=listBenefitsFreq[i];
-					if(benefit.BenefitNum==0) {
-						benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided,isPatOverride);
-					}
+					benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided,isPatOverride);
 					_listBenefitsAll.Add(benefit);
 				}
 			}
@@ -1442,6 +1436,7 @@ namespace OpenDental {
 			return true;
 		}
 
+		///<summary>Copies the passed in benefit. If existing benefit then will just update during sync.</summary>
 		private Benefit MakeAgeLimitBenefit(Benefit benefit, byte quantity) {
 			Benefit benefitNew=benefit.Copy();
 			benefitNew.BenefitType=InsBenefitType.Limitations;
@@ -1459,6 +1454,7 @@ namespace OpenDental {
 			return benefitNew;
 		}
 
+		///<summary>Copies the passed in benefit. If existing benefit then will just update during sync.</summary>
 		private Benefit MakeFrequencyBenefit(Benefit benefit, int indexComboFrequency, int indexComboTreatArea, byte quantity, bool isPatOverride) {
 			Benefit benefitNew=benefit.Copy();
 			benefitNew.BenefitType=InsBenefitType.Limitations;

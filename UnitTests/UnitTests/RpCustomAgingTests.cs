@@ -121,6 +121,40 @@ namespace UnitTests.RpCustomAgingTests_Tests {
 			Assert.IsTrue(listAgingPats.Count(x => x.BalOverNinety  < 0)==1);
 		}
 
+		[TestMethod]
+		public void RpCustomAging_GetAgingList_AgingProcLifoOn() {
+			PrefT.UpdateYN(PrefName.AgingProcLifo,YN.Yes);
+			//Create a patient and set complete two procedures, one 61-90 days ago, and the other 90+ days ago
+			ProcedureCode procedureCode=ProcedureCodeT.CreateProcCode("CUSTAGE");
+			Patient patient=PatientT.CreatePatient();
+			Procedure procedure=ProcedureT.CreateProcedure(patient,procedureCode.ProcCode,ProcStat.C,"",100,procDate:DateTime.Today.AddDays(-70));
+			ProcedureT.CreateProcedure(patient,procedureCode.ProcCode,ProcStat.C,"",100,procDate:DateTime.Today.AddDays(-100));
+			//Attach a negative adjustment to the procedure 61-90 days ago
+			AdjustmentT.MakeAdjustment(patient.PatNum,-50,adjDate:DateTime.Today.AddDays(-70).AddDays(10),procDate:DateTime.Today.AddDays(-70),procNum:procedure.ProcNum);
+			AgingOptions agingOptions=GetAgingOptions(ageAccount:AgeOfAccount.Any,ageCredits:false,negativeBalOptions:AgingOptions.NegativeBalAgingOptions.Exclude);
+			List<AgingPat> listAgingPats=RpCustomAging.GetAgingList(agingOptions);
+			Assert.AreEqual(1,listAgingPats.Count);
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalSixtyNinety==50);//Attached transaction amount offsets procedure
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalOverNinety==100);//No credits apply to the procedure 90+ days ago
+		}
+
+		[TestMethod]
+		public void RpCustomAging_GetAgingList_AgingProcLifoOff() {
+			PrefT.UpdateYN(PrefName.AgingProcLifo,YN.No);
+			//Create a patient and set complete two procedures, one 61-90 days ago, and the other 90+ days ago
+			ProcedureCode procedureCode=ProcedureCodeT.CreateProcCode("CUSTAGE");
+			Patient patient=PatientT.CreatePatient();
+			Procedure procedure=ProcedureT.CreateProcedure(patient,procedureCode.ProcCode,ProcStat.C,"",100,procDate:DateTime.Today.AddDays(-70));
+			ProcedureT.CreateProcedure(patient,procedureCode.ProcCode,ProcStat.C,"",100,procDate:DateTime.Today.AddDays(-100));
+			//Attach a negative adjustment to the procedure 61-90 days ago
+			AdjustmentT.MakeAdjustment(patient.PatNum,-50,adjDate:DateTime.Today.AddDays(-70).AddDays(10),procDate:DateTime.Today.AddDays(-70),procNum:procedure.ProcNum);
+			AgingOptions agingOptions=GetAgingOptions(ageAccount:AgeOfAccount.Any,ageCredits:false,negativeBalOptions:AgingOptions.NegativeBalAgingOptions.Exclude);
+			List<AgingPat> listAgingPats=RpCustomAging.GetAgingList(agingOptions);
+			Assert.AreEqual(1,listAgingPats.Count);
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalSixtyNinety==100);//No credits apply to the procedure 61-90 days ago
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalOverNinety==50);//Attached transaction used as credit towards oldest charge
+		}
+
 		private void InitializePatientData(bool hasNegativeBalance=false,DateTime dateToday=default) {
 			double balance=100;
 			if(hasNegativeBalance) {

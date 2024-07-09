@@ -29,7 +29,11 @@ namespace OpenDental {
 			gridSubscribers.Columns.Clear();
 			gridSubscribers.Columns.Add(new GridColumn(Lan.g(this,"Name"),200));
 			gridSubscribers.ListGridRows.Clear();
-			List<string> listSubs=InsSubs.GetSubscribersForPlan(InsPlanCur.PlanNum,excludeSub:InsSubCur.InsSubNum);
+			long excludeSub=-1;
+			if(InsSubCur!=null){
+				excludeSub=InsSubCur.InsSubNum;
+			}
+			List<string> listSubs=InsSubs.GetSubscribersForPlan(InsPlanCur.PlanNum,excludeSub);
 			for(int i=0;i<listSubs.Count;i++) {
 				gridSubscribers.ListGridRows.Add(new GridRow(listSubs[i]));
 			}

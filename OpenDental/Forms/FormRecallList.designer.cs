@@ -128,6 +128,10 @@
 			this.menuItemSeeAccount.Text = "See Account";
 			this.menuItemSeeAccount.Click += new System.EventHandler(this.butGotoAccount_Click);
 			// 
+			// menuRightClick
+			// 
+			this.menuRightClick.Popup+=gridContextMenu_Popup;
+			// 
 			// tabControl
 			// 
 			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 

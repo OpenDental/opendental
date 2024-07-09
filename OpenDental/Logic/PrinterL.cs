@@ -246,9 +246,10 @@ namespace OpenDental {
 			#endregion 1
 			#region 2 - If a printer is set for this situation, and it is in the list of installed printers, use it.
 			if(printSituation!=PrintSituation.Default){
-				printerForSit=Printers.GetForSit(printSituation);
+				Printer printerForSpecificSit=Printers.GetForSit(printSituation);
 				printerName="";
-				if(printerForSit!=null){
+				if(printerForSpecificSit!=null){
+					printerForSit=printerForSpecificSit;
 					printerName=printerForSit.PrinterName;
 					showPrompt=printerForSit.DisplayPrompt;
 					if(Printers.PrinterIsInstalled(printerName)) {

@@ -44,7 +44,19 @@ namespace OpenDental{
 			gridPrinters.ListGridRows.Clear();
 			GridRow row;
 			//Get a list of all of the print situations
-			List<PrintSituation> listPrintSituations=Enum.GetValues(typeof(PrintSituation)).AsEnumerable<PrintSituation>().ToList();
+			List<PrintSituation> listPrintSituations=new List<PrintSituation>{
+				PrintSituation.Default, 
+				PrintSituation.Appointments, 
+				PrintSituation.Claim, 
+				PrintSituation.LabelSheet,
+				PrintSituation.LabelSingle, 
+				PrintSituation.Postcard, 
+				PrintSituation.Rx, 
+				PrintSituation.RxControlled, 
+				PrintSituation.RxMulti, 
+				PrintSituation.Statement, 
+				PrintSituation.TPPerio, 
+				PrintSituation.Receipt};
 			//If simple only show the default row.
 			if(checkSimple.Checked){
 				listPrintSituations.RemoveAll(x=>x!=PrintSituation.Default);

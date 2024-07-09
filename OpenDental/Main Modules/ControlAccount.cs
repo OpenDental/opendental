@@ -110,13 +110,7 @@ namespace OpenDental {
 
 		///<summary>True if 'Entire Family' is selected in the Select Patient grid.</summary>
 		private bool IsFamilySelected() {
-			if(_dataSetMain==null) {
-				return false;
-			}
-			if(_useSuperFam && SuperFamHasData()) {
-				return false;
-			}
-			return gridAcctPat.GetSelectedIndex()==gridAcctPat.ListGridRows.Count-1;//last row
+			return gridAcctPat.GetSelectedIndex()==gridAcctPat.ListGridRows.Count-1 || (_useSuperFam && SuperFamHasData());
 		}
 
 		private bool SuperFamHasData() {
@@ -661,14 +655,12 @@ namespace OpenDental {
 		}
 
 		private void gridAcctPat_CellClick(object sender,ODGridClickEventArgs e) {
+			Cursor=Cursors.WaitCursor;
 			if(gridAcctPat.SelectedTag<Patient>() is Patient patient) {
 				GlobalFormOpenDental.PatientSelected(patient,false);
-				ModuleSelected(patient.PatNum);
-				return;
+				ModuleSelected(patient.PatNum,IsFamilySelected());
 			}
-			//last row of non-SuperFam grid
-			GlobalFormOpenDental.PatientSelected(_family.ListPats[0],false);
-			ModuleSelected(_family.ListPats[0].PatNum,true);
+			Cursor=Cursors.Default;
 		}
 
 		private void gridAutoOrtho_CellDoubleClick(object sender,ODGridClickEventArgs e) {

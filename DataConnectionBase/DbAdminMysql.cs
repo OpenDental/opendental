@@ -108,6 +108,10 @@ namespace DataConnectionBase {
 			if(SOut.HasInjectionChars(password)) {
 				return("The specified password contains invalid characters.");
 			}
+			//These characters cannot be used when launching the Open Dental program.
+			if(password.In(";","<",">","&","|","^","(",")","*"," ")){
+				return("The specified password contains invalid characters.");
+			}
 			string errMsg="";
 			foreach(string hostName in _arrayHostNames) {
 				errMsg=GrantToUser(conAdmin,hostName,userName,password,doSetPassword:true,hasFullPermission:true);
@@ -179,6 +183,10 @@ namespace DataConnectionBase {
 				throw new Exception("The specified user name contains invalid characters.");
 			}
 			if(SOut.HasInjectionChars(password)) {
+				throw new Exception("The specified password contains invalid characters.");
+			}
+			//These characters cannot be used when launching the Open Dental program.
+			if(password.In(";","<",">","&","|","^","(",")","*"," ")){
 				throw new Exception("The specified password contains invalid characters.");
 			}
 			string command;

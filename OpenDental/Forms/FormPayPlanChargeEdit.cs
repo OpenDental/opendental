@@ -46,6 +46,9 @@ namespace OpenDental{
 				dynamicPaymentPlanModuleData=PayPlanEdit.GetDynamicPaymentPlanModuleData(payPlan);
 			}
 			_dynamicPaymentPlanModuleData=dynamicPaymentPlanModuleData;
+			if(PayPlanChargeCur.PayPlanChargeNum==0) {
+				PayPlanChargeCur.IsNew=true;
+			}
 		}
 
 		private void FormPayPlanCharge_Load(object sender, System.EventArgs e) {
@@ -59,6 +62,9 @@ namespace OpenDental{
 			if(_payPlan.IsDynamic) {
 				comboBoxClinic.Enabled=true;
 				textInterest.ReadOnly=false;
+				if(PayPlanChargeCur.IsNew) {
+					butDelete.Enabled=false;
+				}
 			}
 			FillComboProv();
 			if(PayPlanChargeCur.SecDateTEntry==DateTime.MinValue) {

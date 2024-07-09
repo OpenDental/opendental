@@ -324,8 +324,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Must choose a new Insurance Plan Type.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,suppressMessage:true)) {
-				MsgBox.Show(this,"User does not have permission to edit insurance plans");
+			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit)) {
 				return;
 			}
 			if(!GetPasswordFromUser()) {
@@ -348,8 +347,7 @@ namespace OpenDental{
 		}
 
 		private void butChangeFeeSchedule_Click(object sender,System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,suppressMessage:true)) {
-				MsgBox.Show(this,"User does not have permission to edit insurance plans");
+			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {

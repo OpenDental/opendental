@@ -84,5 +84,7 @@
 		ServicesHQLog,
 		///<summary>Database that stores the upload schedule and metadata regarding supplemental backups from each dental office.</summary>
 		SupplementalBackups,
+		///<summary>Database that stores hardware monitoring data.</summary>
+		HardwareMonitoring,
 	}
 }
