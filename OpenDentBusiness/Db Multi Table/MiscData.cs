@@ -381,15 +381,18 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns the major and minor version of MySQL for the current connection.  Returns a version of 0.0 if the MySQL version cannot be determined.</summary>
-		public static string GetMySqlVersion() {
+		public static string GetMySqlVersion(bool getRawVersion=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod());
+				return Meth.GetString(MethodBase.GetCurrentMethod(),getRawVersion);
 			}
 			string command="SELECT @@version";
 			DataTable table=Db.GetTable(command);
 			string version=PIn.String(table.Rows[0][0].ToString());
 			string[] arrayVersion=version.Split('.');
 			try {
+				if(getRawVersion) {
+					return version;
+				}
 				return int.Parse(arrayVersion[0])+"."+int.Parse(arrayVersion[1]);
 			}
 			catch {

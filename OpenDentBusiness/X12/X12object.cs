@@ -319,6 +319,8 @@ namespace OpenDentBusiness
 					return "02";
 				case PlaceOfService.TelehealthInHome:
 					return "10";
+				case PlaceOfService.OutreachSiteOrStreet:
+					return "27";
 			}
 			return "11";
 		}
@@ -1078,7 +1080,9 @@ namespace OpenDentBusiness
 		///<summary>15. Code 02.</summary>
 		TelehealthOutsideHome,
 		///<summary>16. Code 10</summary>
-		TelehealthInHome
+		TelehealthInHome,
+		///<summary>17. Code 27</summary>
+		OutreachSiteOrStreet
 	}
 
 }

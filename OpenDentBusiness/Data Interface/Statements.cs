@@ -708,6 +708,15 @@ namespace OpenDentBusiness {
 			Statements.Update(statement,statementOld);
 		}
 
+		///<summary>Assigns the given ShortGUID to the Statement with the given StatementNum</summary>
+		public static void UpdateShortGUID(long statementNum,string shortGuid) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),statementNum,shortGuid);
+			}
+			string command="UPDATE statement SET ShortGUID='"+POut.String(shortGuid)+"' WHERE StatementNum="+POut.Long(statementNum);
+			Db.NonQ(command);
+		}
+
 		public static Statement CreateLimitedStatement(List<long> listPatNumsSelected,long patNum,List<long> listPayClaimNums,List<long> listAdjustments,
 			List<long> listPayNums,List<long> listProcedures,List<long> listPayPlanChargeNums,long superFamily=0,
 			EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.None)

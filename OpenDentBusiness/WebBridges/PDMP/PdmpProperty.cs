@@ -56,7 +56,7 @@ namespace OpenDentBusiness {
 			if(string.IsNullOrWhiteSpace(ProvLicenseType)) {
 				ProvLicenseType=nameof(ProviderClinic.StateLicense);
 			}
-			bool useRxID=!string.IsNullOrWhiteSpace(ProvLicenseType) && ProvLicenseType==nameof(ProviderClinic.StateRxID);
+			bool useRxID=DoUseRxID();
 			ProvLicenseNum=ProviderClinics.GetStateLicenseForProv(PdmpProv.ProvNum,StateAbbr,clinicNum,useRxID);
 			if(programCur.ProgName==ProgramName.PDMP.ToString()) {
 				LoadPDMPProps(programCur.ProgramNum);
@@ -67,6 +67,17 @@ namespace OpenDentBusiness {
 			if(Introspection.IsTestingMode) {
 				LoadDebugOverrides(programCur);
 			}
+		}
+
+		/// <summary>Returns true if the providers State Rx ID should be used instead of the State License Number, false otherwise.</summary>
+		public bool DoUseRxID() {
+			if(string.IsNullOrWhiteSpace(ProvLicenseType)) {
+				return false;
+			}
+			if(ProvLicenseType==nameof(ProviderClinic.StateRxID)) {
+				return true;
+			}
+			return false;
 		}
 
 		///<summary>Checks each PDMP program bridge and makes sure we have everything we need to initiate a connection with website. Can throw</summary>
@@ -127,8 +138,15 @@ namespace OpenDentBusiness {
 
 		private static bool TryValidateProvLicense(PdmpProperty prop, out string error) {
 			error="";
+			string rxIDOrLicenseNumber="";
 			if(prop.ProvLicenseNum.IsNullOrEmpty()) {
-				error=Lans.g("PDMP","Provider's license is required.");
+				if(prop.DoUseRxID()) {
+					rxIDOrLicenseNumber="Rx ID";
+				}
+				else {
+					rxIDOrLicenseNumber="License Number";
+				}
+				error=Lans.g("PDMP",$"Provider's State {rxIDOrLicenseNumber} is required.");
 			}
 			return string.IsNullOrWhiteSpace(error);
 		}
@@ -180,7 +198,7 @@ namespace OpenDentBusiness {
 			if(!Regex.IsMatch(prop.StateAbbr,
 				"^(?:(A[KLRZ]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|P[AR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY]))$")) 
 			{
-				error=Lans.g("PDMP","State abbrieviation is invalid.");
+				error=Lans.g("PDMP","State Where Licensed is invalid for user's provider.");
 			}
 			return string.IsNullOrWhiteSpace(error);
 		}

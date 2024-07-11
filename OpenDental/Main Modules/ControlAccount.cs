@@ -3688,6 +3688,10 @@ namespace OpenDental {
 				gridAcctPat.Title="Patients";
 				FillGridAcctPat(isSelectingFamily);
 			}
+			if(_patient==null) {
+				return;
+			}
+			ToggleUseSuperFamCheckboxEnabled(_superFamPrefEnabled && _patient.SuperFamily>0);
 		}
 
 		private void FillGridAcctPat(bool isSelectingFamily) {

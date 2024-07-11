@@ -30,7 +30,12 @@ namespace OpenDental {
 				panelCubicle.Visible=false;
 				labelDescription.Text="Text";			
 				labelDescriptionExample.Text="example: 12";
-				textFontSize.Text=MapAreaCur.FontSize.ToString();
+				if(MapAreaCur.FontSize<textFontSize.MinVal) {
+					textFontSize.Text="14";
+				}
+				else {
+					textFontSize.Text=MapAreaCur.FontSize.ToString();
+				}
 			}
 		}
 

@@ -378,8 +378,8 @@ namespace OpenDental {
 					}
 				}
 			}
-			//Show attached P&I checkbox only when we have one or more rows, otherwise it will do nothing.
-			checkShowAttachedPnI.Visible=gridCharges.ListGridRows.Count>0;
+			//Show attached P&I checkbox only when we have one or more charges, otherwise it will do nothing.
+			checkShowAttachedPnI.Visible=_dynamicPaymentPlanData.ListPayPlanChargesExpected.Count>0;
 			#endregion
 			_dynamicPaymentPlanData.TotalInterest=0;
 			for(int i=0;i<listPayPlanChargesExpected.Count;i++) {//combine with list expected.

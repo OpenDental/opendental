@@ -81,6 +81,7 @@
 			this.checkIsActive = new OpenDental.UI.CheckBox();
 			this.comboPhase = new OpenDental.UI.ComboBox();
 			this.comboJobTeam = new OpenDental.UI.ComboBox();
+			this.checkIncludeCompletedJobsInHoursCalc = new OpenDental.UI.CheckBox();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -708,9 +709,19 @@
 			this.comboJobTeam.TabIndex = 339;
 			this.comboJobTeam.SelectionChangeCommitted += new System.EventHandler(this.comboJobTeam_SelectionChangeCommitted);
 			// 
+			// checkIncludeCompletedJobsInHoursCalc
+			// 
+			this.checkIncludeCompletedJobsInHoursCalc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIncludeCompletedJobsInHoursCalc.Location = new System.Drawing.Point(139, 220);
+			this.checkIncludeCompletedJobsInHoursCalc.Name = "checkIncludeCompletedJobsInHoursCalc";
+			this.checkIncludeCompletedJobsInHoursCalc.Size = new System.Drawing.Size(72, 23);
+			this.checkIncludeCompletedJobsInHoursCalc.TabIndex = 379;
+			this.checkIncludeCompletedJobsInHoursCalc.Text = "Include Complete";
+			// 
 			// UserControlProjectEdit
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.Controls.Add(this.checkIncludeCompletedJobsInHoursCalc);
 			this.Controls.Add(this.butAddExistingJob);
 			this.Controls.Add(this.textCheckedOut);
 			this.Controls.Add(this.labelCheckedOut);
@@ -822,5 +833,6 @@
 		private System.Windows.Forms.Timer timerTitle;
 		private System.Windows.Forms.Timer timerVersion;
 		private UI.CheckBox checkShowAllChildJobs;
+		private UI.CheckBox checkIncludeCompletedJobsInHoursCalc;
 	}
 }

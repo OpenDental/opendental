@@ -1551,7 +1551,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			//Get listJobs
 			RefreshListJobsByTopParent(true,false);
 			List<Job> listJobsAllDescendants=GetDescedentJobs(_jobCur.JobNum,false);
-			listJobsAllDescendants.RemoveAll(x => x.PhaseCur.In(JobPhase.Complete,JobPhase.Cancelled));
+			listJobsAllDescendants.RemoveAll(x => x.PhaseCur==JobPhase.Cancelled);
+			if(!checkIncludeCompletedJobsInHoursCalc.Checked) {
+				listJobsAllDescendants.RemoveAll(x => x.PhaseCur==JobPhase.Complete);
+			}
 			RemoveCompletedJobsFromListJobs(_listJobsByTopParent);
 			double totalHoursEst=0;
 			double totalHourActual=0;

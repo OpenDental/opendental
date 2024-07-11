@@ -564,40 +564,48 @@ namespace OpenDental {
 				row=new GridRow();
 				#region New York Mental Health
 				if(PrefC.GetBool(PrefName.OmhNy)) {
-					DateTime dateLastVisit=PIn.Date(_tablePats.Rows[i]["lastVisit"].ToString());
 					string description=_tablePats.Rows[i]["RecallPastDue"].ToString();
-					if(dateLastVisit.Year<1880) {
+					if(description=="ORANGE") {
 						row.ColorText=Color.FromRgb(255,165,0);//Orange
 					}
-					else if(dateLastVisit.Year>1880 && description=="") {
+					else if(description=="BLACK") {
 						row.ColorText=Color.FromRgb(0,0,0);//Black
 					}
 					else if(description=="PROPHY") {
 						row.ColorText=Color.FromRgb(255,0,0);//Red
+						row.Bold=true;
 					}
 					else if(description=="CHILD PROPHY") {
 						row.ColorText=Color.FromRgb(255,0,0);//Red
+						row.Bold=true;
 					}
 					else if(description=="ANNUAL EXAM") {
 						row.ColorText=Color.FromRgb(0,128,0);//Green
+						row.Bold=true;
 					}
 					else if(description=="6 MONTH EXAM") {
 						row.ColorText=Color.FromRgb(0,0,255);//Blue
+						row.Bold=true;
 					}
 					else if(description=="PANO X-RAY") {
 						row.ColorText=Color.FromRgb(128,0,128);//Purple
+						row.Bold=true;
 					}
 					else if(description=="PERIO SRP(UR)") {
 						row.ColorText=Color.FromRgb(150,75,0);//Brown
+						row.Bold=true;
 					}
 					else if(description=="PERIO SRP(UL)") {
 						row.ColorText=Color.FromRgb(150,75,0);//Brown
+						row.Bold=true;
 					}
 					else if(description=="PERIO SRP(LR)") {
 						row.ColorText=Color.FromRgb(150,75,0);//Brown
+						row.Bold=true;
 					}
 					else if(description=="PERIO SRP(LL)") {
 						row.ColorText=Color.FromRgb(150,75,0);//Brown
+						row.Bold=true;
 					}
 					else {
 						row.ColorText=Color.FromRgb(0,0,0);//Black

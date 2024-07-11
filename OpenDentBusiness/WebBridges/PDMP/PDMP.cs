@@ -40,19 +40,11 @@ namespace OpenDentBusiness {
 				sbErrors.AppendLine(Lans.g("PDMP","Please select a patient."));
 				throw new ApplicationException(sbErrors.ToString());
 			}
-			string strDeaNum=ProviderClinics.GetDEANum(prov.ProvNum,Clinics.ClinicNum);//If no result found, retries using clinicNum=0.
-			if(string.IsNullOrWhiteSpace(strDeaNum)) {
-				sbErrors.AppendLine(Lans.g("PDMP","User's provider does not have a DEA number."));
-			}
-			string stateWhereLicensed=ProviderClinics.GetStateWhereLicensed(prov.ProvNum,Clinics.ClinicNum);
-			if(string.IsNullOrWhiteSpace(stateWhereLicensed)) {
-				sbErrors.AppendLine(Lans.g("PDMP","User's provider is not licensed for any state."));
-			}
 			PdmpProperty propertyVals=new PdmpProperty() {
 				PdmpProv=prov,
 				PdmpPat=pat,
-				StateAbbr=stateWhereLicensed,
-				Dea=strDeaNum,
+				StateAbbr=ProviderClinics.GetStateWhereLicensed(prov.ProvNum,Clinics.ClinicNum),//Will be validated below
+				Dea=ProviderClinics.GetDEANum(prov.ProvNum,Clinics.ClinicNum)//If no result found, retries using clinicNum=0. Will be validated below.
 			};
 			try {
 				propertyVals.LoadPropertiesForProgram(programCur,Clinics.ClinicNum);
