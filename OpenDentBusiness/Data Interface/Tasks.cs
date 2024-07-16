@@ -23,25 +23,30 @@ namespace OpenDentBusiness{
 
 		/// <summary>Returns true if either the current user created this task, or if they have permission to edit read only tasks, otherwise false.</summary>
 		public static bool IsAuthorizedOrOwner(Task task) {
-			bool isAuthorized=Security.IsAuthorized(EnumPermType.EditReadOnlyTasks,suppressMessage:true);
-			//The code below is copied from FormTaskEdit.Load.
-			bool isOwner = true;
-			if(task.UserNum!=Security.CurUser.UserNum) {//current user didn't write this task, so block them.
-				isOwner=false;//Delete will only be enabled if the user has the TaskEdit and TaskNoteEdit permissions.
+			//If the task is new then there is no point in checking permissions or for other task notes (even if other people added them somehow).
+			if(task.IsNew) {
+				return true;
 			}
-			if(task.TaskListNum!=Security.CurUser.TaskListInBox && task.TaskListNum!=-1) {//the task is not in the logged-in user's inbox or being created
-				isOwner=false;
+			//If the user is authorized to edit read-only tasks, don't waste time checking ownership.
+			if(Security.IsAuthorized(EnumPermType.EditReadOnlyTasks,suppressMessage:true)) {
+				return true;
 			}
-			if(isOwner) {//this just allows getting the NoteList less often
-				List<TaskNote> listTaskNotes = TaskNotes.GetForTask(task.TaskNum);//so we can check so see if other users have added notes
-				for(int i = 0;i<listTaskNotes.Count;i++) {
-					if(Security.CurUser.UserNum!=listTaskNotes[i].UserNum) {
-						isOwner=false;
-						break;
-					}
+			//If the current user didn't write this task, block them.
+			if(task.UserNum!=Security.CurUser.UserNum) {
+				return false;
+			}
+			//If the task is not in the logged-in user's inbox.
+			if(task.TaskListNum!=Security.CurUser.TaskListInBox && task.TaskListNum!=-1) {
+				return false;
+			}
+			//Check to see if other users have added notes.
+			List<TaskNote> listTaskNotes = TaskNotes.GetForTask(task.TaskNum);
+			for(int i = 0;i<listTaskNotes.Count;i++) {
+				if(Security.CurUser.UserNum!=listTaskNotes[i].UserNum) {
+					return false;
 				}
 			}
-			return isAuthorized||isOwner;
+			return true;
 		}
 
 		///<summary>Returns true if task does not exist in the database.</summary>

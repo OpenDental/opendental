@@ -115,6 +115,7 @@ namespace OpenDental {
 			}
 			FillTextAttachments();
 			if(IsNew) {
+				TaskCur.IsNew=true;
 				//butDelete.Enabled always stays true
 				//textDescript always editable
 			}

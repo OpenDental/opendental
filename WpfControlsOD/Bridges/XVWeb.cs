@@ -116,10 +116,9 @@ namespace OpenDental.Bridges {
 			return false;
 		}
 
-		/// <summary>Makes a post request to opendental.xvweb and returns a token string that allows access for get requests. Times out after 5 mins then
-		/// string is no longer valid and another post will need to be made to get another access token. 
-		/// </summary>
-		/// <returns>Returns the authorization header type and the actual token.</returns>
+		///<summary>Makes a post request to xvweb and returns a token string that allows access for get requests. Times out after 5 mins then
+		///token is no longer valid and we will have to fetch another one. In the event that this method fails to generate a token we 
+		///will instead open to the login screen, so this method is not required for xvweb to function.</summary>
 		private static string GetAuthorizationToken(bool getFreshToken=false) {
 			lock(_lock) {
 				if(!getFreshToken && !IsTokenExpired()) { //reuse the old token if there is a valid one
@@ -146,31 +145,41 @@ namespace OpenDental.Bridges {
 			dataStream.Write(byteArray,0,byteArray.Length);
 			dataStream.Close();
 			//Check to for bad user credentials or server problems. 
-			HttpWebResponse response=(HttpWebResponse)request.GetResponse();
-			if(response.StatusCode==HttpStatusCode.NoContent) {
-				throw new ApplicationException(Lang.g("XVWeb","Invalid XVWeb credentials. Please check your username and password in the XVWeb bridge setup."));
+			HttpWebResponse response=null;
+			try {
+				response=(HttpWebResponse)request.GetResponse();
+			}
+			catch (Exception e) {
+				response?.Close();
+				return "";
 			}
 			if(response.StatusCode!=HttpStatusCode.OK) {
-				throw new ApplicationException(Lang.g("XVWeb","Unable to connect to XVWeb. Response from XVWeb:")+" "+response.StatusDescription);
+				response.Close();
+				return "";
 			}
 			dataStream=response.GetResponseStream();
 			StreamReader reader=new StreamReader(dataStream);
 			string serverResp=reader.ReadToEnd();
+			reader.Close();
+			dataStream.Close();
+			response.Close();
 			//parse recieved data to get the token
-			object tokenResponse=JsonConvert.DeserializeObject(serverResp);
-			JToken parseResp=JToken.Parse(tokenResponse.ToString());
 			Token authToken=new Token();
-			authToken.tokenType=parseResp["token_type"].ToString();
-			authToken.accessToken=parseResp["access_token"].ToString();
-			authToken.issued=parseResp["issued"].ToObject<DateTime>();
-			authToken.expires=parseResp["expires"].ToObject<DateTime>().ToLocalTime();
+			try {
+				object tokenResponse=JsonConvert.DeserializeObject(serverResp);
+				JToken parseResp=JToken.Parse(tokenResponse.ToString());
+				authToken.tokenType=parseResp["token_type"].ToString();
+				authToken.accessToken=parseResp["access_token"].ToString();
+				authToken.issued=parseResp["issued"].ToObject<DateTime>();
+				authToken.expires=parseResp["expires"].ToObject<DateTime>().ToLocalTime();
+			}
+			catch(Exception e) {
+				return "";
+			}
 			string token=authToken.tokenType+" "+authToken.accessToken;
 			lock(_lock) {
 				_xvwebToken=authToken;
 			}
-			reader.Close();
-			dataStream.Close();
-			response.Close();
 			return token;
 		}
 

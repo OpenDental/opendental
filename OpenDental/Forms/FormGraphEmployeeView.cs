@@ -127,6 +127,12 @@ namespace OpenDental {
 			GridRow row=gridMain.SelectedGridRows[0];
 			DateTime dateEntry=DateTime.Parse(row.Cells[0].Text);
 			PhoneEmpDefault phoneEmpDefault=(PhoneEmpDefault)gridMain.ListGridRows[e.Row].Tag;
+			if(phoneEmpDefault==null) {
+				Employee employee=listBoxEmployees.GetSelected<Employee>();
+				MsgBox.Show(this,"No 'phoneempdefault' row found for EmployeeNum "+employee.EmployeeNum
+					+".\r\nGo to Phone Settings window and add a row for this employee.");
+				return;
+			}
 			PhoneGraph phoneGraph=_listPhoneGraphsEmpCur.Find(x=>x.EmployeeNum==phoneEmpDefault?.EmployeeNum && x.DateEntry==dateEntry);
 			if(phoneGraph==null){
 				phoneGraph=new PhoneGraph();

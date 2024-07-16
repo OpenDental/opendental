@@ -63,9 +63,15 @@ namespace OpenDental {
 			{
 				_dontAllowSimplified=true;
 				checkSimplified.Checked=false;
+				gridBenefits.Title=Lan.g(this,"Benefits");
+				gridFrequencies.Visible=false;
+				checkShowProcCodes.Visible=false;
+				butAddFrequency.Visible=false;
 				panelSimple.Visible=false;
+				groupCategories.Visible=false;
 				LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,groupYear.Bottom+3));
 				LayoutManager.MoveHeight(gridBenefits,butAddBenefit.Top-gridBenefits.Top-5);
+				Width=LayoutManager.Scale(796);
 			}
 			FillCalendarYear();
 			FillSimple();

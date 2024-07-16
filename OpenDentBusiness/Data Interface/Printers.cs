@@ -122,7 +122,7 @@ namespace OpenDentBusiness{
 		///<summary>Either does an insert or an update to the database if need to create a Printer object.  Or it also deletes a printer object if needed.</summary>
 		public static void PutForSit(PrintSituation sit,string computerName, string printerName,bool displayPrompt,bool isVirtual=false,string fileExtension=""){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),sit,computerName,printerName,displayPrompt);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),sit,computerName,printerName,displayPrompt,isVirtual,fileExtension);
 				return;
 			}
 			//Computer[] compList=Computers.Refresh();

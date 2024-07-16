@@ -5655,7 +5655,7 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Appointment>(MethodBase.GetCurrentMethod(),patNum);
 			}
-			string command=@$"SELECT a.PatNum, a.AptNum, a.ItemOrderPlanned FROM appointment a
+			string command=@$"SELECT a.* FROM appointment a
 				LEFT JOIN appointment ON a.AptNum=appointment.NextAptNum
 				WHERE a.AptStatus={POut.Int((int)ApptStatus.Planned)} AND a.PatNum={POut.Long(patNum)}
 				AND (appointment.AptStatus IS NULL OR appointment.AptStatus!={POut.Enum<ApptStatus>(ApptStatus.Complete)})

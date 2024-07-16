@@ -212,7 +212,8 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 					if(teamReportJob._hoursLoggedInDateRange==0) {
 						continue;
 					}
-					listSummaryLines.Add(teamReportJob._jobDescriptionWithStatus);
+					listSummaryLines.Add(teamReportJob._hoursLoggedInDateRange.ToString("F2")
+						+" Hours | "+teamReportJob._jobDescriptionWithStatus);
 				}
 				if(listSummaryLines.Count==0) {
 					listSummaryLines.Add("No hours logged");
@@ -231,7 +232,7 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 			private static List<GridRow> CreateGridRowsForType(List<TeamReportJob> listTeamReportJobs,bool doIncludeNoLogsThirtyDays,DateTime dateTimeFrom,TeamReportLogType logType) {
 				List<TeamReportJob>listTeamReportJobsForType=listTeamReportJobs?.FindAll(x => x._logType == logType) ?? new List<TeamReportJob>();
 				List<GridRow> listGridRows=new List<GridRow>();
-				double typeTotalPercent=0;
+				double typeTotal=0;
 				foreach(TeamReportJob teamReportJob in listTeamReportJobsForType) {
 					string discussionPrompt=teamReportJob.GetDiscussionPrompt(dateTimeFrom);
 					//The job doesn't have hours logged in date range, and we have no discussion prompts for it.
@@ -241,25 +242,25 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 					if(!doIncludeNoLogsThirtyDays && discussionPrompt.Contains(_DAYS_NO_LOG)) {
 						continue;
 					}
-					typeTotalPercent+=teamReportJob._percentOfUserTotalHoursInDateRange;
+					typeTotal+=teamReportJob._hoursLoggedInDateRange;
 					GridRow row=new GridRow();
 					row.Cells.Add(teamReportJob._job.ToString());
 					row.Cells.Add(teamReportJob._jobTeamName);
 					row.Cells.Add(teamReportJob.GetStatus());
 					row.Cells.Add(teamReportJob._priority.ItemName);
-					row.Cells.Add(teamReportJob._percentOfUserTotalHoursInDateRange.ToString("F2"));
+					row.Cells.Add(teamReportJob._hoursLoggedInDateRange.ToString("F2"));
 					row.Cells.Add(discussionPrompt);
 					row.Tag=teamReportJob._job;
 					listGridRows.Add(row);
 				}
 				if(logType.In(TeamReportLogType.TimeLog,TeamReportLogType.Review)) {
-					listGridRows.Add(CreateSummaryRow(logType,typeTotalPercent));
+					listGridRows.Add(CreateSummaryRow(logType,typeTotal));
 				}
 				return listGridRows;
 			}
 
-			private static GridRow CreateSummaryRow(TeamReportLogType logType, double percent) {
-				string label="Total % ";
+			private static GridRow CreateSummaryRow(TeamReportLogType logType, double hours) {
+				string label="Total ";
 				switch (logType) {
 					case TeamReportLogType.TimeLog:
 					label+="TimeLogs";
@@ -278,7 +279,7 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 				row.Cells.Add("");
 				row.Cells.Add("");
 				row.Cells.Add("");
-				row.Cells.Add(percent.ToString("F2"));
+				row.Cells.Add(hours.ToString("F2"));
 				row.Cells.Add("");
 				row.Tag=null;
 				return row;

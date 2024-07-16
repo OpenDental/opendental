@@ -83,11 +83,19 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets a list of plans from the database for the API.</summary>
-		public static List<InsPlan> GetInsPlansForApi(int limit,int offset) {
+		public static List<InsPlan> GetInsPlansForApi(int limit,int offset,string planType,long carrierNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<InsPlan>>(MethodBase.GetCurrentMethod(),limit,offset);
+				return Meth.GetObject<List<InsPlan>>(MethodBase.GetCurrentMethod(),limit,offset,planType,carrierNum);
 			}
-			string command="SELECT * FROM insplan LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			string command="SELECT * FROM insplan WHERE SecDateEntry >= "+POut.DateT(DateTime.MinValue)+" ";
+			if(planType!=null) {
+				command+="AND PlanType='"+POut.String(planType)+"' ";
+			}
+			if(carrierNum>0) {
+				command+="AND CarrierNum="+POut.Long(carrierNum)+" ";
+			}
+			command+="ORDER BY PlanNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.InsPlanCrud.SelectMany(command);
 		}
 

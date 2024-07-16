@@ -11,14 +11,15 @@ namespace OpenDentBusiness.OpenAi {
 	public class OpenAiClient {
 		public static OpenAiClient Inst=new OpenAiClient();
 		private readonly HttpClient _httpClient;
-		private const string _apiVersion="v1";
+		private const string _apiEnpointVersion="v1";
+		private const string _apiHeaderVersion="v2";
 
 		public OpenAiClient() {
 			_httpClient=new HttpClient {
-				BaseAddress=new Uri($"https://api.openai.com/{_apiVersion}/")
+				BaseAddress=new Uri($"https://api.openai.com/{_apiEnpointVersion}/")
 			};
 			_httpClient.DefaultRequestHeaders.Authorization=new AuthenticationHeaderValue("Bearer",WebChatPrefs.GetString(WebChatPrefName.OpenAiApiKey));
-			_httpClient.DefaultRequestHeaders.Add("OpenAI-Beta",$"assistants={_apiVersion}");
+			_httpClient.DefaultRequestHeaders.Add("OpenAI-Beta",$"assistants={_apiHeaderVersion}");
 		}
 
 		#region Threads: An OpenAi conversation session between an Assistant and a user.
@@ -58,7 +59,7 @@ namespace OpenDentBusiness.OpenAi {
 			string content=JsonConvert.SerializeObject(new {
 				role="user",
 				content=msgContent,
-				file_ids=fileIds??new string[0],
+				attachments=fileIds?.Select(x => new { file_id = x })?.ToArray() ?? new object[0],
 			});
 			return await APIRequest.Inst.PostRequestAsync<OAIMessage>($"threads/{threadId}/messages",content,clientOverride:_httpClient);
 		}

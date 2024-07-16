@@ -4,19 +4,17 @@ using System.Windows.Forms;
 using System.Text;
 using OpenDentBusiness.InternalTools.Job_Manager.HelperClasses;
 using OpenDentBusiness;
+using System.Drawing;
+using CodeBase;
 
 namespace OpenDental {
 	public partial class FormTeamSummary:FormODBase {
 		private const string _OTHER_NOTES_TAB_PAGE_TITLE="Other Notes";
+		private const string _RICH_TEXT_BOX_DISCUSSION="richTextBoxDiscussion";
+		private const string _RICH_TEXT_BOX_JOBS="richTextBoxJobs";
 		private List<TeamReportUser> _listTeamReportUsers=new List<TeamReportUser>();
 		private string _subjectLine;
 		private string _jobTeamName;
-
-		private string _jobTeamAddress {
-			get {
-				return $"{_jobTeamName.Replace(" ","")}@opendental.com";
-			}
-		}
 
 		public FormTeamSummary(string jobTeamName,DateTime dateFrom,DateTime dateTo,List<TeamReportUser> listTeamReportUsers) {
 			InitializeComponent();
@@ -39,14 +37,46 @@ namespace OpenDental {
 		public void AddTab(string title,string text) {
 			UI.TabPage newTab=new UI.TabPage(title);
 			LayoutManager.Add(newTab,tabControlSummary);
-			RichTextBox richTextBox=CreateRichTextBox();
-			AddAndFormatText(richTextBox,text);
-			LayoutManager.Add(richTextBox,newTab);
+			float fontSize=LayoutManager.ScaleF(8.25f);
+			//Add discussion label
+			Label labelDiscussion=new Label();
+			labelDiscussion.Text="Discussion Notes";
+			labelDiscussion.Size=new Size(LayoutManager.Scale(100),LayoutManager.Scale(18));
+			labelDiscussion.Location=new Point(LayoutManager.Scale(2),LayoutManager.Scale(5));
+			labelDiscussion.Font=new Font("Microsoft Sans Serif",fontSize);
+			LayoutManager.Add(labelDiscussion,newTab);
+			//Add discussion textrich
+			RichTextBox richTextBoxDiscussion=CreateRichTextBox();
+			richTextBoxDiscussion.Name=_RICH_TEXT_BOX_DISCUSSION;
+			richTextBoxDiscussion.SelectionBullet=true;
+			richTextBoxDiscussion.Size=new Size(LayoutManager.Scale(newTab.Width-10),LayoutManager.Scale(280));
+			if(title==_OTHER_NOTES_TAB_PAGE_TITLE) {
+				richTextBoxDiscussion.Size=new Size(LayoutManager.Scale(newTab.Width-10),LayoutManager.Scale(580));
+			}
+			richTextBoxDiscussion.Location=new Point(LayoutManager.Scale(5),LayoutManager.Scale(25));
+			richTextBoxDiscussion.Font=new Font("Microsoft Sans Serif",fontSize);
+			LayoutManager.Add(richTextBoxDiscussion,newTab);
+			if(title!=_OTHER_NOTES_TAB_PAGE_TITLE) {
+				//Add job label
+				Label labelJobs=new Label();
+				labelJobs.Text="Jobs";
+				labelJobs.Size=new Size(LayoutManager.Scale(40),LayoutManager.Scale(18));
+				labelJobs.Location=new Point(LayoutManager.Scale(2),LayoutManager.Scale(315));
+				labelJobs.Font=new Font("Microsoft Sans Serif",fontSize);
+				LayoutManager.Add(labelJobs,newTab);
+				//Add job textrich
+				RichTextBox richTextBox=CreateRichTextBox();
+				richTextBox.Name=_RICH_TEXT_BOX_JOBS;
+				richTextBox.Size=new Size(LayoutManager.Scale(newTab.Width-10),LayoutManager.Scale(280));
+				richTextBox.Location=new Point(LayoutManager.Scale(5),LayoutManager.Scale(335));
+				richTextBox.Font=new Font("Microsoft Sans Serif",fontSize);
+				AddAndFormatText(richTextBox,text);
+				LayoutManager.Add(richTextBox,newTab);
+			}
 		}
 
 		public RichTextBox CreateRichTextBox() {
 			RichTextBox richTextBox=new RichTextBox();
-			richTextBox.Dock=DockStyle.Fill;
 			richTextBox.BulletIndent=10;
 			return richTextBox;
 		}
@@ -57,6 +87,57 @@ namespace OpenDental {
 			richTextBox.SelectionBullet=true;
 			richTextBox.SelectionIndent=10;
 			richTextBox.Select(0,0);
+		}
+
+		private void buttonCopy_Click(object sender,EventArgs e) {
+			string copyText="";
+			for(int i=0;i<tabControlSummary.TabPages.Count;i++) {
+				UI.TabPage tabPage=tabControlSummary.TabPages[i];
+				if(tabPage.Controls.Count==0) {
+					continue;
+				}
+				//Discussion Notes
+				RichTextBox richTextBoxDiscussion=GetRichTextBoxFromTab(tabPage,_RICH_TEXT_BOX_DISCUSSION);
+				if(richTextBoxDiscussion==null 
+					|| (tabPage.Text==_OTHER_NOTES_TAB_PAGE_TITLE && string.IsNullOrEmpty(richTextBoxDiscussion.Text))) 
+				{
+					continue;//Kick out if other notes tab is empty
+				}
+				copyText+=tabPage.Text+"\r\n";//Tabpage title
+				copyText+="Discussion Notes:\r\n";
+				if(string.IsNullOrEmpty(richTextBoxDiscussion.Text)) {
+					copyText+="* No Discussion Notes\r\n";
+				}
+				else {
+					string[] arrayLinesDiscussion=richTextBoxDiscussion.Text.Split(new string[] {"\r\n","\r","\n"},StringSplitOptions.RemoveEmptyEntries);
+					for(int j=0;j<arrayLinesDiscussion.Length;j++) {
+						copyText+="* "+arrayLinesDiscussion[j]+"\r\n";
+					}
+				}
+				//Job Notes
+				RichTextBox richTextBoxJobs=GetRichTextBoxFromTab(tabPage,_RICH_TEXT_BOX_JOBS);
+				if(richTextBoxJobs==null || string.IsNullOrEmpty(richTextBoxJobs.Text) || tabPage.Text==_OTHER_NOTES_TAB_PAGE_TITLE) {
+					copyText+="\r\n";
+					continue;
+				}
+				copyText+="Jobs:\r\n";
+				string[] arrayLinesJobs=richTextBoxJobs.Text.Split(new string[] {"\r\n","\r","\n"},StringSplitOptions.RemoveEmptyEntries);
+				for(int j=0;j<arrayLinesJobs.Length;j++) {
+					copyText+="* "+arrayLinesJobs[j]+"\r\n";
+				}
+				copyText+="\r\n";
+			}
+			ODClipboard.Clear();
+			ODClipboard.SetClipboard(copyText);
+		}
+
+		private RichTextBox GetRichTextBoxFromTab(UI.TabPage tabPage,string name) {
+			Control[] controls=tabPage.Controls.Find(name,false);
+			if(controls.Length==0) {
+				return null;
+			}
+			RichTextBox richTextBox=controls[0] as RichTextBox;
+			return richTextBox;
 		}
 
 		private void butDraftEmail_Click(object sender,EventArgs e) {
@@ -82,7 +163,6 @@ namespace OpenDental {
 			EmailMessage emailMessage=new EmailMessage() { 
 				FromAddress=fromAddress.GetFrom(),
 				ToAddress="EngineeringManagement@opendental.com",
-				CcAddress=_jobTeamAddress,
 				Subject=_subjectLine,
 				HtmlType=EmailType.RawHtml,
 				HtmlText=emailBody,
@@ -105,16 +185,32 @@ namespace OpenDental {
 		}
 
 		private string ConvertTabPageToHtml(UI.TabPage tabPage) {
-			StringBuilder stringBuilder = new StringBuilder();
-			// Assuming the first control is always a RichTextBox. There should be no other controls.
-			if (tabPage.Controls.Count > 0 && tabPage.Controls[0] is RichTextBox richTextBox) {
-				string richTextBoxText=richTextBox.Text.Trim();
-				// Append the content if it's not empty, or the tab is not "Other Notes"
-				if (!string.IsNullOrEmpty(richTextBoxText) || tabPage.Text != _OTHER_NOTES_TAB_PAGE_TITLE) {
-					stringBuilder.Append($"<strong>{tabPage.Text}</strong>");
-					stringBuilder.Append(ConvertStringToHtmlUnorderedList(richTextBoxText));
+			StringBuilder stringBuilder=new StringBuilder();
+			RichTextBox richTextBoxDiscussion=GetRichTextBoxFromTab(tabPage,_RICH_TEXT_BOX_DISCUSSION);
+			if(richTextBoxDiscussion==null) {
+				return stringBuilder.ToString();
+			}
+			string textRichTextBox=richTextBoxDiscussion.Text.Trim();
+			//Append the content if it's not empty, or the tab is not "Other Notes"
+			if(!string.IsNullOrEmpty(textRichTextBox) || tabPage.Text!=_OTHER_NOTES_TAB_PAGE_TITLE) {
+				stringBuilder.Append($"<strong>{tabPage.Text}</strong>");
+				stringBuilder.Append("<p>Discussion Notes:</p>");
+				stringBuilder.Append(ConvertStringToHtmlUnorderedList(textRichTextBox));
+				if(string.IsNullOrEmpty(textRichTextBox)) {
+					stringBuilder.Append($"<ul><li>No Discussion Notes</li></ul>");//Consistent message with the copy button
 				}
 			}
+			RichTextBox richTextBoxJobs=GetRichTextBoxFromTab(tabPage,_RICH_TEXT_BOX_JOBS);
+			if(richTextBoxJobs==null) {
+				return stringBuilder.ToString();
+			}
+			string richTextBoxText=richTextBoxJobs.Text.Trim();
+			//Append the content if it's not empty, or the tab is not "Other Notes"
+			if(string.IsNullOrEmpty(richTextBoxText) || tabPage.Text==_OTHER_NOTES_TAB_PAGE_TITLE) {
+				return stringBuilder.ToString();
+			}
+			stringBuilder.Append("<p>Jobs:</p>");
+			stringBuilder.Append(ConvertStringToHtmlUnorderedList(richTextBoxText));
 			return stringBuilder.ToString();
 		}
 

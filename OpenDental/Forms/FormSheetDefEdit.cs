@@ -450,12 +450,19 @@ namespace OpenDental {
 			//Once sheet defs are enhanced to allow showing users editable margins we can go back to using the SheetDefCur.HeightTotal property.
 			//For now we need to use the algorithm that Ryan provided me.  See task #743211 for more information.
 			int lowestYPos=SheetUtil.GetLowestYPos(SheetDef_.SheetFieldDefs);
+			int minimumPageCount=0;
 			int arbitraryHeight=lowestYPos-_margins.Bottom;//-60;
 			int onePageHeight=SheetDef_.Height;
 			if(SheetDef_.IsLandscape){
 				onePageHeight=SheetDef_.Width;
 			}
-			int minimumPageCount=(int)Math.Ceiling((double)arbitraryHeight / (onePageHeight-_margins.Top-_margins.Bottom));
+			//See method panelMain_Paint() we set the lowest point to the total height of the sheet when there is only 1 page
+			if(SheetDef_.PageCount==1) {
+				minimumPageCount=(int)Math.Ceiling((double)lowestYPos/(onePageHeight));
+			}
+			else {
+				minimumPageCount=(int)Math.Ceiling((double)arbitraryHeight/(onePageHeight-_margins.Top-_margins.Bottom));
+			}
 			if(minimumPageCount > SheetDef_.PageCount) { //There are fields that have a YPos and heights that push them past the bottom of the page.
 				MsgBox.Show(this,"Cannot remove pages that contain sheet fields. The fields might be hidden or in another language.");
 				SheetDef_.PageCount++;//Forcefully add a page back.
@@ -1233,9 +1240,26 @@ namespace OpenDental {
 			using Pen penDashMargin=new Pen(Color.Green);
 			penDashMargin.DashPattern=new float[] {1.0F,5.0F};
 			int margins=(_margins.Top+_margins.Bottom);
-			for(int i=1;i<SheetDef_.PageCount;i++) {
+			for(int i=1;i<SheetDef_.PageCount+1;i++) {
+				if(SheetDef_.PageCount==1) {
+					//Always show the next page line even in the case of 1 page so that our users know when their sheetfields are exceeding the 
+					//We allow additional fields to appear within the margins when we have the sheets pages set to 1. In this case, we will put the new line page at the bottom of the full size page.  We also subtract 1 so that this line shows at the bottom of panelMain. (e.g if the page is set to 1100 for a normal page height, then panel main's height will be set to 1100, this draws the line at 1099.)
+					g.DrawLine(penDashPage,0,i*(SheetDef_.HeightPage-1),SheetDef_.WidthPage,i*(SheetDef_.HeightPage-1));
+				}
+				else {
 				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage-_printMargin.Bottom,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage-_printMargin.Bottom);
-				g.DrawLine(penDashPage,0,i*(SheetDef_.HeightPage-margins)+_margins.Top,SheetDef_.WidthPage,i*(SheetDef_.HeightPage-margins)+_margins.Top);
+					//In the case that the sheet is multiple pages, check to see if the last control is within the total height of the first page. If so, drawn the line at the bottom of the first page without margins.  Otherwise move the line up respecting the margins of the first page.  This is consistent with how we determine page breaks in FormSheetFill Edit when calling Sheets.CalculatePageCount().
+					int bottomLastField=0;
+					if(SheetDef_.SheetFieldDefs.Count>0) {
+						bottomLastField=SheetDef_.SheetFieldDefs.Max(x=>x.Bounds.Bottom);
+					}
+					if(bottomLastField<=SheetDef_.HeightPage && i==1 && SheetDef_.SheetType!=SheetTypeEnum.MedLabResults) {
+						g.DrawLine(penDashPage,0,i*(SheetDef_.HeightPage-1),SheetDef_.WidthPage,i*(SheetDef_.HeightPage-1));
+					}
+					else {
+						g.DrawLine(penDashPage,0,i*(SheetDef_.HeightPage-(margins))+_margins.Top-1,SheetDef_.WidthPage,i*(SheetDef_.HeightPage-(margins))+_margins.Top-1);
+					}
+				}
 				//g.DrawLine(pDashMargin,0,i*SheetDefCur.HeightPage+_printMargin.Top,SheetDefCur.WidthPage,i*SheetDefCur.HeightPage+_printMargin.Top);
 			}
 			//End Draw Page Break

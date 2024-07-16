@@ -16,8 +16,7 @@ namespace OpenDentBusiness.OpenAi {
 		public string Role="user";
 		[JsonProperty("content")]
 		public List<OAIContent> Content=new List<OAIContent>();
-		[JsonProperty("file_ids")]
-		public List<string> FileIds=new List<string>();
+		public object[] Attachments;
 		[JsonProperty("assistant_id")]
 		public string AssistantId;
 		[JsonProperty("run_id")]

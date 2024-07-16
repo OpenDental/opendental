@@ -265,5 +265,47 @@ namespace OpenDentBusiness{
 			return listPatFields;
 		}
 
+		///<summary></summary>
+		public static List<Operatory> GetOperatoriesForSubscription(DateTime dateTimeStart,DateTime dateTimeStop,int limit=1000,int offset=0) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Operatory>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop,limit,offset);
+			}
+			string command="SELECT * FROM operatory "
+				+"WHERE DateTStamp >= "+POut.DateT(dateTimeStart)+" "
+				+"AND DateTStamp < "+POut.DateT(dateTimeStop)+" "
+				+"ORDER BY DateTStamp "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit)+"";
+			List<Operatory> listOperatories=Crud.OperatoryCrud.SelectMany(command);
+			return listOperatories;
+		}
+
+		///<summary></summary>
+		public static List<Provider> GetProvidersForSubscription(DateTime dateTimeStart,DateTime dateTimeStop,int limit=1000,int offset=0) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Provider>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop,limit,offset);
+			}
+			string command="SELECT * FROM provider "
+				+"WHERE DateTStamp >= "+POut.DateT(dateTimeStart)+" "
+				+"AND DateTStamp < "+POut.DateT(dateTimeStop)+" "
+				+"ORDER BY DateTStamp "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit)+"";
+			List<Provider> listProviders=Crud.ProviderCrud.SelectMany(command);
+			return listProviders;
+		}
+
+		///<summary></summary>
+		public static List<Schedule> GetSchedulesForSubscription(DateTime dateTimeStart,DateTime dateTimeStop,int limit=1000,int offset=0) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Schedule>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop,limit,offset);
+			}
+			string command="SELECT * FROM schedule "
+				+"WHERE DateTStamp >= "+POut.DateT(dateTimeStart)+" "
+				+"AND DateTStamp < "+POut.DateT(dateTimeStop)+" "
+				+"ORDER BY DateTStamp "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit)+"";
+			List<Schedule> listSchedules=Crud.ScheduleCrud.SelectMany(command);
+			return listSchedules;
+		}
+
 	}
 }

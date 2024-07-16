@@ -147,10 +147,19 @@ namespace OpenDental {
 			if(sender is GridOD grid) {
 				if(grid.ListGridRows[e.Row].Tag is ERoutingActionDef eRoutingActionDef) {
 					switch(eRoutingActionDef.ERoutingActionType) {
+						//The only difference between exam sheet and consent form behavior is that sheetDefs are chosen from a different category.
+						case EnumERoutingActionType.ExamSheet:
 						case EnumERoutingActionType.ConsentForm:
 							//Fetch applicable sheets
 							//Allow the user to pick one
-							List<SheetDef> listSheetDefs=SheetDefs.GetWhere(x=>x.SheetType==SheetTypeEnum.Consent);
+							List<SheetDef> listSheetDefs=null;
+							if(eRoutingActionDef.ERoutingActionType==EnumERoutingActionType.ExamSheet) {
+								listSheetDefs=SheetDefs.GetWhere(x=>x.SheetType==SheetTypeEnum.ExamSheet && x.HasMobileLayout);
+							}
+							else if(eRoutingActionDef.ERoutingActionType==EnumERoutingActionType.ConsentForm) {
+								listSheetDefs=SheetDefs.GetWhere(x=>x.SheetType==SheetTypeEnum.Consent && x.HasMobileLayout);
+							}
+							listSheetDefs=listSheetDefs.FindAll(x=>x.HasMobileLayout);
 							FrmSheetPicker formSheetPicker=new FrmSheetPicker();
 							formSheetPicker.ListSheetDefs=listSheetDefs;
 							formSheetPicker.AllowMultiSelect=false;

@@ -83,7 +83,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			gridMain.Columns.Add(column);
 			column=new GridColumn("Priority",100,HorizontalAlignment.Right);
 			gridMain.Columns.Add(column);
-			column=new GridColumn("% Total Hours",100,HorizontalAlignment.Right);
+			column=new GridColumn("Total Hours",100,HorizontalAlignment.Right);
 			gridMain.Columns.Add(column);
 			column=new GridColumn("Discussion Prompt",150);
 			gridMain.Columns.Add(column);

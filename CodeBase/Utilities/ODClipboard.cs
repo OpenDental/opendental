@@ -84,7 +84,7 @@ namespace CodeBase {
 		}
 
 		///<summary>
-		///Gets the contents of the user's clipboard as a list of file paths. Returns null if the clipboard does not contain any files.
+		///Surround with try/catch. Gets the contents of the user's clipboard as a list of file paths. Returns null if the clipboard does not contain any files.
 		///If ODCloud, files are transferred from the ODCloudClient to the temp opendental directory and the new paths are returned.
 		///</summary>
 		public static string[] GetFileDropList() {

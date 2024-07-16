@@ -44,8 +44,11 @@ namespace OpenDentBusiness {
 		None,
 		Appointment,
 		AppointmentDeleted,
+		Operatory,
 		PatField,
 		Patient,
+		Provider,
+		Schedule
 	}
 
 	///<summary>These are stored in the database as strings and are converted to strings. Do not alter spellings.</summary>

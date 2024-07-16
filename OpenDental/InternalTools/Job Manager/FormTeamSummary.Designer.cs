@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTeamSummary));
 			this.butDraftEmail = new OpenDental.UI.Button();
 			this.tabControlSummary = new OpenDental.UI.TabControl();
+			this.buttonCopy = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// butDraftEmail
@@ -50,9 +51,20 @@ namespace OpenDental{
 			this.tabControlSummary.Size = new System.Drawing.Size(932, 642);
 			this.tabControlSummary.TabIndex = 74;
 			// 
+			// buttonCopy
+			// 
+			this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonCopy.Location = new System.Drawing.Point(764, 660);
+			this.buttonCopy.Name = "buttonCopy";
+			this.buttonCopy.Size = new System.Drawing.Size(75, 24);
+			this.buttonCopy.TabIndex = 75;
+			this.buttonCopy.Text = "Copy";
+			this.buttonCopy.Click += new System.EventHandler(this.buttonCopy_Click);
+			// 
 			// FormJobTeamSummary
 			// 
 			this.ClientSize = new System.Drawing.Size(932, 696);
+			this.Controls.Add(this.buttonCopy);
 			this.Controls.Add(this.butDraftEmail);
 			this.Controls.Add(this.tabControlSummary);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -66,5 +78,6 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butDraftEmail;
 		private UI.TabControl tabControlSummary;
+		private UI.Button buttonCopy;
 	}
 }

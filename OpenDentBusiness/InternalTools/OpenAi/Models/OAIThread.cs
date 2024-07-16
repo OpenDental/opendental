@@ -11,5 +11,8 @@ namespace OpenDentBusiness.OpenAi {
 		public long CreatedAt;
 		[JsonProperty("metadata")]
 		public OAIMetadata Metadata;
+		public object[] Tools;
+		[JsonProperty("tool_resources")]
+		public object ToolResources;
 	}
 }

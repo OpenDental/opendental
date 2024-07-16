@@ -469,6 +469,9 @@ namespace OpenDental {
 				}
 			}
 			for(int i=0;i<gridAccount.SelectedIndices.Length;i++) {
+				if(gridAccount.SelectedIndices[i]>=table.Rows.Count) {
+					continue;//An office was getting an exception here, but we're not sure how grid and table could be out of sync and can't duplicate.
+				}
 				DataRow dataRow=table.Rows[gridAccount.SelectedIndices[i]];
 				if(dataRow["ClaimNum"].ToString()!="0") {//claims and claimpayments
 					//Since we removed all selected items above, we need to reselect the claim the user just clicked on at the very least.
@@ -3742,21 +3745,9 @@ namespace OpenDental {
 		private void FillGridAcctPatAsSuperFam() {
 			gridAcctPat.BeginUpdate();
 			gridAcctPat.Columns.Clear();
-			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
-			for(int i=0;i<listDisplayFields.Count;i++) {
-				string displayName=listDisplayFields[i].DescriptionOverride;
-				if(string.IsNullOrWhiteSpace(displayName)) {
-					displayName=listDisplayFields[i].Description;
-				}
-				if(string.IsNullOrWhiteSpace(displayName)) {
-					displayName=listDisplayFields[i].InternalName;
-				}
-				GridColumn gridColumn=new GridColumn(Lan.g("gridAcctPat",displayName),listDisplayFields[i].ColumnWidth);
-				if(listDisplayFields[i].InternalName!="Name") {
-					gridColumn.TextAlign=HorizontalAlignment.Center;
-				}
-				gridAcctPat.Columns.Add(gridColumn);
-			}
+			//Grid is primarily used for switching patients, so only show Name instead of SuperFamilyGridCols display fields.
+			GridColumn gridColumn=new GridColumn(Lan.g("gridAcctPat","Name"),280);//Default width in DisplayFields.GetDefaultList()
+			gridAcctPat.Columns.Add(gridColumn);
 			gridAcctPat.ListGridRows.Clear();
 			if(_patient==null) {
 				gridAcctPat.EndUpdate();
@@ -3769,16 +3760,11 @@ namespace OpenDental {
 				GridRow gridRow=new GridRow();
 				Patient patientGuar=_listPatientsSuperFamilyGuarantors[i];
 				gridRow.Tag=patientGuar;
-				//Loop through each displayField within the user-chosen displayField list.
-				for(int j=0;j<listDisplayFields.Count;j++) {
-					if(listDisplayFields[j].InternalName=="Name") {
-						string strSuperFam=GetCellTextSuperFamName(patientGuar);
-						gridRow.Cells.Add(strSuperFam);
-						if(i==0) {
-							gridRow.Cells[j].Bold=YN.Yes;
-							gridRow.Cells[j].ColorText=Color.OrangeRed;
-						}
-					}
+				string strSuperFam=GetCellTextSuperFamName(patientGuar);
+				gridRow.Cells.Add(strSuperFam);
+				if(i==0) {
+					gridRow.Cells[i].Bold=YN.Yes;
+					gridRow.Cells[i].ColorText=Color.OrangeRed;
 				}
 				gridAcctPat.ListGridRows.Add(gridRow);
 			}

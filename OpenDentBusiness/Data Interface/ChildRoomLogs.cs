@@ -149,7 +149,7 @@ namespace OpenDentBusiness{
 		///<summary>Get all the logs for a specified ChildRoom and filtered by the given date.</summary>
 		public static List<ChildRoomLog> GetChildRoomLogs(long childRoomNum,DateTime date) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),childRoomNum);
+				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),childRoomNum,date);
 			}
 			string command="SELECT * FROM childroomlog WHERE ChildRoomNum="+POut.Long(childRoomNum)
 				+" AND CAST(DateTDisplayed as DATE)="+POut.Date(date)

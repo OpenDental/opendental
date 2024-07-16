@@ -712,6 +712,7 @@ namespace OpenDentBusiness {
 		public static void UpdateShortGUID(long statementNum,string shortGuid) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),statementNum,shortGuid);
+				return;
 			}
 			string command="UPDATE statement SET ShortGUID='"+POut.String(shortGuid)+"' WHERE StatementNum="+POut.Long(statementNum);
 			Db.NonQ(command);

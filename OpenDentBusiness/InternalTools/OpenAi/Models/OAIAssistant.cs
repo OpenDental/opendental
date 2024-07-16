@@ -13,8 +13,7 @@ namespace OpenDentBusiness.OpenAi {
 		public string Model;
 		public string Instructions;
 		public object[] Tools;
-		[JsonProperty("file_ids")]
-		public object[] FileIds;
-		public OAIMetadata Metadata;
+		[JsonProperty("tool_resources")]
+		public object ToolResources;
 	}
 }
