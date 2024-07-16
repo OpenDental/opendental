@@ -435,6 +435,9 @@ namespace OpenDental {
 				}
 			}
 			for(int i=0;i<gridAccount.SelectedIndices.Count();i++) {
+				if(gridAccount.SelectedIndices[i]>=table.Rows.Count) {
+					continue;//An office was getting an exception here, but we're not sure how grid and table could be out of sync and can't duplicate.
+				}
 				DataRow dataRow=table.Rows[gridAccount.SelectedIndices[i]];
 				if(dataRow["ClaimNum"].ToString()!="0") {//claims and claimpayments
 					//Since we removed all selected items above, we need to reselect the claim the user just clicked on at the very least.

@@ -290,8 +290,7 @@ namespace OpenDental{
 		}
 
 		private void butChange_Click(object sender,System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,suppressMessage:true)) {
-				MsgBox.Show(this,"User does not have permission to edit insurance plans");
+			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {

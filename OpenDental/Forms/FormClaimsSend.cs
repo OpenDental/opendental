@@ -723,9 +723,10 @@ namespace OpenDental{
 						MsgBox.Show(this,"Please filter by clinic first.");
 						return;
 					}
-					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Send all e-claims through selected clearinghouse?")) {
-						return;
-					}
+					//if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Send all e-claims through selected clearinghouse?")) {
+					//Redundant. Asks again 30 lines down.
+					//	return;
+					//}
 					for(int i=0;i<gridMain.ListGridRows.Count;i++) {//loop through all filtered rows
 						ClaimSendQueueItem queueItem=(ClaimSendQueueItem)gridMain.ListGridRows[i].Tag;
 						if(queueItem.CanSendElect) {
