@@ -202,8 +202,6 @@ namespace OpenDental {
 					}
 				}
 				mobileAppDevice.IsEclipboardEnabled=!mobileAppDevice.IsEclipboardEnabled;//Flip the bit.
-				//Update the device because the signal processing of this form isn't friendly to keeping an in-memory list that syncs when the form closes
-				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.eClipboard,mobileAppDevice.IsEclipboardEnabled);
 			}
 			if(e.Col==idxODTouchColumn) {
 				mobileAppDevice.IsODTouchEnabled=!mobileAppDevice.IsODTouchEnabled;//Flip the bit.
@@ -218,15 +216,23 @@ namespace OpenDental {
 					mobileAppDevice.IsODTouchEnabled=false;
 					return;//Don't activate device.
 				}
-				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.ODTouch,mobileAppDevice.IsODTouchEnabled);
-				SecurityLogs.MakeLogEntry(EnumPermType.EServicesSetup,0,$"ODTouch {(mobileAppDevice.IsODTouchEnabled ? "enabled" : "disabled")} for device {mobileAppDevice.UniqueID}",mobileAppDevice.MobileAppDeviceNum,LogSources.None,DateTime.Now,Security.CurUser.UserNum);
 			}
 			FillGridMobileAppDevices();	//Fill the grid to show the changes.
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
 			MobileAppDevices.DeleteMany(_listMobileAppDevicesDelete);
-			_listMobileAppDevicesAll.ForEach(x => MobileAppDevices.Update(x));
+			for(int i=0;i<_listMobileAppDevicesAll.Count;i++) {
+				MobileAppDevice mobileAppDeviceOld=_listMobileAppDevicesOld.Find(x => x.MobileAppDeviceNum==_listMobileAppDevicesAll[i].MobileAppDeviceNum);
+				MobileAppDevices.Update(_listMobileAppDevicesAll[i],mobileAppDeviceOld);
+				if(_listMobileAppDevicesAll[i].IsEclipboardEnabled!=mobileAppDeviceOld.IsEclipboardEnabled) {
+					MobileNotifications.IsAllowedChanged(_listMobileAppDevicesAll[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,_listMobileAppDevicesAll[i].IsEclipboardEnabled);
+				}
+				if(_listMobileAppDevicesAll[i].IsODTouchEnabled!=mobileAppDeviceOld.IsODTouchEnabled) {
+					MobileNotifications.IsAllowedChanged(_listMobileAppDevicesAll[i].MobileAppDeviceNum,EnumAppTarget.ODTouch,_listMobileAppDevicesAll[i].IsODTouchEnabled);
+					SecurityLogs.MakeLogEntry(EnumPermType.EServicesSetup,0,$"ODTouch {(_listMobileAppDevicesAll[i].IsODTouchEnabled ? "enabled" : "disabled")} for device {_listMobileAppDevicesAll[i].UniqueID}",_listMobileAppDevicesAll[i].MobileAppDeviceNum,LogSources.None,DateTime.Now,Security.CurUser.UserNum);
+				}
+			}
 			DialogResult=DialogResult.OK;
 		}
 

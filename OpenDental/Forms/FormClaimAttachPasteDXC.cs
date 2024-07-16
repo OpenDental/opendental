@@ -93,7 +93,16 @@ namespace OpenDental {
 		private bool GetImagesFromClipboard() {
 			//Get either a single image or a list of filepaths
 			Bitmap bitmap=ODClipboard.GetImage();//Null if no bitmap on clipboard
-			List<string> listFilePaths=ODClipboard.GetFileDropList()?.ToList();//Null if no files on clipboard
+			string[] stringArrayFileNames=null;
+			if(bitmap==null) {//if no bitmap on clipboard, try to get file names
+				try {
+					stringArrayFileNames=ODClipboard.GetFileDropList();
+				}
+				catch(Exception ex) {
+					ex.DoNothing();//do nothing here, fileNames should remain null and a message box will show below if necessary
+				}
+			}
+			List<string> listFilePaths=stringArrayFileNames?.ToList();//Null if no files on clipboard
 			if(listFilePaths==null && bitmap==null) {
 				MsgBox.Show("There are no Images saved to your clipboard");
 				return false;

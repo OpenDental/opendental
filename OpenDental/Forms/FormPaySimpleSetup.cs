@@ -332,17 +332,17 @@ namespace OpenDental {
 		}
 
 		private void checkAllowOnlinePayments_Click(object sender,EventArgs e) {
-			//If the user unchecked the "Allow Online Payments" checbox, remove ProgramProperty for the other merchant service's property from the list of properties to update.
+			long clinicNum=0;
+			if(PrefC.HasClinicsEnabled) {
+				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
+			}
+			//If the user unchecked the "Allow Online Payments" checkbox, remove ProgramProperty for the other merchant service's property from the list of properties to update.
 			if(!checkAllowOnlinePayments.Checked) {
-				ProgramProperty programPropToRemove=_listOnlinePaymentProgramProperties.Find(x => x.ClinicNum==_listUserClinicNums[comboClinic.SelectedIndex]);
+				ProgramProperty programPropToRemove=_listOnlinePaymentProgramProperties.Find(x => x.ClinicNum==clinicNum);
 				if(programPropToRemove!=null) {
 					_listOnlinePaymentProgramProperties.Remove(programPropToRemove);
 				}
 				return;
-			}
-			long clinicNum=0;
-			if(PrefC.HasClinicsEnabled) {
-				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
 			}
 			ProgramProperty programProperty=ProgramProperties.GetOnlinePaymentsEnabledForClinic(clinicNum,ProgramName.PaySimple);
 			if(programProperty!=null) {

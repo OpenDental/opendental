@@ -182,6 +182,8 @@ namespace OpenDental {
 				msgToPaySent.Subject=textSubject.Text;
 			}
 			MsgToPaySents.Insert(msgToPaySent);
+			//Bind the Statement to the MsgToPaySent
+			StmtLinks.AttachFKeysToStatement(statement.StatementNum,ListTools.FromSingle(msgToPaySent.MsgToPaySentNum),StmtLinkTypes.MsgToPaySent);
 			MessageBox.Show(Lan.g(this,"Your")+$" {commType} "+Lan.g(this,"has been sent"));
 			DialogResult=DialogResult.OK;
 		}

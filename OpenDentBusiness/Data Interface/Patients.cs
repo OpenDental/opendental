@@ -1999,12 +1999,14 @@ namespace OpenDentBusiness {
 			//DischargeDate is not a part of the table and must be added manually by grabbing the ehrpatient data.
 			PtDataTable.Columns.Add("DischargeDate");
 			List<Recall> listRecalls=new List<Recall>();//only for OmhNy
+			List<long> listPatNumsWithCompletedProcs=new List<long>();//only for OmhNy
 			//RecallPastDue is not a part of the table and must be added manually by grabbing the recall data.
 			if(PrefC.GetBool(PrefName.OmhNy)) {
 				if(listPatNums.Count==0) {
 					listPatNums=listPatNumStrs.Select(x => PIn.Long(x)).ToList();
 				}
 				listRecalls=Recalls.GetList(listPatNums);
+				listPatNumsWithCompletedProcs=Procedures.GetAllPatNumsWithCompletedProcs(listPatNums);
 				PtDataTable.Columns.Add("RecallPastDue");
 			}
 			PtDataTable.Columns.OfType<DataColumn>().ForEach(x => x.DataType=typeof(string));
@@ -2079,18 +2081,26 @@ namespace OpenDentBusiness {
 				if(date.Year>1880) {
 					r["DischargeDate"]=date.ToShortDateString();
 				}
+				#region New York Mental Health
 				if(PrefC.GetBool(PrefName.OmhNy)) {
-					r["RecallPastDue"]="";
-					Recall recallPastDue=listRecalls
+					List<Recall> listRecallsPat=listRecalls
 						.FindAll(x => x.PatNum==patNum)
-						.OrderBy(x => x.RecallTypeNum).ToList()//at their request, not sure why
-						.Find(x => x.DateDue.Year>1880 && x.DateDue<DateTime.Today);
-					string description="";
+						.OrderBy(x => x.RecallTypeNum).ToList();//at their request, not sure why
+					string description="ORANGE";
+					bool hasCompletedProc=listPatNumsWithCompletedProcs.Exists(x => x==patNum);
+					if(hasCompletedProc) {
+						description="BLACK";
+					}
+					//Recall that has a due date within 14 days or less... or recall is overdue
+					Recall recallPastDue=listRecallsPat.Find(x => x.DateDue.Year>1880 
+						&& x.DateDue.AddDays(-14)<=DateTime.Today
+						&& RecallTypes.GetDescription(x.RecallTypeNum).In("PROPHY","CHILD PROPHY","ANNUAL EXAM","6 MONTH EXAM","PANO X-RAY","PERIO SRP(UR)","PERIO SRP(UL)","PERIO SRP(LR)","PERIO SRP(LL)"));
 					if(recallPastDue!=null) {
 						description=RecallTypes.GetDescription(recallPastDue.RecallTypeNum);
 					}
 					r["RecallPastDue"]=description;
 				}
+				#endregion New York Mental Health
 				PtDataTable.Rows.Add(r);
 			}
 			return PtDataTable;

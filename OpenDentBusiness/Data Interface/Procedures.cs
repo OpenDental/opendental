@@ -67,6 +67,20 @@ namespace OpenDentBusiness {
 			return Db.GetList(command,Crud.ProcedureCrud.RowToObj);
 		}
 
+		///<summary>Gets a list of distinct PatNums who have at least one completed procedure.</summary>
+		public static List<long> GetAllPatNumsWithCompletedProcs(List<long> listPatNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),listPatNums);
+			}
+			if(listPatNums.IsNullOrEmpty()) {
+				return new List<long>();
+			}
+			string command="SELECT DISTINCT PatNum FROM procedurelog "
+				+"WHERE ProcStatus="+POut.Int((int)ProcStat.C)+" "
+				+"And PatNum IN"+" ("+String.Join(",",listPatNums)+")";
+			return Db.GetListLong(command);
+		}
+
 		public static List<Procedure> GetAllForPatsAndStatuses(List<long> listPatNums,params ProcStat[] arrayProcStats) {
 			if(listPatNums.IsNullOrEmpty() || arrayProcStats.IsNullOrEmpty()) {
 				return new List<Procedure>();

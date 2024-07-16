@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CodeBase;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -20,6 +21,18 @@ namespace OpenDentBusiness{
 			return Db.GetListLong(command);
 		}
 		#endregion
+
+		///<summary>Gets the a list of StmtLinks with an FKey in the provided list and a matching StmtLinkType</summary>
+		public static List<StmtLink> GetForFKeyAndType(List<long> listFKeys,StmtLinkTypes stmtLinkType) {
+			if(listFKeys.IsNullOrEmpty()) {
+				return new List<StmtLink>();
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<StmtLink>>(MethodBase.GetCurrentMethod(),listFKeys,stmtLinkType);
+			}
+			string command="SELECT * FROM stmtlink WHERE StmtLinkType="+POut.Int((int)stmtLinkType)+" AND FKey IN (" + String.Join(",",listFKeys.Select(x=>POut.Long(x))) + ")" ;
+			return Crud.StmtLinkCrud.SelectMany(command);
+		}
 
 		#region Insert
 		///<summary></summary>

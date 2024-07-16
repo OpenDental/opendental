@@ -86,6 +86,9 @@ namespace OpenDentBusiness {
 				req.CardToken=token;
 				req.Expiry=ccExpiration;
 				req.CardHolder=pat.GetNameFLnoPref();
+				if(!zipCode.IsNullOrEmpty()) {
+					req.ZipCode=zipCode;
+				}
 				response=PostCreateTransaction(req,clinicNum);
 			}
 			return response;
@@ -564,7 +567,7 @@ namespace OpenDentBusiness {
 
 		[DataContract]
 		public class CreateTransactionRequest {
-			///<summary>Identidy if transaction is Recurring or OneTime</summary>
+			///<summary>Identify if transaction is Recurring or OneTime</summary>
 			[DataMember(Name = "frequency"),JsonConverter(typeof(StringEnumConverter))]
 			public TransactionFrequency Frequency;
 			///<summary>Type of transaction</summary>
@@ -591,11 +594,14 @@ namespace OpenDentBusiness {
 			///<summary>Patient for the payment.</summary>
 			[DataMember(Name = "patient",IsRequired=false)]
 			public PayConnectPatient Patient;
+			///<summary>ZipCode of the card holder</summary>
+			[DataMember(Name = "zipCode",IsRequired=false)]
+			public string ZipCode;
 		}
 
 		[DataContract]
 		public class CreateSurchargeTransactionRequest {
-			///<summary>Identidy if transaction is Recurring or OneTime</summary>
+			///<summary>Identify if transaction is Recurring or OneTime</summary>
 			[DataMember(Name = "frequency")]
 			public TransactionFrequency Frequency;
 			///<summary>Type of transaction</summary>

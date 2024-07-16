@@ -462,6 +462,7 @@ namespace OpenDental{
 			}
 			//Hook up MT connection lost event. Nothing prior to this point fires LostConnection events.
 			MiddleTierConnectionEvent.Fired+=MiddleTierConnection_ConnectionLost;
+			RemotingClient.HasAutomaticConnectionLostRetry=true;
 			FormSplash formSplash=new FormSplash();
 			ChooseDatabaseInfo chooseDatabaseInfo2=null;
 			while(true) {//Most users will loop through once.  If user tries to connect to a db with replication failure, they will loop through again.
@@ -3303,6 +3304,7 @@ namespace OpenDental{
 				UserControlTasks.ResetGlobalTaskFilterTypesToDefaultAllInstances();
 				UserControlTasks.RefreshTasksForAllInstances(null);//Refresh tasks so any filter changes are applied immediately.
 				//In the future this may need to be enhanced to also consider refreshing other clinic specific features
+				RefreshMenuReports();
 				LayoutToolBar();
 				FillPatientButton(Patients.GetPat(PatNumCur));//Need to do this also for disabling of buttons when no pat is selected.
 			}
@@ -6052,7 +6054,14 @@ namespace OpenDental{
 				}
 			}
 			List<ToolButItem> listToolButItems=ToolButItems.GetForToolBar(EnumToolBar.ReportsMenu);
+			if(PrefC.HasClinicsEnabled) {
+				listToolButItems.RemoveAll(x=>ProgramProperties.GetPropForProgByDesc(x.ProgramNum,ProgramProperties.PropertyDescs.ClinicHideButton,Clinics.ClinicNum)!=null);
+			}
 			if(listToolButItems.Count==0) {
+				MenuStripOD menuStripOD=MenuStripOD.GetMenuStripOD(_menuItemReports);
+				if(menuStripOD!=null){
+					menuStripOD.LayoutItems();
+				}
 				return;//Return early to avoid adding a useless separator in the menu.
 			}
 			//Add separator, then dynamic items to the bottom of the menu.

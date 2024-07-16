@@ -1294,7 +1294,7 @@ namespace OpenDentBusiness{
 			return listClaimProcsRet;
 		}
 
-		///<summary>Gets claimprocs from the given list which are attached to the given claimNum and are not Canadian labs and are attached to a procedure.</summary>
+		///<summary>Gets claimprocs from the given list which are attached to the given claimNum and are attached to a procedure.</summary>
 		public static List<ClaimProc> GetForClaimOverpay(List<ClaimProc> listClaimProcs,long claimNum) {
 			//No need to check MiddleTierRole; no call to db.
 			List<ClaimProc> listClaimProcsRet=new List<ClaimProc>();
