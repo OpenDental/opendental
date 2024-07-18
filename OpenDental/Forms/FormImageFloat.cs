@@ -1229,12 +1229,13 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Three objects will end up on clipboard: 1:NodeTypeAndKey , 2:Bitmap(if it's an image type), 3:FileDrop. For images, the filedrop will point to a temp copy of the saved bitmap.  For non-images, filedrop will point to the original file.</summary>
+		///<summary>Three to four objects will end up on clipboard: 1:NodeTypeAndKey, 2:Bitmap(if it's an image type), 3:FileDrop, 4:Database name (if NodeTypeAndKey is not null). For images, the filedrop will point to a temp copy of the saved bitmap.  For non-images, filedrop will point to the original file.</summary>
 		public void ToolBarCopy_Click(){
 			//not enabled when pdf selected
 			NodeTypeAndKey nodeTypeAndKey=null;
 			Bitmap bitmapCopy=null;
 			string fileName="";
+			string dbName=DataConnectionBase.DataConnection.GetDatabaseName();//this is safe even if null or empty
 			Cursor=Cursors.WaitCursor;
 			if(IsMountItemSelected()){
 				if(ImageHelper.HasImageExtension(GetDocumentShowing(_idxSelectedInMount).FileName) || GetDocumentShowing(_idxSelectedInMount).FileName.EndsWith(".dcm"))
@@ -1321,7 +1322,8 @@ namespace OpenDental {
 			}
 			System.Windows.DataObject dataObject=new System.Windows.DataObject();
 			if(nodeTypeAndKey!=null){
-				dataObject.SetData(nodeTypeAndKey);
+				dataObject.SetData(nodeTypeAndKey);//DataFormat automatically determined
+				dataObject.SetData("stringDbName",dbName);//this is in addition to the other DataFormat with the nodeTypeAndKey
 			}
 			if(bitmapCopy!=null){
 				dataObject.SetData(DataFormats.Bitmap,bitmapCopy);
@@ -1333,7 +1335,7 @@ namespace OpenDental {
 			}
 			if(ODEnvironment.IsCloudServer){
 				int nodeType=(int)nodeTypeAndKey.NodeType;
-				ODCloudClient.CopyToClipboard(bitmapCopy,fileName,nodeType,nodeTypeAndKey.PriKey);
+				ODCloudClient.CopyToClipboard(bitmapCopy,fileName,nodeType,nodeTypeAndKey.PriKey,dbName);
 			}
 			else{
 				try {
@@ -1704,7 +1706,9 @@ namespace OpenDental {
 			}
 			IDataObject iDataObject=null;
 			NodeTypeAndKey nodeTypeAndKey=null;
+			string dbName="";
 			if(ODEnvironment.IsCloudServer) {
+				dbName=ODCloudClient.GetDbNameFromClipboard();
 				ODCloudClient.CloudNodeTypeAndKey cloudNodeTypeAndKey=ODCloudClient.GetNodeTypeAndKey();
 				if(cloudNodeTypeAndKey!=null){
 					EnumImageNodeType enumImageNodeTypeCopied=(EnumImageNodeType)cloudNodeTypeAndKey.nodeType;
@@ -1725,8 +1729,9 @@ namespace OpenDental {
 					return;
 				}
 				nodeTypeAndKey=(NodeTypeAndKey)iDataObject.GetData(typeof(NodeTypeAndKey));
+				dbName=(string)iDataObject.GetData("stringDbName");//safe even if null
 			}
-			if(nodeTypeAndKey!=null){
+			if(DataConnectionBase.DataConnection.GetDatabaseName()==dbName && nodeTypeAndKey!=null){
 				ToolBarPasteTypeAndKey(nodeTypeAndKey);
 				return;
 			}
