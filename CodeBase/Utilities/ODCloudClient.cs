@@ -255,7 +255,7 @@ namespace CodeBase {
 		}
 
 		///<summary></summary>
-		public static void CopyToClipboard(Bitmap bitmapCopy=null,string fileName=null,int nodeType=-1, long imageKey=-1){
+		public static void CopyToClipboard(Bitmap bitmapCopy=null,string fileName=null,int nodeType=-1, long imageKey=-1, string dbName=null){
 			ODCloudClientData oDCloudClientData=new ODCloudClientData();
 			if(bitmapCopy!=null){
 				try{
@@ -275,6 +275,9 @@ namespace CodeBase {
 			if(nodeType>-1 && imageKey>-1){
 				oDCloudClientData.NodeType=nodeType;
 				oDCloudClientData.ImageKey=imageKey;
+			}
+			if(!string.IsNullOrEmpty(dbName)){
+				oDCloudClientData.OtherData=dbName;
 			}
 			try{
 				SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.CopyToClipboard);
@@ -299,6 +302,21 @@ namespace CodeBase {
 			}
 			nodeTypeAndKey=JsonConvert.DeserializeObject<CloudNodeTypeAndKey>(strNodeTypeAndKey);
 			return nodeTypeAndKey;
+		}
+
+		///<summary>Used for copy/paste in imaging module to prevent issues when copying across different databases</summary>
+		public static string GetDbNameFromClipboard(){
+			string dbName="";
+			try{
+				dbName=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetDbNameFromClipboard);
+			}
+			catch(Exception ex) {
+				ODMessageBox.Show(ex.Message);
+			}
+			if(string.IsNullOrEmpty(dbName)){
+				return null;
+			}
+			return dbName;
 		}
 
 		///<summary>Asks ODCloudClient to process a PayConnect terminal payment. If successful, returns the contents of the PosResponse object. Otherwise, returns null.
@@ -1178,6 +1196,8 @@ namespace CodeBase {
 			ExportFile,
 			///<summary>Imports a file from the user's workstation</summary>
 			ImportFile,
+			///<summary>Used during copy/paste in Imaging Module to prevent issues when copying images across different databases</summary>
+			GetDbNameFromClipboard,
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

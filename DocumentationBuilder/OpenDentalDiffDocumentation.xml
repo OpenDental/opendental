@@ -380,6 +380,16 @@
       </Enumeration>
     </column>
   </table>
+  <table name="stmtlink">
+    <summary></summary>
+    <column order="2" name="StmtLinkType" type="tinyint(4)">
+      <summary>Enum:StmtLinkTypes Represents what object FKey corresponds to.</summary>
+      <Enumeration name="StmtLinkTypes">
+        <summary></summary>
+        <EnumValue name="MsgToPaySent">6 - MsgToPaySent </EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="userod">
     <summary></summary>
     <column order="23" name="BadgeId" type="varchar(255)">

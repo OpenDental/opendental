@@ -1945,6 +1945,7 @@ namespace OpenDentBusiness{
 			table.Columns.Add("AptNum");
 			table.Columns.Add("age");
 			table.Columns.Add("AptDateTime",typeof(DateTime));
+			table.Columns.Add("clinicNumApt");
 			table.Columns.Add("ClinicNum");//patient.ClinicNum
 			table.Columns.Add("confirmed");
 			table.Columns.Add("contactMethod");
@@ -1975,7 +1976,7 @@ namespace OpenDentBusiness{
 				+"patient.WirelessPhone,appointment.ProcDescript,appointment.Confirmed,appointment.Note,patient.AddrNote,appointment.AptNum,patient.MedUrgNote,"
 				+"patient.PreferConfirmMethod,guar.Email guarEmail,guar.WirelessPhone guarWirelessPhone,guar.TxtMsgOK guarTxtMsgOK,guar.ClinicNum guarClinicNum,"
 				+"guar.PreferConfirmMethod guarPreferConfirmMethod,patient.Email,patient.Premed,appointment.DateTimeAskedToArrive,securitylog.LogDateTime,"
-				+"guar.FName AS guarNameF "
+				+"guar.FName AS guarNameF,appointment.ClinicNum clinicNumApt "
 				+"FROM patient "
 				+"INNER JOIN appointment ON appointment.PatNum=patient.PatNum "
 				+"INNER JOIN patient guar ON guar.PatNum=patient.Guarantor "
@@ -2052,6 +2053,7 @@ namespace OpenDentBusiness{
 				dataRow["AptNum"]=tableRaw.Rows[i]["AptNum"].ToString();
 				dataRow["age"]=Patients.DateToAge(PIn.Date(tableRaw.Rows[i]["Birthdate"].ToString())).ToString();//we don't care about m/y.
 				dataRow["AptDateTime"]=PIn.DateT(tableRaw.Rows[i]["AptDateTime"].ToString());
+				dataRow["clinicNumApt"]=tableRaw.Rows[i]["clinicNumApt"].ToString();
 				dataRow["DateTimeAskedToArrive"]=PIn.DateT(tableRaw.Rows[i]["DateTimeAskedToArrive"].ToString());
 				dataRow["ClinicNum"]=tableRaw.Rows[i]["ClinicNum"].ToString();
 				dataRow["confirmed"]=Defs.GetName(DefCat.ApptConfirmed,PIn.Long(tableRaw.Rows[i]["Confirmed"].ToString()));
@@ -2139,6 +2141,7 @@ namespace OpenDentBusiness{
 			table.Columns.Add("Address");//Can be guar.
 			table.Columns.Add("Address2");//Can be guar.
 			table.Columns.Add("AptDateTime");
+			table.Columns.Add("clinicNumApt");
 			table.Columns.Add("City");//Can be guar.
 			table.Columns.Add("clinicNum");//will be the guar clinicNum if grouped.
 			table.Columns.Add("DateTimeAskedToArrive");
@@ -2166,7 +2169,7 @@ namespace OpenDentBusiness{
 				return table;
 			}
 			string command = "SELECT patient.LName,patient.FName,patient.MiddleI,patient.Preferred, patient.Address,patient.Address2,patient.City,"
-				+"patient.State,patient.Zip,patient.Guarantor,patient.Email,appointment.AptDateTime,appointment.ClinicNum,patient.PatNum,"
+				+"patient.State,patient.Zip,patient.Guarantor,patient.Email,appointment.AptDateTime,appointment.ClinicNum clinicNumApt,patient.PatNum,patient.ClinicNum,"
 				+"appointment.DateTimeAskedToArrive,guar.Address AS guarAddress,guar.Address2 AS guarAddress2,"
 				+"guar.ClinicNum AS guarClinicNum,guar.FName AS guarFName,guar.LName AS guarLName,guar.State AS guarState,"
 				+"guar.Zip AS guarZip, guar.City AS guarCity, guar.Email as guarEmail "
@@ -2190,6 +2193,7 @@ namespace OpenDentBusiness{
 				};
 				DateTime dateTimeApt=PIn.Date(tableRaw.Rows[i]["AptDateTime"].ToString());
 				DateTime dateTimeAskedToArrive=PIn.Date(tableRaw.Rows[i]["DateTimeAskedToArrive"].ToString());
+				long clinicNumApt=PIn.Long(tableRaw.Rows[i]["clinicNumApt"].ToString());
 				if(!groupByFamily) {
 					dataRow=table.NewRow();
 					dataRow["Address"]=tableRaw.Rows[i]["Address"].ToString();
@@ -2198,6 +2202,7 @@ namespace OpenDentBusiness{
 					}
 					dataRow["City"]=tableRaw.Rows[i]["City"].ToString();
 					dataRow["clinicNum"]=tableRaw.Rows[i]["ClinicNum"].ToString();
+					dataRow["clinicNumApt"]=clinicNumApt;
 					dataRow["AptDateTime"]=dateTimeApt;
 					dataRow["DateTimeAskedToArrive"]=dateTimeAskedToArrive;
 					//since not grouping by family, this is always just the patient email
@@ -2230,6 +2235,7 @@ namespace OpenDentBusiness{
 						dataRow["State"]=tableRaw.Rows[i]["State"].ToString();
 						dataRow["Zip"]=tableRaw.Rows[i]["Zip"].ToString();
 						dataRow["clinicNum"]=tableRaw.Rows[i]["ClinicNum"].ToString();
+						dataRow["clinicNumApt"]=clinicNumApt;
 						dataRow["AptDateTime"]=dateTimeApt;
 						dataRow["DateTimeAskedToArrive"]=dateTimeAskedToArrive;
 						//this will always be the guarantor email
@@ -2246,13 +2252,13 @@ namespace OpenDentBusiness{
 						continue;
 					}
 					else{//this is the first patient of a family with multiple family members
-						strFamilyAptList=PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
+						strFamilyAptList=PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 						patNumStr=tableRaw.Rows[i]["PatNum"].ToString();
 						continue;
 					}
 				}
 				else{//not the first patient
-					strFamilyAptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
+					strFamilyAptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 					patNumStr+=","+tableRaw.Rows[i]["PatNum"].ToString();
 				}
 				if(i==tableRaw.Rows.Count-1//if this is the last row
@@ -2268,6 +2274,7 @@ namespace OpenDentBusiness{
 					dataRow["State"]=tableRaw.Rows[i]["guarState"].ToString();
 					dataRow["Zip"]=tableRaw.Rows[i]["guarZip"].ToString();
 					dataRow["clinicNum"]=tableRaw.Rows[i]["guarClinicNum"].ToString();
+					dataRow["clinicNumApt"]=clinicNumApt;
 					dataRow["AptDateTime"]=dateTimeApt;
 					dataRow["DateTimeAskedToArrive"]=dateTimeAskedToArrive;
 					dataRow["email"]=tableRaw.Rows[i]["guarEmail"].ToString();

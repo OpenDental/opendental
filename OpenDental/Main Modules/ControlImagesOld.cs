@@ -2889,8 +2889,9 @@ namespace OpenDental {
 			//Display the document signature form.
 			FrmDocSign frmDocSign=new FrmDocSign(_documentShowing,_patient);//Updates our local document and saves changes to db also.
 			int signLeft=treeMain.Left;
-			//frmDocSign.Location=PointToScreen(new Point(signLeft,this.ClientRectangle.Bottom-frmDocSign.Height));
-			//frmDocSign.Width=Math.Max(0,Math.Min(frmDocSign.Width,pictureBoxMain.Right-signLeft));
+			Point pointLocal=new Point(panelNote.Left-7,Height);//-7 to cover panel note completely
+			Point pointScreen=PointToScreen(pointLocal);
+			frmDocSign.PointLLStart=pointScreen;
 			frmDocSign.ShowDialog();
 			FillTree(true);
 			//Adjust visibility of panel note based on changes made to the signature above.

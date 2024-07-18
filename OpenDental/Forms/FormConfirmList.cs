@@ -591,7 +591,9 @@ namespace OpenDental{
 					Patient patient=new Patient();
 					patient.FName=PIn.String(_tableAddresses.Rows[_patientsPrinted]["FName"].ToString());
 					patient.Preferred=PIn.String(_tableAddresses.Rows[_patientsPrinted]["Preferred"].ToString());
-					postcardMessage=PatComm.BuildConfirmMessage(ContactMethod.Mail,patient,dateTimeAskedToArrive,dateTimeApt);
+					patient.ClinicNum=PIn.Long(_tableAddresses.Rows[_patientsPrinted]["ClinicNum"].ToString());
+					long clinicNumApt=PIn.Long(_tableAddresses.Rows[_patientsPrinted]["clinicNumApt"].ToString());
+					postcardMessage=PatComm.BuildConfirmMessage(ContactMethod.Mail,patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 				}
 				using Font fontBody=new Font(FontFamily.GenericSansSerif,10);
 				RectangleF rectangleF=new RectangleF(xPos+45,yPos+180,250,190);
@@ -740,20 +742,22 @@ namespace OpenDental{
 				Patient patient=new Patient();
 				patient.FName=PIn.String(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["FName"].ToString());
 				patient.Preferred=PIn.String(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["Preferred"].ToString());
+				patient.ClinicNum=PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["ClinicNum"].ToString());
 				DateTime dateTimeAskedToArrive=PIn.DateT(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["DateTimeAskedToArrive"].ToString());
 				DateTime dateTimeApt=PIn.DateT(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["AptDateTime"].ToString());
+				long clinicNumApt=PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["clinicNumApt"].ToString());
 				if(checkGroupFamilies.Checked) {//build the list of appointments a family has scheduled
 					if(i==gridMain.SelectedIndices.Length-1 
 						|| _tableAppointments.Rows[gridMain.SelectedIndices[i]]["Guarantor"].ToString()!=_tableAppointments.Rows[gridMain.SelectedIndices[i+1]]["Guarantor"].ToString()) 
 					{
 						if(familyApptList!=""){
-							familyApptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
+							familyApptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 							//continue with sending an email, because there are no more family members
 						}
 					}
 					else if(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["Guarantor"].ToString()==_tableAppointments.Rows[gridMain.SelectedIndices[i+1]]["Guarantor"].ToString()) {
 						listAptNums.Add(PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["AptNum"].ToString()));
-						familyApptList+=(familyApptList!=""?"\r\n":"")+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
+						familyApptList+=(familyApptList!=""?"\r\n":"")+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 						continue;//skip sending emails to anyone that isn't the guarantor or isn't a single patient
 					}
 				}
@@ -776,7 +780,7 @@ namespace OpenDental{
 					familyApptList="";
 				}
 				else {
-					confirmationMessage=PatComm.BuildConfirmMessage(ContactMethod.Email,patient,dateTimeAskedToArrive,dateTimeApt);
+					confirmationMessage=PatComm.BuildConfirmMessage(ContactMethod.Email,patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 				}
 				emailMessage.BodyText=EmailMessages.FindAndReplacePostalAddressTag(confirmationMessage,clinicNum);
 				emailMessage.MsgDateTime=DateTime.Now;
@@ -926,18 +930,19 @@ namespace OpenDental{
 				patient.PriProv=PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["PriProv"].ToString());
 				DateTime dateTimeAskedToArrive=PIn.DateT(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["DateTimeAskedToArrive"].ToString());
 				DateTime dateTimeApt=PIn.DateT(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["AptDateTime"].ToString());
+				long clinicNumApt=PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["clinicNumApt"].ToString());
 				if(checkGroupFamilies.Checked) {//build the list of appointments a family has scheduled
 					if(i==gridMain.SelectedIndices.Length-1 
 						|| _tableAppointments.Rows[gridMain.SelectedIndices[i]]["Guarantor"].ToString()!=_tableAppointments.Rows[gridMain.SelectedIndices[i+1]]["Guarantor"].ToString()) 
 					{
 						if(familyApptList!=""){
-							familyApptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
+							familyApptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 							//continue with sending an email, because there are no more family members
 						}
 					}
 					else if(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["Guarantor"].ToString()==_tableAppointments.Rows[gridMain.SelectedIndices[i+1]]["Guarantor"].ToString()) {
 						listAptNums.Add(PIn.Long(_tableAppointments.Rows[gridMain.SelectedIndices[i]]["AptNum"].ToString()));
-						familyApptList+=(familyApptList!=""?"\r\n":"")+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
+						familyApptList+=(familyApptList!=""?"\r\n":"")+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 						continue;//skip sending emails to anyone that isn't the guarantor or isn't a single patient
 					}
 				}
@@ -952,7 +957,7 @@ namespace OpenDental{
 					familyApptList="";
 				}
 				else {
-					confirmationMessage=PatComm.BuildConfirmMessage(ContactMethod.TextMessage,patient,dateTimeAskedToArrive,dateTimeApt);
+					confirmationMessage=PatComm.BuildConfirmMessage(ContactMethod.TextMessage,patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
 				}
 				if(formTxtMsgEdit.SendText(patNum,wirelessPhone,confirmationMessage,YNtxtMsgOk,clinicNum,SmsMessageSource.Confirmation)) {
 					for(int j=0; j<listAptNums.Count; j++) {

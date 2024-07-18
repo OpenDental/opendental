@@ -3136,7 +3136,7 @@ namespace OpenDental{
 			}
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.TreatPlanDiscountAdjustmentType));
 			List<ProcTP> listSelectedProcTPS=gridMain.SelectedTags<ProcTP>();
-			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,false)) {
+			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,DateTime.Today,false)) {
 				return;
 			}
 			if(!new[] { TreatPlanStatus.Active,TreatPlanStatus.Inactive }.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)) {
