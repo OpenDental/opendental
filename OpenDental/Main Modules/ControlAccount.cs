@@ -284,7 +284,10 @@ namespace OpenDental {
 		private void checkUseSuperFam_CheckedChanged(object sender,EventArgs e) {
 			Cursor=Cursors.WaitCursor;
 			_useSuperFam=checkUseSuperFam.Checked;
-			RefreshModuleScreen(IsFamilySelected());
+			if(gridAcctPat.SelectedTag<Patient>() is Patient patient) {
+				GlobalFormOpenDental.PatientSelected(patient,false);
+				ModuleSelected(_patient.PatNum,true);
+			}
 			Cursor=Cursors.Default;
 		}
 

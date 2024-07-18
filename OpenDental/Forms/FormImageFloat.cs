@@ -88,6 +88,7 @@ namespace OpenDental {
 			_pointMouseScreenPrevious=point;
 			_rectangleOnDesktopMouseDown=rectangleFormBounds;
 			_enumMouseDownRegion=EnumMouseDownRegion.Title;
+			PanelBorders.Capture=true;
 		}
 		#endregion Methods - Public
 

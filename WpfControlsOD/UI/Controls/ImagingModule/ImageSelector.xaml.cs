@@ -350,10 +350,8 @@ Only used once in Imaging module.
 			}
 			if(keepSelection){
 				//Make sure selection exists. Works with null.
-				NodeObjTag nodeObjTagMatching=_listNodeObjTags.FirstOrDefault(x=>x.IsMatching(_nodeObjTagSelected));
-				if(nodeObjTagMatching is null){
-					_nodeObjTagSelected=null;
-				}
+				//Category might have changed from within info window. This pulls updated version. Null ok.
+				_nodeObjTagSelected=_listNodeObjTags.FirstOrDefault(x=>x.IsMatching(_nodeObjTagSelected));
 			}
 			else{
 				_nodeObjTagSelected=null;
@@ -1015,11 +1013,7 @@ Only used once in Imaging module.
 			}
 			//single click from here down------------------------------------------------------------------
 			_hasDraggedOutsideTheTree=false;
-			base.OnMouseDown(e);
-			if(_isLeftMouseDownDragging){//already dragging before this click
-				//Ignore this second one, but this old code could probably go away since right click won't hit here.
-				return;
-			}
+			base.OnMouseDown(e);//I think this is old
 			//from here down, clicked on a valid row
 			//Expand/Collapse============================================================================================
 			if(_listNodeObjTags[idx].NodeType==EnumImageNodeType.Category){
@@ -1111,6 +1105,8 @@ Only used once in Imaging module.
 			if(!_isLeftMouseDownDragging){
 				return;
 			}
+			//_isLeftMouseDownDragging is actually almost always true.
+			//It's really synonymous with isMouseDown, so should nearly always be true.
 			_isLeftMouseDownDragging=false;
 			Border border=(Border)sender;
 			int idx=IndexFromBorder(border);

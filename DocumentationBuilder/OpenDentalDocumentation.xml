@@ -2727,7 +2727,7 @@
       <summary>Holds a comma delimited list of Claim Adjustment Reason Codes from an ERA. https://x12.org/codes/claim-adjustment-reason-codes </summary>
     </column>
     <column order="47" name="IsOverpay" type="tinyint(4)">
-      <summary></summary>
+      <summary>Bool, defaults to false. When true, Status is NotReceived and indicates that the claimproc represents an insurance overpayment OR underpayment.</summary>
     </column>
     <column order="48" name="SecurityHash" type="varchar(255)">
       <summary>Holds the salted hash of the following claimproc fields: ClaimNum, Status, InsPayEst, InsPayAmt. </summary>

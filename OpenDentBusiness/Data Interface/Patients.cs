@@ -5743,18 +5743,18 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Builds a confirmation message string based on the appropriate preference, given patient, and given date.</summary>
-		public static string BuildConfirmMessage(ContactMethod contactMethod,Patient pat,DateTime dateTimeAskedToArrive,DateTime apptDateTime) {
+		public static string BuildConfirmMessage(ContactMethod contactMethod,Patient pat,DateTime dateTimeAskedToArrive,DateTime apptDateTime,long clinicNumApt) {
 			string template=contactMethod switch {
 				ContactMethod.Email=>PrefC.GetString(PrefName.ConfirmEmailMessage),
 				ContactMethod.TextMessage=>PrefC.GetString(PrefName.ConfirmTextMessage),
 				ContactMethod.Mail=>PrefC.GetString(PrefName.ConfirmPostcardMessage),
 				_=>PrefC.GetString(PrefName.ConfirmTextMessage),
 			};
-			return BuildAppointmentMessage(pat,dateTimeAskedToArrive,apptDateTime,template);
+			return BuildAppointmentMessage(pat,dateTimeAskedToArrive,apptDateTime,clinicNumApt,template);
 		}
 
 		///<summary>Builds an appointment information message string based on the given template, given patient, and given date.</summary>
-		public static string BuildAppointmentMessage(Patient pat,DateTime dateTimeAskedToArrive,DateTime apptDateTime
+		public static string BuildAppointmentMessage(Patient pat,DateTime dateTimeAskedToArrive,DateTime apptDateTime,long clinicNumApt
 			,string template="[NameF]:  [date] at [time]",bool isEmail=false) {
 			DateTime dateTime=apptDateTime;
 			if(dateTimeAskedToArrive.Year>1880) {
@@ -5762,7 +5762,13 @@ namespace OpenDentBusiness {
 			}
 			if(pat!=null) {
 				string name=Patients.GetNameFirstOrPreferred(pat.FName,pat.Preferred);
-				Clinic clinic=Clinics.GetClinic(pat.ClinicNum);
+				Clinic clinic=null;//Null clinic will default to practice name in TagReplacer.
+				if(clinicNumApt>0) {
+					clinic=Clinics.GetClinic(clinicNumApt);
+				}
+				else if(pat.ClinicNum>0){
+					clinic=Clinics.GetClinic(pat.ClinicNum);
+				}
 				TagReplacer tagReplacer=new TagReplacer();
 				AutoCommObj autoCommObj=new AutoCommObj();
 				autoCommObj.NameF=pat.FName;

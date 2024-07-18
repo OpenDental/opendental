@@ -310,7 +310,7 @@ namespace OpenDental {
 						provChanged=true;
 					}
 				}
-				if(i==2){
+				if(i==1){
 					if(ListSchedulesProv[i].StartTime != dateTimeProvStart2.TimeOfDay){
 						provChanged=true;
 					}

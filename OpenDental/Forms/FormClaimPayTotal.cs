@@ -71,7 +71,7 @@ namespace OpenDental {
 				}
 			}
 			_listDefs=Defs.GetDefsForCategory(DefCat.ClaimPaymentTracking,true);
-			if(_totalPayAmt>0) {
+			if(_totalPayAmt>=0) {
 				ApplyAsTotalPayment();
 			}
 			FillGrid();

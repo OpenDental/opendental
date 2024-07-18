@@ -2236,7 +2236,7 @@ namespace OpenDental {
 					if(ApptIsNull(appointment)) { return; }
 					Appointment aptOld=appointment.Copy();
 					Patient patient=Patients.GetPat(appointment.PatNum);
-					string message=PatComm.BuildConfirmMessage(ContactMethod.TextMessage,patient,appointment.DateTimeAskedToArrive,appointment.AptDateTime);
+					string message=PatComm.BuildConfirmMessage(ContactMethod.TextMessage,patient,appointment.DateTimeAskedToArrive,appointment.AptDateTime,appointment.ClinicNum);
 					bool wasTextSent=GlobalFormOpenDental.SendTextMessage?.Invoke(patient.PatNum,message)??false;
 					if(wasTextSent) {
 						long newStatus=PrefC.GetLong(PrefName.ConfirmStatusTextMessaged);

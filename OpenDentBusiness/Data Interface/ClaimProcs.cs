@@ -631,7 +631,7 @@ namespace OpenDentBusiness{
 			List<ClaimProc> listClaimProcsSorted=claimProcArray.ToList();
 			listClaimProcsSorted=listClaimProcsSorted.FindAll(x=>x.Status!=ClaimProcStatus.Supplemental && x.Status!=ClaimProcStatus.Received && x.Status!=ClaimProcStatus.CapComplete)
 				.OrderByDescending(x=>x.DateCP).ToList();			
-			if(listClaimProcsSorted.IsNullOrEmpty() || totalPayAmt<=0) {
+			if(listClaimProcsSorted.IsNullOrEmpty() || totalPayAmt<0) {
 				return;
 			}
 			double remainingAlotment=totalPayAmt;//The user entered value (pool) of cash we are going to fill the claim procs with

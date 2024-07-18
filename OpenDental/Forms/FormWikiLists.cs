@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OpenDentBusiness;
 
@@ -54,6 +55,13 @@ namespace OpenDental {
 			}
 			if(strResult=="") {
 				MsgBox.Show(this,"List name cannot be blank.");
+				return;
+			}
+			//Mysql table names are limited to specific characters, use a regex to enforce this.
+			//^Assert the start of the string which can be a letter or underscore. This is then followed by any number of alphanumeric characters or underscrores through to the end of the string denoted by $.
+			Regex regexItem=new Regex("^[a-zA-Z_][a-zA-Z0-9_]*$");
+			if(!regexItem.IsMatch(strResult)) {
+				MsgBox.Show("List name cannot start with a number and must only contain alphanumeric characters and underscores.");
 				return;
 			}
 			if(WikiLists.CheckExists(strResult)) {

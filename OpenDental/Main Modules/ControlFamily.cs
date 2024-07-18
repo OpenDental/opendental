@@ -1858,7 +1858,7 @@ namespace OpenDental{
 				}
 				gridSuperFam.Columns.Add(gridColumn);
 			}
-			_widthGridSuperFam=listDisplayFields.Sum(x=>x.ColumnWidth)+LayoutManager.Scale(SystemInformation.VerticalScrollBarWidth);
+			_widthGridSuperFam=LayoutManager.Scale(listDisplayFields.Sum(x=>x.ColumnWidth)+SystemInformation.VerticalScrollBarWidth);
 			gridSuperFam.Width=_widthGridSuperFam;
 			gridSuperFam.ListGridRows.Clear();
 			if(_patient==null) {

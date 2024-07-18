@@ -1780,5 +1780,11 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End B54856
 		}//End of 24_2_6()
+
+		private static void To24_2_12() {
+			string command="UPDATE procedurecode SET TreatArea=0 " +//0 = TreatmentArea.None
+				"WHERE TreatArea=3 AND ProcCode IN ('D0120','D0140','D0145','D0150','D0270','D0272','D0273','D0274')";//3 = TreatmentArea.Mouth
+			Db.NonQ(command);
+		}//End of 24_2_12()
 	}
 }
