@@ -1375,7 +1375,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					return;
 				}
 				WindowState=FormWindowState.Minimized;
-				if(this.GetType().ToString()=="FormImageFloat"){
+				if(this.GetType().ToString()=="OpenDental.FormImageFloat"){
 					IsImageFloatDocked=false;
 					IsImageFloatLocked=false;
 				}
