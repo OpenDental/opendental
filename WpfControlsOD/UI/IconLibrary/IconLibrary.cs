@@ -69,7 +69,13 @@ namespace WpfControls.UI{
 			byte[] byteArray=Convert.FromBase64String(base64);
 			bitmapImage.BeginInit();
 			bitmapImage.StreamSource=new MemoryStream(byteArray);
-			bitmapImage.EndInit();
+			//This can fail for a few bitmaps for a very small number of computers for unknown reasons
+			try{
+				bitmapImage.EndInit();
+			}
+			catch{
+				bitmapImage=new System.Windows.Media.Imaging.BitmapImage();
+			}
 			//bitmapImage.Freeze();//Would makes the image available on any thread, but we don't need that.
 			return bitmapImage;
 			
