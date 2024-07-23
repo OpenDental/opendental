@@ -89,6 +89,10 @@ namespace OpenDental {
 			}
 		}
 
+		private void checkShowHidden_Click(object sender,EventArgs e) {
+			FillGrid();
+		}
+
 		private void butOK_Click(object sender,EventArgs e) {
 			if(gridMain.GetSelectedIndex()==-1) {
 				MsgBox.Show("Please pick a parent first.");
@@ -96,10 +100,6 @@ namespace OpenDental {
 			}
 			ChildParentNumSelected=gridMain.SelectedTag<ChildParent>().ChildParentNum;
 			IsDialogOK=true;
-		}
-
-		private void CheckBox_Click(object sender,EventArgs e) {
-			FillGrid();
 		}
 
 

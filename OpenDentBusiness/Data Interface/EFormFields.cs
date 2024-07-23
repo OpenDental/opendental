@@ -93,9 +93,9 @@ namespace OpenDentBusiness{
 		}
 
 		public static FlowDocument DeserializeFlowDocument(string xmlString){
-			//if(!xmlString.StartsWith("<FlowDocument")){//must always be true, so something is wrong
-			//	return new FlowDocument();
-			//}
+			if(xmlString==""){
+				return new FlowDocument();
+			}
 			string xamlString=xmlString;
 			xamlString=xamlString.Replace("<FlowDocument>","<FlowDocument xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">");
 			using StringReader stringReader=new StringReader(xamlString);

@@ -8,9 +8,9 @@
         mc:Ignorable="d"
         Height="370" Width="424">
 	<Grid Background="#FFFCFDFE">
-		<Grid Name="gridSquareGradient" HorizontalAlignment="Left" VerticalAlignment="Top" Width="258" Height="258" Margin="20,20,0,0" >
+		<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Width="258" Height="258" Margin="20,20,0,0" >
 			<Border BorderBrush="DarkGray" BorderThickness="1">
-				<Grid MouseDown="gridSquareGradient_MouseDown">
+				<Grid Name="gridSquareGradient">
 					<Canvas Name="canvas" x:FieldModifier="internal">
 						<Canvas.Background>
 							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">

@@ -142,7 +142,7 @@ namespace OpenDental{
 			this.butAddEForm.Name = "butAddEForm";
 			this.butAddEForm.Size = new System.Drawing.Size(87, 24);
 			this.butAddEForm.TabIndex = 15;
-			this.butAddEForm.Text = "Add EForm";
+			this.butAddEForm.Text = "Add eForm";
 			this.butAddEForm.Click += new System.EventHandler(this.butAddEForm_Click);
 			// 
 			// FormPatientForms

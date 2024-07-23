@@ -63,6 +63,8 @@ but understand that RefreshFromDb will happen on the main thread in this case, w
 		public Action<object> ActionComplete;
 		///<summary>This is the func where your db query will run in a separate thread. It should return an object encapsulating the new data such as a DataTable or a List.</summary>
 		public Func<object> FuncDb;
+		/// <summary>True by default. Set to false temporarily if you don't want to trigger FuncDb, usually if you're setting a text property in the load.</summary>
+		public bool ShouldRefresh=true;
 		///<summary>This timer starts when user makes a change, and then it fires about a second later.</summary>
 		private DispatcherTimer _dispatcherTimer;
 		///<summary>To call Invoke, we need a control.  Any control will do. So we just stash any control here for that sole purpose.</summary>
@@ -203,6 +205,9 @@ but understand that RefreshFromDb will happen on the main thread in this case, w
 		#region Methods - private event handlers
 		///<summary></summary>
 		private void Control_Changed(object sender,EventArgs e) {
+			if(!ShouldRefresh){
+				return;
+			}
 			//Check the count of the textboxes to see if we should launch immediately or not
 			if(CountText() >= _minChars){
 				LaunchThread();//immediate

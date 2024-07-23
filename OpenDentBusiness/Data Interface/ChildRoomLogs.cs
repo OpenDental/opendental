@@ -152,8 +152,38 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),childRoomNum,date);
 			}
 			string command="SELECT * FROM childroomlog WHERE ChildRoomNum="+POut.Long(childRoomNum)
-				+" AND CAST(DateTDisplayed as DATE)="+POut.Date(date)
+				+" AND DATE(DateTDisplayed)="+POut.Date(date)
 				+" ORDER BY DateTDisplayed";
+			return Crud.ChildRoomLogCrud.SelectMany(command);
+		}
+
+		///<summary>Returns all child logs for a given date.</summary>
+		public static List<ChildRoomLog> GetAllChildrenForDate(DateTime date) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),date);
+			}
+			string command="SELECT * FROM childroomlog WHERE DATE(DateTDisplayed)="+POut.Date(date)//Specify date
+				+" AND ChildNum!=0";//Only child logs
+			return Crud.ChildRoomLogCrud.SelectMany(command);
+		}
+
+		///<summary>Returns all logs for a specific child for a given date.</summary>
+		public static List<ChildRoomLog> GetAllLogsForChild(long childNum,DateTime date) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),childNum,date);
+			}
+			string command="SELECT * FROM childroomlog WHERE ChildNum="+POut.Long(childNum)
+				+" AND DATE(DateTDisplayed)="+POut.Date(date);
+			return Crud.ChildRoomLogCrud.SelectMany(command);
+		}
+
+		///<summary>Returns all logs for a specific employee for a given date.</summary>
+		public static List<ChildRoomLog> GetAllLogsForEmployee(long employeeNum,DateTime date) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),employeeNum,date);
+			}
+			string command="SELECT * FROM childroomlog WHERE EmployeeNum="+POut.Long(employeeNum)
+				+" AND DATE(DateTDisplayed)="+POut.Date(date);
 			return Crud.ChildRoomLogCrud.SelectMany(command);
 		}
 

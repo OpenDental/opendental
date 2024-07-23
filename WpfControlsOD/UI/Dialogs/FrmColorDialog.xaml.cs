@@ -31,6 +31,9 @@ namespace WpfControls.UI {
 		public FrmColorDialog():base() {
 			InitializeComponent();
 			Loaded+=Window_Loaded;
+			gridSquareGradient.MouseDown+=gridSquareGradient_MouseDown;
+			gridSquareGradient.MouseMove+=GridSquareGradient_MouseMove;
+			gridSquareGradient.MouseUp+=GridSquareGradient_MouseUp;
 		}
 
 		#region Methods - private
@@ -382,6 +385,24 @@ namespace WpfControls.UI {
 
 		private void gridSquareGradient_MouseDown(object sender,MouseButtonEventArgs e) {
 			Point point=e.GetPosition(gridSquareGradient);
+			gridSquareGradient.CaptureMouse();
+			MoveCircle(point);
+		}
+
+		private void GridSquareGradient_MouseMove(object sender,MouseEventArgs e) {
+			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;
+			if(!isMouseDown){
+				return;
+			}
+			Point point=e.GetPosition(gridSquareGradient);
+			MoveCircle(point);
+		}
+
+		private void GridSquareGradient_MouseUp(object sender,MouseButtonEventArgs e) {
+			gridSquareGradient.ReleaseMouseCapture();
+		}
+
+		private void MoveCircle(Point point){
 			//Check to make sure the user stays within the canvas
 			if(point.X>255){//Example grid is 256 pixels wide: 0-255.
 				point.X=255;

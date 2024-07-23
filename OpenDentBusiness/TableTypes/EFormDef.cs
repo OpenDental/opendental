@@ -7,13 +7,6 @@ using System.Xml.Serialization;
 
 namespace OpenDentBusiness {
 /*
-Ryan Todo:
-Test Replacement fields. Try to break it.
-Write code to treat two pagebreaks as a single pagebreak when patient is filling out. No change to setup window.
-Test entire page or multiple pages of conditional hidden fields
-Edit internal consent forms to add hanging indents, as requested by the forms team.
-Replacement fields. I'm pretty sure we'll need to loop through all the textRanges to do this, but I have existing code I can paste in for that, so don't worry about it.
-
 EForms is a complete replacement for the mobile version of sheets for patient forms. 
 It's also designed to be used on larger devices so that it can replace sheets being used for webforms.
 We will probably not be able to completely deprecate mobile sheets immediately, but we will try very hard for most customers.
@@ -25,7 +18,9 @@ We did a good job on sheets, but we never should have tried to adapt sheets for 
 Once EForms is mature and powerful, we might add a way to convert a mobile sheet into a more powerful EForm.
 Since EForms is intended to replace Mobile Sheets, we need to explain how to do the same things here that we did there.
 Sheets are laid out in absolute x,y coords, with some additional growth behavior built in.
+EForms are entirely dynamic
 Mobile sheets had no positional control but were instead just stacked vertical scrolling.
+EForms is still stacked vertical scrolling, but there are also horizontal stacking options mixed in.
 Internal EFormDefs are hard coded in C#, just like internal sheets.
 If a user makes a copy of in internal EFormDef, they will now have a custom EFormDef that is identical but stored in the database.
 A custom EFormDef is editable. User can add/remove/rearrange EFormFields.
@@ -65,7 +60,7 @@ Gender, Female
 Our conditional logic will be placed on the field that we want to show or hide.
 1. Parent field ... User can type it in or pick from a list, based on the ValueLabels. This means that ValueLabels are required for now.
 2. Has value... checked, Yes, Female, etc. The value showing, not the db value. Checkboxes will use checked/unchecked for now.
-If all the fields on a page are hidden, this would put multiple page breaks together, so they will be treated as a single page break.
+If all the fields on a page are hidden, that page gets hidden.
 */
 
 	///<summary>EForms are a way for patients to fill out forms. This is similar to sheets, but optimized for dynamic layout instead of fixed layout. The office sets up templates, EFormDefs, which get copied to EForms. Since this is a template EForm, it does not link to a patient. It can be freely changed without affecting any EForms. We also supply internal EFormDefs, which are hard coded as XML rather than being in any office database.</summary>
@@ -102,11 +97,14 @@ https://www.youtube.com/watch?v=4V-wbDuVtFg
 Ours are similar.
 
 Next:
-Conditional children
-Try to break PickListVis by using commas
-EFormDef property window
-Bool method for which types allow horiz stacking
-Mark certain drag locations as never show
+When filling forms, changing window width does not perform another layout.
+Allergies, Medications, Problems
+Enhance FormWebForms to include eForms
+Slight enhancements to FormPatientPickWebForm for wording
+What about FormPatientPickWebForm?
+and .IsWebForm
+WebForms_Preference.ColorBorder
+RyanH: Add conditional logic to all the other UI types
 TabOrders
 Background color
 SigBox implement
@@ -128,12 +126,11 @@ A series of YesNo boxes to force them to answer each question.
 A current list of allergies along with a formal way to add/remove.
 This list control could be combined with the custom checkboxes or yes/no boxes to avoid the need for an "other" textbox.
 Flex uses categories that get expanded. Those don't look useful to me.
-Medications are more complex than Allergies and Problems. It's high priority to add some features:
-List control with Add/Remove.
-Use PatNote for strength and frequency.
+Medications are more complex than Allergies and Problems, so we use a special control.
 
 Future enhancements, in order of priority:
 Add functionality in FormSheetImport to allow EForms.
+Sort out prefill vs import. Probably make them separate.
 Duplicate fields to speed up building a new form.
 Branding, using colors, logos, and images, using MobileBrandingProfile.
 Language Translation. 
@@ -146,6 +143,8 @@ Language Translation.
 	Convert all translations from mobile sheets 
 Lists for Allergies, Problems
 YesNo for Allergies, Problems, Medications
+Allergies and meds, more elegant options than Other.
+Tools to combine meds and probs, like we already do with allergies.
 Columns of checkboxes
 TextArea specify rows showing initially
 Carryover when filling multiple forms in one session.

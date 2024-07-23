@@ -17,6 +17,8 @@ namespace OpenDental {
 		public EFormField EFormFieldCur;
 		///<summary>We need access to a few other fields of the EFormDef.</summary>
 		public EFormDef EFormDefCur;
+		///<summary></summary>
+		public bool IsPreviousStackable;
 		///<summary>Looks just like what would go in the db. If it starts with "allergy:", "problem:", or "med:", then this string also includes the selected allergy, etc. So it will look like "allergy:...", etc. If "None", then this will be empty string. This gets updated as the user types.</summary>
 		private string _dbLink;
 
@@ -37,7 +39,11 @@ namespace OpenDental {
 			_dbLink=EFormFieldCur.DbLink;
 			SetComboFromDbLink();
 			SetMedAllerProbBox();
-			checkIsHorizontal.Checked=EFormFieldCur.IsHorizStacking;
+			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			if(!IsPreviousStackable){
+				labelStackable.Text="previous field is not stackable";
+				checkIsHorizStacking.IsEnabled=false;
+			}
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			if(_dbLink!="allergiesNone" && _dbLink!="problemsNone") {
 				checkIsRequired.Visible=false;
@@ -242,7 +248,7 @@ namespace OpenDental {
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
 			EFormFieldCur.DbLink=_dbLink;
-			EFormFieldCur.IsHorizStacking=checkIsHorizontal.Checked==true;
+			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true && checkIsRequired.Visible;
 			//not saved to db here. That happens when clicking Save in parent window.

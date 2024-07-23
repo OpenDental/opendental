@@ -14,10 +14,12 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 
 namespace OpenDental {
+	///<summary>Also handles eForm import.</summary>
 	public partial class FormSheetImport:FormODBase {
 		public Sheet SheetCur;
-		public Document DocCur;
-		private List<SheetImportRow> _listSheetImportRows;
+		public EForm EFormCur;
+
+		private List<ImportRow> _listImportRows;
 		private Patient _patient;
 		///<summary>A copy of the patient when the form loads.  Used to know the what will change upon import.</summary>
 		private Patient _patientOld;
@@ -43,10 +45,17 @@ namespace OpenDental {
 		private OcrInsScanResponse _ocrResponsePrimaryBack;
 		private OcrInsScanResponse _ocrResponseSecondaryFront;
 		private OcrInsScanResponse _ocrResponseSecondaryBack;
-
 		///<summary>In order to import insurance plans the sheet must contain Relationship, Subscriber, SubscriberID, CarrierName, and CarrierPhone.  This variable gets set when the sheet loads and will indicate if all fields are present for primary OR for secondary insurance.  Insurance should not attempt to import if this is false.</summary>
 		private bool _hasRequiredInsFields;
+		private bool _hasSectionPersonal;
+		private bool _hasSectionAddrHmPhone;
+		private bool _hasSectionIns1;
+		private bool _hasSectionIns2;
+		private bool _hasSectionAllergies;
+		private bool _hasSectionMeds;
+		private bool _hasSectionProblems;
 		private bool _isPatTransferSheet;
+
 		private const string INVALID_DATE="Invalid Date";
 
 		public FormSheetImport() {
@@ -63,84 +72,21 @@ namespace OpenDental {
 		private void FormSheetImport_Load(object sender,EventArgs e) {
 			if(SheetCur!=null) {
 				_patient=Patients.GetPat(SheetCur.PatNum);
-				_patientOld=_patient.Copy();
-				_patientNote=PatientNotes.Refresh(_patient.PatNum,_patient.Guarantor);
-				_patientNoteOld=_patientNote.Copy();
 				if(SheetCur.SheetFields!=null) {
 					_isPatTransferSheet=SheetCur.SheetFields.Any(x => x.FieldName=="isTransfer" && PIn.Bool(x.FieldValue));
 				}
 			}
-			else {
-				#region Acro
-				throw new NotImplementedException();//js this broke with the move to dot net 4.0.
-				/*
-				pat=Patients.GetPat(DocCur.PatNum);
-				CAcroApp acroApp=null;
-				try {
-					acroApp=new AcroAppClass();//Initialize Acrobat by creating App object
-				}
-				catch {
-					MsgBox.Show(this,"Requires Acrobat 9 Pro to be installed on this computer.");
-					DialogResult=DialogResult.Cancel;
-					return;
-				}
-				//acroApp.Show();// Show Acrobat Viewer
-				//acroApp.Hide();//This is annoying if Acrobat is already open for some other reason.
-				CAcroAVDoc avDoc=new AcroAVDocClass();
-				string pathToPdf=CodeBase.ODFileUtils.CombinePaths(ImageStore.GetPatientFolder(pat),DocCur.FileName);
-				if(!avDoc.Open(pathToPdf,"")){
-					MessageBox.Show(Lan.g(this,"Could not open")+" "+pathToPdf);
-					DialogResult=DialogResult.Cancel;
-					return;
-				}
-				IAFormApp formApp=new AFormAppClass();//Create a IAFormApp object so we can access the form fields in the open document
-				IFields myFields=(IFields)formApp.Fields;// Get the IFields object associated with the form
-				IEnumerator myEnumerator = myFields.GetEnumerator();// Get the IEnumerator object for myFields
-				dictAcrobatFields=new Dictionary<string,string>();
-				IField myField;
-				string nameClean;
-				string valClean;
-				while(myEnumerator.MoveNext()) {
-					myField=(IField)myEnumerator.Current;// Get the IField object
-					if(myField.Value==null){
-						continue;
-					}
-					//if the form was designed in LiveCycle, the names will look like this: topmostSubform[0].page1[0].SSN[0]
-					//Whereas, if it was designed in Acrobat, the names will look like this: SSN
-					//So...
-					nameClean=myField.Name;
-					if(nameClean.Contains("[") && nameClean.Contains(".")) {
-						nameClean=nameClean.Substring(nameClean.LastIndexOf(".")+1);
-						nameClean=nameClean.Substring(0,nameClean.IndexOf("["));
-					}
-					if(nameClean=="misc") {
-						int suffix=1;
-						nameClean=nameClean+suffix.ToString();
-						while(dictAcrobatFields.ContainsKey(nameClean)) {//untested.
-							suffix++;
-							nameClean=nameClean+suffix.ToString();
-						}
-					}
-					valClean=myField.Value;
-					if(valClean=="Off") {
-						valClean="";
-					}
-					//myField.Type//possible values include text,radiobutton,checkbox
-					//MessageBox.Show("Raw:"+myField.Name+"  Name:"+nameClean+"  Value:"+myField.Value);
-					if(dictAcrobatFields.ContainsKey(nameClean)) {
-						continue;
-					}
-					dictAcrobatFields.Add(nameClean,valClean);
-					//name:topmostSubform[0].page1[0].SSN[0]
-				}
-				//acroApp.Hide();//Doesn't work well enough
-				//this.BringToFront();//Doesn't work
-				//acroApp.Minimize();
-				acroApp.Exit();
-				acroApp=null;
-				*/
-				#endregion
+			else if(EFormCur!=null){
+				_patient=Patients.GetPat(EFormCur.PatNum);
+				Text="eForm Import";
+				gridMain.Title="eForm Import";
 			}
+			else {
+				throw new NotImplementedException();//js PDF import broke with the move to dot net 4.0.
+			}
+			_patientOld=_patient.Copy();
+			_patientNote=PatientNotes.Refresh(_patient.PatNum,_patient.Guarantor);
+			_patientNoteOld=_patientNote.Copy();
 			//pre-initialize ocrData to blank. Do this even if we dont have ocr docs. Its easier than adding null checks.
 			_ocrResponsePrimaryFront=CreateBlankOcrInsScanResponse();
 			_ocrResponsePrimaryBack=CreateBlankOcrInsScanResponse();
@@ -215,262 +161,369 @@ namespace OpenDental {
 			FillRows();
 			FillGrid();
 			//All the fields have been loaded on the sheet at this point.  Set the required insurance boolean if this is a patient form.
-			if(SheetCur.SheetType==SheetTypeEnum.PatientForm) {
+			if(SheetCur!=null && SheetCur.SheetType==SheetTypeEnum.PatientForm) {
+				SetHasRequiredInsFields();
+			}
+			if(EFormCur!=null){
 				SetHasRequiredInsFields();
 			}
 		}
 
 		///<summary>This can only be run once when the form first opens.  After that, the rows are just edited.</summary>
 		private void FillRows() {
+			_listImportRows=new List<ImportRow>();
+			ImportRow importRow;
+			string fieldVal;
+			#region Sections
+			_hasSectionPersonal=false;
+			List<string> listFieldNamesPersonal=new List<string>(){
+				"LName","FName","MiddleI","Preferred","Gender","Position","Birthdate","SSN","WkPhone",
+				"WirelessPhone","wirelessCarrier","Email","PreferContactMethod","PreferConfirmMethod",
+				"PreferRecallMethod","referredFrom","ICEName","ICEPhone"
+			};
+			if(EFormCur!=null && EFormCur.ListEFormFields.Exists(x=>listFieldNamesPersonal.Contains(x.DbLink))){
+				_hasSectionPersonal=true;
+			}
+			if(SheetCur!=null && SheetCur.SheetFields.Exists(x=>listFieldNamesPersonal.Contains(x.FieldName))){
+				_hasSectionPersonal=true;
+			}
+			_hasSectionAddrHmPhone=false;
+			List<string> listFieldNamesAddr=new List<string>(){
+				"addressAndHmPhoneIsSameEntireFamily","Address","Address2","City","State","StateNoValidation","Zip",
+				"HmPhone"
+			};
+			if(EFormCur!=null && EFormCur.ListEFormFields.Exists(x=>listFieldNamesAddr.Contains(x.DbLink))){
+				_hasSectionAddrHmPhone=true;
+			}
+			if(SheetCur!=null && SheetCur.SheetFields.Exists(x=>listFieldNamesAddr.Contains(x.FieldName))){
+				_hasSectionAddrHmPhone=true;
+			}
+			_hasSectionIns1=false;
+			List<string> listFieldNamesIns1=new List<string>(){
+				"ins1Relat","ins1SubscriberNameF","ins1SubscriberID","ins1CarrierName","ins1CarrierPhone",
+				"ins1EmployerName","ins1GroupName","ins1GroupNum"
+			};
+			if(EFormCur!=null && EFormCur.ListEFormFields.Exists(x=>listFieldNamesIns1.Contains(x.DbLink))){
+				_hasSectionIns1=true;
+			}
+			if(SheetCur!=null && SheetCur.SheetFields.Exists(x=>listFieldNamesIns1.Contains(x.FieldName))){
+				_hasSectionIns1=true;
+			}
+			_hasSectionIns2=false;
+			List<string> listFieldNamesIns2=new List<string>(){
+				"ins2Relat","ins2SubscriberNameF","ins2SubscriberID","ins2CarrierName","ins2CarrierPhone",
+				"ins2EmployerName","ins2GroupName","ins2GroupNum"
+			};
+			if(EFormCur!=null && EFormCur.ListEFormFields.Exists(x=>listFieldNamesIns2.Contains(x.DbLink))){
+				_hasSectionIns2=true;
+			}
+			if(SheetCur!=null && SheetCur.SheetFields.Exists(x=>listFieldNamesIns2.Contains(x.FieldName))){
+				_hasSectionIns2=true;
+			}
+			_hasSectionAllergies=false;
+			if(EFormCur!=null){
+				if(EFormCur.ListEFormFields.Exists(x=>
+					x.DbLink.In("allergiesNone","allergiesOther")
+					|| x.DbLink.StartsWith("allergy:")
+				)){
+					_hasSectionAllergies=true;
+				}
+			}
+			if(SheetCur!=null){
+				if(SheetCur.SheetFields.Exists(x=>
+					x.FieldName.StartsWith("allergy:")
+				)){
+					_hasSectionAllergies=true;
+				}
+			}
+			_hasSectionMeds=false;
+			if(EFormCur!=null){
+				if(EFormCur.ListEFormFields.Exists(x=>
+					x.FieldType==EnumEFormFieldType.MedicationList
+				)){
+					_hasSectionMeds=true;
+				}
+			}
+			if(SheetCur!=null){
+				if(SheetCur.SheetFields.Exists(x=>
+					x.FieldName.StartsWith("inputMed")
+					|| x.FieldName.StartsWith("checkMed")
+				)){
+					_hasSectionMeds=true;
+				}
+			}
+			_hasSectionProblems=false;
+			if(EFormCur!=null){
+				if(EFormCur.ListEFormFields.Exists(x=>
+					x.DbLink.In("problemsNone","problemsOther")
+					|| x.DbLink.StartsWith("problem:")
+				)){
+					_hasSectionProblems=true;
+				}
+			}
+			if(SheetCur!=null){
+				if(SheetCur.SheetFields.Exists(x=>
+					x.FieldName.StartsWith("problem:")
+				)){
+					_hasSectionProblems=true;
+				}
+			}
+			#endregion Sections
 			#region Patient Form
-			if(SheetCur.SheetType==SheetTypeEnum.PatientForm) {
-				_listSheetImportRows=new List<SheetImportRow>();
-				SheetImportRow row;
-				string fieldVal;
-				_listSheetImportRows.Add(CreateSeparator("Personal"));
+			if(EFormCur!=null
+				|| (SheetCur!=null && SheetCur.SheetType==SheetTypeEnum.PatientForm)) 
+			{
+				if(_hasSectionPersonal){
+					_listImportRows.Add(CreateSeparator("Personal"));
+				}
 				#region personal
 				//LName---------------------------------------------
 				fieldVal=GetInputValue("LName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="LName";
-					row.OldValDisplay=_patient.LName;
-					row.OldValObj=_patient.LName;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="LName";
+					importRow.OldValDisplay=_patient.LName;
+					importRow.OldValObj=_patient.LName;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//FName---------------------------------------------
 				fieldVal=GetInputValue("FName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="FName";
-					row.OldValDisplay=_patient.FName;
-					row.OldValObj=_patient.FName;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="FName";
+					importRow.OldValDisplay=_patient.FName;
+					importRow.OldValObj=_patient.FName;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//MiddleI---------------------------------------------
 				fieldVal=GetInputValue("MiddleI");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="MiddleI";
-					row.OldValDisplay=_patient.MiddleI;
-					row.OldValObj=_patient.MiddleI;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="MiddleI";
+					importRow.OldValDisplay=_patient.MiddleI;
+					importRow.OldValObj=_patient.MiddleI;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//Preferred---------------------------------------------
 				fieldVal=GetInputValue("Preferred");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="Preferred";
-					row.OldValDisplay=_patient.Preferred;
-					row.OldValObj=_patient.Preferred;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="Preferred";
+					importRow.OldValDisplay=_patient.Preferred;
+					importRow.OldValObj=_patient.Preferred;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//Gender---------------------------------------------
 				fieldVal=GetRadioValue("Gender");
 				if(fieldVal!=null) {//field exists on form
-					row=new SheetImportRow();
-					row.FieldName="Gender";
-					row.OldValDisplay=Lan.g("enumPatientGender",_patient.Gender.ToString());
-					row.OldValObj=_patient.Gender;
+					importRow=new ImportRow();
+					importRow.FieldName="Gender";
+					importRow.OldValDisplay=Lan.g("enumPatientGender",_patient.Gender.ToString());
+					importRow.OldValObj=_patient.Gender;
 					if(fieldVal=="") {//no box was checked
-						row.NewValDisplay="";
-						row.NewValObj=null;
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
 					}
 					else {
 						try {
 							PatientGender patientGender=(PatientGender)Enum.Parse(typeof(PatientGender),fieldVal);
-							row.NewValDisplay=Lan.g("enumPatientGender",patientGender.ToString());
-							row.NewValObj=patientGender;
+							importRow.NewValDisplay=Lan.g("enumPatientGender",patientGender.ToString());
+							importRow.NewValObj=patientGender;
 						}
 						catch {
 							MessageBox.Show(fieldVal+Lan.g(this," is not a valid gender."));
 						}
 					}
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(PatientGender);
-					if(row.NewValObj!=null && (PatientGender)row.NewValObj!=_patient.Gender) {
-						row.DoImport=true;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(PatientGender);
+					if(importRow.NewValObj!=null && (PatientGender)importRow.NewValObj!=_patient.Gender) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//Position---------------------------------------------
 				fieldVal=GetRadioValue("Position");
 				if(fieldVal!=null) {//field exists on form
-					row=new SheetImportRow();
-					row.FieldName="Position";
-					row.OldValDisplay=Lan.g("enumPatientPositionr",_patient.Position.ToString());
-					row.OldValObj=_patient.Position;
+					importRow=new ImportRow();
+					importRow.FieldName="Position";
+					importRow.OldValDisplay=Lan.g("enumPatientPositionr",_patient.Position.ToString());
+					importRow.OldValObj=_patient.Position;
 					if(fieldVal=="") {//no box was checked
-						row.NewValDisplay="";
-						row.NewValObj=null;
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
 					}
 					else {
 						try {
 							PatientPosition patientPosition=(PatientPosition)Enum.Parse(typeof(PatientPosition),fieldVal);
-							row.NewValDisplay=Lan.g("enumPatientPosition",patientPosition.ToString());
-							row.NewValObj=patientPosition;
+							importRow.NewValDisplay=Lan.g("enumPatientPosition",patientPosition.ToString());
+							importRow.NewValObj=patientPosition;
 						}
 						catch {
 							MessageBox.Show(fieldVal+Lan.g(this," is not a valid PatientPosition."));
 						}
 					}
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(PatientPosition);
-					if(row.NewValObj!=null && (PatientPosition)row.NewValObj!=_patient.Position) {
-						row.DoImport=true;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(PatientPosition);
+					if(importRow.NewValObj!=null && (PatientPosition)importRow.NewValObj!=_patient.Position) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//Birthdate---------------------------------------------
 				fieldVal=GetInputValue("Birthdate");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="Birthdate";
+					importRow=new ImportRow();
+					importRow.FieldName="Birthdate";
 					if(_patient.Birthdate.Year<1880) {
-						row.OldValDisplay="";
+						importRow.OldValDisplay="";
 					}
 					else {
-						row.OldValDisplay=_patient.Birthdate.ToShortDateString();
+						importRow.OldValDisplay=_patient.Birthdate.ToShortDateString();
 					}
-					row.OldValObj=_patient.Birthdate;
-					row.NewValObj=SheetFields.GetBirthDate(fieldVal,SheetCur.IsWebForm,SheetCur.IsCemtTransfer);
+					importRow.OldValObj=_patient.Birthdate;
+					if(EFormCur!=null){
+						importRow.NewValObj=PIn.Date(fieldVal);
+					}
+					if(SheetCur!=null){
+						importRow.NewValObj=SheetFields.GetBirthDate(fieldVal,SheetCur.IsWebForm,SheetCur.IsCemtTransfer);
+					}
 					if(string.IsNullOrWhiteSpace(fieldVal)) {//Patient entered blank date, consider this to be valid blank date.
-						row.NewValDisplay="";
-						row.ImpValDisplay="";
+						importRow.NewValDisplay="";
+						importRow.ImpValDisplay="";
 					}
-					else if(((DateTime)row.NewValObj).Year<1880) {//Patient entered date in incorrect format, consider this invalid (imports as MinValue)
-						row.NewValDisplay=fieldVal;
-						row.ImpValDisplay=INVALID_DATE;
-						row.IsFlaggedImp=true;
+					else if(((DateTime)importRow.NewValObj).Year<1880) {//Patient entered date in incorrect format, consider this invalid (imports as MinValue)
+						importRow.NewValDisplay=fieldVal;
+						importRow.ImpValDisplay=INVALID_DATE;
+						importRow.IsImportRed=true;
 					}
 					else {
-						row.NewValDisplay=((DateTime)row.NewValObj).ToShortDateString();//Correct formatting, valid date.
-						row.ImpValDisplay=row.NewValDisplay;
+						importRow.NewValDisplay=((DateTime)importRow.NewValObj).ToShortDateString();//Correct formatting, valid date.
+						importRow.ImpValDisplay=importRow.NewValDisplay;
 					}
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(DateTime);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(DateTime);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//SSN---------------------------------------------
 				fieldVal=GetInputValue("SSN");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="SSN";
-					row.OldValDisplay=_patient.SSN;
-					row.OldValObj=_patient.SSN;
-					row.NewValDisplay=fieldVal.Replace("-","");//quickly strip dashes
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="SSN";
+					importRow.OldValDisplay=_patient.SSN;
+					importRow.OldValObj=_patient.SSN;
+					importRow.NewValDisplay=fieldVal.Replace("-","");//quickly strip dashes
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//WkPhone---------------------------------------------
 				fieldVal=GetInputValue("WkPhone");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="WkPhone";
-					row.OldValDisplay=_patient.WkPhone;
-					row.OldValObj=_patient.WkPhone;
-					row.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="WkPhone";
+					importRow.OldValDisplay=_patient.WkPhone;
+					importRow.OldValObj=_patient.WkPhone;
+					importRow.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//WirelessPhone---------------------------------------------
 				fieldVal=GetInputValue("WirelessPhone");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="WirelessPhone";
-					row.OldValDisplay=_patient.WirelessPhone;
-					row.OldValObj=_patient.WirelessPhone;
-					row.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="WirelessPhone";
+					importRow.OldValDisplay=_patient.WirelessPhone;
+					importRow.OldValObj=_patient.WirelessPhone;
+					importRow.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//wirelessCarrier---------------------------------------------
 				fieldVal=GetInputValue("wirelessCarrier");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="wirelessCarrier";
-					row.OldValDisplay="";
-					row.OldValObj="";
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					row.IsFlagged=true;//if user entered nothing, the red text won't show anyway.
-					_listSheetImportRows.Add(row);
+					importRow=new ImportRow();
+					importRow.FieldName="wirelessCarrier";
+					importRow.OldValDisplay="";
+					importRow.OldValObj="";
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					importRow.IsNewValRed=true;//if user entered nothing, the red text won't show anyway.
+					_listImportRows.Add(importRow);
 				}
 				//Email---------------------------------------------
 				fieldVal=GetInputValue("Email");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="Email";
-					row.OldValDisplay=_patient.Email;
-					row.OldValObj=_patient.Email;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="Email";
+					importRow.OldValDisplay=_patient.Email;
+					importRow.OldValObj=_patient.Email;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//PreferContactMethod---------------------------------------------
 				fieldVal=GetRadioValue("PreferContactMethod");
@@ -478,31 +531,31 @@ namespace OpenDental {
 					fieldVal=GetInputValue("PreferContactMethod");
 				}
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="PreferContactMethod";
-					row.OldValDisplay=Lan.g("enumContactMethod",_patient.PreferContactMethod.ToString());
-					row.OldValObj=_patient.PreferContactMethod;
+					importRow=new ImportRow();
+					importRow.FieldName="PreferContactMethod";
+					importRow.OldValDisplay=Lan.g("enumContactMethod",_patient.PreferContactMethod.ToString());
+					importRow.OldValObj=_patient.PreferContactMethod;
 					if(fieldVal=="") {
-						row.NewValDisplay="";
-						row.NewValObj=null;
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
 					}
 					else {
 						try {
 							ContactMethod contactMethod=(ContactMethod)Enum.Parse(typeof(ContactMethod),fieldVal);
-							row.NewValDisplay=Lan.g("enumContactMethod",contactMethod.ToString());
-							row.NewValObj=contactMethod;
+							importRow.NewValDisplay=Lan.g("enumContactMethod",contactMethod.ToString());
+							importRow.NewValObj=contactMethod;
 						}
 						catch {
 							MessageBox.Show(fieldVal+Lan.g(this," is not a valid ContactMethod."));
 						}
 					}
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(ContactMethod);
-					if(row.NewValObj!=null && (ContactMethod)row.NewValObj!=_patient.PreferContactMethod) {
-						row.DoImport=true;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(ContactMethod);
+					if(importRow.NewValObj!=null && (ContactMethod)importRow.NewValObj!=_patient.PreferContactMethod) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//PreferConfirmMethod---------------------------------------------
 				fieldVal=GetRadioValue("PreferConfirmMethod");
@@ -510,31 +563,31 @@ namespace OpenDental {
 					fieldVal=GetInputValue("PreferConfirmMethod");
 				}
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="PreferConfirmMethod";
-					row.OldValDisplay=Lan.g("enumContactMethod",_patient.PreferConfirmMethod.ToString());
-					row.OldValObj=_patient.PreferConfirmMethod;
+					importRow=new ImportRow();
+					importRow.FieldName="PreferConfirmMethod";
+					importRow.OldValDisplay=Lan.g("enumContactMethod",_patient.PreferConfirmMethod.ToString());
+					importRow.OldValObj=_patient.PreferConfirmMethod;
 					if(fieldVal=="") {
-						row.NewValDisplay="";
-						row.NewValObj=null;
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
 					}
 					else {
 						try {
 							ContactMethod contactMethod=(ContactMethod)Enum.Parse(typeof(ContactMethod),fieldVal);
-							row.NewValDisplay=Lan.g("enumContactMethod",contactMethod.ToString());
-							row.NewValObj=contactMethod;
+							importRow.NewValDisplay=Lan.g("enumContactMethod",contactMethod.ToString());
+							importRow.NewValObj=contactMethod;
 						}
 						catch {
 							MessageBox.Show(fieldVal+Lan.g(this," is not a valid ContactMethod."));
 						}
 					}
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(ContactMethod);
-					if(row.NewValObj!=null && (ContactMethod)row.NewValObj!=_patient.PreferConfirmMethod) {
-						row.DoImport=true;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(ContactMethod);
+					if(importRow.NewValObj!=null && (ContactMethod)importRow.NewValObj!=_patient.PreferConfirmMethod) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//PreferRecallMethod---------------------------------------------
 				fieldVal=GetRadioValue("PreferRecallMethod");
@@ -542,273 +595,277 @@ namespace OpenDental {
 					fieldVal=GetInputValue("PreferRecallMethod");
 				}
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="PreferRecallMethod";
-					row.OldValDisplay=Lan.g("enumContactMethod",_patient.PreferRecallMethod.ToString());
-					row.OldValObj=_patient.PreferRecallMethod;
+					importRow=new ImportRow();
+					importRow.FieldName="PreferRecallMethod";
+					importRow.OldValDisplay=Lan.g("enumContactMethod",_patient.PreferRecallMethod.ToString());
+					importRow.OldValObj=_patient.PreferRecallMethod;
 					if(fieldVal=="") {
-						row.NewValDisplay="";
-						row.NewValObj=null;
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
 					}
 					else {
 						try {
 							ContactMethod contactMethod=(ContactMethod)Enum.Parse(typeof(ContactMethod),fieldVal);
-							row.NewValDisplay=Lan.g("enumContactMethod",contactMethod.ToString());
-							row.NewValObj=contactMethod;
+							importRow.NewValDisplay=Lan.g("enumContactMethod",contactMethod.ToString());
+							importRow.NewValObj=contactMethod;
 						}
 						catch {
 							MessageBox.Show(fieldVal+Lan.g(this," is not a valid ContactMethod."));
 						}
 					}
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(ContactMethod);
-					if(row.NewValObj!=null && (ContactMethod)row.NewValObj!=_patient.PreferRecallMethod) {
-						row.DoImport=true;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(ContactMethod);
+					if(importRow.NewValObj!=null && (ContactMethod)importRow.NewValObj!=_patient.PreferRecallMethod) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//referredFrom---------------------------------------------
 				fieldVal=GetInputValue("referredFrom");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="referredFrom";
+					importRow=new ImportRow();
+					importRow.FieldName="referredFrom";
 					Referral referral=Referrals.GetReferralForPat(_patient.PatNum);
 					if(referral==null) {//there was no existing referral
-						row.OldValDisplay="";
-						row.OldValObj=null;
-						row.NewValDisplay=fieldVal;
-						row.NewValObj=null;
-						if(row.NewValDisplay!="") {//user did enter a referral
-							row.ImpValDisplay=Lan.g(this,"[double click to pick]");
-							row.ImpValObj=null;
-							row.IsFlaggedImp=true;
-							row.DoImport=false;//this will change to true after they pick a referral
+						importRow.OldValDisplay="";
+						importRow.OldValObj=null;
+						importRow.NewValDisplay=fieldVal;
+						importRow.NewValObj=null;
+						if(importRow.NewValDisplay!="") {//user did enter a referral
+							importRow.ImpValDisplay=Lan.g(this,"[double click to pick]");
+							importRow.ImpValObj=null;
+							importRow.IsImportRed=true;
+							importRow.DoImport=false;//this will change to true after they pick a referral
 						}
 						else {//user still did not enter a referral
-							row.ImpValDisplay="";
-							row.ImpValObj=null;
-							row.DoImport=false;
+							importRow.ImpValDisplay="";
+							importRow.ImpValObj=null;
+							importRow.DoImport=false;
 						}
 					}
 					else {//there was an existing referral. We don't allow changing from here since mostly for new patients.
-						row.OldValDisplay=referral.GetNameFL();
-						row.OldValObj=referral;
-						row.NewValDisplay=fieldVal;
-						row.NewValObj=null;
-						row.ImpValDisplay="";
-						row.ImpValObj=null;
-						row.DoImport=false;
-						if(row.OldValDisplay!=row.NewValDisplay) {//if patient changed an existing referral, at least let user know.
-							row.IsFlagged=true;//although they won't be able to do anything about it here
+						importRow.OldValDisplay=referral.GetNameFL();
+						importRow.OldValObj=referral;
+						importRow.NewValDisplay=fieldVal;
+						importRow.NewValObj=null;
+						importRow.ImpValDisplay="";
+						importRow.ImpValObj=null;
+						importRow.DoImport=false;
+						if(importRow.OldValDisplay!=importRow.NewValDisplay) {//if patient changed an existing referral, at least let user know.
+							importRow.IsNewValRed=true;//although they won't be able to do anything about it here
 						}
 					}
-					row.ObjType=typeof(Referral);
-					_listSheetImportRows.Add(row);
+					importRow.TypeObj=typeof(Referral);
+					_listImportRows.Add(importRow);
 				}
 				//ICE Name---------------------------------------------
 				fieldVal=GetInputValue("ICEName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ICEName";
-					row.OldValDisplay=_patientNote.ICEName;
-					row.OldValObj=_patientNote.ICEName;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="ICEName";
+					importRow.OldValDisplay=_patientNote.ICEName;
+					importRow.OldValObj=_patientNote.ICEName;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					row.IsFlagged=true;//if user entered nothing, the red text won't show anyway.
-					_listSheetImportRows.Add(row);
+					importRow.IsNewValRed=true;//if user entered nothing, the red text won't show anyway.
+					_listImportRows.Add(importRow);
 				}
 				//ICE Phone---------------------------------------------
 				fieldVal=GetInputValue("ICEPhone");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ICEPhone";
-					row.OldValDisplay=_patientNote.ICEPhone;
-					row.OldValObj=_patientNote.ICEPhone;
-					row.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="ICEPhone";
+					importRow.OldValDisplay=_patientNote.ICEPhone;
+					importRow.OldValObj=_patientNote.ICEPhone;
+					importRow.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					row.IsFlagged=true;//if user entered nothing, the red text won't show anyway.
-					_listSheetImportRows.Add(row);
+					importRow.IsNewValRed=true;//if user entered nothing, the red text won't show anyway.
+					_listImportRows.Add(importRow);
 				}	
 				#endregion personal
 				//Separator-------------------------------------------
-				_listSheetImportRows.Add(CreateSeparator("Address and Home Phone"));
+				if(_hasSectionAddrHmPhone){
+				_listImportRows.Add(CreateSeparator("Address and Home Phone"));
+				}
 				#region address
 				//SameForEntireFamily-------------------------------------------
 				if(ContainsOneOfFields("addressAndHmPhoneIsSameEntireFamily")) {
-					row=new SheetImportRow();
-					row.FieldName="addressAndHmPhoneIsSameEntireFamily";
-					row.FieldDisplay="Same for entire family";
+					importRow=new ImportRow();
+					importRow.FieldName="addressAndHmPhoneIsSameEntireFamily";
+					importRow.FieldDisplay="Same for entire family";
 					if(_isAddressSameForFam) {//remember we calculated this in the form constructor.
-						row.OldValDisplay="X";
-						row.OldValObj="X";
+						importRow.OldValDisplay="X";
+						importRow.OldValObj="X";
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
 					//And now, we will revise AddressSameForFam based on user input
 					_isAddressSameForFam=IsChecked("addressAndHmPhoneIsSameEntireFamily");
 					if(_isAddressSameForFam) {
-						row.NewValDisplay="X";
-						row.NewValObj="X";
-						row.ImpValDisplay="X";
-						row.ImpValObj="X";
+						importRow.NewValDisplay="X";
+						importRow.NewValObj="X";
+						importRow.ImpValDisplay="X";
+						importRow.ImpValObj="X";
 					}
 					else {
-						row.NewValDisplay="";
-						row.NewValObj="";
-						row.ImpValDisplay="";
-						row.ImpValObj="";
+						importRow.NewValDisplay="";
+						importRow.NewValObj="";
+						importRow.ImpValDisplay="";
+						importRow.ImpValObj="";
 					}
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//Address---------------------------------------------
 				fieldVal=GetInputValue("Address");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="Address";
-					row.OldValDisplay=_patient.Address;
-					row.OldValObj=_patient.Address;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="Address";
+					importRow.OldValDisplay=_patient.Address;
+					importRow.OldValObj=_patient.Address;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//Address2---------------------------------------------
 				fieldVal=GetInputValue("Address2");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="Address2";
-					row.OldValDisplay=_patient.Address2;
-					row.OldValObj=_patient.Address2;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="Address2";
+					importRow.OldValDisplay=_patient.Address2;
+					importRow.OldValObj=_patient.Address2;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//City---------------------------------------------
 				fieldVal=GetInputValue("City");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="City";
-					row.OldValDisplay=_patient.City;
-					row.OldValObj=_patient.City;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="City";
+					importRow.OldValDisplay=_patient.City;
+					importRow.OldValObj=_patient.City;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//State---------------------------------------------
 				fieldVal=GetInputValue("State");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="State";
-					row.OldValDisplay=_patient.State;
-					row.OldValObj=_patient.State;
-					row.NewValDisplay=fieldVal;
+					importRow=new ImportRow();
+					importRow.FieldName="State";
+					importRow.OldValDisplay=_patient.State;
+					importRow.OldValObj=_patient.State;
+					importRow.NewValDisplay=fieldVal;
 					string pattern="^"//start of string
 						+"[a-zA-Z][a-zA-Z]"//exactly two letters
 						+"$";//end of string
 					if(Regex.IsMatch(fieldVal,pattern)) {
 						if(CultureInfo.CurrentCulture.Name.EndsWith("US") || CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-							row.NewValDisplay=fieldVal.ToUpper();
+							importRow.NewValDisplay=fieldVal.ToUpper();
 						}
 					}
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//StateNoValidation---------------------------------
 				fieldVal=GetInputValue("StateNoValidation");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="StateNoValidation";
-					row.OldValDisplay=_patient.State;
-					row.OldValObj=_patient.State;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="StateNoValidation";
+					importRow.OldValDisplay=_patient.State;
+					importRow.OldValObj=_patient.State;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//Zip---------------------------------------------
 				fieldVal=GetInputValue("Zip");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="Zip";
-					row.OldValDisplay=_patient.Zip;
-					row.OldValObj=_patient.Zip;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="Zip";
+					importRow.OldValDisplay=_patient.Zip;
+					importRow.OldValObj=_patient.Zip;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//HmPhone---------------------------------------------
 				fieldVal=GetInputValue("HmPhone");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="HmPhone";
-					row.OldValDisplay=_patient.HmPhone;
-					row.OldValObj=_patient.HmPhone;
-					row.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="HmPhone";
+					importRow.OldValDisplay=_patient.HmPhone;
+					importRow.OldValObj=_patient.HmPhone;
+					importRow.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				#endregion address
 				//Separator-------------------------------------------
-				_listSheetImportRows.Add(CreateSeparator("Insurance Policy 1"));
+				if(_hasSectionIns1){
+					_listImportRows.Add(CreateSeparator("Insurance Policy 1"));
+				}
 				#region ins1
 				//It turns out that importing insurance is crazy complicated if we want it to be perfect.
 				//So it's better to table that plan for now.
@@ -819,204 +876,206 @@ namespace OpenDental {
 					fieldVal=GetInputValue("ins1Relat");
 				}
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1Relat";
-					row.FieldDisplay="Relationship";
-					row.OldValDisplay=Lan.g("enumRelat",_relatIns1.ToString());
-					row.OldValObj=_relatIns1;
+					importRow=new ImportRow();
+					importRow.FieldName="ins1Relat";
+					importRow.FieldDisplay="Relationship";
+					importRow.OldValDisplay=Lan.g("enumRelat",_relatIns1.ToString());
+					importRow.OldValObj=_relatIns1;
 					if(fieldVal=="") {
-						row.NewValDisplay="";
-						row.NewValObj=null;
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
 					}
 					else {
 						try {
 							Relat relat=(Relat)Enum.Parse(typeof(Relat),fieldVal);
-							row.NewValDisplay=Lan.g("enumRelat",relat.ToString());
-							row.NewValObj=relat;
+							importRow.NewValDisplay=Lan.g("enumRelat",relat.ToString());
+							importRow.NewValObj=relat;
 						}
 						catch {
 							MessageBox.Show(fieldVal+Lan.g(this," is not a valid Relationship."));
 						}
 					}
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(Relat);
-					row.DoImport=false;
-					if(row.NewValObj!=null && row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(Relat);
+					importRow.DoImport=false;
+					if(importRow.NewValObj!=null && importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins1Subscriber---------------------------------------------
 				fieldVal=GetInputValue("ins1SubscriberNameF");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1Subscriber";
-					row.FieldDisplay="Subscriber";
+					importRow=new ImportRow();
+					importRow.FieldName="ins1Subscriber";
+					importRow.FieldDisplay="Subscriber";
 					if(_insPlan1!=null) {
-						row.OldValDisplay=_family.GetNameInFamFirst(_insSub1.Subscriber);
-						row.OldValObj=_insSub1.Subscriber;
+						importRow.OldValDisplay=_family.GetNameInFamFirst(_insSub1.Subscriber);
+						importRow.OldValObj=_insSub1.Subscriber;
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj=null;
+						importRow.OldValDisplay="";
+						importRow.OldValObj=null;
 					}
-					row.NewValDisplay=fieldVal;//whether it's empty or has a value
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay="[double click to pick]";
-					row.ImpValObj=null;
-					row.ObjType=typeof(Patient);
-					row.DoImport=false;
-					row.IsFlaggedImp=true;
-					_listSheetImportRows.Add(row);
+					importRow.NewValDisplay=fieldVal;//whether it's empty or has a value
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay="[double click to pick]";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Patient);
+					importRow.DoImport=false;
+					importRow.IsImportRed=true;
+					_listImportRows.Add(importRow);
 				}
 				//ins1SubscriberID---------------------------------------------
 				fieldVal=GetInputValue("ins1SubscriberID");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1SubscriberID";
-					row.FieldDisplay="Subscriber ID";
+					importRow=new ImportRow();
+					importRow.FieldName="ins1SubscriberID";
+					importRow.FieldDisplay="Subscriber ID";
 					if(_insPlan1!=null) {
-						row.OldValDisplay=_insSub1.SubscriberID;
-						row.OldValObj="";
+						importRow.OldValDisplay=_insSub1.SubscriberID;
+						importRow.OldValObj="";
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
-					row.NewValDisplay=fieldVal;//whether it's empty or has a value
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.NewValDisplay=fieldVal;//whether it's empty or has a value
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins1CarrierName---------------------------------------------
 				fieldVal=GetInputValue("ins1CarrierName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1CarrierName";
-					row.FieldDisplay="Carrier";
+					importRow=new ImportRow();
+					importRow.FieldName="ins1CarrierName";
+					importRow.FieldDisplay="Carrier";
 					if(_carrier1!=null) {
-						row.OldValDisplay=_carrier1.CarrierName;
-						row.OldValObj=_carrier1;
+						importRow.OldValDisplay=_carrier1.CarrierName;
+						importRow.OldValObj=_carrier1;
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
-					row.NewValDisplay=fieldVal;//whether it's empty or has a value
-					row.NewValObj="";
-					row.ImpValDisplay="[double click to pick]";
-					row.ImpValObj=null;
-					row.ObjType=typeof(Carrier);
-					row.DoImport=false;
-					row.IsFlaggedImp=true;
-					_listSheetImportRows.Add(row);
+					importRow.NewValDisplay=fieldVal;//whether it's empty or has a value
+					importRow.NewValObj="";
+					importRow.ImpValDisplay="[double click to pick]";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Carrier);
+					importRow.DoImport=false;
+					importRow.IsImportRed=true;
+					_listImportRows.Add(importRow);
 				}
 				//ins1CarrierPhone---------------------------------------------
 				fieldVal=GetInputValue("ins1CarrierPhone");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1CarrierPhone";
-					row.FieldDisplay="Phone";
+					importRow=new ImportRow();
+					importRow.FieldName="ins1CarrierPhone";
+					importRow.FieldDisplay="Phone";
 					if(_carrier1!=null) {
-						row.OldValDisplay=_carrier1.Phone;
-						row.OldValObj="";
+						importRow.OldValDisplay=_carrier1.Phone;
+						importRow.OldValObj="";
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
-					row.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);//whether it's empty or has a value
-					row.NewValObj="";
-					row.ImpValDisplay="[double click to pick]";
-					row.ImpValObj=null;
-					row.ObjType=typeof(Carrier);
-					row.DoImport=false;
-					row.IsFlaggedImp=true;
-					_listSheetImportRows.Add(row);
+					importRow.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);//whether it's empty or has a value
+					importRow.NewValObj="";
+					importRow.ImpValDisplay="[double click to pick]";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Carrier);
+					importRow.DoImport=false;
+					importRow.IsImportRed=true;
+					_listImportRows.Add(importRow);
 				}
 				//ins1EmployerName---------------------------------------------
 				fieldVal=GetInputValue("ins1EmployerName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1EmployerName";
-					row.FieldDisplay="Employer";
+					importRow=new ImportRow();
+					importRow.FieldName="ins1EmployerName";
+					importRow.FieldDisplay="Employer";
 					if(_insPlan1==null) {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
 					else {
-						row.OldValDisplay=Employers.GetName(_insPlan1.EmployerNum);
-						row.OldValObj=Employers.GetEmployer(_insPlan1.EmployerNum);
+						importRow.OldValDisplay=Employers.GetName(_insPlan1.EmployerNum);
+						importRow.OldValObj=Employers.GetEmployer(_insPlan1.EmployerNum);
 					}
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins1GroupName---------------------------------------------
 				fieldVal=GetInputValue("ins1GroupName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1GroupName";
-					row.FieldDisplay="Group Name";
+					importRow=new ImportRow();
+					importRow.FieldName="ins1GroupName";
+					importRow.FieldDisplay="Group Name";
 					if(_insPlan1!=null) {
-						row.OldValDisplay=_insPlan1.GroupName;
+						importRow.OldValDisplay=_insPlan1.GroupName;
 					}
 					else {
-						row.OldValDisplay="";
+						importRow.OldValDisplay="";
 					}
-					row.OldValObj="";
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.OldValObj="";
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins1GroupNum---------------------------------------------
 				fieldVal=GetInputValue("ins1GroupNum");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins1GroupNum";
-					row.FieldDisplay="Group Num";
+					importRow=new ImportRow();
+					importRow.FieldName="ins1GroupNum";
+					importRow.FieldDisplay="Group Num";
 					if(_insPlan1!=null) {
-						row.OldValDisplay=_insPlan1.GroupNum;
+						importRow.OldValDisplay=_insPlan1.GroupNum;
 					}
 					else {
-						row.OldValDisplay="";
+						importRow.OldValDisplay="";
 					}
-					row.OldValObj="";
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.OldValObj="";
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				#endregion ins1
 				//Separator-------------------------------------------
-				_listSheetImportRows.Add(CreateSeparator("Insurance Policy 2"));
+				if(_hasSectionIns2){
+					_listImportRows.Add(CreateSeparator("Insurance Policy 2"));
+				}
 				#region ins2
 				//It turns out that importing insurance is crazy complicated if want it to be perfect.
 				//So it's better to table that plan for now.
@@ -1027,350 +1086,330 @@ namespace OpenDental {
 					fieldVal=GetInputValue("ins2Relat");
 				}
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2Relat";
-					row.FieldDisplay="Relationship";
-					row.OldValDisplay=Lan.g("enumRelat",_relatIns2.ToString());
-					row.OldValObj=_relatIns2;
+					importRow=new ImportRow();
+					importRow.FieldName="ins2Relat";
+					importRow.FieldDisplay="Relationship";
+					importRow.OldValDisplay=Lan.g("enumRelat",_relatIns2.ToString());
+					importRow.OldValObj=_relatIns2;
 					if(fieldVal=="") {
-						row.NewValDisplay="";
-						row.NewValObj=null;
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
 					}
 					else {
 						try {
 							Relat relat=(Relat)Enum.Parse(typeof(Relat),fieldVal);
-							row.NewValDisplay=Lan.g("enumRelat",relat.ToString());
-							row.NewValObj=relat;
+							importRow.NewValDisplay=Lan.g("enumRelat",relat.ToString());
+							importRow.NewValObj=relat;
 						}
 						catch {
 							MessageBox.Show(fieldVal+Lan.g(this," is not a valid Relationship."));
 						}
 					}
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(Relat);
-					row.DoImport=false;
-					if(row.NewValObj!=null && row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(Relat);
+					importRow.DoImport=false;
+					if(importRow.NewValObj!=null && importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins2Subscriber---------------------------------------------
 				fieldVal=GetInputValue("ins2SubscriberNameF");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2Subscriber";
-					row.FieldDisplay="Subscriber";
+					importRow=new ImportRow();
+					importRow.FieldName="ins2Subscriber";
+					importRow.FieldDisplay="Subscriber";
 					if(_insPlan2!=null) {
-						row.OldValDisplay=_family.GetNameInFamFirst(_insSub2.Subscriber);
-						row.OldValObj=_insSub2.Subscriber;
+						importRow.OldValDisplay=_family.GetNameInFamFirst(_insSub2.Subscriber);
+						importRow.OldValObj=_insSub2.Subscriber;
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj=null;
+						importRow.OldValDisplay="";
+						importRow.OldValObj=null;
 					}
-					row.NewValDisplay=fieldVal;//whether it's empty or has a value
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay="[double click to pick]";
-					row.ImpValObj=null;
-					row.ObjType=typeof(Patient);
-					row.DoImport=false;
-					row.IsFlaggedImp=true;
-					_listSheetImportRows.Add(row);
+					importRow.NewValDisplay=fieldVal;//whether it's empty or has a value
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay="[double click to pick]";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Patient);
+					importRow.DoImport=false;
+					importRow.IsImportRed=true;
+					_listImportRows.Add(importRow);
 				}
 				//ins2SubscriberID---------------------------------------------
 				fieldVal=GetInputValue("ins2SubscriberID");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2SubscriberID";
-					row.FieldDisplay="Subscriber ID";
+					importRow=new ImportRow();
+					importRow.FieldName="ins2SubscriberID";
+					importRow.FieldDisplay="Subscriber ID";
 					if(_insPlan2!=null) {
-						row.OldValDisplay=_insSub2.SubscriberID;
-						row.OldValObj="";
+						importRow.OldValDisplay=_insSub2.SubscriberID;
+						importRow.OldValObj="";
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
-					row.NewValDisplay=fieldVal;//whether it's empty or has a value
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.NewValDisplay=fieldVal;//whether it's empty or has a value
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins2CarrierName---------------------------------------------
 				fieldVal=GetInputValue("ins2CarrierName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2CarrierName";
-					row.FieldDisplay="Carrier";
+					importRow=new ImportRow();
+					importRow.FieldName="ins2CarrierName";
+					importRow.FieldDisplay="Carrier";
 					if(_carrier2!=null) {
-						row.OldValDisplay=_carrier2.CarrierName;
-						row.OldValObj="";
+						importRow.OldValDisplay=_carrier2.CarrierName;
+						importRow.OldValObj="";
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
-					row.NewValDisplay=fieldVal;//whether it's empty or has a value
-					row.NewValObj="";
-					row.ImpValDisplay="[double click to pick]";
-					row.ImpValObj=null;
-					row.ObjType=typeof(Carrier);
-					row.DoImport=false;
-					row.IsFlaggedImp=true;
-					_listSheetImportRows.Add(row);
+					importRow.NewValDisplay=fieldVal;//whether it's empty or has a value
+					importRow.NewValObj="";
+					importRow.ImpValDisplay="[double click to pick]";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Carrier);
+					importRow.DoImport=false;
+					importRow.IsImportRed=true;
+					_listImportRows.Add(importRow);
 				}
 				//ins2CarrierPhone---------------------------------------------
 				fieldVal=GetInputValue("ins2CarrierPhone");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2CarrierPhone";
-					row.FieldDisplay="Phone";
+					importRow=new ImportRow();
+					importRow.FieldName="ins2CarrierPhone";
+					importRow.FieldDisplay="Phone";
 					if(_carrier2!=null) {
-						row.OldValDisplay=_carrier2.Phone;
-						row.OldValObj="";
+						importRow.OldValDisplay=_carrier2.Phone;
+						importRow.OldValObj="";
 					}
 					else {
-						row.OldValDisplay="";
-						row.OldValObj="";
+						importRow.OldValDisplay="";
+						importRow.OldValObj="";
 					}
-					row.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);//whether it's empty or has a value
-					row.NewValObj="";
-					row.ImpValDisplay="[double click to pick]";
-					row.ImpValObj=null;
-					row.ObjType=typeof(Carrier);
-					row.DoImport=false;
-					row.IsFlaggedImp=true;
-					_listSheetImportRows.Add(row);
+					importRow.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);//whether it's empty or has a value
+					importRow.NewValObj="";
+					importRow.ImpValDisplay="[double click to pick]";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Carrier);
+					importRow.DoImport=false;
+					importRow.IsImportRed=true;
+					_listImportRows.Add(importRow);
 				}
 				//ins2EmployerName---------------------------------------------
 				fieldVal=GetInputValue("ins2EmployerName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2EmployerName";
-					row.FieldDisplay="Employer";
+					importRow=new ImportRow();
+					importRow.FieldName="ins2EmployerName";
+					importRow.FieldDisplay="Employer";
 					if(_insPlan2==null) {
-						row.OldValDisplay="";
+						importRow.OldValDisplay="";
 					}
 					else {
-						row.OldValDisplay=Employers.GetName(_insPlan2.EmployerNum);
+						importRow.OldValDisplay=Employers.GetName(_insPlan2.EmployerNum);
 					}
-					row.OldValObj="";
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.OldValObj="";
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins2GroupName---------------------------------------------
 				fieldVal=GetInputValue("ins2GroupName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2GroupName";
-					row.FieldDisplay="Group Name";
+					importRow=new ImportRow();
+					importRow.FieldName="ins2GroupName";
+					importRow.FieldDisplay="Group Name";
 					if(_insPlan2!=null) {
-						row.OldValDisplay=_insPlan2.GroupName;
+						importRow.OldValDisplay=_insPlan2.GroupName;
 					}
 					else {
-						row.OldValDisplay="";
+						importRow.OldValDisplay="";
 					}
-					row.OldValObj="";
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.OldValObj="";
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				//ins2GroupNum---------------------------------------------
 				fieldVal=GetInputValue("ins2GroupNum");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ins2GroupNum";
-					row.FieldDisplay="Group Num";
+					importRow=new ImportRow();
+					importRow.FieldName="ins2GroupNum";
+					importRow.FieldDisplay="Group Num";
 					if(_insPlan2!=null) {
-						row.OldValDisplay=_insPlan2.GroupNum;
+						importRow.OldValDisplay=_insPlan2.GroupNum;
 					}
 					else {
-						row.OldValDisplay="";
+						importRow.OldValDisplay="";
 					}
-					row.OldValObj="";
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=fieldVal;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					row.DoImport=false;
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow.OldValObj="";
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=fieldVal;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					importRow.DoImport=false;
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
 				#endregion ins2
-				//jsalmon - It was deemed a bug by Nathan and Jordan 12/16/2014 to be showing Misc fields in the sheet import tool.
-				////Separator-------------------------------------------
-				//Rows.Add(CreateSeparator("Misc"));
-				////misc----------------------------------------------------
-				//List<string> miscVals=GetMiscValues();
-				//for(int i=0;i<miscVals.Count;i++) {
-				//	fieldVal=miscVals[i];
-				//	row=new SheetImportRow();
-				//	row.FieldName="misc";
-				//	row.FieldDisplay="misc"+(i+1).ToString();
-				//	row.OldValDisplay="";
-				//	row.OldValObj="";
-				//	row.NewValDisplay=fieldVal;
-				//	row.NewValObj="";
-				//	row.ImpValDisplay="";
-				//	row.ImpValObj="";
-				//	row.ObjType=typeof(string);
-				//	row.DoImport=false;
-				//	row.IsFlagged=true;
-				//	Rows.Add(row);
-				//}
 			}
-			#endregion
-			#region Medical History
-			else if(SheetCur.SheetType==SheetTypeEnum.MedicalHistory) {
-				_listSheetImportRows=new List<SheetImportRow>();
-				string fieldVal="";
-				List<Allergy> listAllergies=null;
+			#endregion Patient Form
+			#region Medical History (Sheets)
+			if(SheetCur!=null && SheetCur.SheetType==SheetTypeEnum.MedicalHistory){
 				List<Disease> listDiseases=null;
-				SheetImportRow row;
-				_listSheetImportRows.Add(CreateSeparator("Personal"));
+				//_listImportRows.Add(CreateSeparator("Personal"));//already done
 				#region ICE
 				//ICE Name---------------------------------------------
 				fieldVal=GetInputValue("ICEName");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ICEName";
-					row.OldValDisplay=_patientNote.ICEName;
-					row.OldValObj=_patientNote.ICEName;
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="ICEName";
+					importRow.OldValDisplay=_patientNote.ICEName;
+					importRow.OldValObj=_patientNote.ICEName;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					row.IsFlagged=true;//if user entered nothing, the red text won't show anyway.
-					_listSheetImportRows.Add(row);
+					importRow.IsNewValRed=true;//if user entered nothing, the red text won't show anyway.
+					_listImportRows.Add(importRow);
 				}
 				//ICE Phone---------------------------------------------
 				fieldVal=GetInputValue("ICEPhone");
 				if(fieldVal!=null) {
-					row=new SheetImportRow();
-					row.FieldName="ICEPhone";
-					row.OldValDisplay=_patientNote.ICEPhone;
-					row.OldValObj=_patientNote.ICEPhone;
-					row.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
-					row.NewValObj=row.NewValDisplay;
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=row.NewValObj;
-					row.ObjType=typeof(string);
-					if(row.OldValDisplay!=row.NewValDisplay) {
-						row.DoImport=true;
+					importRow=new ImportRow();
+					importRow.FieldName="ICEPhone";
+					importRow.OldValDisplay=_patientNote.ICEPhone;
+					importRow.OldValObj=_patientNote.ICEPhone;
+					importRow.NewValDisplay=TelephoneNumbers.AutoFormat(fieldVal);
+					importRow.NewValObj=importRow.NewValDisplay;
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay) {
+						importRow.DoImport=true;
 					}
-					row.IsFlagged=true;//if user entered nothing, the red text won't show anyway.
-					_listSheetImportRows.Add(row);
+					importRow.IsNewValRed=true;//if user entered nothing, the red text won't show anyway.
+					_listImportRows.Add(importRow);
 				}
 				#endregion
 				//Separator-------------------------------------------
-				_listSheetImportRows.Add(CreateSeparator("Allergies"));
-				#region Allergies
-				//Get list of all the allergy check boxes
-				List<SheetField> listSheetFieldsAllergy=GetSheetFieldsByFieldName("allergy:");
-				for(int i=0;i<listSheetFieldsAllergy.Count;i++) {
-					fieldVal="";
-					if(i<1) {
-						listAllergies=Allergies.GetAll(_patient.PatNum,true);
-					}
-					row=new SheetImportRow();
-					row.FieldName=listSheetFieldsAllergy[i].FieldName.Remove(0,8);
-					row.OldValDisplay="";
-					row.OldValObj=null;
-					//Check if allergy exists.
-					for(int j=0;j<listAllergies.Count;j++) {
-						if(AllergyDefs.GetDescription(listAllergies[j].AllergyDefNum)==listSheetFieldsAllergy[i].FieldName.Remove(0,8)) {
-							if(listAllergies[j].StatusIsActive) {
-								row.OldValDisplay="Y";
+				if(_hasSectionAllergies){
+					_listImportRows.Add(CreateSeparator("Allergies"));
+				}
+				#region Allergies (Sheets)
+				if(SheetCur!=null){
+					List<Allergy> listAllergiesPat=Allergies.GetAll(_patient.PatNum,showInactive:true);
+					//Get list of all the allergy check boxes
+					List<SheetField> listSheetFieldsAllergy=new List<SheetField>();
+					listSheetFieldsAllergy=GetSheetFieldsStartWith("allergy:");
+					for(int i=0;i<listSheetFieldsAllergy.Count;i++) {
+						fieldVal="";
+						importRow=new ImportRow();
+						importRow.FieldName=listSheetFieldsAllergy[i].FieldName.Remove(0,8);
+						importRow.OldValDisplay="";
+						importRow.OldValObj=null;
+						//Check if allergy exists.
+						for(int j=0;j<listAllergiesPat.Count;j++) {
+							if(AllergyDefs.GetDescription(listAllergiesPat[j].AllergyDefNum)==listSheetFieldsAllergy[i].FieldName.Remove(0,8)) {
+								if(listAllergiesPat[j].StatusIsActive) {
+									importRow.OldValDisplay="Y";
+								}
+								else {
+									importRow.OldValDisplay="N";
+								}
+								importRow.OldValObj=listAllergiesPat[j];
+								break;
+							}
+						}
+						SheetField sheetFieldOppositeBox=GetOppositeSheetFieldCheckBox(listSheetFieldsAllergy,listSheetFieldsAllergy[i]);
+						if(listSheetFieldsAllergy[i].FieldValue=="") {//Current box not checked.
+							if(sheetFieldOppositeBox==null || sheetFieldOppositeBox.FieldValue=="") {//No opposite box or both boxes are not checked.
+								//Create a blank row just in case they want to import.
+								importRow.NewValDisplay="";
+								importRow.NewValObj=listSheetFieldsAllergy[i];
+								importRow.ImpValDisplay="";
+								importRow.ImpValObj="";
+								importRow.TypeObj=typeof(Allergy);
+								_listImportRows.Add(importRow);
+								if(sheetFieldOppositeBox!=null) {
+									listSheetFieldsAllergy.Remove(sheetFieldOppositeBox);//Removes possible duplicate entry.
+								}
+								continue;
+							}
+							//Opposite box is checked, figure out if it's a Y or N box.
+							if(sheetFieldOppositeBox.RadioButtonValue=="Y") {
+								fieldVal="Y";
 							}
 							else {
-								row.OldValDisplay="N";
+								fieldVal="N";
 							}
-							row.OldValObj=listAllergies[j];
-							break;
 						}
-					}
-					SheetField sheetFieldOppositeBox=GetOppositeSheetFieldCheckBox(listSheetFieldsAllergy,listSheetFieldsAllergy[i]);
-					if(listSheetFieldsAllergy[i].FieldValue=="") {//Current box not checked.
-						if(sheetFieldOppositeBox==null || sheetFieldOppositeBox.FieldValue=="") {//No opposite box or both boxes are not checked.
-							//Create a blank row just in case they want to import.
-							row.NewValDisplay="";
-							row.NewValObj=listSheetFieldsAllergy[i];
-							row.ImpValDisplay="";
-							row.ImpValObj="";
-							row.ObjType=typeof(Allergy);
-							_listSheetImportRows.Add(row);
-							if(sheetFieldOppositeBox!=null) {
-								listSheetFieldsAllergy.Remove(sheetFieldOppositeBox);//Removes possible duplicate entry.
+						else {//Current box is checked.
+							if(listSheetFieldsAllergy[i].RadioButtonValue=="Y") {
+								fieldVal="Y";
 							}
-							continue;
+							else {
+								fieldVal="N";
+							}
 						}
-						//Opposite box is checked, figure out if it's a Y or N box.
-						if(sheetFieldOppositeBox.RadioButtonValue=="Y") {
-							fieldVal="Y";
+						//Get rid of the opposite check box so field doesn't show up twice.
+						if(sheetFieldOppositeBox!=null) {
+							listSheetFieldsAllergy.Remove(sheetFieldOppositeBox);
 						}
-						else {
-							fieldVal="N";
+						importRow.NewValDisplay=fieldVal;
+						importRow.NewValObj=listSheetFieldsAllergy[i];
+						importRow.ImpValDisplay=importRow.NewValDisplay;
+						importRow.ImpValObj=typeof(string);
+						importRow.TypeObj=typeof(Allergy);
+						if(importRow.OldValDisplay!=importRow.NewValDisplay && !(importRow.OldValDisplay=="" && importRow.NewValDisplay=="N")) {
+							importRow.DoImport=true;
 						}
+						_listImportRows.Add(importRow);
 					}
-					else {//Current box is checked.
-						if(listSheetFieldsAllergy[i].RadioButtonValue=="Y") {
-							fieldVal="Y";
-						}
-						else {
-							fieldVal="N";
-						}
-					}
-					//Get rid of the opposite check box so field doesn't show up twice.
-					if(sheetFieldOppositeBox!=null) {
-						listSheetFieldsAllergy.Remove(sheetFieldOppositeBox);
-					}
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=listSheetFieldsAllergy[i];
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=typeof(string);
-					row.ObjType=typeof(Allergy);
-					if(row.OldValDisplay!=row.NewValDisplay && !(row.OldValDisplay=="" && row.NewValDisplay=="N")) {
-						row.DoImport=true;
-					}
-					_listSheetImportRows.Add(row);
 				}
-				#endregion
+				#endregion Allergies (Sheets)
 				//Separator-------------------------------------------
-				_listSheetImportRows.Add(CreateSeparator("Medications"));
-				#region Medications
-				List<SheetField> listSheetFieldsInputMed=GetSheetFieldsByFieldName("inputMed");
-				List<SheetField> listSheetFieldsCheckMed=GetSheetFieldsByFieldName("checkMed");
+				if(_hasSectionMeds){
+					_listImportRows.Add(CreateSeparator("Medications"));
+				}
+				#region Medications (Sheets)
 				List<SheetField> listSheetFieldsCurrentMed=new List<SheetField>();
 				List<SheetField> listSheetFieldsNewMed=new List<SheetField>();
+				List<SheetField> listSheetFieldsInputMed=GetSheetFieldsStartWith("inputMed");
+				List<SheetField> listSheetFieldsCheckMed=GetSheetFieldsStartWith("checkMed");
 				for(int i=0;i<listSheetFieldsInputMed.Count;i++) {
 					if(listSheetFieldsInputMed[i].FieldType==SheetFieldType.OutputText) {
 						listSheetFieldsCurrentMed.Add(listSheetFieldsInputMed[i]);
@@ -1383,18 +1422,18 @@ namespace OpenDental {
 				for(int i=0;i<listSheetFieldsCurrentMed.Count;i++) {
 					#region existing medications
 					fieldVal="";
-					row=new SheetImportRow();
-					row.FieldName=listSheetFieldsCurrentMed[i].FieldValue;//Will be the name of the drug.
-					row.OldValDisplay="N";
-					row.OldValObj=null;
+					importRow=new ImportRow();
+					importRow.FieldName=listSheetFieldsCurrentMed[i].FieldValue;//Will be the name of the drug.
+					importRow.OldValDisplay="N";
+					importRow.OldValObj=null;
 					for(int j=0;j<listMedicationPatsFull.Count;j++) {
 						string strMedName=listMedicationPatsFull[j].MedDescript;//for meds that came back from NewCrop
 						if(listMedicationPatsFull[j].MedicationNum!=0) {//For meds entered in OD and linked to Medication list.
 							strMedName=Medications.GetDescription(listMedicationPatsFull[j].MedicationNum);
 						}
 						if(listSheetFieldsCurrentMed[i].FieldValue==strMedName) {
-							row.OldValDisplay="Y";
-							row.OldValObj=listMedicationPatsFull[j];
+							importRow.OldValDisplay="Y";
+							importRow.OldValObj=listMedicationPatsFull[j];
 						}
 					}
 					List<SheetField> listSheetFieldsRelatedChkBoxes=GetRelatedMedicalCheckBoxes(listSheetFieldsCheckMed,listSheetFieldsCurrentMed[i]);
@@ -1410,7 +1449,7 @@ namespace OpenDental {
 						}
 						//If sheet is only using N boxes and the patient already had this med marked as inactive and then they unchecked the N, so now we need to import it.
 						if(listSheetFieldsRelatedChkBoxes.Count==1 && listSheetFieldsRelatedChkBoxes[j].RadioButtonValue=="N" //Only using N boxes for this current medication.
-							&& row.OldValObj!=null && row.OldValDisplay=="N" //Patient has this medication but is currently marked as inactive.
+							&& importRow.OldValObj!=null && importRow.OldValDisplay=="N" //Patient has this medication but is currently marked as inactive.
 							&& listSheetFieldsRelatedChkBoxes[j].FieldValue=="") //Patient unchecked the medication so we activate it again.
 						{
 							fieldVal="Y";
@@ -1419,20 +1458,20 @@ namespace OpenDental {
 					if(listSheetFieldsRelatedChkBoxes.Count==1 
 						&& listSheetFieldsRelatedChkBoxes[0].RadioButtonValue=="N" 
 						&& listSheetFieldsRelatedChkBoxes[0].FieldValue=="" 
-						&& row.OldValDisplay=="N" 
-						&& row.OldValObj!=null)
+						&& importRow.OldValDisplay=="N" 
+						&& importRow.OldValObj!=null)
 					{
-						row.DoImport=true;
+						importRow.DoImport=true;
 					}
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=listSheetFieldsCurrentMed[i];
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=typeof(string);
-					row.ObjType=typeof(MedicationPat);
-					if(row.OldValDisplay!=row.NewValDisplay && row.NewValDisplay!="") {
-						row.DoImport=true;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=listSheetFieldsCurrentMed[i];
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=typeof(string);
+					importRow.TypeObj=typeof(MedicationPat);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay && importRow.NewValDisplay!="") {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 					#endregion
 				}
 				for(int i=0;i<listSheetFieldsNewMed.Count;i++) {
@@ -1440,44 +1479,46 @@ namespace OpenDental {
 					if(listSheetFieldsNewMed[i].FieldValue=="") {//No medication entered by patient.
 						continue;
 					}
-					row=new SheetImportRow();
-					row.FieldName=listSheetFieldsNewMed[i].FieldValue;//Whatever the patient typed in...
-					row.OldValDisplay="";
-					row.OldValObj=null;
-					row.NewValDisplay="Y";
-					row.NewValObj=listSheetFieldsNewMed[i];
-					row.ImpValDisplay=Lan.g(this,"[double click to pick]");
-					row.ImpValObj=new long();
-					row.IsFlaggedImp=true;
-					row.DoImport=false;//this will change to true after they pick a medication
-					row.ObjType=typeof(MedicationPat);
-					_listSheetImportRows.Add(row);
+					importRow=new ImportRow();
+					importRow.FieldName=listSheetFieldsNewMed[i].FieldValue;//Whatever the patient typed in...
+					importRow.OldValDisplay="";
+					importRow.OldValObj=null;
+					importRow.NewValDisplay="Y";
+					importRow.NewValObj=listSheetFieldsNewMed[i];
+					importRow.ImpValDisplay=Lan.g(this,"[double click to pick]");
+					importRow.ImpValObj=new long();
+					importRow.IsImportRed=true;
+					importRow.DoImport=false;//this will change to true after they pick a medication
+					importRow.TypeObj=typeof(MedicationPat);
+					_listImportRows.Add(importRow);
 					#endregion
 				}
-				#endregion
+				#endregion Medications (Sheets)
 				//Separator-------------------------------------------
-				_listSheetImportRows.Add(CreateSeparator("Problems"));
-				#region Problems
-				List<SheetField> listSheetFieldsProblems=GetSheetFieldsByFieldName("problem:");
+				if(_hasSectionProblems){
+					_listImportRows.Add(CreateSeparator("Problems"));
+				}
+				#region Problems (Sheets only)
+				List<SheetField> listSheetFieldsProblems=GetSheetFieldsStartWith("problem:");
 				for(int i=0;i<listSheetFieldsProblems.Count;i++) {
 					fieldVal="";
 					if(i<1) {
 						listDiseases=Diseases.Refresh(_patient.PatNum,false);
 					}
-					row=new SheetImportRow();
-					row.FieldName=listSheetFieldsProblems[i].FieldName.Remove(0,8);
+					importRow=new ImportRow();
+					importRow.FieldName=listSheetFieldsProblems[i].FieldName.Remove(0,8);
 					//Figure out the current status of this allergy
-					row.OldValDisplay="";
-					row.OldValObj=null;
+					importRow.OldValDisplay="";
+					importRow.OldValObj=null;
 					for(int j=0;j<listDiseases.Count;j++) {
 						if(DiseaseDefs.GetName(listDiseases[j].DiseaseDefNum)==listSheetFieldsProblems[i].FieldName.Remove(0,8)) {
 							if(listDiseases[j].ProbStatus==ProblemStatus.Active) {
-								row.OldValDisplay="Y";
+								importRow.OldValDisplay="Y";
 							}
 							else {
-								row.OldValDisplay="N";
+								importRow.OldValDisplay="N";
 							}
-							row.OldValObj=listDiseases[j];
+							importRow.OldValObj=listDiseases[j];
 							break;
 						}
 					}
@@ -1485,12 +1526,12 @@ namespace OpenDental {
 					if(listSheetFieldsProblems[i].FieldValue=="") {//Current box not checked.
 						if(sheetFieldOppositeBox==null || sheetFieldOppositeBox.FieldValue=="") {//No opposite box or both boxes are not checked.
 							//Create a blank row just in case they still want to import.
-							row.NewValDisplay="";
-							row.NewValObj=listSheetFieldsProblems[i];
-							row.ImpValDisplay="";
-							row.ImpValObj="";
-							row.ObjType=typeof(Disease);
-							_listSheetImportRows.Add(row);
+							importRow.NewValDisplay="";
+							importRow.NewValObj=listSheetFieldsProblems[i];
+							importRow.ImpValDisplay="";
+							importRow.ImpValObj="";
+							importRow.TypeObj=typeof(Disease);
+							_listImportRows.Add(importRow);
 							if(sheetFieldOppositeBox!=null) {
 								listSheetFieldsProblems.Remove(sheetFieldOppositeBox);//Removes possible duplicate entry.
 							}
@@ -1516,93 +1557,618 @@ namespace OpenDental {
 					if(sheetFieldOppositeBox!=null) {
 						listSheetFieldsProblems.Remove(sheetFieldOppositeBox);
 					}
-					row.NewValDisplay=fieldVal;
-					row.NewValObj=listSheetFieldsProblems[i];
-					row.ImpValDisplay=row.NewValDisplay;
-					row.ImpValObj=typeof(string);
-					row.ObjType=typeof(Disease);
-					if(row.OldValDisplay!=row.NewValDisplay && !(row.OldValDisplay=="" && row.NewValDisplay=="N")) {
-						row.DoImport=true;
+					importRow.NewValDisplay=fieldVal;
+					importRow.NewValObj=listSheetFieldsProblems[i];
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=typeof(string);
+					importRow.TypeObj=typeof(Disease);
+					if(importRow.OldValDisplay!=importRow.NewValDisplay && !(importRow.OldValDisplay=="" && importRow.NewValDisplay=="N")) {
+						importRow.DoImport=true;
 					}
-					_listSheetImportRows.Add(row);
+					_listImportRows.Add(importRow);
 				}
-				#endregion
+				#endregion Problems (Sheets only)
 			}
-			#endregion
+			#endregion Medical History (Sheets)
+			#region Allergies (eForms)
+			if(EFormCur!=null && _hasSectionAllergies){
+				_listImportRows.Add(CreateSeparator("Allergies"));
+				List<AllergyDef> listAllergyDefs=AllergyDefs.GetAll(includeHidden:false);//from db. AllergyDefs are oddly not cached.
+				List<Allergy> listAllergiesPat=Allergies.GetAll(_patient.PatNum,showInactive:false);//just active allergies
+				List<string> listStringsPat=new List<string>();//this is for later
+				//First, we add a list of all existing allergies
+				for(int i=0;i<listAllergiesPat.Count;i++){
+					AllergyDef allergyDef=listAllergyDefs.Find(x=>x.AllergyDefNum==listAllergiesPat[i].AllergyDefNum);
+					string descript=allergyDef.Description;
+					if(allergyDef.Description=="Other"){
+						descript+=" - "+listAllergiesPat[i].Reaction;
+					}
+					else{
+						listStringsPat.Add(allergyDef.Description);
+					}
+					//no need to check allergyDef null for existing allergies
+					importRow=new ImportRow();
+					importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
+					importRow.OldValDisplay=descript;
+					importRow.OldValObj=listAllergiesPat[i];
+					importRow.NewValDisplay="";
+					importRow.NewValObj=null;
+					importRow.ImpValDisplay="";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Allergy);
+					_listImportRows.Add(importRow);
+				}
+				bool? isCheckedAllergiesNone=IsCheckedEForm("allergiesNone");
+				if(isCheckedAllergiesNone!=null) {
+					//note that this is mutually exclusive with allergiesOther and allergy:...
+					//If this gets hit, neither of those will,
+					//and if either of those gets hit, this will not.
+					if(isCheckedAllergiesNone==true) {
+						for(int a=0;a<listAllergiesPat.Count;a++) {
+							ImportRow importRowAllerg=_listImportRows.Find(x=>x.OldValObj==listAllergiesPat[a]);
+							if(importRowAllerg==null){
+								continue;//should never happen
+							}
+							importRowAllerg.DoRemove=true;//this is our trigger to remove the allergy
+							importRowAllerg.NewValDisplay="None";
+							importRowAllerg.ImpValDisplay="(mark inactive)";
+							importRowAllerg.DoImport=true;
+						}
+					}
+				}
+				fieldVal=GetInputValue("allergiesOther");
+				if(fieldVal!=null) {
+					//if allergiesNone was checked, this box will be empty, so loop list will also be empty.
+					List<string> listStrsInput=fieldVal.Split(new char[]{','},StringSplitOptions.RemoveEmptyEntries).Select(x=>x.Trim()).ToList();
+					//get list of allergies already covered by checkboxes
+					List<string> listStrAllergiesChecks=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("allergy:")).Select(x=>x.DbLink.Substring(8)).ToList();
+					//First loop is to consider which ones to add based on user input
+					for(int a=0;a<listStrsInput.Count;a++){
+						if(listStringsPat.Contains(listStrsInput[a])){
+							continue;
+							//The patient already has this as an active allergy, so there's no action for us to take.
+							//This is common because of prefill.
+						}
+						if(listStrAllergiesChecks.Contains(listStrsInput[a])) {
+							//If there is a checkbox for an allergy, but user also types it in here,
+							//then we have a slight problem. We have to pick one or the other, and they might not match.
+							//We have decided in that case to depend on the checkbox and ignore whatever happens in this box.
+							continue;
+						}
+						AllergyDef allergyDef=listAllergyDefs.Find(x=>x.Description.ToLower()==listStrsInput[a].ToLower());
+						if(allergyDef==null){
+							//this allergy that they typed in does not have any matching allergyDef, so we will use "Other".
+							//So we have to check if it exists as an "Other" allergy
+							AllergyDef allergyDefOther=listAllergyDefs.Find(x=>x.Description=="Other");
+							if(allergyDefOther!=null){
+								if(listAllergiesPat.Exists(x=>x.AllergyDefNum==allergyDefOther.AllergyDefNum && x.Reaction==listStrsInput[a])){
+									//this is common because of prefill
+									continue;
+								}
+							}
+						}
+						//need to add one
+						importRow=new ImportRow();
+						importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
+						importRow.OldValDisplay="";
+						importRow.OldValObj=null;
+						importRow.NewValDisplay=listStrsInput[a];//this is how we will know what to add
+						importRow.NewValObj=null;//no object until we later create one
+						importRow.ImpValDisplay="(add)";
+						importRow.ImpValObj=null;//no object until we later create one
+						importRow.TypeObj=typeof(Allergy);
+						importRow.DoImport=true;
+						importRow.DoAdd=true;//although this will be ignored if not importing.
+						_listImportRows.Add(importRow);
+					}//for
+					//Second loop here could consider which ones to remove, but this doesn't seem very useful.
+					//It would make more sense for a problem or certainly for a med.
+					//But nobody stops having an allergy, so ignore this for now.
+				}//if allergiesOther
+				List<EFormField> listEFormFieldsAllergyCheck=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("allergy:"));
+				//Allergy checkboxes:
+				for(int i=0;i<listEFormFieldsAllergyCheck.Count;i++){
+					string strAllergyCheck=listEFormFieldsAllergyCheck[i].DbLink.Substring(8);
+					AllergyDef allergyDef=listAllergyDefs.Find(x=>x.Description.ToLower()==strAllergyCheck.ToLower());
+					if(allergyDef==null){
+						//This shouldn't normally happen, but it certainly is possible because user could change an allergyDef name after adding the checkbox,
+						//or this could be an imported form with no allergyDef in the db representing the value in this checkbox.
+						//We will just add this for them. That way, all imported forms will correctly work.
+						//We are doing it here instead of when clicking Import because it's extremely rare
+						//and it's more of a setup issue. Also, it would be more complex to pass the info to that section.
+						allergyDef=new AllergyDef();
+						allergyDef.Description=strAllergyCheck;
+						AllergyDefs.Insert(allergyDef);
+						listAllergyDefs=AllergyDefs.GetAll(includeHidden:false);
+						//DataValid.SetInvalid would be used instead if this was cached.
+					}
+					//allergyDef is now guaranteed to have a value
+					Allergy allergyPat=listAllergiesPat.Find(x=>x.AllergyDefNum==allergyDef.AllergyDefNum);
+					//We don't also need to check list of pending imports because allergiesOther defers to this section.
+					if(allergyPat==null){
+						//This patient does not have an active allergy matching the allergy for this checkbox.
+						//Notice that we do not look at inactive allergies and consider flipping them back to active.
+						//Once someone has an allergy, it doesn't go away. We don't need to consider that fancy edge case.
+						//The worst consequence is that they might end up with one active and one inactive. No big deal.
+						if(listEFormFieldsAllergyCheck[i].ValueString=="X"){
+							//add
+							importRow=new ImportRow();
+							importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
+							importRow.OldValDisplay="";
+							importRow.OldValObj=null;
+							importRow.NewValDisplay=strAllergyCheck;//this is how we will know what to add
+							importRow.NewValObj=null;//no object until we later create one
+							importRow.ImpValDisplay="(add)";
+							importRow.ImpValObj=null;//no object until we later create one
+							importRow.TypeObj=typeof(Allergy);
+							importRow.DoImport=true;
+							importRow.DoAdd=true;//although this will be ignored if not importing.
+							_listImportRows.Add(importRow);
+						}
+						else{
+							//db is already accurate
+						}
+					}
+					else{
+						//This patient does have an active allergy matching the allergy for this checkbox.
+						if(listEFormFieldsAllergyCheck[i].ValueString=="X"){
+							//db is already accurate
+						}
+						else{
+							//remove
+							ImportRow importRowAllerg=_listImportRows.Find(x=>
+								x.TypeObj==typeof(Allergy)
+								&& x.OldValObj!=null
+								&& ((Allergy)x.OldValObj).AllergyDefNum==allergyDef.AllergyDefNum);
+							if(importRowAllerg==null){
+								continue;//should never happen
+							}
+							importRowAllerg.DoRemove=true;//this is our trigger to remove the allergy
+							importRowAllerg.NewValDisplay="(unchecked)";
+							importRowAllerg.ImpValDisplay="(mark inactive)";
+							importRowAllerg.DoImport=true;
+						}
+					}
+				}
+			}
+			#endregion Allergies (eForms)
+			#region Medications (eForms)
+			if(EFormCur!=null && _hasSectionMeds){
+				_listImportRows.Add(CreateSeparator("Medications"));
+				EFormField eFormFieldMedList=EFormCur.ListEFormFields.Find(x=>x.FieldType==EnumEFormFieldType.MedicationList);
+				//No need to check for null because we already did that when setting _hasSectionMeds
+				EFormMedListLayout eFormMedListLayout=JsonConvert.DeserializeObject<EFormMedListLayout>(eFormFieldMedList.ValueLabel);
+				List<MedicationPat> listMedicationPats=MedicationPats.Refresh(_patient.PatNum,includeDiscontinued:false);
+				//First, we add a list of all existing meds
+				for(int i=0;i<listMedicationPats.Count;i++){
+					Medication medication=Medications.GetMedication(listMedicationPats[i].MedicationNum);
+					string strMed=listMedicationPats[i].MedDescript;//used if this medicationPat came from an eRx or eForm import and medication is null
+					if(medication!=null){
+						strMed=medication.MedName;
+					}
+					if(listMedicationPats[i].PatNote!=""){
+						strMed+=" ("+listMedicationPats[i].PatNote+")";
+					}
+					importRow=new ImportRow();
+					importRow.FieldName="";//not going to show anything here
+					importRow.OldValDisplay=strMed;
+					importRow.OldValObj=listMedicationPats[i];
+					importRow.NewValDisplay="";
+					importRow.NewValObj=null;
+					importRow.ImpValDisplay="";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(MedicationPat);
+					_listImportRows.Add(importRow);
+				}
+				List<EFormMed> listEFormMeds=new List<EFormMed>();
+				if(!String.IsNullOrEmpty(eFormFieldMedList.ValueString)){
+					listEFormMeds=JsonConvert.DeserializeObject<List<EFormMed>>(eFormFieldMedList.ValueString);
+				}
+				//add any new ones
+				//If the med is already present, import the freq & quant.
+				for(int m=0;m<listEFormMeds.Count;m++){
+					string strMedNewVal=listEFormMeds[m].MedName;
+					if(listEFormMeds[m].StrengthFreq!=""){
+						strMedNewVal+=" ("+listEFormMeds[m].StrengthFreq+")";
+					}
+					MedicationPat medicationPat=null;
+					for(int a=0;a<listMedicationPats.Count;a++){
+						Medication medication=Medications.GetMedication(listMedicationPats[a].MedicationNum);
+						string strMed=listMedicationPats[a].MedDescript;//used if this medicationPat came from an eRx or eForm import and medication is null
+						if(medication!=null){
+							strMed=medication.MedName;
+						}
+						if(strMed==listEFormMeds[m].MedName){
+							medicationPat=listMedicationPats[a];
+							break;
+						}
+					}
+					if(medicationPat!=null){
+						//Now we know that this med is already present in the list.
+						ImportRow importRowMed=_listImportRows.Find(x=>x.OldValObj==medicationPat);
+						if(importRowMed==null){
+							continue;//should never happen
+						}
+						//Show user that the same med was entered in the eForm or was at least echoed back.
+						//Show it in same format as OldValDisplay.
+						importRowMed.NewValDisplay=strMedNewVal;
+						if(listEFormMeds[m].StrengthFreq==""){
+							continue;
+						}
+						//Might need to import the strength and freq
+						if(eFormMedListLayout.ImportCol2AppendDate){
+							importRowMed.MedStrengthFreq=medicationPat.PatNote;
+							if(medicationPat.PatNote!=""){
+								importRowMed.MedStrengthFreq+="\r\n";
+							}
+							importRowMed.MedStrengthFreq+=DateTime.Today.ToShortDateString()+"-"+listEFormMeds[m].StrengthFreq;
+							importRowMed.MedDoImportCol2=true;
+							importRowMed.ImpValDisplay="(append)";
+						}
+						if(eFormMedListLayout.ImportCol2OverwriteDate){
+							importRowMed.MedStrengthFreq=DateTime.Today.ToShortDateString()+"-"+listEFormMeds[m].StrengthFreq;
+							importRowMed.MedDoImportCol2=true;
+							importRowMed.ImpValDisplay="(overwrite)";
+						}
+						if(eFormMedListLayout.ImportCol2Append){
+							importRowMed.MedStrengthFreq=medicationPat.PatNote;
+							if(medicationPat.PatNote!=""){
+								importRowMed.MedStrengthFreq+="\r\n";
+							}
+							importRowMed.MedStrengthFreq+=listEFormMeds[m].StrengthFreq;
+							importRowMed.MedDoImportCol2=true;
+							importRowMed.ImpValDisplay="(append)";
+						}
+						if(eFormMedListLayout.ImportCol2Overwrite){
+							importRowMed.MedStrengthFreq=listEFormMeds[m].StrengthFreq;
+							importRowMed.MedDoImportCol2=true;
+							importRowMed.ImpValDisplay="(overwrite)";
+						}
+						if(importRowMed.MedDoImportCol2){
+							importRowMed.DoImport=true;
+							//	importRowMed.MedStrengthFreq=strengthFreq;
+							//	MedicationPats.Update(medicationPat);
+							//	listMedicationPats=MedicationPats.Refresh(patient.PatNum,includeDiscontinued:false);
+						}
+						if(!eFormMedListLayout.ImportCol1){
+							importRowMed.DoImport=false;
+							importRowMed.MedDoImportCol2=false;
+							importRowMed.ImpValDisplay="";
+						}
+						continue;
+					}
+					//missing in pat, so add it
+					importRow=new ImportRow();
+					importRow.FieldName="";//Don't show anything here
+					importRow.OldValDisplay="";
+					importRow.OldValObj=null;
+					importRow.MedName=listEFormMeds[m].MedName;//this is how we will know what to add
+					importRow.NewValDisplay=strMedNewVal;
+					importRow.NewValObj=null;//no object until we later create one
+					importRow.ImpValDisplay="(add)";
+					importRow.ImpValObj=null;//no object until we later create one
+					importRow.TypeObj=typeof(MedicationPat);
+					if(eFormMedListLayout.ImportCol1){
+						importRow.DoImport=true;
+						importRow.DoAdd=true;//although this will be ignored if not importing.
+						if(eFormMedListLayout.ImportCol2AppendDate
+							|| eFormMedListLayout.ImportCol2Append
+							|| eFormMedListLayout.ImportCol2Overwrite
+							|| eFormMedListLayout.ImportCol2OverwriteDate)
+						{
+							importRow.MedStrengthFreq=listEFormMeds[m].StrengthFreq;
+							importRow.MedDoImportCol2=true;
+						}
+					}
+					_listImportRows.Add(importRow);
+				}
+				//remove 
+				for(int a=0;a<listMedicationPats.Count;a++){
+					Medication medication=Medications.GetMedication(listMedicationPats[a].MedicationNum);
+					string strMed=listMedicationPats[a].MedDescript;//used if this medicationPat came from an eRx or eForm import and medication is null
+					if(medication!=null){
+						strMed=medication.MedName;
+					}
+					EFormMed eFormMed=listEFormMeds.Find(x=>x.MedName==strMed);
+					if(eFormMed!=null){//in the import list
+						continue;
+					}
+					//this patient med is not in the import list, so it needs to be removed.
+					ImportRow importRowMed=_listImportRows.Find(x=>
+						x.TypeObj==typeof(MedicationPat)
+						&& x.OldValObj!=null
+						&& ((MedicationPat)x.OldValObj).MedicationNum==listMedicationPats[a].MedicationNum);
+					if(importRowMed==null){
+						continue;//should never happen
+					}
+					importRowMed.DoRemove=true;//this is our trigger to remove the med
+					importRowMed.NewValDisplay="(removed)";
+					importRowMed.ImpValDisplay="(mark inactive)";
+					importRowMed.DoImport=true;
+				}
+			}
+			#endregion Medications (eForms)
+			#region Problems (eForms)
+			if(EFormCur!=null && _hasSectionProblems){
+				_listImportRows.Add(CreateSeparator("Problems"));
+				List<Disease> listDiseasesPat=Diseases.Refresh(_patient.PatNum,showActiveOnly:true);
+				List<string> listStringsPat=new List<string>();//this is for later
+				//First, we add a list of all existing diseases
+				for(int i=0;i<listDiseasesPat.Count;i++){
+					DiseaseDef diseaseDef=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseDefNum==listDiseasesPat[i].DiseaseDefNum);
+					string descript=diseaseDef.DiseaseName;
+					if(diseaseDef.DiseaseName=="Other"){
+						descript+=" - "+listDiseasesPat[i].PatNote;
+					}
+					else{
+						listStringsPat.Add(diseaseDef.DiseaseName);
+					}
+					//no need to check diseaseDef null for existing diseases
+					importRow=new ImportRow();
+					importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
+					importRow.OldValDisplay=descript;
+					importRow.OldValObj=listDiseasesPat[i];
+					importRow.NewValDisplay="";
+					importRow.NewValObj=null;
+					importRow.ImpValDisplay="";
+					importRow.ImpValObj=null;
+					importRow.TypeObj=typeof(Disease);
+					_listImportRows.Add(importRow);
+				}
+				bool? isCheckedProblemsNone=IsCheckedEForm("problemsNone");
+				if(isCheckedProblemsNone!=null) {
+					//note that this is mutually exclusive with diseasesOther and disease:...
+					//If this gets hit, neither of those will,
+					//and if either of those gets hit, this will not.
+					if(isCheckedProblemsNone==true) {
+						for(int a=0;a<listDiseasesPat.Count;a++) {
+							ImportRow importRowDisease=_listImportRows.Find(x=>x.OldValObj==listDiseasesPat[a]);
+							if(importRowDisease==null){
+								continue;//should never happen
+							}
+							importRowDisease.DoRemove=true;//this is our trigger to remove the disease
+							importRowDisease.NewValDisplay="None";
+							importRowDisease.ImpValDisplay="(mark inactive)";
+							importRowDisease.DoImport=true;
+						}
+					}
+				}
+				fieldVal=GetInputValue("problemsOther");
+				if(fieldVal!=null) {
+					//if problemsNone was checked, this box will be empty, so loop list will also be empty.
+					List<string> listStrsInput=fieldVal.Split(new char[]{','},StringSplitOptions.RemoveEmptyEntries).Select(x=>x.Trim()).ToList();
+					//get list of diseases already covered by checkboxes
+					List<string> listStrProblemChecks=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("problem:")).Select(x=>x.DbLink.Substring(8)).ToList();
+					//First loop is to consider which ones to add based on user input
+					for(int a=0;a<listStrsInput.Count;a++){
+						if(listStringsPat.Contains(listStrsInput[a])){
+							continue;
+							//The patient already has this as an active problem, so there's no action for us to take.
+							//This is common because of prefill.
+						}
+						if(listStrProblemChecks.Contains(listStrsInput[a])) {
+							//If there is a checkbox for a problem, but user also types it in here,
+							//then we have a slight conundrum. We have to pick one or the other, and they might not match.
+							//We have decided in that case to depend on the checkbox and ignore whatever happens in this box.
+							continue;
+						}
+						DiseaseDef diseaseDef=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseName.ToLower()==listStrsInput[a].ToLower());
+						if(diseaseDef==null){
+							//this problem that they typed in does not have any matching diseaseDef, so we will use "Other".
+							//So we have to check if it exists as an "Other" problem
+							DiseaseDef diseaseDefOther=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseName=="Other");
+							if(diseaseDefOther!=null){
+								if(listDiseasesPat.Exists(x=>x.DiseaseDefNum==diseaseDefOther.DiseaseDefNum && x.PatNote==listStrsInput[a])){
+									//this is common because of prefill
+									continue;
+								}
+							}
+						}
+						//need to add one
+						importRow=new ImportRow();
+						importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
+						importRow.OldValDisplay="";
+						importRow.OldValObj=null;
+						importRow.NewValDisplay=listStrsInput[a];//this is how we will know what to add
+						importRow.NewValObj=null;//no object until we later create one
+						importRow.ImpValDisplay="(add)";
+						importRow.ImpValObj=null;//no object until we later create one
+						importRow.TypeObj=typeof(Disease);
+						importRow.DoImport=true;
+						importRow.DoAdd=true;//although this will be ignored if not importing.
+						_listImportRows.Add(importRow);
+					}//for
+					//Second loop to consider which ones to remove (this was not done for allergies)
+					for(int a=0;a<listDiseasesPat.Count;a++){
+						DiseaseDef diseaseDef=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseDefNum==listDiseasesPat[a].DiseaseDefNum);
+						if(listStrProblemChecks.Contains(diseaseDef.DiseaseName)) {
+							//If there is a checkbox for a problem then we only pay attention to the checkbox.
+							//An Other disease wouldn't be represented by a checkbox, so it would automatically pass through this check.
+							continue;
+						}
+						if(diseaseDef.DiseaseName=="Other"){
+							if(listStrsInput.Contains(listDiseasesPat[a].PatNote)){
+								//This Other disease is still present in the typed box.
+								//This is common because of prefill.
+								continue;
+							}
+						}
+						else if(listStrsInput.Contains(diseaseDef.DiseaseName)){
+							//This disease is still present in the typed box.
+							//This is common because of prefill.
+							continue;
+						}
+						//This pt disease is not in typed in the box, so we remove it.
+						ImportRow importRowProb=_listImportRows.Find(x=>
+							x.TypeObj==typeof(Disease)
+							&& x.OldValObj!=null
+							&& ((Disease)x.OldValObj).DiseaseNum==listDiseasesPat[a].DiseaseNum);
+						if(importRowProb==null){
+							continue;//should never happen
+						}
+						importRowProb.DoRemove=true;//this is our trigger to remove the problem
+						importRowProb.NewValDisplay="(removed)";
+						importRowProb.ImpValDisplay="(mark inactive)";
+						importRowProb.DoImport=true;
+					}
+				}//if problemsOther
+				List<EFormField> listEFormFieldsProblemCheck=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("problem:"));
+				//Problem checkboxes:
+				for(int i=0;i<listEFormFieldsProblemCheck.Count;i++){
+					string strProblemCheck=listEFormFieldsProblemCheck[i].DbLink.Substring(8);
+					DiseaseDef diseaseDef=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseName.ToLower()==strProblemCheck.ToLower());
+					if(diseaseDef==null){
+						//This shouldn't normally happen, but it certainly is possible because user could change a diseaseDef name after adding the checkbox,
+						//or this could be an imported form with no diseaseDef in the db representing the value in this checkbox.
+						//We will just add this for them. That way, all imported forms will correctly work.
+						//We are doing it here instead of when clicking Import because it's extremely rare
+						//and it's more of a setup issue. Also, it would be more complex to pass the info to that section.
+						diseaseDef=new DiseaseDef();
+						diseaseDef.DiseaseName=strProblemCheck;
+						DiseaseDefs.Insert(diseaseDef);
+						DataValid.SetInvalid(InvalidType.Diseases);
+					}
+					//diseaseDef is now guaranteed to have a value
+					Disease diseasePat=listDiseasesPat.Find(x=>x.DiseaseDefNum==diseaseDef.DiseaseDefNum);
+					//We don't also need to check list of pending imports because diseasesOther defers to this section.
+					if(diseasePat==null){
+						//This patient does not have an active disease matching the problem for this checkbox.
+						//Notice that we do not look at inactive diseases and consider flipping them back to active.
+						//Once someone has a problem, it tends to not go away. We don't need to consider that fancy edge case.
+						//The worst consequence is that they might end up with one active and one inactive. No big deal.
+						if(listEFormFieldsProblemCheck[i].ValueString=="X"){
+							//add
+							importRow=new ImportRow();
+							importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
+							importRow.OldValDisplay="";
+							importRow.OldValObj=null;
+							importRow.NewValDisplay=strProblemCheck;//this is how we will know what to add
+							importRow.NewValObj=null;//no object until we later create one
+							importRow.ImpValDisplay="(add)";
+							importRow.ImpValObj=null;//no object until we later create one
+							importRow.TypeObj=typeof(Disease);
+							importRow.DoImport=true;
+							importRow.DoAdd=true;//although this will be ignored if not importing.
+							_listImportRows.Add(importRow);
+						}
+						else{
+							//db is already accurate
+						}
+					}
+					else{
+						//This patient does have an active disease matching the problem for this checkbox.
+						if(listEFormFieldsProblemCheck[i].ValueString=="X"){
+							//db is already accurate
+						}
+						else{
+							//remove
+							ImportRow importRowProblem=_listImportRows.Find(x=>
+								x.TypeObj==typeof(Disease)
+								&& x.OldValObj!=null
+								&& ((Disease)x.OldValObj).DiseaseDefNum==diseaseDef.DiseaseDefNum);
+							if(importRowProblem==null){
+								continue;//should never happen
+							}
+							importRowProblem.DoRemove=true;//this is our trigger to remove the allergy
+							importRowProblem.NewValDisplay="(unchecked)";
+							importRowProblem.ImpValDisplay="(mark inactive)";
+							importRowProblem.DoImport=true;
+						}
+					}
+				}//problem checkboxes
+			}
+			#endregion Problems (eForms)
 		}
 
 		private void FillGrid() {
 			int scrollVal=gridMain.ScrollValue;
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn col; 
-			col=new GridColumn(Lan.g(this,"FieldName"),140);
-			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Current Value"),175);
-			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Entered Value"),175);
-			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Import Value"),175);
-			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Do Import"),60,HorizontalAlignment.Center);
-			gridMain.Columns.Add(col);
+			GridColumn gridColumn; 
+			gridColumn=new GridColumn(Lan.g(this,"FieldName"),140);
+			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn(Lan.g(this,"Current Value"),175);
+			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn(Lan.g(this,"Entered Value"),175);
+			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn(Lan.g(this,"Import Value"),175);
+			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn(Lan.g(this,"Do Import"),60,HorizontalAlignment.Center);
+			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
-			GridRow row;
-			GridCell cell;
-			for(int i=0;i<_listSheetImportRows.Count;i++) {
-				row=new GridRow();
-				if(_listSheetImportRows[i].IsSeparator) {
-					row.Cells.Add(_listSheetImportRows[i].FieldName);
-					row.Cells.Add("");
-					row.Cells.Add("");
-					row.Cells.Add("");
-					row.Cells.Add("");
-					row.ColorBackG=Color.DarkSlateGray;
-					row.ColorText=Color.White;
+			GridRow gridRow;
+			GridCell gridCell;
+			for(int i=0;i<_listImportRows.Count;i++) {
+				gridRow=new GridRow();
+				if(_listImportRows[i].IsSectionHeader) {
+					gridRow.Cells.Add(_listImportRows[i].FieldName);
+					gridRow.Cells.Add("");
+					gridRow.Cells.Add("");
+					gridRow.Cells.Add("");
+					gridRow.Cells.Add("");
+					gridRow.ColorBackG=Color.DarkSlateGray;
+					gridRow.ColorText=Color.White;
 				}
 				else {
-					if(_listSheetImportRows[i].FieldDisplay!=null) {
-						row.Cells.Add(_listSheetImportRows[i].FieldDisplay);
+					if(_listImportRows[i].FieldDisplay!=null) {
+						gridRow.Cells.Add(_listImportRows[i].FieldDisplay);
 					}
 					else {
-						row.Cells.Add(_listSheetImportRows[i].FieldName);
+						gridRow.Cells.Add(_listImportRows[i].FieldName);
 					}
-					row.Cells.Add(_listSheetImportRows[i].OldValDisplay);
-					cell=new GridCell(_listSheetImportRows[i].NewValDisplay);
-					if(_listSheetImportRows[i].IsFlagged) {
-						cell.ColorText=Color.Firebrick;
-						cell.Bold=YN.Yes;
+					gridRow.Cells.Add(_listImportRows[i].OldValDisplay);
+					gridCell=new GridCell(_listImportRows[i].NewValDisplay);
+					if(_listImportRows[i].IsNewValRed) {
+						gridCell.ColorText=Color.Firebrick;
+						gridCell.Bold=YN.Yes;
 					}
-					row.Cells.Add(cell);
-					cell=new GridCell(_listSheetImportRows[i].ImpValDisplay);
-					if(_listSheetImportRows[i].IsFlaggedImp) {
-						cell.ColorText=Color.Firebrick;
-						cell.Bold=YN.Yes;
+					gridRow.Cells.Add(gridCell);
+					gridCell=new GridCell(_listImportRows[i].ImpValDisplay);
+					if(_listImportRows[i].IsImportRed) {
+						gridCell.ColorText=Color.Firebrick;
+						gridCell.Bold=YN.Yes;
 					}
-					row.Cells.Add(cell);
-					if(_listSheetImportRows[i].DoImport) {
-						row.Cells.Add("X");
-						row.ColorBackG=Color.FromArgb(225,225,225);
+					gridRow.Cells.Add(gridCell);
+					if(_listImportRows[i].DoImport) {
+						gridRow.Cells.Add("X");
+						gridRow.ColorBackG=Color.FromArgb(225,225,225);
 					}
 					else {
-						row.Cells.Add("");
+						gridRow.Cells.Add("");
 					}
 				}
-				gridMain.ListGridRows.Add(row);
+				gridMain.ListGridRows.Add(gridRow);
 			}
 			gridMain.EndUpdate();
 			gridMain.ScrollValue=scrollVal;
 		}
 
-		/// <summary> This tries to get the value from the sheet for the field name passed in. If it's an insurnace related field and it was not found on the sheet it pulls the value from Ocr data instead. If null is returned, the row for that field will not be added to the form. </summary>
+		/// <summary>For a Sheet, this tries to get the FieldValue from the InputField. For an eForm, this tries to get the ValueString for the DbLink. For ins field, it can also pull from OCR data. Null means that field will not be added to the list for import.</summary>
 		private string GetInputValue(string fieldName) {
-			string result=GetSheetInputValue(fieldName);
+			string result=null;
+			if(SheetCur!=null){
+				SheetField sheetField=SheetCur.SheetFields.Find(
+					x => x.FieldType==SheetFieldType.InputField && x.FieldName==fieldName);
+				if(sheetField is null){
+					return null;
+				}
+				result=sheetField.FieldValue;
+			}
+			if(EFormCur!=null){
+				EFormField eFormField=EFormCur.ListEFormFields.Find(
+					x => x.FieldType==EnumEFormFieldType.TextField && x.DbLink==fieldName);
+				if(eFormField is null){
+					return null;
+				}
+				result=eFormField.ValueString;
+			}
 			if(!fieldName.StartsWith("ins")) {
 				return result;
 			}
+			//OCR processing of insurance card from here down
 			if(result==null || result!="") {
-				//If null was returned by GetSheetInputValue, preserve the null.
-				//If a value was found on the sheet prefer the sheet value to ocrData.
+				//If null, preserve the null.
+				//If a value was found on the sheet, prefer the sheet value to ocrData.
 				return result;
 			}
 			switch(fieldName) {
@@ -1693,55 +2259,66 @@ namespace OpenDental {
 				default: break;
 			}
 			//Turn null into empty if we got in here. The field exists on the sheet, but didnt have a value, neither does OcrData.
-			//If we return null, the field wont be added to the grid. We know it should be there because GetSheetInputValue didnt return null.
+			//If we return null, the field wont be added to the grid. We know it should be there because sheetField.FieldValue was empty string.
 			if(result==null) {
 				result="";
 			}
 			return result;
 		}
 
-		///<summary>If the specified fieldName does not exist, returns null</summary>
-		private string GetSheetInputValue(string fieldName) {
-			//Get ocr vals here Make a wrapper method to call this then an ocr version.
-			return SheetCur?.SheetFields?.FirstOrDefault(x => x.FieldType==SheetFieldType.InputField && x.FieldName==fieldName)?.FieldValue;
-		}
-
 		///<summary>If no radiobox with that name exists, returns null.  If no box is checked, it returns empty string.</summary>
 		private string GetRadioValue(string fieldName) {
-			List<SheetField> listSheetFields=SheetCur?.SheetFields?.FindAll(x => x.FieldType==SheetFieldType.CheckBox && x.FieldName==fieldName);
-			if(listSheetFields==null || listSheetFields.Count==0) {
-				return null;
+			if(SheetCur!=null){
+				List<SheetField> listSheetFields=SheetCur?.SheetFields?.FindAll(x => x.FieldType==SheetFieldType.CheckBox && x.FieldName==fieldName);
+				if(listSheetFields==null || listSheetFields.Count==0) {
+					return null;
+				}
+				SheetField sheetField=listSheetFields.FirstOrDefault(x => x.FieldValue=="X");
+				return sheetField==null ? "" : sheetField.RadioButtonValue;
 			}
-			SheetField sheetField=listSheetFields.FirstOrDefault(x => x.FieldValue=="X");
-			return sheetField==null ? "" : sheetField.RadioButtonValue;
+			if(EFormCur!=null){
+				EFormField eFormField=EFormCur.ListEFormFields.Find(x=>x.DbLink==fieldName);
+				if(eFormField is null){
+					return null;
+				}
+				return eFormField.ValueString;
+			}
+			return null;
 		}
 
 		///<summary>Only the true condition is tested.  If the specified fieldName does not exist, returns false.</summary>
 		private bool IsChecked(string fieldName) {
-			return SheetCur?.SheetFields?.FirstOrDefault(x => x.FieldType==SheetFieldType.CheckBox && x.FieldName==fieldName)?.FieldValue=="X";
-		}
-
-		///<summary>Returns the values of all the "misc" textbox fields on this form.</summary>
-		private List<string> GetMiscValues() {
-			if(SheetCur==null) {
-				return new List<string>();
+			if(SheetCur!=null){
+				return SheetCur?.SheetFields?.FirstOrDefault(x => x.FieldType==SheetFieldType.CheckBox && x.FieldName==fieldName)?.FieldValue=="X";
 			}
-			return SheetCur.SheetFields.FindAll(x => x.FieldType==SheetFieldType.InputField && x.FieldName=="misc").Select(x => x.FieldValue).ToList();
+			return false;
 		}
 
-		///<summary>Returns all the sheet fields with FieldNames that start with the passed in string.  Only works for check box, input and output fields for now.</summary>
-		private List<SheetField> GetSheetFieldsByFieldName(string fieldName) {
+		///<summary>If the specified fieldName does not exist, returns null.</summary>
+		private bool? IsCheckedEForm(string fieldName) {
+			if(EFormCur!=null){
+				EFormField eFormField=EFormCur.ListEFormFields.Find(x=>x.DbLink==fieldName);
+				if(eFormField is null){
+					return null;
+				}
+				return eFormField.ValueString=="X";
+			}
+			return null;
+		}
+
+		///<summary>Returns all the sheet fields with FieldNames that start with the passed-in string.</summary>
+		private List<SheetField> GetSheetFieldsStartWith(string fieldName) {
 			List<SheetField> listSheetFieldsReturnVal=new List<SheetField>();
 			if(SheetCur==null) {
 				return listSheetFieldsReturnVal;
 			}
 			for(int i=0;i<SheetCur.SheetFields.Count;i++) {
-				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.CheckBox
-					&& SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField
-					&& SheetCur.SheetFields[i].FieldType!=SheetFieldType.OutputText) 
-				{
-					continue;
-				}
+				//if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.CheckBox
+				//	&& SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField
+				//	&& SheetCur.SheetFields[i].FieldType!=SheetFieldType.OutputText) 
+				//{
+				//	continue;
+				//}
 				if(!SheetCur.SheetFields[i].FieldName.StartsWith(fieldName)) {
 					continue;
 				}
@@ -1751,13 +2328,13 @@ namespace OpenDental {
 		}
 		
 		///<summary>Returns one sheet field with the same FieldName. Returns null if not found.</summary>
-		private SheetImportRow GetImportRowByFieldName(string fieldName) {
-			if(_listSheetImportRows==null) {
+		private ImportRow GetImportRowByFieldName(string fieldName) {
+			if(_listImportRows==null) {
 				return null;
 			}
-			for(int i=0;i<_listSheetImportRows.Count;i++) {
-				if(_listSheetImportRows[i].FieldName==fieldName){
-					return _listSheetImportRows[i];
+			for(int i=0;i<_listImportRows.Count;i++) {
+				if(_listImportRows[i].FieldName==fieldName){
+					return _listImportRows[i];
 				}
 			}
 			return null;
@@ -1790,38 +2367,32 @@ namespace OpenDental {
 			return listSheetFieldsCheckBoxes;
 		}
 
-		private bool ContainsOneOfFields(params string[] fieldNames) {
-			if(SheetCur==null) {
-				return false;
+		private bool ContainsOneOfFields(params string[] fieldNameArray) {
+			if(SheetCur!=null) {
+				return SheetCur.SheetFields.Any(x => fieldNameArray.Contains(x.FieldName));
 			}
-			return SheetCur.SheetFields.FindAll(x => x.FieldType==SheetFieldType.CheckBox || x.FieldType==SheetFieldType.InputField)
-				.Any(x => fieldNames.Contains(x.FieldName));
-		}
-
-		private bool ContainsFieldThatStartsWith(string fieldName) {
-			if(SheetCur==null) {
-				return false;
+			if(EFormCur!=null){
+				return EFormCur.ListEFormFields.Any(x => fieldNameArray.Contains(x.DbLink));
 			}
-			return SheetCur.SheetFields.FindAll(x => x.FieldType==SheetFieldType.CheckBox || x.FieldType==SheetFieldType.InputField)
-				.Any(x => x.FieldName.StartsWith(fieldName));
+			return false;//shouldn't happen
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
 			if(e.Col!=4) {
 				return;
 			}
-			if(_listSheetImportRows[e.Row].IsSeparator) {
+			if(_listImportRows[e.Row].IsSectionHeader) {
 				return;
 			}
-			if(!IsImportable(_listSheetImportRows[e.Row])) {
+			if(!IsImportable(_listImportRows[e.Row])) {
 				return;
 			}
-			_listSheetImportRows[e.Row].DoImport=!_listSheetImportRows[e.Row].DoImport;
+			_listImportRows[e.Row].DoImport=!_listImportRows[e.Row].DoImport;
 			FillGrid();
 		}
 
 		///<summary>Mostly the same as IsImportable.  But subtle differences.</summary>
-		private bool IsEditable(SheetImportRow row) {
+		private bool IsEditable(ImportRow row) {
 			if(row.FieldName=="wirelessCarrier"){
 				MessageBox.Show(row.FieldName+" "+Lan.g(this,"cannot be imported."));
 				return false;
@@ -1832,16 +2403,10 @@ namespace OpenDental {
 					return false;
 				}
 			}
-			//if(row.FieldName.StartsWith("ins1") || row.FieldName.StartsWith("ins2")) {
-			//  //if(patPlanList.Count>0) {
-			//  MsgBox.Show(this,"Insurance cannot be imported yet.");
-			//  return false;
-			//  //}
-			//}
 			return true;
 		}
 
-		private bool IsImportable(SheetImportRow row) {
+		private bool IsImportable(ImportRow row) {
 			if(row.ImpValObj==null) {
 				MsgBox.Show(this,"Please enter a value for this row first.");
 				return false;
@@ -1853,13 +2418,13 @@ namespace OpenDental {
 			if(e.Col!=3) {
 				return;
 			}
-			if(_listSheetImportRows[e.Row].IsSeparator) {
+			if(_listImportRows[e.Row].IsSectionHeader) {
 				return;
 			}
-			if(!IsEditable(_listSheetImportRows[e.Row])){
+			if(!IsEditable(_listImportRows[e.Row])){
 				return;
 			}
-			if(_listSheetImportRows[e.Row].FieldName=="referredFrom") {
+			if(_listImportRows[e.Row].FieldName=="referredFrom") {
 				FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
 				frmReferralSelect.IsSelectionMode=true;
 				frmReferralSelect.ShowDialog();
@@ -1867,33 +2432,33 @@ namespace OpenDental {
 					return;
 				}
 				Referral referralSelected=frmReferralSelect.ReferralSelected;
-				_listSheetImportRows[e.Row].DoImport=true;
-				_listSheetImportRows[e.Row].IsFlaggedImp=false;
-				_listSheetImportRows[e.Row].ImpValDisplay=referralSelected.GetNameFL();
-				_listSheetImportRows[e.Row].ImpValObj=referralSelected;
+				_listImportRows[e.Row].DoImport=true;
+				_listImportRows[e.Row].IsImportRed=false;
+				_listImportRows[e.Row].ImpValDisplay=referralSelected.GetNameFL();
+				_listImportRows[e.Row].ImpValObj=referralSelected;
 			}
 			#region string
-			else if(_listSheetImportRows[e.Row].ObjType==typeof(string)) {
+			else if(_listImportRows[e.Row].TypeObj==typeof(string)) {
 				InputBox inputBox;
-				if(_listSheetImportRows[e.Row].FieldName.In("WkPhone","WirelessPhone","HmPhone","ins1CarrierPhone","ins2CarrierPhone","ICEPhone")) {
+				if(_listImportRows[e.Row].FieldName.In("WkPhone","WirelessPhone","HmPhone","ins1CarrierPhone","ins2CarrierPhone","ICEPhone")) {
 					InputBoxParam inputBoxParam=new InputBoxParam();
 					inputBoxParam.InputBoxType_=InputBoxType.ValidPhone;
-					inputBoxParam.LabelText=_listSheetImportRows[e.Row].FieldName;
-					inputBoxParam.Text=_listSheetImportRows[e.Row].ImpValDisplay;
+					inputBoxParam.LabelText=_listImportRows[e.Row].FieldName;
+					inputBoxParam.Text=_listImportRows[e.Row].ImpValDisplay;
 					inputBox=new InputBox(inputBoxParam);
 				}
 				else {
 					InputBoxParam inputBoxParam=new InputBoxParam();
 					inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-					inputBoxParam.LabelText=_listSheetImportRows[e.Row].FieldName;
-					inputBoxParam.Text=_listSheetImportRows[e.Row].ImpValDisplay;
+					inputBoxParam.LabelText=_listImportRows[e.Row].FieldName;
+					inputBoxParam.Text=_listImportRows[e.Row].ImpValDisplay;
 					inputBox=new InputBox(inputBoxParam);
 				}
 				inputBox.ShowDialog();
 				if(inputBox.IsDialogCancel) {
 					return;
 				}
-				if(_listSheetImportRows[e.Row].FieldName=="addressAndHmPhoneIsSameEntireFamily") {
+				if(_listImportRows[e.Row].FieldName=="addressAndHmPhoneIsSameEntireFamily") {
 					if(inputBox.StringResult=="") {
 						_isAddressSameForFam=false;
 					}
@@ -1905,65 +2470,65 @@ namespace OpenDental {
 						return;
 					}
 				}
-				if(_listSheetImportRows[e.Row].OldValDisplay==inputBox.StringResult) {//value is now same as original
-					_listSheetImportRows[e.Row].DoImport=false;
+				if(_listImportRows[e.Row].OldValDisplay==inputBox.StringResult) {//value is now same as original
+					_listImportRows[e.Row].DoImport=false;
 				}
 				else {
-					_listSheetImportRows[e.Row].DoImport=true;
+					_listImportRows[e.Row].DoImport=true;
 				}
-				_listSheetImportRows[e.Row].ImpValDisplay=inputBox.StringResult;
-				_listSheetImportRows[e.Row].ImpValObj=inputBox.StringResult;
+				_listImportRows[e.Row].ImpValDisplay=inputBox.StringResult;
+				_listImportRows[e.Row].ImpValObj=inputBox.StringResult;
 			}
 			#endregion
 			#region Enum
-			else if(_listSheetImportRows[e.Row].ObjType.IsEnum) {
+			else if(_listImportRows[e.Row].TypeObj.IsEnum) {
 				//Note.  This only works for zero-indexed enums.
-				using FormSheetImportEnumPicker formSheetImportEnumPicker=new FormSheetImportEnumPicker(_listSheetImportRows[e.Row].FieldName);
-				for(int i=0;i<Enum.GetNames(_listSheetImportRows[e.Row].ObjType).Length;i++) {
-					formSheetImportEnumPicker.listResult.Items.Add(Enum.GetNames(_listSheetImportRows[e.Row].ObjType)[i]);
-					if(_listSheetImportRows[e.Row].ImpValObj!=null && i==(int)_listSheetImportRows[e.Row].ImpValObj) {
+				using FormSheetImportEnumPicker formSheetImportEnumPicker=new FormSheetImportEnumPicker(_listImportRows[e.Row].FieldName);
+				for(int i=0;i<Enum.GetNames(_listImportRows[e.Row].TypeObj).Length;i++) {
+					formSheetImportEnumPicker.listResult.Items.Add(Enum.GetNames(_listImportRows[e.Row].TypeObj)[i]);
+					if(_listImportRows[e.Row].ImpValObj!=null && i==(int)_listImportRows[e.Row].ImpValObj) {
 						formSheetImportEnumPicker.listResult.SelectedIndex=i;
 					}
 				}
 				formSheetImportEnumPicker.ShowDialog();
 				if(formSheetImportEnumPicker.DialogResult==DialogResult.OK) {
 					int selectedI=formSheetImportEnumPicker.listResult.SelectedIndex;
-					if(_listSheetImportRows[e.Row].ImpValObj==null) {//was initially null
+					if(_listImportRows[e.Row].ImpValObj==null) {//was initially null
 						if(selectedI!=-1) {//an item was selected
-							_listSheetImportRows[e.Row].ImpValObj=Enum.ToObject(_listSheetImportRows[e.Row].ObjType,selectedI);
-							_listSheetImportRows[e.Row].ImpValDisplay=_listSheetImportRows[e.Row].ImpValObj.ToString();
+							_listImportRows[e.Row].ImpValObj=Enum.ToObject(_listImportRows[e.Row].TypeObj,selectedI);
+							_listImportRows[e.Row].ImpValDisplay=_listImportRows[e.Row].ImpValObj.ToString();
 						}
 					}
 					else {//was not initially null
-						if((int)_listSheetImportRows[e.Row].ImpValObj!=selectedI) {//value was changed.
+						if((int)_listImportRows[e.Row].ImpValObj!=selectedI) {//value was changed.
 							//There's no way for the user to set it to null, so we do not need to test that
-							_listSheetImportRows[e.Row].ImpValObj=Enum.ToObject(_listSheetImportRows[e.Row].ObjType,selectedI);
-							_listSheetImportRows[e.Row].ImpValDisplay=_listSheetImportRows[e.Row].ImpValObj.ToString();
+							_listImportRows[e.Row].ImpValObj=Enum.ToObject(_listImportRows[e.Row].TypeObj,selectedI);
+							_listImportRows[e.Row].ImpValDisplay=_listImportRows[e.Row].ImpValObj.ToString();
 						}
 					}
 					if(selectedI==-1) {
-						_listSheetImportRows[e.Row].DoImport=false;//impossible to import a null
+						_listImportRows[e.Row].DoImport=false;//impossible to import a null
 					}
-					else if(_listSheetImportRows[e.Row].OldValObj!=null && (int)_listSheetImportRows[e.Row].ImpValObj==(int)_listSheetImportRows[e.Row].OldValObj) {//it's the old setting for the patient, whether or not they actually changed it.
-						_listSheetImportRows[e.Row].DoImport=false;//so no need to import
+					else if(_listImportRows[e.Row].OldValObj!=null && (int)_listImportRows[e.Row].ImpValObj==(int)_listImportRows[e.Row].OldValObj) {//it's the old setting for the patient, whether or not they actually changed it.
+						_listImportRows[e.Row].DoImport=false;//so no need to import
 					}
 					else {
-						_listSheetImportRows[e.Row].DoImport=true;
+						_listImportRows[e.Row].DoImport=true;
 					}
 				}
 			}
 			#endregion
 			#region DateTime
-			else if(_listSheetImportRows[e.Row].ObjType==typeof(DateTime)) {//this is only for one field so far: Birthdate
+			else if(_listImportRows[e.Row].TypeObj==typeof(DateTime)) {//this is only for one field so far: Birthdate
 				InputBoxParam inputBoxParam=new InputBoxParam();
 				inputBoxParam.InputBoxType_=InputBoxType.ValidDate;
-				inputBoxParam.LabelText=_listSheetImportRows[e.Row].FieldName;
+				inputBoxParam.LabelText=_listImportRows[e.Row].FieldName;
 				//Display the importing date if valid, otherwise display the invalid date from the form.
-				if(_listSheetImportRows[e.Row].ImpValDisplay==INVALID_DATE){
-					inputBoxParam.Text=_listSheetImportRows[e.Row].NewValDisplay;
+				if(_listImportRows[e.Row].ImpValDisplay==INVALID_DATE){
+					inputBoxParam.Text=_listImportRows[e.Row].NewValDisplay;
 				}
 				else {
-					inputBoxParam.Text=_listSheetImportRows[e.Row].ImpValDisplay;
+					inputBoxParam.Text=_listImportRows[e.Row].ImpValDisplay;
 				}
 				InputBox inputBox=new InputBox(inputBoxParam);//Display the date format that the current computer will use when parsing the date.
 				inputBox.ShowDialog();
@@ -1972,55 +2537,55 @@ namespace OpenDental {
 				}
 				DateTime dateTimeEntered=inputBox.DateResult;
 				if(dateTimeEntered==DateTime.MinValue) {
-					_listSheetImportRows[e.Row].ImpValDisplay="";
+					_listImportRows[e.Row].ImpValDisplay="";
 				}
 				else if(dateTimeEntered.Year<1880 || dateTimeEntered.Year>2050) {
 					MsgBox.Show(this,INVALID_DATE);
 					return;
 				}
 				else {
-					_listSheetImportRows[e.Row].ImpValDisplay=dateTimeEntered.ToShortDateString();
+					_listImportRows[e.Row].ImpValDisplay=dateTimeEntered.ToShortDateString();
 				}
-				_listSheetImportRows[e.Row].ImpValObj=dateTimeEntered;
-				if(_listSheetImportRows[e.Row].ImpValDisplay==_listSheetImportRows[e.Row].OldValDisplay) {//value is now same as original
-					_listSheetImportRows[e.Row].DoImport=false;
+				_listImportRows[e.Row].ImpValObj=dateTimeEntered;
+				if(_listImportRows[e.Row].ImpValDisplay==_listImportRows[e.Row].OldValDisplay) {//value is now same as original
+					_listImportRows[e.Row].DoImport=false;
 				}
 				else {
-					_listSheetImportRows[e.Row].DoImport=true;
+					_listImportRows[e.Row].DoImport=true;
 				}
 			}
 			#endregion
 			#region Medication, Allergy or Disease
-			else if(_listSheetImportRows[e.Row].ObjType==typeof(MedicationPat)
-				|| _listSheetImportRows[e.Row].ObjType==typeof(Allergy)
-				|| _listSheetImportRows[e.Row].ObjType==typeof(Disease)) 
+			else if(_listImportRows[e.Row].TypeObj==typeof(MedicationPat)
+				|| _listImportRows[e.Row].TypeObj==typeof(Allergy)
+				|| _listImportRows[e.Row].TypeObj==typeof(Disease)) 
 			{
 				//User entered medications will have a MedicationNum as the ImpValObj.
-				if(_listSheetImportRows[e.Row].ImpValObj.GetType()==typeof(long)) {
+				if(_listImportRows[e.Row].ImpValObj.GetType()==typeof(long)) {
 					using FormMedications formMedications=new FormMedications();
 					formMedications.IsSelectionMode=true;
-					formMedications.textSearch.Text=_listSheetImportRows[e.Row].FieldName.Trim();
+					formMedications.textSearch.Text=_listImportRows[e.Row].FieldName.Trim();
 					formMedications.ShowDialog();
 					if(formMedications.DialogResult!=DialogResult.OK) {
 						return;
 					}
-					_listSheetImportRows[e.Row].ImpValDisplay="Y";
-					_listSheetImportRows[e.Row].ImpValObj=formMedications.SelectedMedicationNum;
+					_listImportRows[e.Row].ImpValDisplay="Y";
+					_listImportRows[e.Row].ImpValObj=formMedications.SelectedMedicationNum;
 					string descript=Medications.GetDescription(formMedications.SelectedMedicationNum);
-					_listSheetImportRows[e.Row].FieldDisplay=descript;
-					((SheetField)_listSheetImportRows[e.Row].NewValObj).FieldValue=descript;
-					_listSheetImportRows[e.Row].NewValDisplay="Y";
-					_listSheetImportRows[e.Row].DoImport=true;
-					_listSheetImportRows[e.Row].IsFlaggedImp=false;
+					_listImportRows[e.Row].FieldDisplay=descript;
+					((SheetField)_listImportRows[e.Row].NewValObj).FieldValue=descript;
+					_listImportRows[e.Row].NewValDisplay="Y";
+					_listImportRows[e.Row].DoImport=true;
+					_listImportRows[e.Row].IsImportRed=false;
 				}
 				else {
-					using FormSheetImportEnumPicker formSheetImportEnumPicker=new FormSheetImportEnumPicker(_listSheetImportRows[e.Row].FieldName);
+					using FormSheetImportEnumPicker formSheetImportEnumPicker=new FormSheetImportEnumPicker(_listImportRows[e.Row].FieldName);
 					formSheetImportEnumPicker.listResult.Items.AddEnums<YN>();
 					formSheetImportEnumPicker.listResult.SelectedIndex=0;//Unknown
-					if(_listSheetImportRows[e.Row].ImpValDisplay=="Y") {
+					if(_listImportRows[e.Row].ImpValDisplay=="Y") {
 						formSheetImportEnumPicker.listResult.SelectedIndex=1;
 					}
-					if(_listSheetImportRows[e.Row].ImpValDisplay=="N") {
+					if(_listImportRows[e.Row].ImpValDisplay=="N") {
 						formSheetImportEnumPicker.listResult.SelectedIndex=2;
 					}
 					formSheetImportEnumPicker.ShowDialog();
@@ -2030,29 +2595,29 @@ namespace OpenDental {
 					int selectedI=formSheetImportEnumPicker.listResult.SelectedIndex;
 					switch(selectedI) {
 						case 0:
-							_listSheetImportRows[e.Row].ImpValDisplay="";
+							_listImportRows[e.Row].ImpValDisplay="";
 							break;
 						case 1:
-							_listSheetImportRows[e.Row].ImpValDisplay="Y";
+							_listImportRows[e.Row].ImpValDisplay="Y";
 							break;
 						case 2:
-							_listSheetImportRows[e.Row].ImpValDisplay="N";
+							_listImportRows[e.Row].ImpValDisplay="N";
 							break;
 					}
-					if(_listSheetImportRows[e.Row].OldValDisplay==_listSheetImportRows[e.Row].ImpValDisplay) {//value is now same as original
-						_listSheetImportRows[e.Row].DoImport=false;
+					if(_listImportRows[e.Row].OldValDisplay==_listImportRows[e.Row].ImpValDisplay) {//value is now same as original
+						_listImportRows[e.Row].DoImport=false;
 					}
 					else {
-						_listSheetImportRows[e.Row].DoImport=true;
+						_listImportRows[e.Row].DoImport=true;
 					}
 					if(selectedI==-1 || selectedI==0) {
-						_listSheetImportRows[e.Row].DoImport=false;
+						_listImportRows[e.Row].DoImport=false;
 					}
 				}
 			}
 			#endregion
 			#region Subscriber
-			else if(_listSheetImportRows[e.Row].ObjType==typeof(Patient)) {
+			else if(_listImportRows[e.Row].TypeObj==typeof(Patient)) {
 				Patient patientSubscriber=new Patient();
 				using FormSubscriberSelect formSubscriberSelect=new FormSubscriberSelect(_family);
 				formSubscriberSelect.ShowDialog();
@@ -2065,25 +2630,25 @@ namespace OpenDental {
 				}
 				//Use GetNameFirst() because this is how OldValDisplay is displayed.
 				string patName=Patients.GetNameFirst(patientSubscriber.FName,patientSubscriber.Preferred);
-				if(_listSheetImportRows[e.Row].OldValDisplay==patName) {
-					_listSheetImportRows[e.Row].DoImport=false;
+				if(_listImportRows[e.Row].OldValDisplay==patName) {
+					_listImportRows[e.Row].DoImport=false;
 				}
 				else {
-					_listSheetImportRows[e.Row].DoImport=true;
+					_listImportRows[e.Row].DoImport=true;
 				}
-				_listSheetImportRows[e.Row].ImpValDisplay=patName;
-				_listSheetImportRows[e.Row].ImpValObj=patientSubscriber;
+				_listImportRows[e.Row].ImpValDisplay=patName;
+				_listImportRows[e.Row].ImpValObj=patientSubscriber;
 			}
 			#endregion
 			#region Carrier
-			else if(_listSheetImportRows[e.Row].ObjType==typeof(Carrier)) {
+			else if(_listImportRows[e.Row].TypeObj==typeof(Carrier)) {
 				//Change both carrier rows at the same time.
 				string insStr="ins1";
-				if(_listSheetImportRows[e.Row].FieldName.StartsWith("ins2")) {
+				if(_listImportRows[e.Row].FieldName.StartsWith("ins2")) {
 					insStr="ins2";
 				}
-				SheetImportRow sheetImportRowCarrierName=GetImportRowByFieldName(insStr+"CarrierName");
-				SheetImportRow sheetImportRowCarrierPhone=GetImportRowByFieldName(insStr+"CarrierPhone");
+				ImportRow sheetImportRowCarrierName=GetImportRowByFieldName(insStr+"CarrierName");
+				ImportRow sheetImportRowCarrierPhone=GetImportRowByFieldName(insStr+"CarrierPhone");
 				Carrier carrier=new Carrier();
 				using FormCarriers formCarriers=new FormCarriers();
 				formCarriers.IsSelectMode=true;
@@ -2149,11 +2714,11 @@ namespace OpenDental {
 				insStr="ins2";
 			}
 			//Load up all five required insurance rows.
-			SheetImportRow sheetImportRowRelation=GetImportRowByFieldName(insStr+"Relat");
-			SheetImportRow sheetImportRowSubscriber=GetImportRowByFieldName(insStr+"Subscriber");
-			SheetImportRow sheetImportRowSubscriberId=GetImportRowByFieldName(insStr+"SubscriberID");
-			SheetImportRow sheetImportRowCarrierName=GetImportRowByFieldName(insStr+"CarrierName");
-			SheetImportRow sheetImportRowCarrierPhone=GetImportRowByFieldName(insStr+"CarrierPhone");
+			ImportRow sheetImportRowRelation=GetImportRowByFieldName(insStr+"Relat");
+			ImportRow sheetImportRowSubscriber=GetImportRowByFieldName(insStr+"Subscriber");
+			ImportRow sheetImportRowSubscriberId=GetImportRowByFieldName(insStr+"SubscriberID");
+			ImportRow sheetImportRowCarrierName=GetImportRowByFieldName(insStr+"CarrierName");
+			ImportRow sheetImportRowCarrierPhone=GetImportRowByFieldName(insStr+"CarrierPhone");
 			//Check if all of the required insurance fields exist on this sheet.
 			if(sheetImportRowRelation==null 
 				|| sheetImportRowSubscriber==null
@@ -2174,11 +2739,11 @@ namespace OpenDental {
 				insStr="ins2";
 			}
 			//Only five ins fields have the possibility of DoImport being automatically set to true.  The others require a double click.
-			SheetImportRow sheetImportRowRelation=GetImportRowByFieldName(insStr+"Relat");
-			SheetImportRow sheetImportRowSubscriberId=GetImportRowByFieldName(insStr+"SubscriberID");
-			SheetImportRow sheetImportRowEmployerName=GetImportRowByFieldName(insStr+"EmployerName");
-			SheetImportRow sheetImportRowGroupName=GetImportRowByFieldName(insStr+"GroupName");
-			SheetImportRow sheetImportRowGroupNum=GetImportRowByFieldName(insStr+"GroupNum");
+			ImportRow sheetImportRowRelation=GetImportRowByFieldName(insStr+"Relat");
+			ImportRow sheetImportRowSubscriberId=GetImportRowByFieldName(insStr+"SubscriberID");
+			ImportRow sheetImportRowEmployerName=GetImportRowByFieldName(insStr+"EmployerName");
+			ImportRow sheetImportRowGroupName=GetImportRowByFieldName(insStr+"GroupName");
+			ImportRow sheetImportRowGroupNum=GetImportRowByFieldName(insStr+"GroupNum");
 			if(sheetImportRowRelation!=null) {
 				sheetImportRowRelation.DoImport=false;
 				isChanged=true;
@@ -2220,14 +2785,14 @@ namespace OpenDental {
 				ordinal=2;
 			}
 			//Load up every insurance row related to the particular ins.
-			SheetImportRow sheetImportRowRelation=GetImportRowByFieldName(insStr+"Relat");
-			SheetImportRow sheetImportRowSubscriber=GetImportRowByFieldName(insStr+"Subscriber");
-			SheetImportRow sheetImportRowSubscriberId=GetImportRowByFieldName(insStr+"SubscriberID");
-			SheetImportRow sheetImportRowCarrierName=GetImportRowByFieldName(insStr+"CarrierName");
-			SheetImportRow sheetImportRowCarrierPhone=GetImportRowByFieldName(insStr+"CarrierPhone");
-			SheetImportRow sheetImportRowEmployerName=GetImportRowByFieldName(insStr+"EmployerName");
-			SheetImportRow sheetImportRowGroupName=GetImportRowByFieldName(insStr+"GroupName");
-			SheetImportRow sheetImportRowGroupNum=GetImportRowByFieldName(insStr+"GroupNum");
+			ImportRow sheetImportRowRelation=GetImportRowByFieldName(insStr+"Relat");
+			ImportRow sheetImportRowSubscriber=GetImportRowByFieldName(insStr+"Subscriber");
+			ImportRow sheetImportRowSubscriberId=GetImportRowByFieldName(insStr+"SubscriberID");
+			ImportRow sheetImportRowCarrierName=GetImportRowByFieldName(insStr+"CarrierName");
+			ImportRow sheetImportRowCarrierPhone=GetImportRowByFieldName(insStr+"CarrierPhone");
+			ImportRow sheetImportRowEmployerName=GetImportRowByFieldName(insStr+"EmployerName");
+			ImportRow sheetImportRowGroupName=GetImportRowByFieldName(insStr+"GroupName");
+			ImportRow sheetImportRowGroupNum=GetImportRowByFieldName(insStr+"GroupNum");
 			//Check if the required insurance fields exist on this sheet.
 			//NOTE: Employer, group name and group num are optional fields.
 			//Checking for nulls in the required fields still needs to be here in this method in case the user has the required fields for one insurance plan but not enough for the other.  They will hit this code ONLY if they have flagged one of the fields on the "other" insurance plan for import that does not have all of the required fields.
@@ -2468,76 +3033,78 @@ namespace OpenDental {
 				+createNewPlanMsg,Lan.g(this,"Import ")+insStr+importValue,msgBoxButton);
 		}
 
-		private void butOK_Click(object sender,EventArgs e) {
-			if(!_listSheetImportRows.Any(x => x.DoImport)) {
+		private void butImport_Click(object sender,EventArgs e) {
+			if(!_listImportRows.Any(x => x.DoImport)) {
 				MsgBox.Show(this,"No rows are set for import.");
 				return;
 			}
-			if(_listSheetImportRows.Any(x => x.DoImport && x.ImpValObj is DateTime && x.ImpValDisplay==INVALID_DATE)) {
+			if(_listImportRows.Any(x => x.DoImport && x.ImpValObj is DateTime && x.ImpValDisplay==INVALID_DATE)) {
 				MsgBox.Show(this,$"Please fix data entry errors first (ImportValues with '{INVALID_DATE}').");
 				return;
 			}
 			#region Patient Form
-			if(SheetCur.SheetType==SheetTypeEnum.PatientForm) {
+			if(EFormCur!=null
+				|| (SheetCur!=null && SheetCur.SheetType==SheetTypeEnum.PatientForm)) 
+			{
 				bool isImportingPriIns=false;
 				bool isImportingSecIns=false;
 				List<RefAttach> listRefAttaches=new List<RefAttach>();
-				for(int i=0;i<_listSheetImportRows.Count;i++) {
-					if(!_listSheetImportRows[i].DoImport) {
+				for(int i=0;i<_listImportRows.Count;i++) {
+					if(!_listImportRows[i].DoImport) {
 						continue;
 					}
 					//Importing insurance happens later.
-					if(_listSheetImportRows[i].FieldName.StartsWith("ins1")) {
+					if(_listImportRows[i].FieldName.StartsWith("ins1")) {
 						isImportingPriIns=true;
 						continue;
 					}
-					if(_listSheetImportRows[i].FieldName.StartsWith("ins2")) {
+					if(_listImportRows[i].FieldName.StartsWith("ins2")) {
 						isImportingSecIns=true;
 						continue;
 					}
-					switch(_listSheetImportRows[i].FieldName) {
+					switch(_listImportRows[i].FieldName) {
 						#region Personal
 						case "LName":
-							_patient.LName=_listSheetImportRows[i].ImpValDisplay;
+							_patient.LName=_listImportRows[i].ImpValDisplay;
 							break;
 						case "FName":
-							_patient.FName=_listSheetImportRows[i].ImpValDisplay;
+							_patient.FName=_listImportRows[i].ImpValDisplay;
 							break;
 						case "MiddleI":
-							_patient.MiddleI=_listSheetImportRows[i].ImpValDisplay;
+							_patient.MiddleI=_listImportRows[i].ImpValDisplay;
 							break;
 						case "Preferred":
-							_patient.Preferred=_listSheetImportRows[i].ImpValDisplay;
+							_patient.Preferred=_listImportRows[i].ImpValDisplay;
 							break;
 						case "Gender":
-							_patient.Gender=(PatientGender)_listSheetImportRows[i].ImpValObj;
+							_patient.Gender=(PatientGender)_listImportRows[i].ImpValObj;
 							break;
 						case "Position":
-							_patient.Position=(PatientPosition)_listSheetImportRows[i].ImpValObj;
+							_patient.Position=(PatientPosition)_listImportRows[i].ImpValObj;
 							break;
 						case "Birthdate":
-							_patient.Birthdate=(DateTime)_listSheetImportRows[i].ImpValObj;
+							_patient.Birthdate=(DateTime)_listImportRows[i].ImpValObj;
 							break;
 						case "SSN":
-							_patient.SSN=_listSheetImportRows[i].ImpValDisplay;
+							_patient.SSN=_listImportRows[i].ImpValDisplay;
 							break;
 						case "WkPhone":
-							_patient.WkPhone=_listSheetImportRows[i].ImpValDisplay;
+							_patient.WkPhone=_listImportRows[i].ImpValDisplay;
 							break;
 						case "WirelessPhone":
-							_patient.WirelessPhone=_listSheetImportRows[i].ImpValDisplay;
+							_patient.WirelessPhone=_listImportRows[i].ImpValDisplay;
 							break;
 						case "Email":
-							_patient.Email=_listSheetImportRows[i].ImpValDisplay;
+							_patient.Email=_listImportRows[i].ImpValDisplay;
 							break;
 						case "PreferContactMethod":
-							_patient.PreferContactMethod=(ContactMethod)_listSheetImportRows[i].ImpValObj;
+							_patient.PreferContactMethod=(ContactMethod)_listImportRows[i].ImpValObj;
 							break;
 						case "PreferConfirmMethod":
-							_patient.PreferConfirmMethod=(ContactMethod)_listSheetImportRows[i].ImpValObj;
+							_patient.PreferConfirmMethod=(ContactMethod)_listImportRows[i].ImpValObj;
 							break;
 						case "PreferRecallMethod":
-							_patient.PreferRecallMethod=(ContactMethod)_listSheetImportRows[i].ImpValObj;
+							_patient.PreferRecallMethod=(ContactMethod)_listImportRows[i].ImpValObj;
 							break;
 						case "referredFrom":
 							RefAttach refAttach=new RefAttach();
@@ -2545,32 +3112,32 @@ namespace OpenDental {
 							refAttach.ItemOrder=1;
 							refAttach.PatNum=_patient.PatNum;
 							refAttach.RefDate=DateTime.Today;
-							refAttach.ReferralNum=((Referral)_listSheetImportRows[i].ImpValObj).ReferralNum;
+							refAttach.ReferralNum=((Referral)_listImportRows[i].ImpValObj).ReferralNum;
 							listRefAttaches.Add(refAttach);
 							break;
 						#endregion
 						#region Address and Home Phone
 						//AddressSameForFam already set, but not really importable by itself
 						case "Address":
-							_patient.Address=_listSheetImportRows[i].ImpValDisplay;
+							_patient.Address=_listImportRows[i].ImpValDisplay;
 							break;
 						case "Address2":
-							_patient.Address2=_listSheetImportRows[i].ImpValDisplay;
+							_patient.Address2=_listImportRows[i].ImpValDisplay;
 							break;
 						case "City":
-							_patient.City=_listSheetImportRows[i].ImpValDisplay;
+							_patient.City=_listImportRows[i].ImpValDisplay;
 							break;
 						case "State":
-							_patient.State=_listSheetImportRows[i].ImpValDisplay;
+							_patient.State=_listImportRows[i].ImpValDisplay;
 							break;
 						case "StateNoValidation":
-							_patient.State=_listSheetImportRows[i].ImpValDisplay;
+							_patient.State=_listImportRows[i].ImpValDisplay;
 							break;
 						case "Zip":
-							_patient.Zip=_listSheetImportRows[i].ImpValDisplay;
+							_patient.Zip=_listImportRows[i].ImpValDisplay;
 							break;
 						case "HmPhone":
-							_patient.HmPhone=_listSheetImportRows[i].ImpValDisplay;
+							_patient.HmPhone=_listImportRows[i].ImpValDisplay;
 							break;
 						#endregion
 					}
@@ -2644,30 +3211,32 @@ namespace OpenDental {
 				}
 			}
 			#endregion
-			#region Medical History
-			else if(SheetCur.SheetType==SheetTypeEnum.MedicalHistory) {
-				for(int i=0;i<_listSheetImportRows.Count;i++) {
-					if(!_listSheetImportRows[i].DoImport) {
+			#region Medical History (Sheets)
+			if(SheetCur!=null && SheetCur.SheetType==SheetTypeEnum.MedicalHistory){
+				for(int i=0;i<_listImportRows.Count;i++) {
+					if(!_listImportRows[i].DoImport) {
 						continue;
 					}
-					if(_listSheetImportRows[i].ObjType==null) {//Should never happen.
+					if(_listImportRows[i].TypeObj==null) {//Should never happen.
 						continue;
 					}
+					//The reason it was written like this was to catch all allergies, meds, and diseases.
+					//All of those would have a Y or N in the import column. 
 					YN hasValue=YN.Unknown;
-					if(_listSheetImportRows[i].ImpValDisplay=="Y") {
+					if(_listImportRows[i].ImpValDisplay=="Y") {
 						hasValue=YN.Yes;
 					}
-					if(_listSheetImportRows[i].ImpValDisplay=="N") {
+					if(_listImportRows[i].ImpValDisplay=="N") {
 						hasValue=YN.No;
 					}
 					if(hasValue==YN.Unknown) {//Unknown, nothing to do.
 						continue;
 					}
-					#region Allergies
-					if(_listSheetImportRows[i].ObjType==typeof(Allergy)) {
+					#region Allergies (sheets)
+					if(_listImportRows[i].TypeObj==typeof(Allergy)) {
 						//Patient has this allergy in the db so just update the value.
-						if(_listSheetImportRows[i].OldValObj!=null) {
-							Allergy allergyOld=(Allergy)_listSheetImportRows[i].OldValObj;
+						if(_listImportRows[i].OldValObj!=null) {
+							Allergy allergyOld=(Allergy)_listImportRows[i].OldValObj;
 							if(hasValue==YN.Yes) {
 								allergyOld.StatusIsActive=true;
 							}
@@ -2682,7 +3251,7 @@ namespace OpenDental {
 						}
 						//Allergy does not exist for this patient yet so create one.
 						List<AllergyDef> listAllergyDefs=AllergyDefs.GetAll(false);
-						SheetField sheetFieldAllergy=(SheetField)_listSheetImportRows[i].NewValObj;
+						SheetField sheetFieldAllergy=(SheetField)_listImportRows[i].NewValObj;
 						//Find what allergy user wants to import.
 						for(int j=0;j<listAllergyDefs.Count;j++) {
 							if(listAllergyDefs[j].Description==sheetFieldAllergy.FieldName.Remove(0,8)) {
@@ -2695,13 +3264,13 @@ namespace OpenDental {
 							}
 						}
 					}
-					#endregion
-					#region Medications
-					else if(_listSheetImportRows[i].ObjType==typeof(MedicationPat)) {
+					#endregion Allergies (sheets)
+					#region Medications (sheets)
+					else if(_listImportRows[i].TypeObj==typeof(MedicationPat)) {
 						//Patient has this medication in the db so leave it alone or set the stop date.
-						if(_listSheetImportRows[i].OldValObj!=null) {
+						if(_listImportRows[i].OldValObj!=null) {
 						//Set the stop date for the current medication(s).
-							MedicationPat medicationPatOld=(MedicationPat)_listSheetImportRows[i].OldValObj;
+							MedicationPat medicationPatOld=(MedicationPat)_listImportRows[i].OldValObj;
 							if(hasValue==YN.Yes) {
 								if(!MedicationPats.IsMedActive(medicationPatOld)) {
 									medicationPatOld.DateStop=new DateTime(0001,1,1);//This will activate the med.
@@ -2718,7 +3287,7 @@ namespace OpenDental {
 						}
 						//Medication does not exist for this patient yet so create it.
 						List<Medication> listMedications=Medications.GetList("");
-						SheetField sheetFieldMed=(SheetField)_listSheetImportRows[i].NewValObj;
+						SheetField sheetFieldMed=(SheetField)_listImportRows[i].NewValObj;
 						//Find what medication user wants to import.
 						for(int j=0;j<listMedications.Count;j++) {
 							if(Medications.GetDescription(listMedications[j].MedicationNum)==sheetFieldMed.FieldValue) {
@@ -2730,12 +3299,12 @@ namespace OpenDental {
 							}
 						}
 					}
-					#endregion
-					#region Diseases
-					else if(_listSheetImportRows[i].ObjType==typeof(Disease)) {
+					#endregion Medications (sheets)
+					#region Diseases (sheets)
+					else if(_listImportRows[i].TypeObj==typeof(Disease)) {
 						//Patient has this problem in the db so just update the value.
-						if(_listSheetImportRows[i].OldValObj!=null) {
-							Disease diseaseOld=(Disease)_listSheetImportRows[i].OldValObj;
+						if(_listImportRows[i].OldValObj!=null) {
+							Disease diseaseOld=(Disease)_listImportRows[i].OldValObj;
 							if(hasValue==YN.Yes) {
 								diseaseOld.ProbStatus=ProblemStatus.Active;
 							}
@@ -2749,7 +3318,7 @@ namespace OpenDental {
 							continue;
 						}
 						//Problem does not exist for this patient yet so create one.
-						SheetField sheetFieldDisease=(SheetField)_listSheetImportRows[i].NewValObj;
+						SheetField sheetFieldDisease=(SheetField)_listImportRows[i].NewValObj;
 						List<DiseaseDef> listDiseaseDefs=DiseaseDefs.GetDeepCopy(true);
 						//Find what allergy user wants to import.
 						for(int j=0;j<listDiseaseDefs.Count;j++) {
@@ -2763,12 +3332,168 @@ namespace OpenDental {
 							}
 						}
 					}
-					#endregion
+					#endregion Diseases (sheets)
 				}
 			}
-			#endregion
+			#endregion Medical History (Sheets)
+			#region Allergies (eForms)
+			if(EFormCur!=null && _hasSectionAllergies){
+				List<AllergyDef> listAllergyDefs=AllergyDefs.GetAll(includeHidden:false);//from db. AllergyDefs are oddly not cached.
+				List<Allergy> listAllergiesPat=Allergies.GetAll(_patient.PatNum,showInactive:false);//just active allergies
+				for(int i=0;i<_listImportRows.Count;i++) {
+					if(_listImportRows[i].TypeObj!=typeof(Allergy)){
+						continue;
+					}
+					if(!_listImportRows[i].DoImport) {
+						continue;
+					}
+					if(_listImportRows[i].DoRemove){
+						Allergy allergy=_listImportRows[i].OldValObj as Allergy;
+						allergy.StatusIsActive=false;
+						Allergies.Update(allergy);
+						continue;
+					}
+					if(_listImportRows[i].DoAdd){
+						//The allergy could be here from checking a box or typing it in.
+						AllergyDef allergyDef=listAllergyDefs.Find(x=>x.Description.ToLower()==_listImportRows[i].NewValDisplay.ToLower());
+						if(allergyDef==null){
+							//This allergy that they typed in does not have any matching allergyDef, so we will use "Other".
+							//This won't happen for checkboxes, because we already added a def.
+							AllergyDef allergyDefOther=listAllergyDefs.Find(x=>x.Description=="Other");
+							if(allergyDefOther==null){//this will only happen once, and then all patients will reuse it for years.
+								allergyDefOther=new AllergyDef();
+								allergyDefOther.Description="Other";
+								AllergyDefs.Insert(allergyDefOther);
+								listAllergyDefs=AllergyDefs.GetAll(includeHidden:false);
+								//DataValid.SetInvalid would be used instead if this was cached.
+							}
+							//allergyDefOther is now guaranteed to be valid
+							Allergy allergyOther=listAllergiesPat.Find(x=>x.AllergyDefNum==allergyDefOther.AllergyDefNum && x.Reaction==_listImportRows[i].NewValDisplay);
+							if(allergyOther==null){
+								//This patient does not have an active "Other" allergy representing the allergy that was typed in
+								allergyOther=new Allergy();
+								allergyOther.PatNum=_patient.PatNum;
+								allergyOther.AllergyDefNum=allergyDefOther.AllergyDefNum;
+								allergyOther.Reaction=_listImportRows[i].NewValDisplay;
+								allergyOther.StatusIsActive=true;
+								Allergies.Insert(allergyOther);
+								continue;
+							}
+							//This patient already has an active "Other" allergy representing the allergy that was typed in
+							//so db will not need to change.
+							continue;
+						}//allergyDef==null
+						//adding an allergy with known defNum
+						Allergy allergy=new Allergy();
+						allergy.PatNum=_patient.PatNum;
+						allergy.AllergyDefNum=allergyDef.AllergyDefNum;
+						allergy.StatusIsActive=true;
+						Allergies.Insert(allergy);
+						continue;
+					}
+				}
+			}
+			#endregion Allergies (eForms)
+			#region Meds (eForms)
+			if(EFormCur!=null && _hasSectionMeds){
+				List<MedicationPat> listMedicationPats=MedicationPats.Refresh(_patient.PatNum,includeDiscontinued:false);
+				for(int i=0;i<_listImportRows.Count;i++) {
+					if(_listImportRows[i].TypeObj!=typeof(MedicationPat)){
+						continue;
+					}
+					if(!_listImportRows[i].DoImport) {
+						continue;
+					}
+					if(_listImportRows[i].MedDoImportCol2 && !_listImportRows[i].DoAdd){
+						MedicationPat medicationPat=_listImportRows[i].OldValObj as MedicationPat;
+						medicationPat.PatNote=_listImportRows[i].MedStrengthFreq;
+						MedicationPats.Update(medicationPat);
+						continue;
+					}
+					if(_listImportRows[i].DoRemove){
+						MedicationPat medicationPat=_listImportRows[i].OldValObj as MedicationPat;
+						medicationPat.DateStop=DateTime.Today.AddDays(-1);
+						MedicationPats.Update(medicationPat);
+						continue;
+					}
+					if(_listImportRows[i].DoAdd){
+						MedicationPat medicationPat=new MedicationPat();
+						medicationPat.PatNum=_patient.PatNum;
+						Medication medication=Medications.GetFirstOrDefault(x=>x.MedName.ToLower()==_listImportRows[i].MedName.ToLower());
+						if(medication is null){
+							//There is no existing med (def) in the db with that name, so use the weaker unlinked strategy
+							medicationPat.MedDescript=_listImportRows[i].MedName;
+						}
+						else{
+							medicationPat.MedicationNum=medication.MedicationNum;
+						}
+						if(_listImportRows[i].MedDoImportCol2){
+							medicationPat.PatNote=_listImportRows[i].MedStrengthFreq;
+						}
+						MedicationPats.Insert(medicationPat);
+					}
+				}
+			}
+			#endregion Meds (eForms)
+			#region Problems (eForms)
+			if(EFormCur!=null && _hasSectionProblems){
+				List<Disease> listDiseasesPat=Diseases.Refresh(_patient.PatNum,showActiveOnly:true);
+				for(int i=0;i<_listImportRows.Count;i++) {
+					if(_listImportRows[i].TypeObj!=typeof(Disease)){
+						continue;
+					}
+					if(!_listImportRows[i].DoImport) {
+						continue;
+					}
+					if(_listImportRows[i].DoRemove){
+						Disease disease=_listImportRows[i].OldValObj as Disease;
+						disease.ProbStatus=ProblemStatus.Inactive;
+						disease.DateStop=DateTime.Today.AddDays(-1);//yesterday
+						Diseases.Update(disease);
+						continue;
+					}
+					if(_listImportRows[i].DoAdd){
+						//The disease could be here from checking a box or typing it in.
+						DiseaseDef diseaseDef=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseName.ToLower()==_listImportRows[i].NewValDisplay.ToLower());
+						if(diseaseDef==null){
+							//This disease that they typed in does not have any matching diseaseDef, so we will use "Other".
+							//This won't happen for checkboxes, because we already added a def.
+							DiseaseDef diseaseDefOther=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseName=="Other");
+							if(diseaseDefOther==null){//this will only happen once, and then all patients will reuse it for years.
+								diseaseDefOther=new DiseaseDef();
+								diseaseDefOther.DiseaseName="Other";
+								DiseaseDefs.Insert(diseaseDefOther);
+								DataValid.SetInvalid(InvalidType.Diseases);
+							}
+							//diseaseDefOther is now guaranteed to be valid
+							Disease diseaseOther=listDiseasesPat.Find(x=>x.DiseaseDefNum==diseaseDefOther.DiseaseDefNum && x.PatNote==_listImportRows[i].NewValDisplay);
+							if(diseaseOther==null){
+								//This patient does not have an active "Other" disease representing the disease that was typed in
+								diseaseOther=new Disease();
+								diseaseOther.PatNum=_patient.PatNum;
+								diseaseOther.DiseaseDefNum=diseaseDefOther.DiseaseDefNum;
+								diseaseOther.PatNote=_listImportRows[i].NewValDisplay;
+								diseaseOther.ProbStatus=ProblemStatus.Active;
+								Diseases.Insert(diseaseOther);
+								continue;
+							}
+							//This patient already has an active "Other" disease representing the disease that was typed in
+							//so db will not need to change.
+							continue;
+						}//diseaseDef==null
+						//adding an disease with known defNum
+						Disease disease=new Disease();
+						disease.PatNum=_patient.PatNum;
+						disease.DiseaseDefNum=diseaseDef.DiseaseDefNum;
+						disease.ProbStatus=ProblemStatus.Active;
+						Diseases.Insert(disease);
+						continue;
+					}
+				}
+			}
+			#endregion Problems (eForms)
 			#region ICE
-			List<SheetImportRow> listSheetImportRowsFieldsIce = _listSheetImportRows.FindAll(x => x.FieldName.StartsWith("ICE") && x.DoImport);
+			List<ImportRow> listSheetImportRowsFieldsIce = _listImportRows.FindAll(x => x.FieldName.StartsWith("ICE") && x.DoImport);
 			if(listSheetImportRowsFieldsIce.Count>0) {
 				for(int i=0;i<listSheetImportRowsFieldsIce.Count;i++){
 					switch(listSheetImportRowsFieldsIce[i].FieldName) {
@@ -2792,7 +3517,6 @@ namespace OpenDental {
 			MsgBox.Show(this,"Done.");
 			DialogResult=DialogResult.OK;
 		}
-
 
 		/// <summary> Loads the Image and sets it in the appropriate PictureBox in the ui if able, and parses stored OcrInsScanResponse. If image fails to load, returned value will be an empty OcrInsScanResponse.</summary>
 		private OcrInsScanResponse LoadOcrDataFromDocHelper(Document doc) {
@@ -2875,69 +3599,89 @@ namespace OpenDental {
 		}
 
 		private bool DoImport(string fieldName) {
-			for(int i=0;i<_listSheetImportRows.Count;i++) {
-				if(_listSheetImportRows[i].FieldName!=fieldName) {
+			for(int i=0;i<_listImportRows.Count;i++) {
+				if(_listImportRows[i].FieldName!=fieldName) {
 					continue;
 				}
-				return _listSheetImportRows[i].DoImport;
+				return _listImportRows[i].DoImport;
 			}
 			return false;
 		}
 
 		///<summary>Will return null if field not found or if field marked to not import.</summary>
 		private object GetImpObj(string fieldName) {
-			for(int i=0;i<_listSheetImportRows.Count;i++) {
-				if(_listSheetImportRows[i].FieldName!=fieldName) {
+			for(int i=0;i<_listImportRows.Count;i++) {
+				if(_listImportRows[i].FieldName!=fieldName) {
 					continue;
 				}
-				if(!_listSheetImportRows[i].DoImport) {
+				if(!_listImportRows[i].DoImport) {
 					return null;
 				}
-				return _listSheetImportRows[i].ImpValObj;
+				return _listImportRows[i].ImpValObj;
 			}
 			return null;
 		}
 
 		///<summary>Will return empty string field not found or if field marked to not import.</summary>
 		private string GetImpDisplay(string fieldName) {
-			for(int i=0;i<_listSheetImportRows.Count;i++) {
-				if(_listSheetImportRows[i].FieldName!=fieldName) {
+			for(int i=0;i<_listImportRows.Count;i++) {
+				if(_listImportRows[i].FieldName!=fieldName) {
 					continue;
 				}
-				if(!_listSheetImportRows[i].DoImport) {
+				if(!_listImportRows[i].DoImport) {
 					return "";
 				}
-				return _listSheetImportRows[i].ImpValDisplay;
+				return _listImportRows[i].ImpValDisplay;
 			}
 			return "";
 		}
 
 		///<summary>Returns a separator and sets the FieldName to the passed in string.</summary>
-		private SheetImportRow CreateSeparator(string displayText) {
-			SheetImportRow sheetImportRow=new SheetImportRow();
-			sheetImportRow.FieldName=displayText;
-			sheetImportRow.IsSeparator=true;
-			return sheetImportRow;
+		private ImportRow CreateSeparator(string displayText) {
+			ImportRow importRow=new ImportRow();
+			importRow.FieldName=displayText;
+			importRow.IsSectionHeader=true;
+			return importRow;
 		}
 
-		private class SheetImportRow {
+		private class ImportRow {
+			///<summary>This is the SheetField.FieldName which usually shows in the first column unless overridden by FieldDisplay</summary>
 			public string FieldName;
-			///<summary>Overrides FieldName.  If null, use FieldName;</summary>
+			///<summary>Overrides FieldName in first column. If null, use FieldName;</summary>
 			public string FieldDisplay;
+			///<summary>Displays in the Old Val column. Can be any altered string representation.</summary>
 			public string OldValDisplay;
+			///<summary>Frequently the same as OldValDisplay, but since it's an object, it can be an actual enum or some other object entirely, like an allergy.</summary>
 			public object OldValObj;
+			///<summary>Displays in the New Val column. Can be any altered string representation.</summary>
 			public string NewValDisplay;
+			///<summary>This is what the user entered. Frequently the same as NewValDisplay, but since it's an object, it can be an actual enum or some other object entirely, like an allergy.</summary>
 			public object NewValObj;
+			///<summary>Displays in the Imp Val column. Can be any altered string representation.</summary>
 			public string ImpValDisplay;
+			///<summary>This is what will be imported. Frequently the same as ImpValDisplay, but since it's an object, it can be an actual enum or some other object entirely, like an allergy.</summary>
 			public object ImpValObj;
+			///<summary>True if we will import. Shows as X in last column.</summary>
 			public bool DoImport;
-			public bool IsSeparator;
-			///<summary>This is needed because the NewValObj might be null.</summary>
-			public Type ObjType;
+			///<summary>A section header is darker and does not represent any import fields, but is instead the title for a group of them.</summary>
+			public bool IsSectionHeader;
+			///<summary>This can apply to Old, New, or Imp. Frequently some of those will be null and an object will only be present in other(s).</summary>
+			public Type TypeObj;
 			///<summary>Some fields are not importable, but they still need to be made obvious to user by coloring the user-entered value red.</summary>
-			public bool IsFlagged;
+			public bool IsNewValRed;
 			///<summary>The import cell is shown with colored text to prompt user to notice.</summary>
-			public bool IsFlaggedImp;
+			public bool IsImportRed;
+			//allergies, meds, probs==============================================
+			///<summary>This will trigger removal of an allergy, med, or disease from a patient by setting it inactive.</summary>
+			public bool DoRemove;
+			///<summary>This will trigger addition of an allergy, med, or disease to a patient.</summary>
+			public bool DoAdd;
+			///<summary>We need this for meds when we import. This is not what the patient entered or what we show to the user. Instead, it's the new value that should go in the db. So it's the original plus the appended.</summary>
+			public string MedStrengthFreq;
+			///<summary>We need this for meds when we import.</summary>
+			public string MedName;
+			///<summary>For now, true if they have one of the 4 import options set to true in setup. We might try to give them more control at import time.</summary>
+			public bool MedDoImportCol2;
 		}
 
 	}

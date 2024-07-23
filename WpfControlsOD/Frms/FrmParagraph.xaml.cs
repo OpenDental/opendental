@@ -31,6 +31,11 @@ namespace OpenDental {
 			listBoxAlignment.SelectedIndex=(int)TextAlignment_;
 		}
 
+		private void butHanging_Click(object sender,EventArgs e) {
+			textVIntIndent.Value=-25;
+			textVIntLeftMargin.Value=25;
+		}
+
 		private void butSave_Click(object sender, EventArgs e) {
 			if(!textVIntIndent.IsValid()){
 				MsgBox.Show("Please fix errors first.");

@@ -109,7 +109,7 @@ namespace OpenDental {
 			Children.Delete(frmChildEdit.ChildCur.ChildNum);
 		}
 
-		private void CheckBox_Click(object sender,EventArgs e) {
+		private void checkShowHidden_Click(object sender,EventArgs e) {
 			FillGrid();
 		}
 

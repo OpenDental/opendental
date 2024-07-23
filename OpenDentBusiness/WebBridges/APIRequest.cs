@@ -19,8 +19,8 @@ namespace OpenDentBusiness {
 		public static IApiRequest Inst { get;set; } = new APIRequest();
 
 		///<summary>Throws exception if the response from the server returned an http code of 300 or greater.</summary>
-		public T SendRequest<T>(string urlEndpoint,HttpMethod method,AuthenticationHeaderValue authHeaderVal,string body,HttpContentType contentType) {
-				return System.Threading.Tasks.Task.Run(async () => await SendRequestAsync<T>(urlEndpoint,method,authHeaderVal,body,contentType))
+		public T SendRequest<T>(string urlEndpoint,HttpMethod method,AuthenticationHeaderValue authHeaderVal,string body,HttpContentType contentType,HttpClient clientOverride=null,List<string> queryParameters=null,JsonSerializerSettings deserializeSettings=null) {
+				return System.Threading.Tasks.Task.Run(async () => await SendRequestAsync<T>(urlEndpoint,method,authHeaderVal,body,contentType,clientOverride,queryParameters,deserializeSettings))
 					.GetAwaiter()
 					.GetResult();
 		}
@@ -36,11 +36,14 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Throws exception if the response from the server returned an http code of 300 or greater. Any type that gets passed in and wants the status code must have a JSON property attribute 'ResponseCode'.</summary>
-		public async Task<T> SendRequestAsync<T>(string urlEndpoint,HttpMethod method,AuthenticationHeaderValue authHeaderVal,string body,HttpContentType contentType=HttpContentType.Json,HttpClient clientOverride=null) {
+		public async Task<T> SendRequestAsync<T>(string urlEndpoint,HttpMethod method,AuthenticationHeaderValue authHeaderVal,string body,HttpContentType contentType=HttpContentType.Json,HttpClient clientOverride=null,List<string> queryParameters=null,JsonSerializerSettings deserializeSettings=null) {
 			string res="";
 			HttpResponseMessage response=new HttpResponseMessage();
 			HttpClient client=clientOverride ?? new HttpClient();
 			bool disposeClient=clientOverride==null;// Dispose client only if it was created here
+			if(queryParameters!=null) {
+				urlEndpoint+="?"+string.Join("&",queryParameters);
+			}
 			try {
 				using(HttpRequestMessage request=new HttpRequestMessage(method,urlEndpoint)) {
 					if(authHeaderVal!=null) {
@@ -66,7 +69,7 @@ namespace OpenDentBusiness {
 				if(ODBuild.IsDebug() && (typeof(T)==typeof(string))) {//If user wants the entire json response as a string
 					return (T)Convert.ChangeType(res,typeof(T));
 				}
-				return JsonConvert.DeserializeObject<T>(res);
+				return JsonConvert.DeserializeObject<T>(res,deserializeSettings);
 			}
 			catch(HttpRequestException hre) {
 				string errorMsg=hre.Message+(string.IsNullOrWhiteSpace(res) ? "" : "\r\nRaw response:\r\n"+res);

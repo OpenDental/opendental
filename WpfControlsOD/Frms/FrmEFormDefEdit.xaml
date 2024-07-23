@@ -8,26 +8,30 @@
              mc:Ignorable="d"
              Width="675" Height="719" 
              Text="EForm Def Edit">
-    <Grid Background="#FFFCFDFE" >
-        <ui:Button x:Name="butDelete" Height="24" Margin="10,0,0,8" Text="Delete" Icon="DeleteX" Click="butDelete_Click" Width="84" VerticalAlignment="Bottom" />
-        <ui:GroupBox x:Name="groupSetTitle" Width="101" Height="276" Margin="25,144,0,0" TabIndexOD="2" Text="Add Field">
-            <ui:Button x:Name="butTextField" Margin="7,24,0,0" Text="Text Box" Click="butTextField_Click" Height="24" Width="87" />
-            <ui:Button x:Name="butLabel" Margin="7,49,0,0" Text="Label" Click="butLabel_Click" Height="24" Width="87" />
-            <ui:Button x:Name="butDateField" Margin="7,74,0,0" Text="Date Field" Click="butDateField_Click" Height="24" Width="87" />
-            <ui:Button x:Name="butCheckBox" Margin="7,114,0,0" Text="Check Box" Click="butCheckBox_Click" Height="24" Width="87"  />
-            <ui:Button x:Name="butRadioButtons" Margin="7,139,0,0" Text="Radio Buttons" Click="butRadioButtons_Click" Height="24" Width="87" />
-            <ui:Button x:Name="butSigBox" Margin="7,180,0,0" Text="Signature Box" Click="butSigBox_Click" Height="24" Width="87"  />
-            <ui:Button x:Name="butPageBreak" Margin="0,245,0,0" Text="Page Break" Click="butPageBreak_Click" Height="24" Width="87" HorizontalAlignment="Center"  />
-            <ui:Button x:Name="butMedicationList" Margin="0,205,0,0" Text="Medication List" Height="24" Width="87"  HorizontalAlignment="Center" Click="butMedicationList_Click"  />
-        </ui:GroupBox>
-        <ui:GroupBox x:Name="groupConditional" Height="108" Width="101" Margin="25,491,0,0" Text="Conditions For...">
-            <ui:Button x:Name="butSetCondition" Margin="7,32,0,0" Text="Multiple Fileds" Click="butSetCondition_Click" Height="24" Width="87"/>
-            <ui:Button x:Name="butSetPageCondition" Margin="7,66,0,0" Text="Page" Click="butSetPageCondition_Click" Height="24" Width="87"/>
-        </ui:GroupBox>
-        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,8" Text="_Save" Click="butSave_Click" />
-        <local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="178,32,30,38"/>
-        <ui:TextBox x:Name="textDescription" Height="20" RenderTransformOrigin="0.371,0.78" Width="131" Margin="25,9,0,0" ReadOnly="True" ColorBack="#FFF0F0F0"/>
-        <ui:Button x:Name="butEditProp" Height="23" Margin="25,32,0,0" Text="Edit Properties" Click="butEditProp_Click" Width="85" />
-        <ui:Label x:Name="labelTitle" Height="18" Margin="176,10,0,0" Width="469" VAlign="Bottom" Text="This is an internal eForm. Once saved, it will become a custom eForm."/>
-    </Grid>
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butDelete" Height="24" Margin="10,0,0,8" Text="Delete" Icon="DeleteX" Click="butDelete_Click" Width="84" VerticalAlignment="Bottom" />
+		<ui:GroupBox x:Name="groupSetTitle" Width="101" Height="276" Margin="20,144,0,0" TabIndexOD="2" Text="Add Field">
+			<ui:Button x:Name="butTextField" Margin="7,24,0,0" Text="Text Box" Click="butTextField_Click" Height="24" Width="87" />
+			<ui:Button x:Name="butLabel" Margin="0,51,0,0" Text="Label" Click="butLabel_Click" Height="24" Width="87" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butDateField" Margin="0,77,0,0" Text="Date Field" Click="butDateField_Click" Height="24" Width="87" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butCheckBox" Margin="7,114,0,0" Text="Check Box" Click="butCheckBox_Click" Height="24" Width="87"  />
+			<ui:Button x:Name="butRadioButtons" Margin="0,141,0,0" Text="Radio Buttons" Click="butRadioButtons_Click" Height="24" Width="87" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butSigBox" Margin="7,180,0,0" Text="Signature Box" Click="butSigBox_Click" Height="24" Width="87"  />
+			<ui:Button x:Name="butPageBreak" Margin="0,245,0,0" Text="Page Break" Click="butPageBreak_Click" Height="24" Width="87" HorizontalAlignment="Center"  />
+			<ui:Button x:Name="butMedicationList" Margin="0,207,0,0" Text="Medication List" Height="24" Width="87"  HorizontalAlignment="Center" Click="butMedicationList_Click"  />
+		</ui:GroupBox>
+		<ui:GroupBox x:Name="groupConditional" Height="100" Width="101" Margin="20,491,0,0">
+			<ui:Label Width="98" Height="34" Margin="0,1,0,0" Text="Set conditional parent for" VAlign="Center" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butSetCondition" Text="Multiple Fields" Click="butSetCondition_Click" Height="24" Width="87" HorizontalAlignment="Center" Margin="0,40,0,0"/>
+			<ui:Button x:Name="butSetPageCondition" Margin="0,67,0,0" Text="Entire Page" Click="butSetPageCondition_Click" Height="24" Width="87" HorizontalAlignment="Center"/>
+		</ui:GroupBox>
+
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,8" Text="_Save" Click="butSave_Click" />
+		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="178,32,30,38"/>
+		<ui:TextBox x:Name="textDescription" Height="20" RenderTransformOrigin="0.371,0.78" Width="131" Margin="8,26,0,0"/>
+		<ui:Label x:Name="labelTitle" Height="18" Margin="176,10,0,0" Width="469" VAlign="Bottom" Text="This is an internal eForm. Once saved, it will become a custom eForm."/>
+		<ui:ComboBox x:Name="comboType" Width="131" Height="21" Margin="8,71,0,0"/>
+		<ui:Label x:Name="labelModFormTitle" Height="18" Margin="5,6,0,0" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" />
+		<ui:Label x:Name="labelModFormTitle_Copy" Height="18" Margin="5,52,0,0" Text="Type" Width="88" VAlign="Center" HorizontalContentAlignment="Left" />
+	</Grid>
 </local:FrmODBase>

@@ -2893,11 +2893,9 @@ namespace OpenDental {
 					return false;
 				}
 			}
-			if(_rigorousAccounting==RigorousAccounting.EnforceFully) {
-				if(_listPaySplits.Any(x => x.ProcNum==0 && x.UnearnedType==0 && x.AdjNum==0 && x.PayPlanChargeNum==0)) {//if no procs, no adjust, not an unearned type, and not a payment plan.
-					MsgBox.Show(this,"A procedure, adjustment, unearned type, or payment plan must be selected for each of the payment splits.");
-					return false;
-				}
+			if(_rigorousAccounting==RigorousAccounting.EnforceFully && _listPaySplits.Any(x => x.IsUnallocated)) {
+				MsgBox.Show(this,"A procedure, adjustment, unearned type, or payment plan must be selected for each of the payment splits. In order to save this payment, verify that all attached payment splits meet this criteria.");
+				return false;
 			}
 			List<long> listHiddenUnearnedTypes=PaySplits.GetHiddenUnearnedDefNums();
 			double unearnedCur=_listPaySplits.FindAll(x => x.UnearnedType>0 && !listHiddenUnearnedTypes.Contains(x.UnearnedType)).Sum(x => x.SplitAmt);

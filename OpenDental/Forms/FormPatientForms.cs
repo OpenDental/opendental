@@ -24,7 +24,7 @@ namespace OpenDental {
 		}
 
 		private void FormPatientForms_Load(object sender,EventArgs e) {
-			if(!PrefC.IsODHQ) {//Temp. EForms is WIP.
+			if(!ODBuild.IsDebug() && !PrefC.IsODHQ) {//if release and not HQ
 				butAddEForm.Visible=false;
 			}
 			Patient patient=Patients.GetLim(PatNum);
@@ -38,7 +38,7 @@ namespace OpenDental {
 			MenuItemOD menuItemSetup=new MenuItemOD("Setup");
 			menuMain.Add(menuItemSetup);
 			menuItemSetup.Add("Sheets",menuItemSheets_Click);
-			if(PrefC.IsODHQ) {
+			if(ODBuild.IsDebug() || PrefC.IsODHQ) {
 				menuItemSetup.Add("eForms",menuItemEForms_Click);
 			}
 			menuItemSetup.Add("Image Categories",menuItemImageCats_Click);
@@ -118,11 +118,9 @@ namespace OpenDental {
 			//EForms
 			long eFormNum=PIn.Long(_table.Rows[e.Row]["EFormNum"].ToString());
 			if(eFormNum!=0){
-				EForm eForm=EForms.GetOne(eFormNum);
-				List<EFormField> listEFormFields=EFormFields.GetForForm(eFormNum);
+				EForm eForm=EForms.GetEForm(eFormNum);
 				FrmEFormFillEdit frmEFormFillEdit=new FrmEFormFillEdit();
 				frmEFormFillEdit.EFormCur=eForm;
-				frmEFormFillEdit.ListEFormFields=listEFormFields;
 				frmEFormFillEdit.ShowDialog();
 				if(frmEFormFillEdit.IsDialogCancel){
 					return;
@@ -237,10 +235,10 @@ namespace OpenDental {
 			EFormDef eFormDef=frmEFormPicker.EFormDefSelected;
 			//fields already attached
 			EForm eForm=EForms.CreateEFormFromEFormDef(eFormDef,PatNum);
+			eForm.DateTimeShown=DateTime.Now;
 			EFormFiller.FillFields(eForm);
 			FrmEFormFillEdit frmEFormFillEdit=new FrmEFormFillEdit();
 			frmEFormFillEdit.EFormCur=eForm;
-			frmEFormFillEdit.ListEFormFields=eForm.ListEFormFields;
 			frmEFormFillEdit.ShowDialog();
 			if(frmEFormFillEdit.IsDialogCancel){
 				return;
@@ -372,11 +370,9 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select one completed form from the list above first.");
 				return;
 			}
-			long sheetNum=PIn.Long(_table.Rows[gridMain.SelectedIndices[0]]["SheetNum"].ToString());
 			long docNum=PIn.Long(_table.Rows[gridMain.SelectedIndices[0]]["DocNum"].ToString());
-			Document document=null;
 			if(docNum!=0) {
-				document=Documents.GetByNum(docNum);
+				//document=Documents.GetByNum(docNum);
 				//Pdf importing broke with dot net 4.0 and was enver reimplemented.
 				//See FormSheetImport.Load() region Acro 
 				//string extens=Path.GetExtension(doc.FileName);
@@ -384,7 +380,11 @@ namespace OpenDental {
 				//	MsgBox.Show(this,"Only pdf's and sheets can be imported into the database.");
 				//	return;
 				//}
+				MsgBox.Show(this,"PDFs cannot be imported into the database.");
+				return;
 			}
+			long sheetNum=PIn.Long(_table.Rows[gridMain.SelectedIndices[0]]["SheetNum"].ToString());
+			long eFormNum=PIn.Long(_table.Rows[gridMain.SelectedIndices[0]]["EFormNum"].ToString());
 			Sheet sheet=null;
 			if(sheetNum!=0) {
 				sheet=Sheets.GetSheet(sheetNum);
@@ -393,13 +393,13 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(sheet==null) {
-				MsgBox.Show(this,"Only sheets can be imported into the database.");
-				return;
+			EForm eForm=null;
+			if(eFormNum!=0){
+				eForm=EForms.GetEForm(eFormNum);
 			}
 			using FormSheetImport formSheetImport=new FormSheetImport();
 			formSheetImport.SheetCur=sheet;
-			formSheetImport.DocCur=document;
+			formSheetImport.EFormCur=eForm;
 			formSheetImport.ShowDialog();
 			//No need to refresh grid because no changes could have been made.
 		}

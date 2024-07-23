@@ -225,7 +225,10 @@ namespace OpenDental {
 			}
 			if(PatNumInitial!=0){
 				Patient patientI=Patients.GetLim(PatNumInitial);
+				//This prevents _filterControlsAndAction from making a call to refresh the database due to the text being changed.
+				_filterControlsAndAction.ShouldRefresh=false;
 				textLName.Text=patientI.LName;
+				_filterControlsAndAction.ShouldRefresh=true;
 				_doLimitOnePage=false;
 				_ignoreRefresh=true;
 				FillGrid(RefreshFromDb());

@@ -17,8 +17,8 @@
         <ui:Label Width="98" Height="18" Margin="61,49,0,0" Text="Label" HAlign="Right" VAlign="Center" />
         <ui:Label Height="18" Margin="377,49,0,0" Text="This shows to the left of the checkbox" VAlign="Center" Width="211" />
         <ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="160,49,0,0" TabIndexOD="1"/>
-        <ui:CheckBox x:Name="checkIsHorizontal" Height="20" Margin="43,131,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
-        <ui:Label Height="18" Margin="179,132,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
+        <ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="43,131,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
+        <ui:Label x:Name="labelStackable" Height="18" Margin="179,132,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
         <ui:Label x:Name="labelMedAllerProb" Width="98" Height="18" Margin="61,105,0,0" Text="Label" HAlign="Right" VAlign="Center" />
         <ui:TextBox x:Name="textMedAllerProb" Width="213" Height="20" Margin="160,105,0,0" TabIndexOD="1" ReadOnly="True"/>
         <ui:Button x:Name="butChange" Width="75" Height="24" Margin="380,104,0,0" Text="Change" Click="butChange_Click" />

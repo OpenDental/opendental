@@ -44,13 +44,16 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		}
 		#endregion Constructor
 
-		#region Methods - private event handlers
+		#region Methods - private Event Handlers
+
 		///<summary></summary>
 		private void FrmEFormDefEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			ctrlEFormFill.ListEFormFields=EFormFields.FromListDefs(EFormDefCur.ListEFormFieldDefs);
 			ctrlEFormFill.RefreshLayout();
 			textDescription.Text=EFormDefCur.Description;
+			comboType.Items.AddEnums<EnumEFormType>();
+			comboType.SetSelectedEnum(EFormDefCur.FormType);
 			contextMenu=new ContextMenu(this);
 			//gridMain.ContextMenu=contextMenu;
 			//contextMenu.Add(new MenuItem("Delete",menuDelete_Click));
@@ -62,10 +65,15 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 
 		///<summary></summary>
 		private void CtrlEFormFill_EventDoubleClickField(object sender,int idx) {
+			bool isPreviousStackable=false;
+			if(idx>0 && EFormFieldDefs.IsHorizStackable(ctrlEFormFill.ListEFormFields[idx-1].FieldType)){
+				isPreviousStackable=true;
+			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.TextField){
 				FrmEFormTextBoxEdit frmEFormTextBoxEdit=new FrmEFormTextBoxEdit();
 				frmEFormTextBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
 				frmEFormTextBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+				frmEFormTextBoxEdit.IsPreviousStackable=isPreviousStackable;
 				frmEFormTextBoxEdit.ShowDialog();
 				if(frmEFormTextBoxEdit.IsDialogCancel){
 					return;
@@ -80,6 +88,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				FrmEFormLabelEdit frmEFormLabelEdit=new FrmEFormLabelEdit();
 				frmEFormLabelEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
 				frmEFormLabelEdit.EFormDefCur=EFormDefCur;
+				frmEFormLabelEdit.IsPreviousStackable=isPreviousStackable;
 				frmEFormLabelEdit.ShowDialog();
 				if(frmEFormLabelEdit.IsDialogCancel){
 					return;
@@ -93,7 +102,9 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.DateField){
 				FrmEFormDateFieldEdit frmEFormDateFieldEdit=new FrmEFormDateFieldEdit();
 				frmEFormDateFieldEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormDateFieldEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormDateFieldEdit.EFormDefCur=EFormDefCur;
+				frmEFormDateFieldEdit.IsPreviousStackable=isPreviousStackable;
 				frmEFormDateFieldEdit.ShowDialog();
 				if(frmEFormDateFieldEdit.IsDialogCancel){
 					return;
@@ -108,6 +119,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				FrmEFormCheckBoxEdit frmEFormCheckBoxEdit=new FrmEFormCheckBoxEdit();
 				frmEFormCheckBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
 				frmEFormCheckBoxEdit.EFormDefCur=EFormDefCur;
+				frmEFormCheckBoxEdit.IsPreviousStackable=isPreviousStackable;
 				frmEFormCheckBoxEdit.ShowDialog();
 				if(frmEFormCheckBoxEdit.IsDialogCancel){
 					return;
@@ -162,45 +174,9 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			}
 			ctrlEFormFill.RefreshLayout();
 		}
+		#endregion Methods - private Event Handlers
 
-		private void AddNewField(EFormField eFormField) {
-			if(ctrlEFormFill.ListEFormFields.Count==0) {//This handles when the form is empty and adding the first field.
-				ctrlEFormFill.ListEFormFields.Add(eFormField);
-				ctrlEFormFill.RefreshLayout();
-				return;
-			}
-			int idx=ctrlEFormFill.GetSelectedIndex();
-			bool wasFieldSelected=true;
-			if(idx==-1){
-				//Set the idx value to the end of the current page showing.
-				wasFieldSelected=false;
-				int pageShowing=ctrlEFormFill.GetPageShowing();//Will never be 0 because 1-based.
-				int numberOfPageBreaks=0;
-				for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
-					if(ctrlEFormFill.ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak) {
-						numberOfPageBreaks++;
-					}
-					if(numberOfPageBreaks==pageShowing) {
-						idx=i;//the page break at the bottom of the page we are on.
-						break;
-					}
-				}
-				if(idx==-1) {//Still -1. This is becuase we are looking at the last page.
-					idx=ctrlEFormFill.ListEFormFields.Count-1;
-				}
-			}
-			ctrlEFormFill.ListEFormFields.Insert(idx,eFormField);
-			ctrlEFormFill.RefreshLayout();
-			if(wasFieldSelected){
-				ctrlEFormFill.SetSelected(idx+1);
-			}
-			else{//No field was selected. Set selected to the new field.
-				ctrlEFormFill.SetSelected(idx);
-			}
-		}
-		#endregion Methods - private event handlers
-
-		#region Methods - private Add buttons
+		#region Methods - private Event Handlers, Add buttons
 		private void butTextField_Click(object sender,EventArgs e) {
 			FrmEFormTextBoxEdit frmEFormTextBoxEdit=new FrmEFormTextBoxEdit();
 			EFormField eFormField=new EFormField();
@@ -247,6 +223,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FieldType=EnumEFormFieldType.DateField;
 			frmEFormDateFieldEdit.EFormFieldCur=eFormField;
 			frmEFormDateFieldEdit.EFormDefCur=EFormDefCur;
+			frmEFormDateFieldEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormDateFieldEdit.ShowDialog();
 			if(frmEFormDateFieldEdit.IsDialogCancel){
 				return;
@@ -348,18 +325,60 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FieldType=EnumEFormFieldType.PageBreak;
 			AddNewField(eFormField);//This will refresh the layout and set a selected field.
 		}
-		#endregion Methods - private Add buttons
+		#endregion Methods - private Event Handlers, Add buttons
 
-		#region Methods - private other buttons
+		#region Methods - private Event Handlers, other buttons
 		///<summary></summary>
-		private void butEditProp_Click(object sender,EventArgs e) {
-			FrmEFormDef frmEFormDef=new FrmEFormDef();
-			frmEFormDef.EFormDefCur=EFormDefCur;
-			frmEFormDef.ShowDialog();
-			if(frmEFormDef.IsDialogCancel){
+		private void butDelete_Click(object sender,EventArgs e) {
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete entire form?")){
 				return;
 			}
-			textDescription.Text=EFormDefCur.Description;
+			if(EFormDefCur.IsInternal){
+				IsInternalDeleted=true;
+				IsDialogCancel=true;
+				return;
+			}
+			if(EFormDefCur.IsNew){
+				IsDialogCancel=true;
+				return;
+			}
+			EFormFieldDefs.DeleteForForm(EFormDefCur.EFormDefNum);
+			EFormDefs.Delete(EFormDefCur.EFormDefNum);
+			IsDialogOK=true;
+		}
+
+		private void butSave_Click(object sender,EventArgs e) {
+			if(string.IsNullOrEmpty(EFormDefCur.Description)){
+				MsgBox.Show(this,"Description is required");
+				return;
+			}
+			for(int i=0;i<ctrlEFormFill.ListEFormFields.Count-1;i++){//the -1 here allows comparing i+1
+				if(ctrlEFormFill.ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak 
+					&& ctrlEFormFill.ListEFormFields[i+1].FieldType==EnumEFormFieldType.PageBreak)
+				{
+					MsgBox.Show(this,"Cannot have two page breaks back to back.");
+				}
+			}
+			//End of validation
+			EFormDefCur.Description=textDescription.Text;
+			EFormDefCur.FormType=comboType.GetSelected<EnumEFormType>();
+			//This is where everything goes to the database
+			if(EFormDefCur.IsNew){
+				EFormDefCur.DateTCreated=DateTime.Now;
+				EFormDefs.Insert(EFormDefCur);
+			}
+			else{
+				EFormDefs.Update(EFormDefCur);
+			}
+			//Delete all of the fieldDefs that are on the form from the database and re-insert them.
+			EFormFieldDefs.DeleteForForm(EFormDefCur.EFormDefNum);
+			for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
+				EFormFieldDef eFormFieldDef=EFormFields.ToDef(ctrlEFormFill.ListEFormFields[i]);
+				eFormFieldDef.EFormDefNum=EFormDefCur.EFormDefNum;
+				eFormFieldDef.ItemOrder=i;
+				EFormFieldDefs.Insert(eFormFieldDef);//ignores any existing PK when inserting
+			}
+			IsDialogOK=true;
 		}
 
 		///<summary></summary>
@@ -371,7 +390,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			}
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
 			frmEFormFieldPicker.ListEFormFields=ctrlEFormFill.ListEFormFields;
-			frmEFormFieldPicker.ShowValueSelector=true;
+			frmEFormFieldPicker.IsMultiple=true;
 			frmEFormFieldPicker.ListSelectedIndices=listSelectedIndices;
 			frmEFormFieldPicker.ShowDialog();
 			if(frmEFormFieldPicker.IsDialogCancel){
@@ -398,7 +417,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			}
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
 			frmEFormFieldPicker.ListEFormFields=ctrlEFormFill.ListEFormFields;
-			frmEFormFieldPicker.ShowValueSelector=true;
+			frmEFormFieldPicker.IsMultiple=true;
 			frmEFormFieldPicker.ListSelectedIndices=listSelectedIndices;
 			frmEFormFieldPicker.ShowDialog();
 			if(frmEFormFieldPicker.IsDialogCancel) {
@@ -454,60 +473,44 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				ctrlEFormFill.SetSelected(listSelectedIndices[i]+1);
 			}
 		}*/
+		#endregion Methods - private Event Handlers, other buttons
 
-		///<summary></summary>
-		private void butDelete_Click(object sender,EventArgs e) {
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete entire form?")){
+		#region Methods - private
+		private void AddNewField(EFormField eFormField) {
+			if(ctrlEFormFill.ListEFormFields.Count==0) {//This handles when the form is empty and adding the first field.
+				ctrlEFormFill.ListEFormFields.Add(eFormField);
+				ctrlEFormFill.RefreshLayout();
 				return;
 			}
-			if(EFormDefCur.IsInternal){
-				IsInternalDeleted=true;
-				IsDialogCancel=true;
-				return;
-			}
-			if(EFormDefCur.IsNew){
-				IsDialogCancel=true;
-				return;
-			}
-			EFormFieldDefs.DeleteForForm(EFormDefCur.EFormDefNum);
-			EFormDefs.Delete(EFormDefCur.EFormDefNum);
-			IsDialogOK=true;
-		}
-
-		private void butSave_Click(object sender,EventArgs e) {
-			if(string.IsNullOrEmpty(EFormDefCur.Description)){
-				MsgBox.Show(this,"Description is required");
-				return;
-			}
-			for(int i=0;i<ctrlEFormFill.ListEFormFields.Count-1;i++){//the -1 here allows comparing i+1
-				if(ctrlEFormFill.ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak 
-					&& ctrlEFormFill.ListEFormFields[i+1].FieldType==EnumEFormFieldType.PageBreak)
-				{
-					MsgBox.Show(this,"Cannot have two page breaks back to back.");
+			int idx=ctrlEFormFill.GetSelectedIndex();
+			bool wasFieldSelected=true;
+			if(idx==-1){
+				//Set the idx value to the end of the current page showing.
+				wasFieldSelected=false;
+				int pageShowing=ctrlEFormFill.GetPageShowing();//Will never be 0 because 1-based.
+				int numberOfPageBreaks=0;
+				for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
+					if(ctrlEFormFill.ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak) {
+						numberOfPageBreaks++;
+					}
+					if(numberOfPageBreaks==pageShowing) {
+						idx=i;//the page break at the bottom of the page we are on.
+						break;
+					}
+				}
+				if(idx==-1) {//Still -1. This is becuase we are looking at the last page.
+					idx=ctrlEFormFill.ListEFormFields.Count-1;
 				}
 			}
-			//End of validation
-			//This is where everything goes to the database
-			if(EFormDefCur.IsNew){
-				EFormDefCur.DateTCreated=DateTime.Now;
-				EFormDefs.Insert(EFormDefCur);
+			ctrlEFormFill.ListEFormFields.Insert(idx,eFormField);
+			ctrlEFormFill.RefreshLayout();
+			if(wasFieldSelected){
+				ctrlEFormFill.SetSelected(idx+1);
 			}
-			else{
-				EFormDefs.Update(EFormDefCur);
+			else{//No field was selected. Set selected to the new field.
+				ctrlEFormFill.SetSelected(idx);
 			}
-			//Delete all of the fieldDefs that are on the form from the database and re-insert them.
-			EFormFieldDefs.DeleteForForm(EFormDefCur.EFormDefNum);
-			for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
-				EFormFieldDef eFormFieldDef=EFormFields.ToDef(ctrlEFormFill.ListEFormFields[i]);
-				eFormFieldDef.EFormDefNum=EFormDefCur.EFormDefNum;
-				eFormFieldDef.ItemOrder=i;
-				EFormFieldDefs.Insert(eFormFieldDef);//ignores any existing PK when inserting
-			}
-			IsDialogOK=true;
 		}
-
-		#endregion Methods - private other buttons
-
-
+		#endregion Methods - private
 	}
 }

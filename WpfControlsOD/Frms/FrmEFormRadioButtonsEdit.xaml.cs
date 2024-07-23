@@ -146,7 +146,9 @@ namespace OpenDental {
 
 To exclude a db option from being visible to the patient, remove that row. Example: Ins Relationship has 9 options, but only 4 of them are really used in dentistry. Just leave the other 5 off and force patient to pick one of the 4.
 
-But you also don't need to force them to pick one. Example: For Marital Status, you might only show Married and Child, excluding Divorced and Single from the pick list. The unselected state then represents no change, so an existing patient could leave both radio buttons unchecked and their status would remain Divorced or Single.
+But you also don't need to force them to pick one. Example: For Marital Status, you might only show Married and Child, excluding Divorced and Single from the pick list. The unselected state then represents no change, so an existing patient could leave both radio buttons unchecked and their status would remain unchanged.
+
+You can have a row with no db value. For example, a visible value of Separated might have no corresponding db value entered. In that case, an import would not cause any change to the existing db value.
 
 Two radio buttons can represent one db item. Example: Gender Other in db can be expanded to show the patient both Nonbinary and Other. When patient picks either of these, it goes into the db as Other.
 
@@ -188,6 +190,7 @@ Any or all items are allowed to have no label by leaving that value in the first
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {
+			ColRow colRowSelected=gridMain.SelectedCell;
 			int idx=gridMain.GetSelectedIndex();
 			if(idx==-1){
 				MsgBox.Show(this,"Please select a row first.");
@@ -200,9 +203,12 @@ Any or all items are allowed to have no label by leaving that value in the first
 			_listVisDbs[idx-1]=_listVisDbs[idx];
 			_listVisDbs[idx]=visDb;
 			FillGrid();
+			ColRow colRow=new ColRow(colRowSelected.Col,idx-1);
+			gridMain.SetSelected(colRow);
 		}
 
 		private void butDown_Click(object sender,EventArgs e) {
+			ColRow colRowSelected=gridMain.SelectedCell;
 			int idx=gridMain.GetSelectedIndex();
 			if(idx==-1){
 				MsgBox.Show(this,"Please select a row first.");
@@ -215,6 +221,8 @@ Any or all items are allowed to have no label by leaving that value in the first
 			_listVisDbs[idx+1]=_listVisDbs[idx];
 			_listVisDbs[idx]=visDb;
 			FillGrid();
+			ColRow colRow=new ColRow(colRowSelected.Col,idx+1);
+			gridMain.SetSelected(colRow);
 		}
 
 		//private void butPickChildren_Click(object sender,EventArgs e) {
@@ -236,8 +244,8 @@ Any or all items are allowed to have no label by leaving that value in the first
 		private void butPickParent_Click(object sender,EventArgs e) {
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
 			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
-			frmEFormFieldPicker.ListSelectedIndices=new List<int>(_listEFormFields.IndexOf(EFormFieldCur));//can be -1
-			//Prevents self selection as parent
+			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
 			frmEFormFieldPicker.ShowDialog();
 			if(frmEFormFieldPicker.IsDialogCancel){
 				return;
@@ -274,12 +282,6 @@ Any or all items are allowed to have no label by leaving that value in the first
 					|| _listVisDbs[i].Vis.Contains(","))
 				{
 					MsgBox.Show("Pick list items cannot contain commas.");
-					return;
-				}
-				if(comboDbLink.SelectedIndex>0//db link
-					&&_listVisDbs[i].Db=="")
-				{
-					MsgBox.Show("Pick list Db items cannot be empty.");//even though I don't think this is possible.
 					return;
 				}
 			}

@@ -23,6 +23,8 @@ namespace OpenDental {
 		public EFormField EFormFieldCur;
 		///<summary>We need access to a few other fields of the EFormDef.</summary>
 		public EFormDef EFormDefCur;
+		///<summary></summary>
+		public bool IsPreviousStackable;
 		private string _openingBracket;
 
 		///<summary></summary>
@@ -38,7 +40,11 @@ namespace OpenDental {
 			//textLabel.richTextBox.IsInactiveSelectionHighlightEnabled=true;//this doesn't seem to work
 			FlowDocument flowDocument=EFormFields.DeserializeFlowDocument(EFormFieldCur.ValueLabel);
 			textLabel.richTextBox.Document=flowDocument;
-			checkIsHorizontal.Checked=EFormFieldCur.IsHorizStacking;
+			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			if(!IsPreviousStackable){
+				labelStackable.Text="previous field is not stackable";
+				checkIsHorizStacking.IsEnabled=false;
+			}
 			textVIntWidth.Value=EFormFieldCur.Width;
 			List<EnumStaticTextField> listStaticTextFields=Enum.GetValues(typeof(EnumStaticTextField))
 				.Cast<EnumStaticTextField>()
@@ -84,14 +90,22 @@ namespace OpenDental {
 			frmFont.FontScale=(int)(fontSize/11.5*100);
 			frmFont.IsEmpty=textSelection.IsEmpty;
 			TextRange textRange=new TextRange(textSelection.Start, textSelection.End);
-			SolidColorBrush solidColorBrush=(SolidColorBrush)textRange.GetPropertyValue(TextElement.ForegroundProperty);
-			frmFont.ColorText=solidColorBrush.Color;
-			SolidColorBrush solidColorBackBrush=(SolidColorBrush)textRange.GetPropertyValue(TextElement.BackgroundProperty);
-			if(solidColorBackBrush==null){
-				frmFont.ColorBack=null;
+			object objectForeground=textRange.GetPropertyValue(TextElement.ForegroundProperty);
+			if(objectForeground is SolidColorBrush solidColorBrushFore){
+				frmFont.ColorText=solidColorBrushFore.Color;
 			}
 			else{
-				frmFont.ColorBack=solidColorBackBrush.Color;
+				frmFont.ColorText=Colors.Black;
+			}
+			object objectBackground=textRange.GetPropertyValue(TextElement.BackgroundProperty);
+			if(objectBackground==null){
+				frmFont.ColorBack=null;
+			}
+			else if(objectBackground is SolidColorBrush solidColorBrushBack){
+				frmFont.ColorBack=solidColorBrushBack.Color;
+			}
+			else{
+				frmFont.ColorBack=Colors.White;
 			}
 			frmFont.ShowDialog();
 			if(frmFont.IsDialogCancel){
@@ -266,7 +280,7 @@ namespace OpenDental {
 			}
 			//end validation
 			EFormFieldCur.ValueLabel=EFormFields.SerializeFlowDocument(flowDocument);
-			EFormFieldCur.IsHorizStacking=checkIsHorizontal.Checked==true;
+			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.Width=textVIntWidth.Value;
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;

@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CodeBase;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -142,6 +143,27 @@ namespace OpenDentBusiness{
 			}
 			return listEFormFieldDefs;
 		}
+
+		public static bool IsHorizStackable(EnumEFormFieldType enumEFormFieldType){
+			if(enumEFormFieldType.In(
+				EnumEFormFieldType.CheckBox, 
+				EnumEFormFieldType.DateField, 
+				EnumEFormFieldType.Label, 
+				EnumEFormFieldType.TextField))
+			{
+				return true;//those types are allowed to stack
+			}
+			if(enumEFormFieldType.In(
+				EnumEFormFieldType.RadioButtons, 
+				EnumEFormFieldType.SigBox, 
+				EnumEFormFieldType.PageBreak, 
+				EnumEFormFieldType.MedicationList))
+			{
+				return false;//those types are not allowed to stack
+			}
+			throw new Exception("Missing a type.");
+		}
+
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.
 		

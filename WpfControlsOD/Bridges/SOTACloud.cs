@@ -70,14 +70,11 @@ namespace OpenDental.Bridges{
 				MsgBox.Show(message+"\r\n"+baseUrl);
 				return;
 			}
-			//Open Webview2 to force the user to use a Chromium browser since that is the only browser that SOTA Cloud supports.
-			FormLauncher formLauncher=new FormLauncher(EnumFormName.FormWebView);
-			formLauncher.SetField("UrlBrowseTo",baseUrl);
-			try{
-				formLauncher.ShowDialog();
+			try {
+				Process.Start(baseUrl);//Launch in external browser per JobNum:55276. SOTA Cloud only supports Chromium browsers.
 			}
 			catch {
-				//If the user does not have WebView2 installed and clicks 'No' when prompted to install it, and exception will bubble up through FormWebView from it's ODWebView2 control. This exception has no useful information in it since it is only being thrown because the user decided not to download WebView2, so nothing to do here.
+				MessageBox.Show(Lans.g("SOTACloud","Failed to open web browser.  Please make sure you have a default browser set and are connected to the internet then try again."));
 			}
 		}
 

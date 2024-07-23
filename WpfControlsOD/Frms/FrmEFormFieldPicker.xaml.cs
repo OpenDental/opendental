@@ -20,10 +20,10 @@ namespace OpenDental {
 		public string LabelSelected;
 		///<summary>Upon closing, this is the value from the selected eForm field. This will only have a value when multiple fields are selected and setting the condition; otherwise, null.</summary>
 		public string ValueSelected;
-		///<summary>Set to true to show groupParentValue or false to hide.</summary>
-		public bool ShowValueSelector;
-		///<summary>These are the indices of the fields we are setting conditions for.</summary>
-		public List<int> ListSelectedIndices;
+		///<summary>Set to true to show groupParentValue and change some wording. Used for multiple fields and for entire page.</summary>
+		public bool IsMultiple;
+		///<summary>These are the indices of the fields we are setting conditions for. Allows preventing showing self.</summary>
+		public List<int> ListSelectedIndices=new List<int>();
 		///<summary>The reason for this is to handle duplicates. This list will contain the duplicate, but not the listBox.</summary>
 		private List<string> _listStrings;
 
@@ -38,7 +38,10 @@ namespace OpenDental {
 
 		private void FrmEFormFieldPicker_Load(object sender, EventArgs e) {
 			Lang.F(this);
-			groupParentValue.Visible=ShowValueSelector;
+			if(IsMultiple){
+				labelSelect.Text="Select the field below which will be the parent responsible for showing or hiding the fields. Only check boxes and radio buttons are available";
+			}
+			groupParentValue.Visible=IsMultiple;
 			_listStrings=new List<string>();
 			for(int i=0;i<ListEFormFields.Count;i++) {
 				if(!ListEFormFields[i].FieldType.In(

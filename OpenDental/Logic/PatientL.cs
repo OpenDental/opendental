@@ -314,11 +314,11 @@ namespace OpenDental{
 			return false;
 		}
 
-		///<summary>Launches an interaction where a patient address is validated and corrected by USPS. The user is then prompted to choose between the address they provided, the one corrected by USPS, or choosing to return null, and go back to edit. Takes in a sender so that the appropriate information gets set on the message box.</summary>
+		///<summary>Launches an interaction where a patient address is validated and corrected by USPS. The user is then prompted to choose between the address they provided, the one corrected by USPS, or choosing to return null, and go back to edit. Takes in a sender for translation.</summary>
 		public static OpenDentBusiness.Address VerifyPatientAddressInteraction(OpenDentBusiness.Address address, object sender) {
 			//if state is more than two characters, try to look up the abbreviation for the state with the name they entered.
 			if(string.IsNullOrWhiteSpace(address.State) || string.IsNullOrWhiteSpace(address.Address1)) {
-				if(MsgBox.Show(sender,MsgBoxButtons.YesNo, "State and Address1 are required in order for addresses to be verified with USPS. Import anyways?","Warning")) {
+				if(MsgBox.Show(sender,MsgBoxButtons.YesNo, "State and Address1 are required in order for addresses to be verified with USPS. Import anyway?","Warning")) {
 					//Just return the address they entered.
 					return address;
 				}
@@ -349,8 +349,8 @@ namespace OpenDental{
 			USPSAddressValidationResponse uspsAddressValidationResponse=USPSAddressValidationDatas.GetUSPSAddressValidationResponse(address);
 			//We want to include zip+4 in zip codes, so we will always show the prompt when we get a response.
 			if(uspsAddressValidationResponse==null || uspsAddressValidationResponse.address==null) { 
-				if(MsgBox.Show(sender, MsgBoxButtons.YesNo, "Failed to verify address with USPS. Save Anyways?", "Warning")) {
-					//Import anyways.
+				if(MsgBox.Show(sender, MsgBoxButtons.YesNo, "Failed to verify address with USPS. (Verification can be turned off in Preferences, Family, General). Save Anyway?", "Warning")) {
+					//Import anyway.
 					return address;
 				}
 				else {

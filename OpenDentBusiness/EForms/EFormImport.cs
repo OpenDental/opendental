@@ -8,7 +8,8 @@ using Newtonsoft.Json;
 
 namespace OpenDentBusiness {
 	public class EFormImport {
-		///<summary>Always succeeds silently.</summary>
+		///<summary>Always succeeds silently. Not used because we instead use FormSheetImport. We are using this code as inspiration for that location.</summary>
+		[Obsolete()]
 		public static void Import(EForm eForm){
 			//Any changes to this list should also be duplicated in EFormFiller and EFormFieldsAvailable.
 			//This code was copied from FormSheetImport

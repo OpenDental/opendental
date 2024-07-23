@@ -772,6 +772,8 @@ namespace OpenDental{
 				_menuItemWebChatTools.Available=false;
 				_menuItemResellers.Available=false;
 				_menuItemXChargeReconcile.Available=false;
+			}
+			if(!ODBuild.IsDebug() && !PrefC.IsODHQ){//if release and not HQ
 				_menuItemEForms.Available=false;
 			}
 			if(PrefC.IsODHQ) {

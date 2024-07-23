@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="418" Height="202" 
+             Width="592" Height="344" 
              Text="Module Form Def Edit" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butApply" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="Apply" Click="butSave_Click" />
@@ -14,8 +14,9 @@
 		<ui:TextVInt x:Name="textVIntIndent" Width="54" Height="20" Margin="130,44,0,0" MaxVal="500" MinVal="-500"/>
 		<ui:Label Width="107" Height="18" Margin="22,71,0,0" Text="Left Margin" HAlign="Right" VAlign="Center" />
 		<ui:TextVInt x:Name="textVIntLeftMargin" Width="54" Height="20" Margin="130,71,0,0" MaxVal="500" MinVal="-500"/>
-		<ui:Label Width="200" Height="61" Margin="194,36,0,0" Text="To create a hanging indent, set indent to a negative value and left margin to an equal positive value" VAlign="Center" />
+		<ui:Label Width="200" Height="34" Margin="293,50,0,0" Text="This sets an indent of negative 25&#10;and a left margin of positive 25" VAlign="Center" />
 		<ui:Label Width="107" Height="18" Margin="22,98,0,0" Text="Text Alignment" HAlign="Right" VAlign="Center" />
 		<ui:ListBox x:Name="listBoxAlignment" Width="64" Height="68" Margin="130,98,0,0" ItemStrings="Left,Right,Center,Justify" />
+		<ui:Button x:Name="butHanging" Width="95" Height="24" Margin="192,55,0,0" Text="Hanging Indent" Click="butHanging_Click" />
 	</Grid>
 </local:FrmODBase>

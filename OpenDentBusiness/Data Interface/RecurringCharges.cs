@@ -1325,7 +1325,9 @@ namespace OpenDentBusiness {
 			RigorousAccounting accountingMode=PrefC.GetEnum<RigorousAccounting>(PrefName.RigorousAccounting);
 			if(CompareDouble.IsZero(amount)) {
 				//The credit card payment could have been declined or failed but there needs to be a record that the recurring charge was considered.
-				listPaySplits.Add(CreateUnearnedSplitForPayment(paymentCur,amount,recCharge.PayPlanNum));
+				PaySplit paySplit=CreateUnearnedSplitForPayment(paymentCur,amount,recCharge.PayPlanNum);
+				paySplit.UnearnedType=0;//Set unearned type to 'None' for $0 paysplit
+				listPaySplits.Add(paySplit);
 			}
 			else if(accountingMode.In(RigorousAccounting.AutoSplitOnly,RigorousAccounting.EnforceFully)) {
 				listPaySplits.AddRange(GetLinkedSplitsForChargeData(patCur,recCharge,paymentCur));

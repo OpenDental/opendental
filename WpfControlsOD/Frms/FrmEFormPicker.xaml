@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="459" Height="359" 
-             Text="Pick EForm" >
+             Text="Pick eForm" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Label x:Name="labelHead" Width="301" Height="18" Margin="29,9,0,0" Text="Pick from the list of example internal eForms" />
 		<ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30,36,128,26"/>

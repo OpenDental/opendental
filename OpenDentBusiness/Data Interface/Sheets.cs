@@ -21,8 +21,7 @@ namespace OpenDentBusiness{
 			return Crud.SheetCrud.SelectOne(sheetNum);
 		}
 
-		///<summary>Gets a single sheet from the database.  Then, gets all the fields and parameters for it.  So it returns a fully functional sheet.
-		///Returns null if the sheet isn't found in the database.</summary>
+		///<summary>Gets a single sheet from the database.  Then, gets all the fields and parameters for it.  So it returns a fully functional sheet. Returns null if the sheet isn't found in the database.</summary>
 		public static Sheet GetSheet(long sheetNum) {
 			//No need to check MiddleTierRole; no call to db.
 			Sheet sheet=GetOne(sheetNum);

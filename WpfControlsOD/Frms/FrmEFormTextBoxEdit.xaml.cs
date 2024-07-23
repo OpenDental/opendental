@@ -17,6 +17,8 @@ namespace OpenDental {
 	public partial class FrmEFormTextBoxEdit : FrmODBase {
 		///<summary>This is the object being edited.</summary>
 		public EFormField EFormFieldCur;
+		///<summary></summary>
+		public bool IsPreviousStackable;
 		///<summary>All the siblings</summary>
 		public List<EFormField> _listEFormFields;
 
@@ -25,7 +27,7 @@ namespace OpenDental {
 			InitializeComponent();
 			Load+=FrmEFormsTextBoxEdit_Load;
 			PreviewKeyDown+=FrmEFormTextBoxEdit_PreviewKeyDown;
-			checkIsHorizontal.Click+=CheckIsHorizontal_Click;
+			checkIsHorizStacking.Click+=CheckIsHorizontal_Click;
 			textVIntWidth.TextChanged+=TextVIntWidth_TextChanged;
 		}
 
@@ -41,7 +43,11 @@ namespace OpenDental {
 			else {
 				comboDbLink.SelectedIndex=idxSelect;
 			}
-			checkIsHorizontal.Checked=EFormFieldCur.IsHorizStacking;
+			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			if(!IsPreviousStackable){
+				labelStackable.Text="previous field is not stackable";
+				checkIsHorizStacking.IsEnabled=false;
+			}
 			textVIntWidth.Value=EFormFieldCur.Width;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			checkIsTextWrap.Checked=EFormFieldCur.IsTextWrap;
@@ -61,7 +67,7 @@ namespace OpenDental {
 		}
 
 		private void SetLabelRed(){
-			if(checkIsHorizontal.Checked==true
+			if(checkIsHorizStacking.Checked==true
 				&& textVIntWidth.IsValid()
 				&& textVIntWidth.Value==0)
 			{
@@ -75,8 +81,8 @@ namespace OpenDental {
 		private void butPickParent_Click(object sender,EventArgs e) {
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
 			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
-			frmEFormFieldPicker.ListSelectedIndices=new List<int>(_listEFormFields.IndexOf(EFormFieldCur));//can be -1
-			//Prevents self selection as parent
+			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
 			frmEFormFieldPicker.ShowDialog();
 			if(frmEFormFieldPicker.IsDialogCancel){
 				return;
@@ -132,7 +138,7 @@ namespace OpenDental {
 			else{
 				EFormFieldCur.DbLink=comboDbLink.GetSelected<string>();
 			}
-			EFormFieldCur.IsHorizStacking=checkIsHorizontal.Checked==true;
+			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.Width=textVIntWidth.Value;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.IsTextWrap=checkIsTextWrap.Checked==true;

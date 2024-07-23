@@ -12,7 +12,7 @@
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
 		<ui:Label Width="98" Height="18" Margin="104,93,0,0" Text="Title" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="0,93,0,0" Text="This shows above the list" VAlign="Center" Width="212" HorizontalAlignment="Center" />
+		<ui:Label Height="18" Margin="418,93,0,0" Text="This shows above the list" VAlign="Center" Width="212" />
 		<ui:TextBox x:Name="textTitle" Width="213" Height="20" Margin="201,92,0,0" TabIndexOD="1"/>
 		<ui:Label Width="98" Height="18" Margin="102,537,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
 		<ui:Label Height="18" Margin="259,537,0,0" Text="default is 100" VAlign="Center" Width="228" />
@@ -31,9 +31,9 @@
 		<ui:TextVInt x:Name="textVIntWidthCol2" Width="54" Height="20" Margin="201,192,0,0" MaxVal="800" ShowZero="False"/>
 		<ui:CheckBox x:Name="checkIsCol2Visible" Height="20" Margin="84,216,0,0" Width="130" Text="Is Col 2 Visible" CheckAlign="MiddleRight"/>
 		<ui:Label Height="18" Margin="220,217,0,0" Text="Unchecking this will hide the second column so only the medication names show" VAlign="Center" Width="512" />
-		<ui:CheckBox x:Name="checkPrefillCol1" Height="20" Margin="84,239,0,0" Width="130" Text="Prefill Col 1" CheckAlign="MiddleRight"/>
+		<ui:CheckBox x:Name="checkPrefillCol1" Height="20" Margin="84,239,0,0" Width="130" Text="Pre-fill Col 1" CheckAlign="MiddleRight"/>
 		<ui:Label Height="18" Margin="220,240,0,0" Text="If unchecked, then the patient would enter their meds from scratch each time" VAlign="Center" Width="512" />
-		<ui:CheckBox x:Name="checkPrefillCol2" Height="20" Margin="84,262,0,0" Width="130" Text="Prefill Col 2" CheckAlign="MiddleRight"/>
+		<ui:CheckBox x:Name="checkPrefillCol2" Height="20" Margin="84,262,0,0" Width="130" Text="Pre-fill Col 2" CheckAlign="MiddleRight"/>
 		<ui:Label x:Name="labelPreFilCol2" Height="18" Margin="220,263,0,0" Text="This gets filled from the med patient note field, which you might not want the patient to see" VAlign="Center" Width="512" />
 		<ui:CheckBox x:Name="checkSyncCol1" Height="20" Margin="84,285,0,0" Width="130" Text="Import Col 1" CheckAlign="MiddleRight"/>
 		<ui:Label Height="18" Margin="220,286,0,0" Text="Whether meds are prefilled or not, if this is checked, then meds will be imported back into the database after patient fills them out" VAlign="Center" Width="689" />
@@ -44,10 +44,10 @@
 		<ui:GroupBox x:Name="groupAdvanced" Width="819" Height="173" Margin="28,329,0,0" TabIndexOD="2">
 			<ui:Label Height="34" Margin="59,7,0,0" Text="It's hard to import strength and frequency back into the database, so these are unchecked by default. Neither of the two Append options should be used with Prefill." Width="689" />
 			<ui:CheckBox x:Name="checkSyncCol2Overwrite" Height="20" Margin="26,47,0,0" Width="159" Text="Import Col 2 Overwrite" CheckAlign="MiddleRight"/>
-			<ui:Label Height="20" Margin="191,50,0,0" Text="If checked, the value that the patient fills out would overwrite whatever was originally in the database" Width="562" />
-			<ui:Label Height="31" Margin="191,134,0,0" Text="If checked, the value that the patient fills out would be appended to the end of the existing value in the database, after a carriage return and a date." Width="601" />
-			<ui:Label Height="20" Margin="191,70,0,0" Text="If checked, the database would be overwritten with a date followed by what the patient fills out" Width="545" VAlign="Center" />
-			<ui:Label Height="31" Margin="191,97,0,0" Text="If checked, the value that the patient fills out would be appended to the end of the existing value in the database, after a carriage return." Width="601" />
+			<ui:Label Height="20" Margin="191,50,0,0" Text="If checked, the value that the patient fills out will overwrite whatever was originally in the database" Width="562" />
+			<ui:Label Height="31" Margin="191,134,0,0" Text="If checked, the value that the patient fills out will be appended to the end of the existing value in the database, after a carriage return and a date." Width="601" />
+			<ui:Label Height="20" Margin="191,70,0,0" Text="If checked, the database value will be overwritten with a date followed by what the patient fills out" Width="545" VAlign="Center" />
+			<ui:Label Height="31" Margin="191,97,0,0" Text="If checked, the value that the patient fills out will be appended to the end of the existing value in the database, after a carriage return." Width="601" />
 			<ui:CheckBox x:Name="checkSyncCol2Append" Height="20" Margin="35,102,0,0" Width="150" Text="Import Col 2 Append" CheckAlign="MiddleRight"/>
 			<ui:CheckBox x:Name="checkSyncCol2AppendDate" Height="20" Margin="26,138,0,0" Width="159" Text="Import Col 2 Append Date" CheckAlign="MiddleRight"/>
 			<ui:CheckBox x:Name="checkSyncCol2OverwriteDate" Height="20" Margin="8,70,0,0" Width="177" Text="Import Col 2 Overwrite Date" CheckAlign="MiddleRight"/>

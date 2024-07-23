@@ -50,7 +50,7 @@ namespace OpenDental{
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "Import";
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			this.butOK.Click += new System.EventHandler(this.butImport_Click);
 			// 
 			// gridMain
 			// 

@@ -8,17 +8,15 @@
              mc:Ignorable="d"
              Width="588" Height="193" 
              Text="Edit Signature Box" MinMaxBoxes="False">
-    <Grid Background="#FFFCFDFE" >
-        <ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
-        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
-        <ui:Label Width="98" Height="18" Margin="59,38,0,0" Text="Label" HAlign="Right" VAlign="Center" />
-        <ui:Label Height="18" Margin="377,38,0,0" Text="This shows above the signature box" VAlign="Center" Width="193" />
-        <ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="160,38,0,0"/>
-        <ui:CheckBox x:Name="checkIsHorizontal" Height="20" Margin="43,62,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
-        <ui:Label Height="18" Margin="179,63,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
-        <ui:Label Width="98" Height="18" Margin="61,110,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
-        <ui:Label Height="18" Margin="218,110,0,0" Text="default is 100" VAlign="Center" Width="228" />
-        <ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="160,110,0,0" MaxVal="300" MinVal="50"/>
-        <ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="59,85,0,0" Width="114" Text="Required" CheckAlign="MiddleRight"/>
-    </Grid>
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
+		<ui:Label Width="98" Height="18" Margin="59,38,0,0" Text="Label" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="377,38,0,0" Text="This shows above the signature box" VAlign="Center" Width="193" />
+		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="160,38,0,0"/>
+		<ui:Label Width="98" Height="18" Margin="61,0,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" VerticalAlignment="Center" />
+		<ui:Label Height="18" Margin="218,0,0,0" Text="default is 100" VAlign="Center" Width="228" VerticalAlignment="Center" />
+		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="160,88,0,0" MaxVal="300" MinVal="50"/>
+		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="59,63,0,0" Width="114" Text="Required" CheckAlign="MiddleRight"/>
+	</Grid>
 </local:FrmODBase>

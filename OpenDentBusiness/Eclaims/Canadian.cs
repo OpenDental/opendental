@@ -1000,6 +1000,29 @@ namespace OpenDentBusiness.Eclaims {
 			if(doPrint && formCCDPrint!=null) {
 				formCCDPrint(etrans,result,true);//Physically print the form.
 			}
+			if(canCreateSecClaim) {//The below logic mimics EOBImportHelper().
+				Dictionary<int,List<CCDField>> dictProcDataClaim=fieldInputter.GetPerformedProcsDict();
+				if(dictProcDataClaim.Count>0) {
+					bool isFullyEligible=true;
+					for(int i=0;i<claimProcsClaim.Count;i++) {
+						if(claimProcsClaim[i].LineNumber==0) {
+							continue;
+						}
+						if(!dictProcDataClaim.ContainsKey(claimProcsClaim[i].LineNumber)) {
+							continue;//See task 5538948. This can happen rarely when the EOB does not contain a response for one of the procedures going out on the eclaim.
+						}
+						foreach(CCDField field in dictProcDataClaim[claimProcsClaim[i].LineNumber]) {
+							if(field.fieldId=="G14" && field.valuestr!="100") {//G14 is elegible percent for procedure
+								isFullyEligible=false;
+								break;
+							}
+						}
+					}
+					if(isFullyEligible) {
+						canCreateSecClaim=false;//Primary EOB paid services in full, no need to create secondary claim.
+					}
+				}
+			}
 			ClaimSendQueueItem queueItem2=null;
 			if(canCreateSecClaim) {
 				//If an eob was returned and patient has secondary insurance, we'll create secondary claim and then check of we need to consider an embedded response.

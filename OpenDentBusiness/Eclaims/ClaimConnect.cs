@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 using System.Web.Services;
@@ -1180,6 +1181,8 @@ namespace OpenDentBusiness.Eclaims {
 		internal static Carrier _carrierForClaim;
 		internal static List<Provider> _listProvidersForClaim;
 		internal static Claim _claim;
+		private static HttpMethod _httpMethod;
+		private static HttpClient _httpClient=new HttpClient() { BaseAddress=new Uri("https://api.dentalxchange.com") };
 
 		public XConnect() {
 		}
@@ -1212,46 +1215,28 @@ namespace OpenDentBusiness.Eclaims {
 		}
 
 		////<summary>Throws exceptions. Generic API call to XConnect. Give a payload object structured the same as the JSON definition of the API call. Returns an object of the type specified, which must also be structured the same as the JSON definition of the response for the API call. The endpointURL given must be a relative URL. The endpointURL is automatically modified to point to the sandbox in Debug mode.</summary>
-		private static T CallAPI<T>(Clearinghouse clearinghouseClinic,string endpointURL,object payload) {
-			Exception ex=null;
-			T result=default(T);
-			System.Threading.Tasks.Task.Run(async () => {
-				try {
-					if(ODBuild.IsDebug()) { //Testing
-						endpointURL="/sandbox"+endpointURL;
-					}
-					string url="https://api.dentalxchange.com"+endpointURL
-						+"?username="+HttpUtility.UrlEncode(clearinghouseClinic.LoginID)
-						+"&password="+HttpUtility.UrlEncode(clearinghouseClinic.Password);
-					HttpClient httpClient=new HttpClient();
-					httpClient.DefaultRequestHeaders.Add("username",clearinghouseClinic.LoginID);
-					httpClient.DefaultRequestHeaders.Add("password",clearinghouseClinic.Password);
-					httpClient.DefaultRequestHeaders.Add("API-Key",clearinghouseClinic.LocationID);
-					JsonSerializerSettings jsonSerializerSettings=new JsonSerializerSettings{NullValueHandling=NullValueHandling.Ignore};
-					jsonSerializerSettings.Converters.Add(new StringEnumConverter());
-					string bodyJSON=JsonConvert.SerializeObject(payload,Newtonsoft.Json.Formatting.None,jsonSerializerSettings);
-					HttpResponseMessage httpResponseMessage=await httpClient.PostAsync(url,new StringContent(bodyJSON,Encoding.UTF8,"application/json"));
-					string bodyResponse=await httpResponseMessage.Content.ReadAsStringAsync();
-					jsonSerializerSettings=new JsonSerializerSettings { MissingMemberHandling=MissingMemberHandling.Error };
-					result=JsonConvert.DeserializeObject<T>(bodyResponse,jsonSerializerSettings);
-				}
-				catch(Exception e) {
-					ex=e;
-				}
-			}).GetAwaiter().GetResult();
-			if(ex!=null) {
-				throw ex;
+		private static T CallAPI<T>(Clearinghouse clearinghouseClinic,string endpointURL,object payload,HttpMethod httpMethod,List<string> queryParameters=null) {
+			if(ODBuild.IsDebug()) {//Testing
+				endpointURL="/sandbox"+endpointURL;
 			}
-			return result;
+			_httpClient.DefaultRequestHeaders.Clear();
+			_httpClient.DefaultRequestHeaders.Add("username",clearinghouseClinic.LoginID);
+			_httpClient.DefaultRequestHeaders.Add("password",clearinghouseClinic.Password);
+			_httpClient.DefaultRequestHeaders.Add("API-Key",clearinghouseClinic.LocationID);
+			JsonSerializerSettings jsonSerializerSettings=new JsonSerializerSettings{NullValueHandling=NullValueHandling.Ignore};
+			jsonSerializerSettings.Converters.Add(new StringEnumConverter());
+			string bodyJSON=JsonConvert.SerializeObject(payload,Newtonsoft.Json.Formatting.None,jsonSerializerSettings);
+			JsonSerializerSettings deserializationSettings=new JsonSerializerSettings { MissingMemberHandling=MissingMemberHandling.Error };
+			return APIRequest.Inst.SendRequest<T>(endpointURL,httpMethod,null,bodyJSON,HttpContentType.Json,_httpClient,queryParameters,deserializationSettings);
 		}
-
 
 		///<summary>Throws Exceptions. Returns an error message if validation failed. Otherwise returns an empty string.</summary>
 		public static XConnectWebResponse ValidateClaim(Claim claim) {
 			XConnectValidateClaim xConnectValidateClaim=new XConnectValidateClaim();
 			XConnect.SetData(claim);
 			xConnectValidateClaim.claim=XConnectClaim.FromClaim(claim);
-			return CallAPI<XConnectWebResponse>(_clearinghouseForClaim,"/claims/validation",xConnectValidateClaim);
+			_httpMethod=HttpMethod.Post;
+			return CallAPI<XConnectWebResponse>(_clearinghouseForClaim,"/claims/validation",xConnectValidateClaim,_httpMethod);
 		}
 
 		///<summary>Copied from X837_5010</summary>

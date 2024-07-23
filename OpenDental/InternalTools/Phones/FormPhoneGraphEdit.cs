@@ -237,12 +237,9 @@ namespace OpenDental {
 				return;
 			}
 			if((dateTimeStart1.Year>1880 && dateTimeStart1>dateTimeStop1)
-				|| (dateTimeStart2.Year>1880 && dateTimeStop1>dateTimeStart2)
 				|| (dateTimeStart2.Year>1880 && dateTimeStart2>dateTimeStop2)
 				|| (dateTimeProvStart1.Year>1880 && dateTimeProvStart1>dateTimeProvStop1)
-				|| (dateTimeProvStart2.Year>1880 && dateTimeProvStop1>dateTimeProvStart2)
-				|| (dateTimeProvStart2.Year>1880 && dateTimeProvStart2>dateTimeProvStop2))
-			{
+				|| (dateTimeProvStart2.Year>1880 && dateTimeProvStart2>dateTimeProvStop2)) {
 				MsgBox.Show(this,"Times must be sequential.");
 				return;
 			}

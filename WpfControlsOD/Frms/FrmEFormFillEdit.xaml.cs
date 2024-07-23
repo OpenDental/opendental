@@ -18,8 +18,8 @@ namespace OpenDental {
 		#region Fields
 		///<summary>This is the object we are editing.</summary>
 		public EForm EFormCur;
-		///<summary>All the fields for this eForm. We could have instead used the list attached to the EForm, but using a separate list like this as soon as we are able matches all our existing patterns better. If we are comming from Patient Forms and clicked "Add EForm", this list is referenced from there and EFormCur.ListEFormFields will have the same list. If we double click on an exisiting eForm, this list will be fields from the database.</summary>
-		public List<EFormField> ListEFormFields;
+		//<summary>All the fields for this eForm. We could have instead used the list attached to the EForm, but using a separate list like this as soon as we are able matches all our existing patterns better. If we are comming from Patient Forms and clicked "Add EForm", this list is referenced from there and EFormCur.ListEFormFields will have the same list. If we double click on an exisiting eForm, this list will be fields from the database.</summary>
+		//public List<EFormField> ListEFormFields;
 		///<summary>Used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.</summary>
 		private string _maskedSSNOld;
 		#endregion Fields
@@ -35,9 +35,11 @@ namespace OpenDental {
 		#region Methods - event handlers
 		private void FrmEFormFillEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
-			ctrlEFormFill.ListEFormFields=ListEFormFields;
+			ctrlEFormFill.ListEFormFields=EFormCur.ListEFormFields;//two references to same list of objects
 			ctrlEFormFill.RefreshLayout();
-			_maskedSSNOld=ListEFormFields.Find(x=>x.DbLink=="SSN")?.ValueString;//null is ok
+			_maskedSSNOld=EFormCur.ListEFormFields.Find(x=>x.DbLink=="SSN")?.ValueString;//null is ok
+			textDescription.Text=EFormCur.Description;
+			textDateTime.Text=EFormCur.DateTimeShown.ToShortDateString()+" "+EFormCur.DateTimeShown.ToShortTimeString();
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -53,14 +55,14 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void butSaveImport_Click(object sender, EventArgs e) {
-			if(!ValidateAndSave()){
-				return;
-			}
-			EFormCur.ListEFormFields=ListEFormFields;
-			EFormImport.Import(EFormCur);
-			IsDialogOK=true;
-		}
+		//private void butSaveImport_Click(object sender, EventArgs e) {
+		//	if(!ValidateAndSave()){
+		//		return;
+		//	}
+		//	EFormCur.ListEFormFields=ListEFormFields;
+		//	EFormImport.Import(EFormCur);
+		//	IsDialogOK=true;
+		//}
 
 		private void butSaveOnly_Click(object sender,EventArgs e) {
 			if(!ValidateAndSave()){
@@ -77,6 +79,17 @@ namespace OpenDental {
 		#region Methods - private
 		///<summary>If an error won't allow, then it shows a MsgBox and then returns false.</summary>
 		private bool TryToSaveData() {
+			DateTime dateTimeShown=DateTime.MinValue;
+			try {
+				dateTimeShown=DateTime.Parse(textDateTime.Text);
+			}
+			catch(Exception) {
+				MsgBox.Show(this,"Please fix data entry errors first.");
+				return false;
+			}
+			EFormCur.Description=textDescription.Text;
+			EFormCur.DateTimeShown=dateTimeShown;
+			EFormCur.DateTEdited=DateTime.Now;//Will get overwritten on insert, but used for update.  Fill even if user did not make changes.
 			if(EFormCur.IsNew){
 				EFormCur.DateTimeShown=DateTime.Now;
 				EForms.Insert(EFormCur);
@@ -86,17 +99,17 @@ namespace OpenDental {
 			}
 			//Delete all of the fieldDefs that are on the form from the database and re-insert them.
 			EFormFields.DeleteForForm(EFormCur.EFormNum);
-			for(int i=0;i<ListEFormFields.Count;i++) {
-				ListEFormFields[i].EFormNum=EFormCur.EFormNum;
-				ListEFormFields[i].ItemOrder=i;
-				EFormFields.Insert(ListEFormFields[i]);//ignores any existing PK when inserting
+			for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
+				EFormCur.ListEFormFields[i].EFormNum=EFormCur.EFormNum;
+				EFormCur.ListEFormFields[i].ItemOrder=i;
+				EFormFields.Insert(EFormCur.ListEFormFields[i]);//ignores any existing PK when inserting
 			}
 			return true;
 		}
 
 		private bool ValidateAndSave() {
 			ctrlEFormFill.FillFieldsFromControls();
-			EFormCur.ListEFormFields=ListEFormFields;
+			//EFormCur.ListEFormFields=ListEFormFields;
 			EFormValidation eFormValidation=EForms.Validate(EFormCur,_maskedSSNOld);
 			if(eFormValidation.ErrorMsg!="") {
 				MsgBox.Show(eFormValidation.ErrorMsg);

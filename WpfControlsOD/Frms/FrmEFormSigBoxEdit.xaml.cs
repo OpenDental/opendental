@@ -28,7 +28,6 @@ namespace OpenDental {
 		private void FrmEFormsTextBoxEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			textLabel.Text=EFormFieldCur.ValueLabel;
-			checkIsHorizontal.Checked=EFormFieldCur.IsHorizStacking;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 		}
@@ -52,7 +51,6 @@ namespace OpenDental {
 			}
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
-			EFormFieldCur.IsHorizStacking=checkIsHorizontal.Checked==true;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			//not saved to db here. That happens when clicking Save in parent window.

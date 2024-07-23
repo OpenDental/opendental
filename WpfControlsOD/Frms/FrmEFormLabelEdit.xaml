@@ -13,8 +13,8 @@
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="13,0,0,12" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,14,12" Text="_Save" Click="butSave_Click" />
 		<ui:TextRich x:Name="textLabel" Height="288" Margin="0,25,0,0" FormattedTextAllowed="True" SpellCheckIsEnabled="False" Width="627"/>
-		<ui:CheckBox x:Name="checkIsHorizontal" Height="20" Margin="20,326,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
-		<ui:Label Height="18" Margin="155,327,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
+		<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="20,326,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
+		<ui:Label x:Name="labelStackable" Height="18" Margin="155,327,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
 		<ui:Label Width="98" Height="18" Margin="38,357,0,0" Text="Width" HAlign="Right" VAlign="Center" />
 		<ui:Label Height="18" Margin="194,357,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
 		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="137,356,0,0" ShowZero="False"/>

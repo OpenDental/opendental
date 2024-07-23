@@ -436,7 +436,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Removes the assigned user from the InsVerify of the InsPlan that is associated to the PatPlan passed in.
-		///Will only unassign if the user assigned to the patplan matches the user assigned to the insplan.</summary>
+		///Will only unassign if the user assigned to the patplan matches the user assigned to the insplan. Used when a plan gets deleted.</summary>
 		private static void RemoveAssignedUser(PatPlan patPlanCur) {
 			//No Remoting check; no call to db.
 			//Get the insurance verified assigned to the PatPlan.
@@ -458,7 +458,7 @@ namespace OpenDentBusiness{
 					if(insVerifyForInsPlan!=null && insVerifyForInsPlan.UserNum==insVerifyForPatPlan.UserNum) {
 						//Remove user and set DateLastVerified to MinValue.
 						insVerifyForInsPlan.UserNum=0;
-						insVerifyForInsPlan.DateLastVerified=DateTime.MinValue;
+						insVerifyForInsPlan.DateLastAssigned=DateTime.MinValue;
 						InsVerifies.Update(insVerifyForInsPlan);
 					}
 				}

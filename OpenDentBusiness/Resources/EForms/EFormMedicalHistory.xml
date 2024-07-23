@@ -242,7 +242,7 @@
       <EFormFieldDefNum>3711</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - Anesthetic</DbLink>
+      <DbLink>allergy:Anesthetic</DbLink>
       <ValueLabel>Anesthetic</ValueLabel>
       <ItemOrder>14</ItemOrder>
       <PickListVis />
@@ -258,7 +258,7 @@
       <EFormFieldDefNum>3712</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - Aspirin</DbLink>
+      <DbLink>allergy:Aspirin</DbLink>
       <ValueLabel>Aspirin</ValueLabel>
       <ItemOrder>15</ItemOrder>
       <PickListVis />
@@ -274,7 +274,7 @@
       <EFormFieldDefNum>3713</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - Codiene</DbLink>
+      <DbLink>allergy:Codiene</DbLink>
       <ValueLabel>Codeine</ValueLabel>
       <ItemOrder>16</ItemOrder>
       <PickListVis />
@@ -290,7 +290,7 @@
       <EFormFieldDefNum>3714</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - Ibuprofen</DbLink>
+      <DbLink>allergy:Ibuprofen</DbLink>
       <ValueLabel>Ibuprofen</ValueLabel>
       <ItemOrder>17</ItemOrder>
       <PickListVis />
@@ -306,7 +306,7 @@
       <EFormFieldDefNum>3715</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - Iodine</DbLink>
+      <DbLink>allergy:Iodine</DbLink>
       <ValueLabel>Idodine</ValueLabel>
       <ItemOrder>18</ItemOrder>
       <PickListVis />
@@ -322,7 +322,7 @@
       <EFormFieldDefNum>3716</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - LATEX</DbLink>
+      <DbLink>allergy:Latex</DbLink>
       <ValueLabel>Latex</ValueLabel>
       <ItemOrder>19</ItemOrder>
       <PickListVis />
@@ -338,7 +338,7 @@
       <EFormFieldDefNum>3717</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - Pen</DbLink>
+      <DbLink>allergy:Penicillin</DbLink>
       <ValueLabel>Penicillin</ValueLabel>
       <ItemOrder>20</ItemOrder>
       <PickListVis />
@@ -354,7 +354,7 @@
       <EFormFieldDefNum>3718</EFormFieldDefNum>
       <EFormDefNum>37</EFormDefNum>
       <FieldType>CheckBox</FieldType>
-      <DbLink>allergy:Allergy - Sulfa</DbLink>
+      <DbLink>allergy:Sulfa</DbLink>
       <ValueLabel>Sulfa</ValueLabel>
       <ItemOrder>21</ItemOrder>
       <PickListVis />

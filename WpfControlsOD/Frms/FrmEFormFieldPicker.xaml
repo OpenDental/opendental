@@ -10,13 +10,13 @@
              Text="EForm Field Picker" MinMaxBoxes="False">
     <Grid Background="#FFFCFDFE" >
         <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="OK" Click="butSave_Click" />
-        <ui:Label Height="55" Margin="25,10,0,0" Text="Select the field below which will be the parent responsible for showing or hiding this field. Only check boxes and radio buttons are available" Width="270" HAlign="Left" />
+        <ui:Label x:Name="labelSelect" Height="55" Margin="25,10,0,0" Text="Select the field below which will be the parent responsible for showing or hiding this field. Only check boxes and radio buttons are available" Width="289" HAlign="Left" VAlign="Bottom" />
         <ui:ListBox x:Name="listBoxFieldLabels" Width="270" Height="480" Margin="25,70,0,0"/>
-        <ui:Label Height="55" Margin="330,10,0,0" Text="The fields below are not available to use because they are not unique. Change them to be unique if you need to use them." Width="270" HAlign="Left" />
+        <ui:Label Height="55" Margin="330,10,0,0" Text="The fields below are not available to use because they are not unique. Change them to be unique if you need to use them." Width="270" HAlign="Left" VAlign="Bottom" />
         <ui:ListBox x:Name="listBoxDups" Width="270" Height="255" Margin="330,70,0,0"/>
-        <ui:GroupBox x:Name="groupParentValue" Height="145" Width="270" Margin="330,357,0,0">
-            <ui:ComboBox x:Name="comboParentValue" Margin="16,112,0,0" Width="240" Height="21"/>
-            <ui:Label Height="75" Margin="14,11,0,0" Width="245" Text="Choose a value that will be used to show or hide all of the fields you had selected on the previous window. If you chose a checkbox as the parent, your options will be Checked or Unchecked."/>
+        <ui:GroupBox x:Name="groupParentValue" Height="79" Width="270" Margin="330,357,0,0">
+            <ui:ComboBox x:Name="comboParentValue" Margin="16,48,0,0" Width="240" Height="21"/>
+            <ui:Label Height="35" Margin="14,11,0,0" Width="245" Text="Child fields will show if the parent field at the left has the following value"/>
         </ui:GroupBox>
     </Grid>
 </local:FrmODBase>

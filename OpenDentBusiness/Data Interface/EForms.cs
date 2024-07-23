@@ -11,12 +11,17 @@ using System.Text.RegularExpressions;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class EForms{
-		///<summary>Gets one EForm from the db.</summary>
-		public static EForm GetOne(long eFormNum){
+		///<summary>Gets a single eForm from the database.  Then, gets all the fields for it.  So it returns a fully functional eForm. Returns null if the eform isn't found in the database.</summary>
+		public static EForm GetEForm(long eFormNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
 				return Meth.GetObject<EForm>(MethodBase.GetCurrentMethod(),eFormNum);
 			}
-			return Crud.EFormCrud.SelectOne(eFormNum);
+			EForm eForm=Crud.EFormCrud.SelectOne(eFormNum);
+			if(eForm==null) {
+				return null;//eForm was deleted.
+			}
+			eForm.ListEFormFields=EFormFields.GetForForm(eFormNum);
+			return eForm;
 		}
 
 		///<summary></summary>

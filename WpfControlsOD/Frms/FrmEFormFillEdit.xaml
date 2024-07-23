@@ -9,10 +9,13 @@
              Width="750" Height="719" 
              Text="Module Form Def Edit" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
-		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="8,8,112,8"/>
-		<ui:Button x:Name="butPrint" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,20,149" Text="Print" Click="butPrint_Click" />
-		<ui:Button x:Name="butSaveOnly" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,20,59" Text="Save Only" Click="butSaveOnly_Click"   />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="34" Margin="0,0,20,18" Text="_Save and Import" Click="butSaveImport_Click"  />
-		<ui:Button x:Name="butDelete" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,20,239" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="8,8,112,92"/>
+		<ui:Button x:Name="butPrint" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,427,10" Text="Print" Click="butPrint_Click" />
+		<ui:Button x:Name="butSave1" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,10" Text="Save" Click="butSaveOnly_Click"   />
+		<ui:Button x:Name="butDelete" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,62" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:TextBox x:Name="textDateTime" Height="20" Width="131" Margin="8,0,0,50" VerticalAlignment="Bottom"/>
+		<ui:Label Height="18" Margin="5,0,0,72" Text="Date time" Width="88" VAlign="Center" HorizontalContentAlignment="Left" VerticalAlignment="Bottom" />
+		<ui:TextBox x:Name="textDescription" Height="20" Width="131" Margin="8,0,0,9" VerticalAlignment="Bottom"/>
+		<ui:Label Height="18" Margin="5,0,0,31" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" VerticalAlignment="Bottom" />
 	</Grid>
 </local:FrmODBase>

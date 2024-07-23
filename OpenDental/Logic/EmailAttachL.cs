@@ -99,6 +99,11 @@ namespace OpenDental {
 			//Very similar approach for Cloud Storage and local files since most attachments are getting byteArrays from the database
 			if(formImagePickerPatient.DocNumSelected>0) {
 				document=Documents.GetByNum(formImagePickerPatient.DocNumSelected);
+				//We don't want to allow specific files to be attached here so warn the end user when they attempt to add an incompatible document as an image
+				if(!ImageHelper.HasImageExtension(document.FileName)&&!document.FileName.EndsWith(".pdf")&&!document.ImgType.In(ImageType.Photo,ImageType.Radiograph)) {
+					MsgBox.Show("Not allowed to attach selected file type as an image. Attach as a file instead.");
+					return null;
+				}
 				if(document.FileName.EndsWith(".pdf")) {
 					if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
 						try {
