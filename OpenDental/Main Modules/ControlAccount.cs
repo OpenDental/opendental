@@ -3110,8 +3110,8 @@ namespace OpenDental {
 				gridUnearnedBreakdown.ListGridRows.Add(row);
 			}
 			gridUnearnedBreakdown.EndUpdate();
-			LayoutManager.MoveSize(gridUnearnedBreakdown,new Size(gridUnearnedBreakdown.Columns.Sum(x => x.ColWidth),
-				gridUnearnedBreakdown.ListGridRows.Sum(x => x.State.HeightTotal)+18));//+18 for header height 15 plus 3 extra pixels for line spacing
+			int gridWidth=LayoutManager.Scale(gridUnearnedBreakdown.Columns.Sum(x => x.ColWidth));
+			LayoutManager.MoveSize(gridUnearnedBreakdown,new Size(gridWidth,gridUnearnedBreakdown.ListGridRows.Sum(x => x.State.HeightTotal)+24));//+24 for header height 15 plus 3 extra pixels for line spacing + 6 for font increments that would cause a scrollbar
 			LayoutManager.MoveLocation(gridUnearnedBreakdown,new Point(groupBoxFamilyIns.Left-1,groupBoxFamilyIns.Top-1));
 			gridUnearnedBreakdown.BringToFront();
 		}

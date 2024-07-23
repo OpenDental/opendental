@@ -9128,7 +9128,7 @@
       <summary>The date of the last successful verification.</summary>
     </column>
     <column order="2" name="UserNum" type="bigint(20)" fk="userod">
-      <summary>FK to userod.UserNum.  This is the assigned user for this verification.</summary>
+      <summary>FK to userod.UserNum. Typically 0. There is an optional feature that lets an office "assign" users to a verification so that they can split the load of verifying between different users.</summary>
     </column>
     <column order="3" name="VerifyType" type="tinyint(4)">
       <summary>Enum:VerifyTypes either InsuranceBenefits or PatientEnrollment</summary>

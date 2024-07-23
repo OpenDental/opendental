@@ -810,6 +810,7 @@ namespace OpenDental {
 			if(OrthoSignature.GetSigString(orthoChartRow.Signature)!=orthoSignature.SigString) {
 				_hasChanged=true;
 				orthoChartRow.Signature=orthoSignature.ToString();
+				orthoChartRow.UserNum=_userodCurUser.UserNum;
 			}
 		}
 
