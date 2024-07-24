@@ -2919,6 +2919,7 @@
     <Compile Include="Main Modules\FormOpenDentalMenus.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Main Modules\ODSMSLogger.cs" />
     <Compile Include="Misc\DbmInfo.cs" />
     <Compile Include="Misc\Result.cs" />
     <Compile Include="Misc\WebServiceRequest.cs" />

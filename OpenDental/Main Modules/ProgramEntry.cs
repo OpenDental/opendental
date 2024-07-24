@@ -13,6 +13,7 @@ using System.Threading;
 using OpenDentBusiness;
 using Microsoft.Win32;
 using DataConnectionBase;
+using OpenDental.Main_Modules;
 
 namespace OpenDental {
 	static class ProgramEntry {
@@ -159,13 +160,6 @@ namespace OpenDental {
 				{
                     MsgBox.Show("DEBUG MODE!!");
 
-
-                    // Simulate receiving a 'YES' SMS from a specific phone number.  Work full the full process (including looking up the phone number, database updates, etc)
-                    string debugMsgText = "Yes";
-                    string debugMsgTime = DateTime.Today.AddHours(9).ToString();
-                    string debugMsgFrom = "+64210390277"; 
-                    string debugMsgGUID = Guid.NewGuid().ToString();
-
                     // Process the simulated SMS
                     System.Threading.Tasks.Task.Run(async () =>
                     {
@@ -174,8 +168,8 @@ namespace OpenDental {
                         // await OpenDental.Main_Modules.AsyncSMSHandling.processOneReceivedSMS(debugMsgText, debugMsgTime, debugMsgFrom, debugMsgGUID);
                     });
 
-                    // System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever());
-                    // System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks());
                 }
                 else if (ODSMS.RUN_SCHEDULED_TASKS) // True if this is the computer that actually does the work
 				{
