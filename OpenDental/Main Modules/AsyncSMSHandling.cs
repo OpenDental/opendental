@@ -15,6 +15,7 @@ using DataConnectionBase;
 using System.Runtime.Serialization;
 using CodeBase;
 using OpenDentBusiness.Mobile;
+using System.Threading;
 
 namespace OpenDental.Main_Modules
 {
@@ -71,6 +72,9 @@ namespace OpenDental.Main_Modules
         private static long _defNumOneWeekSent;
         private static long _defNumTexted;
         private static long _defNumWebSched;
+
+        private static readonly SemaphoreSlim fetchAndProcessSemaphore = new SemaphoreSlim(1, 1);
+
 
         /// <summary>
         /// This sets up the constants which map 'texted' to the Appointment Confirmed category for texted, etc.
@@ -145,15 +149,13 @@ namespace OpenDental.Main_Modules
                 }
                 else
                 {
-                    Console.WriteLine("GSM Modem Gateway not found.");
-                    EventLog.WriteEntry("ODSMS", "GSM Modem Gateway not found", EventLogEntryType.Error, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log("GSM Modem Gateway not found", EventLogEntryType.Error, logToFile: false);
 
                 }
             }
             catch (DailySMSTasksException ex)
             {
-                Console.WriteLine($"Error checking Diafaan status: {ex.Message}");
-                EventLog.WriteEntry("ODSMS", "Something bad happened checking Diafaan status", EventLogEntryType.Error, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log($"Error checking Diafaan status: {ex.Message}", EventLogEntryType.Error, logToFile: false);
             }
 
             return false;
@@ -178,20 +180,20 @@ namespace OpenDental.Main_Modules
                 {
                     // SMS was previously broken but is now restored
                     MsgBox.Show("SMS is restored. Birthday texts and reminders will be sent now.");
-                    EventLog.WriteEntry("ODSMS", "SMS has been restored", EventLogEntryType.Information, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log("SMS has been restored", EventLogEntryType.Information);
                     ODSMS.USE_ODSMS = true;
                 }
                 else if (ODSMS.initialStartup)
                 {
                     // Initial startup and SMS is working
-                    EventLog.WriteEntry("ODSMS", "SMS is working during initial startup", EventLogEntryType.Information, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log("SMS is working during initial startup", EventLogEntryType.Information);
                     ODSMS.USE_ODSMS = true;
                     ODSMS.initialStartup = false;
                 }
 
                 remindersSent = SendReminderTexts();
                 birthdaySent = SendBirthdayTexts(); // Yes, I'm ignoring hte return value for now
-
+                await FetchAndProcessSmsMessages("&remove=1");
             }
             else
             {
@@ -199,14 +201,13 @@ namespace OpenDental.Main_Modules
                 if (ODSMS.wasSmsBroken)
                 {
                     // SMS was already broken
-                    Console.WriteLine("SMS continues to be down");
-                    EventLog.WriteEntry("ODSMS", "SMS is still down", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log("SMS is still down", EventLogEntryType.Warning);
                 }
                 else
                 {
                     // SMS has just gone down
                     MsgBox.Show("Failure checking Diafaan! SMS will not send or receive until fixed.  Please go to the phone and check the GSM Modem Gateway app and ensure Wi-Fi is enabled. Failing that, check Diafaan manually.");
-                    EventLog.WriteEntry("ODSMS", "SMS is down", EventLogEntryType.Error, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log("SMS is down", EventLogEntryType.Error);
                     ODSMS.USE_ODSMS = false;
                 }
             }
@@ -325,7 +326,7 @@ namespace OpenDental.Main_Modules
                 {
                     foreach (var sms in messagesToSend)
                     {
-                        EventLog.WriteEntry("ODSMS", $"To: {sms.MobilePhoneNumber}, Message: {sms.MsgText}", EventLogEntryType.Information, 101, 1, new byte[10]);
+                        ODSMSLogger.Instance.Log($"To: {sms.MobilePhoneNumber}, Message: {sms.MsgText}", EventLogEntryType.Information);
                     }
                     if (ODSMS.SEND_SMS)
                     {
@@ -370,13 +371,13 @@ namespace OpenDental.Main_Modules
                             }
                             else
                             {
-                                EventLog.WriteEntry("ODSMS", "Failure updating patient details!", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                                ODSMSLogger.Instance.Log("Failure updating patient details!", EventLogEntryType.Warning);
                             }
                         }
                     }
                     else
                     {
-                        EventLog.WriteEntry("ODSMS", "SMS sending is disabled. Not sending any messages", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                        ODSMSLogger.Instance.Log("SMS sending is disabled. Not sending any messages", EventLogEntryType.Warning);
 
                     }
                 }
@@ -437,7 +438,7 @@ namespace OpenDental.Main_Modules
                 }
                 else
                 {
-                    Console.WriteLine("SMS sending is disabled. Not sending any messages.");
+                    ODSMSLogger.Instance.Log("SMS sending is disabled. Not sending any messages", EventLogEntryType.Warning);
                 }
             }
             return birthdaySent; // It's before 7 AM, do not proceed
@@ -571,7 +572,7 @@ namespace OpenDental.Main_Modules
         async public static Task processOneReceivedSMS(string msgText, string msgTime, string msgFrom, string msgGUID)
         {
 
-            EventLog.WriteEntry("ODSMS", "SMS inner loop - downloaded a single SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
+            ODSMSLogger.Instance.Log("SMS inner loop - downloaded a single SMS", EventLogEntryType.Information, logToEventLog: false);
             string guidFilePath = Path.Combine(sms_folder_path, msgGUID);
 
             byte[] bytesToWrite = Encoding.UTF8.GetBytes(msgText);
@@ -587,7 +588,7 @@ namespace OpenDental.Main_Modules
             Console.WriteLine($"Number of matching patients: {patients.Count}");
             if (patients.Count > 20)
             {
-                EventLog.WriteEntry("ODSMS", "Too many patients match this number! Assuming a dummy entry", EventLogEntryType.Information, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log("Too many patients match this number! Assuming a dummy entry", EventLogEntryType.Information);
                 return;
             }
 
@@ -654,8 +655,7 @@ namespace OpenDental.Main_Modules
                     }
                 } else
                 {
-                    EventLog.WriteEntry("ODSMS", "'YES' received matching more than ten patients - process manually", EventLogEntryType.Information, 101, 1, new byte[10]);
-
+                    ODSMSLogger.Instance.Log("'YES' received matching more than ten patients - process manually", EventLogEntryType.Information);
                 }
             }
 
@@ -679,7 +679,7 @@ namespace OpenDental.Main_Modules
             if (status == 0)
             {
                 string s = $"The '{name}' appointment status was not found.";
-                EventLog.WriteEntry("ODSMS", s, EventLogEntryType.Error, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log(s, EventLogEntryType.Error);
                 MsgBox.Show(s);
                 throw new Exception(s); // or raiseError, depending on your framework
             }
@@ -695,7 +695,7 @@ namespace OpenDental.Main_Modules
             if (defNum == 0)
             {
                 string s = $"The '{itemName}' appointment status was not found.";
-                EventLog.WriteEntry("ODSMS", s, EventLogEntryType.Error, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log(s, EventLogEntryType.Error);
                 MsgBox.Show(s);
                 throw new Exception(s); // or raiseError, depending on your framework
             }
@@ -733,12 +733,12 @@ namespace OpenDental.Main_Modules
                 if (p != null)
                 {
                     // Patient found, proceed with further processing
-                    Console.WriteLine("Matched Patient: " + p.GetNameFirstOrPreferred());
+                    ODSMSLogger.Instance.Log("Matched Patient: " + p.GetNameFirstOrPreferred(), EventLogEntryType.Information, logToEventLog: false);
                 }
                 else
                 {
                     // No match found, handle accordingly
-                    Console.WriteLine("No matching patient found.");
+                    ODSMSLogger.Instance.Log("No matching patient found.", EventLogEntryType.Information, logToEventLog: false);
                     return false;
                 }
 
@@ -773,7 +773,7 @@ namespace OpenDental.Main_Modules
                     {
                         // Strange.  We've received YES to an appointment but it's not within the expected time frame
                         string logMessage = $"Received YES to an appointment that is {timeUntilAppointment.TotalDays} days away.  This is unexpected.";
-                        EventLog.WriteEntry("ODSMS", logMessage, EventLogEntryType.Warning, 101, 1, new byte[10]);
+                        ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
                         return false;
                     }
 
@@ -787,7 +787,7 @@ namespace OpenDental.Main_Modules
                             originalAppt.Confirmed != AsyncSMSHandling._defNumOneWeekSent &&
                             originalAppt.Confirmed != AsyncSMSHandling._defNumTwoWeekSent)
                         {
-                            EventLog.WriteEntry("ODSMS", "OOPS! Patient just replied yes to an appointment that is already confirmed.  Ignoring", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                            ODSMSLogger.Instance.Log("OOPS! Patient just replied yes to an appointment that is already confirmed. Ignoring", EventLogEntryType.Warning);
                             return false;
                         }
                         else
@@ -804,26 +804,25 @@ namespace OpenDental.Main_Modules
                             }
                             else
                             {
-                                EventLog.WriteEntry("ODSMS", "Failure updating appointment status!", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                                ODSMSLogger.Instance.Log("Failure updating appointment status!", EventLogEntryType.Error);
                             }
                         }
                     }
                     else
                     {
                         string logMessage = $"No matching appointment found for patient {PatNum} at {appointmentTime.Value}.";
-                        EventLog.WriteEntry("ODSMS", logMessage, EventLogEntryType.Warning, 101, 1, new byte[10]);
+                        ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Error parsing date from communication log note.");
-                    EventLog.WriteEntry("ODSMS", "Error parsing date from communication log note.", EventLogEntryType.Error, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log($"Error parsing date from communication log note. {latestComm.Note ?? "Note is null"}", EventLogEntryType.Error);
                 }
             }
             else
             {
                 string logMessage = $"'Yes' received, but no matching appointment found for any of the patients {patNums}.";
-                EventLog.WriteEntry("ODSMS", logMessage, EventLogEntryType.Warning, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
             }
 
             return false;
@@ -848,68 +847,87 @@ namespace OpenDental.Main_Modules
         {
             if (!Directory.Exists(sms_folder_path))
             {
-                EventLog.WriteEntry("ODSMS", "SMS MSG GUIDs folder not found - creating", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log("SMS MSG GUIDs folder not found - creating", EventLogEntryType.Warning);
                 MsgBox.Show("SMS folder not found - creating. If this is at the practice then quit OpenDental and contact Corrin");
                 Directory.CreateDirectory(sms_folder_path);
             }
+        }
+
+
+        /// <summary>
+        /// </summary>
+        private static async Task ClearProcessedSMSMessages()
+        {
+            await FetchAndProcessSmsMessages("&remove=1");
+            return;
         }
 
         /// <summary>
         /// This processes all the SMS messages received since it as last called (5 minutes is the default timer) - typically just 1 SMS.  It calls ProcessSmsMessage for each SMS
         /// </summary>
         /// <returns></returns>
-        private static async Task FetchAndProcessSmsMessages()
+        private static async Task FetchAndProcessSmsMessages(string removeStr = "")
         {
-            const int getAllCount = 1000;
-            int count = getAllCount;
-            // int offset = 0;     // The old offset logic has been removed.  It was designed to skip a bunch of SMS that have already been processed
-            // int c = 0; // More offset logic
-            string removeStr = "&remove=1";
-            // removeStr = ""; // Stop removing messages, it doesn't seem to help
-            string checkSMSstring = "http/request-received-messages?&order=newest&" + auth;
+            await fetchAndProcessSemaphore.WaitAsync();
+            try
+            { 
+                const int getAllCount = 1000;
+                int count = getAllCount;
+                // int offset = 0;     // The old offset logic has been removed.  It was designed to skip a bunch of SMS that have already been processed
+                // int c = 0; // More offset logic
+                // string removeStr = "&remove=1";
+                string checkSMSstring = "http/request-received-messages?&order=newest&" + auth;
 
-            var request = checkSMSstring + "&limit=" + count.ToString() + removeStr;
-            Console.WriteLine(request);
-            var response = await sharedClient.GetAsync(request);
-            var text = await response.Content.ReadAsStringAsync();
+                var request = checkSMSstring + "&limit=" + count.ToString() + removeStr;
+                Console.WriteLine(request);
+                var response = await sharedClient.GetAsync(request);
+                var text = await response.Content.ReadAsStringAsync();
 
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(text);
-            var list = xmlDoc.ChildNodes[1]; // the list of all SMS received (up to count)
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(text);
+                var list = xmlDoc.ChildNodes[1]; // the list of all SMS received (up to count)
 
-            var smsCount = list.ChildNodes.Count;
-            if (smsCount == 0)
-            {
-                Console.WriteLine("No SMS messages received.");
-                return;
-            } else { 
-                Console.WriteLine($"Received {smsCount} SMS messages.");
-                EventLog.WriteEntry("ODSMS", $"About to loop through {smsCount} SMS messages", EventLogEntryType.Information, 101, 1, new byte[10]);
+                var smsCount = list.ChildNodes.Count;
+                if (smsCount == 0)
+                {
+                    Console.WriteLine("No SMS messages received.");
+                    return;
+                }
+                else
+                {
+                    ODSMSLogger.Instance.Log($"About to loop through {smsCount} SMS messages", EventLogEntryType.Information);
 
-            }
+                }
 
-            // Part of the old offset logic.  Should never be true
+                // Part of the old offset logic.  Should never be true
 
-            // if (list.ChildNodes.Count < offset)     
-            // {
-            //    return;
-            // }
-
-            foreach (XmlElement child in list.ChildNodes)
-            {
-                // if (c < offset)
+                // if (list.ChildNodes.Count < offset)     
                 // {
-                //    c++; // Skip the first offset messages
-                //    continue;
+                //    return;
                 // }
 
-                string msgFrom = child.ChildNodes[0].InnerText;
-                string msgText = child.ChildNodes[2].InnerText;
-                string msgTime = child.ChildNodes[11].InnerText;
-                string msgGUID = child.ChildNodes[4].InnerText;
+                foreach (XmlElement child in list.ChildNodes)
+                {
+                    // if (c < offset)
+                    // {
+                    //    c++; // Skip the first offset messages
+                    //    continue;
+                    // }
 
-                await ProcessSmsMessage(msgFrom, msgText, msgTime, msgGUID);
+                    string msgFrom = child.ChildNodes[0].InnerText;
+                    string msgText = child.ChildNodes[2].InnerText;
+                    string msgTime = child.ChildNodes[11].InnerText;
+                    string msgGUID = child.ChildNodes[4].InnerText;
+
+                    await ProcessSmsMessage(msgFrom, msgText, msgTime, msgGUID);
+                }
             }
+            finally
+            {
+                fetchAndProcessSemaphore.Release();
+            }
+
+
         }
 
         /// <summary>
@@ -924,16 +942,14 @@ namespace OpenDental.Main_Modules
         private static async Task ProcessSmsMessage(string msgFrom, string msgText, string msgTime, string msgGUID)
         {
             string logMessage = $"SMS from {msgFrom} at time {msgTime} with body {msgText} - GUID: {msgGUID}";
-            Console.WriteLine(logMessage);
-            EventLog.WriteEntry("ODSMS", logMessage, EventLogEntryType.Information, 101, 1);
+            ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Information);
 
             string guidFilePath = Path.Combine(sms_folder_path, msgGUID);
 
             if (File.Exists(guidFilePath)) // True if we have processed this message before
             {
                 string errorMessage = "Must've already processed this SMS";
-                Console.WriteLine(errorMessage);
-                EventLog.WriteEntry("ODSMS", errorMessage, EventLogEntryType.Warning, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log(errorMessage, EventLogEntryType.Information);
             }
             else
             {
@@ -946,7 +962,7 @@ namespace OpenDental.Main_Modules
                     Console.WriteLine($"An exception occurred: {ex.Message}");
                     Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                     string fullLogMessage = $"An exception occurred: {ex.Message}\nStack Trace: {ex.StackTrace}";
-                    EventLog.WriteEntry("ODSMS", fullLogMessage, EventLogEntryType.Error, 101, 1);
+                    ODSMSLogger.Instance.Log(fullLogMessage, EventLogEntryType.Error);
                 }
             }
         }
@@ -975,8 +991,7 @@ namespace OpenDental.Main_Modules
                 if (currentTime.Hour >= 8)
                     //if (!todaysJobsSucceeded && currentTime.Hour >= 8)
                 {
-                    Console.WriteLine("Performing daily SMS related tasks");
-                    EventLog.WriteEntry("ODSMS", "Performing daily SMS related tasks", EventLogEntryType.Information, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log("Performing daily SMS related tasks", EventLogEntryType.Information);
 
                     try
                     {
@@ -985,8 +1000,7 @@ namespace OpenDental.Main_Modules
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error performing daily SMS tasks: {ex.Message}");
-                        EventLog.WriteEntry("ODSMS", $"Error performing daily SMS tasks: {ex.Message}", EventLogEntryType.Error, 101, 1, new byte[10]);
+                        ODSMSLogger.Instance.Log($"Error performing daily SMS tasks: {ex.Message}", EventLogEntryType.Error);
                     }
                 }
 
@@ -1010,13 +1024,13 @@ namespace OpenDental.Main_Modules
         {
             while (!DataConnection.HasDatabaseConnection)
             {
-                Console.WriteLine("Waiting for database connection...");
+                ODSMSLogger.Instance.Log("Waiting for database connection...", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
                 await Task.Delay(5000); // Wait for 5 seconds before checking again
             }
 
             while (Security.CurUser == null || Security.CurUser.UserNum == 0) // Assuming UserNum is an integer and 0 or null indicates uninitialized
             {
-                Console.WriteLine("Waiting for user information to be initialized...");
+                ODSMSLogger.Instance.Log("Waiting for user information to be initialized...", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
                 await Task.Delay(5000); // Wait for 5 seconds before checking again
             }
         }
@@ -1035,7 +1049,7 @@ namespace OpenDental.Main_Modules
             while (true)
             {
                 await Task.Delay(60 * 1000); // Check SMS once a minute
-                Console.WriteLine("Checking for new SMS now");
+                ODSMSLogger.Instance.Log("Checking for new SMS now", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
 
                 try
                 {
@@ -1050,19 +1064,19 @@ namespace OpenDental.Main_Modules
                         catch (Exception ex)
                         {
                             MsgBox.Show("Receiving patient texts failed.");
-                            EventLog.WriteEntry("ODSMS", ex.ToString(), EventLogEntryType.Error, 101, 1, new byte[10]);
+                            ODSMSLogger.Instance.Log(ex.ToString(), EventLogEntryType.Error);
                         }
                     }
                     else
                     {
                         if (ODSMS.wasSmsBroken)
                         {
-                            Console.WriteLine("SMS continues to be down");
+                            ODSMSLogger.Instance.Log("SMS continues to be down", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
                         }
                         else
                         {
                             MsgBox.Show("Failure checking Diafaan! SMS will not send or receive until fixed.  Please go to the phone and check the GSM Modem Gateway app and ensure Wi-Fi is enabled. Failing that, check Diafaan manually.");
-                            EventLog.WriteEntry("ODSMS", "SMS is down", EventLogEntryType.Error, 101, 1, new byte[10]);
+                            ODSMSLogger.Instance.Log("SMS is down", EventLogEntryType.Error);
                             ODSMS.wasSmsBroken = true;
                             ODSMS.USE_ODSMS = false;
                         }
@@ -1070,8 +1084,7 @@ namespace OpenDental.Main_Modules
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error receiving SMS: {ex.Message}");
-                    EventLog.WriteEntry("ODSMS", "Error receiving SMS", EventLogEntryType.Error, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log($"Error receiving SMS: {ex.Message}", EventLogEntryType.Error);
                     smsIsWorking = false;
                     ODSMS.wasSmsBroken = true;
                     ODSMS.USE_ODSMS = false;
@@ -1079,8 +1092,7 @@ namespace OpenDental.Main_Modules
 
                 if (!smsIsWorking && await CheckSMSConnection())
                 {
-                    Console.WriteLine("SMS connection restored");
-                    EventLog.WriteEntry("ODSMS", "SMS connection restored", EventLogEntryType.Information, 101, 1, new byte[10]);
+                    ODSMSLogger.Instance.Log("SMS connection restored", EventLogEntryType.Information);
                     smsIsWorking = true;
                     ODSMS.wasSmsBroken = false;
                     ODSMS.USE_ODSMS = true;

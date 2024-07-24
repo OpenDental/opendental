@@ -44,6 +44,7 @@ namespace OpenDental
                 Console.WriteLine("Event source 'ODSMS' already exists.");
             }
 
+            
             EventLog.WriteEntry("ODSMS", "Running custom build of Open Dental on " + MachineName, EventLogEntryType.Information, 101, 1, new byte[10]);
 
 
