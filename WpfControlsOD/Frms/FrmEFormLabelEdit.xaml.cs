@@ -15,6 +15,7 @@ using System.Xml;
 using CodeBase;
 using OpenDentBusiness;
 using WpfControls.UI;
+using WpfControls;
 
 namespace OpenDental {
 	/// <summary>The editor is for the EFormField even though we're really editing the EFormFieldDef. This editor is not patient facing.</summary>
@@ -23,6 +24,8 @@ namespace OpenDental {
 		public EFormField EFormFieldCur;
 		///<summary>We need access to a few other fields of the EFormDef.</summary>
 		public EFormDef EFormDefCur;
+		///<summary>All the siblings</summary>
+		public List<EFormField> _listEFormFields;
 		///<summary></summary>
 		public bool IsPreviousStackable;
 		private string _openingBracket;
@@ -41,6 +44,8 @@ namespace OpenDental {
 			FlowDocument flowDocument=EFormFields.DeserializeFlowDocument(EFormFieldCur.ValueLabel);
 			textLabel.richTextBox.Document=flowDocument;
 			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
 			if(!IsPreviousStackable){
 				labelStackable.Text="previous field is not stackable";
 				checkIsHorizStacking.IsEnabled=false;
@@ -254,6 +259,30 @@ namespace OpenDental {
 			}
 			return true;
 		}
+		private void butPickParent_Click(object sender,EventArgs e) {
+			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
+			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
+			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
+			frmEFormFieldPicker.ShowDialog();
+			if(frmEFormFieldPicker.IsDialogCancel){
+				return;
+			}
+			textCondParent.Text=frmEFormFieldPicker.LabelSelected;
+		}
+
+		private void butPickValue_Click(object sender,EventArgs e) {
+			if(textCondParent.Text==""){
+				MsgBox.Show("Please enter a name in the Parent field first.");
+				return;
+			}
+			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			if(conditionValueSetter.ErrorMsg!="") {
+				MsgBox.Show(conditionValueSetter.ErrorMsg);
+				return;
+			}
+			textCondValue.Text=conditionValueSetter.SelectedValue;
+		}
 
 		private void butSave_Click(object sender, EventArgs e) {
 			if(!textVIntWidth.IsValid()){
@@ -282,6 +311,8 @@ namespace OpenDental {
 			EFormFieldCur.ValueLabel=EFormFields.SerializeFlowDocument(flowDocument);
 			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.Width=textVIntWidth.Value;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

@@ -102,6 +102,15 @@ namespace OpenDentBusiness.OpenAi {
 			});
 			return await APIRequest.Inst.PostRequestAsync<OAIRun>($"threads/{threadId}/runs/{runId}/submit_tool_outputs",content,clientOverride:_httpClient);
 		}
+
+		///<summary>Throws Exception. Returns the Run if succesful, otherwise null.</summary>
+		public async Task<OAIRun> SubmitToolResults(string threadId, string runId, List<OAIToolOutput> toolOutputs) {
+			string content = JsonConvert.SerializeObject(new {
+				tool_outputs = toolOutputs.ToArray(),
+			});
+			return await APIRequest.Inst.PostRequestAsync<OAIRun>($"threads/{threadId}/runs/{runId}/submit_tool_outputs", content, clientOverride: _httpClient);
+		}
+
 		#endregion
 
 		///<summary>Throws Exception. Returns an Assistant from OpenAi for the given id if successful. Otherwise null.</summary>

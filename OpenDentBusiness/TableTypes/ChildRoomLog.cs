@@ -11,10 +11,10 @@ namespace OpenDentBusiness{
 		[CrudColumn(IsPriKey=true)]
 		public long ChildRoomLogNum;
 		///<summary>The actual time that this entry was entered.  Cannot be 01-01-0001.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.DateTEntry)]
+		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateTEntered;
 		///<summary>The time to display and to use in all calculations.  Cannot be 01-01-0001. Usually the same as DateTEntered unless user needs to adjust for some reason.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.DateTEntryEditable)]
+		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateTDisplayed;
 		///<summary>FK to child.ChildNum. Will be 0 if this is for a teacher.</summary>
 		public long ChildNum;

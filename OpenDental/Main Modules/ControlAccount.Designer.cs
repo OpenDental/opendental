@@ -75,7 +75,7 @@
 			this.textUrgFinNote = new OpenDental.ODtextBox();
 			this.butServiceDateView = new OpenDental.UI.Button();
 			this.textFinNote = new OpenDental.ODtextBox();
-			this.checkUseSuperFam = new System.Windows.Forms.CheckBox();
+			this.checkUseSuperFam = new OpenDental.UI.CheckBox();
 			this.tabShow = new OpenDental.UI.TabPage();
 			this.checkShowCommAuto = new OpenDental.UI.CheckBox();
 			this.checkShowCompletePayPlans = new OpenDental.UI.CheckBox();
@@ -759,13 +759,12 @@
 			// 
 			// checkUseSuperFam
 			// 
-			this.checkUseSuperFam.AutoSize = true;
+			this.checkUseSuperFam.BackColor = System.Drawing.SystemColors.Window;
 			this.checkUseSuperFam.Location = new System.Drawing.Point(7, 521);
 			this.checkUseSuperFam.Name = "checkUseSuperFam";
-			this.checkUseSuperFam.Size = new System.Drawing.Size(113, 17);
+			this.checkUseSuperFam.Size = new System.Drawing.Size(135, 17);
 			this.checkUseSuperFam.TabIndex = 74;
 			this.checkUseSuperFam.Text = "Show SuperFamily";
-			this.checkUseSuperFam.UseVisualStyleBackColor = true;
 			this.checkUseSuperFam.CheckedChanged += new System.EventHandler(this.checkUseSuperFam_CheckedChanged);
 			// 
 			// tabShow
@@ -2064,6 +2063,6 @@
 
 		#endregion
 		private UI.GridOD gridAcctPat;
-		private System.Windows.Forms.CheckBox checkUseSuperFam;
+		private OpenDental.UI.CheckBox checkUseSuperFam;
 	}
 }

@@ -22,6 +22,8 @@ namespace OpenDentBusiness {
 		OpenAiApiKey,
 		///<summary>Assistant ids for OpenAi chat assistants, csv.</summary>
 		OpenAiAssistantIds,
+		///<summary>Assistant id for the FAQ chat assistant on OpenAi.</summary>
+		OpenAiFaqAssistantId,
 		///<summary>When messages are sent automatically by the system, they will display in the chat log using this name.
 		///Usually a company name.  For example, "Open Dental"</summary>
 		SystemName,

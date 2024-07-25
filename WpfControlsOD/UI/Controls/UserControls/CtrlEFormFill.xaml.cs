@@ -517,8 +517,18 @@ namespace OpenDental {
 				if(eFormFieldParent is null){
 					continue;//they might have set the ConditionalParent string wrong
 				}
-				string valueStringVis=EFormFields.ConvertValueStringDbToVis(eFormFieldParent);
-				if(valueStringVis==ListEFormFields[i].ConditionalValue){
+				bool isConditionMet=false;
+				if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons 
+					&& EFormFields.ConvertValueStringDbToVis(eFormFieldParent)==ListEFormFields[i].ConditionalValue)
+				{
+					isConditionMet=true;
+				}
+				if(eFormFieldParent.FieldType==EnumEFormFieldType.CheckBox 
+					&& eFormFieldParent.ValueString==ListEFormFields[i].ConditionalValue)
+				{
+					isConditionMet=true;
+				}
+				if(isConditionMet){
 					gridForField.Visibility=Visibility.Visible;
 				}
 				else{
@@ -1222,10 +1232,55 @@ namespace OpenDental {
 		private void AddCheckBox(Grid gridForField,EFormField eFormField){
 			CheckBox checkBox=new CheckBox();
 			gridForField.Children.Add(checkBox);
+			StackPanel stackPanelLabel=new StackPanel();
+			stackPanelLabel.Orientation=Orientation.Horizontal;
 			checkBox.VerticalContentAlignment=VerticalAlignment.Center;
-			checkBox.Content=eFormField.ValueLabel;
 			checkBox.FontSize=FontSize*eFormField.FontScale/100;
 			checkBox.IsChecked=eFormField.ValueString=="X";
+			Label label=new Label();
+			label.FontSize=FontSize*eFormField.FontScale/100;
+			label.Padding=new Thickness(0);//default is 5
+			label.Content=eFormField.ValueLabel;
+			stackPanelLabel.Children.Add(label);
+			if(eFormField.IsRequired) {
+				Label labelRequired=new Label();
+				labelRequired.FontSize=FontSize*eFormField.FontScale/100;
+				labelRequired.Padding=new Thickness(0);
+				labelRequired.Content=" *";
+				labelRequired.Foreground=Brushes.Red;
+				labelRequired.FontWeight=FontWeights.Bold;
+				stackPanelLabel.Children.Add(labelRequired);
+			}
+			bool isConditionalParent=false;
+			if(IsSetupMode
+				&& ListEFormFields.Exists(x=>x.ConditionalParent==eFormField.ValueLabel))
+			{
+				isConditionalParent=true;
+			}
+			if(isConditionalParent) {
+				Label labelCondParent = new Label();
+				stackPanelLabel.Children.Add(labelCondParent);
+				labelCondParent.FontSize=FontSize*eFormField.FontScale/100;
+				labelCondParent.Padding=new Thickness(5,0,0,0);//default is 5
+				labelCondParent.Content="(CND)";
+				labelCondParent.Foreground=Brushes.Red;
+			}
+			bool isConditionalChild = false;
+			if(IsSetupMode
+				&& eFormField.ConditionalParent!=""
+				&& ListEFormFields.Exists(x => x.ValueLabel==eFormField.ConditionalParent)) {
+				isConditionalChild=true;
+			}
+			if(isConditionalChild) {
+				//yes, we let them include both parent and child in case a field is both.
+				Label labelCondChild = new Label();
+				stackPanelLabel.Children.Add(labelCondChild);
+				labelCondChild.FontSize=FontSize*eFormField.FontScale/100;
+				labelCondChild.Padding=new Thickness(5,0,0,0);//default is 5
+				labelCondChild.Content="(cnd)";
+				labelCondChild.Foreground=Brushes.Red;
+			}
+			checkBox.Content=stackPanelLabel;
 			checkBox.Click+=(sender,e)=> {
 				FillFieldsFromControls(eFormField);
 				SetVisibilities(_pageShowing,forceRefresh:true);
@@ -1312,6 +1367,30 @@ namespace OpenDental {
 			//textBlock.FontSize=FontSize*eFormField.FontScale/100;//no, this is never set for labels
 			//textBlock.Padding=new Thickness(0);//default is 5
 			FlowDocument flowDocument=EFormFields.DeserializeFlowDocument(eFormField.ValueLabel);
+			bool isConditionalChild=false;
+			if(IsSetupMode
+				&& eFormField.ConditionalParent!=""
+				&& ListEFormFields.Exists(x=>x.ValueLabel==eFormField.ConditionalParent))
+			{
+				isConditionalChild=true;
+			}
+			if(isConditionalChild){
+				if(flowDocument.Blocks.Count==0) {
+					//Return early if there's no blocks
+					textRich.richTextBox.Document=flowDocument;
+					return;
+				}
+				if(!(flowDocument.Blocks.Any(x=>x.GetType() == typeof(Paragraph)))) {
+					//Return early if there's no paragraph elements
+					textRich.richTextBox.Document=flowDocument;
+					return;
+				}
+				//Adds <Run Foreground="#FFFF0000"> (cnd)</Run> to the end of the last <Paragraph> element in the FlowDocument.
+				Run runCondChild=new Run(" (cnd)");
+				runCondChild.Foreground=new SolidColorBrush(Colors.Red);
+				Paragraph paragraph=flowDocument.Blocks.OfType<Paragraph>().Last();
+				paragraph.Inlines.Add(runCondChild);
+			}
 			textRich.richTextBox.Document=flowDocument;
 		}
 
@@ -1413,6 +1492,21 @@ namespace OpenDental {
 				labelRequired.FontWeight=FontWeights.Bold;
 				labelRequired.Foreground=Brushes.Red;
 				stackPanelLabel.Children.Add(labelRequired);
+			}
+			bool isConditionalChild=false;
+			if(IsSetupMode
+				&& eFormField.ConditionalParent!=""
+				&& ListEFormFields.Exists(x=>x.ValueLabel==eFormField.ConditionalParent))
+			{
+				isConditionalChild=true;
+			}
+			if(isConditionalChild){
+				Label labelCondChild=new Label();
+				stackPanelLabel.Children.Add(labelCondChild);
+				labelCondChild.FontSize=FontSize*eFormField.FontScale/100;
+				labelCondChild.Padding=new Thickness(5,0,0,0);//default is 5
+				labelCondChild.Content="(cnd)";
+				labelCondChild.Foreground=Brushes.Red;
 			}
 			stackPanelVert.Children.Add(stackPanelLabel);
 			//Main grid will hold the headers and the med rows.
@@ -1674,6 +1768,21 @@ namespace OpenDental {
 				labelRequired.Foreground=Brushes.Red;
 				stackPanelLabel.Children.Add(labelRequired);
 			}
+			bool isConditionalChild=false;
+			if(IsSetupMode
+				&& eFormField.ConditionalParent!=""
+				&& ListEFormFields.Exists(x=>x.ValueLabel==eFormField.ConditionalParent))
+			{
+				isConditionalChild=true;
+			}
+			if(isConditionalChild){
+				Label labelCondChild=new Label();
+				stackPanelLabel.Children.Add(labelCondChild);
+				labelCondChild.FontSize=FontSize*eFormField.FontScale/100;
+				labelCondChild.Padding=new Thickness(5,0,0,0);//default is 5
+				labelCondChild.Content="(cnd)";
+				labelCondChild.Foreground=Brushes.Red;
+			}
 			stackPanel2.Children.Add(stackPanelLabel);
 			Rectangle rectangle=new Rectangle();
 			rectangle.Width=stackPanel2.Width;
@@ -1894,8 +2003,18 @@ namespace OpenDental {
 				if(eFormFieldParent is null) {
 					continue;
 				}
-				string valueStringVis=EFormFields.ConvertValueStringDbToVis(eFormFieldParent);
-				if(valueStringVis==ListEFormFields[i].ConditionalValue){
+				bool isConditionMet=false;
+				if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons 
+					&& EFormFields.ConvertValueStringDbToVis(eFormFieldParent)==ListEFormFields[i].ConditionalValue)
+				{
+					isConditionMet=true;
+				}
+				if(eFormFieldParent.FieldType==EnumEFormFieldType.CheckBox 
+					&& eFormFieldParent.ValueString==ListEFormFields[i].ConditionalValue)
+				{
+					isConditionMet=true;
+				}
+				if(isConditionMet){
 					ListEFormFields[i].IsHiddenCondit=false;
 				}
 				else{

@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using OpenDentBusiness;
+using WpfControls;
 using WpfControls.UI;
 
 namespace OpenDental {
@@ -17,6 +18,8 @@ namespace OpenDental {
 		public EFormField EFormFieldCur;
 		///<summary>We need access to a few other fields of the EFormDef.</summary>
 		public EFormDef EFormDefCur;
+		///<summary>Siblings</summary>
+		public List<EFormField> _listEFormFields;
 		///<summary></summary>
 		public bool IsPreviousStackable;
 		///<summary>Looks just like what would go in the db. If it starts with "allergy:", "problem:", or "med:", then this string also includes the selected allergy, etc. So it will look like "allergy:...", etc. If "None", then this will be empty string. This gets updated as the user types.</summary>
@@ -34,6 +37,8 @@ namespace OpenDental {
 		private void FrmEFormsRadioButtonsEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			textLabel.Text=EFormFieldCur.ValueLabel;
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
 			List<string> listAvailCheckBox=EFormFieldsAvailable.GetList_CheckBox();
 			comboDbLink.Items.AddList(listAvailCheckBox);
 			_dbLink=EFormFieldCur.DbLink;
@@ -49,6 +54,8 @@ namespace OpenDental {
 				checkIsRequired.Visible=false;
 			}
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
+			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255)));
+			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
 		}
 
 		private void SetComboFromDbLink(){
@@ -234,6 +241,31 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
+		private void butPickParent_Click(object sender,EventArgs e) {
+			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
+			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
+			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
+			frmEFormFieldPicker.ShowDialog();
+			if(frmEFormFieldPicker.IsDialogCancel){
+				return;
+			}
+			textCondParent.Text=frmEFormFieldPicker.LabelSelected;
+		}
+
+		private void butPickValue_Click(object sender,EventArgs e) {
+			if(textCondParent.Text==""){
+				MsgBox.Show("Please enter a name in the Parent field first.");
+				return;
+			}
+			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			if(conditionValueSetter.ErrorMsg!="") {
+				MsgBox.Show(conditionValueSetter.ErrorMsg);
+				return;
+			}
+			textCondValue.Text=conditionValueSetter.SelectedValue;
+		}
+
 		private void FrmEFormRadioButtonsEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
 			if(butSave.IsAltKey(Key.S,e)) {
 				butSave_Click(this,new EventArgs());
@@ -251,6 +283,8 @@ namespace OpenDental {
 			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true && checkIsRequired.Visible;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

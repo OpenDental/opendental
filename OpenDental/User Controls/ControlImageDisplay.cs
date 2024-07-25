@@ -1685,7 +1685,7 @@ Here is the desired behavior:
 				dbName=(string)iDataObject.GetData("stringDbName");//safe even if null
 			}
 			if(DataConnectionBase.DataConnection.GetDatabaseName()==dbName && nodeTypeAndKey!=null){
-				ToolBarPasteTypeAndKey(nodeTypeAndKey);
+				ToolBarPasteTypeAndKey(nodeTypeAndKey,showDocInfo:true);
 				return;
 			}
 			Bitmap bitmapPaste=ODClipboard.GetImage();
@@ -1844,7 +1844,7 @@ Here is the desired behavior:
 		}
 
 		///<summary>This is used when pasting and a previous OD image was copied to the pinboard.</summary>
-		public void ToolBarPasteTypeAndKey(NodeTypeAndKey nodeTypeAndKey){
+		public void ToolBarPasteTypeAndKey(NodeTypeAndKey nodeTypeAndKey,bool showDocInfo){
 			//Always single item, not series.
 			Document document=null;
 			if(nodeTypeAndKey.NodeType==EnumImageNodeType.Document){//pasting from document
@@ -1898,6 +1898,10 @@ Here is the desired behavior:
 					bool keepSelection=false;
 					EventFillTree?.Invoke(this,keepSelection);
 					EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
+					if(!showDocInfo) {
+						//Document has already been updated and the required event handlers have been called above.
+						return;
+					}
 					FrmDocInfo frmDocInfo = new FrmDocInfo(PatientCur,document,isDocCreate: true);
 					frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
 					if(frmDocInfo.IsDialogCancel) {

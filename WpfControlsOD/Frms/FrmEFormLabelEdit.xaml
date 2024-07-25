@@ -13,12 +13,20 @@
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="13,0,0,12" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,14,12" Text="_Save" Click="butSave_Click" />
 		<ui:TextRich x:Name="textLabel" Height="288" Margin="0,25,0,0" FormattedTextAllowed="True" SpellCheckIsEnabled="False" Width="627"/>
-		<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="20,326,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
-		<ui:Label x:Name="labelStackable" Height="18" Margin="155,327,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
-		<ui:Label Width="98" Height="18" Margin="38,357,0,0" Text="Width" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="194,357,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
-		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="137,356,0,0" ShowZero="False"/>
+		<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="55,326,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
+		<ui:Label x:Name="labelStackable" Height="18" Margin="190,327,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
+		<ui:Label Width="98" Height="18" Margin="73,357,0,0" Text="Width" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="229,357,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
+		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="172,356,0,0" ShowZero="False"/>
 		<ui:ListBox x:Name="listBoxFields" Width="198" Margin="637,26,0,48" VerticalAlignment="Stretch"/>
 		<ui:Label Height="57" Margin="484,323,0,0" Text="Click on the list to the right to insert a Field into the main text above" Width="147" HAlign="Right" />
+		<ui:GroupBox Height="80" Margin="13,411,0,0" Width="470" Text="Conditional Logic. This field will show...">
+			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
+			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
+			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
+			<ui:TextBox x:Name="textCondValue" Width="213" Height="20" Margin="159,50,0,0"/>
+			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
+			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click" />
+		</ui:GroupBox>
 	</Grid>
 </local:FrmODBase>

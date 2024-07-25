@@ -628,6 +628,8 @@ namespace OpenDental{
 			controlImageDisplay.ClearObjects();
 			//SelectTreeNode must come before Show. Must come after bounds are set for the zoom to be correct.
 			controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);//must come before Show, but after bounds set.
+			formImageFloat.SetControlImageDisplay(controlImageDisplay);
+			SelectTreeNode1(nodeTypeAndKey);
 			formImageFloat.Show();//triggers Activated, then imageSelector.SetSelected
 			formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);//#2
 			//the above line can trigger a resize due to dpi change, so once more:
@@ -635,6 +637,7 @@ namespace OpenDental{
 			if(screenArray.Length>1){
 				formImageFloat.WindowState=FormWindowState.Maximized;
 			}
+			formImageFloat.ControlImageDisplay_.SetZoomSliderToFit();
 		}
 
 		///<summary>Fired when user clicks on tree and also for automated selection that's not by mouse, such as image import, image paste, etc.  Can pass in NULL to clear the image.  localPathImported will be set only if using Cloud storage and an image was imported.  We want to use the local version instead of re-downloading what was just uploaded.  nodeObjTag does not need to be ref to same object, but must match type and priKey.</summary>
@@ -1299,8 +1302,10 @@ namespace OpenDental{
 			ControlImageDisplay controlImageDisplay=formImageFloat.ControlImageDisplay_;
 			controlImageDisplay.EnableToolBarButtons();
 			EnumImageNodeType imageNodeType=controlImageDisplay.GetSelectedType();
-			string parent=controlImageDisplay.Parent.GetType().ToString();
-			//Debug.WriteLine("ControlImages.FormImageFloat_Activated, Parent:"+parent);
+			if(ODBuild.IsDebug() && controlImageDisplay.Parent!=null) {
+				string parent=controlImageDisplay.Parent.GetType().ToString();
+				//Debug.WriteLine("ControlImages.FormImageFloat_Activated, Parent:"+parent);
+			}
 			long priKey=controlImageDisplay.GetSelectedPriKey();
 			imageSelector.SetSelected(imageNodeType,priKey);
 			ZoomSliderState zoomSliderState=controlImageDisplay.ZoomSliderStateInitial;
@@ -2165,9 +2170,9 @@ namespace OpenDental{
 				nodeTypeAndKeyCat=new NodeTypeAndKey(EnumImageNodeType.Category,mount.DocCategory);
 				SelectTreeNode1(nodeTypeAndKeyCat);
 			}
-			//Get the new docked floater for this patient
-			controlImageDisplay=GetControlImageDisplaySelected();
-			controlImageDisplay.ToolBarPasteTypeAndKey(nodeTypeAndKeyOriginal);
+			//Get the new docked image for this patient
+			controlImageDisplay=GetOrMakeControlImageDisplay();
+			controlImageDisplay.ToolBarPasteTypeAndKey(nodeTypeAndKeyOriginal,showDocInfo:false);
 			imageSelector.SetSelected(nodeTypeAndKeyOriginal.NodeType,nodeTypeAndKeyOriginal.PriKey);
 			//Delete Old=====================================================================================
 			if(document!=null){
@@ -2655,7 +2660,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"No image selected.");//just in case
 				return;
 			}
-			if(controlImageDock.IsImageFloatSelected){
+			if(!controlImageDock.IsImageFloatSelected){
 				MsgBox.Show(this,"Signature and note only works if the docked image is selected first.");
 				return;
 			}

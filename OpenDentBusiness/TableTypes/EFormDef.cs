@@ -107,7 +107,7 @@ WebForms_Preference.ColorBorder
 RyanH: Add conditional logic to all the other UI types
 TabOrders
 Background color
-SigBox implement
+RyanH: SigBox implement
 
 Widths in a future version: We might add:
  Proportional widths, either * or %.

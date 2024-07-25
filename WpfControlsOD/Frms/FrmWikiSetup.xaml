@@ -13,6 +13,6 @@
 		<ui:CheckBox x:Name="checkCreatePageFromLinks" Width="230" VerticalAlignment="Bottom" Height="19" Margin="14,0,0,12" Text="Allow new wiki pages from links" CheckAlign="MiddleRight" />
 		<ui:CheckBox x:Name="checkDetectLinks" Width="230" VerticalAlignment="Bottom" Height="19" Margin="14,0,0,33" Text="Detect wiki links in textboxes and grids" CheckAlign="MiddleRight" />
 		<ui:Label x:Name="label1" Width="154" Height="16" Margin="12,9,0,0" Text="Master Page:" VAlign="Bottom" />
-		<ui:TextBox x:Name="textMaster" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,28,12,58" />
+		<ui:TextRich x:Name="textMaster" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,28,12,58" SpellCheckIsEnabled="False" />
 	</Grid>
 </local:FrmODBase>

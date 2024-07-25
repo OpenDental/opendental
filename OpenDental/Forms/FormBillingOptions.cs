@@ -538,6 +538,7 @@ namespace OpenDental{
 			checkIntermingled.Checked=PrefC.GetBool(PrefName.BillingDefaultsIntermingle);
 			checkSinglePatient.Checked=PrefC.GetBool(PrefName.BillingDefaultsSinglePatient);
 			checkBoxBillShowTransSinceZero.Checked=PrefC.GetBool(PrefName.BillingShowTransSinceBalZero);
+			textNote.Text=PrefC.GetString(PrefName.BillingDefaultsNote);
 			if(SmsPhones.IsIntegratedTextingEnabled()) {
 				string[] stringArrayBillingDefaultsModesToText=PrefC.GetString(PrefName.BillingDefaultsModesToText)
 					.Split(new string[] { "," },StringSplitOptions.RemoveEmptyEntries);

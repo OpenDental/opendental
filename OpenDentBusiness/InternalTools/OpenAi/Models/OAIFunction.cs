@@ -12,7 +12,8 @@ namespace OpenDentBusiness.OpenAi {
 	}
 
 	public enum OpenAiFunctionName {
-		get_manual_url
+		get_manual_url,
+		get_faq_response
 	}
 
 	public class OpenAiFunctionNameConverter : JsonConverter {
@@ -24,6 +25,7 @@ namespace OpenDentBusiness.OpenAi {
 			if(reader.TokenType == JsonToken.String) {
 				return reader.Value.ToString().ToLower() switch {
 					"get_manual_url" => OpenAiFunctionName.get_manual_url,
+					"get_faq_response" => OpenAiFunctionName.get_faq_response,
 					_ => throw new JsonSerializationException($"Invalid value for OpenAiFunctionName: {reader.Value.ToString()}"),
 				};
 			}

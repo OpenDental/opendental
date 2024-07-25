@@ -108,8 +108,8 @@ namespace OpenDentBusiness.Crud{
 				command+=POut.Long(childRoomLog.ChildRoomLogNum)+",";
 			}
 			command+=
-				     DbHelper.Now()+","
-				+    DbHelper.Now()+","
+				     POut.DateT (childRoomLog.DateTEntered)+","
+				+    POut.DateT (childRoomLog.DateTDisplayed)+","
 				+    POut.Long  (childRoomLog.ChildNum)+","
 				+    POut.Long  (childRoomLog.EmployeeNum)+","
 				+    POut.Bool  (childRoomLog.IsComing)+","
@@ -144,8 +144,8 @@ namespace OpenDentBusiness.Crud{
 				command+=POut.Long(childRoomLog.ChildRoomLogNum)+",";
 			}
 			command+=
-				     DbHelper.Now()+","
-				+    DbHelper.Now()+","
+				     POut.DateT (childRoomLog.DateTEntered)+","
+				+    POut.DateT (childRoomLog.DateTDisplayed)+","
 				+    POut.Long  (childRoomLog.ChildNum)+","
 				+    POut.Long  (childRoomLog.EmployeeNum)+","
 				+    POut.Bool  (childRoomLog.IsComing)+","
@@ -163,7 +163,7 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one ChildRoomLog in the database.</summary>
 		public static void Update(ChildRoomLog childRoomLog) {
 			string command="UPDATE childroomlog SET "
-				//DateTEntered not allowed to change
+				+"DateTEntered   =  "+POut.DateT (childRoomLog.DateTEntered)+", "
 				+"DateTDisplayed =  "+POut.DateT (childRoomLog.DateTDisplayed)+", "
 				+"ChildNum       =  "+POut.Long  (childRoomLog.ChildNum)+", "
 				+"EmployeeNum    =  "+POut.Long  (childRoomLog.EmployeeNum)+", "
@@ -177,7 +177,10 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one ChildRoomLog in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
 		public static bool Update(ChildRoomLog childRoomLog,ChildRoomLog oldChildRoomLog) {
 			string command="";
-			//DateTEntered not allowed to change
+			if(childRoomLog.DateTEntered != oldChildRoomLog.DateTEntered) {
+				if(command!="") { command+=",";}
+				command+="DateTEntered = "+POut.DateT(childRoomLog.DateTEntered)+"";
+			}
 			if(childRoomLog.DateTDisplayed != oldChildRoomLog.DateTDisplayed) {
 				if(command!="") { command+=",";}
 				command+="DateTDisplayed = "+POut.DateT(childRoomLog.DateTDisplayed)+"";
@@ -214,7 +217,9 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Returns true if Update(ChildRoomLog,ChildRoomLog) would make changes to the database.
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
 		public static bool UpdateComparison(ChildRoomLog childRoomLog,ChildRoomLog oldChildRoomLog) {
-			//DateTEntered not allowed to change
+			if(childRoomLog.DateTEntered != oldChildRoomLog.DateTEntered) {
+				return true;
+			}
 			if(childRoomLog.DateTDisplayed != oldChildRoomLog.DateTDisplayed) {
 				return true;
 			}

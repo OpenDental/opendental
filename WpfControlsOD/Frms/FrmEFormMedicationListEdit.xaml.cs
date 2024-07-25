@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using OpenDentBusiness;
+using WpfControls;
 using WpfControls.UI;
 
 namespace OpenDental {
@@ -18,6 +19,8 @@ namespace OpenDental {
 		public EFormField EFormFieldCur;
 		///<summary>We need access to a few other fields of the EFormDef.</summary>
 		public EFormDef EFormDefCur;
+		///<summary>All the siblings</summary>
+		public List<EFormField> _listEFormFields;
 		private EFormMedListLayout _eFormMedListLayout;
 
 		///<summary></summary>
@@ -51,6 +54,8 @@ namespace OpenDental {
 			checkSyncCol2AppendDate.Checked=_eFormMedListLayout.ImportCol2AppendDate;
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
 		}
 
 		private void CheckAdvanced_Click(object sender,EventArgs e) {
@@ -112,6 +117,30 @@ namespace OpenDental {
 			EFormFieldCur=null;
 			IsDialogOK=true;
 		}
+		private void butPickParent_Click(object sender,EventArgs e) {
+			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
+			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
+			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
+			frmEFormFieldPicker.ShowDialog();
+			if(frmEFormFieldPicker.IsDialogCancel){
+				return;
+			}
+			textCondParent.Text=frmEFormFieldPicker.LabelSelected;
+		}
+
+		private void butPickValue_Click(object sender,EventArgs e) {
+			if(textCondParent.Text==""){
+				MsgBox.Show("Please enter a name in the Parent field first.");
+				return;
+			}
+			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			if(conditionValueSetter.ErrorMsg!="") {
+				MsgBox.Show(conditionValueSetter.ErrorMsg);
+				return;
+			}
+			textCondValue.Text=conditionValueSetter.SelectedValue;
+		}
 
 		private void butSave_Click(object sender, EventArgs e) {
 			if(!textVIntWidthCol1.IsValid()
@@ -138,6 +167,8 @@ namespace OpenDental {
 			EFormFieldCur.ValueLabel=JsonConvert.SerializeObject(_eFormMedListLayout);
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

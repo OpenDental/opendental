@@ -1102,6 +1102,9 @@ Only used once in Imaging module.
 
 		private void Item_MouseLeftButtonUp(object sender, MouseButtonEventArgs e){
 			Cursor=Cursors.Arrow;
+			if(DraggedToCategory==null) {//Dragged to category event handler is not defined. Therefore, this event is intentionally unsupported, like in FormImagePickerPatient.
+				return;
+			}
 			if(!_isLeftMouseDownDragging){
 				return;
 			}

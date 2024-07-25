@@ -18,17 +18,23 @@ namespace OpenDentBusiness.OpenAi {
 		private readonly List<string> _listAssistantIds;
 		///<summary>Values come from preference.</summary>
 		private readonly string _additionalInstructions;
+		private readonly string _faqAssistantId;
 		///<summary>Chat thread, not a processing thread.</summary>
 		private OAIThread _thread;
-		private bool _isInitilized => (_thread!=null && ChatSession!=null && !_listAssistantIds.IsNullOrEmpty() && _additionalInstructions!=null);
+		private bool _isOpenAiInitilized => (_thread!=null && !_listAssistantIds.IsNullOrEmpty() && _additionalInstructions!=null && _faqAssistantId!=null);
 		private HttpClient _odSearchClient=new HttpClient() {
 			BaseAddress=new Uri("https://search.opendental.com/")
 		};
+		///<summary>A list of ordered responses from AI. This can be useful when creating an in-memory chat session that is not stored in the DB.</summary>
+		public List<string> ListAiResponses= new List<string>();
 		#endregion
 
-		public OpenAiChatSession() {
+		///<summary>Constructor. Set additionalInstructionsOverride when you do not want to use DB WebChatPrefName.OpenAiAdditionalInstructions value.
+		///Currently this is only done for the FAQ assistant prompts.</summary>
+		public OpenAiChatSession(string additionalInstructionsOverride=null) {
 			_listAssistantIds=WebChatPrefs.GetString(WebChatPrefName.OpenAiAssistantIds).Split(',').ToList();
-			_additionalInstructions=WebChatPrefs.GetString(WebChatPrefName.OpenAiAdditionalInstructions);
+			_additionalInstructions=additionalInstructionsOverride ?? WebChatPrefs.GetString(WebChatPrefName.OpenAiAdditionalInstructions);
+			_faqAssistantId=WebChatPrefs.GetString(WebChatPrefName.OpenAiFaqAssistantId);
 		}
 
 		///<summary>Translates the description before calling the OnSendStatusChanged event.</summary>
@@ -41,28 +47,37 @@ namespace OpenDentBusiness.OpenAi {
 
 		#region Public Methods
 		///<summary>Returns an error string if there was an issue, otherwise null.</summary>
-		public async Task<string> SendMessagesAsync(string assistantId,string msg) {
+		public async Task<string> SendMessagesAsync(string assistantId,string msg,bool isSavedToDb=true) {
+			bool didCreateThread=false;
 			try {
-				if(ChatSession==null) {
-					ReportSendStatus(SendStatus.InitSession,"Initializing AI chat session");
-					InitializeWebChatSession(msg);
+				if(isSavedToDb && ChatSession==null) {
+					ReportSendStatus(SendStatus.InitSession,"Sending question to AI");
+					InitializeWebChatSession(msg);//The first message is stored in WebChatSession.QuestionText
 				}
-				InsertWebChatSessionMsg(msg,WebChatMessageType.Technician);
-				ReportSendStatus(SendStatus.QuestionSaved,"Saved tech question");
+				if(isSavedToDb) {
+					InsertWebChatSessionMsg(msg,WebChatMessageType.Technician);
+					ReportSendStatus(SendStatus.QuestionSaved,"Saved question");
+				}
 				if(_thread==null) {
 					ReportSendStatus(SendStatus.InitThread,"Initializing AI chat thread");
-					await InitializeOpenAiThread(msg);//The first message is stored in WebChatSession.QuestionText
+					await InitializeOpenAiThread(msg);
+					didCreateThread=true;
 				}
-				if(!_isInitilized) {
+				if(!_isOpenAiInitilized) {
 					return Lans.g(this,"Failed to initilize OpenAI chat session.");
 				}
-				ReportSendStatus(SendStatus.SendingToAI,"Sending tech question to AI");
-				await OpenAiClient.Inst.CreateMessage(_thread.Id,msg);
+				if(!didCreateThread) {//When the thread is created, the initial message is already provided and does not need to be sent.
+					ReportSendStatus(SendStatus.SendingToAI,"Sending question to AI");
+					await OpenAiClient.Inst.CreateMessage(_thread.Id,msg);
+				}
 				ReportSendStatus(SendStatus.AwaitingResponse,"Waiting for response from AI");
 				if(await PollForRunCompletion(await OpenAiClient.Inst.CreateRun(_thread.Id,assistantId,_additionalInstructions))) {
 					var response=await OpenAiClient.Inst.GetListMessages(_thread.Id);
 					string aiResponse=response.Data.Last().Content.Last().Text.Value;
-					InsertWebChatSessionMsg(aiResponse,WebChatMessageType.AI);
+					if(isSavedToDb) {
+						InsertWebChatSessionMsg(aiResponse, WebChatMessageType.AI);
+					}
+					ListAiResponses.Add(aiResponse);
 					return null;//No errors
 				}
 			}
@@ -157,27 +172,55 @@ namespace OpenDentBusiness.OpenAi {
 
 		///<summary>Throws Exception. Returns true if local logic was ran and the result was sent back to OpenAi, otherwise false.</summary>
 		private async Task<bool> HandleRequiredActions(OAIRun run) {
+			List<OAIToolOutput> results=new List<OAIToolOutput>();
 			foreach(OAIToolCall toolCall in run.RequiredAction.SubmitToolOutputs.ToolCalls) {
 				switch(toolCall.Function.Name) {
 					case OpenAiFunctionName.get_manual_url:
 						ReportSendStatus(SendStatus.RetrievingManualPages,"Retrieving manual pages from Open Dental");
-						OAIManualUrlFunctionArgs args=JsonConvert.DeserializeObject<OAIManualUrlFunctionArgs>(toolCall.Function.Arguments);
-						string version=args.Version?.ToString().Replace(".", "")??"";
-						string searchUrl=$"manual{version}/index?searchTerm={HttpUtility.UrlEncode(args.Keywords)}";
+						OAIManualUrlFunctionArgs argManual=JsonConvert.DeserializeObject<OAIManualUrlFunctionArgs>(toolCall.Function.Arguments);
+						string version=argManual.Version?.ToString().Replace(".", "")??"";
+						string searchUrl=$"manual{version}/index?searchTerm={HttpUtility.UrlEncode(argManual.Keywords)}";
 						List<DocumentationItem> result=await APIRequest.Inst.PostRequestAsync<List<DocumentationItem>>(searchUrl,String.Empty,clientOverride:_odSearchClient);
 						if(!result.IsNullOrEmpty()) {
+							ReportSendStatus(SendStatus.InitThread,"Providing manual pages to AI");
 							List<string> listPages=result.Where(x => x.IsManualPage && x.IsInSite==EnumSiteOrManual.Manual)
 								.Take(3).Select(page => 
 									$"https://www.opendental.com/manual{version}/{page.FileName}.html"
 								).ToList();
-							ReportSendStatus(SendStatus.RetrievingManualPages, "Providing manual pages to AI");
-							await OpenAiClient.Inst.SubmitToolResult(_thread.Id,run.Id,toolCall.Id,string.Join(",",listPages));
-							return true;
+							ReportSendStatus(SendStatus.RetrievingManualPages,"Providing manual pages to AI");
+							results.Add(new OAIToolOutput() { 
+								ToolCallId=toolCall.Id,
+								Output=string.Join(",",listPages)
+							});
+						}
+						else {
+							ReportSendStatus(SendStatus.InitThread,"No manual pages were found");
+						}
+						break;
+					case OpenAiFunctionName.get_faq_response:
+						ReportSendStatus(SendStatus.RetrievingManualPages,"Checking Open Dental FAQs");
+						OAIFaqResponseFunctionArgs argsFaq=JsonConvert.DeserializeObject<OAIFaqResponseFunctionArgs>(toolCall.Function.Arguments);
+						string additionalInstructions=null;
+						if(argsFaq.Version.HasValue) {
+							additionalInstructions=$"I am using version {argsFaq.Version}, do not reference FAQs questions or answers that have a 'Minimum Version' that is greater than version {argsFaq.Version}.";
+						}
+						var session=new OpenAiChatSession(additionalInstructions);
+						string error=await session.SendMessagesAsync(_faqAssistantId,argsFaq.Prompt,false);
+						if(error.IsNullOrEmpty()) {
+							ReportSendStatus(SendStatus.InitThread,"Providing FAQ data to AI");
+							results.Add(new OAIToolOutput() { 
+								ToolCallId=toolCall.Id,
+								Output=session.ListAiResponses.Last()
+							});
+						}
+						else { 
+							ReportSendStatus(SendStatus.InitThread,"No information was found in the FAQ");
 						}
 						break;
 				}
 			}
-			return false;
+			await OpenAiClient.Inst.SubmitToolResults(_thread.Id,run.Id,results);
+			return results.Count()==run.RequiredAction.SubmitToolOutputs.ToolCalls.Count();
 		}
 
 		///<summary>Inserts a webChatMessage into HQ database.

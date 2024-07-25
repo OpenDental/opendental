@@ -87,6 +87,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.Label){
 				FrmEFormLabelEdit frmEFormLabelEdit=new FrmEFormLabelEdit();
 				frmEFormLabelEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormLabelEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormLabelEdit.EFormDefCur=EFormDefCur;
 				frmEFormLabelEdit.IsPreviousStackable=isPreviousStackable;
 				frmEFormLabelEdit.ShowDialog();
@@ -118,6 +119,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.CheckBox){
 				FrmEFormCheckBoxEdit frmEFormCheckBoxEdit=new FrmEFormCheckBoxEdit();
 				frmEFormCheckBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormCheckBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormCheckBoxEdit.EFormDefCur=EFormDefCur;
 				frmEFormCheckBoxEdit.IsPreviousStackable=isPreviousStackable;
 				frmEFormCheckBoxEdit.ShowDialog();
@@ -147,6 +149,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.SigBox){
 				FrmEFormSigBoxEdit frmEFormSigBoxEdit=new FrmEFormSigBoxEdit();
 				frmEFormSigBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormSigBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormSigBoxEdit.EFormDefCur=EFormDefCur;
 				frmEFormSigBoxEdit.ShowDialog();
 				if(frmEFormSigBoxEdit.IsDialogCancel){
@@ -161,6 +164,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.MedicationList){
 				FrmEFormMedicationListEdit frmEFormMedicationListEdit=new FrmEFormMedicationListEdit();
 				frmEFormMedicationListEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormMedicationListEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormMedicationListEdit.EFormDefCur=EFormDefCur;
 				frmEFormMedicationListEdit.ShowDialog();
 				if(frmEFormMedicationListEdit.IsDialogCancel){
@@ -204,6 +208,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FieldType=EnumEFormFieldType.Label;
 			frmEFormLabelEdit.EFormFieldCur=eFormField;
 			frmEFormLabelEdit.EFormDefCur=EFormDefCur;
+			frmEFormLabelEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormLabelEdit.ShowDialog();
 			if(frmEFormLabelEdit.IsDialogCancel){
 				return;
@@ -242,6 +247,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FontScale=100;
 			eFormField.FieldType=EnumEFormFieldType.CheckBox;
 			frmEFormCheckBoxEdit.EFormFieldCur=eFormField;
+			frmEFormCheckBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormCheckBoxEdit.EFormDefCur=EFormDefCur;
 			frmEFormCheckBoxEdit.ShowDialog();
 			if(frmEFormCheckBoxEdit.IsDialogCancel){
@@ -281,6 +287,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FieldType= EnumEFormFieldType.SigBox;
 			eFormField.ValueLabel="Signature";
 			frmEFormSigBoxEdit.EFormFieldCur=eFormField;
+			frmEFormSigBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormSigBoxEdit.EFormDefCur=EFormDefCur;
 			frmEFormSigBoxEdit.ShowDialog();
 			if(frmEFormSigBoxEdit.IsDialogCancel){
@@ -302,6 +309,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			EFormMedListLayout eFormMedListLayout=new EFormMedListLayout();
 			eFormField.ValueLabel=JsonConvert.SerializeObject(eFormMedListLayout);
 			frmEFormMedicationListEdit.EFormFieldCur=eFormField;
+			frmEFormMedicationListEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormMedicationListEdit.EFormDefCur=EFormDefCur;
 			frmEFormMedicationListEdit.ShowDialog();
 			if(frmEFormMedicationListEdit.IsDialogCancel){

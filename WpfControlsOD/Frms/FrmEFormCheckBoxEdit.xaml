@@ -6,25 +6,35 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="595" Height="263" 
+             Width="615" Height="390" 
              Text="Edit CheckBox" MinMaxBoxes="False">
-    <Grid Background="#FFFCFDFE" >
-        <ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
-        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
-        <ui:ComboBox x:Name="comboDbLink" Width="213" Height="20" Margin="160,77,0,0" />
-        <ui:Label Width="98" Height="18" Margin="61,77,0,0" Text="Db Link" HAlign="Right" VAlign="Center" />
-        <ui:Label Height="18" Margin="377,79,0,0" Text="Used to link to a database field" VAlign="Center" Width="211" />
-        <ui:Label Width="98" Height="18" Margin="61,49,0,0" Text="Label" HAlign="Right" VAlign="Center" />
-        <ui:Label Height="18" Margin="377,49,0,0" Text="This shows to the left of the checkbox" VAlign="Center" Width="211" />
-        <ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="160,49,0,0" TabIndexOD="1"/>
-        <ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="43,131,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
-        <ui:Label x:Name="labelStackable" Height="18" Margin="179,132,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
-        <ui:Label x:Name="labelMedAllerProb" Width="98" Height="18" Margin="61,105,0,0" Text="Label" HAlign="Right" VAlign="Center" />
-        <ui:TextBox x:Name="textMedAllerProb" Width="213" Height="20" Margin="160,105,0,0" TabIndexOD="1" ReadOnly="True"/>
-        <ui:Button x:Name="butChange" Width="75" Height="24" Margin="380,104,0,0" Text="Change" Click="butChange_Click" />
-        <ui:Label Width="98" Height="18" Margin="61,179,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
-        <ui:Label Height="18" Margin="218,179,0,0" Text="default is 100" VAlign="Center" Width="228" />
-        <ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="160,179,0,0" MaxVal="300" MinVal="50"/>
-        <ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="43,154,0,0" Width="130" Text="Required" CheckAlign="MiddleRight"/>
-    </Grid>
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
+		<ui:ComboBox x:Name="comboDbLink" Width="213" Height="20" Margin="182,53,0,0" />
+		<ui:Label Width="98" Height="18" Margin="83,53,0,0" Text="Db Link" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="399,55,0,0" Text="Used to link to a database field" VAlign="Center" Width="211" />
+		<ui:Label Width="98" Height="18" Margin="83,25,0,0" Text="Label" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="399,25,0,0" Text="This shows to the left of the checkbox" VAlign="Center" Width="211" />
+		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="182,25,0,0" TabIndexOD="1"/>
+		<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="65,107,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
+		<ui:Label x:Name="labelStackable" Height="18" Margin="201,108,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
+		<ui:Label x:Name="labelMedAllerProb" Width="98" Height="18" Margin="83,81,0,0" Text="Label" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textMedAllerProb" Width="213" Height="20" Margin="182,81,0,0" TabIndexOD="1" ReadOnly="True"/>
+		<ui:Button x:Name="butChange" Width="75" Height="24" Margin="402,80,0,0" Text="Change" Click="butChange_Click" />
+		<ui:Label Width="98" Height="18" Margin="83,155,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="240,155,0,0" Text="default is 100" VAlign="Center" Width="228" />
+		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="182,155,0,0" MaxVal="300" MinVal="50"/>
+		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="65,130,0,0" Width="130" Text="Required" CheckAlign="MiddleRight"/>
+		<ui:GroupBox Height="80" Margin="23,191,0,0" Width="470" Text="Conditional Logic. This field will show...">
+			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
+			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
+			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
+			<ui:TextBox x:Name="textCondValue" Height="20" Margin="159,50,0,0" Width="213"/>
+			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
+			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click"/>
+		</ui:GroupBox>
+		<ui:Label Width="344" Height="18" Margin="18,280,0,0" Text="This field is the conditional parent for this many child fields" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textCountChildren" Height="20" Margin="365,280,0,0" ReadOnly="True" ColorBack="#FFF0F0F0" Width="30"/>
+	</Grid>
 </local:FrmODBase>

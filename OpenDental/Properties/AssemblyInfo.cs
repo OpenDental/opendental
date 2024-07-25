@@ -34,6 +34,6 @@ using System.Runtime.InteropServices;
 //so we might consider removing it when a significant portion of OD is in WPF.
 [assembly: System.Windows.Media.DisableDpiAwareness]
 
-[assembly: AssemblyVersion("24.2.14.0")]
+[assembly: AssemblyVersion("24.2.15.0")]
 
 //[assembly: AssemblyFileVersion("1.0.0.0")]
