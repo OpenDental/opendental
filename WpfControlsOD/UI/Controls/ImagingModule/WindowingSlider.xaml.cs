@@ -341,6 +341,7 @@ Jordan is the only one allowed to edit this file.
 				|| _enumSliderButStateM==EnumSliderButState.Pressed)
 			{
 				_dispatcherTimerDelay.IsEnabled=false;//cancel any pending Scroll event
+				Scroll?.Invoke(this,new EventArgs());//Final scroll on mouse up because timer hasn't fired yet
 				ScrollComplete?.Invoke(this,new EventArgs());
 			}
 			_enumSliderButStateL=EnumSliderButState.Normal;

@@ -215,7 +215,7 @@ namespace OpenDental
 
 		///<summary>Key down from FormOpenDental is passed in to allow some keys to work here.  As long as this module is open, all key down events are sent here.</summary>
 		public void ControlImagesJ_KeyDown(Keys keys){
-			if(_formLauncherVideo!=null && !_formLauncherVideo.IsNullOrDisposed()){
+			if(_formLauncherVideo!=null && !_formLauncherVideo.IsNullOrDisposedOrNotVis()){
 				_formLauncherVideo.MethodGetVoid("Parent_KeyDown",keys);
 			}
 			FormImageFloat formImageFloat=GetFormImageFloatSelected();
@@ -2296,7 +2296,7 @@ namespace OpenDental
 				_formLauncherVideo=new FormLauncher(EnumFormName.FormVideo);
 				_formLauncherVideo.SetEvent("BitmapCaptured",formVideo_BitmapCaptured);
 			}
-			if(_formLauncherVideo.IsNullOrDisposed()){
+			if(_formLauncherVideo.IsNullOrDisposedOrNotVis()){
 				PreselectFirstItem();
 				//still might not be one selected, so test each time
 				_formLauncherVideo.Show();

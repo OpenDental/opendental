@@ -34,7 +34,7 @@ Complex example showing both setting fields and getting results:
 				if(formLauncher.IsDialogCancel){
 					return;
 				}
-				long patNum=(long)formLauncher.GetResult(1);
+				long patNum=formLauncher.GetField<long>("PatNum";
 
 Example non-modal:
 			FormLauncher formLauncher=new FormLauncher(EnumFormName.FormWiki);
@@ -97,8 +97,12 @@ Events:
 		#endregion Properties
 
 		public T GetField<T>(string fieldName){
-			if(IsNullOrDisposed()){
-				throw new Exception("Form is null.");
+			//if(IsNullOrDisposedOrNotVis()){//don't use this because this is still allowed even if form is not visible.
+			if(_formLauncherEventArgs.Form is null){
+				throw new Exception("Form is null");
+			}
+			if(_formLauncherEventArgs.Form.IsDisposed){
+				throw new Exception("Form is disposed");
 			}
 			Type type=_formLauncherEventArgs.Form.GetType();
 			FieldInfo fieldInfo=type.GetField(fieldName);
@@ -106,7 +110,7 @@ Events:
 		}
 
 		///<summary>This checks null or disposed of the form we are trying to launch. Also checks Visible property.</summary>
-		public bool IsNullOrDisposed(){
+		public bool IsNullOrDisposedOrNotVis(){
 			if(_formLauncherEventArgs.Form is null){
 				return true;
 			}
@@ -121,7 +125,7 @@ Events:
 
 		///<summary>methodName example: "GetSomeVal"</summary>
 		public T MethodGetObject<T>(string methodName,params object[] parameters){
-			if(IsNullOrDisposed()){
+			if(IsNullOrDisposedOrNotVis()){
 				throw new Exception("Only for non-modal. Form is not open.");
 			}
 			Type type=_formLauncherEventArgs.Form.GetType();
@@ -131,7 +135,7 @@ Events:
 		}
 
 		public void MethodGetVoid(string methodName,params object[] parameters){
-			if(IsNullOrDisposed()){
+			if(IsNullOrDisposedOrNotVis()){
 				throw new Exception("Only for non-modal. Form is not open.");
 			}
 			Type type=_formLauncherEventArgs.Form.GetType();
@@ -141,7 +145,7 @@ Events:
 
 		///<summary>RestoreAndFront is also available.</summary>
 		public void BringToFront(){
-			if(IsNullOrDisposed()){
+			if(IsNullOrDisposedOrNotVis()){
 				return;
 			}
 			_formLauncherEventArgs.Form.BringToFront();
@@ -149,7 +153,7 @@ Events:
 
 		///<summary>Restores from Minimized to Normal and calls BringToFront. You can also just call BringToFront.</summary>
 		public void RestoreAndFront(){
-			if(IsNullOrDisposed()){
+			if(IsNullOrDisposedOrNotVis()){
 				return;
 			}
 			if(_formLauncherEventArgs.Form.WindowState==System.Windows.Forms.FormWindowState.Minimized){
@@ -175,7 +179,7 @@ Events:
 		}
 
 		public void SetEvent(string eventName,Delegate eventHandler){
-			if(IsNullOrDisposed()){
+			if(IsNullOrDisposedOrNotVis()){
 				//setting the event prior to showing the form is the typical approach
 				_formLauncherEventArgs.AddEvent(eventName,eventHandler);
 				return;
@@ -187,7 +191,7 @@ Events:
 		}
 
 		public void SetField(string fieldName,object fieldValue){
-			if(IsNullOrDisposed()){
+			if(IsNullOrDisposedOrNotVis()){
 				//setting the field prior to showing the form
 				_formLauncherEventArgs.AddField(fieldName,fieldValue);
 				return;
@@ -216,7 +220,7 @@ Events:
 		}
 
 		public void Close(){
-			if(IsNullOrDisposed()){
+			if(IsNullOrDisposedOrNotVis()){
 				return;
 			}
 			_formLauncherEventArgs.Form.Close();

@@ -175,6 +175,16 @@ namespace OpenDental {
 				MessageBox.Show(this,"PDF attachments are not supported.");
 				return false;
 			}
+			if(!fileName.EndsWith(".bmp")
+				&& !fileName.EndsWith(".gif")
+				&& !fileName.EndsWith(".jpeg")
+				&& !fileName.EndsWith(".png")
+				&& !fileName.EndsWith(".tiff")
+				&& !fileName.EndsWith(".jpg")
+				&& !fileName.EndsWith(".tif")) {
+				MsgBox.Show(this,"The selected file type is invalid. Valid file types include BMP, GIF, JPEG, PNG, TIFF, TIF, and JPG.");
+				return false;
+			}
 			if(string.IsNullOrWhiteSpace(textFileName.Text)) {
 				MsgBox.Show(this,"Enter the filename for this attachment.");
 				return false;

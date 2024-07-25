@@ -2227,7 +2227,7 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers
 		private void FormImageFloat_FormClosed(object sender, FormClosedEventArgs e){
-			if(!_formLauncherImageFloatWindows.IsNullOrDisposed()){
+			if(!_formLauncherImageFloatWindows.IsNullOrDisposedOrNotVis()){
 				_formLauncherImageFloatWindows.Close();
 			}
 		}
@@ -2279,7 +2279,7 @@ namespace OpenDental {
 			}
 			//But this also causes FormODBase mouseUp to not register. User then clicks title to hide the menu, and that's when FormODBase MouseMove fires. 
 			_pointMouseScreenPrevious=new Point(0,0);//Gets around the above problem.
-			if(_formLauncherImageFloatWindows.IsNullOrDisposed()){
+			if(_formLauncherImageFloatWindows.IsNullOrDisposedOrNotVis()){
 				_formLauncherImageFloatWindows=new FormLauncher(EnumFormName.FormImageFloatWindows);
 				_formLauncherImageFloatWindows.SetField("FormOwner",this);
 				_formLauncherImageFloatWindows.SetField("LayoutManager",LayoutManager);
