@@ -335,15 +335,12 @@ namespace OpenDental {
 			if(_selectedIndex==-1){
 				return;
 			}
+			_isMouseDown=false;
 			FrmMountItemEdit frmMountItemEdit=new FrmMountItemEdit();
 			frmMountItemEdit.MountItemCur=_listMountItems[_selectedIndex];
 			frmMountItemEdit.IsLayout=true;
 			frmMountItemEdit.ShowDialog();
 			FillItems();
-			//If the last item in the array was deleted, we need to update the selectedIndex variable
-			if(frmMountItemEdit.IsDialogOK && _selectedIndex>=_listMountItems.Count) {
-				_selectedIndex=_listMountItems.Count-1;
-			}
 		}
 		#endregion Methods - EventHandlers - Mouse	
 
@@ -496,6 +493,10 @@ namespace OpenDental {
 				//string s="#"+_listMountItemDefs[i].ItemOrder.ToString()+": X:"+_listMountItemDefs[i].Xpos.ToString()+", Y:"+_listMountItemDefs[i].Ypos.ToString()
 				//	+": W:"+_listMountItemDefs[i].Width.ToString()+", H:"+_listMountItemDefs[i].Height.ToString();
 				//listBoxItems.Items.Add(s);
+			}
+			//If the last item in the array was deleted, we need to update the selectedIndex variable
+			if(_selectedIndex>=_listMountItems.Count) {
+				_selectedIndex=_listMountItems.Count-1;
 			}
 			Draw();
 		}

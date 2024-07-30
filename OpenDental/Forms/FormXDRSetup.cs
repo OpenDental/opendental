@@ -180,15 +180,17 @@ namespace OpenDental {
 
 		private void UpsertLocationIdsForClinics() {
 			List<ProgramProperty> listProgramPropertiesDb=ProgramProperties.GetForProgram(_program.ProgramNum).FindAll(x => x.PropertyDesc==XDR.PropertyDescs.LocationID);
-			for(int i=0;i<_listProgramProperties.Count;i++) { 
+			for(int i=0;i<_listProgramProperties.Count;i++) {
+				if(_listProgramProperties[i].PropertyDesc!=XDR.PropertyDescs.LocationID) {
+					continue;
+				}
 				ProgramProperty programProperty=listProgramPropertiesDb.Find(x => x.ProgramPropertyNum == _listProgramProperties[i].ProgramPropertyNum);
-				if(programProperty is null) {//Program property for that clinicnum didn't exist, so insert it into the db.
-					ProgramProperties.Insert(_listProgramProperties[i]);//Program property for that clinicnum didn't exist, so insert it into the db.
-					_hasProgramPropertyChanged=true;
-				}
-				else {//update existing
+				if(programProperty!=null) {
 					UpdateProgramProperty(programProperty,_listProgramProperties[i].PropertyValue);
+					continue;
 				}
+				ProgramProperties.Insert(_listProgramProperties[i]); //Program property for that clinicnum didn't exist, so insert it into the db.
+				_hasProgramPropertyChanged=true;
 			}
 		}
 

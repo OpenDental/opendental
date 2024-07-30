@@ -3783,13 +3783,18 @@ namespace OpenDental {
 			string fileNameFull=Path.Combine(PatFolder,"Thumbnails",fileName);
 			//todo: if storage in db
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				if(File.Exists(fileNameFull)){
-					File.Delete(fileNameFull);
+				if(File.Exists(fileNameFull)) {
+					try {
+						File.Delete(fileNameFull);
+					}
+					catch (Exception ex) {
+						ex.DoNothing();
+					}
 				}
 				try {
 					bitmap.Save(fileNameFull);
 				}
-				catch(Exception ex){
+				catch(Exception ex) {
 					ex.DoNothing();
 				}
 			}
