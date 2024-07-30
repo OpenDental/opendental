@@ -272,7 +272,7 @@ namespace OpenDental {
 			}
 			_response=PayConnect2.ApiResponseToPayConnectResponse(payConnect2Response);
 			bool doShowSignatureLine=true;
-			if(TransType==transType.SALE || TransType==transType.AUTH) {
+			if(TransType==transType.SALE || TransType==transType.AUTH || TransType==transType.RETURN) {
 				PayConnect2Response signatureResponse=SendSignature();
 				if(signatureResponse!=null && signatureResponse.SignatureResponse!=null && signatureResponse.SignatureResponse.Status=="Processed") {
 					doShowSignatureLine=false;

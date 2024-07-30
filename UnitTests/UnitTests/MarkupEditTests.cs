@@ -9,6 +9,7 @@ using OpenDentBusiness;
 using UnitTestsCore;
 using System.IO;
 using System.Xml;
+using CodeBase;
 
 namespace UnitTests.MarkupEdit_Tests {
 	[TestClass]
@@ -88,42 +89,42 @@ namespace UnitTests.MarkupEdit_Tests {
 		public void MarkupEdit_ProcessList_OrderedList_TrailingCR() {
 			string s="<td Width=\"100\"><p>#a<br/>#b<br/>#c<br/></p></td>";
 			string result=MarkupEdit.ProcessList(s,"#");
-			Assert.AreEqual("<td Width=\"100\"><ol><li>a<br/></li><li>b<br/></li><li>c<br/></li></ol></td>",result);
+			Assert.AreEqual("<td Width=\"100\"><p><ol><li><span class=\"ListItemContent\">a</span></li><li><span class=\"ListItemContent\">b</span></li><li><span class=\"ListItemContent\">c</span></li></ol><br/></p></td>",result);
 		}
 
 		[TestMethod]
 		public void MarkupEdit_ProcessList_UnorderedList_TrailingCR() {
 			string s="<td Width=\"100\"><p>*a<br/>*b<br/><br/>*c<br/></p></td>";
 			string result=MarkupEdit.ProcessList(s,"*");
-			Assert.AreEqual("<td Width=\"100\"><ul><li>a<br/></li><li>b<br/><br/></li><li>c<br/></li></ul></td>",result);
+			Assert.AreEqual("<td Width=\"100\"><p><ul><li><span class=\"ListItemContent\">a</span></li><li><span class=\"ListItemContent\">b</span></li></ul><br/><ul><li><span class=\"ListItemContent\">c</span></li></ul><br/></p></td>",result);
 		}
 		
 		[TestMethod]
 		public void MarkupEdit_ProcessList_ComplexContent_OrderedList() {
 			string s="<td Width=\"100\"><p>#<a href=\"wiki:link1\">link1</a><br/>{{nbsp}}<span style=\"color:red ;\"> Hello</span><br/>#<a href=\"wiki:link 2\">link 2</a><br/><span style=\"color:blue ;\"> Hello</span><br/>#<span style=\"color:green ;\"> Hello</span><br/><a href=\"wiki:line 3\">line 3</a></p></td>";
 			string result=MarkupEdit.ProcessList(s,"#");
-			Assert.AreEqual("<td Width=\"100\"><ol><li><a href=\"wiki:link1\">link1</a><br/>{{nbsp}}<span style=\"color:red ;\"> Hello</span><br/></li><li><a href=\"wiki:link 2\">link 2</a><br/><span style=\"color:blue ;\"> Hello</span><br/></li><li><span style=\"color:green ;\"> Hello</span><br/><a href=\"wiki:line 3\">line 3</a></li></ol></td>",result);
+			Assert.AreEqual("<td Width=\"100\"><p><ol><li><span class=\"ListItemContent\"><a href=\"wiki:link1\">link1</a></span></li></ol>{{nbsp}}<span style=\"color:red ;\"> Hello</span><ol><li><span class=\"ListItemContent\"><a href=\"wiki:link 2\">link 2</a></span></li></ol><span style=\"color:blue ;\"> Hello</span><ol><li><span class=\"ListItemContent\"><span style=\"color:green ;\"> Hello</span></span></li></ol><br/><a href=\"wiki:line 3\">line 3</a></p></td>",result);
 		}
 
 		[TestMethod]
 		public void MarkupEdit_ProcessList_ComplexContent_UnorderedList() {
 			string s="<td Width=\"100\"><p>*<a href=\"wiki:link1\">link1</a><br/>{{nbsp}}<span style=\"color:red ;\"> Hello</span><br/>*<a href=\"wiki:link 2\">link 2</a><br/><span style=\"color:blue ;\"> Hello</span><br/>*<span style=\"color:green ;\"> Hello</span><br/><a href=\"wiki:line 3\">line 3</a></p></td>";
 			string result=MarkupEdit.ProcessList(s,"*");
-			Assert.AreEqual("<td Width=\"100\"><ul><li><a href=\"wiki:link1\">link1</a><br/>{{nbsp}}<span style=\"color:red ;\"> Hello</span><br/></li><li><a href=\"wiki:link 2\">link 2</a><br/><span style=\"color:blue ;\"> Hello</span><br/></li><li><span style=\"color:green ;\"> Hello</span><br/><a href=\"wiki:line 3\">line 3</a></li></ul></td>",result);
+			Assert.AreEqual("<td Width=\"100\"><p><ul><li><span class=\"ListItemContent\"><a href=\"wiki:link1\">link1</a></span></li></ul>{{nbsp}}<span style=\"color:red ;\"> Hello</span><ul><li><span class=\"ListItemContent\"><a href=\"wiki:link 2\">link 2</a></span></li></ul><span style=\"color:blue ;\"> Hello</span><ul><li><span class=\"ListItemContent\"><span style=\"color:green ;\"> Hello</span></span></li></ul><br/><a href=\"wiki:line 3\">line 3</a></p></td>",result);
 		}
 		
 		[TestMethod]
 		public void MarkupEdit_ProcessList_ComplexContent_OrderedList_NewLinesInListItems() {
 			string s="<td Width=\"100\"><p>#<a href=\"wiki:link1\">link1</a><br/><br/><br/>{{nbsp}}<br/><br/><br/><span style=\"color:red ;\"> Hello</span><br/>#<a href=\"wiki:link 2\">link 2</a><br/><br/><br/><span style=\"color:blue ;\"> Hello</span><br/>#<span style=\"color:green ;\"> Hello</span><br/><br/><a href=\"wiki:line 3\">line 3</a></p></td>";
 			string result=MarkupEdit.ProcessList(s,"#");
-			Assert.AreEqual("<td Width=\"100\"><ol><li><a href=\"wiki:link1\">link1</a><br/><br/><br/>{{nbsp}}<br/><br/><br/><span style=\"color:red ;\"> Hello</span><br/></li><li><a href=\"wiki:link 2\">link 2</a><br/><br/><br/><span style=\"color:blue ;\"> Hello</span><br/></li><li><span style=\"color:green ;\"> Hello</span><br/><br/><a href=\"wiki:line 3\">line 3</a></li></ol></td>",result);
+			Assert.AreEqual("<td Width=\"100\"><p><ol><li><span class=\"ListItemContent\"><a href=\"wiki:link1\">link1</a></span></li></ol><br/><br/>{{nbsp}}<br/><br/><span style=\"color:red ;\"> Hello</span><ol><li><span class=\"ListItemContent\"><a href=\"wiki:link 2\">link 2</a></span></li></ol><br/><br/><span style=\"color:blue ;\"> Hello</span><ol><li><span class=\"ListItemContent\"><span style=\"color:green ;\"> Hello</span></span></li></ol><br/><br/><a href=\"wiki:line 3\">line 3</a></p></td>",result);
 		}
 
 		[TestMethod]
 		public void MarkupEdit_ProcessList_ComplexContent_UnorderedList_NewLinesInListItems() {
 			string s="<td Width=\"100\"><p>*<a href=\"wiki:link1\">link1</a><br/><br/><br/>{{nbsp}}<span style=\"color:red ;\"> Hello</span><br/>*<a href=\"wiki:link 2\">link 2</a><br/><br/><br/><span style=\"color:blue ;\"> Hello</span><br/>*<span style=\"color:green ;\"> Hello</span><br/><br/><br/><a href=\"wiki:line 3\">line 3</a></p></td>";
 			string result=MarkupEdit.ProcessList(s,"*");
-			Assert.AreEqual("<td Width=\"100\"><ul><li><a href=\"wiki:link1\">link1</a><br/><br/><br/>{{nbsp}}<span style=\"color:red ;\"> Hello</span><br/></li><li><a href=\"wiki:link 2\">link 2</a><br/><br/><br/><span style=\"color:blue ;\"> Hello</span><br/></li><li><span style=\"color:green ;\"> Hello</span><br/><br/><br/><a href=\"wiki:line 3\">line 3</a></li></ul></td>",result);
+			Assert.AreEqual("<td Width=\"100\"><p><ul><li><span class=\"ListItemContent\"><a href=\"wiki:link1\">link1</a></span></li></ul><br/><br/>{{nbsp}}<span style=\"color:red ;\"> Hello</span><ul><li><span class=\"ListItemContent\"><a href=\"wiki:link 2\">link 2</a></span></li></ul><br/><br/><span style=\"color:blue ;\"> Hello</span><ul><li><span class=\"ListItemContent\"><span style=\"color:green ;\"> Hello</span></span></li></ul><br/><br/><br/><a href=\"wiki:line 3\">line 3</a></p></td>",result);
 		}
 
 		[TestMethod]
@@ -172,24 +173,16 @@ namespace UnitTests.MarkupEdit_Tests {
 
 		[TestMethod]
 		public void MarkupEdit_ProcessList_NewLinesAtStartOfList() {
-			string markup="<body>\r\n#<a href=\"wiki:Jane Doe\">Jane Doe</a> \r\n#<a href=\"wiki:John Doe\">John Doe</a>\r\n</body>";
+			string markup="<body>\n#<a href=\"wiki:Jane Doe\">Jane Doe</a> \n#<a href=\"wiki:John Doe\">John Doe</a>\n</body>";
 			string result=MarkupEdit.ProcessList(markup,"#");
-			XmlDocument doc=new XmlDocument();
-			using(StringReader reader=new StringReader(result)) {
-				doc.Load(reader);//This will throw if there are any errors in the HTML output by ProcessLists
-			}
-			Assert.IsFalse(result.Contains("#"));
+			Assert.AreEqual(result,"<body>\n<ol><li><span class=\"ListItemContent\"><a href=\"wiki:Jane Doe\">Jane Doe</a> </span></li>\n<li><span class=\"ListItemContent\"><a href=\"wiki:John Doe\">John Doe</a></span></li></ol>\n</body>");
 		}
 
 		[TestMethod]
 		public void MarkupEdit_ProcessList_NewLinesAtStartOfList_Table() {
-			string markup="<body><table>\r\n<tr>\r\n<th Width=\"145\"><p>Heading1</p></th>\r\n</tr>\r\n<tr>\r\n<td Width=\"145\"><p><br/>#<a href=\"wiki:Jane Doe\">Jane Doe</a> <br/>#<a href=\"wiki:John Doe\">John Doe</a></p></td>\r\n</tr>\r\n</table></body>";
+			string markup="<body><table>\n<tr>\n<th Width=\"145\"><p>Heading1</p></th>\n</tr>\n<tr>\n<td Width=\"145\"><p><br/>#<a href=\"wiki:Jane Doe\">Jane Doe</a> <br/>#<a href=\"wiki:John Doe\">John Doe</a></p></td>\n</tr>\n</table></body>";
 			string result=MarkupEdit.ProcessList(markup,"#");
-			XmlDocument doc=new XmlDocument();
-			using(StringReader reader=new StringReader(result)) {
-				doc.Load(reader);//This will throw if there are any errors in the HTML output by ProcessLists
-			}
-			Assert.IsFalse(result.Contains("#"));
+			Assert.AreEqual(result,"<body><table>\n<tr>\n<th Width=\"145\"><p>Heading1</p></th>\n</tr>\n<tr>\n<td Width=\"145\"><p><br/><ol><li><span class=\"ListItemContent\"><a href=\"wiki:Jane Doe\">Jane Doe</a> </span></li><li><span class=\"ListItemContent\"><a href=\"wiki:John Doe\">John Doe</a></span></li></ol></p></td>\n</tr>\n</table></body>");
 		}
 
 		[TestMethod]
@@ -207,16 +200,31 @@ namespace UnitTests.MarkupEdit_Tests {
 
 		[TestMethod]
 		public void MarkupEdit_ProcessList_ContentFollowedByOrderedAndUnorderedElements() {
-			string markup="<body><table>\r\n<tr>\r\n<th Width=\"800\"><p>Column Header</p></th>\r\n</tr>\r\n<tr>\r\n<td Width=\"800\"><p>This is some cell content.<br/>Within this cell is an ordered list of 3 items<br/>#item one<br/>#item two<br/>#item three<br/>Followed by an unordered list of 3 items<br/>*item one<br/>*item two<br/>*item three</p></td>\r\n</tr>\r\n</table></body>";
+			string markup="<body><table>\n<tr>\n<th Width=\"800\"><p>Column Header</p></th>\n</tr>\n<tr>\n<td Width=\"800\"><p>This is some cell content.<br/>Within this cell is an ordered list of 3 items<br/>#item one<br/>#item two<br/>#item three<br/>Followed by an unordered list of 3 items<br/>*item one<br/>*item two<br/>*item three</p></td>\n</tr>\n</table></body>";
 			string result=MarkupEdit.ProcessList(markup,"*");
 			result=MarkupEdit.ProcessList(result,"#");
-			XmlDocument doc=new XmlDocument();
-			using(StringReader reader=new StringReader(result)) {
-				doc.Load(reader);//This will throw if there are any errors in the HTML output by ProcessLists
-			}
-			//TODO: We know that this unit test fails and will work on fixing it later.
-			//Assert.IsFalse(result.Contains("#"));
-			//Assert.IsFalse(result.Contains("*"));
+			Assert.AreEqual(result,"<body><table>\n<tr>\n<th Width=\"800\"><p>Column Header</p></th>\n</tr>\n<tr>\n<td Width=\"800\"><p>This is some cell content.<br/>Within this cell is an ordered list of 3 items<br/><ol><li><span class=\"ListItemContent\">item one</span></li><li><span class=\"ListItemContent\">item two</span></li><li><span class=\"ListItemContent\">item three</span></li></ol>Followed by an unordered list of 3 items<ul><li><span class=\"ListItemContent\">item one</span></li><li><span class=\"ListItemContent\">item two</span></li><li><span class=\"ListItemContent\">item three</span></li></ul></p></td>\n</tr>\n</table></body>");
+		}
+
+		[TestMethod]
+		public void MarkupEdit_ProcessList_TableContentContainsBrs() {
+			string markup="<body><td Width=\"100\"><p>*h<br/><br/>i<br/>j</p></td></body>";
+			string result=MarkupEdit.ProcessList(markup,"*");
+			Assert.AreEqual("<body><td Width=\"100\"><p><ul><li><span class=\"ListItemContent\">h</span></li></ul><br/><br/>i<br/>j</p></td></body>",result);
+		}
+
+		[TestMethod]
+		public void MarkupEdit_ReduceTagGroupingsByOne_OrderedAndUnorderedLists() {
+			string markup="<ul><li><span class=\"ListItemContent\">h</span></li></ul><br/><br/><ol><li><span class=\"ListItemContent\">i</span></li></ol><br/><ul><li><span class=\"ListItemContent\">j</span></li></ul>";
+			string result=MarkupEdit.ReduceTagGroupingsByOne(markup,"<br/>");
+			Assert.AreEqual("<ul><li><span class=\"ListItemContent\">h</span></li></ul><br/><ol><li><span class=\"ListItemContent\">i</span></li></ol><ul><li><span class=\"ListItemContent\">j</span></li></ul>",result);
+		}
+
+		[TestMethod]
+		public void MarkupEdit_ReduceTagGroupingsByOne_NoListsPresent() {
+			string markup="<a href=\"#Scheduling Test Conversions\">I. Test is scheduled</a> <br/>{{nbsp}}  <a href=\"#Assigning\">A. Office is assigned</a><br/>{{nbsp}}  <a href=\"#Processing\">B. Coordinator processes the assignment</a><br/>{{nbsp}}  <a href=\"#Reassigning\">C. Reassigning offices</a><br/><a href=\"#Pre-test check in\">II. Pre-test check in</a><br/><a href=\"#Post-test check in\">III. Post-test check in</a><br/>{{nbsp}}  <a href=\"#Grey\">A. Grey Tasks</a><br/>{{nbsp}}  <a href=\"#Enhancement\">B. Enhancement Requests</a><br/>{{nbsp}}  <a href=\"#Packet\">C. The Conversion Packet</a><br/>{{nbsp}}  <a href=\"#Dexis\">D. Dexis Renumbering</a><br/><a href=\"#Checks\">IV. Account Checks</a><br/><a href=\"#Scheduled Appointments\">V. Scheduled Appointments</a><br/><a href=\"#Pre-final check in\">VI. Pre-final check in</a><br/>{{nbsp}}  <a href=\"#ASAP\">A. The ASAP list</a><br/><a href=\"#Post-final check in\">VII. Post-final check in</a><br/>{{nbsp}}  <a href=\"#Difficulties\">A. Offices expressing difficulties</a><br/><a href=\"#Other responsibilities\">VIII. Other responsibilities</a><br/>{{nbsp}}  <a href=\"#Customers\">A. The 'Onboarding (Customers)' task list</a><br/>{{nbsp}}  <a href=\"#Shifts\">B. Scheduled Shifts</a><br/>{{nbsp}}  <a href=\"#Conversions\">C. The Conversions task list</a><br/>{{nbsp}}  <a href=\"#Absent\">D. Absent Onboarding Corrdinators</a><br/>{{nbsp}}  <a href=\"#Escalations\">E. Escalations</a><br/>{{nbsp}}  <a href=\"#DAPF\">F. DAPF Reminders</a><br/>{{nbsp}}  <a href=\"#Cert\">G. Conversion Support Certification</a><br/>{{nbsp}}  <a href=\"#Emails\">H. Emails</a><br/><a href=\"#Quickpaste Notes\">IX. Quickpaste Notes</a><br/><a href=\"#Tips\">X. Tips and Tricks</a><br/><br/>{{nbsp}}";
+			string result=MarkupEdit.ReduceTagGroupingsByOne(markup,"<br/>");
+			Assert.AreEqual(markup,result);//No changes should have been made since there are no list tags in the markup
 		}
 	}
 }

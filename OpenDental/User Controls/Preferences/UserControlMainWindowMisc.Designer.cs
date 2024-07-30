@@ -272,7 +272,7 @@ namespace OpenDental {
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(386, 17);
 			this.label3.TabIndex = 56;
-			this.label3.Text = "Process signal interval in seconds.  Leave blank to disable autorefresh";
+			this.label3.Text = "Process signal interval in seconds.  Leave blank to disable";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label5

@@ -127,22 +127,24 @@ namespace OpenDentBusiness {
 				try {
 					bitmap=(Bitmap)Bitmap.FromFile(fileNameFull);
 				}
-				catch{
+				catch {
 					try {
 						File.Delete(fileNameFull); //File may be invalid, corrupted, or unavailable. This was a bug in previous versions.
-					} 
+					}
 					catch {
 						//we tried our best, and it just wasn't good enough
 						return Documents.NoAvailablePhoto();
 					}
 				}
 				//but that bitmap has a file lock that we need to release.
-				Bitmap bitmap2=new Bitmap(bitmap);
-				bitmap?.Dispose();
-				return bitmap2;
+				if(bitmap!=null) {
+					Bitmap bitmap2=new Bitmap(bitmap);
+					bitmap?.Dispose();
+					return bitmap2;
+				}
 			}
 			//Unlike documents, this method never creates a missing thumbnail because that would cause delays.
-			//Creation happens in FormImageFloat.CreateMountThumbnail().
+			//Creation happens in ControlImageDisplay.CreateMountThumbnail().
 			return Documents.NoAvailablePhoto();
 		}
 

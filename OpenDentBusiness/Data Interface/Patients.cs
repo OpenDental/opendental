@@ -1823,17 +1823,22 @@ namespace OpenDentBusiness {
 					AND definition.Category={SOut.Int((int)DefCat.ClinicSpecialty)}
 					LIMIT 1
 				)")+$@" Specialty,"//always include Specialty column, only populate if displaying specialty field
-			+(!PrefC.GetBool(PrefName.DistributorKey)?"":$@"
-				GROUP_CONCAT(DISTINCT phonenumber.PhoneNumberVal) AS OtherPhone,registrationkey.RegKey,")
+			+(!PrefC.GetBool(PrefName.DistributorKey)?"":
+				ptSearchArgs.Phone.IsNullOrEmpty()?"'' OtherPhone, ":$@"GROUP_CONCAT(DISTINCT phonenumber.PhoneNumberVal) AS OtherPhone,")
+			+(!PrefC.GetBool(PrefName.DistributorKey)?"":
+				ptSearchArgs.RegKey.IsNullOrEmpty()?"'' RegKey, ":$@"registrationkey.RegKey,")
 			+(string.IsNullOrEmpty(ptSearchArgs.InvoiceNumber)?"'' ":"statement.")+$@"StatementNum
 				FROM patient"
 			+(!usePhonenumTable?"":$@"
 				INNER JOIN phonenumber ON phonenumber.PatNum=patient.PatNum")
-			+(!PrefC.GetBool(PrefName.DistributorKey)?"":$@"{(usePhonenumTable?"":$@"
+			+(!PrefC.GetBool(PrefName.DistributorKey)?"":
+					ptSearchArgs.Phone.IsNullOrEmpty()?"":$@"{(usePhonenumTable?"":$@"
 				LEFT JOIN phonenumber ON phonenumber.PatNum=patient.PatNum
 					AND phonenumber.PhoneType={SOut.Int((int)PhoneType.Other)}
 				{(string.IsNullOrEmpty(regexp)?"":$@"
-					AND phonenumber.PhoneNumberVal REGEXP '{regexp}'")}")}
+					AND phonenumber.PhoneNumberVal REGEXP '{regexp}'")}")}")
+			+(!PrefC.GetBool(PrefName.DistributorKey)?"":
+				ptSearchArgs.RegKey.IsNullOrEmpty()?"":$@"
 				LEFT JOIN registrationkey ON patient.PatNum=registrationkey.PatNum")
 			+(string.IsNullOrEmpty(ptSearchArgs.SubscriberId)?"":$@"
 				LEFT JOIN patplan ON patplan.PatNum=patient.PatNum

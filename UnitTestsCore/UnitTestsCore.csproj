@@ -96,6 +96,7 @@
     <Compile Include="TableTypes\AutoCodeT.cs" />
     <Compile Include="TableTypes\AutoNoteControlT.cs" />
     <Compile Include="TableTypes\AutoNoteT.cs" />
+    <Compile Include="TableTypes\BroadcasterInstanceT.cs" />
     <Compile Include="TableTypes\CalendarIcsInfoT.cs" />
     <Compile Include="TableTypes\CdcrecT.cs" />
     <Compile Include="TableTypes\CentralManagerT.cs" />

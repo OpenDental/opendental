@@ -626,6 +626,7 @@ namespace OpenDental{
 				nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Mount,mountNum);
 			}
 			controlImageDisplay.ClearObjects();
+			SetDocumentOrMount(nodeTypeAndKey,controlImageDisplay);//Set _mountShowing prior to SelectTreeNode2() to avoid UE when _mountShowing is null.
 			//SelectTreeNode must come before Show. Must come after bounds are set for the zoom to be correct.
 			controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);//must come before Show, but after bounds set.
 			formImageFloat.SetControlImageDisplay(controlImageDisplay);
@@ -706,13 +707,13 @@ namespace OpenDental{
 			else{
 				controlImageDisplay=CreateControlImageDisplay();
 				//close the draw panel because we are going to change to a different image in the window
-				SetDrawMode(EnumDrawMode.None);
 				panelDraw.Visible=false;
 				controlImageDisplay.PatientCur=_patient;
 				controlImageDisplay.PatFolder=_patFolder;
 				controlImageDisplay.ZoomSliderValue=zoomSlider.Value;
 				controlImageDock.SetControlImageDisplay(controlImageDisplay);
 				controlImageDock.IsImageFloatSelected=true;
+				SetDrawMode(EnumDrawMode.None);
 				//deactivate all floaters
 				for(int i=0;i<_listFormImageFloats.Count;i++){
 					_listFormImageFloats[i].IsImageFloatSelected=false;
@@ -1204,6 +1205,7 @@ namespace OpenDental{
 				imageSelector.SetSelected(EnumImageNodeType.Mount,GetMountShowing().MountNum);//Need to update _nodeObjTagSelected in case category changed
 				controlImageDisplay.ClearObjects();
 				NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
+				SetDocumentOrMount(nodeTypeAndKey,controlImageDisplay);//Set _mountShowing prior to SelectTreeNode2() to avoid UE when _mountShowing is null.
 				controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);
 				unmountedBar.SetObjects(controlImageDisplay.GetUmountedObjs());
 				unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));

@@ -710,11 +710,14 @@ namespace OpenDentBusiness {
 		///<summary>This will get called repeatedly.  prefixChars is, for now, * or #.  Expects s to be mostly processed with the exception of {{nbsp}}s and prefixChars. Returns the text of the full document with the wiki markup for lists converted to HTML. Public for unit testing.</summary>
 		public static string ProcessList(string s,string prefixChars){
 			string listTag ="";
+			string otherPrefixChar="";
 			if(prefixChars=="#") {
 				listTag="ol";
+				otherPrefixChar="*";
 			}
 			else if(prefixChars=="*") {
 				listTag="ul";
+				otherPrefixChar="#";
 			}
 			string[] lines=s.Split("\n",StringSplitOptions.None);//includes empty elements
 			bool isWithinListTag=false;//Keep track of when we enter a list tag and have yet to close it.
@@ -731,25 +734,17 @@ namespace OpenDentBusiness {
 					//Groups[2] represents the outermost set of parenthesis in the regex above.
 					//Example: In a table row like: <td Width="100"><p>*1<br/>*2</p></td>
 					//Groups[2] refers to the contents ofthe opening and closing <td> tags, namely <p>*1<br/>*2</p>
-					if(!match.Groups[2].Value.StartsWith(prefixChars) && !match.Groups[2].Value.StartsWith("<br/>")) {
-						continue;//This is not a list and simply contains a # or * E.g. 4*4.
+					string strCellcontent=match.Groups[2].Value.Replace("<br/>","\n");//Newlines are needed for the recursive calls below.
+					//Recursively process the content of this table cell.
+					strCellcontent=ProcessList(strCellcontent,prefixChars);
+					if(strCellcontent.Contains(otherPrefixChar)) {
+						strCellcontent=ProcessList(strCellcontent,otherPrefixChar);
 					}
-					string[] strArrayListItems=match.Groups[2].Value.Split(prefixChars,StringSplitOptions.RemoveEmptyEntries);
-					//Loop through the raw list items and surrround with <li></li>
-					for(int j = 0;j < strArrayListItems.Length;j++) {
-						if(!strArrayListItems[j].StartsWith("<br/>")) {
-							stringBuilder.Append(strArrayListItems[j]);
-							continue;
-						}
-						if(j > 0 || strArrayListItems.Length==1) {
-							stringBuilder.Append("<li><span class=\"ListItemContent\">"+strArrayListItems[j]+"</span></li>");
-						}
-					}
-					//Replace the following match with the end-result after replacing the list item prefix chars and wrapping it in the item tag.
-					//E.g. <p>(.+)</p>  =>  <ol>(.+)</ol>  where (.+) has each # or * turned into <li></li>.
-					//Groups[1] Refers to the inner most group of parenthesis. E.g.In a table row like: <td Width="100"><p>*1<br/>*2</p></td>
-					//Group[i] would refer to what is between the opening and closing <p> tags, namely *1<br/>*2.
-					lines[i]=lines[i].Replace(match.Groups[1].Value,$@"<{listTag}>{stringBuilder}</{listTag}>");
+					strCellcontent=strCellcontent.Replace("\n","<br/>");//But back the <br/>s we removed for the recursion above.
+					//We will now have too many <br/>s since there is an implicit <br/> between <li> tags.
+					//Reduce those groupings by only 1 so that any intentional formatting is preserved.
+					strCellcontent=ReduceTagGroupingsByOne(strCellcontent,"<br/>");
+					lines[i]=lines[i].Replace(match.Groups[2].Value,strCellcontent);
 				}
 				else {//List(s) are present outside of tables
 					string line=lines[i];
@@ -792,6 +787,46 @@ namespace OpenDentBusiness {
 				}
 			}
 			return string.Join("\n",lines);
+		}
+
+		/// <summary>Searches for groups of tags that match the tag passed in repeated 1 to many times. Returns the passed in content with all tag groupings reduced by one tag. Will only match tags that are between list elements (li,ol,ul,/ul,/ol, or /li tags).
+		/// Example: <br /><br /> becomes <br />.
+		/// Example 2: <br /> becomes empty string.
+		/// </summary>
+		public static string ReduceTagGroupingsByOne(string content,string tag) {
+			if(string.IsNullOrEmpty(content) 
+				|| !content.Contains(tag) 
+				|| (!content.Contains("<ol>") && !content.Contains("<ul>") && !content.Contains("</ol>") && !content.Contains("</ul>"))) 
+			{
+				return content;
+			}
+			//It is possible for the passed in content to contain text that is not bounded by list tags in some way.
+			//This text needs to be excluded from any tag replacing so that whatever format the text has is preserved.
+			//Reducing tag groupings directly applies to tags within HTML lists (between ol, ul, or li elements).
+			int startIndex=content.IndexOf("<ol>");
+			if(content.IndexOf("<ul>") > -1 && 
+				(startIndex==-1 || content.IndexOf("<ul>") < startIndex)) 
+			{
+				startIndex=content.IndexOf("<ul>");
+			}
+			int endIndex=content.LastIndexOf("</ol>");
+			if(content.LastIndexOf("</ul>") > -1 && 
+				 content.LastIndexOf("</ul>") > endIndex) 
+			{
+				endIndex=content.LastIndexOf("</ul>");
+			}
+			string contentInList=content.Substring(startIndex,endIndex+5-startIndex);//+5 to account for the length of a closing </ol> or </ul> tag
+			//Split the list content by tag. We will be looking for empty entries between tags, and replacing the count of tag with the count of empty entries.
+			//This effectively reduces tag count by 1 for all tag groupings.
+			//Example: <br><br> split by <br> => "" which is 1 less than the number of <br> tags present.
+			string[] strArrayContents=contentInList.Split(tag,StringSplitOptions.None);
+			for(int i = 0;i < strArrayContents.Length;i++) {
+				if(strArrayContents[i].IsNullOrEmpty()) {
+					strArrayContents[i]=tag;//Replace the tags that were removed by the split above, so that the count of tags will be reduced.
+				}
+			}
+			content=content.Replace(contentInList,string.Join("",strArrayContents));
+			return content;
 		}
 
 		///<summary>This will wrap the text in p tags as well as handle internal carriage returns.  startsWithCR is only used on the first paragraph 

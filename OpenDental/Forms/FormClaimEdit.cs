@@ -4173,7 +4173,7 @@ namespace OpenDental{
 				//Is the user authorized to send claims.
 				if(Security.IsAuthorized(EnumPermType.ClaimSend,true)) {
 					//Consider the preferences for automatically changing the claim status or prompting the user to take action on other insurance.
-					if(PrefC.GetBool(PrefName.ClaimMedReceivedPromptForPrimaryClaim) && _claim.MedType.In(EnumClaimMedType.Medical,EnumClaimMedType.Institutional)) {
+					if(PrefC.GetBool(PrefName.ClaimMedReceivedPromptForPrimaryClaim) && _claim.MedType.In(EnumClaimMedType.Medical,EnumClaimMedType.Institutional) && _claim.ClaimType!="PreAuth") {
 						ClaimL.PromptForPrimaryOrSecondaryClaim(_listClaimProcsForClaim,false);//Check for unsent primary claimprocs.
 					}
 					else if(PrefC.GetBool(PrefName.PromptForSecondaryClaim)) {
