@@ -393,6 +393,10 @@ namespace OpenDental {
 			if(PrefC.GetBool(PrefName.SaveDXCAttachments)) {
 				Document documentCur=ImageStore.Import(_claimConnectImageAttachment.ImageFileAsBase64,defNumImageType,ImageType.Attachment,Patient);
 				_claimConnectImageAttachment.ImageFileNameActual=documentCur.FileName;
+				//Set description of newly created document
+				Document documentOld=documentCur.Copy();
+				documentCur.Description=_claimConnectImageAttachment.ImageFileNameDisplay;
+				Documents.Update(documentCur,documentOld);
 			}
 			//Create attachment objects
 			List<ClaimAttach> listClaimAttaches=new List<ClaimAttach>();

@@ -161,8 +161,12 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),mobileAppDevice);
 				return;
 			}
-			MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.eClipboard,false);//deleting so always false
-			MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.ODTouch,false);
+			if(IsClinicSignedUpForEClipboard(mobileAppDevice.ClinicNum)) {
+				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.eClipboard,false);//deleting so always false
+			}
+			if(ClinicPrefs.IsODTouchAllowed(mobileAppDevice.ClinicNum)) {
+				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.ODTouch,false);
+			}
 			Crud.MobileAppDeviceCrud.Delete(mobileAppDevice.MobileAppDeviceNum);
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
@@ -176,8 +180,12 @@ namespace OpenDentBusiness{
 				return;
 			}
 			for(int i=0;i<listMobileAppDevices.Count;i++) {
-				MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,false); //deleting so always false
-				MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODTouch,false); //deleting so always false
+				if(IsClinicSignedUpForEClipboard(listMobileAppDevices[i].ClinicNum)) {
+					MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,false); //deleting so always false
+				}
+				if(ClinicPrefs.IsODTouchAllowed(listMobileAppDevices[i].ClinicNum)) {
+					MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODTouch,false); //deleting so always false
+				}
 			}
 			Crud.MobileAppDeviceCrud.DeleteMany(listMobileAppDevices.Select(x => x.MobileAppDeviceNum).ToList());
 			Signalods.SetInvalid(InvalidType.EClipboard);

@@ -1032,7 +1032,7 @@
 			// 
 			this.labelClaim.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelClaim.Location = new System.Drawing.Point(89, 665);
+			this.labelClaim.Location = new System.Drawing.Point(89, 663);
 			this.labelClaim.Name = "labelClaim";
 			this.labelClaim.Size = new System.Drawing.Size(524, 32);
 			this.labelClaim.TabIndex = 50;
@@ -1408,7 +1408,7 @@
 			this.tabControl.Controls.Add(this.tabPageMedical);
 			this.tabControl.Controls.Add(this.tabPageMisc);
 			this.tabControl.Controls.Add(this.tabPageCanada);
-			this.tabControl.Location = new System.Drawing.Point(1, 424);
+			this.tabControl.Location = new System.Drawing.Point(1, 423);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.Size = new System.Drawing.Size(982, 244);
 			this.tabControl.TabIndex = 175;

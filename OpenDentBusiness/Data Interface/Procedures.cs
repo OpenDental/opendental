@@ -836,7 +836,7 @@ namespace OpenDentBusiness {
 			}
 			string command="SELECT PatNum,procedurelog.ProvNum,COUNT(ProcNum) procCount "
 				+"FROM procedurelog "
-				+"INNER JOIN provider ON procedurelog.ProvNum=provider.ProvNum AND provider.IsHidden=0 "
+				+"INNER JOIN provider ON procedurelog.ProvNum=provider.ProvNum AND provider.IsHidden=0 AND provider.IsSecondary=0 "
 				+"WHERE PatNum IN ("+string.Join(",",listPatNums)+") "
 				+"AND ProcStatus="+POut.Int((int)ProcStat.C)+" "
 				+"GROUP BY procedurelog.ProvNum,PatNum" +" "

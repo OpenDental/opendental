@@ -291,6 +291,10 @@ namespace OpenDental {
 			if(_selectedIndex==-1){
 				return;
 			}
+			if(Mouse.LeftButton!=MouseButtonState.Pressed) {//Ensure mouse is dragging
+				_isMouseDown=false;
+				return;
+			}
 			//we are dragging
 			Point point=e.GetPosition(panelDrawing);
 			int x=(int)((point.X-_pointMouseDownOrig.X+_pointItemOrig.X-_rectMount.X)/_ratio);

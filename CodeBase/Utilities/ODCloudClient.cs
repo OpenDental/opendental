@@ -255,7 +255,7 @@ namespace CodeBase {
 		}
 
 		///<summary></summary>
-		public static void CopyToClipboard(Bitmap bitmapCopy=null,string fileName=null,int nodeType=-1, long imageKey=-1, string dbName=null){
+		public static void CopyToClipboard(Bitmap bitmapCopy=null,string fileName=null,int nodeType=-1, long imageKey=-1, string dbNameOrUri=null){
 			ODCloudClientData oDCloudClientData=new ODCloudClientData();
 			if(bitmapCopy!=null){
 				try{
@@ -276,8 +276,8 @@ namespace CodeBase {
 				oDCloudClientData.NodeType=nodeType;
 				oDCloudClientData.ImageKey=imageKey;
 			}
-			if(!string.IsNullOrEmpty(dbName)){
-				oDCloudClientData.OtherData=dbName;
+			if(!string.IsNullOrEmpty(dbNameOrUri)){
+				oDCloudClientData.OtherData=dbNameOrUri;
 			}
 			try{
 				SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.CopyToClipboard);
@@ -305,18 +305,18 @@ namespace CodeBase {
 		}
 
 		///<summary>Used for copy/paste in imaging module to prevent issues when copying across different databases</summary>
-		public static string GetDbNameFromClipboard(){
-			string dbName="";
+		public static string GetDbNameOrUriFromClipboard(){
+			string dbNameOrUri="";
 			try{
-				dbName=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetDbNameFromClipboard);
+				dbNameOrUri=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetDbNameOrUriFromClipboard);
 			}
 			catch(Exception ex) {
-				ODMessageBox.Show(ex.Message);
+				ex.DoNothing();//Don't need to handle here. Will return null and paste action will proceed.
 			}
-			if(string.IsNullOrEmpty(dbName)){
+			if(string.IsNullOrEmpty(dbNameOrUri)){
 				return null;
 			}
-			return dbName;
+			return dbNameOrUri;
 		}
 
 		///<summary>Asks ODCloudClient to process a PayConnect terminal payment. If successful, returns the contents of the PosResponse object. Otherwise, returns null.
@@ -1197,7 +1197,7 @@ namespace CodeBase {
 			///<summary>Imports a file from the user's workstation</summary>
 			ImportFile,
 			///<summary>Used during copy/paste in Imaging Module to prevent issues when copying images across different databases</summary>
-			GetDbNameFromClipboard,
+			GetDbNameOrUriFromClipboard,
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

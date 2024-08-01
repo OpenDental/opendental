@@ -227,7 +227,8 @@ namespace OpenDentBusiness {
 				//Example. We have drawn 1 line and we are getting ready to draw the second line.
 				//For this example, with text wrap, this text will only be two lines high, so this is also the last line.
 				//lineIdx=1. if(rect.Y+(heightRow*2)>rect.Bottom) then no room so kick out.
-				if(rectangleF.Y+pixelsPerLine*(lineIdx+1)>rectangleF.Bottom) {//Check if rectangleF is tall enough to show next line.
+				//Skips checking the first line.
+				if(lineIdx!=0 && rectangleF.Y+pixelsPerLine*(lineIdx+1)>rectangleF.Bottom) {//Check if rectangleF is tall enough to show next line.
 					break;
 				}
 				//pixels:
