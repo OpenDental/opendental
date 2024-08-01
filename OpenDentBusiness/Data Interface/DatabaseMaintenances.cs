@@ -9076,7 +9076,7 @@ namespace OpenDentBusiness {
 					{POut.Enum(ClaimProcStatus.Supplemental)},
 					{POut.Enum(ClaimProcStatus.CapComplete)})
 				LEFT JOIN adjustment ON adjustment.ProcNum=procedurelog.ProcNum
-				LEFT JOIN paysplit ON paysplit.ProcNum=procedurelog.ProcNum
+				LEFT JOIN paysplit ON paysplit.ProcNum=procedurelog.ProcNum and paysplit.UnearnedType=0
 				LEFT JOIN procedurelog procedureloglab ON procedurelog.ProcNumLab=procedureloglab.ProcNum
 				LEFT JOIN procedurecode procedurecodelab ON procedureloglab.CodeNum=procedurecodelab.CodeNum
 				WHERE procedurelog.ProcStatus NOT IN({POut.Enum(ProcStat.C)}) 

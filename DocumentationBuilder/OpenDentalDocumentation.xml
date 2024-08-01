@@ -11463,7 +11463,7 @@
       <summary>Aged balance over 90 days old. Aging numbers are for entire family.  Only stored with guarantor.</summary>
     </column>
     <column order="40" name="InsEst" type="double">
-      <summary>Insurance Estimate for entire family.</summary>
+      <summary>Insurance Estimate for entire family. Only stored with guarantor.</summary>
     </column>
     <column order="41" name="BalTotal" type="double">
       <summary>Total balance for entire family before insurance estimate.  Not the same as the sum of the 4 aging balances because this can be 

@@ -1144,9 +1144,8 @@ namespace OpenDentBusiness{
 			return countNewEmails;
 		}
 
-		///<summary>Use Microsoft authentication to retrieve emails. Returns the count of new emails that were downloaded.</summary>
+		///<summary>Throws Exceptions. Use Microsoft authentication to retrieve emails. Returns the count of new emails that were downloaded.</summary>
 		private static int RetrieveFromMicrosoftInbox(EmailAddress emailAddressInbox,bool hasRetried=false) {
-			int countNewEmails=0;
 			List<Microsoft.Graph.Message> listMessages=new List<Microsoft.Graph.Message>();
 			try {
 				listMessages=MicrosoftApiConnector.RetrieveMessages(emailAddressInbox.EmailUsername,emailAddressInbox.AccessToken);
@@ -1162,66 +1161,35 @@ namespace OpenDentBusiness{
 			List<string> listEmailMessageUids=EmailMessageUids.GetMsgIdsRecipientAddress(emailAddressInbox.EmailUsername)
 				.Select(x=>x.TrimStart("MicrosoftId".ToCharArray())).ToList();
 			listMessages=listMessages.Where(x => !listEmailMessageUids.Contains(x.Id)).ToList();
+			int countNewEmails=0;
 			for(int i=0;i<listMessages.Count;i++) {
-				EmailMessage emailMessage=new EmailMessage();
-				//Check to see if the message has any inline attachments. If so then need to use MIME formatting.
-				if(listMessages[i].Attachments.OfType<Microsoft.Graph.FileAttachment>().ToList().Any(x => (bool)x.IsInline)) {
-					MimeKit.MimeMessage mimeMsg=MicrosoftApiConnector.GetMIMEMessage(emailAddressInbox.EmailUsername,emailAddressInbox.AccessToken,listMessages[i].Id);
-					if(IsEmailFromInbox(emailAddressInbox.EmailUsername,mimeMsg.To.ToList(),mimeMsg.From.ToList(),mimeMsg.Cc.ToList(),mimeMsg.Bcc.ToList())) {
-						//Convert MIME to our Email format and store the ID in the database
-						emailMessage=ProcessRawEmailMessageIn(mimeMsg.ToString(),0,emailAddressInbox,true);
-					}
-				}
-				else {
-					emailMessage=ConvertMicrosoftMessageToEmailMessage(emailAddressInbox.EmailUsername,listMessages[i]);
-					if(emailMessage.PatNum==0) {//If a patient match was not already found, try to locate patient based on the email address sent from.
-						string emailFromAddress=GetAddressSimple(emailMessage.FromAddress);
-						List<Patient> listMatchedPats=Patients.GetPatsByEmailAddress(emailFromAddress);
-						if(listMatchedPats.Count==1) {//If multiple matches, then we do not want to mislead the user by assigning a patient.
-							emailMessage.PatNum=listMatchedPats[0].PatNum;
-						}
-					}
-					Insert(emailMessage);
-				}
-				countNewEmails++;
 				EmailMessageUid uid=new EmailMessageUid();
 				uid.MsgId=listMessages[i].Id;
 				uid.RecipientAddress=emailAddressInbox.EmailUsername;
+				try {
+					//Check to see if the message has any inline attachments. If so then need to use MIME formatting.
+					MimeKit.MimeMessage mimeMsg=MicrosoftApiConnector.GetMIMEMessage(emailAddressInbox.EmailUsername,emailAddressInbox.AccessToken,listMessages[i].Id);
+					if(IsEmailFromInbox(emailAddressInbox.EmailUsername,mimeMsg.To.ToList(),mimeMsg.From.ToList(),mimeMsg.Cc.ToList(),mimeMsg.Bcc.ToList())) {
+						//Convert MIME to our Email format and store the ID in the database
+						EmailMessage emailMessageProcessed=ProcessRawEmailMessageIn(mimeMsg.ToString(),0,emailAddressInbox,true);
+						if(uid.RecipientAddress!=emailMessageProcessed.RecipientAddress) {
+							uid.RecipientAddress=emailMessageProcessed.RecipientAddress;
+						}
+					}
+					countNewEmails++;
+				}
+				catch(ThreadAbortException) {
+					//This can happen if the application is exiting. We need to leave right away so the program does not lock up.
+					//Otherwise, this loop could continue for a while if there are a lot of messages to download.
+					throw;
+				}
+				catch(Exception ex) {
+					//Something went wrong with processing this email. Still add the uid to not download again later.
+					ex.DoNothing();
+				}
 				EmailMessageUids.Insert(uid);
 			}
 			return countNewEmails;
-		}
-
-		private static EmailMessage ConvertMicrosoftMessageToEmailMessage(string emailAddress,Microsoft.Graph.Message message) {
-			OpenDentBusiness.EmailMessage emailMessageTemp=new OpenDentBusiness.EmailMessage();
-			emailMessageTemp.EmailMessageNum=0;
-			emailMessageTemp.Subject=message.Subject;
-			emailMessageTemp.RecipientAddress=emailAddress;
-			emailMessageTemp.ToAddress=string.Join(",",message.ToRecipients.Select(x => x.EmailAddress.Address));
-			emailMessageTemp.FromAddress=message.From.EmailAddress.Address;
-			emailMessageTemp.CcAddress=string.Join(",",message.CcRecipients.Select(x => x.EmailAddress.Address));
-			emailMessageTemp.BccAddress=string.Join(",",message.BccRecipients.Select(x => x.EmailAddress.Address));
-			emailMessageTemp.BodyText=message.Body.Content;
-			if(message.Attachments!=null) { //message.HasAttachments not entirely accurate so use this instead.
-				//This will only be getting file attachments to the email.
-				List<Microsoft.Graph.FileAttachment> listFileAttachments=message.Attachments.OfType<Microsoft.Graph.FileAttachment>().ToList();
-				for(int i=0;i<listFileAttachments.Count;i++) {
-					if(listFileAttachments[i]==null) {
-						continue;
-					}
-					try {
-						EmailAttach emailAttach=EmailAttaches.CreateAttach(listFileAttachments[i].Name,"",listFileAttachments[i].ContentBytes,false);
-						emailMessageTemp.Attachments.Add(emailAttach);
-					}
-					catch(Exception) {
-						continue; //unable to download the attachment so will just continue to the next one.
-					}
-				}
-			}
-			emailMessageTemp.RawEmailIn=message.Body.Content;
-			emailMessageTemp.SentOrReceived=EmailSentOrReceived.Received;
-			emailMessageTemp.MsgDateTime=((DateTimeOffset)message.SentDateTime).DateTime.ToLocalTime();
-			return emailMessageTemp;
 		}
 
 		///<summary>Parses a raw email into a usable object.</summary>

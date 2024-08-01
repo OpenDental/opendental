@@ -1187,7 +1187,11 @@ Here is the desired behavior:
 			NodeTypeAndKey nodeTypeAndKey=null;
 			Bitmap bitmapCopy=null;
 			string fileName="";
-			string dbName=DataConnectionBase.DataConnection.GetDatabaseName();//this is safe even if null or empty
+			string dbNameOrUri="";//Used to prevent issues with copying images across different databases.
+			dbNameOrUri=DataConnectionBase.DataConnection.GetDatabaseName();
+			if(RemotingClient.MiddleTierRole!=MiddleTierRole.ClientDirect) {//using Middle Tier
+				dbNameOrUri=RemotingClient.ServerURI;
+			}
 			Cursor=Cursors.WaitCursor;
 			if(IsMountItemSelected()){
 				if(ImageHelper.HasImageExtension(GetDocumentShowing(_idxSelectedInMount).FileName) || GetDocumentShowing(_idxSelectedInMount).FileName.EndsWith(".dcm"))
@@ -1275,7 +1279,7 @@ Here is the desired behavior:
 			System.Windows.DataObject dataObject=new System.Windows.DataObject();
 			if(nodeTypeAndKey!=null){
 				dataObject.SetData(nodeTypeAndKey);//DataFormat automatically determined
-				dataObject.SetData("stringDbName",dbName);//this is in addition to the other DataFormat with the nodeTypeAndKey
+				dataObject.SetData("stringDbNameOrUri",dbNameOrUri);//this is in addition to the other DataFormat with the nodeTypeAndKey
 			}
 			if(bitmapCopy!=null){
 				dataObject.SetData(DataFormats.Bitmap,bitmapCopy);
@@ -1287,7 +1291,7 @@ Here is the desired behavior:
 			}
 			if(ODEnvironment.IsCloudServer){
 				int nodeType=(int)nodeTypeAndKey.NodeType;
-				ODCloudClient.CopyToClipboard(bitmapCopy,fileName,nodeType,nodeTypeAndKey.PriKey,dbName);
+				ODCloudClient.CopyToClipboard(bitmapCopy,fileName,nodeType,nodeTypeAndKey.PriKey,dbNameOrUri);
 			}
 			else{
 				try {
@@ -1659,9 +1663,9 @@ Here is the desired behavior:
 			}
 			IDataObject iDataObject=null;
 			NodeTypeAndKey nodeTypeAndKey=null;
-			string dbName="";
+			string dbNameOrUriCopied="";
 			if(ODEnvironment.IsCloudServer) {
-				dbName=ODCloudClient.GetDbNameFromClipboard();
+				dbNameOrUriCopied=ODCloudClient.GetDbNameOrUriFromClipboard();
 				ODCloudClient.CloudNodeTypeAndKey cloudNodeTypeAndKey=ODCloudClient.GetNodeTypeAndKey();
 				if(cloudNodeTypeAndKey!=null){
 					EnumImageNodeType enumImageNodeTypeCopied=(EnumImageNodeType)cloudNodeTypeAndKey.nodeType;
@@ -1682,9 +1686,13 @@ Here is the desired behavior:
 					return;
 				}
 				nodeTypeAndKey=(NodeTypeAndKey)iDataObject.GetData(typeof(NodeTypeAndKey));
-				dbName=(string)iDataObject.GetData("stringDbName");//safe even if null
+				dbNameOrUriCopied=(string)iDataObject.GetData("stringDbNameOrUri");//safe even if null
 			}
-			if(DataConnectionBase.DataConnection.GetDatabaseName()==dbName && nodeTypeAndKey!=null){
+			string dbNameOrUri=DataConnectionBase.DataConnection.GetDatabaseName();
+			if(RemotingClient.MiddleTierRole!=MiddleTierRole.ClientDirect) {//using Middle Tier
+				dbNameOrUri=RemotingClient.ServerURI;
+			}
+			if(dbNameOrUri==dbNameOrUriCopied && nodeTypeAndKey!=null){
 				ToolBarPasteTypeAndKey(nodeTypeAndKey,showDocInfo:true);
 				return;
 			}
