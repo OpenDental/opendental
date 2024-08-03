@@ -74,7 +74,8 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns the number of messages which have not yet been read.  If there are no unread messages, then empty string is returned.  If more than 99 messages are unread, then "99" is returned.  The count limit is 99, because only 2 digits can fit in the SMS notification text.</summary>
 		public static string GetSmsNotification() {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+            Console.WriteLine("\n\n\nsms notifs calc\n\n\n");
+            if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod());
 			}
 			string command="SELECT COUNT(*) FROM smsfrommobile WHERE SmsStatus="+POut.Int((int)SmsFromStatus.ReceivedUnread);
@@ -90,7 +91,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Call ProcessInboundSms instead.</summary>
 		public static long Insert(SmsFromMobile smsFromMobile) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+			if (RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
 				smsFromMobile.SmsFromMobileNum=Meth.GetLong(MethodBase.GetCurrentMethod(),smsFromMobile);
 				return smsFromMobile.SmsFromMobileNum;
 			}
@@ -118,7 +119,9 @@ namespace OpenDentBusiness{
 		public static List<SmsFromMobile> GetMessages(DateTime dateStart,DateTime dateEnd,List<long> listClinicNums,long patNum,
 			bool isMessageThread,string phoneNumber,List<SmsFromStatus> listSmsFromStatuses) 
 		{
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+            Console.WriteLine("messages get");
+            Console.WriteLine(listSmsFromStatuses.ToString());
+            if (RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<SmsFromMobile>>(MethodBase.GetCurrentMethod(),dateStart,dateEnd,listClinicNums,patNum,isMessageThread,phoneNumber,listSmsFromStatuses);
 			}
 			List <string> listCommandFilters=new List<string>();

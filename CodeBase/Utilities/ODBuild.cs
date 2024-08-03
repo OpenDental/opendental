@@ -15,11 +15,7 @@ namespace CodeBase {
 		///<summary>Returns true if the current build is debug. Useful when you want the release code to show up when searching for references.</summary>
 		public static bool IsDebug() {
 			//There are some sections of code where we can't use this.  Specifically, places where a variable is a different type in debug vs not.  If anyone has a suggestion for including that pattern, let Jordan know.
-#if DEBUG
-			return true;
-#else
-			return false;
-#endif
+			return false; // Corrin - 2024-01-25 - report that we are never in debug mode so that we always connect to OpenDental HQ.
 		}
 
 		///<summary>Returns true if the current build is alpha. Useful when you want the release code to show up when searching for references.</summary>
