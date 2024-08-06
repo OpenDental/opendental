@@ -1205,7 +1205,8 @@ namespace OpenDental{
 				imageSelector.SetSelected(EnumImageNodeType.Mount,GetMountShowing().MountNum);//Need to update _nodeObjTagSelected in case category changed
 				controlImageDisplay.ClearObjects();
 				NodeTypeAndKey nodeTypeAndKey=controlImageDisplay.GetNodeTypeAndKey();
-				SetDocumentOrMount(nodeTypeAndKey,controlImageDisplay);//Set _mountShowing prior to SelectTreeNode2() to avoid UE when _mountShowing is null.
+				SetDocumentOrMount(nodeTypeAndKey,controlImageDisplay);
+				//Jordan 2024-08-05 I suspect we might need to be calling SelectTreeNode1 here instead. Maybe.
 				controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);
 				unmountedBar.SetObjects(controlImageDisplay.GetUmountedObjs());
 				unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));

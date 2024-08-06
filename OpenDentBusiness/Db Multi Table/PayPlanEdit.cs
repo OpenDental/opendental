@@ -1705,7 +1705,6 @@ namespace OpenDentBusiness {
 			if(listSplitsCur.All(x => x.PayPlanNum==0)) {
 				return listRecalcData;
 			}
-			Family family=Patients.GetFamily(pat.PatNum);
 			List<long> listPayPlanNums=listSplitsCur.Where(x=>x.PayPlanNum!=0).Select(x=>x.PayPlanNum).Distinct().ToList();
 			List<PayPlan> listPayPlans=PayPlans.GetMany(listPayPlanNums.ToArray());
 			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlans(listPayPlanNums).FindAll(x=>x.ChargeDate.Date<=DateTime_.Today);
@@ -1714,6 +1713,7 @@ namespace OpenDentBusiness {
 			List<PayPlanProductionEntry> listPayPlanProductionEntries=PayPlanProductionEntry.GetWithAmountRemaining(listPayPlanLinks,listPayPlanCharges);
 			for(int i = 0;i<listPayPlans.Count;i++) {
 				PayPlan payPlan=listPayPlans[i];
+				Family family=Patients.GetFamily(payPlan.PatNum);
 				List<PayPlanLink> listPayPlanLinksForPlan=listPayPlanLinks.FindAll(x=>x.PayPlanNum==payPlan.PayPlanNum);
 				PayPlanTerms terms=GetPayPlanTerms(payPlan,listPayPlanLinksForPlan);
 				List<PayPlanCharge> listPayPlanChargesForPlan=listPayPlanCharges.FindAll(x=>x.PayPlanNum==payPlan.PayPlanNum);

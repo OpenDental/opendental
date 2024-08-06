@@ -98,16 +98,14 @@ Ours are similar.
 
 Next:
 When filling forms, changing window width does not perform another layout.
-Allergies, Medications, Problems
 Enhance FormWebForms to include eForms
 Slight enhancements to FormPatientPickWebForm for wording
 What about FormPatientPickWebForm?
 and .IsWebForm
 WebForms_Preference.ColorBorder
-RyanH: Add conditional logic to all the other UI types
-TabOrders
 Background color
 RyanH: SigBox implement
+Conditional dates/ages
 
 Widths in a future version: We might add:
  Proportional widths, either * or %.

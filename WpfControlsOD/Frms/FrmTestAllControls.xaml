@@ -128,5 +128,9 @@
 			<ui:Label x:Name="label2" Width="127" Height="18" Margin="10,23,0,0" Text="Label in my groupBox" />
 		</ui:GroupBox>
 		<ui:Button x:Name="button2" Width="85" Height="48" Margin="155,55,0,0" Text="_Set 3 selected" Icon="CommLog" Click="button2_Click" />
+		<ScrollViewer x:Name="scrollViewer" Width="255" Height="269" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1187,124,0,0" VerticalScrollBarVisibility="Visible"  HorizontalScrollBarVisibility="Disabled" Focusable="True">
+			<StackPanel Name="stackPanel" x:FieldModifier="internal"/>
+			
+		</ScrollViewer>
 	</Grid>
 </local:FrmODBase>

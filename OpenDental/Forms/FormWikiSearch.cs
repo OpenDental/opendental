@@ -41,11 +41,11 @@ namespace OpenDental {
 			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerDbName))
 				|| string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ReportingServerCompName)))
 			{
-				checkReadOnlyServer.Visible=false;
+				checkReportServer.Visible=false;
 			}
 			else {//default to report server when one is set up.
-				checkReadOnlyServer.Visible=true;
-				checkReadOnlyServer.Checked=true;
+				checkReportServer.Visible=true;
+				checkReportServer.Checked=true;
 			}
 			FillGrid();
 			SetFilterControlsAndAction(
@@ -109,8 +109,8 @@ namespace OpenDental {
 			//gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			//This used to search the wikipagehist table, now archived pages are stored in wikipage.  See JobNum 4429.
-			_listWikiPageTitles=ReportsComplex.RunFuncOnReadOnlyServer(() => WikiPages.GetForSearch(textSearch.Text,checkIgnoreContent.Checked,checkArchivedOnly.Checked,
-				checkBoxMatchWholeWord.Checked,checkBoxShowMainPages.Checked,searchForLinks:false),checkReadOnlyServer.Checked);
+			_listWikiPageTitles=ReportsComplex.RunFuncOnReportServer(() => WikiPages.GetForSearch(textSearch.Text,checkIgnoreContent.Checked,checkArchivedOnly.Checked,
+				checkBoxMatchWholeWord.Checked,checkBoxShowMainPages.Checked,searchForLinks:false),checkReportServer.Checked);
 			for(int i=0;i<_listWikiPageTitles.Count;i++) {
 				GridRow row=new GridRow();
 				row.Cells.Add(_listWikiPageTitles[i]);

@@ -20,15 +20,14 @@ namespace OpenDental {
 		///<summary></summary>
 		public bool IsPreviousStackable;
 		///<summary>All the siblings</summary>
-		public List<EFormField> _listEFormFields;
+		public List<EFormField> ListEFormFields;
 
 		///<summary></summary>
 		public FrmEFormTextBoxEdit() {
 			InitializeComponent();
 			Load+=FrmEFormsTextBoxEdit_Load;
 			PreviewKeyDown+=FrmEFormTextBoxEdit_PreviewKeyDown;
-			checkIsHorizStacking.Click+=CheckIsHorizontal_Click;
-			textVIntWidth.TextChanged+=TextVIntWidth_TextChanged;
+			comboDbLink.SelectionTrulyChanged+=ComboDbLink_SelectionTrulyChanged;
 		}
 
 		private void FrmEFormsTextBoxEdit_Load(object sender, EventArgs e) {
@@ -53,35 +52,20 @@ namespace OpenDental {
 			checkIsTextWrap.Checked=EFormFieldCur.IsTextWrap;
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
-			SetLabelRed();
+			textCondValue.Text=EFormL.CondValueStrConverter(ListEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
 			textLabel.Focus();
 		}
 
-		private void CheckIsHorizontal_Click(object sender,EventArgs e) {
-			SetLabelRed();
-		}
-
-		private void TextVIntWidth_TextChanged(object sender,EventArgs e) {
-			SetLabelRed();
-		}
-
-		private void SetLabelRed(){
-			if(checkIsHorizStacking.Checked==true
-				&& textVIntWidth.IsValid()
-				&& textVIntWidth.Value==0)
-			{
-				labelRed.Visible=true;
-			}
-			else{
-				labelRed.Visible=false;
+		private void ComboDbLink_SelectionTrulyChanged(object sender,EventArgs e) {
+			if(textLabel.Text==""){
+				textLabel.Text=(string)comboDbLink.SelectedItem;
 			}
 		}
 
 		private void butPickParent_Click(object sender,EventArgs e) {
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
-			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
-			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListEFormFields=ListEFormFields;
+			int idx=ListEFormFields.IndexOf(EFormFieldCur);
 			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
 			frmEFormFieldPicker.ShowDialog();
 			if(frmEFormFieldPicker.IsDialogCancel){
@@ -95,7 +79,7 @@ namespace OpenDental {
 				MsgBox.Show("Please enter a name in the Parent field first.");
 				return;
 			}
-			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(ListEFormFields,textCondParent.Text,textCondValue.Text);
 			if(conditionValueSetter.ErrorMsg!="") {
 				MsgBox.Show(conditionValueSetter.ErrorMsg);
 				return;
@@ -123,7 +107,7 @@ namespace OpenDental {
 				return;
 			}
 			//If the parent is a radiobutton, they have to select a value.
-			EFormField eFormField=_listEFormFields.Find(x=>x.ValueLabel==textCondParent.Text);
+			EFormField eFormField=ListEFormFields.Find(x=>x.ValueLabel==textCondParent.Text);
 			if(eFormField!=null && eFormField.FieldType==EnumEFormFieldType.RadioButtons) {
 				if(textCondValue.Text.IsNullOrEmpty()) {
 					MsgBox.Show("Please select a value for your parent field.");
@@ -144,7 +128,7 @@ namespace OpenDental {
 			EFormFieldCur.IsTextWrap=checkIsTextWrap.Checked==true;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
+			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(ListEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

@@ -252,6 +252,7 @@ namespace OpenDental{
 				//We set ourselves unavailable from this window because we require an explanation.
 				//This is the only status that will synch with the phone table, all others should be handled by the small phone panel.
 				Phones.SetPhoneStatus(ClockStatusEnum.Unavailable,PedCur.PhoneExt,PedCur.EmployeeNum);
+				PhoneAsterisks.SetQueueForExtension(PedCur.PhoneExt,AsteriskQueues.None);
 			}
 			if(extensionChange) {
 				//Phone extension has changed so update the phone table as well. 

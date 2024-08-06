@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
 using Newtonsoft.Json;
+using OpenDental.Drawing;
 using CodeBase;
 
 namespace OpenDental {
@@ -121,14 +122,19 @@ namespace OpenDental {
 		private int _hoverIndex=-1;
 		///<summary>When we capture mouse, it causes a mouse move event that messes up our logic. This allows us to ignore that event for that one line.</summary>
 		private bool _ignoreMouseMove;
-		private bool _isDragging;
+		///<summary>True if currently dragging a field or fields.</summary>
+		private bool _isDraggingField;
+		///<summary>Mouse down was not on a field. Immediately start dragging a selector rectangle. Don't show any borderDropHover.</summary>
+		private bool _isDraggingSelector;
 		///<summary>We must combine this class level field with Mouse.LeftButton==MouseButtonState.Pressed to avoid two different edge case bugs. Using _isMouseDown prevents bug in following scenario: a combobox above this control has a dropdown that user clicks on. This causes the dropdown to close, triggering a mouse move in here while mouse is still down. Using _isMouseDown lets us ignore this because we didn't actually mouse down in here.</summary>
 		private bool _isMouseDown;
 		///<summary>This is a list of the borders that are used for drag drop.</summary>
 		private List<Border> _listBordersDrops=new List<Border>();
-		///<summary>This is the only internal storage for tracking selected indices.</summary>
+		///<summary>This is the only internal storage for tracking selected indices. Not guaranteed to be ordered least to greatest.</summary>
 		private List<int> _listSelectedIndices=new List<int>();
-		///<summary>This is the vertical and horizontal white space between each field, as well as the margins of the entire page.</summary>
+		///<summary>This is a copy of the selected indices whenever we start dragging to select multiple.</summary>
+		private List<int> _listSelectedIndicesWhenSelectionStart=new List<int>();
+		///<summary>This is the vertical and horizontal white space between each field, as well as the margins of the entire page. Later, this can be split into multiple variables or even database fields.</summary>
 		private double _margins=10;
 		private int _mouseDownIndex;
 		///<summary>The actual page count, including all hidden fields. User only sees _pageCountFiltered.</summary>
@@ -295,10 +301,16 @@ namespace OpenDental {
 			return new List<int>();
 		}
 
+		///<summary>Fixes stacking, clears the stackpanel, adds back all new fresh controls to the stackpanel, scrolls back to the same offset as before, reselects if one was selected.</summary>
 		public void RefreshLayout(){
 			FixAllStacking();
+			int idxSelected=-1;
+			if(_listSelectedIndices.Count==1){
+				idxSelected=_listSelectedIndices[0];
+			}
 			double verticalOffset=scrollViewer.VerticalOffset;
 			stackPanel.Children.Clear();
+			borderSelect.Visibility=Visibility.Collapsed;
 			_pageCount=1;
 			_pageShowingFiltered=1;
 			WrapPanel wrapPanel=null;
@@ -446,6 +458,9 @@ namespace OpenDental {
 			}
 			scrollViewer.ScrollToVerticalOffset(verticalOffset);
 			SetVisibilities(_pageShowing,forceRefresh:true);
+			if(idxSelected!=-1){
+				SetSelected(idxSelected);
+			}
 		}
 
 		///<summary></summary>
@@ -552,7 +567,89 @@ namespace OpenDental {
 		}
 		#endregion Methods - public
 
-		#region Methods - Event Handlers mouse
+		#region Methods - private Event Handlers mouse
+		private void Grid_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
+			//This happens after stackPanel.MouseLeftButtonDown
+			_pointMouseDown=e.GetPosition(this);
+			if(_mouseDownIndex>-1){
+				return;
+			}
+			bool isControlDown=Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+			if(isControlDown) {
+				//as we drag the selector, we will add to the existing selection
+			}
+			else{
+				_listSelectedIndices.Clear();
+				SetColors();
+			}
+			_listSelectedIndicesWhenSelectionStart.Clear();
+			_listSelectedIndicesWhenSelectionStart.AddRange(_listSelectedIndices);
+			_isDraggingSelector=true;//immediately show the dragging rectangle
+			borderSelect.Visibility=Visibility.Visible;
+			borderSelect.Width=0;
+			borderSelect.Height=0;
+			borderSelect.Margin=new Thickness(_pointMouseDown.X,_pointMouseDown.Y,0,0);
+		}
+
+		private void Grid_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
+			_mouseDownIndex=-1;
+			if(!_isDraggingSelector){
+				return;
+			}
+			_isDraggingSelector=false;
+			borderSelect.Visibility=Visibility.Collapsed;
+		}
+
+		private void Grid_MouseMove(object sender,MouseEventArgs e) {
+			if(!_isDraggingSelector){
+				return;
+			}
+			Point pointMouse=e.GetPosition(this);
+			double x=_pointMouseDown.X;
+			double y=_pointMouseDown.Y;
+			double w=pointMouse.X-_pointMouseDown.X;
+			double h=pointMouse.Y-_pointMouseDown.Y;
+			//untangle. -w or -h are not allowed
+			if(w<0){
+				x+=w;
+				w=-w;
+			}
+			if(h<0){
+				y+=h;
+				h=-h;
+			}
+			borderSelect.Margin=new Thickness(x,y,0,0);
+			borderSelect.Width=w;
+			borderSelect.Height=h;
+			_listSelectedIndices.Clear();
+			_listSelectedIndices.AddRange(_listSelectedIndicesWhenSelectionStart);
+			Rect rectSelector=new Rect(x,y,w,h);
+			for(int i=0;i<ListEFormFields.Count;i++){
+				if(ListEFormFields[i].Page!=_pageShowing){
+					continue;
+				}
+				Grid gridForField=(Grid)ListEFormFields[i].TagOD;
+				//test all 4 corners
+				//Points are relative to entire control, not StackPanel
+				//Our gridForFields include the right margin that isn't really part of the field.
+				Point pointUL=PointFromScreen(gridForField.PointToScreen(new Point(0,0)));
+				//Point pointUR=PointFromScreen(gridForField.PointToScreen(new Point(gridForField.ActualWidth,0)));
+				//Point pointBL=PointFromScreen(gridForField.PointToScreen(new Point(0,gridForField.ActualHeight)));
+				Point pointBR=PointFromScreen(gridForField.PointToScreen(new Point(gridForField.ActualWidth,gridForField.ActualHeight)));
+				//this rectangle won't be tangled
+				Rect rectField=new Rect(pointUL.X,pointUL.Y,pointBR.X-pointUL.X-_margins,pointBR.Y-pointUL.Y);
+				if(rectSelector.IntersectsWith(rectField)){
+					if(_listSelectedIndicesWhenSelectionStart.Contains(i)){
+						_listSelectedIndices.Remove(i);
+					}
+					else{
+						_listSelectedIndices.Add(i);
+					}
+				}
+			}
+			SetColors();
+		}
+
 		private void StackPanel_MouseLeave(object sender,MouseEventArgs e) {
 			//When mouse is down and captured, this does not fire until mouse up
 			_hoverIndex=-1;
@@ -560,7 +657,6 @@ namespace OpenDental {
 		}
 
 		private void StackPanel_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
-			_isMouseDown=true;
 			_pointMouseDown=e.GetPosition(this);
 			_ignoreMouseMove=true;
 			((IInputElement)sender).CaptureMouse();
@@ -573,35 +669,24 @@ namespace OpenDental {
 					continue;
 				}
 				Point point=e.GetPosition(gridForField);
-				Rect rectBounds=new Rect(0,0,gridForField.ActualWidth,gridForField.ActualHeight);
+				Rect rectBounds=new Rect(0,0,gridForField.ActualWidth-_margins,gridForField.ActualHeight);
 				if(rectBounds.Contains(point)){
 					_mouseDownIndex=i;
 					break;
 				}
 			}
-			//If the _mouseDownIndex is still -1, it will crash later on.
-			//If a user clicks the empty space in between the fields, _mouseDownIndex will still be -1.
-			if(_mouseDownIndex==-1) {
+			if(e.ClickCount==2) {//double click
+				if(_mouseDownIndex>=0){
+					EventDoubleClickField?.Invoke(this,_mouseDownIndex);
+				}
 				return;
 			}
-			//Check for double click
-			if(e.ClickCount==2) {
-				//but not if on a button
-				//if(ListEFormFields[_mouseDownIndex].FieldType==EnumEFormFieldType.RadioButtons) {
-				//	if(ListEFormFields.Exists(x=>x.ConditionalParent==ListEFormFields[_mouseDownIndex].ValueLabel)){
-				//		Grid gridForField=ListEFormFields[_mouseDownIndex].TagOD as Grid;
-				//		WpfControls.UI.Button button=gridForField.Children[2] as WpfControls.UI.Button;
-				//		if(button.Visible) {
-				//			Point point=e.GetPosition(button);
-				//			Rect rectBounds=new Rect(0,0,button.ActualWidth,button.ActualHeight);
-				//			if(rectBounds.Contains(point)) {
-				//				return;
-				//			}
-				//		}
-				//	}
-				//}
-				EventDoubleClickField?.Invoke(this,_mouseDownIndex);
+			_isMouseDown=true;
+			if(_mouseDownIndex==-1){
+				//User clicked the empty space in between the fields
 				return;
+				//Nothing else to do.
+				//All the code below assumes _mouseDownIndex > -1
 			}
 			//Check if the page break delete button was clicked. If it was, remove the field from the list and refresh the layout.
 			if(ListEFormFields[_mouseDownIndex].FieldType==EnumEFormFieldType.PageBreak) {
@@ -627,7 +712,6 @@ namespace OpenDental {
 			{
 				//Then they might be wanting to start dragging the group.
 				//Don't deselect the others until they mouse up, having not dragged
-				//todo
 			}
 			else if(isControlDown) {
 				if(_listSelectedIndices.Contains(_mouseDownIndex)) {
@@ -650,7 +734,8 @@ namespace OpenDental {
 		private void StackPanel_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
 			((IInputElement)sender).ReleaseMouseCapture();
 			_isMouseDown=false;
-			_isDragging=false;
+			_mouseDownIndex=-1;
+			_isDraggingField=false;
 			Cursor=Cursors.Arrow;
 			_dispatcherTimer.Stop();
 			_actionTimer=null;
@@ -719,12 +804,15 @@ namespace OpenDental {
 			Point pointMouse=e.GetPosition(this);
 			//mouse up could have easily happened on a popup, so we need to check again
 			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;
-			if(_isDragging && !isMouseDown){
-				_isDragging=false;
+			if(_isDraggingField && !isMouseDown){
+				_isDraggingField=false;
 				_isMouseDown=false;
 				//might need more
 			}
-			if(_isDragging){
+			if(_isDraggingSelector){
+				return;
+			}
+			if(_isDraggingField){
 				#region Page Pan Scroll
 				//Logic to change the page and scrolling when dragging a field.
 				//Left (Previous page)
@@ -905,7 +993,7 @@ namespace OpenDental {
 				if(!rectBounds.Contains(point)){
 					continue;
 				}
-				if(_isDragging){
+				if(_isDraggingField){
 					if(_listSelectedIndices.Count==1 && _listSelectedIndices[0]==i){
 						//We ignore self. But if multiple are selected, then this restriction doesn't make sense.
 						continue;
@@ -999,7 +1087,6 @@ namespace OpenDental {
 			}
 			#endregion Hover Fields
 			SetColors();
-			//bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;
 			if(!isMouseDown || !_isMouseDown) {
 				return;
 			}
@@ -1009,7 +1096,7 @@ namespace OpenDental {
 			}
 			//from here down is dragging
 			//If we are already dragging, then we don't need to do the test again.
-			if(_isDragging){
+			if(_isDraggingField){
 				//still dragging
 				return;
 			}
@@ -1019,10 +1106,10 @@ namespace OpenDental {
 				//They dragged slightly, but not enough to count as a true drag.
 				return;
 			}
-			_isDragging=true;
+			_isDraggingField=true;
 			Cursor=_cursorDrag;
 		}
-		#endregion Methods - Event Handlers mouse
+		#endregion Methods - private Event Handlers mouse
 
 		#region Methods - private Event Handlers
 		private void butNext_Click(object sender,EventArgs e) {
@@ -1114,14 +1201,18 @@ namespace OpenDental {
 		}*/
 
 		private void CtrlEFormFill_Loaded(object sender,RoutedEventArgs e) {
-			if(IsSetupMode){
-				Keyboard.Focus(stackPanel);
-				stackPanel.MouseLeave+=StackPanel_MouseLeave;
-				stackPanel.MouseLeftButtonDown+=StackPanel_MouseLeftButtonDown;
-				stackPanel.MouseLeftButtonUp+=StackPanel_MouseLeftButtonUp;
-				stackPanel.MouseMove+=StackPanel_MouseMove;
-				stackPanel.KeyDown+=StackPanel_KeyDown;
+			if(!IsSetupMode){
+				return;
 			}
+			Keyboard.Focus(stackPanel);
+			stackPanel.MouseLeave+=StackPanel_MouseLeave;
+			stackPanel.MouseLeftButtonDown+=StackPanel_MouseLeftButtonDown;
+			stackPanel.MouseLeftButtonUp+=StackPanel_MouseLeftButtonUp;
+			stackPanel.MouseMove+=StackPanel_MouseMove;
+			stackPanel.KeyDown+=StackPanel_KeyDown;
+			grid.MouseLeftButtonDown+=Grid_MouseLeftButtonDown;
+			grid.MouseLeftButtonUp+=Grid_MouseLeftButtonUp;
+			grid.MouseMove+=Grid_MouseMove;
 		}
 
 		///<summary>This method is called when the timer interval has elapsed.</summary>
@@ -1641,26 +1732,32 @@ namespace OpenDental {
 
 		private void AddRadioButtons(Grid gridForField,EFormField eFormField){
 			StackPanel stackPanelRadio=new StackPanel();
+			//stackPanelRadio is our main stackPanel
+			//It has two children: stackPanelLabel and wrapPanelRadio
+			if(eFormField.LabelAlign==EnumEFormLabelAlign.TopLeft){
+				stackPanelRadio.Orientation=Orientation.Vertical;
+			}
+			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
+				stackPanelRadio.Orientation=Orientation.Horizontal;
+			}
 			gridForField.Children.Add(stackPanelRadio);
 			double widthAvail=stackPanel.ActualWidth-_margins*2;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
-			if(eFormField.Width==0){//not specified
-				stackPanelRadio.Width=widthAvail;//so full width
-			}
-			else if(eFormField.Width<widthAvail){
-				stackPanelRadio.Width=eFormField.Width;
-			}
-			else{
-				stackPanelRadio.Width=widthAvail;
-			}
+			stackPanelRadio.Width=widthAvail;
+			//RadioButton groups are always full width.
+			//So this is not a good example of the normal math to use for width.
+			//See further down for how setting width affects label size.
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
 			Label label = new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0,0,0,bottom:0);//default is 5
 			label.Content=eFormField.ValueLabel;
+			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
+				stackPanelLabel.Margin=new Thickness(0,0,right:10,0);
+			}
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
 				Label labelRequired=new Label();
@@ -1703,6 +1800,37 @@ namespace OpenDental {
 			}
 			stackPanelRadio.Children.Add(stackPanelLabel);
 			WrapPanel wrapPanelRadio=new WrapPanel();
+			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
+				Graphics g=Graphics.MeasureBegin();
+				Font font=Font.ForWpf();
+				font.SizeDip=12*eFormField.FontScale/100;
+				//I'm a little unclear if this control is using 12 DIP and/or 12 point, especially for printing.
+				//12 DIP looks good on screen and is very close to our default 11.5 DIP.
+				//12 point is very typical for printing and I think it's our default for sheets.
+				//This will be clarified later
+				double wLabel=g.MeasureString(eFormField.ValueLabel,font,includePadding:false).Width;
+				wLabel+=10;//the right margin on these labels
+				if(eFormField.IsRequired) {
+					font.IsBold=true;
+					wLabel+=g.MeasureString(" *",font,includePadding:false).Width;
+				}
+				if(isConditionalParent){
+					font.IsBold=false;
+					wLabel+=g.MeasureString("(CND)",font,includePadding:false).Width+5;
+				}
+				if(isConditionalChild){
+					font.IsBold=false;
+					wLabel+=g.MeasureString("(cnd)",font,includePadding:false).Width+5;
+				}
+				if(eFormField.Width>0){
+					wLabel=eFormField.Width;
+					
+				}
+				stackPanelLabel.Width=wLabel;//here just for debugging. Move up.
+				wrapPanelRadio.Width=stackPanelRadio.Width-wLabel;
+				//The math above has some sort of flaw.
+				//I'm getting a width that isn't wide enough, so too much margin on right.
+			}
 			wrapPanelRadio.Orientation=Orientation.Horizontal;//radiobuttons go horizontal as much as possible.
 			List<string> listPickVis=eFormField.PickListVis.Split(',').ToList();
 			List<string> listPickDb=eFormField.PickListDb.Split(',').ToList();
@@ -1897,10 +2025,6 @@ namespace OpenDental {
 					//the simple obvious fix for self
 					ListEFormFields[i].IsHorizStacking=false;
 				}
-				if(ListEFormFields[i].Width==0){
-					//If no width is specified, then this field can't stack. It takes 100%, so not stacking by definition.
-					ListEFormFields[i].IsHorizStacking=false;
-				}
 			}
 			//Now that all selves are fixed, another loop will check field to left of each
 			for(int i=1;i<ListEFormFields.Count;i++){
@@ -1909,6 +2033,41 @@ namespace OpenDental {
 					ListEFormFields[i].IsHorizStacking=false;
 				}
 			}
+			//If a field is stacking or is before a stacking field, give it a set width
+			for(int i=0;i<ListEFormFields.Count;i++){
+				//too confusing to refactor this if to kick out
+				if(ListEFormFields[i].IsHorizStacking//if this field is stacking
+					|| (i<ListEFormFields.Count-1 && ListEFormFields[i+1].IsHorizStacking))//or the next field is stacking
+				{
+					if(ListEFormFields[i].Width>0){
+						continue;//a width is already set
+					}
+					if(ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
+						continue;//checkboxes don't have widths. Any width we added would just be ignored.
+					}
+					//Well, we don't really know what the available width is because it depends on the device.
+					//We will pick an arbitrary max.
+					//Remember that when laid out, this width will automatically shrink if not enough space
+					Graphics g=Graphics.MeasureBegin();
+					double width=g.MeasureString(ListEFormFields[i].ValueLabel).Width;
+					if(width>300){
+						width=300;
+					}
+					//double widthNew=width;
+					if(ListEFormFields[i].FieldType==EnumEFormFieldType.TextField
+						|| ListEFormFields[i].FieldType==EnumEFormFieldType.DateField)
+					{
+						width+=15;
+					}
+					if(ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
+						width+=25;
+					}
+					ListEFormFields[i].Width=(int)width;
+				}
+			}
+			//IF a field is not stacking, we will leave it alone.
+			//It seems harmless to leave them at a fixed width..
+			//It gives users more control, and I can see how they would need to make some fields narrower.
 		}
 
 		///<summary>Gets the index at the specified point. Returns -1 if no index can be selected at that point. Pass in the y pos relative to this control. It can fall outside the control when dragging.</summary>

@@ -33,9 +33,19 @@ How to use the Button control:
 		f. Set the button.BitmapFileName. Example: EditPencil.gif
 	3. WPF doesn't use anything like the WF ImageList, so all of those are going away during the conversion to WPF. Image index is not an option.
 	4. Someday, we could add option to set any in-memory image, although buttons probably don't need that feature.
--Keyboard shortcuts for buttons are discussed in FrmODBase. For example Enter for OK or Alt-P for print.
+-Keyboard shortcuts for buttons
+	Create an event handler in your frm constructor:
+	PreviewKeyDown+=Frm_PreviewKeyDown;
+	Then:
+	private void Frm_PreviewKeyDown(object sender,KeyEventArgs e) {
+		if(butSave.IsAltKey(Key.S,e)){//automatically handles visible, enbled, etc.
+			butSave_Click(this,new EventArgs());
+		}
+	}
+	In addition to the code above, also include an underscore inside the button text so that the user knows about the keyboard shortcut.
+	An underscore prefix is used in WPF instead of the & that's used in WinForms.
 -Click event handlers usually look like this:
-		private void butEdit_Click(object sender,EventArgs e) { etc.
+	private void butEdit_Click(object sender,EventArgs e) { etc.
 
 	https://wpf-tutorial.com/basic-controls/the-textblock-control-inline-formatting/#google_vignette
 
@@ -335,7 +345,6 @@ How to use the Button control:
 			if(!groupBoxParent.Visible) {
 				return false;
 			}
-
 			return true;
 		}
 

@@ -62,6 +62,7 @@ namespace OpenDentBusiness.Crud{
 				eFormFieldDef.IsRequired       = PIn.Bool  (row["IsRequired"].ToString());
 				eFormFieldDef.ConditionalParent= PIn.String(row["ConditionalParent"].ToString());
 				eFormFieldDef.ConditionalValue = PIn.String(row["ConditionalValue"].ToString());
+				eFormFieldDef.LabelAlign       = (OpenDentBusiness.EnumEFormLabelAlign)PIn.Int(row["LabelAlign"].ToString());
 				retVal.Add(eFormFieldDef);
 			}
 			return retVal;
@@ -88,6 +89,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("IsRequired");
 			table.Columns.Add("ConditionalParent");
 			table.Columns.Add("ConditionalValue");
+			table.Columns.Add("LabelAlign");
 			foreach(EFormFieldDef eFormFieldDef in listEFormFieldDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eFormFieldDef.EFormFieldDefNum),
@@ -105,6 +107,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Bool  (eFormFieldDef.IsRequired),
 					            eFormFieldDef.ConditionalParent,
 					            eFormFieldDef.ConditionalValue,
+					POut.Int   ((int)eFormFieldDef.LabelAlign),
 				});
 			}
 			return table;
@@ -124,7 +127,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EFormFieldDefNum,";
 			}
-			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue) VALUES(";
+			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue,LabelAlign) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eFormFieldDef.EFormFieldDefNum)+",";
 			}
@@ -142,7 +145,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (eFormFieldDef.FontScale)+","
 				+    POut.Bool  (eFormFieldDef.IsRequired)+","
 				+"'"+POut.String(eFormFieldDef.ConditionalParent)+"',"
-				+"'"+POut.String(eFormFieldDef.ConditionalValue)+"')";
+				+"'"+POut.String(eFormFieldDef.ConditionalValue)+"',"
+				+    POut.Int   ((int)eFormFieldDef.LabelAlign)+")";
 			if(eFormFieldDef.ValueLabel==null) {
 				eFormFieldDef.ValueLabel="";
 			}
@@ -171,7 +175,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EFormFieldDefNum,";
 			}
-			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue) VALUES(";
+			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue,LabelAlign) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eFormFieldDef.EFormFieldDefNum)+",";
 			}
@@ -189,7 +193,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (eFormFieldDef.FontScale)+","
 				+    POut.Bool  (eFormFieldDef.IsRequired)+","
 				+"'"+POut.String(eFormFieldDef.ConditionalParent)+"',"
-				+"'"+POut.String(eFormFieldDef.ConditionalValue)+"')";
+				+"'"+POut.String(eFormFieldDef.ConditionalValue)+"',"
+				+    POut.Int   ((int)eFormFieldDef.LabelAlign)+")";
 			if(eFormFieldDef.ValueLabel==null) {
 				eFormFieldDef.ValueLabel="";
 			}
@@ -219,7 +224,8 @@ namespace OpenDentBusiness.Crud{
 				+"FontScale        =  "+POut.Int   (eFormFieldDef.FontScale)+", "
 				+"IsRequired       =  "+POut.Bool  (eFormFieldDef.IsRequired)+", "
 				+"ConditionalParent= '"+POut.String(eFormFieldDef.ConditionalParent)+"', "
-				+"ConditionalValue = '"+POut.String(eFormFieldDef.ConditionalValue)+"' "
+				+"ConditionalValue = '"+POut.String(eFormFieldDef.ConditionalValue)+"', "
+				+"LabelAlign       =  "+POut.Int   ((int)eFormFieldDef.LabelAlign)+" "
 				+"WHERE EFormFieldDefNum = "+POut.Long(eFormFieldDef.EFormFieldDefNum);
 			if(eFormFieldDef.ValueLabel==null) {
 				eFormFieldDef.ValueLabel="";
@@ -287,6 +293,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="ConditionalValue = '"+POut.String(eFormFieldDef.ConditionalValue)+"'";
 			}
+			if(eFormFieldDef.LabelAlign != oldEFormFieldDef.LabelAlign) {
+				if(command!="") { command+=",";}
+				command+="LabelAlign = "+POut.Int   ((int)eFormFieldDef.LabelAlign)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -343,6 +353,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eFormFieldDef.ConditionalValue != oldEFormFieldDef.ConditionalValue) {
+				return true;
+			}
+			if(eFormFieldDef.LabelAlign != oldEFormFieldDef.LabelAlign) {
 				return true;
 			}
 			return false;

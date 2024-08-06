@@ -1786,5 +1786,12 @@ namespace OpenDentBusiness {
 				"WHERE TreatArea=3 AND ProcCode IN ('D0120','D0140','D0145','D0150','D0270','D0272','D0273','D0274')";//3 = TreatmentArea.Mouth
 			Db.NonQ(command);
 		}//End of 24_2_12()
+
+		private static void To24_2_18() {
+			string command="ALTER TABLE eformfield ADD LabelAlign tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD LabelAlign tinyint NOT NULL";
+			Db.NonQ(command);
+		}//End of 24_2_18()
 	}
 }

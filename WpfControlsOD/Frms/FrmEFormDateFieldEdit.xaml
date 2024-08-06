@@ -19,7 +19,6 @@
 		<ui:TextBox x:Name="textLabel" Width="214" Height="20" Margin="187,32,0,0"/>
 		<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="70,87,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
 		<ui:Label x:Name="labelStackable" Height="18" Margin="206,88,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
-		<ui:Label x:Name="labelRed" Height="50" Margin="402,88,0,0" Text="This field and previous field must have widths specified for horizontal stacking to work" VAlign="Center" Width="193" ColorText="Red" />
 		<ui:Label Width="98" Height="18" Margin="88,133,0,0" Text="Width" HAlign="Right" VAlign="Center" />
 		<ui:Label Height="18" Margin="245,133,0,0" Text="leave blank for full width" VAlign="Center" Width="157" />
 		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="187,133,0,0" ShowZero="False"/>

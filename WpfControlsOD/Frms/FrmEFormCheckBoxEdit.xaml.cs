@@ -22,217 +22,190 @@ namespace OpenDental {
 		public List<EFormField> _listEFormFields;
 		///<summary></summary>
 		public bool IsPreviousStackable;
-		///<summary>Looks just like what would go in the db. If it starts with "allergy:", "problem:", or "med:", then this string also includes the selected allergy, etc. So it will look like "allergy:...", etc. If "None", then this will be empty string. This gets updated as the user types.</summary>
-		private string _dbLink;
+		private bool _alreadyAsked;
 
 		///<summary></summary>
 		public FrmEFormCheckBoxEdit() {
 			InitializeComponent();
 			Load+=FrmEFormsRadioButtonsEdit_Load;
 			PreviewKeyDown+=FrmEFormRadioButtonsEdit_PreviewKeyDown;
-			comboDbLink.SelectionChangeCommitted+=ComboDbLink_SelectionChangeCommitted;
-			textMedAllerProb.TextChanged+=TextMedAllerProb_TextChanged;
+			comboDbLink.SelectionTrulyChanged+=ComboDbLink_SelectionTrulyChanged;
+			textMedAllerProb.LostKeyboardFocus+=TextMedAllerProb_LostKeyboardFocus;
 		}
 
 		private void FrmEFormsRadioButtonsEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			textLabel.Text=EFormFieldCur.ValueLabel;
-			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
 			List<string> listAvailCheckBox=EFormFieldsAvailable.GetList_CheckBox();
 			comboDbLink.Items.AddList(listAvailCheckBox);
-			_dbLink=EFormFieldCur.DbLink;
-			SetComboFromDbLink();
-			SetMedAllerProbBox();
+			if(EFormFieldCur.DbLink==""){//None
+				comboDbLink.SelectedIndex=0;
+			}
+			else if(EFormFieldCur.DbLink.StartsWith("allergy:")){
+				comboDbLink.SelectedItem="allergy:";
+				textMedAllerProb.Text=EFormFieldCur.DbLink.Substring(8);
+			}
+			else if(EFormFieldCur.DbLink.StartsWith("problem:")){
+				comboDbLink.SelectedItem="problem:";
+				textMedAllerProb.Text=EFormFieldCur.DbLink.Substring(8);
+			}
+			else{
+				comboDbLink.SelectedItem=EFormFieldCur.DbLink;
+			}
+			SetVisAllerProb();
 			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
 			if(!IsPreviousStackable){
 				labelStackable.Text="previous field is not stackable";
 				checkIsHorizStacking.IsEnabled=false;
 			}
-			textVIntFontScale.Value=EFormFieldCur.FontScale;
-			if(_dbLink!="allergiesNone" && _dbLink!="problemsNone") {
-				checkIsRequired.Visible=false;
-			}
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
+			textVIntFontScale.Value=EFormFieldCur.FontScale;
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
 			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255)));
 			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
 		}
 
-		private void SetComboFromDbLink(){
-			if(string.IsNullOrEmpty(_dbLink)){
-				comboDbLink.SelectedIndex=0;//None
-			}
-			else if(_dbLink.StartsWith("allergy:")){
-				comboDbLink.SelectedItem="allergy:";
-			}
-			else if(_dbLink.StartsWith("med:")){
-				comboDbLink.SelectedItem="med:";
-			}
-			else if(_dbLink.StartsWith("problem:")){
-				comboDbLink.SelectedItem="problem:";
-			}
-			else{
-				comboDbLink.SelectedItem=_dbLink;
-			}
-		}
-
-		private void ComboDbLink_SelectionChangeCommitted(object sender,EventArgs e) {
-			//first, we must test for change because if it changed, we will be clearing the textbox.
-			string strSelected=comboDbLink.GetSelected<string>();
-			if(strSelected.StartsWith("allergy:") && _dbLink.StartsWith("allergy:")){
-				return;
-			}
-			if(strSelected.StartsWith("med:") && _dbLink.StartsWith("med:")){
-				return;
-			}
-			if(strSelected.StartsWith("problem:") && _dbLink.StartsWith("problem:")){
-				return;
-			}
-			//now we know that they actually changed
-			if(strSelected=="allergy:"){
+		private void ComboDbLink_SelectionTrulyChanged(object sender,EventArgs e) {
+			if((string)comboDbLink.SelectedItem=="allergy:"){
 				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormAllergySetup);
 				formLauncher.SetField("IsSelectionMode",true);
 				formLauncher.ShowDialog();
 				if(formLauncher.IsDialogCancel){
-					//we have to revert their selection, or it would leave allergy with an inappropriate suffix
-					SetComboFromDbLink();
-					SetMedAllerProbBox();
+					textMedAllerProb.Text="";
+					SetVisAllerProb();
+					textMedAllerProb.Focus();
 					return;
 				}
 				long allergyDefNumSelected=formLauncher.GetField<long>("AllergyDefNumSelected");
 				AllergyDef allergyDef=AllergyDefs.GetOne(allergyDefNumSelected);//from db
-				_dbLink="allergy:"+allergyDef.Description;
+				textMedAllerProb.Text=allergyDef.Description;
+				textLabel.Text=allergyDef.Description;
+				SetVisAllerProb();
+				textMedAllerProb.Focus();
+				return;
 			}
-			else if(strSelected=="med:"){
-				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormMedications);
-				formLauncher.SetField("IsSelectionMode",true);
-				formLauncher.ShowDialog();
-				if(formLauncher.IsDialogCancel){
-					//we have to revert their selection, or it would leave allergy with an inappropriate suffix
-					SetComboFromDbLink();
-					SetMedAllerProbBox();
-					return;
-				}
-				long medicationNum=formLauncher.GetField<long>("SelectedMedicationNum");
-				Medication medication=Medications.GetOne(medicationNum);//from cache
-				_dbLink="med:"+medication.MedName;
-			}
-			else if(strSelected=="problem:"){
+			if((string)comboDbLink.SelectedItem=="problem:"){
 				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormDiseaseDefs);
 				formLauncher.SetField("IsSelectionMode",true);
 				formLauncher.ShowDialog();
 				if(formLauncher.IsDialogCancel){
-					//we have to revert their selection, or it would leave allergy with an inappropriate suffix
-					SetComboFromDbLink();
-					SetMedAllerProbBox();
+					textMedAllerProb.Text="";
+					SetVisAllerProb();
+					textMedAllerProb.Focus();
 					return;
 				}
 				DiseaseDef diseaseDef=formLauncher.GetField<List<DiseaseDef>>("ListDiseaseDefsSelected")[0];
-				_dbLink="problem:"+diseaseDef.DiseaseName;
-			}
-			else if(strSelected=="None"){
-				_dbLink="";
-			}
-			else{
-				_dbLink=strSelected;
-			}
-			SetMedAllerProbBox();
-		}
-
-		private void TextMedAllerProb_TextChanged(object sender,EventArgs e) {
-			if(comboDbLink.SelectedIndex==0){//None
+				textMedAllerProb.Text=diseaseDef.DiseaseName;
+				textLabel.Text=diseaseDef.DiseaseName;
+				SetVisAllerProb();
+				textMedAllerProb.Focus();
 				return;
 			}
-			else if(comboDbLink.SelectedItem.ToString()=="allergy:"){
-				_dbLink="allergy:"+textMedAllerProb.Text;
+			//all others
+			if(textLabel.Text==""){
+				textLabel.Text=(string)comboDbLink.SelectedItem;
 			}
-			else if(comboDbLink.SelectedItem.ToString()=="med:"){
-				_dbLink="med:"+textMedAllerProb.Text;
-			}
-			else if(comboDbLink.SelectedItem.ToString()=="problem:"){
-				_dbLink="problem:"+textMedAllerProb.Text;
-			}
-			else{
-				comboDbLink.SelectedItem=_dbLink;
-			}
+			SetVisAllerProb();
 		}
 
 		private void butChange_Click(object sender,EventArgs e) {
-			if(_dbLink.StartsWith("allergy:")){
+			if((string)comboDbLink.SelectedItem=="allergy:"){
 				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormAllergySetup);
 				formLauncher.SetField("IsSelectionMode",true);
 				formLauncher.ShowDialog();
 				if(formLauncher.IsDialogCancel){
+					textMedAllerProb.Text="";
+					SetVisAllerProb();
+					textMedAllerProb.Focus();
 					return;
 				}
 				long allergyDefNumSelected=formLauncher.GetField<long>("AllergyDefNumSelected");
 				AllergyDef allergyDef=AllergyDefs.GetOne(allergyDefNumSelected);
-				_dbLink="allergy:"+allergyDef.Description;
+				textMedAllerProb.Text=allergyDef.Description;
+				textLabel.Text=allergyDef.Description;
+				SetVisAllerProb();
+				textMedAllerProb.Focus();
+				return;
 			}
-			else if(_dbLink.StartsWith("med:")){
-				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormMedications);
-				formLauncher.SetField("IsSelectionMode",true);
-				formLauncher.ShowDialog();
-				if(formLauncher.IsDialogCancel){
-					return;
-				}
-				long medicationNum=formLauncher.GetField<long>("SelectedMedicationNum");
-				Medication medication=Medications.GetOne(medicationNum);//from cache
-				_dbLink="med:"+medication.MedName;
-			}
-			else if(_dbLink.StartsWith("problem:")){
+			if((string)comboDbLink.SelectedItem=="problem:"){
 				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormDiseaseDefs);
 				formLauncher.SetField("IsSelectionMode",true);
 				formLauncher.ShowDialog();
 				if(formLauncher.IsDialogCancel){
+					textMedAllerProb.Text="";
+					SetVisAllerProb();
+					textMedAllerProb.Focus();
 					return;
 				}
 				DiseaseDef diseaseDef=formLauncher.GetField<List<DiseaseDef>>("ListDiseaseDefsSelected")[0];
-				_dbLink="problem:"+diseaseDef.DiseaseName;
+				textMedAllerProb.Text=diseaseDef.DiseaseName;
+				textLabel.Text=diseaseDef.DiseaseName;
+				SetVisAllerProb();
+				textMedAllerProb.Focus();
+				return;
 			}
-			SetMedAllerProbBox();
+			//all others:
+			SetVisAllerProb();
 		}
 
-		///<summary>This sets visibility and fills the box based on _dbLink</summary>
-		private void SetMedAllerProbBox(){
-			if(string.IsNullOrEmpty(_dbLink)){
-				labelMedAllerProb.Visible=false;
-				textMedAllerProb.Visible=false;
-				butChange.Visible=false;
-				textMedAllerProb.Text="";
-				checkIsRequired.Visible=true;
+		private void TextMedAllerProb_LostKeyboardFocus(object sender,KeyboardFocusChangedEventArgs e) {
+			//AskChangeLabelToMatch();
+			//This was too annoying.
+			//Lots of edge cases where I couldn't suppress it properly
+		}
+
+		private void AskChangeLabelToMatch(){
+			if(textMedAllerProb.Text==textLabel.Text){
+				return;
 			}
-			else if(_dbLink.StartsWith("allergy:")){
-				labelMedAllerProb.Visible=true;
+			if(textMedAllerProb.Text==""){
+				return;
+			}
+			if(_alreadyAsked){
+				return;
+			}
+			string str= "";
+			if((string)comboDbLink.SelectedItem=="allergy:") {
+				str="allergy";
+			}
+			else if((string)comboDbLink.SelectedItem=="problem:"){
+				str="problem";
+			}
+			else{
+				return;
+			}
+			_alreadyAsked=true;
+			if(!MsgBox.Show(MsgBoxButtons.YesNo,"Change label to match "+str+"?")){
+				return;
+			}
+			textLabel.Text=textMedAllerProb.Text;
+		}
+
+		///<summary>This sets visibility based on selected index of comboDbLink.</summary>
+		private void SetVisAllerProb(){
+			if((string)comboDbLink.SelectedItem=="allergy:"){
+				labelAllergProb.Visible=true;
 				textMedAllerProb.Visible=true;
 				butChange.Visible=true;
-				labelMedAllerProb.Text="Allergy";
-				textMedAllerProb.Text=_dbLink.Substring(8);//this does trigger TextChanged, which is harmless
+				labelAllergProb.Text="Allergy";
 				checkIsRequired.Visible=false;
+				return;
 			}
-			else if(_dbLink.StartsWith("med:")){
-				labelMedAllerProb.Visible=true;
+			if((string)comboDbLink.SelectedItem=="problem:"){
+				labelAllergProb.Visible=true;
 				textMedAllerProb.Visible=true;
 				butChange.Visible=true;
-				labelMedAllerProb.Text="Medication";
-				textMedAllerProb.Text=_dbLink.Substring(4);
+				labelAllergProb.Text="Problem";
 				checkIsRequired.Visible=false;
+				return;
 			}
-			else if(_dbLink.StartsWith("problem:")){
-				labelMedAllerProb.Visible=true;
-				textMedAllerProb.Visible=true;
-				butChange.Visible=true;
-				labelMedAllerProb.Text="Problem";
-				textMedAllerProb.Text=_dbLink.Substring(8);
-				checkIsRequired.Visible=false;
-			}
-			else{//allergiesNone or problemsNone
-				labelMedAllerProb.Visible=false;
-				textMedAllerProb.Visible=false;
-				butChange.Visible=false;
-				textMedAllerProb.Text="";
-				checkIsRequired.Visible=true;
-			}
+			//all others
+			labelAllergProb.Visible=false;
+			textMedAllerProb.Visible=false;
+			butChange.Visible=false;
+			textMedAllerProb.Text="";
+			checkIsRequired.Visible=true;
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -273,16 +246,38 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender, EventArgs e) {
+			AskChangeLabelToMatch();
 			if(!textVIntFontScale.IsValid()) {
 				MsgBox.Show("Please fix entry errors first.");
 				return;
 			}
+			if(textMedAllerProb.Text==""){
+				if((string)comboDbLink.SelectedItem=="allergy:"){
+					MsgBox.Show("Please enter an allergy name first.");
+					return;
+				}
+				if((string)comboDbLink.SelectedItem=="problem:"){
+					MsgBox.Show("Please enter a problem name first.");
+					return;
+				}
+			}
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
-			EFormFieldCur.DbLink=_dbLink;
+			if(comboDbLink.SelectedIndex==0){//None
+				EFormFieldCur.DbLink="";
+			}
+			else if((string)comboDbLink.SelectedItem=="allergy:"){
+				EFormFieldCur.DbLink="allergy:"+textMedAllerProb.Text;
+			}
+			else if((string)comboDbLink.SelectedItem=="problem:"){
+				EFormFieldCur.DbLink="problem:"+textMedAllerProb.Text;
+			}
+			else{
+				EFormFieldCur.DbLink=(string)comboDbLink.SelectedItem;
+			}
 			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
-			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true && checkIsRequired.Visible;
+			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);
 			//not saved to db here. That happens when clicking Save in parent window.

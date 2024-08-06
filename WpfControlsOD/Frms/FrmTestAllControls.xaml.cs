@@ -91,6 +91,11 @@ namespace OpenDental {
 			Size sizeImage=new Size(500,800);
 			//zoomSlider.SetValueInitialFit(sizeCanvas,sizeImage,0);
 			textBox3.Focus();
+			for(int i=0;i<40;i++){
+				System.Windows.Controls.TextBlock textBlock=new System.Windows.Controls.TextBlock();
+				textBlock.Text="Item"+i.ToString();
+				stackPanel.Children.Add(textBlock);
+			}
 		}
 
 		//private async void InitializeWebView2Async() {

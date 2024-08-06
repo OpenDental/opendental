@@ -209,10 +209,10 @@ namespace OpenDental{
 			bool isCanadaEraClearinghouse= comboCommBridge.GetSelected<EclaimsCommBridge>()
 				.In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2);
 			if(!isCanadaEraClearinghouse) {//If US
-				LayoutManager.MoveHeight(listBoxEraBehavior,30);
+				LayoutManager.MoveHeight(listBoxEraBehavior,LayoutManager.Scale(30));
 			}
 			else {
-				LayoutManager.MoveHeight(listBoxEraBehavior,43);
+				LayoutManager.MoveHeight(listBoxEraBehavior,LayoutManager.Scale(43));
 			}
 			listBoxEraBehavior.Items.Clear();
 			List<EraBehaviors> listEraBehaviors=new List<EraBehaviors>((EraBehaviors[])Enum.GetValues(typeof(EraBehaviors)));

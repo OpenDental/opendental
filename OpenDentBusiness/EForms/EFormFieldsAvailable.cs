@@ -13,6 +13,7 @@ namespace OpenDentBusiness {
 			//We don't divide them up by type. All fields are available on all types.
 			//if(enumEFormType==EnumEFormType.PatientForm){
 			listStrings.Add("None");//Required for UI to work properly
+			listStrings.Add("allergy:");
 			listStrings.Add("Gender");
 			listStrings.Add("ins1Relat");
 			listStrings.Add("ins2Relat");
@@ -20,10 +21,11 @@ namespace OpenDentBusiness {
 			listStrings.Add("PreferConfirmMethod");
 			listStrings.Add("PreferContactMethod");
 			listStrings.Add("PreferRecallMethod");
+			listStrings.Add("problem:");
 			listStrings.Add("StudentStatus");
 			//"Race" can't be added yet because it requires multiselect listbox or similar. And since race is stored in a separate table, this is a lot more like meds/allerg/probs.
 			//But we could add it in the future with some work. listStrings=Enum.GetNames(typeof(PatientRaceOld)).ToList();
-			//For now, use could just add it with no DbLink, so it would not be importable.
+			//For now, we could just add it with no DbLink, so it would not be importable.
 			return listStrings;
 		}
 
@@ -91,6 +93,13 @@ namespace OpenDentBusiness {
 		///<summary>For a given fieldName, returns a picklist of all possible Db options.</summary>
 		public static List<string> GetRadioDbAll(string fieldName) {
 			List<string> listStrings=new List<string>();
+			if(fieldName.StartsWith("allergy:")
+				|| fieldName.StartsWith("problem:"))
+			{
+				listStrings.Add("Y");
+				listStrings.Add("N");
+				return listStrings;
+			}
 			switch(fieldName) {
 				case "None":
 				default:
@@ -130,6 +139,13 @@ namespace OpenDentBusiness {
 		///<summary>For a given fieldName, returns a picklist of our suggested default Db options. This must be paired exactly with GetRadioVisDefault.</summary>
 		public static List<string> GetRadioDbDefault(string fieldName) {
 			List<string> listStrings=new List<string>();
+			if(fieldName.StartsWith("allergy:")
+				|| fieldName.StartsWith("problem:"))
+			{
+				listStrings.Add("Y");
+				listStrings.Add("N");
+				return listStrings;
+			}
 			switch(fieldName) {
 				default:
 					return listStrings;
@@ -180,6 +196,13 @@ namespace OpenDentBusiness {
 		///<summary>For a given fieldName, returns a picklist to show to patient.</summary>
 		public static List<string> GetRadioVisDefault(string fieldName) {
 			List<string> listStrings=new List<string>();
+			if(fieldName.StartsWith("allergy:")
+				|| fieldName.StartsWith("problem:"))
+			{
+				listStrings.Add("Y");
+				listStrings.Add("N");
+				return listStrings;
+			}
 			switch(fieldName) {
 				default:
 					return listStrings;

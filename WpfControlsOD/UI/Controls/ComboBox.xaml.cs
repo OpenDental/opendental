@@ -120,14 +120,19 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		#endregion Constructor
 
 		#region Events
-		///<summary>Occurs when user selects item(s) from the drop-down list and the drop-down closes. This is designed to fire whether or not changed. For example, FormPatientAddAll.ComboClinic1 needs to change the others even if it doesn't change.</summary>
+		///<summary>Occurs when user selects item(s) from the drop-down list and the drop-down closes. This is designed to fire whether or not changed. For example, FormPatientAddAll.ComboClinic1 needs to change the others even if it doesn't change. Use SelectionTrulyChanged if you don't want that behavior.</summary>
 		[Category("OD")]
-		[Description("Occurs when user selects item(s) from the drop-down list and the drop-down closes. This is designed to fire whether or not changed. For example, FormPatientAddAll.ComboClinic1 needs to change the others even if it doesn't change.")]
+		[Description("Occurs when user selects item(s) from the drop-down list and the drop-down closes. This is designed to fire whether or not changed. For example, FormPatientAddAll.ComboClinic1 needs to change the others even if it doesn't change. Use SelectionTrulyChanged if you don't want that behavior.")]
 		public event EventHandler SelectionChangeCommitted;
 
-		///<summary>Try not to use this. The preferred technique is to use SelectionChangeCommitted to react to each user click. In contrast, this event will fire even if the selection programmatically changes. Rarely, you might actually want that behavior.</summary>
+		///<summary>Occurs when user selects item(s) from the drop-down list and the drop-down closes. Unlike SelectionChangeCommitted, this will only fire when item truly changes.</summary>
 		[Category("OD")]
-		[Description("Try not to use this. The preferred technique is to use SelectionChangeCommitted to react to each user click. In contrast, this event will fire even if the selection programmatically changes. Rarely, you might actually want that behavior.")]
+		[Description("Occurs when user selects item(s) from the drop-down list and the drop-down closes. Unlike SelectionChangeCommitted, this will only fire when item truly changes.")]
+		public event EventHandler SelectionTrulyChanged;
+
+		///<summary>Try not to use this. The preferred technique is to use SelectionChangeCommitted or SelectionTrulyChanged to react to each user click. In contrast, this event will fire even if the selection programmatically changes. Rarely, you might actually want that behavior.</summary>
+		[Category("OD")]
+		[Description("Try not to use this. The preferred technique is to use SelectionChangeCommitted or SelectionTrulyChanged to react to each user click. In contrast, this event will fire even if the selection programmatically changes. Rarely, you might actually want that behavior.")]
 		public event EventHandler SelectedIndexChanged;
 		#endregion Events
 
@@ -669,8 +674,41 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		}
 
 		private void _windowComboPicker_Closed(object sender,EventArgs e) {
-			_listSelectedIndices.Clear();
+			//It might be an improvement to order both lists here first before comparing
+			bool selectionChanged=false;
 			int indexOffset=0;
+			if(IncludeAll){
+				if(_windowComboPicker.ListIndicesSelected.Contains(0) != IsAllSelected){
+					selectionChanged=true;
+				}
+				indexOffset=1;
+			}
+			if(IsMultiSelect){
+				if(!IsAllSelected){//if all is selected, we ignore other selections
+					//Can't test with SequenceEqual because of indexOffset
+					//This multiselect is kind of tricky to write so we will just set to true.
+					//If someone actually needs this to work someday, we can enhance it.
+					selectionChanged=true;
+				}
+			}
+			else{//single select mode
+				if(!IsAllSelected){//if all is selected, we ignore other selections
+					int selectedIdx=-1;
+					if(_listSelectedIndices.Count>0){
+						selectedIdx=_listSelectedIndices[0];
+					}
+					if(selectedIdx!=_windowComboPicker.SelectedIndex-indexOffset){
+						selectionChanged=true;
+					}
+				}
+			}
+			if(!selectionChanged){
+				//These events are always raised, even if no changes.
+				SelectionChangeCommitted?.Invoke(this,e);
+				SelectedIndexChanged?.Invoke(this,e);
+				return;
+			}
+			_listSelectedIndices.Clear();
 			if(IncludeAll){
 				if(_windowComboPicker.ListIndicesSelected.Contains(0)){
 					IsAllSelected=true;
@@ -678,7 +716,6 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				else{
 					IsAllSelected=false;
 				}
-				indexOffset=1;
 			}
 			if(IsMultiSelect){
 				if(!IsAllSelected){//if all is selected, we ignore other selections
@@ -694,7 +731,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 					}
 				}
 			}
-			//These events are always raised, even if no changes.
+			SelectionTrulyChanged?.Invoke(this,e);
 			SelectionChangeCommitted?.Invoke(this,e);
 			SelectedIndexChanged?.Invoke(this,e);
 			SetText();

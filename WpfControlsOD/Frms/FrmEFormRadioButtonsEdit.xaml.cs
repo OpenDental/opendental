@@ -21,12 +21,15 @@ namespace OpenDental {
 		public List<EFormField> _listEFormFields;
 		///<summary>This is the list showing in the grid. Gets pushed back into our object when user clicks save.</summary>
 		private List<VisDb> _listVisDbs;
+		private bool _alreadyAsked;
 
 		///<summary></summary>
 		public FrmEFormRadioButtonsEdit() {
 			InitializeComponent();
 			Load+=FrmEFormsRadioButtonsEdit_Load;
 			PreviewKeyDown+=FrmEFormRadioButtonsEdit_PreviewKeyDown;
+			comboDbLink.SelectionTrulyChanged+=ComboDbLink_SelectionTrulyChanged;
+			checkLabelAlign.Click+=CheckLabelAlign_Click;
 			gridMain.CellTextChanged+=GridMain_CellTextChanged;
 			gridMain.CellSelectionCommitted+=GridMain_CellSelectionCommitted;
 		}
@@ -34,19 +37,27 @@ namespace OpenDental {
 		private void FrmEFormsRadioButtonsEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			textLabel.Text=EFormFieldCur.ValueLabel;
-			textVIntFontScale.Value=EFormFieldCur.FontScale;
-			checkIsRequired.Checked=EFormFieldCur.IsRequired;
-			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
+			checkLabelAlign.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.LeftLeft;
+			textVIntWidth.Value=EFormFieldCur.Width;
 			List<string> listAvailRadio=EFormFieldsAvailable.GetList_RadioButtons();
 			comboDbLink.Items.AddList(listAvailRadio);
-			int idxSelect=listAvailRadio.IndexOf(EFormFieldCur.DbLink);
-			if(idxSelect==-1){//this handles "" showing as "None"
-				comboDbLink.SelectedIndex=0;//None
+			if(EFormFieldCur.DbLink==""){//None
+				comboDbLink.SelectedIndex=0;
+			}
+			else if(EFormFieldCur.DbLink.StartsWith("allergy:")){
+				comboDbLink.SelectedItem="allergy:";
+				textMedAllerProb.Text=EFormFieldCur.DbLink.Substring(8);
+			}
+			else if(EFormFieldCur.DbLink.StartsWith("problem:")){
+				comboDbLink.SelectedItem="problem:";
+				textMedAllerProb.Text=EFormFieldCur.DbLink.Substring(8);
 			}
 			else{
-				comboDbLink.SelectedIndex=idxSelect;
+				comboDbLink.SelectedItem=EFormFieldCur.DbLink;
 			}
+			SetVisibilities();
+			checkIsRequired.Checked=EFormFieldCur.IsRequired;
+			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			//only set list from obj one time upon opening.
 			_listVisDbs=new List<VisDb>();
 			List<string> listVisOrig=new List<string>();
@@ -69,7 +80,12 @@ namespace OpenDental {
 				//Should never happen. We handle it by not filling the grid with anything at all.
 			}
 			FillGrid();
-			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255)));
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
+			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(
+				x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255))
+				&& x.ConditionalParent!="" //for a new radiobutton, ValueLabel might be blank
+			);
 			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
 		}
 
@@ -78,6 +94,43 @@ namespace OpenDental {
 			public string Vis;
 			///<summary>This is the value that gets stored in db, frequently a string version of an enum.</summary>
 			public string Db;
+		}
+
+		///<summary>This sets visibilities for various situations.</summary>
+		private void SetVisibilities(){
+			if(checkLabelAlign.Checked==true){
+				labelWidth.Visible=true;
+				textVIntWidth.Visible=true;
+				labelWidthComment.Visible=true;
+			}
+			else{
+				labelWidth.Visible=false;
+				textVIntWidth.Visible=false;
+				labelWidthComment.Visible=false;
+				textVIntWidth.Value=0;;
+			}
+			if((string)comboDbLink.SelectedItem=="allergy:"){
+				labelAllergProb.Visible=true;
+				textMedAllerProb.Visible=true;
+				butChange.Visible=true;
+				labelAllergProb.Text="Allergy";
+				checkIsRequired.Visible=true;
+				return;
+			}
+			if((string)comboDbLink.SelectedItem=="problem:"){
+				labelAllergProb.Visible=true;
+				textMedAllerProb.Visible=true;
+				butChange.Visible=true;
+				labelAllergProb.Text="Problem";
+				checkIsRequired.Visible=true;
+				return;
+			}
+			//all others:
+			labelAllergProb.Visible=false;
+			textMedAllerProb.Visible=false;
+			butChange.Visible=false;
+			textMedAllerProb.Text="";
+			checkIsRequired.Visible=true;
 		}
 
 		private void FillGrid(){
@@ -97,7 +150,8 @@ namespace OpenDental {
 				gridMain.Columns.Add(gridColumn);
 				gridColumn=new GridColumn(Lans.g("TableEFormRadioButton","As Stored in Db"),170);
 				gridColumn.ListDisplayStrings=new List<string>();
-				List<string> listDbAll=EFormFieldsAvailable.GetRadioDbAll(comboDbLink.GetSelected<string>());
+				string strSelected=comboDbLink.GetSelected<string>();
+				List<string> listDbAll=EFormFieldsAvailable.GetRadioDbAll(strSelected);
 				for(int i=0;i<listDbAll.Count;i++){
 					gridColumn.ListDisplayStrings.Add(listDbAll[i]);
 				}
@@ -118,6 +172,10 @@ namespace OpenDental {
 			gridMain.EndUpdate();
 		}
 
+		private void CheckLabelAlign_Click(object sender,EventArgs e) {
+			SetVisibilities();
+		}
+
 		private void comboDbLink_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(_listVisDbs.Count>0){
 				if(!MsgBox.Show(MsgBoxButtons.OKCancel,"Pick list will be reset for this Db Link. Continue?")){
@@ -125,6 +183,89 @@ namespace OpenDental {
 				}
 			}
 			ResetList();
+		}
+
+		private void ComboDbLink_SelectionTrulyChanged(object sender,EventArgs e) {
+			if((string)comboDbLink.SelectedItem=="allergy:"){
+				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormAllergySetup);
+				formLauncher.SetField("IsSelectionMode",true);
+				formLauncher.ShowDialog();
+				if(formLauncher.IsDialogCancel){
+					textMedAllerProb.Text="";
+					SetVisibilities();
+					textMedAllerProb.Focus();
+					return;
+				}
+				long allergyDefNumSelected=formLauncher.GetField<long>("AllergyDefNumSelected");
+				AllergyDef allergyDef=AllergyDefs.GetOne(allergyDefNumSelected);//from db
+				textMedAllerProb.Text=allergyDef.Description;
+				textLabel.Text=allergyDef.Description;
+				SetVisibilities();
+				textMedAllerProb.Focus();
+				return;
+			}
+			if((string)comboDbLink.SelectedItem=="problem:"){
+				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormDiseaseDefs);
+				formLauncher.SetField("IsSelectionMode",true);
+				formLauncher.ShowDialog();
+				if(formLauncher.IsDialogCancel){
+					textMedAllerProb.Text="";
+					SetVisibilities();
+					textMedAllerProb.Focus();
+					return;
+				}
+				DiseaseDef diseaseDef=formLauncher.GetField<List<DiseaseDef>>("ListDiseaseDefsSelected")[0];
+				textMedAllerProb.Text=diseaseDef.DiseaseName;
+				textLabel.Text=diseaseDef.DiseaseName;
+				SetVisibilities();
+				textMedAllerProb.Focus();
+				return;
+			}
+			//all others
+			if(textLabel.Text==""){
+				textLabel.Text=(string)comboDbLink.SelectedItem;
+			}
+			SetVisibilities();
+		}
+
+		private void butChange_Click(object sender,EventArgs e) {
+			if((string)comboDbLink.SelectedItem=="allergy:"){
+				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormAllergySetup);
+				formLauncher.SetField("IsSelectionMode",true);
+				formLauncher.ShowDialog();
+				if(formLauncher.IsDialogCancel){
+					textMedAllerProb.Text="";
+					SetVisibilities();
+					textMedAllerProb.Focus();
+					return;
+				}
+				long allergyDefNumSelected=formLauncher.GetField<long>("AllergyDefNumSelected");
+				AllergyDef allergyDef=AllergyDefs.GetOne(allergyDefNumSelected);
+				textMedAllerProb.Text=allergyDef.Description;
+				textLabel.Text=allergyDef.Description;
+				SetVisibilities();
+				textMedAllerProb.Focus();
+				return;
+			}
+			if((string)comboDbLink.SelectedItem=="problem:"){
+				FormLauncher formLauncher=new FormLauncher(EnumFormName.FormDiseaseDefs);
+				formLauncher.SetField("IsSelectionMode",true);
+				formLauncher.ShowDialog();
+				if(formLauncher.IsDialogCancel){
+					textMedAllerProb.Text="";
+					SetVisibilities();
+					textMedAllerProb.Focus();
+					return;
+				}
+				DiseaseDef diseaseDef=formLauncher.GetField<List<DiseaseDef>>("ListDiseaseDefsSelected")[0];
+				textMedAllerProb.Text=diseaseDef.DiseaseName;
+				textLabel.Text=diseaseDef.DiseaseName;
+				SetVisibilities();
+				textMedAllerProb.Focus();
+				return;
+			}
+			//all others
+			SetVisibilities();
 		}
 
 		private void ResetList(){
@@ -272,7 +413,35 @@ Any or all items are allowed to have no label by leaving that value in the first
 			}
 		}
 
+		private void AskChangeLabelToMatch(){
+			if(textMedAllerProb.Text==textLabel.Text){
+				return;
+			}
+			if(textMedAllerProb.Text==""){
+				return;
+			}
+			if(_alreadyAsked){
+				return;
+			}
+			string str= "";
+			if((string)comboDbLink.SelectedItem=="allergy:") {
+				str="allergy";
+			}
+			else if((string)comboDbLink.SelectedItem=="problem:"){
+				str="problem";
+			}
+			else{
+				return;
+			}
+			_alreadyAsked=true;
+			if(!MsgBox.Show(MsgBoxButtons.YesNo,"Change label to match "+str+"?")){
+				return;
+			}
+			textLabel.Text=textMedAllerProb.Text;
+		}
+
 		private void butSave_Click(object sender, EventArgs e) {
+			AskChangeLabelToMatch();
 			if(_listVisDbs.Count<2){
 				MsgBox.Show("Must have at least two items in pick list.");
 				return;
@@ -297,20 +466,31 @@ Any or all items are allowed to have no label by leaving that value in the first
 					return;
 				}
 			}
-			//todo: more validation
-
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
-			EFormFieldCur.FontScale=textVIntFontScale.Value;
-			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
-			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			if(checkLabelAlign.Checked==true){
+				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.LeftLeft;
+			}
+			else{
+				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.TopLeft;
+			}
+			EFormFieldCur.Width=textVIntWidth.Value;
 			if(comboDbLink.SelectedIndex==0){//None
 				EFormFieldCur.DbLink="";
 			}
-			else{
-				EFormFieldCur.DbLink=comboDbLink.GetSelected<string>();
+			else if((string)comboDbLink.SelectedItem=="allergy:"){
+				EFormFieldCur.DbLink="allergy:"+textMedAllerProb.Text;
 			}
+			else if((string)comboDbLink.SelectedItem=="problem:"){
+				EFormFieldCur.DbLink="problem:"+textMedAllerProb.Text;
+			}
+			else{
+				EFormFieldCur.DbLink=(string)comboDbLink.SelectedItem;
+			}
+			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
+			EFormFieldCur.FontScale=textVIntFontScale.Value;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);
 			EFormFieldCur.PickListVis="";
 			EFormFieldCur.PickListDb="";
 			for(int i=0;i<_listVisDbs.Count;i++){
@@ -324,5 +504,5 @@ Any or all items are allowed to have no label by leaving that value in the first
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}
-  }
+	}
 }

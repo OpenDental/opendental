@@ -30,17 +30,11 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		public FrmEFormDefEdit() {
 			InitializeComponent();
 			Load+=FrmEFormDefEdit_Load;
+			PreviewKeyDown+=FrmEFormDefEdit_PreviewKeyDown;
 			SizeChanged+=FrmEFormDefEdit_SizeChanged;
 			//gridMain.CellDoubleClick+=gridMain_CellDoubleClick;
 			ctrlEFormFill.IsSetupMode=true;
 			ctrlEFormFill.EventDoubleClickField+=CtrlEFormFill_EventDoubleClickField;
-		}
-
-		private void FrmEFormDefEdit_SizeChanged(object sender,SizeChangedEventArgs e) {
-			if(!_isLoaded){
-				return;
-			}
-			ctrlEFormFill.RefreshLayout();
 		}
 		#endregion Constructor
 
@@ -63,6 +57,28 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			_isLoaded=true;
 		}
 
+		private void FrmEFormDefEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
+			if(Keyboard.Modifiers!=ModifierKeys.Control) {
+				return;
+			}
+			if(e.Key==Key.X){
+				butCut_Click(this,new EventArgs());
+			}
+			if(e.Key==Key.C){
+				butCopy_Click(this,new EventArgs());
+			}
+			if(e.Key==Key.V){
+				butPaste_Click(this,new EventArgs());
+			}
+		}
+
+		private void FrmEFormDefEdit_SizeChanged(object sender,SizeChangedEventArgs e) {
+			if(!_isLoaded){
+				return;
+			}
+			ctrlEFormFill.RefreshLayout();
+		}
+
 		///<summary></summary>
 		private void CtrlEFormFill_EventDoubleClickField(object sender,int idx) {
 			bool isPreviousStackable=false;
@@ -72,7 +88,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.TextField){
 				FrmEFormTextBoxEdit frmEFormTextBoxEdit=new FrmEFormTextBoxEdit();
 				frmEFormTextBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
-				frmEFormTextBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+				frmEFormTextBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormTextBoxEdit.IsPreviousStackable=isPreviousStackable;
 				frmEFormTextBoxEdit.ShowDialog();
 				if(frmEFormTextBoxEdit.IsDialogCancel){
@@ -177,6 +193,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				}
 			}
 			ctrlEFormFill.RefreshLayout();
+			return;
 		}
 		#endregion Methods - private Event Handlers
 
@@ -188,7 +205,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FontScale=100;
 			eFormField.FieldType=EnumEFormFieldType.TextField;
 			frmEFormTextBoxEdit.EFormFieldCur=eFormField;
-			frmEFormTextBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+			frmEFormTextBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormTextBoxEdit.ShowDialog();
 			if(frmEFormTextBoxEdit.IsDialogCancel){
 				return;
@@ -389,11 +406,132 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			IsDialogOK=true;
 		}
 
+		private void butCut_Click(object sender,EventArgs e) {
+			List<int> listSelectedIndices=ctrlEFormFill.GetSelectedIndices();
+			if(listSelectedIndices.Count==0) {
+				MsgBox.Show(this,"Please select at least 1 field.");
+				return;
+			}
+			List<EFormField> listEFormFields=new List<EFormField>();
+			for(int i=0;i<listSelectedIndices.Count;i++){
+				EFormField eFormField=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].Copy();
+				eFormField.TagOD=null;
+				//none of this actually matters because when this form is saved, these fields get reset anyway
+				eFormField.EFormFieldNum=0;
+				eFormField.EFormNum=0;
+				eFormField.ItemOrder=0;
+				listEFormFields.Add(eFormField);
+			}
+			string str=JsonConvert.SerializeObject(listEFormFields);
+			DataObject dataObject=new DataObject();
+			dataObject.SetData("ListEFormFields",str);
+			try{
+				Clipboard.SetDataObject(dataObject);
+			}
+			catch(Exception ex){
+				MsgBox.Show("Failed: "+ex.Message);
+			}
+			Cursor=Cursors.Wait;
+			ctrlEFormFill.Cursor=Cursors.Wait;
+			for(int i=listSelectedIndices.Count-1;i>=0;i--){//backward because removing
+				ctrlEFormFill.ListEFormFields.RemoveAt(listSelectedIndices[i]);
+			}
+			ctrlEFormFill.RefreshLayout();
+			//System.Threading.Thread.Sleep(200);//No need. They get feedback by seeing their fields disappear
+			Cursor=Cursors.Arrow;
+			ctrlEFormFill.Cursor=Cursors.Arrow;
+		}
+
+		private void butCopy_Click(object sender,EventArgs e) {
+			List<int> listSelectedIndices=ctrlEFormFill.GetSelectedIndices();
+			if(listSelectedIndices.Count==0) {
+				MsgBox.Show(this,"Please select at least 1 field.");
+				return;
+			}
+			List<EFormField> listEFormFields=new List<EFormField>();
+			for(int i=0;i<listSelectedIndices.Count;i++){
+				EFormField eFormField=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].Copy();
+				eFormField.TagOD=null;
+				//none of this actually matters because when this form is saved, these fields get reset anyway
+				eFormField.EFormFieldNum=0;
+				eFormField.EFormNum=0;
+				eFormField.ItemOrder=0;
+				listEFormFields.Add(eFormField);
+			}
+			string str=JsonConvert.SerializeObject(listEFormFields);
+			DataObject dataObject=new DataObject();
+			dataObject.SetData("ListEFormFields",str);
+			try{
+				Clipboard.SetDataObject(dataObject);
+			}
+			catch(Exception ex){
+				MsgBox.Show("Failed: "+ex.Message);
+			}
+			Cursor=Cursors.Wait;
+			ctrlEFormFill.Cursor=Cursors.Wait;
+			System.Threading.Thread.Sleep(200);//so that the wait cursor will flash to give feedback
+			Cursor=Cursors.Arrow;
+			ctrlEFormFill.Cursor=Cursors.Arrow;
+		}
+
+		private void butPaste_Click(object sender,EventArgs e) {
+			IDataObject iDataObject=null;
+			try {
+				iDataObject=Clipboard.GetDataObject();
+			}
+			catch(Exception ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			if(iDataObject==null){
+				MsgBox.Show(this,"Clipboard is empty.");
+				return;
+			}
+			string str=(string)iDataObject.GetData("ListEFormFields");
+			if(str is null){
+				MsgBox.Show(this,"There are no eForm Fields on the Clipboard.");
+				return;
+			}
+			List<EFormField> listEFormFields=JsonConvert.DeserializeObject<List<EFormField>>(str);
+			if(ctrlEFormFill.ListEFormFields.Count==0) {//This handles when the form is empty and adding the first field.
+				ctrlEFormFill.ListEFormFields.AddRange(listEFormFields);
+				ctrlEFormFill.RefreshLayout();
+				return;
+			}
+			int idx=ctrlEFormFill.GetSelectedIndex();
+			int pageShowing=ctrlEFormFill.GetPageShowing();//Will never be 0 because 1-based.
+			if(idx>-1 && ctrlEFormFill.ListEFormFields[idx].Page!=pageShowing){
+				idx=-1;//we don't want to paste to that idx because it's on another page.
+			}
+			if(idx==-1){
+				//Set the idx value to the end of the current page showing.
+				int numberOfPageBreaks=0;
+				for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
+					if(ctrlEFormFill.ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak) {
+						numberOfPageBreaks++;
+					}
+					if(numberOfPageBreaks==pageShowing) {
+						idx=i;//the page break at the bottom of the page we are on.
+						break;
+					}
+				}
+				if(idx==-1) {//Still -1. This is because we are looking at the last page.
+					idx=ctrlEFormFill.ListEFormFields.Count-1;
+				}
+			}
+			ctrlEFormFill.ListEFormFields.InsertRange(idx,listEFormFields);
+			ctrlEFormFill.RefreshLayout();//This also fixes all stacking
+			//set the new fields selected
+			for(int i=0;i<listEFormFields.Count;i++){
+				ctrlEFormFill.SetSelected(idx+i);
+			}
+		}
+
 		///<summary></summary>
 		private void butSetCondition_Click(object sender,EventArgs e) {
 			List<int> listSelectedIndices=ctrlEFormFill.GetSelectedIndices();
-			if(listSelectedIndices.Count<2) {
-				MsgBox.Show(this,"This is used to set the decision on multiple fields. Please select more than 1 field.");
+			if(listSelectedIndices.Count==0) {
+				MsgBox.Show(this,"This is used to set the decision on selected fields. Please select at least 1 field.");
 				return;
 			}
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
@@ -491,11 +629,12 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				return;
 			}
 			int idx=ctrlEFormFill.GetSelectedIndex();
-			bool wasFieldSelected=true;
+			int pageShowing=ctrlEFormFill.GetPageShowing();//Will never be 0 because 1-based.
+			if(ctrlEFormFill.ListEFormFields[idx].Page!=pageShowing){
+				idx=-1;//we don't want to insert at that idx because it's on another page.
+			}
 			if(idx==-1){
 				//Set the idx value to the end of the current page showing.
-				wasFieldSelected=false;
-				int pageShowing=ctrlEFormFill.GetPageShowing();//Will never be 0 because 1-based.
 				int numberOfPageBreaks=0;
 				for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
 					if(ctrlEFormFill.ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak) {
@@ -506,18 +645,13 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 						break;
 					}
 				}
-				if(idx==-1) {//Still -1. This is becuase we are looking at the last page.
+				if(idx==-1) {//Still -1. This is because we are looking at the last page.
 					idx=ctrlEFormFill.ListEFormFields.Count-1;
 				}
 			}
 			ctrlEFormFill.ListEFormFields.Insert(idx,eFormField);
 			ctrlEFormFill.RefreshLayout();
-			if(wasFieldSelected){
-				ctrlEFormFill.SetSelected(idx+1);
-			}
-			else{//No field was selected. Set selected to the new field.
-				ctrlEFormFill.SetSelected(idx);
-			}
+			ctrlEFormFill.SetSelected(idx);
 		}
 		#endregion Methods - private
 	}

@@ -29,7 +29,10 @@ There are four supported drawing scenarios:
 4. Measuring some text rather than drawing
 			(using OpenDental.Drawing;)
 			Graphics g=Graphics.MeasureBegin();
+			double width=g.MeasureString("some text").Width;
+			//or:
 			double height=g.MeasureString("some text",width).Height;
+			(if using this to measure screen elements, see the discussions further down and in the Font class)
 These three different strategies are closely interrelated and you can use a single set of drawing code to draw to all three.
 This class should allow you to use existing WinForms code with very little modification.
 Just like we used "g" for an instance of System.Drawing.Graphics, we will use "g" for an instance of OpenDental.Drawing.Graphics.
@@ -79,7 +82,12 @@ DrawSvg:
 	This is an alternate class to this Graphics class
 	It uses more powerful SVG style commands for drawing vectors.
 	But it's a little harder to use.
-	
+WPF
+	The discussion above all assumes you are drawing the old WinForms way.
+	But what if you want to use this in a newer WPF window?
+	This is especially important when measuring a string to lay it out on the screen.
+	In that case, Font has a few helpers to help with size conversions.
+	Also, MeasureString has an optional parameter for includePadding. This is typically false for WPF layout purposes.
 */
 	///<summary>Designed to mimic System.Drawing.Graphics by drawing onto a canvas.</summary>
 	public class Graphics {
@@ -282,12 +290,20 @@ DrawSvg:
 			return g;
 		}
 
-		public Size MeasureString(string text,Font font=null,double width=double.PositiveInfinity){
+		///<summary>Boilerplate example at the top of this file. includePadding is true by default to mimic WinForms. But if you truly want to just measure the text with no whitespace, like in WPF display, set it to false.</summary>
+		public Size MeasureString(string text,Font font=null,double width=double.PositiveInfinity,bool includePadding=true){
 			TextBlock textBlock=new TextBlock();
 			if(width<double.PositiveInfinity){
 				textBlock.Width=width;
 			}
-			textBlock.Padding=new Thickness(left:2,0,right:2,bottom:2);
+			//note: we could add an optional parameter to exclude padding to tightly measure the actual text
+			//This padding was an attempt to duplicate the old WinForms code.
+			if(includePadding){
+				textBlock.Padding=new Thickness(left:2,0,right:2,bottom:2);
+			}
+			else{
+				textBlock.Padding=new Thickness(0);
+			}
 			if(font is null){
 				font=new Font();
 			}
@@ -316,7 +332,7 @@ DrawSvg:
 			TextBlock textBlock=new TextBlock();
 			textBlock.Width=sizeAvail.Width;
 			textBlock.Padding=new Thickness(left:2,0,right:2,bottom:2);
-			textBlock.FontSize=font.Size*96f/72f;
+			textBlock.FontSize=font.Size*96/72;
 			textBlock.FontFamily=new FontFamily(font.Name);
 			if(font.IsBold){
 				textBlock.FontWeight=FontWeights.Bold;
@@ -436,7 +452,7 @@ DrawSvg:
 		}
 	}
 
-	///<summary>WPF treats these fields separately, but we made our own Font object to group these fields together to make it slightly easier.</summary>
+	///<summary>WPF treats these fields separately, but we made our own Font object to group these fields together to make it slightly easier. Default font is Microsoft Sans Serif 8.25 because that's always what we used with WinForms. Use ForWpf and/or SizeDip when using with WPF screen.</summary>
 	public class Font{
 		///<summary>Default is 8.25</summary>
 		public double Size=8.25;
@@ -444,5 +460,18 @@ DrawSvg:
 		public string Name="Microsoft Sans Serif";
 		public bool IsBold=false;
 		public bool IsUnderline=false;
+
+		///<summary>Use this when you are creating a font for use in WPF DIPs instead of points.</summary>
+		public double SizeDip{
+			get=>Size*96/72;
+			set=>Size=value*72/96;
+		}
+
+		public static Font ForWpf(){
+			Font font=new Font();
+			font.Name="Segoe UI";
+			font.Size=11.5;
+			return font;
+		}
 	}
 }

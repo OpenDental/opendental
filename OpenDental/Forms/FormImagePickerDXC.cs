@@ -175,13 +175,14 @@ namespace OpenDental {
 				MessageBox.Show(this,"PDF attachments are not supported.");
 				return false;
 			}
-			if(!fileName.EndsWith(".bmp")
-				&& !fileName.EndsWith(".gif")
-				&& !fileName.EndsWith(".jpeg")
-				&& !fileName.EndsWith(".png")
-				&& !fileName.EndsWith(".tiff")
-				&& !fileName.EndsWith(".jpg")
-				&& !fileName.EndsWith(".tif")) {
+			if(!fileName.ToLower().EndsWith(".bmp")
+				&& !fileName.ToLower().EndsWith(".gif")
+				&& !fileName.ToLower().EndsWith(".jpeg")
+				&& !fileName.ToLower().EndsWith(".png")
+				&& !fileName.ToLower().EndsWith(".tiff")
+				&& !fileName.ToLower().EndsWith(".jpg")
+				&& !fileName.ToLower().EndsWith(".tif"))
+			{
 				MsgBox.Show(this,"The selected file type is invalid. Valid file types include BMP, GIF, JPEG, PNG, TIFF, TIF, and JPG.");
 				return false;
 			}

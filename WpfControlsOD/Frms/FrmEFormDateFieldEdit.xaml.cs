@@ -28,8 +28,6 @@ namespace OpenDental {
 			InitializeComponent();
 			Load+=FrmEFormsTextBoxEdit_Load;
 			PreviewKeyDown+=FrmEFormTextBoxEdit_PreviewKeyDown;
-			checkIsHorizStacking.Click+=CheckIsHorizontal_Click;
-			textVIntWidth.TextChanged+=TextVIntWidth_TextChanged;
 		}
 
 		private void FrmEFormsTextBoxEdit_Load(object sender, EventArgs e) {
@@ -54,28 +52,7 @@ namespace OpenDental {
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
 			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
-			SetLabelRed();
 			textLabel.Focus();
-		}
-
-		private void CheckIsHorizontal_Click(object sender,EventArgs e) {
-			SetLabelRed();
-		}
-
-		private void TextVIntWidth_TextChanged(object sender,EventArgs e) {
-			SetLabelRed();
-		}
-
-		private void SetLabelRed(){
-			if(checkIsHorizStacking.Checked==true
-				&& textVIntWidth.IsValid()
-				&& textVIntWidth.Value==0)
-			{
-				labelRed.Visible=true;
-			}
-			else{
-				labelRed.Visible=false;
-			}
 		}
 
 		private void butPickParent_Click(object sender,EventArgs e) {

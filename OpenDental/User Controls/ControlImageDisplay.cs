@@ -961,6 +961,7 @@ Here is the desired behavior:
 				EventSetCropPanEditAdj?.Invoke(this,EnumCropPanAdj.Pan);
 			}
 			if(nodeTypeAndKey.NodeType==EnumImageNodeType.Mount){
+				_mountShowing=Mounts.GetByNum(nodeTypeAndKey.PriKey);
 				_listImageDraws=ImageDraws.RefreshForMount(_mountShowing.MountNum);
 				_nodeTypeKeyCatSelected.DefNumCategory=_mountShowing.DocCategory;
 				_listMountItems=MountItems.GetItemsForMount(_mountShowing.MountNum);

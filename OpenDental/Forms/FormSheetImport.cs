@@ -1601,8 +1601,8 @@ namespace OpenDental {
 				bool? isCheckedAllergiesNone=IsCheckedEForm("allergiesNone");
 				if(isCheckedAllergiesNone!=null) {
 					//note that this is mutually exclusive with allergiesOther and allergy:...
-					//If this gets hit, neither of those will,
-					//and if either of those gets hit, this will not.
+					//If this gets hit, none of those will,
+					//and if any of those get hit, this will not.
 					if(isCheckedAllergiesNone==true) {
 						for(int a=0;a<listAllergiesPat.Count;a++) {
 							ImportRow importRowAllerg=_listImportRows.Find(x=>x.OldValObj==listAllergiesPat[a]);
@@ -1620,7 +1620,7 @@ namespace OpenDental {
 				if(fieldVal!=null) {
 					//if allergiesNone was checked, this box will be empty, so loop list will also be empty.
 					List<string> listStrsInput=fieldVal.Split(new char[]{','},StringSplitOptions.RemoveEmptyEntries).Select(x=>x.Trim()).ToList();
-					//get list of allergies already covered by checkboxes
+					//get list of allergies already covered by checkboxes or radiobuttons
 					List<string> listStrAllergiesChecks=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("allergy:")).Select(x=>x.DbLink.Substring(8)).ToList();
 					//First loop is to consider which ones to add based on user input
 					for(int a=0;a<listStrsInput.Count;a++){
@@ -1630,9 +1630,9 @@ namespace OpenDental {
 							//This is common because of prefill.
 						}
 						if(listStrAllergiesChecks.Contains(listStrsInput[a])) {
-							//If there is a checkbox for an allergy, but user also types it in here,
+							//If there is a checkbox or radiobutton for an allergy, but user also types it in here,
 							//then we have a slight problem. We have to pick one or the other, and they might not match.
-							//We have decided in that case to depend on the checkbox and ignore whatever happens in this box.
+							//We have decided in that case to depend on the checkbox/radiobutton and ignore whatever happens in this box.
 							continue;
 						}
 						AllergyDef allergyDef=listAllergyDefs.Find(x=>x.Description.ToLower()==listStrsInput[a].ToLower());
@@ -1666,13 +1666,13 @@ namespace OpenDental {
 					//But nobody stops having an allergy, so ignore this for now.
 				}//if allergiesOther
 				List<EFormField> listEFormFieldsAllergyCheck=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("allergy:"));
-				//Allergy checkboxes:
+				//Allergy checkboxes and radiobuttons:
 				for(int i=0;i<listEFormFieldsAllergyCheck.Count;i++){
 					string strAllergyCheck=listEFormFieldsAllergyCheck[i].DbLink.Substring(8);
 					AllergyDef allergyDef=listAllergyDefs.Find(x=>x.Description.ToLower()==strAllergyCheck.ToLower());
 					if(allergyDef==null){
-						//This shouldn't normally happen, but it certainly is possible because user could change an allergyDef name after adding the checkbox,
-						//or this could be an imported form with no allergyDef in the db representing the value in this checkbox.
+						//This shouldn't normally happen, but it certainly is possible because user could change an allergyDef name after adding the checkbox or radiobutton,
+						//or this could be an imported form with no allergyDef in the db representing the value in this checkbox/radiobut.
 						//We will just add this for them. That way, all imported forms will correctly work.
 						//We are doing it here instead of when clicking Import because it's extremely rare
 						//and it's more of a setup issue. Also, it would be more complex to pass the info to that section.
@@ -1690,7 +1690,9 @@ namespace OpenDental {
 						//Notice that we do not look at inactive allergies and consider flipping them back to active.
 						//Once someone has an allergy, it doesn't go away. We don't need to consider that fancy edge case.
 						//The worst consequence is that they might end up with one active and one inactive. No big deal.
-						if(listEFormFieldsAllergyCheck[i].ValueString=="X"){
+						if(listEFormFieldsAllergyCheck[i].ValueString=="X"//checkbox
+							|| listEFormFieldsAllergyCheck[i].ValueString=="Y")//radiobutton
+						{
 							//add
 							importRow=new ImportRow();
 							importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
@@ -1711,10 +1713,10 @@ namespace OpenDental {
 					}
 					else{
 						//This patient does have an active allergy matching the allergy for this checkbox.
-						if(listEFormFieldsAllergyCheck[i].ValueString=="X"){
-							//db is already accurate
-						}
-						else{
+						if((listEFormFieldsAllergyCheck[i].FieldType==EnumEFormFieldType.CheckBox
+							&& listEFormFieldsAllergyCheck[i].ValueString=="")
+							|| listEFormFieldsAllergyCheck[i].ValueString=="N")//radiobutton (empty rb indicates no change)
+						{
 							//remove
 							ImportRow importRowAllerg=_listImportRows.Find(x=>
 								x.TypeObj==typeof(Allergy)
@@ -1728,8 +1730,11 @@ namespace OpenDental {
 							importRowAllerg.ImpValDisplay="(mark inactive)";
 							importRowAllerg.DoImport=true;
 						}
+						else{
+							//db is already accurate
+						}
 					}
-				}
+				}//for i allergy checkboxes and radiobuttons
 			}
 			#endregion Allergies (eForms)
 			#region Medications (eForms)
@@ -1918,8 +1923,8 @@ namespace OpenDental {
 				bool? isCheckedProblemsNone=IsCheckedEForm("problemsNone");
 				if(isCheckedProblemsNone!=null) {
 					//note that this is mutually exclusive with diseasesOther and disease:...
-					//If this gets hit, neither of those will,
-					//and if either of those gets hit, this will not.
+					//If this gets hit, none of those will,
+					//and if any of those get hit, this will not.
 					if(isCheckedProblemsNone==true) {
 						for(int a=0;a<listDiseasesPat.Count;a++) {
 							ImportRow importRowDisease=_listImportRows.Find(x=>x.OldValObj==listDiseasesPat[a]);
@@ -1937,7 +1942,7 @@ namespace OpenDental {
 				if(fieldVal!=null) {
 					//if problemsNone was checked, this box will be empty, so loop list will also be empty.
 					List<string> listStrsInput=fieldVal.Split(new char[]{','},StringSplitOptions.RemoveEmptyEntries).Select(x=>x.Trim()).ToList();
-					//get list of diseases already covered by checkboxes
+					//get list of diseases already covered by checkboxes or radiobuttons
 					List<string> listStrProblemChecks=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("problem:")).Select(x=>x.DbLink.Substring(8)).ToList();
 					//First loop is to consider which ones to add based on user input
 					for(int a=0;a<listStrsInput.Count;a++){
@@ -1947,9 +1952,9 @@ namespace OpenDental {
 							//This is common because of prefill.
 						}
 						if(listStrProblemChecks.Contains(listStrsInput[a])) {
-							//If there is a checkbox for a problem, but user also types it in here,
+							//If there is a checkbox or radiobutton for a problem, but user also types it in here,
 							//then we have a slight conundrum. We have to pick one or the other, and they might not match.
-							//We have decided in that case to depend on the checkbox and ignore whatever happens in this box.
+							//We have decided in that case to depend on the checkbox/radiobutton and ignore whatever happens in this box.
 							continue;
 						}
 						DiseaseDef diseaseDef=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseName.ToLower()==listStrsInput[a].ToLower());
@@ -2013,13 +2018,13 @@ namespace OpenDental {
 					}
 				}//if problemsOther
 				List<EFormField> listEFormFieldsProblemCheck=EFormCur.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("problem:"));
-				//Problem checkboxes:
+				//Problem checkboxes and radiobuttons:
 				for(int i=0;i<listEFormFieldsProblemCheck.Count;i++){
 					string strProblemCheck=listEFormFieldsProblemCheck[i].DbLink.Substring(8);
 					DiseaseDef diseaseDef=DiseaseDefs.GetFirstOrDefault(x=>x.DiseaseName.ToLower()==strProblemCheck.ToLower());
 					if(diseaseDef==null){
-						//This shouldn't normally happen, but it certainly is possible because user could change a diseaseDef name after adding the checkbox,
-						//or this could be an imported form with no diseaseDef in the db representing the value in this checkbox.
+						//This shouldn't normally happen, but it certainly is possible because user could change a diseaseDef name after adding the checkbox or radiobutton,
+						//or this could be an imported form with no diseaseDef in the db representing the value in this checkbox/radiobut.
 						//We will just add this for them. That way, all imported forms will correctly work.
 						//We are doing it here instead of when clicking Import because it's extremely rare
 						//and it's more of a setup issue. Also, it would be more complex to pass the info to that section.
@@ -2032,11 +2037,13 @@ namespace OpenDental {
 					Disease diseasePat=listDiseasesPat.Find(x=>x.DiseaseDefNum==diseaseDef.DiseaseDefNum);
 					//We don't also need to check list of pending imports because diseasesOther defers to this section.
 					if(diseasePat==null){
-						//This patient does not have an active disease matching the problem for this checkbox.
+						//This patient does not have an active disease matching the problem for this checkbox or radiobutton.
 						//Notice that we do not look at inactive diseases and consider flipping them back to active.
 						//Once someone has a problem, it tends to not go away. We don't need to consider that fancy edge case.
 						//The worst consequence is that they might end up with one active and one inactive. No big deal.
-						if(listEFormFieldsProblemCheck[i].ValueString=="X"){
+						if(listEFormFieldsProblemCheck[i].ValueString=="X"//checkbox
+							|| listEFormFieldsProblemCheck[i].ValueString=="Y")//radiobutton
+						{
 							//add
 							importRow=new ImportRow();
 							importRow.FieldName="";//There is no fieldname that makes sense. It's a combination of multiple.
@@ -2056,11 +2063,11 @@ namespace OpenDental {
 						}
 					}
 					else{
-						//This patient does have an active disease matching the problem for this checkbox.
-						if(listEFormFieldsProblemCheck[i].ValueString=="X"){
-							//db is already accurate
-						}
-						else{
+						//This patient does have an active disease matching the problem for this checkbox or radiobutton.
+						if((listEFormFieldsProblemCheck[i].FieldType==EnumEFormFieldType.CheckBox
+							&& listEFormFieldsProblemCheck[i].ValueString=="")
+							|| listEFormFieldsProblemCheck[i].ValueString=="N")//radiobutton (empty rb indicates no change)
+						{
 							//remove
 							ImportRow importRowProblem=_listImportRows.Find(x=>
 								x.TypeObj==typeof(Disease)
@@ -2074,8 +2081,11 @@ namespace OpenDental {
 							importRowProblem.ImpValDisplay="(mark inactive)";
 							importRowProblem.DoImport=true;
 						}
+						else{
+							//db is already accurate
+						}
 					}
-				}//problem checkboxes
+				}//problem checkboxes and radiobuttons
 			}
 			#endregion Problems (eForms)
 		}
@@ -2561,7 +2571,9 @@ namespace OpenDental {
 				|| _listImportRows[e.Row].TypeObj==typeof(Disease)) 
 			{
 				//User entered medications will have a MedicationNum as the ImpValObj.
-				if(_listImportRows[e.Row].ImpValObj.GetType()==typeof(long)) {
+				if(_listImportRows[e.Row].ImpValObj!=null
+					&& _listImportRows[e.Row].ImpValObj.GetType()==typeof(long)) 
+				{
 					using FormMedications formMedications=new FormMedications();
 					formMedications.IsSelectionMode=true;
 					formMedications.textSearch.Text=_listImportRows[e.Row].FieldName.Trim();

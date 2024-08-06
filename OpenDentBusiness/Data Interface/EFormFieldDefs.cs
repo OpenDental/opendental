@@ -144,6 +144,7 @@ namespace OpenDentBusiness{
 			return listEFormFieldDefs;
 		}
 
+		///<summary>True for CheckBox, DateField, Label, TextField</summary>
 		public static bool IsHorizStackable(EnumEFormFieldType enumEFormFieldType){
 			if(enumEFormFieldType.In(
 				EnumEFormFieldType.CheckBox, 

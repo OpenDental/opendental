@@ -14,6 +14,7 @@
 				<StackPanel Name="stackPanel" x:FieldModifier="internal" Focusable="True"/>
 			</ScrollViewer>
 			<Border BorderBrush="Silver" BorderThickness="0,1,0,0" VerticalAlignment="Bottom" Height="30"/>
+			<Border x:Name="borderSelect" BorderBrush="Blue" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,40,0,0" Width="100" Height="80"/>
 			<ui:Button x:Name="butPrevious" Width="75" VerticalAlignment="Bottom" Height="24" Margin="2,0,0,2" Text="Previous" Click="butPrevious_Click" />
 			<ui:Label x:Name="label" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5" Height="18" Width="40" HAlign="Center" VAlign="Center" Text="1/1" />
 			<ui:Button x:Name="butNext" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,2,2" Text="Next" Click="butNext_Click" />

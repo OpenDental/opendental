@@ -27,7 +27,6 @@
 		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="181,151,0,0" MaxVal="300" MinVal="50"/>
 		<ui:CheckBox x:Name="checkIsTextWrap" Height="20" Margin="64,176,0,0" Width="130" Text="Text Wraps" CheckAlign="MiddleRight"/>
 		<ui:Label Height="18" Margin="198,177,0,0" Text="and box expands down as text is added" VAlign="Center" Width="263" />
-		<ui:Label x:Name="labelRed" Height="50" Margin="396,78,0,0" Text="This field and previous field must have widths specified for horizontal stacking to work" VAlign="Center" Width="193" ColorText="Red" />
 		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="80,100,0,0" Width="114" Text="Required" CheckAlign="MiddleRight"/>
 		<ui:GroupBox Height="80" Margin="22,210,0,0" Width="470" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />

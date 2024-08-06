@@ -34,7 +34,7 @@ namespace OpenDental{
 			this.checkBoxMatchWholeWord = new OpenDental.UI.CheckBox();
 			this.checkBoxShowMainPages = new OpenDental.UI.CheckBox();
 			this.butSearch = new OpenDental.UI.Button();
-			this.checkReadOnlyServer = new OpenDental.UI.CheckBox();
+			this.checkReportServer = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
 			// gridMain
@@ -142,18 +142,18 @@ namespace OpenDental{
 			this.butSearch.Text = "Search";
 			this.butSearch.Click += new System.EventHandler(this.butSearch_Click);
 			// 
-			// checkReadOnlyServer
+			// checkReportServer
 			// 
-			this.checkReadOnlyServer.Location = new System.Drawing.Point(911, 12);
-			this.checkReadOnlyServer.Name = "checkReadOnlyServer";
-			this.checkReadOnlyServer.Size = new System.Drawing.Size(145, 22);
-			this.checkReadOnlyServer.TabIndex = 21;
-			this.checkReadOnlyServer.Text = "Run on read-only server";
+			this.checkReportServer.Location = new System.Drawing.Point(911, 12);
+			this.checkReportServer.Name = "checkReportServer";
+			this.checkReportServer.Size = new System.Drawing.Size(145, 22);
+			this.checkReportServer.TabIndex = 21;
+			this.checkReportServer.Text = "Run on report server";
 			// 
 			// FormWikiSearch
 			// 
 			this.ClientSize = new System.Drawing.Size(1184, 662);
-			this.Controls.Add(this.checkReadOnlyServer);
+			this.Controls.Add(this.checkReportServer);
 			this.Controls.Add(this.butSearch);
 			this.Controls.Add(this.checkBoxShowMainPages);
 			this.Controls.Add(this.checkBoxMatchWholeWord);
@@ -187,6 +187,6 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkBoxMatchWholeWord;
 		private OpenDental.UI.CheckBox checkBoxShowMainPages;
 		private UI.Button butSearch;
-		private OpenDental.UI.CheckBox checkReadOnlyServer;
+		private OpenDental.UI.CheckBox checkReportServer;
 	}
 }

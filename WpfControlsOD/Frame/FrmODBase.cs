@@ -712,23 +712,29 @@ How to:
 			//We use preview so that this will work even if user is inside a textbox.
 			//That textbox would mark a KeyDown event as handled so we wouldn't see it.
 			//Preview is a tunneling event which is raised before a bubbling event like KeyDown.
-			//If you want to handle an Alt-key combo, then create another event handler like this one, but in your derived frm.
-			//The code should look like this:
-			//if(butSave.IsAltKey(Key.S,e)){//automatically handles visible, enbled, etc.
-			//	butSave_Click(this,new EventArgs());
+			//Look in Button.xaml.cs for example of how to handle Alt-key combos
+			//--------------------------------------------------------------------------------------------------------------
+			//Here's an example of an ordinary key event handler for a form.
+			//Create an event handler in your frm constructor:
+			//PreviewKeyDown+=Frm_PreviewKeyDown;
+			//Then:
+			//private void Frm_PreviewKeyDown(object sender,KeyEventArgs e) {
+			//	if(Keyboard.Modifiers=ModifierKeys.Control && e.Key==Key.C){
+						//You might need to test e.SystemKey instead of e.Key.
+						//Example is when modifier is Alt because that causes it to be a system command.
+			//		butCopy_Click(this,new EventArgs());
+			//	}
 			//}
-			//In addition to the code above, also include an underscore inside the button text so that the user knows about the keyboard shortcut.
-			//An underscore is used in WPF instead of the & that's used in WinForms. 
 			//--------------------------------------------------------------------------------------------------------------
 			//Using Esc key to close the form:
 			//This was previously done by setting Form.CancelButton to point to the Cancel button.
 			//WPF does not have that, so instead, we make Esc be equivalent to clicking the window X in all cases. 
 			//It's already built in for you here:
 			if(e.Key==Key.Escape) {
-				CancelEventArgs ea=new CancelEventArgs();
-				if(ea.Cancel){
-					return;
-				}
+				//CancelEventArgs ea=new CancelEventArgs();
+				//if(ea.Cancel){
+				//	return;
+				//}
 				if(EscClosesWindow){
 					Close();
 				}

@@ -61,6 +61,7 @@ namespace OpenDentBusiness{
 			eFormField.IsRequired=eFormFieldDef.IsRequired;
 			eFormField.ConditionalParent=eFormFieldDef.ConditionalParent;
 			eFormField.ConditionalValue=eFormFieldDef.ConditionalValue;
+			eFormField.LabelAlign=eFormFieldDef.LabelAlign;
 			return eFormField;
 		}
 
@@ -80,6 +81,7 @@ namespace OpenDentBusiness{
 			eFormFieldDef.IsRequired=eFormField.IsRequired;
 			eFormFieldDef.ConditionalParent=eFormField.ConditionalParent;
 			eFormFieldDef.ConditionalValue=eFormField.ConditionalValue;
+			eFormFieldDef.LabelAlign=eFormField.LabelAlign;
 			return eFormFieldDef;
 		}
 

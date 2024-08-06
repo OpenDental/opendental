@@ -75,14 +75,14 @@ namespace OpenDentBusiness {
 					}
 				}
 				if(eForm.ListEFormFields[i].DbLink=="allergiesOther") {
-					//get list of allergies already covered by checkboxes
+					//get list of allergies already covered by checkboxes and radiobuttons
 					List<string> listStrAllergiesChecks=eForm.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("allergy:")).Select(x=>x.DbLink.Substring(8)).ToList();
 					List<string> listStrAllergiesToAdd=new List<string>();
 					for(int a=0;a<listAllergiesPat.Count;a++){
 						AllergyDef allergyDef=listAllergyDefs.Find(x=>x.AllergyDefNum==listAllergiesPat[a].AllergyDefNum);
 						string strAllerg=allergyDef.Description;
 						if(listStrAllergiesChecks.Contains(strAllerg)) {
-							continue;//this allergy is already covered by a checkbox
+							continue;//this allergy is already covered by a checkbox or radiobutton
 						}
 						if(strAllerg.Contains(",")){
 							continue;//ignore allergies that patient has that contain commas. It would mess up our serialization.
@@ -100,13 +100,31 @@ namespace OpenDentBusiness {
 					eForm.ListEFormFields[i].ValueString=string.Join(", ",listStrAllergiesToAdd);
 				}
 				if(eForm.ListEFormFields[i].DbLink.StartsWith("allergy:")) {
-					//get the checkbox allergy that we are looking at
-					string strAllergyCheck=eForm.ListEFormFields[i].DbLink.Substring(8);
+					string strAllergyName=eForm.ListEFormFields[i].DbLink.Substring(8);
+					bool hasAllergy=false;
 					for(int a=0;a<listAllergiesPat.Count;a++){
-						AllergyDef allergyDef=listAllergyDefs.Find(x=>x.AllergyDefNum==listAllergiesPat[a].AllergyDefNum);//guaranteed to not be null
+						AllergyDef allergyDef=listAllergyDefs.Find(x=>x.AllergyDefNum==listAllergiesPat[a].AllergyDefNum);
+						//Should never be null, but there might be an edge case I haven't thought of
+						if(allergyDef==null){
+							continue;
+						}
 						string strAllergDes=allergyDef.Description;
-						if(strAllergDes==strAllergyCheck) {//if the patient has this allergy, "check the box"
+						if(strAllergDes==strAllergyName) {
+							hasAllergy=true;
+							break;
+						}
+					}
+					if(eForm.ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
+						if(hasAllergy){
 							eForm.ListEFormFields[i].ValueString="X";
+						}
+					}
+					if(eForm.ListEFormFields[i].FieldType==EnumEFormFieldType.RadioButtons){
+						if(hasAllergy){
+							eForm.ListEFormFields[i].ValueString="Y";
+						}
+						else{
+							eForm.ListEFormFields[i].ValueString="N";
 						}
 					}
 				}
@@ -309,14 +327,14 @@ namespace OpenDentBusiness {
 					}
 				}
 				if(eForm.ListEFormFields[i].DbLink=="problemsOther") {
-					//get list of diseases already covered by checkboxes
+					//get list of diseases already covered by checkboxes or radiobuttons
 					List<string> listStrDiseasesChecks=eForm.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("problem:")).Select(x=>x.DbLink.Substring(8)).ToList();
 					List<string> listStrDiseasesToAdd=new List<string>();
 					for(int a=0;a<listDiseasesPat.Count;a++) {
 						DiseaseDef diseaseDef=DiseaseDefs.GetItem(listDiseasesPat[a].DiseaseDefNum);
 						string strDisease=diseaseDef.DiseaseName;
 						if(listStrDiseasesChecks.Contains(strDisease)) {
-							continue;//this disease is already covered by a checkbox
+							continue;//this disease is already covered by a checkbox or radiobutton
 						}
 						if(strDisease.Contains(",")){
 							continue;//ignore diseases that patient has that contain commas. It would mess up our serialization.
@@ -334,13 +352,31 @@ namespace OpenDentBusiness {
 					eForm.ListEFormFields[i].ValueString=string.Join(", ",listStrDiseasesToAdd);
 				}
 				if(eForm.ListEFormFields[i].DbLink.StartsWith("problem:")) {
-					//get the checkbox diseases we are looking at
-					string strDiseaseCheck=eForm.ListEFormFields[i].DbLink.Substring(8);
-					for(int a=0;a<listDiseasesPat.Count;a++) {
+					string strProblemName=eForm.ListEFormFields[i].DbLink.Substring(8);
+					bool hasProblem=false;
+					for(int a=0;a<listDiseasesPat.Count;a++){
 						DiseaseDef diseaseDef=DiseaseDefs.GetItem(listDiseasesPat[a].DiseaseDefNum);
+						//Should never be null, but there might be an edge case I haven't thought of
+						if(diseaseDef==null){
+							continue;
+						}
 						string strDiseaseName=diseaseDef.DiseaseName;
-						if(strDiseaseName==strDiseaseCheck) {//if the patient has this disease, "check the box"
+						if(strDiseaseName==strProblemName) {
+							hasProblem=true;
+							break;
+						}
+					}
+					if(eForm.ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
+						if(hasProblem){
 							eForm.ListEFormFields[i].ValueString="X";
+						}
+					}
+					if(eForm.ListEFormFields[i].FieldType==EnumEFormFieldType.RadioButtons){
+						if(hasProblem){
+							eForm.ListEFormFields[i].ValueString="Y";
+						}
+						else{
+							eForm.ListEFormFields[i].ValueString="N";
 						}
 					}
 				}

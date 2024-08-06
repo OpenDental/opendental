@@ -196,13 +196,7 @@ namespace OpenDental {
 			using FormPhoneEmpDefaultEdit formPED=new FormPhoneEmpDefaultEdit();
 			formPED.PedCur=ped;
 			formPED.PedCur.StatusOverride=PhoneEmpStatusOverride.Unavailable;
-			if(formPED.ShowDialog()==DialogResult.OK && formPED.PedCur.StatusOverride==PhoneEmpStatusOverride.Unavailable) {
-				//This phone status update can get skipped from within the editor if the employee is not clocked in.
-				//This would be the case when you are setting an employee other than yourself to Unavailable.
-				//So we will set it here. This keeps the phone table and phone panel in sync.
-				Phones.SetPhoneStatus(ClockStatusEnum.Unavailable,formPED.PedCur.PhoneExt,formPED.PedCur.EmployeeNum);
-				PhoneAsterisks.SetQueueForExtension(phone.Extension,AsteriskQueues.None);
-			}
+			formPED.ShowDialog();//Phone Status and Queue get updated inside of the form when status is set to Unavailable.
 		}
 
 		///<summary></summary>
