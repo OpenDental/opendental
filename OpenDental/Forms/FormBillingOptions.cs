@@ -540,6 +540,7 @@ namespace OpenDental{
 			checkBoxBillShowTransSinceZero.Checked=PrefC.GetBool(PrefName.BillingShowTransSinceBalZero);
 			textNote.Text=PrefC.GetString(PrefName.BillingDefaultsNote);
 			if(SmsPhones.IsIntegratedTextingEnabled()) {
+				listModeToText.ClearSelected();
 				string[] stringArrayBillingDefaultsModesToText=PrefC.GetString(PrefName.BillingDefaultsModesToText)
 					.Split(new string[] { "," },StringSplitOptions.RemoveEmptyEntries);
 				for(int i = 0;i<stringArrayBillingDefaultsModesToText.Length;++i) {
