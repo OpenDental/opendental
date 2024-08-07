@@ -560,16 +560,24 @@ namespace CodeBase {
 				throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
 			}
 			DateTime start=DateTime.Now;
+			string tempResponseFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental",fileName);
 			void waitForResponse() {
-				while(!_hasReceivedResponse &&  (DateTime.Now-start).TotalSeconds<timeoutSecs) {
+				while(!_hasReceivedResponse && (DateTime.Now-start).TotalSeconds<timeoutSecs) {
 					try {
-						_response=File.ReadAllText(_responseFilePath);
+						if(!File.Exists(_responseFilePath)) {
+							Thread.Sleep(100);
+							continue;
+						}
+						File.Move(_responseFilePath,tempResponseFilePath);//move file to local temp folder before reading it in
+						_response=File.ReadAllText(tempResponseFilePath);
 						_hasReceivedResponse=true;
 					}
 					catch(Exception ex) {
 						ex.DoNothing();
 					}
-					Thread.Sleep(100);
+					if(!_hasReceivedResponse) {
+						Thread.Sleep(100);
+					}
 				}
 			}
 			if(doShowProgressBar) {
@@ -581,8 +589,14 @@ namespace CodeBase {
       try {
           File.Delete(_responseFilePath);
       }
-      catch (Exception ex) {
+      catch(Exception ex) {
           ex.DoNothing();
+      }
+      try {
+				File.Delete(tempResponseFilePath);
+      }
+      catch(Exception ex) {
+				ex.DoNothing();
       }
       if(!_hasReceivedResponse) {
 				_appstreamId="";

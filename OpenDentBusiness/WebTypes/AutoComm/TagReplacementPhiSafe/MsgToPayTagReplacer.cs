@@ -25,7 +25,7 @@ namespace OpenDentBusiness.AutoComm {
 			base.ReplaceTagsChild(sbTemplate,autoCommObj,isEmail);
 			if(_replaceStatementBalance) {
 				double balance=Statements.GetFamilyBalance(autoCommObj.PatNum);
-				ReplaceOneTag(sbTemplate,MsgToPaySents.STATEMENT_BALANCE_TAG,balance.ToString(),isEmail);
+				ReplaceOneTag(sbTemplate,MsgToPaySents.STATEMENT_BALANCE_TAG,balance.ToString("0.00"),isEmail);
 			}
 		}
 	}
