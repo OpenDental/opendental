@@ -1039,7 +1039,7 @@ namespace OpenDental{
 			inputBoxParam.Text=Lan.g(this,"Also make line item in Account Module");
 			inputBoxParam.SizeParam=new System.Windows.Size(250,30);
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.PayPlanAdjType));
-			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def)) {
+			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,DateTime.Today)) {
 				inputBoxParam.Enabled=false;
 			}
 			listInputBoxParams.Add(inputBoxParam);

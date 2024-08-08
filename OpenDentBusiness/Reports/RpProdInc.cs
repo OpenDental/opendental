@@ -44,17 +44,17 @@ namespace OpenDentBusiness {
 			if(_hasClinics) {
 				tableDailyProd.Columns.Add(new DataColumn("Clinic"));
 			}
-			tableDailyProd.Columns.Add(new DataColumn("Production",typeof(double)));
-			tableDailyProd.Columns.Add(new DataColumn("Adjust",typeof(double)));
+			tableDailyProd.Columns.Add(new DataColumn("Production"));
+			tableDailyProd.Columns.Add(new DataColumn("Adjust"));
 			if(writeoffType==PPOWriteoffDateCalc.ClaimPayDate) {
-				tableDailyProd.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				tableDailyProd.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				tableDailyProd.Columns.Add(new DataColumn("Writeoff Est"));
+				tableDailyProd.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				tableDailyProd.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				tableDailyProd.Columns.Add(new DataColumn("Writeoff"));
 			}
-			tableDailyProd.Columns.Add(new DataColumn("Pt Income",typeof(double)));
-			tableDailyProd.Columns.Add(new DataColumn("Ins Income",typeof(double)));
+			tableDailyProd.Columns.Add(new DataColumn("Pt Income"));
+			tableDailyProd.Columns.Add(new DataColumn("Ins Income"));
 			tableDailyProd.Columns.Add(new DataColumn("ClinicSplit"));
 			for(int i=0;i<tableProduction.Rows.Count;i++) {
 				if(_hasClinics && !listClinics.Exists(x => x.ClinicNum==PIn.Long(tableProduction.Rows[i]["Clinic"].ToString()))) {
@@ -264,43 +264,43 @@ namespace OpenDentBusiness {
 			decimal totalincome;
 			DataTable dt=new DataTable("Total");
 			dt.Columns.Add(new DataColumn("Provider"));
-			dt.Columns.Add(new DataColumn("Production",typeof(double)));
-			dt.Columns.Add(new DataColumn("Adjustments",typeof(double)));
+			dt.Columns.Add(new DataColumn("Production"));
+			dt.Columns.Add(new DataColumn("Adjustments"));
 			if(writeoffType==PPOWriteoffDateCalc.ClaimPayDate) {
-				dt.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dt.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff Est"));
+				dt.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dt.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dt.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
-			dt.Columns.Add(new DataColumn("Pt Income",typeof(double)));
+			dt.Columns.Add(new DataColumn("Tot Prod"));
+			dt.Columns.Add(new DataColumn("Pt Income"));
 			if(isUnearnedIncluded) {
-				dt.Columns.Add(new DataColumn("Unearned Pt Income",typeof(double)));
+				dt.Columns.Add(new DataColumn("Unearned Pt Income"));
 			}
-			dt.Columns.Add(new DataColumn("Ins Income",typeof(double)));
-			dt.Columns.Add(new DataColumn("Total Income",typeof(double)));
-			dt.Columns.Add(new DataColumn("Total Pt Income",typeof(double)));
+			dt.Columns.Add(new DataColumn("Ins Income"));
+			dt.Columns.Add(new DataColumn("Total Income"));
+			dt.Columns.Add(new DataColumn("Total Pt Income"));
 			DataTable dtClinic=new DataTable("Clinic");
 			dtClinic.Columns.Add(new DataColumn("Provider"));
-			dtClinic.Columns.Add(new DataColumn("Production",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Adjustments",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Production"));
+			dtClinic.Columns.Add(new DataColumn("Adjustments"));
 			if(writeoffType==PPOWriteoffDateCalc.ClaimPayDate) {
-				dtClinic.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dtClinic.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Est"));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dtClinic.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dtClinic.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Pt Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Tot Prod"));
+			dtClinic.Columns.Add(new DataColumn("Pt Income"));
 			if(isUnearnedIncluded) {
-				dtClinic.Columns.Add(new DataColumn("Unearned Pt Income",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Unearned Pt Income"));
 			}
-			dtClinic.Columns.Add(new DataColumn("Ins Income",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Total Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Ins Income"));
+			dtClinic.Columns.Add(new DataColumn("Total Income"));
 			dtClinic.Columns.Add(new DataColumn("Clinic"));
-			dtClinic.Columns.Add(new DataColumn("Total Pt Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Total Pt Income"));
 			//length of array is number of months between the two dates plus one.
 			//The from date and to date will not be more than one year and must will be within the same year due to FormRpProdInc UI validation enforcement.
 			//Get a list of clinics so that we have access to their descriptions for the report.
@@ -1501,46 +1501,46 @@ namespace OpenDentBusiness {
 			DataTable dt=new DataTable("Total");
 			dt.Columns.Add(new DataColumn("Month"));
 			dt.Columns.Add(new DataColumn("Day"));
-			dt.Columns.Add(new DataColumn("Production",typeof(double)));
-			dt.Columns.Add(new DataColumn("Sched",typeof(double)));
-			dt.Columns.Add(new DataColumn("Adjustments",typeof(double)));
+			dt.Columns.Add(new DataColumn("Production"));
+			dt.Columns.Add(new DataColumn("Sched"));
+			dt.Columns.Add(new DataColumn("Adjustments"));
 			if(hasChangeInWriteoff) {
-				dt.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dt.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff Est"));
+				dt.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dt.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dt.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
-			dt.Columns.Add(new DataColumn("Pt Income",typeof(double)));
+			dt.Columns.Add(new DataColumn("Tot Prod"));
+			dt.Columns.Add(new DataColumn("Pt Income"));
 			if(isUnearnedIncluded) {
-				dt.Columns.Add(new DataColumn("Unearned Pt Income",typeof(double)));
+				dt.Columns.Add(new DataColumn("Unearned Pt Income"));
 			}
-			dt.Columns.Add(new DataColumn("Ins Income",typeof(double)));
-			dt.Columns.Add(new DataColumn("Total Income",typeof(double)));
-			dt.Columns.Add(new DataColumn("Total Pt Income",typeof(double)));
+			dt.Columns.Add(new DataColumn("Ins Income"));
+			dt.Columns.Add(new DataColumn("Total Income"));
+			dt.Columns.Add(new DataColumn("Total Pt Income"));
 			DataTable dtClinic=new DataTable("Clinic");
 			dtClinic.Columns.Add(new DataColumn("Month"));
 			dtClinic.Columns.Add(new DataColumn("Day"));
-			dtClinic.Columns.Add(new DataColumn("Production",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Sched",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Adjustments",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Production"));
+			dtClinic.Columns.Add(new DataColumn("Sched"));
+			dtClinic.Columns.Add(new DataColumn("Adjustments"));
 			if(hasChangeInWriteoff) {
-				dtClinic.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dtClinic.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Est"));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dtClinic.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dtClinic.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Pt Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Tot Prod"));
+			dtClinic.Columns.Add(new DataColumn("Pt Income"));
 			if(isUnearnedIncluded) {
-				dtClinic.Columns.Add(new DataColumn("Unearned Pt Income",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Unearned Pt Income"));
 			}
-			dtClinic.Columns.Add(new DataColumn("Ins Income",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Total Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Ins Income"));
+			dtClinic.Columns.Add(new DataColumn("Total Income"));
 			dtClinic.Columns.Add(new DataColumn("Clinic"));
-			dtClinic.Columns.Add(new DataColumn("Total Pt Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Total Pt Income"));
 			//length of array is number of months between the two dates plus one.
 			//The from date and to date will not be more than one year and must will be within the same year due to FormRpProdInc UI validation enforcement.
 			DateTime[] dates=null;
@@ -2137,43 +2137,43 @@ namespace OpenDentBusiness {
 			decimal totalincome;
 			DataTable dt=new DataTable("Total");
 			dt.Columns.Add(new DataColumn("Month"));
-			dt.Columns.Add(new DataColumn("Production",typeof(double)));
-			dt.Columns.Add(new DataColumn("Adjustments",typeof(double)));
+			dt.Columns.Add(new DataColumn("Production"));
+			dt.Columns.Add(new DataColumn("Adjustments"));
 			if(hasChangeInWriteoff) {
-				dt.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dt.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff Est"));
+				dt.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dt.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dt.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
-			dt.Columns.Add(new DataColumn("Pt Income",typeof(double)));
+			dt.Columns.Add(new DataColumn("Tot Prod"));
+			dt.Columns.Add(new DataColumn("Pt Income"));
 			if(isUnearnedIncluded) {
-				dt.Columns.Add(new DataColumn("Unearned Pt Income",typeof(double)));
+				dt.Columns.Add(new DataColumn("Unearned Pt Income"));
 			}
-			dt.Columns.Add(new DataColumn("Ins Income",typeof(double)));
-			dt.Columns.Add(new DataColumn("Total Income",typeof(double)));
-			dt.Columns.Add(new DataColumn("Total Pt Income",typeof(double)));
+			dt.Columns.Add(new DataColumn("Ins Income"));
+			dt.Columns.Add(new DataColumn("Total Income"));
+			dt.Columns.Add(new DataColumn("Total Pt Income"));
 			DataTable dtClinic=new DataTable("Clinic");
 			dtClinic.Columns.Add(new DataColumn("Month"));
-			dtClinic.Columns.Add(new DataColumn("Production",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Adjustments",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Production"));
+			dtClinic.Columns.Add(new DataColumn("Adjustments"));
 			if(hasChangeInWriteoff) {
-				dtClinic.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dtClinic.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Est"));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dtClinic.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dtClinic.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Pt Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Tot Prod"));
+			dtClinic.Columns.Add(new DataColumn("Pt Income"));
 			if(isUnearnedIncluded) {
-				dtClinic.Columns.Add(new DataColumn("Unearned Pt Income",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Unearned Pt Income"));
 			}
-			dtClinic.Columns.Add(new DataColumn("Ins Income",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Total Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Ins Income"));
+			dtClinic.Columns.Add(new DataColumn("Total Income"));
 			dtClinic.Columns.Add(new DataColumn("Clinic"));
-			dtClinic.Columns.Add(new DataColumn("Total Pt Income",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Total Pt Income"));
 			//length of array is number of months between the two dates plus one.
 			//The from date and to date will not be more than one year and must will be within the same year due to FormRpProdInc UI validation enforcement.
 			DateTime[] dates=null;

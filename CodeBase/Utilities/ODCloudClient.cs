@@ -22,8 +22,6 @@ namespace CodeBase {
 		public static bool IsApiEnabled=false;
 		///<summary>Controlled by the CloudIsAppStream preference and is set when OpenDental is launched. Used to determine if communication with the CloudClient is done via HTTP or the FileWatcher.</summary>
 		public static bool IsAppStream=false;
-		private static string _appstreamId="";
-		private static string _lastAppstreamRequest="";
 		///<summary>Used to completely shutdown attempts to use the CloudClient if we were unable to locate the FileWatcher Directory.</summary>
 		public static bool DidLocateFileWatcherDirectory=true;
 		///<summary>The directory the FileWatcher will monitor and raise events for </summary>
@@ -414,14 +412,7 @@ namespace CodeBase {
 		}
 
 		public static string CheckIsRunning() {
-			string result=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.CheckIsRunning,timeoutSecs:5,doShowProgressBar:false);
-			if(!ODBuild.IsThinfinity() && IsAppStream) {
-				var dese=JsonConvert.DeserializeObject<CloudClientResult>(result);
-				if(_appstreamId.IsNullOrEmpty() || _lastAppstreamRequest.IsNullOrEmpty() || File.Exists(ODFileUtils.CombinePaths(FileWatcherDirectory,_lastAppstreamRequest))) {
-					_appstreamId=dese.ResultData.IsNullOrEmpty() ? "" : dese.ResultData;
-				}
-			}
-			return result;
+			return SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.CheckIsRunning,doShowProgressBar:false);
 		}
 
 		///<summary>Process the api request. Parses the request data ot of requestString and sends it to the API service.</summary>
@@ -541,19 +532,14 @@ namespace CodeBase {
 			string retval="";
 			_hasReceivedResponse=false;
 			ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(data);
-			string fileName=@"data_"+args.FileIdentifier+"_";
-			if(args.ActionEnum!=CloudClientAction.CheckIsRunning) {
-				CheckIsRunning();
-			}
-			fileName+=_appstreamId+".txt";
-      string watcherPath=ODFileUtils.CombinePaths(FileWatcherDirectory,@"response");
+			string fileName=@"data_"+args.FileIdentifier+".txt";
+			string watcherPath=ODFileUtils.CombinePaths(FileWatcherDirectory,@"response");
 			_responseFilePath=ODFileUtils.CombinePaths(watcherPath,fileName);
 			try {
 				if(!Directory.Exists(watcherPath)) {
 					Directory.CreateDirectory(watcherPath);
 				}
-        File.WriteAllText(ODFileUtils.CombinePaths(FileWatcherDirectory,fileName),data);
-				_lastAppstreamRequest=fileName;
+				File.WriteAllText(ODFileUtils.CombinePaths(FileWatcherDirectory,fileName),data);
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
@@ -598,8 +584,7 @@ namespace CodeBase {
       catch(Exception ex) {
 				ex.DoNothing();
       }
-      if(!_hasReceivedResponse) {
-				_appstreamId="";
+			if(!_hasReceivedResponse) {
 				throw new ODException("Unable to communicate with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
 			}
 			retval=_response;
@@ -807,15 +792,10 @@ namespace CodeBase {
 				SendDataToBrowser(request,(int)BrowserAction.SendToODCloudClient);
 			}
 			else if(IsAppStream) {
-        ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(request);
-        string fileName=@"data_"+args.FileIdentifier+"_";
-				if(_appstreamId.IsNullOrEmpty() || _lastAppstreamRequest.IsNullOrEmpty() || File.Exists(ODFileUtils.CombinePaths(FileWatcherDirectory,_lastAppstreamRequest))) {
-					CheckIsRunning();
-				}
-				fileName+=_appstreamId+".txt";
-        File.WriteAllText(ODFileUtils.CombinePaths(FileWatcherDirectory, fileName),request);
-				_lastAppstreamRequest=fileName;
-      }
+				ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(request);
+				string fileName=@"data_"+args.FileIdentifier+".txt";
+				File.WriteAllText(ODFileUtils.CombinePaths(FileWatcherDirectory, fileName),request);
+			}
 		}
 
 		public static string GetMicrosoftAccessToken(string textUsername,string textRefreshToken) {
