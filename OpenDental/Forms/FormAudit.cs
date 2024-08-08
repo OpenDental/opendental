@@ -39,7 +39,7 @@ namespace OpenDental{
 			//Permissions
 			EnumPermType[] permissionsArray=(EnumPermType[])Enum.GetValues(typeof(EnumPermType));
 			_listPermissionsAlphabetic=new List<string>();
-			for(int i=1;i<permissionsArray.Length;i++){
+			for(int i=1;i<permissionsArray.Length;i++){//skips the None permission so it can be inserted at the top
 				if(GroupPermissions.HasAuditTrail(permissionsArray[i])) {
 					_listPermissionsAlphabetic.Add(permissionsArray[i].ToString());
 				}

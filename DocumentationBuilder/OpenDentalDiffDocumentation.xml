@@ -128,7 +128,7 @@
       <summary>Only applies when this is a TextField. Default is false, which creates a single row textbox that scrolls horizontally if text is too long. Set to true to cause text to wrap instead. This will cause the box to grow to fit the text.</summary>
     </column>
     <column order="12" name="Width" type="int(11)">
-      <summary>If this is blank/0, then width will be 100% of what's available. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". For Android phones that use 1/160" per DIP, we must scale it while taking into account the font size used for 100% FontScale. So assuming we use 16 Android DIPs for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*16. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original.</summary>
+      <summary>If this is blank/0, then width will be 100% of what's available. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". For Android phones that use 1/160" per DIP, we must scale it while taking into account the font size used for 100% FontScale. So assuming we use 16 Android DIPs for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*16. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is not available on some fields, including CheckBox, even though that's h-stackable. Width is available on RadioButtons, but it only refers to the width of the label which is left aligned in order to allow stacking of radioButtons like in allergies and problems.</summary>
     </column>
     <column order="13" name="FontScale" type="int(11)">
       <summary>Applies to both the label on the field and the field itself. Never 0. Does not apply to Label types, though, since those are only handled by editing the rich text. Always has a valid value between 50 and 300. Default is 100, indicating normal size. WPF defines a DIP as 1/96". Open Dental uses 11.5 DIPs for nearly all fonts on desktop version. Old Microsoft font sizes were based on 1/72", so 11.5 converts to old 8.6. Android defines a DIP as 1/160". Typical recommended font size on Android seems to be about 16, which translates to 9.6 MS DIPs or 7.2 old Windows font. In other words, recommended phone fonts are physically slightly smaller than desktop fonts. EForms uses font sizes based on 100% being a standard normal size. 100% equates to 11.5 on desktop, probably about 16 on Android phones, and whatever our engineers come up with for tablets. By doing it this way, we do not have to explain anything complicated to users, and they also have very good control over font sizes.</summary>
@@ -141,6 +141,14 @@
     </column>
     <column order="16" name="ConditionalValue" type="varchar(255)">
       <summary>When this field has a conditional parent, it will only show if the value of this field matches the value of the parent. For radio buttons, it matches the value of one of the radiobuttons. For checkboxes, a match is "X". If radiobutton text is too long, it matches the first 255 characters.</summary>
+    </column>
+    <column order="17" name="LabelAlign" type="tinyint(4)">
+      <summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft. Only used in RadioButtons for now.</summary>
+      <Enumeration name="EnumEFormLabelAlign">
+        <summary>Describes where the label is in relation to the rest of the field.</summary>
+        <EnumValue name="TopLeft">0-Default</EnumValue>
+        <EnumValue name="LeftLeft">1-Left of the remainder of the field, and left aligned within that space.</EnumValue>
+      </Enumeration>
     </column>
   </table>
   <table name="eformfielddef">
@@ -188,7 +196,7 @@
       <summary>Only applies when this is a TextField. Default is false, which creates a single row textbox that scrolls horizontally if text is too long. Set to true to cause text to wrap instead. This will cause the box to grow to fit the text.</summary>
     </column>
     <column order="10" name="Width" type="int(11)">
-      <summary>If this is blank/0, then width will be 100% of what's available. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". For Android phones that use 1/160" per DIP, we must scale it while taking into account the font size used for 100% FontScale. So assuming we use 16 Android DIPs for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*16. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original.</summary>
+      <summary>If this is blank/0, then width will be 100% of what's available. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". For Android phones that use 1/160" per DIP, we must scale it while taking into account the font size used for 100% FontScale. So assuming we use 16 Android DIPs for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*16. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is not available on some fields, including CheckBox, even though that's h-stackable. Width is available on RadioButtons, but it only refers to the width of the label which is left aligned in order to allow stacking of radioButtons like in allergies and problems.</summary>
     </column>
     <column order="11" name="FontScale" type="int(11)">
       <summary>Applies to both the label on the field and the field itself. Never 0. Does not apply to Label types, though, since those are only handled by editing the rich text. Always has a valid value between 50 and 300. Default is 100, indicating normal size. WPF defines a DIP as 1/96". Open Dental uses 11.5 DIPs for nearly all fonts on desktop version. Old Microsoft font sizes were based on 1/72", so 11.5 converts to old 8.6. Android defines a DIP as 1/160". Typical recommended font size on Android seems to be about 16, which translates to 9.6 MS DIPs or 7.2 old Windows font. In other words, recommended phone fonts are physically slightly smaller than desktop fonts. EForms uses font sizes based on 100% being a standard normal size. 100% equates to 11.5 on desktop, probably about 16 on Android phones, and whatever our engineers come up with for tablets. By doing it this way, we do not have to explain anything complicated to users, and they also have very good control over font sizes.</summary>
@@ -201,6 +209,14 @@
     </column>
     <column order="14" name="ConditionalValue" type="varchar(255)">
       <summary>When this field has a conditional parent, it will only show if the value of this field matches the value of the parent. For radio buttons, it matches the value of one of the radiobuttons. For checkboxes, a match is "X". If radiobutton text is too long, it matches the first 255 characters.</summary>
+    </column>
+    <column order="15" name="LabelAlign" type="tinyint(4)">
+      <summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft. Only used in RadioButtons for now.</summary>
+      <Enumeration name="EnumEFormLabelAlign">
+        <summary>Describes where the label is in relation to the rest of the field.</summary>
+        <EnumValue name="TopLeft">0-Default</EnumValue>
+        <EnumValue name="LeftLeft">1-Left of the remainder of the field, and left aligned within that space.</EnumValue>
+      </Enumeration>
     </column>
   </table>
   <table name="eroutingaction">

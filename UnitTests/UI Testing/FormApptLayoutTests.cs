@@ -43,6 +43,7 @@ namespace UnitTests{
 			_listScenarios.Add(Test16());
 			_listScenarios.Add(Test17());
 			_listScenarios.Add(Test18());
+			_listScenarios.Add(Test19());
 			
 			RunTests();
 			//only gets filled on load
@@ -354,6 +355,22 @@ namespace UnitTests{
 			scenario.ResultExpected="0,84,100,36;0,120,75,36;0,156,75,48;75,120,75,36;75,156,75,48;150,84,75,120;225,168,75,48";
 			return scenario;
 		}
+
+		private ScenarioApptUnitTest Test19() {
+			ScenarioApptUnitTest scenario = new ScenarioApptUnitTest();
+			scenario.DescriptionShort="19: The last appt doesn't trigger resizing";
+			scenario.Details="";
+			scenario.TableAppointments=GenerateTableAppts();
+			scenario.AddRow(TimeSpan.FromMinutes(70),TimeSpan.FromMinutes(60));
+			scenario.AddRow(TimeSpan.FromMinutes(130),TimeSpan.FromMinutes(30));
+			scenario.AddRow(TimeSpan.FromMinutes(120),TimeSpan.FromMinutes(40));
+			scenario.AddRow(TimeSpan.FromMinutes(70),TimeSpan.FromMinutes(50));
+			scenario.AddRow(TimeSpan.FromMinutes(70),TimeSpan.FromMinutes(40));
+			scenario.AddRow(TimeSpan.FromMinutes(110),TimeSpan.FromMinutes(20));
+			scenario.ResultExpected="0,84,100,72;0,156,100,36;100,144,100,48;100,84,100,60;200,84,100,48;200,132,100,24";
+			return scenario;
+		}
+
 
 		private DataTable GenerateTableAppts(){
 			DataTable table=new DataTable();

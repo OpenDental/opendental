@@ -31,6 +31,8 @@ namespace OpenDental {
 			this.checkRelease = new OpenDental.UI.CheckBox();
 			this.textSubscriber = new System.Windows.Forms.TextBox();
 			this.groupSubscriber = new OpenDental.UI.GroupBox();
+			this.labelAssign = new System.Windows.Forms.Label();
+			this.labelRelease = new System.Windows.Forms.Label();
 			this.butChange = new OpenDental.UI.Button();
 			this.label25 = new System.Windows.Forms.Label();
 			this.textSubscriberID = new System.Windows.Forms.TextBox();
@@ -63,6 +65,7 @@ namespace OpenDental {
 			this.textPatID = new System.Windows.Forms.TextBox();
 			this.labelPatID = new System.Windows.Forms.Label();
 			this.panelPat = new System.Windows.Forms.Panel();
+			this.labelPending = new System.Windows.Forms.Label();
 			this.butAuditPat = new OpenDental.UI.Button();
 			this.butHistory = new OpenDental.UI.Button();
 			this.butPatOrtho = new OpenDental.UI.Button();
@@ -258,18 +261,16 @@ namespace OpenDental {
 			// 
 			this.checkAssign.Location = new System.Drawing.Point(285, 54);
 			this.checkAssign.Name = "checkAssign";
-			this.checkAssign.Size = new System.Drawing.Size(224, 20);
+			this.checkAssign.Size = new System.Drawing.Size(18, 17);
 			this.checkAssign.TabIndex = 4;
-			this.checkAssign.Text = "Assignment of Benefits (pay provider)";
 			this.checkAssign.Click += new System.EventHandler(this.CheckAssign_Click);
 			// 
 			// checkRelease
 			// 
 			this.checkRelease.Location = new System.Drawing.Point(285, 36);
 			this.checkRelease.Name = "checkRelease";
-			this.checkRelease.Size = new System.Drawing.Size(205, 20);
+			this.checkRelease.Size = new System.Drawing.Size(18, 17);
 			this.checkRelease.TabIndex = 3;
-			this.checkRelease.Text = "Release of Information";
 			// 
 			// textSubscriber
 			// 
@@ -281,6 +282,8 @@ namespace OpenDental {
 			// 
 			// groupSubscriber
 			// 
+			this.groupSubscriber.Controls.Add(this.labelAssign);
+			this.groupSubscriber.Controls.Add(this.labelRelease);
 			this.groupSubscriber.Controls.Add(this.butChange);
 			this.groupSubscriber.Controls.Add(this.checkAssign);
 			this.groupSubscriber.Controls.Add(this.label25);
@@ -299,6 +302,24 @@ namespace OpenDental {
 			this.groupSubscriber.Size = new System.Drawing.Size(510, 176);
 			this.groupSubscriber.TabIndex = 2;
 			this.groupSubscriber.Text = "Subscriber Information";
+			// 
+			// labelAssign
+			// 
+			this.labelAssign.Location = new System.Drawing.Point(300, 54);
+			this.labelAssign.Name = "labelAssign";
+			this.labelAssign.Size = new System.Drawing.Size(206, 17);
+			this.labelAssign.TabIndex = 193;
+			this.labelAssign.Text = "Assignment of Benefits (pay provider)";
+			this.labelAssign.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// labelRelease
+			// 
+			this.labelRelease.Location = new System.Drawing.Point(300, 36);
+			this.labelRelease.Name = "labelRelease";
+			this.labelRelease.Size = new System.Drawing.Size(130, 17);
+			this.labelRelease.TabIndex = 193;
+			this.labelRelease.Text = "Release of Information";
+			this.labelRelease.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// butChange
 			// 
@@ -520,11 +541,10 @@ namespace OpenDental {
 			// checkIsPending
 			// 
 			this.checkIsPending.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsPending.Location = new System.Drawing.Point(515, 29);
+			this.checkIsPending.Location = new System.Drawing.Point(593, 29);
 			this.checkIsPending.Name = "checkIsPending";
-			this.checkIsPending.Size = new System.Drawing.Size(97, 16);
+			this.checkIsPending.Size = new System.Drawing.Size(18, 17);
 			this.checkIsPending.TabIndex = 3;
-			this.checkIsPending.Text = "Pending";
 			// 
 			// label32
 			// 
@@ -587,6 +607,7 @@ namespace OpenDental {
 			// 
 			// panelPat
 			// 
+			this.panelPat.Controls.Add(this.labelPending);
 			this.panelPat.Controls.Add(this.butAuditPat);
 			this.panelPat.Controls.Add(this.butHistory);
 			this.panelPat.Controls.Add(this.butPatOrtho);
@@ -612,6 +633,15 @@ namespace OpenDental {
 			this.panelPat.Name = "panelPat";
 			this.panelPat.Size = new System.Drawing.Size(982, 90);
 			this.panelPat.TabIndex = 15;
+			// 
+			// labelPending
+			// 
+			this.labelPending.Location = new System.Drawing.Point(536, 29);
+			this.labelPending.Name = "labelPending";
+			this.labelPending.Size = new System.Drawing.Size(61, 17);
+			this.labelPending.TabIndex = 193;
+			this.labelPending.Text = "Pending";
+			this.labelPending.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// butAuditPat
 			// 
@@ -2249,5 +2279,8 @@ namespace OpenDental {
 		private Label label40;
 		private Label label12;
 		private Label labelPerVisit;
+		private Label labelRelease;
+		private Label labelAssign;
+		private Label labelPending;
 	}
 }

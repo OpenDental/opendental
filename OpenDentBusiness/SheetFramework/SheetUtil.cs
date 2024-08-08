@@ -81,7 +81,18 @@ namespace OpenDentBusiness{
 						field.Height=0;//Set height to zero so that it will not cause extra pages to print.
 					}
 				}
-				if(field.GrowthBehavior==GrowthBehaviorEnum.None){//Images don't have growth behavior, so images are excluded below this point.
+				int printableHeight=sheet.Height-topMargin-bottomMargin;
+				if((field.FieldType==SheetFieldType.SigBox || field.FieldType==SheetFieldType.SigBoxPractice) && field.Height<=printableHeight) {//if Sigbox and can fit a single page
+					int currentPageNum=Convert.ToInt32(Math.Ceiling((double)(field.YPos-topMargin)/printableHeight));
+					int pageMaxY=(currentPageNum*printableHeight)+topMargin;
+					if(field.YPos<=pageMaxY && field.YPos+field.Height>pageMaxY) {//Field is split between 2 pages.
+						int yPosNew=(currentPageNum*printableHeight)+topMargin+1;//Set to top of next page, plus 1 for padding.
+						int amountChanged=yPosNew-field.YPos;
+						MoveAllDownWhichIntersect(sheet,field,amountChanged);
+						field.YPos=yPosNew;//Update signature box y position after moving other fields down
+					}
+				}
+				if(field.GrowthBehavior==GrowthBehaviorEnum.None){//Images or SigBoxes don't have growth behavior, so they are excluded below this point.
 					continue;
 				}
 				fontstyle=FontStyle.Regular;
@@ -100,7 +111,6 @@ namespace OpenDentBusiness{
 							DataTable tableClaimsPaid=SheetDataTableUtil.GetDataTableForGridType(sheet,dataSet,field.FieldName,stmt,medLab);
 							DataTable tableCodes=SheetDataTableUtil.GetDataTableForGridType(sheet,dataSet,"EraClaimsPaidCodes",stmt,medLab);
 							SheetDef gridHeaderSheetDef=SheetDefs.GetInternalOrCustom(SheetInternalType.ERAGridHeader);
-							int printableHeight=sheet.Height-topMargin-bottomMargin;
 							calcH=0;
 							foreach(Hx835_Claim claim in era.ListClaimsPaid) {
 								int pageMaxY=printableHeight*((calcH/printableHeight)+1);

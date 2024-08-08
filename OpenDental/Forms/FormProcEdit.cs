@@ -164,7 +164,7 @@ namespace OpenDental {
 				butLock.Visible=false;
 			}
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.TreatPlanDiscountAdjustmentType));
-			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def)) {
+			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,DateTime.Today)) {
 				textDiscount.Enabled=false;
 			}
 			if(IsNew){

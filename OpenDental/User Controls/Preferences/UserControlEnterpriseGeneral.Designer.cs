@@ -137,7 +137,7 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(333, 148);
+			this.label2.Location = new System.Drawing.Point(332, 167);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(94, 18);
 			this.label2.TabIndex = 294;
@@ -147,7 +147,7 @@ namespace OpenDental {
 			// textEnterpriseExactMatchPhoneNumDigits
 			// 
 			this.textEnterpriseExactMatchPhoneNumDigits.Enabled = false;
-			this.textEnterpriseExactMatchPhoneNumDigits.Location = new System.Drawing.Point(427, 146);
+			this.textEnterpriseExactMatchPhoneNumDigits.Location = new System.Drawing.Point(427, 167);
 			this.textEnterpriseExactMatchPhoneNumDigits.MaxVal = 25;
 			this.textEnterpriseExactMatchPhoneNumDigits.MinVal = 1;
 			this.textEnterpriseExactMatchPhoneNumDigits.Name = "textEnterpriseExactMatchPhoneNumDigits";
@@ -158,7 +158,7 @@ namespace OpenDental {
 			// checkEnterpriseExactMatchPhone
 			// 
 			this.checkEnterpriseExactMatchPhone.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEnterpriseExactMatchPhone.Location = new System.Drawing.Point(129, 171);
+			this.checkEnterpriseExactMatchPhone.Location = new System.Drawing.Point(130, 145);
 			this.checkEnterpriseExactMatchPhone.Name = "checkEnterpriseExactMatchPhone";
 			this.checkEnterpriseExactMatchPhone.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkEnterpriseExactMatchPhone.Size = new System.Drawing.Size(337, 18);

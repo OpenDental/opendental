@@ -35,33 +35,33 @@ namespace OpenDentBusiness {
 			DataTable dt=new DataTable("Total");
 			dt.Columns.Add(new DataColumn("Date"));
 			dt.Columns.Add(new DataColumn("Weekday"));
-			dt.Columns.Add(new DataColumn("Production",typeof(double)));
-			dt.Columns.Add(new DataColumn("Prod Goal",typeof(double)));
-			dt.Columns.Add(new DataColumn("Scheduled",typeof(double)));
-			dt.Columns.Add(new DataColumn("Adjusts",typeof(double)));
+			dt.Columns.Add(new DataColumn("Production"));
+			dt.Columns.Add(new DataColumn("Prod Goal"));
+			dt.Columns.Add(new DataColumn("Scheduled"));
+			dt.Columns.Add(new DataColumn("Adjusts"));
 			if(writeoffPayType==PPOWriteoffDateCalc.ClaimPayDate) {
-				dt.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dt.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff Est"));
+				dt.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dt.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dt.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dt.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
+			dt.Columns.Add(new DataColumn("Tot Prod"));
 			DataTable dtClinic=new DataTable("Clinic");
 			dtClinic.Columns.Add(new DataColumn("Date"));
 			dtClinic.Columns.Add(new DataColumn("Weekday"));
-			dtClinic.Columns.Add(new DataColumn("Production",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Prod Goal",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Scheduled",typeof(double)));
-			dtClinic.Columns.Add(new DataColumn("Adjusts",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Production"));
+			dtClinic.Columns.Add(new DataColumn("Prod Goal"));
+			dtClinic.Columns.Add(new DataColumn("Scheduled"));
+			dtClinic.Columns.Add(new DataColumn("Adjusts"));
 			if(writeoffPayType==PPOWriteoffDateCalc.ClaimPayDate) {
-				dtClinic.Columns.Add(new DataColumn("Writeoff Est",typeof(double)));
-				dtClinic.Columns.Add(new DataColumn("Writeoff Adj",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Est"));
+				dtClinic.Columns.Add(new DataColumn("Writeoff Adj"));
 			}
 			else {
-				dtClinic.Columns.Add(new DataColumn("Writeoff",typeof(double)));
+				dtClinic.Columns.Add(new DataColumn("Writeoff"));
 			}
-			dtClinic.Columns.Add(new DataColumn("Tot Prod",typeof(double)));
+			dtClinic.Columns.Add(new DataColumn("Tot Prod"));
 			dtClinic.Columns.Add(new DataColumn("Clinic"));
 			//length of array is number of months between the two dates plus one.
 			//The from date and to date will not be more than one year and must will be within the same year due to FormRpProdInc UI validation enforcement.

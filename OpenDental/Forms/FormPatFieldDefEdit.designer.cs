@@ -47,8 +47,6 @@ namespace OpenDental {
 			this.butUp = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butMerge = new OpenDental.UI.Button();
-			this.labelSaveMsg2 = new System.Windows.Forms.Label();
-			this.labelSaveMsg1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// butSave
@@ -171,29 +169,9 @@ namespace OpenDental {
 			this.butMerge.Text = "&Merge";
 			this.butMerge.Click += new System.EventHandler(this.butMerge_Click);
 			// 
-			// labelSaveMsg2
-			// 
-			this.labelSaveMsg2.Location = new System.Drawing.Point(152, 406);
-			this.labelSaveMsg2.Name = "labelSaveMsg2";
-			this.labelSaveMsg2.Size = new System.Drawing.Size(200, 15);
-			this.labelSaveMsg2.TabIndex = 170;
-			this.labelSaveMsg2.Text = "Saves Patient Field Def only";
-			this.labelSaveMsg2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// labelSaveMsg1
-			// 
-			this.labelSaveMsg1.Location = new System.Drawing.Point(360, 320);
-			this.labelSaveMsg1.Name = "labelSaveMsg1";
-			this.labelSaveMsg1.Size = new System.Drawing.Size(75, 75);
-			this.labelSaveMsg1.TabIndex = 171;
-			this.labelSaveMsg1.Text = "List items are automatically saved when changed";
-			this.labelSaveMsg1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
 			// FormPatFieldDefEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(447, 437);
-			this.Controls.Add(this.labelSaveMsg1);
-			this.Controls.Add(this.labelSaveMsg2);
 			this.Controls.Add(this.butMerge);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butDown);
@@ -230,7 +208,5 @@ namespace OpenDental {
 		private UI.Button butUp;
 		private UI.Button butAdd;
 		private UI.Button butMerge;
-		private Label labelSaveMsg2;
-		private Label labelSaveMsg1;
 	}
 }

@@ -271,8 +271,6 @@ namespace OpenDental {
 				butUp.Visible=true;
 				butDown.Visible=true;
 				butMerge.Visible=true;
-				labelSaveMsg1.Visible=true;
-				labelSaveMsg2.Visible=true;
 			}
 			else if(makeVisible==false) {
 				gridPickListItems.Visible=false;
@@ -280,8 +278,6 @@ namespace OpenDental {
 				butUp.Visible=false;
 				butDown.Visible=false;
 				butMerge.Visible=false;
-				labelSaveMsg1.Visible=false;
-				labelSaveMsg2.Visible=false;
 			}
 			else {//to the opposite of whatever it was
 				gridPickListItems.Visible=!gridPickListItems.Visible;
@@ -289,8 +285,6 @@ namespace OpenDental {
 				butUp.Visible=!butUp.Visible;
 				butDown.Visible=!butDown.Visible;
 				butMerge.Visible=!butMerge.Visible;
-				labelSaveMsg1.Visible=!labelSaveMsg1.Visible;
-				labelSaveMsg2.Visible=!labelSaveMsg2.Visible;
 			}
 		}
 

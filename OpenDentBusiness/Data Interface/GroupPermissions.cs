@@ -396,7 +396,7 @@ namespace OpenDentBusiness{
 			return GetWhere(x => x.PermType == permType && listUserGroupNums.Contains(x.UserGroupNum));
 		}
 
-		///<summary>Gets permissions that actually generate audit trail entries.</summary>
+		///<summary>Gets permissions that actually generate audit trail entries. Returns false for HQ-only preferences if not at HQ.</summary>
 		public static bool HasAuditTrail(EnumPermType permType) {
 			//No need to check MiddleTierRole; no call to db.
 			switch(permType) {//If commented, has an audit trail. In the order they appear in Permissions enumeration
@@ -452,7 +452,7 @@ namespace OpenDentBusiness{
 				case EnumPermType.AdjustmentEditZero:
 				case EnumPermType.EhrEmergencyAccess:
 				//case Permissions.ProcDelete:
-				case EnumPermType.EhrKeyAdd:
+				//case EnumPermType.EhrKeyAdd:
 				//case Permissions.ProviderEdit:
 				case EnumPermType.EcwAppointmentRevise:
 				case EnumPermType.ProcedureNoteFull:
@@ -570,7 +570,7 @@ namespace OpenDentBusiness{
 				case EnumPermType.TreatPlanSign:
 				case EnumPermType.UnrestrictedSearch:
 				case EnumPermType.ArchivedPatientEdit:
-				case EnumPermType.CommlogPersistent:
+				//case EnumPermType.CommlogPersistent:
 				//case Permissions.VerifyPhoneOwnership
 				//case Permissions.SalesTaxAdjEdit://All other adjustment operations are already audited.
 				//case Permissions.AgingRan:
@@ -580,7 +580,7 @@ namespace OpenDentBusiness{
 				case EnumPermType.NewClaimsProcNotBilled:
 				//case Permissions.PatientPortalLogin:
 				//case Permissions.FAQEdit:
-				case EnumPermType.FeatureRequestEdit:
+				//case EnumPermType.FeatureRequestEdit:
 				//case Permissions.SupplementalBackup:
 				//case Permissions.WebSchedRecallManualSend:
 				//case Permissions.PatientSSNView:
@@ -636,6 +636,7 @@ namespace OpenDentBusiness{
 				//case Permissions.AppointmentDelete:
 				//case Permissions.AppointmentCompleteDelete:
 				//case Permissions.AppointmentTypeEdit:
+				//case Permissions.TextingAccountEdit:
 				//case Permissions.WebChatEdit:
 				case EnumPermType.SupplierEdit:
 				//case Permissions.SupplyPurchases:
@@ -645,22 +646,28 @@ namespace OpenDentBusiness{
 				case EnumPermType.ViewAppointmentAuditTrail:
 				//case Permissions.PayPlanChargeEdit:
 				case EnumPermType.ArchivedPatientSelect:
-				case EnumPermType.CloudCustomerEdit:
+				//case EnumPermType.CloudCustomerEdit:
 				//case Permissions.ChanSpy
 				case EnumPermType.ClaimProcFeeBilledToInsEdit:
 				//case Permissions.AllergyMerge
+				//case Permissions.AiChatSession:
 				//case Permissions.BadgeIdEdit
 				return false;//Does not have audit Trail if uncommented.
 			}
 			if(!PrefC.IsODHQ && permType.In(
 					//These permissions are only used at OD HQ
+					EnumPermType.EhrKeyAdd,
+					EnumPermType.CommlogPersistent,
 					EnumPermType.VerifyPhoneOwnership,
+					EnumPermType.SalesTaxAdjEdit,
 					EnumPermType.HeadmasterSetup,
 					EnumPermType.FAQEdit,
+					EnumPermType.FeatureRequestEdit,
 					EnumPermType.EditReadOnlyTasks,
 					EnumPermType.TextingAccountEdit,
 					EnumPermType.PreferenceEditBroadcastMonitor,
 					EnumPermType.CloudCustomerEdit,
+					EnumPermType.ChanSpy,
 					EnumPermType.AiChatSession
 				)) 
 			{

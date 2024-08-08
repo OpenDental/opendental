@@ -2066,6 +2066,8 @@ namespace OpenDental.UI{
 					}
 					listOverlaps[k].OverlapSections=(int)narrowest;
 					CreateRectangle(listOverlaps[k]);
+					int recurseCount=0;
+					ProcessOverlaps(listApptLayoutInfos,listOverlaps,widthCol,apptLayoutInfo.IdxOp,widthNarrowedOnRight,isWeeklyView,widthWeekDay,widthWeekAppt,recurseCount);
 				}
 				//Look for an open spot
 				bool foundSpot=false;

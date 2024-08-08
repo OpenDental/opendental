@@ -369,6 +369,7 @@ namespace OpenDental {
 					}
 				}
 				textOrdinal.Text=_patPlan.Ordinal.ToString();
+				//The label for this checkbox is intentionally separate to prevent inadvertant clicking. Job 53588.
 				checkIsPending.Checked=_patPlan.IsPending;
 				textPatID.Text=_patPlan.PatID;
 				FillPatientAdjustments();
@@ -388,7 +389,9 @@ namespace OpenDental {
 				else {
 					textDateTerm.Text=_insSub.DateTerm.ToString("d");
 				}
+				//The label for this checkbox is intentionally separate to prevent inadvertant clicking. Job 53588.
 				checkRelease.Checked=_insSub.ReleaseInfo;
+				//The label for this checkbox is intentionally separate to prevent inadvertant clicking. Job 53588.
 				checkAssign.Checked=_insSub.AssignBen;
 				textSubscNote.Text=_insSub.SubscNote;
 			}

@@ -649,8 +649,15 @@ namespace OpenDental{
 			textRedCAL.Text =PrefC.GetString(PrefName.PerioRedCAL);
 			textRedFurc.Text=PrefC.GetString(PrefName.PerioRedFurc);
 			textRedMob.Text =PrefC.GetString(PrefName.PerioRedMob);
-			if(Programs.IsEnabled(ProgramName.BolaAI)) {
-				butListen.Visible=false;
+			Program program=Programs.GetCur(ProgramName.BolaAI);
+			ProgramProperty programProperty=ProgramProperties.GetPropForProgByDesc(program.ProgramNum,ProgramProperties.PropertyDescs.ClinicHideButton,_patient.ClinicNum);
+			if(program.Enabled) {
+				if(programProperty==null) {
+					butListen.Visible=false;
+				}
+				else {//Bola AI is enabled but hidden for the patient's clinic
+					butBolaLaunch.Visible=false;
+				}
 				butBolaGet.Visible=false;
 			}
 			else {

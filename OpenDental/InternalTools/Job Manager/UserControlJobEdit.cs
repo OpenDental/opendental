@@ -327,12 +327,18 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void menuItemAppointmentsUnlink_Click(object sender,EventArgs e) {
+			if(gridAppointments.GetSelectedIndex()<0) {
+				return;
+			}
 			long FKey=gridAppointments.SelectedTag<Appointment>().AptNum;
 			RemoveJobLink(JobLinkType.Appointment,FKey);
 			FillGridAppointments();
 		}
 
 		private void menuItemBugsUnlink_Click(object sender,EventArgs e) {
+			if(gridBugs.GetSelectedIndex()<0) {
+				return;
+			}
 			if(gridBugs.ListGridRows[gridBugs.GetSelectedIndex()].Tag.GetType()==typeof(MobileBug)) {
 				RemoveJobLink(JobLinkType.MobileBug,gridBugs.SelectedTag<MobileBug>().MobileBugNum);
 			}
@@ -343,6 +349,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void menuItemBugsViewSubmissions_Click(object sender,EventArgs e) {
+			if(gridBugs.GetSelectedIndex()<0) {
+				return;
+			}
 			if(gridBugs.ListGridRows[gridBugs.GetSelectedIndex()].Tag.GetType()==typeof(MobileBug)) {
 				MsgBox.Show("Submissions for mobile bugs is currently unsupported.");
 			}
@@ -354,16 +363,25 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void menuItemCustomersGoToChart_Click(object sender,EventArgs e) {
+			if(gridCustomers.GetSelectedIndex()<0) {
+				return;
+			}
 			GlobalFormOpenDental.GotoChart(gridCustomers.SelectedTag<Patient>().PatNum);
 		}
 
 		private void menuItemCustomersUnlink_Click(object sender,EventArgs e) {
+			if(gridCustomers.GetSelectedIndex()<0) {
+				return;
+			}
 			long FKey=gridCustomers.SelectedTag<Patient>().PatNum;
 			RemoveJobLink(JobLinkType.Customer,FKey);
 			FillGridCustomers();
 		}
 
 		private void menuItemFeatureRequestsUnlink_Click(object sender,EventArgs e) {
+			if(gridFeatureReq.GetSelectedIndex()<0) {
+				return;
+			}
 			long FKey=gridFeatureReq.SelectedTag<long>();
 			List<JobLink> listLinks=_jobCur.ListJobLinks.FindAll(x => x.LinkType==JobLinkType.Request&&x.FKey==FKey);
 			FeatureRequests.MarkAsApproved(listLinks.Select(x => x.JobLinkNum).ToList());
@@ -442,6 +460,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void menuItemTasksUnlink_Click(object sender,EventArgs e) {
+			if(gridTasks.GetSelectedIndex()<0) {
+				return;
+			}
 			long FKey=gridTasks.SelectedTag<long>();
 			RemoveJobLink(JobLinkType.Task,FKey);
 			FillGridTasks();
