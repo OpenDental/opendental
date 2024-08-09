@@ -535,18 +535,20 @@ namespace CodeBase {
 			string fileName=@"data_"+args.FileIdentifier+".txt";
 			string watcherPath=ODFileUtils.CombinePaths(FileWatcherDirectory,@"response");
 			_responseFilePath=ODFileUtils.CombinePaths(watcherPath,fileName);
+			string tempRequestFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","request_"+fileName);
 			try {
 				if(!Directory.Exists(watcherPath)) {
 					Directory.CreateDirectory(watcherPath);
 				}
-				File.WriteAllText(ODFileUtils.CombinePaths(FileWatcherDirectory,fileName),data);
+        File.WriteAllText(tempRequestFilePath,data);
+				File.Move(tempRequestFilePath,ODFileUtils.CombinePaths(FileWatcherDirectory,fileName));
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
 				throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
 			}
 			DateTime start=DateTime.Now;
-			string tempResponseFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental",fileName);
+			string tempResponseFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","response_"+fileName);
 			void waitForResponse() {
 				while(!_hasReceivedResponse && (DateTime.Now-start).TotalSeconds<timeoutSecs) {
 					try {
@@ -580,6 +582,12 @@ namespace CodeBase {
       }
       try {
 				File.Delete(tempResponseFilePath);
+      }
+      catch(Exception ex) {
+				ex.DoNothing();
+      }
+      try {
+				File.Delete(tempRequestFilePath);
       }
       catch(Exception ex) {
 				ex.DoNothing();
@@ -794,7 +802,21 @@ namespace CodeBase {
 			else if(IsAppStream) {
 				ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(request);
 				string fileName=@"data_"+args.FileIdentifier+".txt";
-				File.WriteAllText(ODFileUtils.CombinePaths(FileWatcherDirectory, fileName),request);
+				string tempRequestFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","request_"+fileName);
+				try {
+					File.WriteAllText(tempRequestFilePath,request);
+					File.Move(tempRequestFilePath,ODFileUtils.CombinePaths(FileWatcherDirectory,fileName));
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
+				}
+				try {
+					File.Delete(tempRequestFilePath);
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+				}
 			}
 		}
 

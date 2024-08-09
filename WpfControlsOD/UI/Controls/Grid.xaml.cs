@@ -724,7 +724,7 @@ using WpfControls.UI;
 					continue;
 				}
 				TextBlock textBlock=new TextBlock();
-				textBlock.Width=Columns[i].State.Width-3;
+				textBlock.Width=Math.Max(0,Columns[i].State.Width-3);
 				if(WrapText){
 					textBlock.TextWrapping=TextWrapping.Wrap;
 					//textBlock.Height=double.NaN

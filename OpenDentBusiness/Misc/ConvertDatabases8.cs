@@ -1462,5 +1462,28 @@ namespace OpenDentBusiness {
 			//End S54250
 		}//End of 24_1_37()
 
+		private static void To24_1_60() {
+			//Start B55522
+			string command="SELECT ProgramNum FROM program WHERE ProgName='XDR'";
+			long programNum=Db.GetLong(command);
+			command="SELECT PropertyDesc,ComputerName,ClinicNum,IsMasked,IsHighSecurity,MIN(ProgramPropertyNum) ProgPropMin,COUNT(*) CountDup "
+				+"FROM programproperty "
+				+"WHERE ProgramNum="+POut.Long(programNum)+" "
+				+"GROUP BY PropertyDesc,ComputerName,ClinicNum,IsMasked,IsHighSecurity "
+				+"HAVING COUNT(*)>1";
+			DataTable table=Db.GetTable(command);
+			for(int i=0;i<table.Rows.Count;i++) {
+				DataRow row=table.Rows[i];
+				command="DELETE FROM programproperty "
+					+"WHERE ProgramNum="+POut.Long(programNum)+" "
+					+"AND PropertyDesc='"+POut.String(PIn.String(row["PropertyDesc"].ToString()))+"' "
+					+"AND ComputerName='"+POut.String(PIn.String(row["ComputerName"].ToString()))+"' "
+					+"AND ClinicNum="+POut.Long(PIn.Long(row["ClinicNum"].ToString()))+" "
+					+"AND IsMasked="+POut.Bool(PIn.Bool(row["IsMasked"].ToString()))+" "
+					+"AND IsHighSecurity="+POut.Bool(PIn.Bool(row["IsHighSecurity"].ToString()))+" "
+					+"AND ProgramPropertyNum!="+POut.Long(PIn.Long(row["ProgPropMin"].ToString()));
+				Db.NonQ(command);
+			}//End B55522
+		}//End of 24_1_60()
 	}
 }

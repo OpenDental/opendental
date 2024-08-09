@@ -122,7 +122,6 @@ namespace OpenDental {
 			this.groupDentalSchools.Name = "groupDentalSchools";
 			this.groupDentalSchools.Size = new System.Drawing.Size(273, 174);
 			this.groupDentalSchools.TabIndex = 1;
-			this.groupDentalSchools.TabStop = false;
 			this.groupDentalSchools.Text = "Dental Schools Search by:";
 			// 
 			// label8
@@ -262,7 +261,6 @@ namespace OpenDental {
 			this.groupCreateUsers.Name = "groupCreateUsers";
 			this.groupCreateUsers.Size = new System.Drawing.Size(273, 76);
 			this.groupCreateUsers.TabIndex = 2;
-			this.groupCreateUsers.TabStop = false;
 			this.groupCreateUsers.Text = "Create Users";
 			// 
 			// comboUserGroup
@@ -297,7 +295,6 @@ namespace OpenDental {
 			this.groupMovePats.Name = "groupMovePats";
 			this.groupMovePats.Size = new System.Drawing.Size(273, 132);
 			this.groupMovePats.TabIndex = 3;
-			this.groupMovePats.TabStop = false;
 			this.groupMovePats.Text = "Move Patients";
 			// 
 			// butMoveSec
@@ -342,11 +339,11 @@ namespace OpenDental {
 			// 
 			// labelReassign
 			// 
-			this.labelReassign.Location = new System.Drawing.Point(8, 98);
+			this.labelReassign.Location = new System.Drawing.Point(8, 85);
 			this.labelReassign.Name = "labelReassign";
-			this.labelReassign.Size = new System.Drawing.Size(168, 31);
+			this.labelReassign.Size = new System.Drawing.Size(168, 44);
 			this.labelReassign.TabIndex = 18;
-			this.labelReassign.Text = "Reassigns primary provider to most-used provider\r\n";
+			this.labelReassign.Text = "Reassigns patients to a different primary provider based on past procedures\r\n";
 			this.labelReassign.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label2
@@ -416,7 +413,6 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(273, 91);
 			this.groupBox1.TabIndex = 19;
-			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Provider Order";
 			// 
 			// butAlphabetize
