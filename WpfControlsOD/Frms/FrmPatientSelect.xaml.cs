@@ -72,8 +72,6 @@ End of Checklist================================================================
 		private bool _isPreFillLoad=false;
 		///<summary>If set, initial patient list will be set to these patients.</summary>
 		public List<long> ListPatNumsExplicit;
-		private DateTime _dateTimeLastSearch;
-		private DateTime _dateTimeLastRequest;
 		private Process _processOnScreenKeyboard=null;
 		private List<Site> _listSites;
 		private List<Def> _listDefsBillingType;
@@ -83,7 +81,7 @@ End of Checklist================================================================
 		private MenuItem menuItemUnmaskDOB;
 		private System.Windows.Controls.Separator separator;
 		private FilterControlsAndAction _filterControlsAndAction;
-		private bool _doLimitOnePage=false;
+		private bool _doLimitOnePage=true;
 		/// <summary>Used so that if the checkbox for refresh while typing is unchecked, the grid doesn't refresh upon typing.</summary>
 		private bool _ignoreRefresh=false;
 		///<summary>Used for determining the accept button. False means that the search button will be the accept button, and true means the OK button will be the accept button.</summary>
@@ -256,7 +254,6 @@ End of Checklist================================================================
 			}
 			checkShowMerged.Visibility=Visibility.Hidden;
 			if(ListPatNumsExplicit!=null && ListPatNumsExplicit.Count>0) {
-				_doLimitOnePage=false;
 				_ignoreRefresh=true;
 				FillGrid(RefreshFromDb());
 				return;
@@ -272,7 +269,6 @@ End of Checklist================================================================
 			//Always fillGrid if _isPreFilledLoad.  Since the first name and last name are pre-filled, the results should be minimal.
 			//Also FillGrid if checkRefresh is checked and either PatientSelectSearchWithEmptyParams is set or there is a character in at least one textbox
 			if(_isPreFillLoad || DoRefreshGrid()) {
-				_doLimitOnePage=true;
 				_ignoreRefresh=true;
 				FillGrid(RefreshFromDb());
 				_isPreFillLoad=false;
@@ -496,8 +492,6 @@ End of Checklist================================================================
 			if(Dispatcher.Invoke(()=>checkRefresh.Checked)==false && !_ignoreRefresh){
 				return _tablePats;
 			}
-			_dateTimeLastRequest=DateTime.Now;
-			_dateTimeLastSearch=_dateTimeLastRequest;
 			long billingType=0;
 			if(comboBillingType.SelectedIndex!=0) {
 				billingType=_listDefsBillingType[comboBillingType.SelectedIndex-1].DefNum;
@@ -769,9 +763,6 @@ End of Checklist================================================================
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
-			if(_dateTimeLastSearch!=_dateTimeLastRequest) {
-				FillGrid(RefreshFromDb());//in case data was entered while thread was running.
-			}
 			gridMain.SetSelected(0,true);
 			for(int i=0;i<_tablePats.Rows.Count;i++) {
 				if(PIn.Long(_tablePats.Rows[i][0].ToString())==PatNumInitial) {
