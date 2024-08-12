@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="350" Height="563" 
+             Width="450" Height="563" 
              Text="Teacher Select" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,10,100,10" Title="Teachers / Employees" />

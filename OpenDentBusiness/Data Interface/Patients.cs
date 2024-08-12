@@ -3571,21 +3571,21 @@ namespace OpenDentBusiness {
 		///<summary>Returns true if there is an exact match in the database based on the lName, fName, and birthDate passed in.
 		///Also, the phone number or the email must match at least one phone number or email on file for any patient within the family.
 		///Otherwise we assume a match is not within the database because some offices have multiple clinics and we need strict matching.</summary>
-		public static bool GetHasDuplicateForNameBirthdayEmailAndPhone(string lName,string fName,DateTime birthDate,string email,string phone) {
-			return GetHasDuplicateForNameBirthdayEmailAndPhone(lName,fName,birthDate,email,new List<string> { phone });
+		public static bool GetHasDuplicateForNameBirthdayEmailAndPhone(string lName,string fName,DateTime birthDate,string email,string phone,bool doCompareFNameAgainstPreferred=false) {
+			return GetHasDuplicateForNameBirthdayEmailAndPhone(lName,fName,birthDate,email,new List<string> { phone },doCompareFNameAgainstPreferred);
 		}
 
 		///<summary>Returns true if there is an exact match in the database based on the lName, fName, and birthDate passed in.
 		///Also, one of the phone numbers or the email must match at least one phone number or email on file for any patient within the family.
 		///Otherwise we assume a match is not within the database because some offices have multiple clinics and we need strict matching.</summary>
 		public static bool GetHasDuplicateForNameBirthdayEmailAndPhone(string lName,string fName,DateTime birthDate,string email,
-			List<string> listPhones) 
+			List<string> listPhones,bool doCompareFNameAgainstPreferred=false) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod(),lName,fName,birthDate,email,listPhones);
 			}
-			//Get all potential matches by name and brith date first.
-			List<long> listPatNums=GetListPatNumsByNameAndBirthday(lName,fName,birthDate);
+			//Get all potential matches by name and birth date first.
+			List<long> listPatNums=GetListPatNumsByNameAndBirthday(lName,fName,birthDate,doCompareFNameAgainstPreferred);
 			if(listPatNums.Count < 1) {
 				return false;//No matches via name and birth date so no need to waste time checking for phone / email matches in the family.
 			}
@@ -3697,6 +3697,11 @@ namespace OpenDentBusiness {
 			string command="SELECT * FROM patient WHERE LName LIKE '"+POut.String(lName)+"' AND FName LIKE '"+POut.String(fName)+"' "
 				+"AND Birthdate="+POut.Date(birthdate,true)+" AND PatNum!="+POut.Long(patNum) +" AND PatStatus!="+POut.Int((int)PatientStatus.Deleted);
 			return Crud.PatientCrud.SelectMany(command);
+		}
+
+		/// <summary>Checks for duplicate patients in the db by running first method to only check fName against existing fNames. If that fails, runs again with method set to check fName against existing preferred names as well.</summary>
+		public static bool GetHasDuplicateForNameOrPreferredBirthdayEmailAndPhone(string lName,string fName,DateTime birthDate,string email,string phone){
+			return GetHasDuplicateForNameBirthdayEmailAndPhone(lName,fName,birthDate,email,phone,doCompareFNameAgainstPreferred:false) || GetHasDuplicateForNameBirthdayEmailAndPhone(lName,fName,birthDate,email,phone,doCompareFNameAgainstPreferred:true);
 		}
 
 		public static void UpdateFamilyBillingType(long billingType,long Guarantor) {

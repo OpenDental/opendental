@@ -16,6 +16,7 @@ namespace OpenDental {
 		private void FrmChildParentEdit_Load(object sender,EventArgs e) {
 			textFirstName.Text=ChildParentCur.FName;
 			textLastName.Text=ChildParentCur.LName;
+			textBadgeId.Text=ChildParentCur.BadgeId;
 			checkHidden.Checked=ChildParentCur.IsHidden;
 		}
 
@@ -30,6 +31,7 @@ namespace OpenDental {
 			}
 			ChildParentCur.FName=textFirstName.Text;
 			ChildParentCur.LName=textLastName.Text;
+			ChildParentCur.BadgeId=textBadgeId.Text;
 			ChildParentCur.IsHidden=checkHidden.Checked==true;
 			if(ChildParentCur.IsNew) {
 				ChildParents.Insert(ChildParentCur);

@@ -1,0 +1,17 @@
+<local:FrmODBase x:Class="OpenDental.FrmChildCheckInBadge"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="260" Height="180" 
+             Text="Child Check In Edit" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="buttonCheckOut" Margin="0,0,10,10" Text="Check Out" HorizontalAlignment="Right" Width="70" VerticalAlignment="Bottom" Height="24" Click="buttonCheckOut_Click" />
+		<ui:ListBox x:Name="listBoxChildren" Margin="10,10,0,0" Height="160" Width="100" SelectionMode="MultiExtended"/>
+		<ui:CheckBox x:Name="checkBoxAll" Margin="115,10,0,0" Height="20" Width="85" Text="All Children" RenderTransformOrigin="0.826,0.6"/>
+		<ui:Button x:Name="buttonCheckIn" Margin="0,0,10,39" Text="Check In" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="70" Height="24" Click="buttonCheckIn_Click"/>
+	</Grid>
+</local:FrmODBase>

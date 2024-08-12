@@ -769,13 +769,9 @@ namespace OpenDental {
 			}
 			ListApptOthers=Appointments.GetApptOthersForPat(_patient.PatNum);
 			_listPlannedAppts=Appointments.GetRefreshedPlannedAppts(_patient.PatNum);
-			int offset=0;
-			if(_listPlannedAppts.Count > 0) {
-				offset=_listPlannedAppts.Max(x=>x.ItemOrderPlanned)+1;
-			}
 			ListApptOthers=ListApptOthers.OrderBy(appt => {
 				var plannedAppt=_listPlannedAppts.FirstOrDefault(x => x.AptNum==appt.AptNum);
-				return plannedAppt?.ItemOrderPlanned??(offset+ListApptOthers.IndexOf(appt));//Place planned appts above other appts in the case of a patient having a longer history of scheduled appts
+				return plannedAppt?.ItemOrderPlanned+ListApptOthers.Count??(ListApptOthers.IndexOf(appt));//Place planned appts after non-planned appts. Keep the same ordering amongst non-planned.
 			}).ToList();
 			_listPlannedApptsIncomplete=_listPlannedAppts.FindAll(x => !ListApptOthers.ToList()
 				.Exists(y => y.NextAptNum==x.AptNum && y.AptStatus==ApptStatus.Complete))

@@ -50,5 +50,11 @@ namespace OpenDentBusiness{
 /*
 The daycare has its own database. They enter their own users from scratch for anyone who needs to use a badge. This can include teachers, kids, parents, and guardians.
 
-The daycare will have 8 classrooms. 5 of the classrooms will support 10 children and staff. The other three will support 20 children and staff. Per Oregon law, there are teacher/child ratios that must be met. Example: 10 preschool kids to 1 teacher equals a ratio of 10. Any more children than the allowed ratio would exceed the legal limit. 
+The daycare will have 8 classrooms. 5 of the classrooms will support 10 children and staff. The other three will support 20 children and staff. Per Oregon law, there are teacher/child ratios that must be met. Example: 10 preschool kids to 1 teacher equals a ratio of 10. Any more children than the allowed ratio would exceed the legal limit.
+
+The daycare has a "map" window that contains grids for each of the classrooms and a grid to store absent children. Daycare staff can move both children and teachers around by right clicking on a grid and using one of the right click options. If a staff member attempts to add a child or teacher to a room they are currently in, they will be given a popup and no new log will be sent to the database.
+
+Parents will be able to check in/out their children. If they have their employee badge they will be able to scan it and have their children come up in a listbox to check in or out. If they do not have their badge, they will be able to pick their children from a list of all the children and check them in or out.
+
+Children will also have their own badges and be able to check themselves in/out as well.
 */

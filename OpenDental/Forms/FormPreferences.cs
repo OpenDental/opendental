@@ -763,6 +763,10 @@ namespace OpenDental {
 			prefValSync.PrefName_=PrefName.ReportingServerURI;
 			prefValSync.PrefVal=PrefC.GetString(PrefName.ReportingServerURI);
 			_listPrefValSyncs.Add(prefValSync);
+			prefValSync=new PrefValSync();
+			prefValSync.PrefName_=PrefName.ShowFeaturePatientClone;
+			prefValSync.PrefVal=PrefC.GetString(PrefName.ShowFeaturePatientClone);
+			_listPrefValSyncs.Add(prefValSync);
 			//Pass the sync list to each control that needs it
 			userControlMainWindow.ListPrefValSyncs=_listPrefValSyncs;
 			userControlMainWindowMisc.ListPrefValSyncs=_listPrefValSyncs;
@@ -779,6 +783,7 @@ namespace OpenDental {
 			userControlEnterpriseAppts.ListPrefValSyncs=_listPrefValSyncs;
 			userControlEnterpriseFamily.ListPrefValSyncs=_listPrefValSyncs;
 			userControlEnterpriseReports.ListPrefValSyncs=_listPrefValSyncs;
+			userControlOrtho.ListPrefValSyncs=_listPrefValSyncs;
 			//Add events
 			userControlMainWindow.SyncChanged+=UserControl_SyncChanged;
 			userControlMainWindowMisc.SyncChanged+=UserControl_SyncChanged;
@@ -795,6 +800,7 @@ namespace OpenDental {
 			userControlEnterpriseAppts.SyncChanged+=UserControl_SyncChanged;
 			userControlEnterpriseFamily.SyncChanged+=UserControl_SyncChanged;
 			userControlEnterpriseReports.SyncChanged+=UserControl_SyncChanged;
+			userControlOrtho.SyncChanged+=UserControl_SyncChanged;
 			//Fill all the usercontrols.
 			userControlMainWindow.FillWindowMain();
 			userControlMainWindowMisc.FillMainWindowMisc();
@@ -846,6 +852,7 @@ namespace OpenDental {
 			userControlEnterpriseAppts.FillSynced();
 			userControlEnterpriseFamily.FillSynced();
 			userControlEnterpriseReports.FillSynced();
+			userControlOrtho.FillSynced();
 		}
 
 		private bool SaveSyncedPrefs(){
@@ -889,6 +896,8 @@ namespace OpenDental {
 			_changed|=Prefs.UpdateString(PrefName.ReportingServerCompName,prefValSync.PrefVal);
 			prefValSync=_listPrefValSyncs.Find(x=>x.PrefName_==PrefName.ReportingServerURI);
 			_changed|=Prefs.UpdateString(PrefName.ReportingServerURI,prefValSync.PrefVal);
+			prefValSync=_listPrefValSyncs.Find(x=>x.PrefName_==PrefName.ShowFeaturePatientClone);
+			_changed|=Prefs.UpdateString(PrefName.ShowFeaturePatientClone,prefValSync.PrefVal);
 			return true;//todo: all the similar methods return true like this.
 			//But that's wrong. See notes in FormClosing and butSave_Click.
 		}

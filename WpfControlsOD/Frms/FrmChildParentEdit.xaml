@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="350" Height="125" 
+             Width="350" Height="145" 
              Text="Edit Parent" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" Margin="0,0,0,0" >
 		<ui:Label x:Name="labelLastName" Width="92" Height="18" Margin="18,42,0,0" Text="Last Name" HAlign="Right" />
@@ -14,6 +14,8 @@
 		<ui:TextBox x:Name="textLastName" Width="127" Height="20" Margin="110,41,0,0" TabIndexOD="1" />
 		<ui:TextBox x:Name="textFirstName" Width="127" Height="20" Margin="110,17,0,0" TabIndexOD="0" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
-		<ui:CheckBox x:Name="checkHidden" Margin="38,62,0,0" CheckAlign="MiddleRight" Text="Hidden" Width="85" Height="20"/>
+		<ui:CheckBox x:Name="checkHidden" Margin="38,86,0,0" CheckAlign="MiddleRight" Text="Hidden" Width="85" Height="20"/>
+		<ui:Label x:Name="labelBadgeId" Width="72" Height="18" Margin="38,67,0,0" Text="Badge ID" HAlign="Right" />
+		<ui:TextBox x:Name="textBadgeId" Width="60" Height="20" Margin="110,66,0,0" TabIndexOD="2" />
 	</Grid>
 </local:FrmODBase>

@@ -118,6 +118,7 @@ namespace OpenDental {
 			ChildCur.IsHidden=checkHidden.Checked==true;
 			//Only need to update as new children will already be inserted by the parent FrmChildren
 			Children.Update(ChildCur);
+			Signalods.SetInvalid(InvalidType.Children);
 			IsDialogOK=true;
 		}
 

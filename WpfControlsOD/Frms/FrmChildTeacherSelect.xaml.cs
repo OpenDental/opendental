@@ -41,11 +41,14 @@ namespace OpenDental {
 			gridMain.Columns.Add(gridColumn);
 			gridColumn=new GridColumn("Last Name",100);
 			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Status",100);
+			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listEmployees.Count;i++) {
 				GridRow gridRow=new GridRow();
 				gridRow.Cells.Add(listEmployees[i].FName);
 				gridRow.Cells.Add(listEmployees[i].LName);
+				gridRow.Cells.Add(listEmployees[i].ClockStatus);
 				gridRow.Tag=listEmployees[i];
 				gridMain.ListGridRows.Add(gridRow);
 			}
@@ -53,6 +56,9 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			if(gridMain.SelectedTag<Employee>()==null) {
+				return;
+			}
 			EmployeeNumSelected=gridMain.SelectedTag<Employee>().EmployeeNum;
 			IsDialogOK=true;
 		}

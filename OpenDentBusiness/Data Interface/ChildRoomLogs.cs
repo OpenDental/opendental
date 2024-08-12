@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -167,6 +168,16 @@ namespace OpenDentBusiness{
 			return Crud.ChildRoomLogCrud.SelectMany(command);
 		}
 
+		///<summary>Returns all the employee logs for a given date.</summary>
+		public static List<ChildRoomLog> GetAllEmployeesForDate(DateTime date) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),date);
+			}
+			string command="SELECT * FROM childroomlog WHERE DATE(DateTDisplayed)="+POut.Date(date)
+				+" AND EmployeeNum!=0";//Only employee logs
+			return Crud.ChildRoomLogCrud.SelectMany(command);
+		}
+
 		///<summary>Returns all logs for a specific child for a given date.</summary>
 		public static List<ChildRoomLog> GetAllLogsForChild(long childNum,DateTime date) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -211,6 +222,31 @@ namespace OpenDentBusiness{
 				return childRoomLog.ChildRoomLogNum;
 			}
 			return Crud.ChildRoomLogCrud.Insert(childRoomLog);
+		}
+
+		///<summary>Creates a ChildRoomLog leaving entry if the most recent log in the given list IsComing. The passed-in list should contain logs for one child or teacher.</summary>
+		public static void CreateChildRoomLogLeaving(List<ChildRoomLog> listChildRoomLogs) {
+			if(listChildRoomLogs.Count==0) {//No need for leaving entry if the child has no logs for today
+				return;
+			}
+			//OrderBy PK in case there are multiple entries with the same time
+			ChildRoomLog childRoomLogOld=listChildRoomLogs.OrderByDescending(x => x.ChildRoomLogNum).First();
+			if(!childRoomLogOld.IsComing) {//Most recent entry is already leaving
+				return;
+			}
+			ChildRoomLog childRoomLog=new ChildRoomLog();
+			childRoomLog.DateTEntered=DateTime.Now;
+			childRoomLog.DateTDisplayed=DateTime.Now;
+			childRoomLog.IsComing=false;
+			childRoomLog.ChildRoomNum=childRoomLogOld.ChildRoomNum;
+			if(childRoomLogOld.ChildNum!=0) {//Child entry
+				childRoomLog.ChildNum=childRoomLogOld.ChildNum;
+			}
+			else {//Employee/teacher entry
+				childRoomLog.EmployeeNum=childRoomLogOld.EmployeeNum;
+			}
+			Insert(childRoomLog);
+			Signalods.SetInvalid(InvalidType.Children);
 		}
 
 	}

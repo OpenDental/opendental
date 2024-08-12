@@ -350,6 +350,11 @@ namespace OpenDental{
 			frmChildCareMap.Show();
 		}
 
+		private void butDaycareCheckIn_Click(object sender,EventArgs e) {
+			FrmChildCheckIn frmChildCheckIn=new FrmChildCheckIn();
+			frmChildCheckIn.Show();
+		}
+
 		private void butSendClaims_Click(object sender,EventArgs e) {
 			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
 				return;
@@ -573,6 +578,7 @@ namespace OpenDental{
 			}
 			if(!PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
 				butDaycare.Visible=false;
+				butDaycareCheckIn.Visible=false;
 			}
 		}
 

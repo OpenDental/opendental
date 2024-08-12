@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -149,8 +150,19 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ChildParent>>(MethodBase.GetCurrentMethod());
 			}
-			string command="SELECT * FROM childparent ORDER BY FName";
+			string command="SELECT * FROM childparent ORDER BY LName";
 			return Crud.ChildParentCrud.TableToList(Db.GetTable(command));
+		}
+
+		///<summary>Gets the first parent with the matching badgeId passed in. Expecting int with 4 digits or less.  Returns null if not found.</summary>
+		public static ChildParent GetByBadgeId(string badgeId) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<ChildParent>(MethodBase.GetCurrentMethod(),badgeId);
+			}
+			string command="SELECT * FROM childparent WHERE BadgeId <> '' AND BadgeId = RIGHT('"+POut.String(badgeId)+"', LENGTH(BadgeId))";
+			//Example BadgeId in db="123". Select compares "123" with RIGHT('00000123',3)
+			List<ChildParent> listChildParents=Crud.ChildParentCrud.TableToList(Db.GetTable(command));
+			return listChildParents.FirstOrDefault();
 		}
 
 		///<summary></summary>

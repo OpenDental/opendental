@@ -100,6 +100,7 @@ namespace OpenDental {
 			this.checkShowFeaturePatientClone.Size = new System.Drawing.Size(319, 18);
 			this.checkShowFeaturePatientClone.TabIndex = 285;
 			this.checkShowFeaturePatientClone.Text = "Patient Clone";
+			this.checkShowFeaturePatientClone.Click += new System.EventHandler(this.checkShowFeaturePatientClone_Click);
 			// 
 			// checkShowFeatureSuperfamilies
 			// 

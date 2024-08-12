@@ -130,6 +130,7 @@ namespace OpenDental {
 				gridMain.ListGridRows.Add(gridRow);
 			}
 			gridMain.EndUpdate();
+			gridMain.ScrollToEnd();
 		}
 
 		private void comboChildRoom_SelectionChangeCommitted(object sender,EventArgs e) {

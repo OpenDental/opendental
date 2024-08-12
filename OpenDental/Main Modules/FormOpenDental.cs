@@ -3987,6 +3987,9 @@ namespace OpenDental{
 				RefreshCurrentModule();
 			}
 			#endregion Appointment Module
+			#region WPF
+			GlobalFormOpenDental.ProcessSignalODs(listSignalods);
+			#endregion WPF
 			#region Unfinalize Pay Menu Update
 			UpdateUnfinalizedPayCount(listSignalods.FindAll(x => x.IType==InvalidType.UnfinalizedPayMenuUpdate));
 			#endregion Unfinalize Pay Menu Update

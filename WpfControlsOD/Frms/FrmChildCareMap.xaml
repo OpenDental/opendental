@@ -11,15 +11,40 @@
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butChildren" Margin="49,22,0,0" Text="Children" RenderTransformOrigin="0.543,1.257" Click="butChildren_Click" Height="24" Width="76" />
 		<ui:Button x:Name="butClassrooms" Margin="49,53,0,0" Text="Classrooms" RenderTransformOrigin="0.543,1.257" Click="butClassrooms_Click" Height="24" Width="76" />
-		<ui:Grid x:Name="gridChildRoom4" Margin="102,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom7" Margin="1164,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom8" Margin="1518,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom5" Margin="456,600,0,0" Title="" Height="335" Width="317" />
-		<ui:Grid x:Name="gridChildRoom6" Margin="810,600,0,0" Title="" Width="317" Height="335" RenderTransformOrigin="0.669,0.507" />
+		<ui:Grid x:Name="gridChildRoom4" Margin="102,630,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom7" Margin="1164,630,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom8" Margin="1518,630,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom5" Margin="456,630,0,0" Title="" Height="335" Width="317" />
+		<ui:Grid x:Name="gridChildRoom6" Margin="0,630,0,0" Title="" Width="316" Height="335" RenderTransformOrigin="0.669,0.507" HorizontalAlignment="Center" />
 		<ui:Grid x:Name="gridChildRoom1" Margin="810,53,0,0" Title="" Height="505" Width="316" />
 		<ui:Grid x:Name="gridChildRoom2" Margin="1164,53,0,0" Title="" Height="505" Width="317" />
 		<ui:Grid x:Name="gridChildRoom3" Margin="1518,53,0,0" Title="" Height="505" Width="317" />
 		<ui:Button x:Name="butParents" Margin="49,84,0,0" Text="Parents" RenderTransformOrigin="0.543,1.257" Height="24" Click="butParents_Click" Width="76" />
 		<ui:Grid x:Name="gridChildrenAbsent" Margin="456,53,0,0" Title="Absent Children" Height="505" Width="317" />
+		<ui:Grid x:Name="gridTeachersUnassigned" Margin="102,172,0,0" Title="Unassigned Teachers" Height="386" Width="317" />
+		<ui:Button x:Name="butAddChild_Grid1" Margin="892,25,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="86" Click="butAddChild_Grid_Click" Icon="Add" />
+		<ui:Button x:Name="butAddTeacher_Grid1" Margin="983,25,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="96" Click="butAddTeacher_Grid_Click" Icon="Add" />
+		<ui:Button x:Name="butViewLogs_Grid1" Margin="811,25,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
+		<ui:Button x:Name="butAddChild_Grid2" Margin="1284,17,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddChild_Grid_Click" />
+		<ui:Button x:Name="butAddTeacher_Grid2" Margin="1370,17,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddTeacher_Grid_Click" />
+		<ui:Button x:Name="butViewLogs_Grid2" Margin="1198,17,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
+		<ui:Button x:Name="butAddChild_Grid3" Margin="1637,17,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddChild_Grid_Click" />
+		<ui:Button x:Name="butAddTeacher_Grid3" Margin="1723,17,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddTeacher_Grid_Click" />
+		<ui:Button x:Name="butViewLogs_Grid3" Margin="1551,17,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
+		<ui:Button x:Name="butAddChild_Grid8" Margin="1637,594,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddChild_Grid_Click" />
+		<ui:Button x:Name="butAddTeacher_Grid8" Margin="1723,594,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddTeacher_Grid_Click" />
+		<ui:Button x:Name="butViewLogs_Grid8" Margin="1551,594,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
+		<ui:Button x:Name="butAddChild_Grid7" Margin="1284,594,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddChild_Grid_Click" />
+		<ui:Button x:Name="butAddTeacher_Grid7" Margin="1370,594,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddTeacher_Grid_Click" />
+		<ui:Button x:Name="butViewLogs_Grid7" Margin="1198,594,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
+		<ui:Button x:Name="butAddChild_Grid6" Margin="930,594,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddChild_Grid_Click" />
+		<ui:Button x:Name="butAddTeacher_Grid6" Margin="1016,594,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddTeacher_Grid_Click" />
+		<ui:Button x:Name="butViewLogs_Grid6" Margin="844,594,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
+		<ui:Button x:Name="butAddChild_Grid5" Margin="576,594,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddChild_Grid_Click" />
+		<ui:Button x:Name="butAddTeacher_Grid5" Margin="662,594,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddTeacher_Grid_Click" />
+		<ui:Button x:Name="butViewLogs_Grid5" Margin="490,594,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
+		<ui:Button x:Name="butAddChild_Grid4" Margin="222,594,0,0" Text="Add Child" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddChild_Grid_Click" />
+		<ui:Button x:Name="butAddTeacher_Grid4" Margin="308,594,0,0" Text="Add Teacher" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butAddTeacher_Grid_Click" />
+		<ui:Button x:Name="butViewLogs_Grid4" Margin="136,594,0,0" Text="View Logs" RenderTransformOrigin="0.543,1.257" Height="24" Width="76" Click="butViewLogs_Grid_Click" />
 	</Grid>
 </local:FrmODBase>

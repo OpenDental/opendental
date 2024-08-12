@@ -383,6 +383,7 @@ namespace OpenDental {
 			this.checkPatClone.Size = new System.Drawing.Size(327, 19);
 			this.checkPatClone.TabIndex = 255;
 			this.checkPatClone.Text = "Patient Clone";
+			this.checkPatClone.Click += new System.EventHandler(this.checkPatClone_Click);
 			// 
 			// UserControlOrtho
 			// 

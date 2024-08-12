@@ -106,6 +106,9 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<string>(MethodBase.GetCurrentMethod(),childRoomNum);
 			}
 			ChildRoom childRoom=Crud.ChildRoomCrud.SelectOne(childRoomNum);
+			if(childRoom==null) {
+				return null;
+			}
 			return childRoom.RoomId;
 		}
 		

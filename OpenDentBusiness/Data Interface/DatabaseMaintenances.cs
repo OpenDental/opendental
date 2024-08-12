@@ -9312,51 +9312,6 @@ namespace OpenDentBusiness {
 		}
 		#endregion ProcedureLog-------------------------------------------------------------------------------------------------------------------------
 		#region ProgramProperty, Provider, QuickPasteNote-----------------------------------------------------------------------------------------------
-
-		[DbmMethodAttr]
-		public static string ProgramPropertiesDuplicatesForXDR(bool verbose,DbmMode dbmMode) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,dbmMode);
-			}
-			long progNum=Programs.GetProgramNum(ProgramName.XDR);
-			string command="SELECT PropertyDesc,ComputerName,ClinicNum,IsMasked,IsHighSecurity,MIN(ProgramPropertyNum) ProgPropMin,COUNT(*) CountDup "
-				+"FROM programproperty "
-				+"WHERE ProgramNum="+POut.Long(progNum)+" "
-				+"GROUP BY PropertyDesc,ComputerName,ClinicNum,IsMasked,IsHighSecurity "
-				+"HAVING COUNT(*)>1";
-			DataTable table=Db.GetTable(command);
-			string log="";
-			switch(dbmMode) {
-				case DbmMode.Check:
-					int numFound=table.Select().Select(x => PIn.Int(x["CountDup"].ToString())-1).Sum();
-					if(numFound>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Duplicate XDR program property entries found: ")
-							+numFound+"\r\n";
-					}
-					break;
-				case DbmMode.Fix:
-					int numberFixed=0;
-					for(int i=0;i<table.Rows.Count;i++) {
-						DataRow row=table.Rows[i];
-						command="DELETE FROM programproperty "
-							+"WHERE ProgramNum="+POut.Long(progNum)+" "
-							+"AND PropertyDesc='"+POut.String(PIn.String(row["PropertyDesc"].ToString()))+"' "
-							+"AND ComputerName='"+POut.String(PIn.String(row["ComputerName"].ToString()))+"' "
-							+"AND ClinicNum="+POut.Long(PIn.Long(row["ClinicNum"].ToString()))+" "
-							+"AND IsMasked="+POut.Bool(PIn.Bool(row["IsMasked"].ToString()))+" "
-							+"AND IsHighSecurity="+POut.Bool(PIn.Bool(row["IsHighSecurity"].ToString()))+" "
-							+"AND ProgramPropertyNum!="+POut.Long(PIn.Long(row["ProgPropMin"].ToString()));
-						numberFixed+=(int)Db.NonQ(command);
-					}
-					if(numberFixed>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Duplicate XDR program property entries removed: ")
-							+numberFixed.ToString()+"\r\n";
-					}
-					break;
-			}
-			return log;
-		}
-
 		[DbmMethodAttr]
 		public static string ProgramPropertiesDuplicateLocalPath(bool verbose,DbmMode dbmMode) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

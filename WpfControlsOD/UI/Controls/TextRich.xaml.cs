@@ -115,6 +115,8 @@ How to use the TextRich control:
 		private TextDecoration _textDecorationSpellCheck;
 		/// <summary>Used to pause the TextChanged event handler, because we don't want the red underline to count as affecting the text.</summary>
 		private bool _isSpellChecking;
+		///<summary>Used to pause the dispatcher timer when the last text change event was the result of an undo or redo.</summary>
+		private bool _usedUndoRedo;
 		
 		#endregion Fields
 
@@ -612,6 +614,10 @@ How to use the TextRich control:
 				_isSpellChecking=true;//this disables the TextChanged event handler.
 			}
 			TextPointer textPointer=richTextBox.Document.ContentStart;
+			//Applying text decorations to any text range is considered one discrete TextChanged event.
+			//That means adding one entry into the Undo Stack per text decoration applied.
+			//This method will combine those changes into one entry in the Undo Stack.
+			richTextBox.BeginChange();
 			//We must loop through all runs, not just our list of known misspelled words.
 			//This is because after text was automatically underlined, the cursor was set to that style. 
 			//The user could then type more text which would be underlined but would not be in our list of ranges.
@@ -646,6 +652,7 @@ How to use the TextRich control:
 				textRange.ApplyPropertyValue(Inline.TextDecorationsProperty,textDecorationCollectionModifiable);
 				textPointer=textPointer.GetNextContextPosition(LogicalDirection.Forward);
 			}
+			richTextBox.EndChange();
 			if(isCalledFromTextChanged) {
 				_isSpellChecking=false;//re-enable the textchanged event handler.
 			}
@@ -735,11 +742,16 @@ How to use the TextRich control:
 				//jump to end of text
 				textPointer=textPointer.GetPositionAtOffset(run.Length);
 			}
+			//Applying text decorations to any text range is considered one discrete TextChanged event.
+			//That means adding one entry into the Undo Stack per text decoration applied.
+			//This method will combine those changes into one entry in the Undo Stack.
+			richTextBox.BeginChange();
 			for(int i=0;i<_listTextRangesMisspelled.Count;i++){
 				TextDecorationCollection textDecorationCollection=new TextDecorationCollection();
 				textDecorationCollection.Add(_textDecorationSpellCheck);
 				_listTextRangesMisspelled[i].ApplyPropertyValue(Inline.TextDecorationsProperty,textDecorationCollection);
 			}
+			richTextBox.EndChange();
 			_isSpellChecking=false;
 			/*
 			TextPointer textPointerContentStart=richTextBox.Document.ContentStart;
@@ -986,7 +998,9 @@ How to use the TextRich control:
 			if(e.Key==Key.Q && Keyboard.Modifiers==ModifierKeys.Control) {
 				ShowQuickPaste();
 			}
-			if(IsUsingSpellCheck()) {//Only spell check if enabled
+			if(IsUsingSpellCheck() //Only spell check if enabled
+				&& !_usedUndoRedo) //change came from user, not from undo
+			{
 				_dispatcherTimer.Start();
 			}
 			if(QuickPasteType==EnumQuickPasteType.None){
@@ -1022,6 +1036,13 @@ How to use the TextRich control:
 		private void textBox_TextChanged(object sender,TextChangedEventArgs e) {
 			//We were forced to use TextChanged instead of KeyUp because we can't guarantee that the text will have changed when KeyUp is raised. It usually is, but it's not guaranteed. It was possible to demonstrate this in testing. So this is our only option.
 			if(_isSpellChecking) {
+				return;
+			}
+			//If we call ClearWavyAll() or check QPNs when we Undo or Redo, we'll mess with the undo-action stack. 
+			_usedUndoRedo=false;
+			if(e.UndoAction==UndoAction.Undo || e.UndoAction==UndoAction.Redo) {
+				_usedUndoRedo=true;
+				_dispatcherTimer.Stop();
 				return;
 			}
 			if(!Db.HasDatabaseConnection()){//for projects outside of OD, for example.

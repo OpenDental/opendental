@@ -527,7 +527,7 @@ namespace OpenDental {
 			//ScheduleThankYou, NewPatientThankYou, and GeneralMessage can be 0, meaning send immediately. ConfirmationFutureDay has a separate check so exclude it here.
 			if(checkEnabled.Checked && PIn.Int(textHours.Text,false)==0 
 				&& PIn.Int(textDays.Text,false)==0 
-				&& !ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.NewPatientThankYou,ApptReminderType.GeneralMessage,ApptReminderType.ConfirmationFutureDay))
+				&& !ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.PatientPortalInvite,ApptReminderType.NewPatientThankYou,ApptReminderType.GeneralMessage,ApptReminderType.ConfirmationFutureDay))
 			{
 				errors.Add(Lan.g(this,"Lead time must be greater than 0 hours."));
 			}

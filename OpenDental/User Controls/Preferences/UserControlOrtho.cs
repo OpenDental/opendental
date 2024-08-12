@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		#region Fields - Public
 		public bool Changed;
+		public List<PrefValSync> ListPrefValSyncs;
 		#endregion Fields - Public
 
 		#region Constructors
@@ -30,6 +31,10 @@ namespace OpenDental {
 			InitializeComponent();
 		}
 		#endregion Constructors
+
+		#region Events
+		public event EventHandler SyncChanged;
+		#endregion Events
 
 		#region Methods - Event Handlers
 		private void butOrthoDisplayFields_Click(object sender,EventArgs e) {
@@ -81,6 +86,12 @@ namespace OpenDental {
 			}
 			RefreshListBoxProcs();
 		}
+
+		private void checkPatClone_Click(object sender,EventArgs e) {
+			PrefValSync prefValSync=ListPrefValSyncs.Find(x=>x.PrefName_==PrefName.ShowFeaturePatientClone);
+			prefValSync.PrefVal=POut.Bool(checkPatClone.Checked);
+			SyncChanged?.Invoke(this,new EventArgs());
+		}
 		#endregion Methods - Event Handlers
 
 		#region Methods - Private
@@ -103,7 +114,7 @@ namespace OpenDental {
 			checkDebondOverridesMonthsTreat.Checked=PrefC.GetBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat);
 			textOrthoMonthsTreat.Text=PrefC.GetByte(PrefName.OrthoDefaultMonthsTreat).ToString();
 			checkApptModuleShowOrthoChartItem.Checked=PrefC.GetBool(PrefName.ApptModuleShowOrthoChartItem);
-			checkPatClone.Checked=PrefC.GetBool(PrefName.ShowFeaturePatientClone);
+			//checkPatClone.Checked=PrefC.GetBool(PrefName.ShowFeaturePatientClone);
 			_orthoAutoProcCodeNum=PrefC.GetLong(PrefName.OrthoAutoProcCodeNum);
 			textOrthoAutoProc.Text=ProcedureCodes.GetStringProcCode(_orthoAutoProcCodeNum);
 			checkConsolidateInsPayment.Checked=PrefC.GetBool(PrefName.OrthoInsPayConsolidated);
@@ -134,7 +145,7 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat,checkDebondOverridesMonthsTreat.Checked);
 			Changed|=Prefs.UpdateByte(PrefName.OrthoDefaultMonthsTreat,PIn.Byte(textOrthoMonthsTreat.Text));
 			Changed|=Prefs.UpdateBool(PrefName.ApptModuleShowOrthoChartItem,checkApptModuleShowOrthoChartItem.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.ShowFeaturePatientClone,checkPatClone.Checked);
+			//Changed|=Prefs.UpdateBool(PrefName.ShowFeaturePatientClone,checkPatClone.Checked);
 			Changed|=Prefs.UpdateLong(PrefName.OrthoAutoProcCodeNum,_orthoAutoProcCodeNum);
 			Changed|=Prefs.UpdateBool(PrefName.OrthoInsPayConsolidated,checkConsolidateInsPayment.Checked);
 			Changed|=Prefs.UpdateString(PrefName.OrthoPlacementProcsList,string.Join(",",_listOrthoPlacementCodeNums));
@@ -143,6 +154,11 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateString(PrefName.OrthoDebondCodes,PIn.String(textDebondCodes.Text));
 			Changed|=Prefs.UpdateBool(PrefName.OrthoChartLoggingOn,checkOrthoChartLoggingOn.Checked);
 			return true;
+		}
+
+		public void FillSynced(){
+			PrefValSync prefValSync=ListPrefValSyncs.Find(x=>x.PrefName_==PrefName.ShowFeaturePatientClone);
+			checkPatClone.Checked=PIn.Bool(prefValSync.PrefVal);
 		}
 		#endregion Methods - Public
 	}

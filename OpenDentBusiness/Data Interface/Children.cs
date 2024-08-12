@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -129,7 +130,7 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Child>>(MethodBase.GetCurrentMethod());
 			}
-			string command="SELECT * FROM child ORDER BY FName";
+			string command="SELECT * FROM child ORDER BY LName";
 			return Crud.ChildCrud.SelectMany(command);
 		}
 
@@ -140,6 +141,17 @@ namespace OpenDentBusiness{
 				return "";
 			}
 			return child.FName+" "+child.LName;
+		}
+
+		///<summary>Gets the first child with the matching badgeId passed in. Expecting int with 4 digits or less.  Returns null if not found.</summary>
+		public static Child GetUserByBadgeId(string badgeId) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<Child>(MethodBase.GetCurrentMethod(),badgeId);
+			}
+			string command="SELECT * FROM child WHERE BadgeId <> '' AND BadgeId = RIGHT('"+POut.String(badgeId)+"', LENGTH(BadgeId))";
+			//Example BadgeId in db="123". Select compares "123" with RIGHT('00000123',3)
+			List<Child> listChildren=Crud.ChildCrud.TableToList(Db.GetTable(command));
+			return listChildren.FirstOrDefault();
 		}
 
 		#region Methods - Modify

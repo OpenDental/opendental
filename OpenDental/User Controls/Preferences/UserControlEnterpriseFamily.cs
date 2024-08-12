@@ -55,6 +55,12 @@ namespace OpenDental {
 			SyncChanged?.Invoke(this,new EventArgs());
 		}
 
+		private void checkShowFeaturePatientClone_Click(object sender,EventArgs e) {
+			PrefValSync prefValSync=ListPrefValSyncs.Find(x=>x.PrefName_==PrefName.ShowFeaturePatientClone);
+			prefValSync.PrefVal=POut.Bool(checkShowFeaturePatientClone.Checked);
+			SyncChanged?.Invoke(this,new EventArgs());
+		}
+
 		private void checkShowFeatureSuperFamilies_Click(object sender,EventArgs e) {
 			PrefValSync prefValSync=ListPrefValSyncs.Find(x=>x.PrefName_==PrefName.ShowFeatureSuperfamilies);
 			prefValSync.PrefVal=POut.Bool(checkShowFeatureSuperfamilies.Checked);
@@ -123,7 +129,7 @@ namespace OpenDental {
 				ex.DoNothing();//Suppress unhandled exceptions from hidden preferences, since they are read only.
 			}
 			//checkShowFeatureSuperfamilies.Checked=PrefC.GetBool(PrefName.ShowFeatureSuperfamilies);
-			checkShowFeaturePatientClone.Checked=PrefC.GetBool(PrefName.ShowFeaturePatientClone);
+			//checkShowFeaturePatientClone.Checked=PrefC.GetBool(PrefName.ShowFeaturePatientClone);
 			//checkCloneCreateSuperFamily.Checked=PrefC.GetBool(PrefName.CloneCreateSuperFamily);
 			checkShowFeeSchedGroups.Checked=PrefC.GetBool(PrefName.ShowFeeSchedGroups);
 			//users should only see the snapshot trigger and service runtime if they have it set to something other than ClaimCreate.
@@ -148,7 +154,7 @@ namespace OpenDental {
 				return false;
 			}
 			//Changed|=Prefs.UpdateBool(PrefName.ShowFeatureSuperfamilies,checkShowFeatureSuperfamilies.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.ShowFeaturePatientClone,checkShowFeaturePatientClone.Checked);
+			//Changed|=Prefs.UpdateBool(PrefName.ShowFeaturePatientClone,checkShowFeaturePatientClone.Checked);
 			//Changed|=Prefs.UpdateBool(PrefName.CloneCreateSuperFamily,checkCloneCreateSuperFamily.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ShowFeeSchedGroups,checkShowFeeSchedGroups.Checked);
 			//Changed|=UpdateClaimSnapshotTrigger();
@@ -171,6 +177,8 @@ namespace OpenDental {
 			checkShowFeatureSuperfamilies.Checked=PIn.Bool(prefValSync.PrefVal);
 			prefValSync=ListPrefValSyncs.Find(x=>x.PrefName_==PrefName.CloneCreateSuperFamily);
 			checkCloneCreateSuperFamily.Checked=PIn.Bool(prefValSync.PrefVal);
+			prefValSync=ListPrefValSyncs.Find(x=>x.PrefName_==PrefName.ShowFeaturePatientClone);
+			checkShowFeaturePatientClone.Checked=PIn.Bool(prefValSync.PrefVal);
 		}
 		#endregion Methods - Public
 	}

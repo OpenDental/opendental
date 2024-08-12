@@ -1,14 +1,14 @@
 ﻿using System;
 
 namespace CodeBase {
-	///<summary>These events are mostly related to progress bars.</summary>
+	///<summary>This was originally designed for use with progressbars, but that use has been deprecated. Now, it seems to just be used for a few oddball things like convertDatabases and dashboard. We're trying to deprecate all of it, so don't add to it. Instead, use GlobalFormOpenDental which is used for user actions for things like switching modules or refreshing screen data. Also see DataValid.EventInvalid which handles all Signalod events.</summary>
 	public class ODEvent {
 		///<summary>Occurs when any developer calls Fire().  Can happen from anywhere in the program.
 		///Consumers of "global" ODEvents need to subscribe because this will be the event that gets fired.</summary>
 		public static event ODEventHandler Fired;
 		public static bool IsCredentialsFailedAfterLogin_EventSubscribed;
 
-		///<summary>Triggers the global Fired event to get invoked with the passed in arguments.</summary>
+		///<summary>Seems to be just old progressBar code.</summary>
 		public static void Fire(ODEventType odEventType,object tag=null) {
 			Fired?.Invoke(new ODEventArgs(odEventType,tag));
 		}

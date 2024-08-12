@@ -212,7 +212,7 @@ namespace OpenDental {
 			this.labelPatSelectPauseMs.Name = "labelPatSelectPauseMs";
 			this.labelPatSelectPauseMs.Size = new System.Drawing.Size(420, 18);
 			this.labelPatSelectPauseMs.TabIndex = 281;
-			this.labelPatSelectPauseMs.Text = "Wait time in milliseconds after a character is entered before grid is filled.";
+			this.labelPatSelectPauseMs.Text = "Wait time in milliseconds after a character is entered before grid is filled";
 			this.labelPatSelectPauseMs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textPatientSelectSearchPauseMs
@@ -231,7 +231,7 @@ namespace OpenDental {
 			this.labelPatSelectMinChars.Name = "labelPatSelectMinChars";
 			this.labelPatSelectMinChars.Size = new System.Drawing.Size(420, 18);
 			this.labelPatSelectMinChars.TabIndex = 279;
-			this.labelPatSelectMinChars.Text = "The number of characters entered into the search fields before filling the grid.";
+			this.labelPatSelectMinChars.Text = "The number of characters entered into the search fields before filling the grid";
 			this.labelPatSelectMinChars.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textPatientSelectSearchMinChars
@@ -259,7 +259,7 @@ namespace OpenDental {
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(392, 18);
 			this.label3.TabIndex = 298;
-			this.label3.Text = "Process signal interval in seconds.  Leave blank to disable";
+			this.label3.Text = "Process signal interval in seconds.  Leave blank to disable autorefresh";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkUpdateStreamlinePassword

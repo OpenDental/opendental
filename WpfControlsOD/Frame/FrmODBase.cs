@@ -190,6 +190,22 @@ How to:
 				if(_ignoreMouseMove){
 					return;
 				}
+-Signal Processing
+		It's common to have a window that needs to be notified of any new incoming signalod from the db.
+		In FormODBase, the way to do it was to override ProcessSignalODs
+		In WPF, do it like this:
+		(in your frm load:)
+		GlobalFormOpenDental.EventProcessSignalODs+=GlobalFormOpenDental_EventProcessSignalODs;
+		then,
+		private void GlobalFormOpenDental_EventProcessSignalODs(object sender,List<Signalod> listSignalods) {
+			for(int i=0;i<listSignalods.Count;i++) {
+				if(listSignalods[i].IType!=InvalidType.Children) {
+					continue;
+				}
+				FillAllGrids();
+				return;
+			}
+		}
 
 */
 	/// <summary>All WPF windows inherit from this base class.</summary>

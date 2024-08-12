@@ -132,6 +132,15 @@ namespace OpenDentBusiness{
 			string command="SELECT * FROM childparentlink WHERE ChildNum="+POut.Long(childNum);
 			return Crud.ChildParentLinkCrud.SelectMany(command);
 		}
+
+		///<summary>Returns a list of all ChildParentLinks with the given childParentNum.</summary>
+		public static List<ChildParentLink> GetAllByChildParentNum(long childParentNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildParentLink>>(MethodBase.GetCurrentMethod(),childParentNum);
+			}
+			string command="SELECT * FROM childparentlink WHERE ChildParentNum="+POut.Long(childParentNum);
+			return Crud.ChildParentLinkCrud.SelectMany(command);
+		}
 		#endregion Methods - Get
 
 		#region Methods - Modify

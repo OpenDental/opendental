@@ -62,6 +62,7 @@ namespace OpenDental {
 				childRoomLog.DateTDisplayed=DateTime.Now;
 				//ChildNum and ChildTeacherNum remain 0 as this is specifically a RatioChange entry
 				ChildRoomLogs.Insert(childRoomLog);
+				Signalods.SetInvalid(InvalidType.Children);
 			}
 			IsDialogOK=true;
 		}
