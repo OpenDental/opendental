@@ -363,11 +363,12 @@ namespace OpenDental.Main_Modules
                             } 
                             else
                             {
-                                EventLog.WriteEntry("ODSMS", $"Not updating appointment {originalAppt.AptNum} on patient {originalAppt.PatNum} from {originalAppt.Confirmed} to {updatedAppt.Confirmed} as running in debug mode", EventLogEntryType.Warning, 101, 1, new byte[10]);
+                                ODSMSLogger.Instance.Log($"Not updating appointment {originalAppt.AptNum} on patient {originalAppt.PatNum} from {originalAppt.Confirmed} to {updatedAppt.Confirmed} as running in debug mode", EventLogEntryType.Warning);
                             }
                             if (updateSucceeded)
                             {
                                 patientsTexted = true;
+                                ODSMSLogger.Instance.Log($"Updated {originalAppt.AptNum} on patient {originalAppt.PatNum} from {originalAppt.Confirmed} to {updatedAppt.Confirmed}", EventLogEntryType.Information);
                             }
                             else
                             {
@@ -879,7 +880,8 @@ namespace OpenDental.Main_Modules
                 string checkSMSstring = "http/request-received-messages?&order=newest&" + auth;
 
                 var request = checkSMSstring + "&limit=" + count.ToString() + removeStr;
-                Console.WriteLine(request);
+                ODSMSLogger.Instance.Log($"Raw Diafaan API call: {request}", EventLogEntryType.Information);
+
                 var response = await sharedClient.GetAsync(request);
                 var text = await response.Content.ReadAsStringAsync();
 

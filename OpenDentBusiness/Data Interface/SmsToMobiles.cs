@@ -320,6 +320,7 @@ namespace OpenDentBusiness
             }
             catch (Exception ex)
             {
+                //                 ODSMSLogger.Instance.Log($"Error checking Diafaan queue size: {ex.Message}", EventLogEntryType.Error);
                 Console.WriteLine($"Error checking Diafaan queue size: {ex.Message}");
                 EventLog.WriteEntry("ODSMS", "Something bad happened checking Diafaan status", EventLogEntryType.Error, 101, 1, new byte[10]);
             }
