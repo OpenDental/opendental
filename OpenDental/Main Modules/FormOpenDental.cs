@@ -692,8 +692,8 @@ namespace OpenDental{
 					hasConnected=false;//If an error occurs, DataStorageType does not connect
 				}
 				List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(program.ProgramNum);
-				ProgramProperty programPropertyPath=listProgramProperties.Find(x => x.PropertyDesc==Dropbox.PropertyDescs.AtoZPath);
-				ProgramProperty programPropertyAccessToken=listProgramProperties.Find(x => x.PropertyDesc==Dropbox.PropertyDescs.AccessToken);
+				ProgramProperty programPropertyPath=listProgramProperties.Find(x => x.PropertyDesc==OpenDentBusiness.Dropbox.PropertyDescs.AtoZPath);
+				ProgramProperty programPropertyAccessToken=listProgramProperties.Find(x => x.PropertyDesc== OpenDentBusiness.Dropbox.PropertyDescs.AccessToken);
 				if(programPropertyPath==null || programPropertyAccessToken==null) {
 					hasConnected=false;//If an error occurs, DataStorageType does not connect
 				}
@@ -7955,7 +7955,7 @@ namespace OpenDental{
 					ex.DoNothing();
 				}
 			}
-			//Per https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.systemevents.sessionswitch?view=netframework-4.7.2 we need to unsubscribe 
+			//Per https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.systemevents.sessionswitch?view=netframework-4.8 we need to unsubscribe 
 			//from the SessionSwitch event "Because this is a static event, you must detach your event handlers when your application is disposed, or 
 			//memory leaks will result."
 			SystemEvents.SessionSwitch-=new SessionSwitchEventHandler(SystemEvents_SessionSwitch);

@@ -350,9 +350,9 @@ namespace OpenDentBusiness {
 			}
 			catch(WebException wex) {
 				//If no connection monitoring desired or this is a WebException that we aren't explicitly looking for then bubble up the exception.
-				//WebException class: https://docs.microsoft.com/en-us/dotnet/api/system.net.webexception?view=netframework-4.7.2
-				//WebException.Status property: https://docs.microsoft.com/en-us/dotnet/api/system.net.webexception.status?view=netframework-4.7.2
-				//Handling WebExceptions: https://docs.microsoft.com/en-us/dotnet/framework/network-programming/handling-errors?view=netframework-4.7.2
+				//WebException class: https://docs.microsoft.com/en-us/dotnet/api/system.net.webexception?view=netframework-4.8
+				//WebException.Status property: https://docs.microsoft.com/en-us/dotnet/api/system.net.webexception.status?view=netframework-4.8
+				//Handling WebExceptions: https://docs.microsoft.com/en-us/dotnet/framework/network-programming/handling-errors?view=netframework-4.8
 				if(!hasConnectionLost || wex.Status!=WebExceptionStatus.ConnectFailure) {
 					throw;
 				}

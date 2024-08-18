@@ -150,8 +150,7 @@ namespace UnitTests.Properties {
         ///N1*PE*Chirag R Vaid Dds Dental Corp*FI*123456789~
         ///N3*2201 Main Ave Ste 100~
         ///N4*Salem*OR*973055722~
-        ///REF*TJ*811902608~
-        ///LX*1 [rest of string was truncated]&quot;;.
+        ///REF*TJ*8 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string JustinSmithERA {
             get {

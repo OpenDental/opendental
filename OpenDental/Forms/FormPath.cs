@@ -313,8 +313,8 @@ namespace OpenDental{
 				return false;
 			}
 			List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(_program.ProgramNum);
-			_programPropertyDropboxPathAtoZ=listProgramProperties.Find(x => x.PropertyDesc==Dropbox.PropertyDescs.AtoZPath);
-			_programPropertyDropboxAccessToken=listProgramProperties.Find(x => x.PropertyDesc==Dropbox.PropertyDescs.AccessToken);
+			_programPropertyDropboxPathAtoZ=listProgramProperties.Find(x => x.PropertyDesc==OpenDentBusiness.Dropbox.PropertyDescs.AtoZPath);
+			_programPropertyDropboxAccessToken=listProgramProperties.Find(x => x.PropertyDesc== OpenDentBusiness.Dropbox.PropertyDescs.AccessToken);
 			if(_programPropertyDropboxPathAtoZ==null || _programPropertyDropboxAccessToken==null) { 
 				_errorMsg=Lan.g(this,"You are missing a program property for Dropbox.  Please contact support to resolve this issue.");
 				return false;

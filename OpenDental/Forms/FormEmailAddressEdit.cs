@@ -347,7 +347,7 @@ namespace OpenDental{
 			if(ODBuild.IsWeb() && !CloudClientL.IsCloudClientRunning()) {
 			return;
 			}
-			Google.AuthorizationRequest authorizationRequest=new Google.AuthorizationRequest();
+			OpenDentBusiness.Google.AuthorizationRequest authorizationRequest=new OpenDentBusiness.Google.AuthorizationRequest();
 			GoogleToken googleToken=null;
 			string emailAddress=textUsername.Text;
 			ProgressOD progressOD=new ProgressOD();

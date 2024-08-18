@@ -109,9 +109,13 @@ namespace OpenDental {
 					return "";
 				}
 			}
-			try {
+			// Corrin 2024-08-18: This is random!?
+            EnumCareCreditPrefillServiceType serviceTypeEnum = (EnumCareCreditPrefillServiceType)Enum.Parse(typeof(EnumCareCreditPrefillServiceType), serviceType);
+
+            try
+            {
 				string pageUrl=CareCredit.SendPrefillReturnPageUrl(careCreditLandingPage,patient,invoiceNumber,purchaseAmt,refundAmt,noteMemo,promoCode,userName,estimatedFeeAmt,
-					oldRefId,merchantNum,serviceType,payNum,clinicNum:clinicNum);
+					oldRefId,merchantNum, serviceTypeEnum, payNum,clinicNum:clinicNum);
 				if(doShowPage) {
 					CareCredit.ShowPage(pageUrl);
 				}

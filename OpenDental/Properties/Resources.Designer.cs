@@ -1144,7 +1144,7 @@ namespace OpenDental.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open Dental, Copyright 2003-2022, Jordan S. Sparks, DMD.
+        ///   Looks up a localized string similar to Open Dental, Copyright 2003-2024, Jordan S. Sparks, DMD.
         ///
         ///Open Dental Software, Inc distributes and supports this software through authorized purchase.  A Registration Key is provided to purchaser at time of sale and is valid for exactly one physical location where patients are treated.  Each separate physical location where patients are treated requires a separate purchase and Registration Key.  Mobile treatment units are each treated as one physical location.  Purchaser may install this software on any  [rest of string was truncated]&quot;;.
         /// </summary>
@@ -1286,9 +1286,9 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Practice_Booster_Icon_22x22 {
+        public static System.Drawing.Bitmap Podium_logo_Black {
             get {
-                object obj = ResourceManager.GetObject("Practice_Booster_Icon_22x22", resourceCulture);
+                object obj = ResourceManager.GetObject("Podium_logo_Black", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1296,9 +1296,9 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Podium_logo_Black {
+        public static System.Drawing.Bitmap Practice_Booster_Icon_22x22 {
             get {
-                object obj = ResourceManager.GetObject("Podium_logo_Black", resourceCulture);
+                object obj = ResourceManager.GetObject("Practice_Booster_Icon_22x22", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

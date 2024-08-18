@@ -947,7 +947,7 @@ namespace OpenDentBusiness.Properties {
         ///	&lt;PageCount&gt;1&lt;/PageCount&gt;
         ///	&lt;IsMultiPage&gt;false&lt;/IsMultiPage&gt;
         ///	&lt;BypassGlobalLock&gt;NeverBypass&lt;/BypassGlobalLock&gt;
-        ///	&lt;HasMobileLayout&gt;true&lt;/Has [rest of string was truncated]&quot;;.
+        ///	&lt;HasMobileLay [rest of string was truncated]&quot;;.
         /// </summary>
         public static string MedicalHist {
             get {

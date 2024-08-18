@@ -22,7 +22,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <ResGenToolArchitecture>Managed32Bit</ResGenToolArchitecture>
     <TargetFrameworkProfile />
     <PublishUrl>http://localhost/OpenDental/</PublishUrl>
@@ -98,262 +98,325 @@
     <DocumentationFile>bin\Release\OpenDental.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.AcroPDFLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\AxInterop.AcroPDFLib.dll</HintPath>
-    </Reference>
-    <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\AxInterop.WMPLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Bridges, Version=22.1.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Bridges.dll</HintPath>
+    <Reference Include="Bridges">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Bridges.dll</HintPath>
     </Reference>
     <Reference Include="CDT, Version=23.2.55.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\CDT.dll</HintPath>
     </Reference>
-    <Reference Include="Dicom.Core, Version=4.0.7.0, Culture=neutral, PublicKeyToken=3a13f649e28eb09a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Dicom.Core.dll</HintPath>
+    <Reference Include="DataConnectionBase">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\DataConnectionBase.dll</HintPath>
     </Reference>
-    <Reference Include="Dicom.Native, Version=4.0.7.0, Culture=neutral, PublicKeyToken=3a13f649e28eb09a, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Dicom.Native.dll</HintPath>
+    <Reference Include="Dicom.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Dicom.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DpsPos, Version=1.0.6191.28914, Culture=neutral, PublicKeyToken=fed6c2461985275f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\DpsPos.dll</HintPath>
+    <Reference Include="Dicom.Native">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Dicom.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="DpsPos">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\DpsPos.dll</HintPath>
+    </Reference>
+    <Reference Include="Dropbox.Api">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Dropbox.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth.PlatformServices">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Google.Apis.Auth.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.PlatformServices">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Google.Apis.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Health.Direct.Agent">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Health.Direct.Agent.dll</HintPath>
     </Reference>
     <Reference Include="Health.Direct.Common">
-      <HintPath>..\Required dlls\Health.Direct.Common.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Health.Direct.Common.dll</HintPath>
     </Reference>
     <Reference Include="ImagingDeviceManager, Version=23.2.55.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\ImagingDeviceManager.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.Acrobat, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Interop.Acrobat">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.Acrobat.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\Required dlls\Interop.Acrobat.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.AFORMAUTLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Interop.AcroPDFLib">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.AcroPDFLib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\Required dlls\Interop.AFORMAUTLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.AFORMAUTLib">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.AFORMAUTLib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.CDRDATALib">
-      <HintPath>..\Required dlls\Interop.CDRDATALib.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.CDRDATALib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.CDRDicom">
-      <HintPath>..\Required dlls\Interop.CDRDicom.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.CDRDicom.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Interop.Microsoft.Office.Core, Version=2.2.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Interop.Microsoft.Office.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.QBFC10, Version=11.0.0.29, Culture=neutral, PublicKeyToken=31d8aec643e18259">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Interop.Microsoft.Office.Core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.Microsoft.Office.Core.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\Required dlls\Interop.QBFC10.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.Word, Version=8.2.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Interop.Word.dll</HintPath>
+    <Reference Include="Interop.QBFC10">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.QBFC10.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.VBIDE">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.VBIDE.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Word">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.Word.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Intuit.Ipp.Core">
-      <HintPath>..\Required dlls\Intuit.Ipp.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Core.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.Data">
-      <HintPath>..\Required dlls\Intuit.Ipp.Data.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Data.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.DataService">
-      <HintPath>..\Required dlls\Intuit.Ipp.DataService.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.DataService.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.Diagnostics">
-      <HintPath>..\Required dlls\Intuit.Ipp.Diagnostics.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.EntitlementService">
-      <HintPath>..\Required dlls\Intuit.Ipp.EntitlementService.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.EntitlementService.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.Exception">
-      <HintPath>..\Required dlls\Intuit.Ipp.Exception.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Exception.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.GlobalTaxService">
-      <HintPath>..\Required dlls\Intuit.Ipp.GlobalTaxService.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.GlobalTaxService.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.OAuth2PlatformClient">
-      <HintPath>..\Required dlls\Intuit.Ipp.OAuth2PlatformClient.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.OAuth2PlatformClient.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.QueryFilter">
-      <HintPath>..\Required dlls\Intuit.Ipp.QueryFilter.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.QueryFilter.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.ReportService">
-      <HintPath>..\Required dlls\Intuit.Ipp.ReportService.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.ReportService.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.Retry">
-      <HintPath>..\Required dlls\Intuit.Ipp.Retry.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Retry.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.Security">
-      <HintPath>..\Required dlls\Intuit.Ipp.Security.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Security.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.Utility">
-      <HintPath>..\Required dlls\Intuit.Ipp.Utility.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Utility.dll</HintPath>
     </Reference>
     <Reference Include="Intuit.Ipp.WebHooksService">
-      <HintPath>..\Required dlls\Intuit.Ipp.WebHooksService.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.WebHooksService.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip, Version=1.9.1.4, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Ionic.Zip.dll</HintPath>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\Required dlls\log4net.dll</HintPath>
+    <Reference Include="IppDotNetSdkForQuickBooksApiV3, Version=14.6.3.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IppDotNetSdkForQuickBooksApiV3.14.6.3.7\lib\net472\IppDotNetSdkForQuickBooksApiV3.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.DotNet.PlatformAbstractions, Version=2.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.DotNet.PlatformAbstractions.2.0.4\lib\net45\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.FileExtensions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.FileExtensions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Json, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Json.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Xml, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Xml.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyModel, Version=2.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyModel.2.0.4\lib\net451\Microsoft.Extensions.DependencyModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileProviders.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileProviders.Physical, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Physical.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Physical.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileSystemGlobbing, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileSystemGlobbing.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.ConfigurationExtensions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.865.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Microsoft.Web.WebView2.Core.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.2651.64, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2651.64\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.865.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.2651.64, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2651.64\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.DocumentObjectModel, Version=1.2.2546.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\MigraDoc.DocumentObjectModel.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.2651.64, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2651.64\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.Rendering, Version=1.2.2546.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\MigraDoc.Rendering.dll</HintPath>
+    <Reference Include="MigraDoc.DocumentObjectModel">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\MigraDoc.DocumentObjectModel.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.RtfRendering, Version=1.2.2546.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\MigraDoc.RtfRendering.dll</HintPath>
+    <Reference Include="MigraDoc.Rendering">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\MigraDoc.Rendering.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
+    <Reference Include="MigraDoc.RtfRendering">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\MigraDoc.RtfRendering.dll</HintPath>
     </Reference>
-    <Reference Include="NDde, Version=1.3.171.0, Culture=neutral, PublicKeyToken=6949dadb6e675e5a">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\NDde.dll</HintPath>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="NDde">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\NDde.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHunspell">
-      <HintPath>..\Required dlls\NHunspell.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\NHunspell.dll</HintPath>
     </Reference>
     <Reference Include="ODApi, Version=22.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\ODApi.dll</HintPath>
     </Reference>
-    <Reference Include="ODCrypt, Version=18.3.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\ODCrypt.dll</HintPath>
-    </Reference>
     <Reference Include="OpenDentalHelp, Version=23.2.55.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\OpenDentalHelp.dll</HintPath>
     </Reference>
-    <Reference Include="Org.Mentalis.Security, Version=1.0.13.715, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Org.Mentalis.Security.dll</HintPath>
+    <Reference Include="PdfSharp">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\PdfSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp, Version=1.2.1269.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\PdfSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="PdfSharp.Charting, Version=1.2.1269.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\PdfSharp.Charting.dll</HintPath>
+    <Reference Include="PdfSharp.Charting">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\PdfSharp.Charting.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RdlEngine, Version=2.9.3.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\RdlEngine.dll</HintPath>
+    <Reference Include="RdlEngine">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\RdlEngine.dll</HintPath>
     </Reference>
-    <Reference Include="RdlViewer, Version=2.9.3.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\RdlViewer.dll</HintPath>
+    <Reference Include="RdlViewer">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\RdlViewer.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog">
-      <HintPath>..\Required dlls\Serilog.dll</HintPath>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Enrichers.Environment">
-      <HintPath>..\Required dlls\Serilog.Enrichers.Environment.dll</HintPath>
+    <Reference Include="Serilog.Enrichers.Environment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Enrichers.Environment.2.1.3\lib\net45\Serilog.Enrichers.Environment.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Enrichers.Thread">
-      <HintPath>..\Required dlls\Serilog.Enrichers.Thread.dll</HintPath>
+    <Reference Include="Serilog.Enrichers.Thread, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Enrichers.Thread.3.1.0\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Extensions.Logging">
-      <HintPath>..\Required dlls\Serilog.Extensions.Logging.dll</HintPath>
+    <Reference Include="Serilog.Extensions.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Extensions.Logging.3.0.1\lib\netstandard2.0\Serilog.Extensions.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Settings.Configuration">
-      <HintPath>..\Required dlls\Serilog.Settings.Configuration.dll</HintPath>
+    <Reference Include="Serilog.Settings.Configuration, Version=3.1.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Settings.Configuration.3.1.0\lib\net461\Serilog.Settings.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Sinks.AzureDocumentDB">
-      <HintPath>..\Required dlls\Serilog.Sinks.AzureDocumentDB.dll</HintPath>
+    <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Sinks.Console">
-      <HintPath>..\Required dlls\Serilog.Sinks.Console.dll</HintPath>
+    <Reference Include="Serilog.Sinks.Debug, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Debug.2.0.0\lib\net46\Serilog.Sinks.Debug.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Sinks.Debug">
-      <HintPath>..\Required dlls\Serilog.Sinks.Debug.dll</HintPath>
+    <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.4.1.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Sinks.File">
-      <HintPath>..\Required dlls\Serilog.Sinks.File.dll</HintPath>
+    <Reference Include="Serilog.Sinks.Trace, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Trace.2.1.0\lib\net45\Serilog.Sinks.Trace.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Sinks.Literate">
-      <HintPath>..\Required dlls\Serilog.Sinks.Literate.dll</HintPath>
+    <Reference Include="SerilogTraceListener, Version=0.0.0.0, Culture=neutral, PublicKeyToken=9398e41289d9b801, processorArchitecture=MSIL">
+      <HintPath>..\packages\SerilogTraceListener.3.2.0\lib\net46\SerilogTraceListener.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Sinks.RollingFile">
-      <HintPath>..\Required dlls\Serilog.Sinks.RollingFile.dll</HintPath>
+    <Reference Include="SharpDX">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\SharpDX.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog.Sinks.Trace">
-      <HintPath>..\Required dlls\Serilog.Sinks.Trace.dll</HintPath>
-    </Reference>
-    <Reference Include="SerilogTraceListener">
-      <HintPath>..\Required dlls\SerilogTraceListener.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SigPlusNET, Version=1.1.4050.24928, Culture=neutral, PublicKeyToken=6aef07010bb0624f, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\SigPlusNET.dll</HintPath>
-    </Reference>
-    <Reference Include="Sparks3D">
-      <HintPath>..\Required dlls\Sparks3D\Sparks3D.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
     </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.4.6.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
+    <Reference Include="System.Diagnostics.TraceSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.TraceSource.4.3.0\lib\net46\System.Diagnostics.TraceSource.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Diagnostics.Tracing" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.WinHttpHandler, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\System.Net.Http.WinHttpHandler.dll</HintPath>
+    <Reference Include="System.IO" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Algorithms" />
+    <Reference Include="System.Security.Cryptography.Encoding" />
+    <Reference Include="System.Security.Cryptography.Primitives" />
+    <Reference Include="System.Security.Cryptography.X509Certificates" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Speech" />
@@ -361,6 +424,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\System.Text.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
@@ -368,23 +432,22 @@
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tamir.SharpSSH, Version=1.1.1.13, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Tamir.SharpSSH.dll</HintPath>
+    <Reference Include="Tamir.SharpSSH">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Tamir.SharpSSH.dll</HintPath>
     </Reference>
-    <Reference Include="Tao.OpenGl, Version=0.0.0.0, Culture=neutral, PublicKeyToken=1ca010269a4501ef">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Tao.OpenGl.dll</HintPath>
+    <Reference Include="Tao.FreeGlut">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Tao.FreeGlut.dll</HintPath>
     </Reference>
-    <Reference Include="Tao.Platform.Windows, Version=1.0.0.3, Culture=neutral, PublicKeyToken=701104b2da67a104">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\Tao.Platform.Windows.dll</HintPath>
+    <Reference Include="Tao.OpenGl">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Tao.OpenGl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Platform.Windows">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Tao.Platform.Windows.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationClient" />
     <Reference Include="UIAutomationProvider" />
-    <Reference Include="VBbridges, Version=4.4.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\VBbridges.dll</HintPath>
+    <Reference Include="VBbridges">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\VBbridges.dll</HintPath>
     </Reference>
     <Reference Include="VirtualWeb, Version=22.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -392,17 +455,11 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="xImageDeviceManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\xImageDeviceManager.dll</HintPath>
+    <Reference Include="xImageDeviceManager">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\xImageDeviceManager.dll</HintPath>
     </Reference>
-    <Reference Include="zxing, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\zxing.dll</HintPath>
-    </Reference>
-    <Reference Include="zxing.presentation, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Required dlls\zxing.presentation.dll</HintPath>
+    <Reference Include="zxing">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\zxing.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -11215,6 +11272,7 @@
       <DependentUpon>ValidNum.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="OpenDental.ruleset" />
     <None Include="Properties\Settings.settings">
@@ -12054,13 +12112,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
-      <Project>{18F7BC78-4B99-48D3-A1F1-0D13A63E3CF9}</Project>
+      <Project>{18f7bc78-4b99-48d3-a1f1-0d13a63e3cf9}</Project>
       <Name>xCodeBase</Name>
-      <Aliases>global</Aliases>
-    </ProjectReference>
-    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
-      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
-      <Name>xDataConnectionBase</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenDentalCloud\OpenDentalCloud.csproj">
       <Project>{f90d0481-3d97-4c72-af6e-dd81177e3de1}</Project>
@@ -12112,15 +12165,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="WMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -12138,4 +12182,11 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets'))" />
+  </Target>
 </Project>

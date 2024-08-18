@@ -3538,7 +3538,7 @@ namespace OpenDental {
 				#region TreatmentNotes
 				case "TreatmentNotes":
 					//Not using ODtextBox becuase RichTextBox.DrawToBitmap(...) does not work.
-					//https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox.drawtobitmap?view=netframework-4.7.2
+					//https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.richtextbox.drawtobitmap?view=netframework-4.8
 					//"This method is not relevant for this class."
 					System.Windows.Forms.TextBox textBoxControlTreatNotes=new System.Windows.Forms.TextBox();
 					textBoxControlTreatNotes.Multiline=true;
