@@ -32,30 +32,46 @@ namespace CodeBase {
 			HasInitialized=true;
 		}
 
-		///<summary>This will only load the assembly once, even if called multiple times.
-		///Some packages are widly popular, 3rd-party libraries reference different versions than what the current project expects.
-		///This can cause runtime errors like "Could not load file or assembly 'package...'". The best way to fix these errors is to update the
-		///3rd-party library to use a newer version of the package. If that option is not available, you can call this method to force any failed
-		///loads of the package to use the specified dll.</summary>
-		public static void FixPackageAssembly(string packageName,string pathToDll) {
-			//Kick out early if we have already loaded the assembly.
-			if(_listPackages.Contains(packageName)) {
-				return;
-			}
-			_listPackages.Add(packageName);
-			AppDomain.CurrentDomain.AssemblyResolve+=(sender,resolveArgs) => {
-				string assemblyInfo=resolveArgs.Name;// e.g "Lib1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
-				string[] arrParts=assemblyInfo.Split(',');
-				string name=arrParts[0];
-				string fullName;
-				if(name==packageName) {
-					fullName=pathToDll;
-				}
-				else {
-					return null;
-				}
-				return Assembly.LoadFile(fullName);
-			};
-		}
-	}
+        ///<summary>This will only load the assembly once, even if called multiple times.
+        ///Some packages are widly popular, 3rd-party libraries reference different versions than what the current project expects.
+        ///This can cause runtime errors like "Could not load file or assembly 'package...'". The best way to fix these errors is to update the
+        ///3rd-party library to use a newer version of the package. If that option is not available, you can call this method to force any failed
+        ///loads of the package to use the specified dll.</summary>
+        /// Corrin 2024-08-19: Changed to using LoadFrom and handle recursion better
+        public static void FixPackageAssembly(string packageName, string pathToDll)
+        {
+            // Kick out early if we have already loaded the assembly.
+            if (_listPackages.Contains(packageName))
+            {
+                return;
+            }
+            _listPackages.Add(packageName);
+
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) => {
+                // Check if the assembly is already loaded to avoid recursion.
+                var alreadyLoadedAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                    .FirstOrDefault(a => a.FullName == resolveArgs.Name);
+                if (alreadyLoadedAssembly != null)
+                {
+                    return alreadyLoadedAssembly;
+                }
+
+                // Parse the assembly name.
+                string assemblyInfo = resolveArgs.Name; // e.g., "Lib1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+                string[] arrParts = assemblyInfo.Split(',');
+                string name = arrParts[0];
+
+                // Load the assembly only if it matches the specified package name.
+                if (name.Equals(packageName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Load the assembly from the specified path.
+                    return Assembly.LoadFrom(pathToDll);
+                }
+
+                // Return null if the assembly doesn't match.
+                return null;
+            };
+        }
+
+    }
 }

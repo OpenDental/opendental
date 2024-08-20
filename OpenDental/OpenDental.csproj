@@ -105,9 +105,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\CDT.dll</HintPath>
     </Reference>
-    <Reference Include="DataConnectionBase">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\DataConnectionBase.dll</HintPath>
-    </Reference>
     <Reference Include="Dicom.Core">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Dicom.Core.dll</HintPath>
     </Reference>
@@ -116,9 +113,6 @@
     </Reference>
     <Reference Include="DpsPos">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\DpsPos.dll</HintPath>
-    </Reference>
-    <Reference Include="Dropbox.Api">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Dropbox.Api.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Google.Apis.dll</HintPath>
@@ -181,115 +175,26 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Interop.Word.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Intuit.Ipp.Core">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.Data">
+    <Reference Include="Intuit.Ipp.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Intuit.Ipp.DataService">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.DataService.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.Diagnostics">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Diagnostics.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.EntitlementService">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.EntitlementService.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.Exception">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Exception.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.GlobalTaxService">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.GlobalTaxService.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.OAuth2PlatformClient">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.OAuth2PlatformClient.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.QueryFilter">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.QueryFilter.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.ReportService">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.ReportService.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.Retry">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Retry.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.Security">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.Utility">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.Utility.dll</HintPath>
-    </Reference>
-    <Reference Include="Intuit.Ipp.WebHooksService">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Intuit.Ipp.WebHooksService.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
+    <Reference Include="Ionic.Zip, Version=1.9.1.4, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="IppDotNetSdkForQuickBooksApiV3, Version=14.6.3.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\IppDotNetSdkForQuickBooksApiV3.14.6.3.7\lib\net472\IppDotNetSdkForQuickBooksApiV3.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.DotNet.PlatformAbstractions, Version=2.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.DotNet.PlatformAbstractions.2.0.4\lib\net45\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.FileExtensions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.FileExtensions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Json, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Json.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Xml, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Xml.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyModel, Version=2.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyModel.2.0.4\lib\net451\Microsoft.Extensions.DependencyModel.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.FileProviders.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.FileProviders.Physical, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Physical.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Physical.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.FileSystemGlobbing, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.FileSystemGlobbing.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Options, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Options.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Options.ConfigurationExtensions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.2651.64, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2651.64\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.865.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.2651.64, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2651.64\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.865.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.2651.64, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2651.64\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.Wpf">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="MigraDoc.DocumentObjectModel">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\MigraDoc.DocumentObjectModel.dll</HintPath>
@@ -300,14 +205,16 @@
     <Reference Include="MigraDoc.RtfRendering">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\MigraDoc.RtfRendering.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data">
+    <Reference Include="MySql.Data, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="NDde">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\NDde.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\NHunspell.dll</HintPath>
@@ -320,7 +227,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\OpenDentalHelp.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp">
+    <Reference Include="PdfSharp, Version=1.2.1269.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\PdfSharp.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp.Charting">
@@ -334,36 +242,6 @@
     <Reference Include="RdlViewer">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\RdlViewer.dll</HintPath>
     </Reference>
-    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Enrichers.Environment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Enrichers.Environment.2.1.3\lib\net45\Serilog.Enrichers.Environment.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Enrichers.Thread, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Enrichers.Thread.3.1.0\lib\net45\Serilog.Enrichers.Thread.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Extensions.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Extensions.Logging.3.0.1\lib\netstandard2.0\Serilog.Extensions.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Settings.Configuration, Version=3.1.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Settings.Configuration.3.1.0\lib\net461\Serilog.Settings.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.Debug, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.Debug.2.0.0\lib\net46\Serilog.Sinks.Debug.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.File.4.1.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.Trace, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.Trace.2.1.0\lib\net45\Serilog.Sinks.Trace.dll</HintPath>
-    </Reference>
-    <Reference Include="SerilogTraceListener, Version=0.0.0.0, Culture=neutral, PublicKeyToken=9398e41289d9b801, processorArchitecture=MSIL">
-      <HintPath>..\packages\SerilogTraceListener.3.2.0\lib\net46\SerilogTraceListener.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\SharpDX.dll</HintPath>
     </Reference>
@@ -373,13 +251,7 @@
     <Reference Include="System">
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
     </Reference>
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.ConfigurationManager, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Configuration.ConfigurationManager.4.6.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -389,11 +261,6 @@
     <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
-    <Reference Include="System.Diagnostics.TraceSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.TraceSource.4.3.0\lib\net46\System.Diagnostics.TraceSource.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Diagnostics.Tracing" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
@@ -401,15 +268,13 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.IO" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    <Reference Include="System.Net.Http.WinHttpHandler, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\System.Net.Http.WinHttpHandler.dll</HintPath>
     </Reference>
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -432,7 +297,8 @@
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tamir.SharpSSH">
+    <Reference Include="Tamir.SharpSSH, Version=1.1.1.13, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Open Dental\Tamir.SharpSSH.dll</HintPath>
     </Reference>
     <Reference Include="Tao.FreeGlut">
@@ -2659,9 +2525,7 @@
     <Compile Include="Forms\FormDashboardWidgets.designer.cs">
       <DependentUpon>FormDashboardWidgets.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormFeeSchedTools.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormFeeSchedTools.cs" />
     <Compile Include="Forms\FormLimitedStatementSelect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4379,9 +4243,7 @@
     <Compile Include="Forms\FormAuditOrtho.designer.cs">
       <DependentUpon>FormAuditOrtho.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEmailCertRegister.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormEmailCertRegister.cs" />
     <Compile Include="Forms\FormEmailCertRegister.designer.cs">
       <DependentUpon>FormEmailCertRegister.cs</DependentUpon>
     </Compile>
@@ -4601,9 +4463,7 @@
     <Compile Include="Forms\FormEhrLabOrderImport.Designer.cs">
       <DependentUpon>FormEhrLabOrderImport.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormOIDRegistryInternal.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormOIDRegistryInternal.cs" />
     <Compile Include="Forms\FormOIDRegistryInternal.Designer.cs">
       <DependentUpon>FormOIDRegistryInternal.cs</DependentUpon>
     </Compile>
@@ -4823,15 +4683,11 @@
     <Compile Include="Forms\FormEhrQualityMeasureEdit2014.Designer.cs">
       <DependentUpon>FormEhrQualityMeasureEdit2014.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrQualityMeasures.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormEhrQualityMeasures.cs" />
     <Compile Include="Forms\FormEhrQualityMeasures.Designer.cs">
       <DependentUpon>FormEhrQualityMeasures.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrQualityMeasures2014.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormEhrQualityMeasures2014.cs" />
     <Compile Include="Forms\FormEhrQualityMeasures2014.Designer.cs">
       <DependentUpon>FormEhrQualityMeasures2014.cs</DependentUpon>
     </Compile>
@@ -4949,9 +4805,7 @@
     <Compile Include="Forms\FormPaymentPlanOptions.designer.cs">
       <DependentUpon>FormPaymentPlanOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormCodeSystemsImport.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormCodeSystemsImport.cs" />
     <Compile Include="Forms\FormCodeSystemsImport.designer.cs">
       <DependentUpon>FormCodeSystemsImport.cs</DependentUpon>
     </Compile>
@@ -4961,9 +4815,7 @@
     <Compile Include="Forms\FormCommPrefPicker.Designer.cs">
       <DependentUpon>FormCommPrefPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEHR.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormEHR.cs" />
     <Compile Include="Forms\FormEHR.Designer.cs">
       <DependentUpon>FormEHR.cs</DependentUpon>
     </Compile>
@@ -5492,9 +5344,7 @@
     <Compile Include="Forms\FormApptPrintSetup.designer.cs">
       <DependentUpon>FormApptPrintSetup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrProvKeyEditCust.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormEhrProvKeyEditCust.cs" />
     <Compile Include="Forms\FormEhrProvKeyEditCust.designer.cs">
       <DependentUpon>FormEhrProvKeyEditCust.cs</DependentUpon>
     </Compile>
@@ -5621,9 +5471,7 @@
     <Compile Include="Forms\FormIcd9s.designer.cs">
       <DependentUpon>FormIcd9s.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrSetup.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormEhrSetup.cs" />
     <Compile Include="Forms\FormEhrSetup.designer.cs">
       <DependentUpon>FormEhrSetup.cs</DependentUpon>
     </Compile>
@@ -6086,15 +5934,11 @@
     <Compile Include="Forms\FormProcEditAll.designer.cs">
       <DependentUpon>FormProcEditAll.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormRequestEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormRequestEdit.cs" />
     <Compile Include="Forms\FormRequestEdit.designer.cs">
       <DependentUpon>FormRequestEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormFeatureRequest.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormFeatureRequest.cs" />
     <Compile Include="Forms\FormSheetFieldCheckBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6399,9 +6243,7 @@
     <Compile Include="Forms\FormReportsMore.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormRegistrationKeyEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormRegistrationKeyEdit.cs" />
     <Compile Include="Forms\FormReqNeededEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6705,12 +6547,8 @@
     <Compile Include="Forms\FormLetterEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormLetterMergeEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormLetterMerges.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\FormLetterMergeEdit.cs" />
+    <Compile Include="Forms\FormLetterMerges.cs" />
     <Compile Include="Forms\FormLetters.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7171,9 +7009,7 @@
     <Compile Include="Main Modules\FormCommandLinePassOff.Designer.cs">
       <DependentUpon>FormCommandLinePassOff.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main Modules\FormOpenDental.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Main Modules\FormOpenDental.cs" />
     <Compile Include="Main Modules\ProgramEntry.cs" />
     <Compile Include="Misc\SetupWizard.cs" />
     <Compile Include="Misc\ClassConvertDatabase.cs" />
@@ -11272,7 +11108,6 @@
       <DependentUpon>ValidNum.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="OpenDental.ruleset" />
     <None Include="Properties\Settings.settings">
@@ -11398,6 +11233,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="WebView2Loader.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Icon1.ico" />
     <None Include="Resources\Podium_logo_Black.png" />
     <None Include="Resources\XamlStyle_ToolBarButton.txt" />
@@ -11511,6 +11349,9 @@
     <EmbeddedResource Include="CursorLineSubtract.cur" />
     <EmbeddedResource Include="CursorMeasure.cur" />
     <EmbeddedResource Include="CursorScale.cur" />
+    <Content Include="Hunspellx86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Misc\App.ico" />
     <Content Include="Misc\TerminalMgr.ico" />
     <EmbeddedResource Include="Forms Reports\FormRpInsOverpaid.resx">
@@ -12115,6 +11956,10 @@
       <Project>{18f7bc78-4b99-48d3-a1f1-0d13a63e3cf9}</Project>
       <Name>xCodeBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
+      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
+      <Name>xDataConnectionBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenDentalCloud\OpenDentalCloud.csproj">
       <Project>{f90d0481-3d97-4c72-af6e-dd81177e3de1}</Project>
       <Name>OpenDentalCloud</Name>
@@ -12182,11 +12027,4 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\Microsoft.Web.WebView2.targets'))" />
-  </Target>
 </Project>
