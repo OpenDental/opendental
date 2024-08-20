@@ -272,6 +272,33 @@ namespace OpenDentBusiness {
 				InsertMobileNotification(MobileNotificationType.ODM_LogoutODUser,mobileAppDeviceNum: listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODMobile,listPrimaryKeys: new List<long> { userNum });
 			}
 		}
+
+		///<summary>This is a workaround due to android push notifications no longer being supported for xamarin. Will only notify android users when ODMobile is running.</summary>
+		public static void ODM_NewTextMessage(SmsFromMobile smsFromMobile,long patNum) {
+			if(smsFromMobile==null) {
+				return;
+			}
+			//No need to bother mobile users with alert for eConfirmation responses.
+			if(smsFromMobile.IsConfirmationResponse){
+				return;
+			}
+			Patient patient=Patients.GetLim(patNum);
+			string senderName=patient?.GetNameFirstOrPreferred();
+			if(string.IsNullOrEmpty(senderName)) {
+				if(smsFromMobile.MobilePhoneNumber.Length==11 && smsFromMobile.MobilePhoneNumber[0]=='1') {
+					senderName=$"({smsFromMobile.MobilePhoneNumber[1]}{smsFromMobile.MobilePhoneNumber[2]}{smsFromMobile.MobilePhoneNumber[3]})"+
+						$"{smsFromMobile.MobilePhoneNumber[4]}{smsFromMobile.MobilePhoneNumber[5]}{smsFromMobile.MobilePhoneNumber[6]}-" +
+						$"{smsFromMobile.MobilePhoneNumber[7]}{smsFromMobile.MobilePhoneNumber[8]}{smsFromMobile.MobilePhoneNumber[9]}{smsFromMobile.MobilePhoneNumber[10]}";
+				}
+				else {
+					senderName=smsFromMobile.MobilePhoneNumber;
+				}
+			}
+			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetForClinic(smsFromMobile.ClinicNum);
+			for(int i = 0;i<listMobileAppDevices.Count;i++) {
+				InsertMobileNotification(MobileNotificationType.ODM_NewTextMessage,listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODMobile,listTags:new List<string>() { smsFromMobile.MobilePhoneNumber,$@"New Message",$@"Received a new message from {senderName}" });
+			}
+		}
 		#endregion
 
 		#region ODTouch 

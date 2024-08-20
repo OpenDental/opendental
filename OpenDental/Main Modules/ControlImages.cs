@@ -859,9 +859,8 @@ namespace OpenDental
 				return;//Unexplained error
 			}
 			string ext=ImageStore.GetExtension(document);
-			if(ext==".jpg" || ext==".jpeg" || ext==".gif" 
-				|| document.ImgType==ImageType.Radiograph || document.ImgType==ImageType.Photo) 
-			{
+			List<string> listImageExtensions=new List<string> {".bmp",".dcm",".dicom",".gif",".jpg",".jpeg",".png",".tif",".tiff"};
+			if(listImageExtensions.Contains(ext)) {
 				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,GetDocumentShowing(0));
 				frmDocInfo.ShowDialog();
 				if(frmDocInfo.IsDialogCancel) {

@@ -1422,6 +1422,29 @@ namespace OpenDentBusiness {
 			return table;
 		}
 
+		public static string GetProcDescriptPlanned(Appointment appointmentLinkToPlanned,List<Procedure> listProceduresPlannedAppt,DateTime dateSched,string procDescript) {
+			bool hasCompletedProcedures=false;
+			bool hasNonCompletedProcedures=false;
+			if(!listProceduresPlannedAppt.IsNullOrEmpty()) {
+				hasCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus==ProcStat.C);
+				hasNonCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus!=ProcStat.C);
+			}
+			//If the "Completed" desc changes, makes sure to update in ControlChart.cs in the FillPlanned() for loop
+			if(appointmentLinkToPlanned!=null && appointmentLinkToPlanned.AptStatus==ApptStatus.Complete) {
+				return Lans.g("ContrChart","(Completed)")+" "+procDescript;
+			}
+			if(hasCompletedProcedures && !hasNonCompletedProcedures) {
+				return Lans.g("ContrChart","(Completed)")+" "+procDescript;
+			}
+			if(dateSched.Date==DateTime_.Today.Date) {
+				return Lans.g("ContrChart","(Today's)")+" "+procDescript;
+			}
+			if(hasCompletedProcedures && hasNonCompletedProcedures) {
+				return Lans.g("ContrChart","(Some Procs Complete)")+" "+procDescript;
+			}
+			return procDescript;
+		}
+
 		public static DataTable GetPlannedApt(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum);
@@ -1461,6 +1484,9 @@ namespace OpenDentBusiness {
 			DateTime dateSched;
 			ApptStatus aptStatus;
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ProgNoteColors);
+			command="SELECT AptNum FROM appointment WHERE PatNum="+POut.Long(patNum)+" AND AptStatus="+POut.Int((int)ApptStatus.Planned);
+			List<long> listAptNumsPlanned=Db.GetListLong(command);
+			List<Procedure> listProcedures=Procedures.GetProcsMultApts(listAptNumsPlanned);
 			Appointment appointmentLinkToPlanned;
 			for(int i=0;i<rawPlannedAppts.Rows.Count;i++) {
 				aptRow=null;
@@ -1483,36 +1509,29 @@ namespace OpenDentBusiness {
 				row=table.NewRow();
 				//PlannedAppt----------------------------------------------------------------------------
 				long aptNum=PIn.Long(aptRow["AptNum"].ToString());
+				appointmentLinkToPlanned=listAppointmentsLinkedToPlanned.Find(x => x.NextAptNum==aptNum);
+				dateSched=DateTime.MinValue;
+				if(appointmentLinkToPlanned!=null) {
+					dateSched=appointmentLinkToPlanned.AptDateTime;
+				}
+				aptStatus=ApptStatus.None;
+				List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(aptNum,listProcedures,true);
 				row["AptNum"]=aptNum; 
 				row["PlannedApptNum"]=rawPlannedAppts.Rows[i]["PlannedApptNum"].ToString();
 				row["minutes"]=(aptRow["Pattern"].ToString().Length*5).ToString();
 				row["Note"]=aptRow["Note"].ToString();
-				row["ProcDescript"]=aptRow["ProcDescript"].ToString();
+				row["ProcDescript"]=GetProcDescriptPlanned(appointmentLinkToPlanned,listProceduresPlannedAppt,dateSched,aptRow["ProcDescript"].ToString());
 				row["ItemOrder"]=itemOrder.ToString();
 				//Appointment Linked to PlannedAppt----------------------------------------------------------------------------
 				row["AptStatus"]="";
 				row["SchedAptNum"]="";
 				row["dateSched"]="";
-				appointmentLinkToPlanned=listAppointmentsLinkedToPlanned.FirstOrDefault(x => x.NextAptNum==aptNum);
-				dateSched=DateTime.MinValue;
-				aptStatus=ApptStatus.None;
 				if(appointmentLinkToPlanned!=null) {
-					dateSched=appointmentLinkToPlanned.AptDateTime;
-					aptStatus=appointmentLinkToPlanned.AptStatus;
-					row["AptStatus"]=(int)aptStatus;
+					row["AptStatus"]=(int)appointmentLinkToPlanned.AptStatus;
 					row["SchedAptNum"]=appointmentLinkToPlanned.AptNum;
-					if(aptStatus==ApptStatus.Complete) {
-						row["ProcDescript"]=Lans.g("ContrChart","(Completed) ")+ row["ProcDescript"];
-					}
-					else if(dateSched.Date==DateTime.Today.Date) {
-						row["ProcDescript"]=Lans.g("ContrChart","(Today's) ")+ row["ProcDescript"];
-					}
-					else if(rawPlannedAppts.Rows[i]["someAreComplete"].ToString()!="0") {
-						row["ProcDescript"]=Lans.g("ContrChart","(Some procs complete) ")+ row["ProcDescript"];
-					}
-					if(dateSched.Year>1880) {
-						row["dateSched"]=dateSched.ToShortDateString();
-					}
+				}
+				if(dateSched.Year>1880) {
+					row["dateSched"]=dateSched.ToShortDateString();
 				}
 				//Colors----------------------------------------------------------------------------
 				//change color if completed, broken, or unscheduled no matter the date

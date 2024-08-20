@@ -557,12 +557,12 @@ namespace OpenDentBusiness {
 		[Description("Payment Portal - User requested a text authentication code")]
 		[EServiceLogType(eServiceType.PaymentPortal)]
 		PayPortalRequestedCodeViaSms,
-		///<summary>109 - Payment Portal - User verfied identity with an email authentication code</summary>
-		[Description("Payment Portal - User verfied identity with an email authentication code")]
+		///<summary>109 - Payment Portal - User verified identity with an email authentication code</summary>
+		[Description("Payment Portal - User verified identity with an email authentication code")]
 		[EServiceLogType(eServiceType.PaymentPortal)]
 		PayPortalAuthenticatedViaEmail,
-		///<summary>110 - Payment Portal - User verfied identity with an SMS authentication code</summary>
-		[Description("Payment Portal - User verfied identity with an SMS authentication code")]
+		///<summary>110 - Payment Portal - User verified identity with an SMS authentication code</summary>
+		[Description("Payment Portal - User verified identity with an SMS authentication code")]
 		[EServiceLogType(eServiceType.PaymentPortal)]
 		PayPortalAuthenticatedViaSms,
 		///<summary>111 - Payment Portal - User opted to pay amount due</summary>

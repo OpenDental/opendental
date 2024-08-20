@@ -279,7 +279,7 @@ namespace OpenDental {
 				}
 			}
 			decimal surchargeAmount=_response.AmountSurcharged;
-			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData,_response.AuthCode,_response.Description,messages:null,_response.Amount,doShowSignatureLine,_clinicNum,_response.CardType,surchargeAmount:surchargeAmount);
+			ReceiptStr=PayConnect.BuildReceiptString(TransType,_response.RefNumber,_patient.GetNameFLnoPref(),_response.CardNumber,magData,_response.AuthCode,_response.Description,messages:null,_response.Amount,doShowSignatureLine,_clinicNum,_response.CardType,surchargeAmount:surchargeAmount,cardHolder:_response.CardHolder);
 			return true;
 		}
 

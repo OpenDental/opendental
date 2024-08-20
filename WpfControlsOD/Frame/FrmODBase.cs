@@ -70,6 +70,7 @@ How to:
 -For pixel drawing, we are using the same coordinate system for drawing as in WinForms. They didn't change it until DirectX10.
 //https://learn.microsoft.com/en-us/windows/win32/direct3d10/d3d10-graphics-programming-guide-resources-coordinates
 -Instead of Windows.Forms.Timer, use System.Windows.Threading.DispatcherTimer.
+		Also consider using our built-in FilterControls
 -See a few hundred lines down for how to handle key events
 -Tab order is set by TabIndexOD, similar to before. But default is a huge int which makes that control last.
 		Here's how you set both keyboard and logical focus, usually in the Load event handler: textBox1.Focus();

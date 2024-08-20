@@ -453,15 +453,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns a list of CodeNums that have a ProcCode that starts with any of the comma separated ProcCodes passed in.
-		///Set isExactMatch to true if the ProcCode must exactly match instead simply starting with any of the ProcCodes passed in.
 		///E.g. Insurance benefit logic invokes this method and must match procedure codes that start the same.</summary>
-		public static List<long> GetCodeNumsForProcCodes(string procCodes,bool isExactMatch=false) {
+		public static List<long> GetCodeNumsForProcCodes(string procCodes) {
 			//No need to check MiddleTierRole; no call to db.
 			List<string> listCodes=procCodes.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
-			if(isExactMatch) {
-				return GetWhereFromList(x => listCodes.Contains(x.ProcCode)).Select(x => x.CodeNum).ToList();
-			}
-			return GetWhereFromList(x => listCodes.Any(y => x.ProcCode.StartsWith(y))).Select(x => x.CodeNum).ToList();
+			return GetWhereFromList(x => listCodes.Contains(x.ProcCode)).Select(x => x.CodeNum).ToList();
 		}
 
 		///<summary>Gets the CodeNums for the passed in InsHist preference.</summary>

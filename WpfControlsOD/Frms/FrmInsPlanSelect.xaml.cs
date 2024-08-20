@@ -27,6 +27,9 @@ namespace OpenDental {
 		public string groupNameText;
 		///<summary>Supply a string here to start off the search with filtered group nums.</summary>
 		public string groupNumText;
+		private FilterControlsAndAction _filterControlsAndAction;
+		///<summary>Gets set to true when hitting GetAll button. Otherwise, query only gets 200 rows. This reverts back to false after one query.</summary>
+		private bool _showAll;
 
 		///<summary></summary>
 		public FrmInsPlanSelect(){
@@ -34,15 +37,6 @@ namespace OpenDental {
 			Lang.F(this);
 			Load+=FrmInsPlanSelect_Load;
 			gridMain.CellDoubleClick+=gridMain_CellDoubleClick;
-			textEmployer.TextChanged+=textEmployer_TextChanged;
-			textCarrier.TextChanged+=textCarrier_TextChanged;
-			textGroupName.TextChanged+=textGroupName_TextChanged;
-			textGroupNum.TextChanged+=textGroupNum_TextChanged;
-			textPlanNum.TextChanged+=textPlanNum_TextChanged;
-			textTrojanID.TextChanged+=textTrojanID_TextChanged;
-			radioOrderCarrier.Click+=radioOrderCarrier_Click;
-			radioOrderEmp.Click+=radioOrderEmp_Click;
-			checkShowHidden.Click+=CheckShowHidden_Click;
 			PreviewKeyDown+=FrmInsPlanSelect_PreviewKeyDown;
 		}
 
@@ -66,13 +60,25 @@ namespace OpenDental {
 			textCarrier.Text=carrierText;
 			textGroupName.Text=groupNameText;
 			textGroupNum.Text=groupNumText;
-			FillGrid();
+			_filterControlsAndAction=new FilterControlsAndAction();
+			_filterControlsAndAction.AddControl(textEmployer);
+			_filterControlsAndAction.AddControl(textCarrier);
+			_filterControlsAndAction.AddControl(textGroupName);
+			_filterControlsAndAction.AddControl(textGroupNum);
+			_filterControlsAndAction.AddControl(textPlanNum);
+			_filterControlsAndAction.AddControl(textTrojanID);
+			_filterControlsAndAction.AddControl(radioOrderCarrier);
+			_filterControlsAndAction.AddControl(radioOrderEmp);
+			_filterControlsAndAction.AddControl(checkShowHidden);
+			_filterControlsAndAction.FuncDb=RefreshFromDb;
+			_filterControlsAndAction.SetInterval(300);
+			//_filterControlsAndAction.SetMinChars(2);
+			_filterControlsAndAction.ActionComplete=FillGrid;
 		}
 
-		private void FillGrid(bool isGetAll=false){
+		private void FillGrid(object objectData) {
 			Cursor=Cursors.Wait;
-			_table=InsPlans.GetBigList(radioOrderEmp.Checked,textEmployer.Text,textCarrier.Text,
-				textGroupName.Text,textGroupNum.Text,textPlanNum.Text,textTrojanID.Text,checkShowHidden.Checked==true,isGetAll);
+			_table=(DataTable)objectData;
 			butBlank.IsEnabled=Security.IsAuthorized(EnumPermType.InsPlanEdit,true);
 			int selectedRow;//preserves the selected row.
 			if(gridMain.SelectedIndices.Length==1){
@@ -154,7 +160,7 @@ namespace OpenDental {
 		private bool InsPlanExists(InsPlan insPlan) {
 			if(insPlan==null || insPlan.PlanNum==0) {
 				MsgBox.Show(this,"Insurance plan selected no longer exists.");
-				FillGrid();
+				FillGrid(RefreshFromDb());
 				return false;
 			}
 			return true;
@@ -169,44 +175,10 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void radioOrderEmp_Click(object sender, System.EventArgs e) {
-			FillGrid();
-		}
-
-		private void radioOrderCarrier_Click(object sender, System.EventArgs e) {
-			FillGrid();
-		}
-
-		private void textEmployer_TextChanged(object sender,EventArgs e) {
-			FillGrid();
-		}
-
-		private void textCarrier_TextChanged(object sender,EventArgs e) {
-			FillGrid();
-		}
-
-		private void textGroupName_TextChanged(object sender,EventArgs e) {
-			FillGrid();
-		}
-
-		private void textGroupNum_TextChanged(object sender,EventArgs e) {
-			FillGrid();
-		}
-
-		private void textPlanNum_TextChanged(object sender,EventArgs e) {
-			FillGrid();
-		}
-
-		private void textTrojanID_TextChanged(object sender,EventArgs e) {
-			FillGrid();
-		}
-
-		private void CheckShowHidden_Click(object sender,EventArgs e) {
-			FillGrid();
-		}
-		
 		private void butGetAll_Click(object sender,EventArgs e) {
-			FillGrid(true);
+			_showAll=true;
+			FillGrid(RefreshFromDb());
+			_showAll=false;
 		}
 
 		private void butBlank_Click(object sender, System.EventArgs e) {
@@ -218,6 +190,29 @@ namespace OpenDental {
 			if(butOK.IsAltKey(Key.O,e)) {
 				butOK_Click(this,new EventArgs());
 			}
+		}
+
+		private object RefreshFromDb(){//bool showAll=false) {
+			//This gets run on a background thread so that the UI will not lock up.
+			string txtEmployer="";
+			Dispatcher.Invoke(()=>txtEmployer=textEmployer.Text);
+			string txtCarrier="";
+			Dispatcher.Invoke(()=>txtCarrier=textCarrier.Text);
+			string txtGroupName="";
+			Dispatcher.Invoke(()=>txtGroupName=textGroupName.Text);
+			string txtGroupNum="";
+			Dispatcher.Invoke(()=>txtGroupNum=textGroupNum.Text);
+			string txtPlanNum="";
+			Dispatcher.Invoke(()=>txtPlanNum=textPlanNum.Text);
+			string txtTrojanID="";
+			Dispatcher.Invoke(()=>txtTrojanID=textTrojanID.Text);
+			bool radioSortCarrier=true;
+			Dispatcher.Invoke(()=>radioSortCarrier=radioOrderCarrier.Checked);
+			bool radioSortEmp=false;
+			Dispatcher.Invoke(()=>radioSortEmp=radioOrderEmp.Checked);
+			bool chkShowHidden=false;
+			Dispatcher.Invoke(()=>chkShowHidden=checkShowHidden.Checked==true);
+			return InsPlans.GetBigList(radioSortEmp,txtEmployer,txtCarrier,txtGroupName,txtGroupNum,txtPlanNum,txtTrojanID,chkShowHidden,_showAll);
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
@@ -236,6 +231,5 @@ namespace OpenDental {
 			InsPlanSelected=insPlan;
 			IsDialogOK=true;
 		}
-
 	}
 }

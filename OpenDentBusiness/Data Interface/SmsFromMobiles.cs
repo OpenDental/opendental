@@ -222,6 +222,8 @@ namespace OpenDentBusiness{
 				Insert(smsFromMobile);
 				//Alert ODMobile where applicable.
 				PushNotificationUtils.ODM_NewTextMessage(smsFromMobile,smsFromMobile.PatNum);
+				//This is a workaround due to android push notifications no longer being supported for xamarin. Will only notify android users when ODMobile is running.
+				MobileNotifications.ODM_NewTextMessage(smsFromMobile,smsFromMobile.PatNum);
 			}
 			//We used to update the SmsNotification indicator via a queries and a signal here.  Now managed by the eConnector.
 		}

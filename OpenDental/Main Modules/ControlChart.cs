@@ -10678,8 +10678,20 @@ namespace OpenDental {
 				table=_loadData.TablePlannedAppts;
 			}*/
 			_listDataRowsPlannedAppts=new List<DataRow>();
+			List<Procedure> listProcedures=Pd.ListProcedures;
 			for(int i=0;i<_tablePlannedAll.Rows.Count;i++) {
-				if(_tablePlannedAll.Rows[i]["AptStatus"].ToString()=="2" && !checkShowCompleted.Checked) {
+				long aptNum=PIn.Long(_tablePlannedAll.Rows[i]["AptNum"].ToString());
+				bool hasCompletedProcedures=false;
+				bool hasNonCompletedProcedures=false;
+				List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(aptNum,listProcedures,true);
+				if(!listProcedures.IsNullOrEmpty()) {
+					hasCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus==ProcStat.C);
+					hasNonCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus!=ProcStat.C);
+				}
+				if(_tablePlannedAll.Rows[i]["AptStatus"].ToString()=="2" && !checkShowCompleted.Checked) {//attached appointment is complete
+					continue;
+				}
+				if(hasCompletedProcedures && !hasNonCompletedProcedures && !checkShowCompleted.Checked) {//all procedures are complete on planned appt
 					continue;
 				}
 				_listDataRowsPlannedAppts.Add(_tablePlannedAll.Rows[i]);//List containing only rows we are showing, can be the same as _tablePlannedAll

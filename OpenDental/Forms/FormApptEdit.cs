@@ -1003,9 +1003,7 @@ namespace OpenDental{
 			}
 			List<Procedure> listProcedures=gridProc.ListGridRows.Select(x=>(Procedure)x.Tag).ToList();
 			for(int i=0;i<listProcedures.Count;i++) {
-				if(DisableDetachingOfCompletedProcFromCompletedAppt(listProcedures[i],_appointment,out string msg)
-					|| DisableDetachingOfAttachedToAPlannedApt(listProcedures[i],out msg))
-				{
+				if(DisableDetachingOfCompletedProcFromCompletedAppt(listProcedures[i],_appointment,out string msg)) {
 					continue;
 				}
 				gridProc.SetSelected(i,true);
@@ -1058,9 +1056,7 @@ namespace OpenDental{
 			toolTip1.RemoveAll();
 			//This grid has AllowSelection=false, so row don't get automatically selected when clicking.
 			Procedure procedureSelected=((Procedure)gridProc.ListGridRows[e.Row].Tag);
-			if(DisableDetachingOfCompletedProcFromCompletedAppt(procedureSelected,_appointment,out string msg)
-				|| DisableDetachingOfAttachedToAPlannedApt(procedureSelected,out msg))
-			{
+			if(DisableDetachingOfCompletedProcFromCompletedAppt(procedureSelected,_appointment,out string msg)) {
 				toolTip1.AutoPopDelay=5000;//5000 is the maximum a tooltip can be displayed for using this method. 
 				toolTip1.IsBalloon=true;//Shows the tooltip in an easier to read speech bubble like view.
 				//Anything greater requires us to use a variation of Show(...) that takes in a time duration.
@@ -1074,20 +1070,6 @@ namespace OpenDental{
 			CalcEstPatientPortion();
 		}
 
-		private bool DisableDetachingOfAttachedToAPlannedApt(Procedure procedureSelected,out string msg) {
-			msg="";
-			//Only allowed to schedule a planned appointment from the Appointments for Patient window or the Planned Appts tab in the Chart Module(per our manual).
-			//Restrict the user from attaching a procedure to an appointment if the scheduled appointment is not scheduled from those two places.
-			if(procedureSelected.PlannedAptNum>0 //Procedure selected is attached to a planned appointment
-				&& procedureSelected.PlannedAptNum!=_appointment.AptNum //Not the same planned appointment
-				&& (procedureSelected.AptNum==0 || procedureSelected.AptNum!=_appointment.AptNum)) 
-			{
-				msg="Procedure must be detached from the Planned Appointment before attaching to this appointment or schedule the Planned Appointment instead.";
-				return true;
-			}
-			return false;
-		}
-
 		private void gridProc_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			if(_isClickLocked) {
 				return;
@@ -1095,9 +1077,7 @@ namespace OpenDental{
 			toolTip1.RemoveAll();//Ensure that any tooltip that was showing due to gridProc_CellClick(...) is removed since user was trying to double click.
 			Procedure procedureSelected=((Procedure)gridProc.ListGridRows[e.Row].Tag);
 			//Only invert the procedure if we didn't block the original row inversion in gridProc_CellClick(...)
-			if(!DisableDetachingOfCompletedProcFromCompletedAppt(procedureSelected,_appointment,out string msg)
-				&& !DisableDetachingOfAttachedToAPlannedApt(procedureSelected,out msg)) 
-			{
+			if(!DisableDetachingOfCompletedProcFromCompletedAppt(procedureSelected,_appointment,out string msg)) {
 				InvertCurProcSelected(e.Row);
 			}
 			//This will put the selection back to what is was before the single click event.

@@ -2982,9 +2982,14 @@ namespace OpenDental {
 			Plugins.HookAddCode(this,"ContrAppt.ModuleSelected_end",patNum);
 		}
 
-		///<summary>Jumping here from another module and selecting an appointment.  Patient is already taken care of, frequently because the appointment is for the current patient.</summary>
+		///<summary>Jumping here from another module and selecting an appointment. Refreshes the module for the patient associated with the appointment.</summary>
 		public void ModuleSelectedGoToAppt(long aptNum,DateTime dateSelected){
 			ModuleSelected(dateSelected);
+			DataRow dataRow=contrApptPanel.TableAppointments.Select().FirstOrDefault(x => PIn.Long(x["AptNum"].ToString())==aptNum);
+			if(dataRow!=null) {
+				long patNum=PIn.Long(dataRow["PatNum"].ToString());
+				RefreshModuleDataPatient(patNum);
+			}
 			contrApptPanel.SelectedAptNum=aptNum;
 		}
 

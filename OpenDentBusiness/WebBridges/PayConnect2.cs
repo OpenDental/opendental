@@ -57,19 +57,19 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Throws exceptions.  Will purposefully throw ODExceptions that are already translated and formatted.</summary>
-		public static PayConnect2Response PostCreateTransactionByToken(Patient pat,CreditCard cc,int payAmtInCents,long clinicNum,TransactionType transactionType=TransactionType.Sale) {
+		public static PayConnect2Response PostCreateTransactionByToken(Patient pat,CreditCard cc,int payAmtInCents,long clinicNum,TransactionType transactionType=TransactionType.Sale,TransactionFrequency transactionFreq=TransactionFrequency.OneTime) {
 			if(cc==null || string.IsNullOrWhiteSpace(cc.PayConnectToken) || pat==null) {
 				throw new ODException("Error making payment by token");
 			}
-			return PostCreateTransactionByToken(pat,cc.CCExpiration.ToString("MMyy"),cc.PayConnectToken,cc.Zip,payAmtInCents,clinicNum,transactionType);
+			return PostCreateTransactionByToken(pat,cc.CCExpiration.ToString("MMyy"),cc.PayConnectToken,cc.Zip,payAmtInCents,clinicNum,transactionType,transactionFreq);
 		}
 
-		public static PayConnect2Response PostCreateTransactionByToken(Patient pat,string ccExpiration,string token,string zipCode,int payAmtInCents,long clinicNum,TransactionType transactionType=TransactionType.Sale) {
+		public static PayConnect2Response PostCreateTransactionByToken(Patient pat,string ccExpiration,string token,string zipCode,int payAmtInCents,long clinicNum,TransactionType transactionType=TransactionType.Sale, TransactionFrequency transactionFreq=TransactionFrequency.OneTime) {
 			long integrationType=GetIntegrationType(clinicNum);
 			PayConnect2Response response;
 			if(integrationType==1) {//Surcharge account
 				CreateSurchargeTransactionRequest req=new CreateSurchargeTransactionRequest();
-				req.Frequency=TransactionFrequency.OneTime;
+				req.Frequency=transactionFreq;
 				req.TransType=transactionType;
 				req.Amount=payAmtInCents;
 				req.CardToken=token;
@@ -80,7 +80,7 @@ namespace OpenDentBusiness {
 			}
 			else {
 				CreateTransactionRequest req=new CreateTransactionRequest();
-				req.Frequency=TransactionFrequency.OneTime;
+				req.Frequency=transactionFreq;
 				req.TransType=transactionType;
 				req.Amount=payAmtInCents;
 				req.CardToken=token;
@@ -421,6 +421,7 @@ namespace OpenDentBusiness {
 					payConnectResponse.CardType=transactionResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
 					payConnectResponse.CardNumber=transactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 					payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
+					payConnectResponse.CardHolder=transactionResponse.PaymentMethod.CardPaymentMethod.CardHolder;
 					break;
 				case ResponseType.CreateSurchargeTransaction:
 					CreateSurchargeTransactionResponse transactionSurchargeResponse=response.TransactionSurchargeResponse;
@@ -436,6 +437,7 @@ namespace OpenDentBusiness {
 					payConnectResponse.CardType=transactionSurchargeResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
 					payConnectResponse.CardNumber=transactionSurchargeResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 					payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
+					payConnectResponse.CardHolder=transactionSurchargeResponse.PaymentMethod.CardPaymentMethod.CardHolder;
 					break;
 				case ResponseType.Error:
 					//Happens when user tries to process a void past the allowed time limit.
@@ -463,7 +465,7 @@ namespace OpenDentBusiness {
 					payConnectResponse.CardType=addSignatureResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
 					payConnectResponse.CardNumber=addSignatureResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 					payConnectResponse.TransType=PayConnectResponse.TransactionType.Unknown;
-
+					payConnectResponse.CardHolder=addSignatureResponse.PaymentMethod.CardPaymentMethod.CardHolder;
 					break;
 				case ResponseType.Void:
 					VoidResponse voidResponse=response.VoidResponse;
@@ -478,6 +480,7 @@ namespace OpenDentBusiness {
 					payConnectResponse.CardNumber=voidResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 					payConnectResponse.TransType=PayConnectResponse.TransactionType.Void;
 					payConnectResponse.AmountSurcharged=voidResponse.AmountSurcharged;
+					payConnectResponse.CardHolder=voidResponse.PaymentMethod.CardPaymentMethod.CardHolder;
 					break;
 				case ResponseType.Refund:
 					RefundResponse refundResponse=response.RefundResponse;
@@ -494,6 +497,7 @@ namespace OpenDentBusiness {
 						payConnectResponse.CardNumber=refundResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 					}
 					payConnectResponse.TransType=PayConnectResponse.TransactionType.Refund;
+					payConnectResponse.CardHolder=refundResponse.PaymentMethod.CardPaymentMethod.CardHolder;
 					break;
 				case ResponseType.IFrame:
 					iFrameResponse iFrameResponse=response.iFrameResponse;
@@ -513,6 +517,7 @@ namespace OpenDentBusiness {
 					payConnectResponse.StatusCode="0";//0 indicates success
 					payConnectResponse.SurchargePercent=iFrameResponse.Response.SurchargePercent;
 					payConnectResponse.AmountSurcharged=((decimal)iFrameResponse.Response.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.CardHolder=iFrameResponse.Response.CardHolder;
 					break;
 				case ResponseType.TerminalTransaction:
 					TerminalTransactionResponse terminalTransactionResponse=response.TerminalTransactionResponse;
@@ -529,6 +534,7 @@ namespace OpenDentBusiness {
 					if(terminalTransactionResponse.TransType==TransactionType.Sale) {
 						payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
 					}
+					payConnectResponse.CardHolder=terminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardHolder;
 					break;
 				case ResponseType.GetStatus:
 					GetStatusResponse statusResponse=response.GetStatusResponse;
@@ -552,7 +558,7 @@ namespace OpenDentBusiness {
 					else if(statusResponse.TransType==TransactionType.Refund) {
 						payConnectResponse.TransType=PayConnectResponse.TransactionType.Refund;
 					}
-					
+					payConnectResponse.CardHolder=statusResponse.PaymentMethod.CardPaymentMethod.CardHolder;
 					break;
 				default:
 					break;
