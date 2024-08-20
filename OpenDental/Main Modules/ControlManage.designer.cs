@@ -605,7 +605,7 @@ namespace OpenDental {
 			// butDaycareCheckIn
 			// 
 			this.butDaycareCheckIn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDaycareCheckIn.Location = new System.Drawing.Point(802, 161);
+			this.butDaycareCheckIn.Location = new System.Drawing.Point(801, 161);
 			this.butDaycareCheckIn.Name = "butDaycareCheckIn";
 			this.butDaycareCheckIn.Size = new System.Drawing.Size(103, 25);
 			this.butDaycareCheckIn.TabIndex = 34;

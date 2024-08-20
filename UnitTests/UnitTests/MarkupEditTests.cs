@@ -226,5 +226,12 @@ namespace UnitTests.MarkupEdit_Tests {
 			string result=MarkupEdit.ReduceTagGroupingsByOne(markup,"<br/>");
 			Assert.AreEqual(markup,result);//No changes should have been made since there are no list tags in the markup
 		}
+
+		[TestMethod]
+		public void MarkupEdit_ProcessList_ListItemFollowedByPlainText() {
+			string markup="<body>*/this is a comment*/\r\n/oops forgot the other */ </body>";
+			string result=MarkupEdit.ProcessList(markup,"*");
+			Assert.AreEqual(result,"<body><ul><li><span class=\"ListItemContent\">/this is a comment*/</span></li></ul>\n/oops forgot the other */ </body>");
+		}
 	}
 }

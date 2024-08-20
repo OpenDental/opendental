@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http;
 using OpenDentBusiness.WebTypes;
+using OpenDentBusiness.PayConnectService;
 
 namespace OpenDentBusiness {
 	public class PayConnect {
@@ -167,19 +168,17 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Builds a receipt string for a web service transaction.</summary>
-		public static string BuildReceiptString(PayConnectService.creditCardRequest request,PayConnectService.transResponse response,
-			PayConnectService.signatureResponse sigResponse,long clinicNum) 
+		public static string BuildReceiptString(creditCardRequest request,transResponse response,signatureResponse sigResponse,long clinicNum,string cardHolder="")
 		{
 			if(response==null) {
 				return "";
 			}
 			bool doShowSignatureLine=DoShowSignatureLine(sigResponse);
-			return BuildReceiptString(request.TransType,response.RefNumber,request.NameOnCard,request.CardNumber,request.MagData,response.AuthCode,
-				response.Status.description,response.Messages==null ? null : response.Messages.ToList(),request.Amount,doShowSignatureLine,clinicNum);
+			return BuildReceiptString(request.TransType,response.RefNumber,request.NameOnCard,request.CardNumber,request.MagData,response.AuthCode,response.Status.description,response.Messages==null ? null : response.Messages.ToList(),request.Amount,doShowSignatureLine,clinicNum,cardHolder:cardHolder);
 		}
 
-		public static string BuildReceiptString(PayConnectService.transType transType,string refNum,string nameOnCard,string cardNumber,
-			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum,string cardType="",decimal surchargeAmount=0) 
+		public static string BuildReceiptString(PayConnectService.transType transType,string refNum,string patName,string cardNumber,
+			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum,string cardType="",decimal surchargeAmount=0,string cardHolder="")
 		{
 			string result="";
 			cardNumber=cardNumber??""; //Prevents null reference exceptions when PayConnectPortal transactions don't have an associated card number
@@ -195,7 +194,10 @@ namespace OpenDentBusiness {
 			result+="Trans Type".PadRight(xright-xleft,'.')+transType+Environment.NewLine;
 			result+=Environment.NewLine;
 			result+="Transaction #".PadRight(xright-xleft,'.')+refNum+Environment.NewLine;
-			result+="Name".PadRight(xright-xleft,'.')+nameOnCard+Environment.NewLine;
+			result+="Patient".PadRight(xright-xleft,'.')+patName+Environment.NewLine;
+			if(!string.IsNullOrWhiteSpace(cardHolder)) {
+				result+="Cardholder".PadRight(xright-xleft,'.')+cardHolder+Environment.NewLine;
+			}
 			result+="Account".PadRight(xright-xleft,'.');
 			if(cardNumber.Length>4) {
 				for(int i = 0;i<cardNumber.Length-4;i++) {

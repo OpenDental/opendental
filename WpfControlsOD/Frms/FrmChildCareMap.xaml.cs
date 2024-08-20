@@ -57,7 +57,6 @@ namespace OpenDental {
 
 		private void FrmChildren_Load(object sender, EventArgs e) {
 			StartMaximized=true;
-			//TODO: If not a daycare worker, hide buttons
 			//Tag each grid with a hardcoded value that represents a ChildRoomNum. Childrooms can be created and edited, but not deleted. If we end up with more than 8 childrooms, then more grids would need to be added to this frm.
 			//Tag each grid button with a hardcoded value that represents a ChildRoomNum.
 			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
@@ -146,7 +145,9 @@ namespace OpenDental {
 			//Begin to fill the grid
 			gridTeachersUnassigned.BeginUpdate();
 			gridTeachersUnassigned.Columns.Clear();
-			GridColumn gridColumn=new GridColumn("Name",100);
+			GridColumn gridColumn=new GridColumn("Name",200);
+			gridTeachersUnassigned.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Status",100);
 			gridTeachersUnassigned.Columns.Add(gridColumn);
 			gridTeachersUnassigned.ListGridRows.Clear();
 			for(int i=0;i<listEmployeesSorted.Count;i++) {
@@ -154,14 +155,10 @@ namespace OpenDental {
 				if(employee.IsHidden) {
 					continue;
 				}
-				if(employee.ClockStatus.ToLower()!="working") {
-					continue;//Only show teachers who are working
-				}
 				GridRow gridRow=new GridRow();
-				GridCell gridCell=new GridCell();
-				gridCell.Text=employee.FName+" "+employee.LName;
-				gridCell.ColorBackG=Color.FromRgb(255,240,240);//Match the color in the classroom grids
-				gridRow.Cells.Add(gridCell);
+				gridRow.Cells.Add(employee.FName+" "+employee.LName);
+				gridRow.ColorBackG=Color.FromRgb(255,240,240);
+				gridRow.Cells.Add(employee.ClockStatus);
 				gridRow.Tag=employee;
 				gridTeachersUnassigned.ListGridRows.Add(gridRow);
 			}
@@ -249,9 +246,6 @@ namespace OpenDental {
 				}
 				else {//Employee/teacher entry
 					Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listChildRoomLogs[i].EmployeeNum);
-					if(employee.ClockStatus.ToLower()!="working") {
-						continue;//Only show teachers who are working
-					}
 					gridCell.Text=employee.FName+" "+employee.LName;
 					gridCell.ColorBackG=Color.FromRgb(255,240,240);//Pale pink to distinguish between teachers and children
 					countEmployees++;
@@ -425,6 +419,43 @@ namespace OpenDental {
 			Signalods.SetInvalid(InvalidType.Children);
 			//Refresh
 			FillAllGrids();
+		}
+
+		///<summary>Set to view only for maps parents will be able to see but not interact with.</summary>
+		private void butViewOnly_Click(object sender,EventArgs e) {
+			//Disable buttons
+			butChildren.Visible=false;
+			butClassrooms.Visible=false;
+			butParents.Visible=false;
+			butViewOnly.Visible=false;
+			//Disable grid buttons
+			butViewLogs_Grid1.Visible=false;
+			butAddChild_Grid1.Visible=false;
+			butAddTeacher_Grid1.Visible=false;
+			butViewLogs_Grid2.Visible=false;
+			butAddChild_Grid2.Visible=false;
+			butAddTeacher_Grid2.Visible=false;
+			butViewLogs_Grid3.Visible=false;
+			butAddChild_Grid3.Visible=false;
+			butAddTeacher_Grid3.Visible=false;
+			butViewLogs_Grid4.Visible=false;
+			butAddChild_Grid4.Visible=false;
+			butAddTeacher_Grid4.Visible=false;
+			butViewLogs_Grid5.Visible=false;
+			butAddChild_Grid5.Visible=false;
+			butAddTeacher_Grid5.Visible=false;
+			butViewLogs_Grid6.Visible=false;
+			butAddChild_Grid6.Visible=false;
+			butAddTeacher_Grid6.Visible=false;
+			butViewLogs_Grid7.Visible=false;
+			butAddChild_Grid7.Visible=false;
+			butAddTeacher_Grid7.Visible=false;
+			butViewLogs_Grid8.Visible=false;
+			butAddChild_Grid8.Visible=false;
+			butAddTeacher_Grid8.Visible=false;
+			//Remove menu items from the context menus
+			_contextMenu.RemoveAt(0);
+			_contextMenuAbsent.RemoveAt(0);
 		}
 	}
 }

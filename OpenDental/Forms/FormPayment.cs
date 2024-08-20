@@ -2337,10 +2337,13 @@ namespace OpenDental {
 		}
 
 		///<summary>Prints receipt, adds splits, etc. Closes the current window.</summary>
-		private void HandleVoidPayment(string payNote,double approvedAmt,string receipt,CreditCardSource creditCardSource) {
+		private void HandleVoidPayment(string payNote,double approvedAmt,string receipt,CreditCardSource creditCardSource,bool isVoidingRefund=false) {
 			if(IsNew) {
 				if(!_wasCreditCardSuccessful) {
-					textAmount.Text="-"+approvedAmt.ToString("F");
+					textAmount.Text="-"+approvedAmt.ToString("F");//Voiding a purchase. Payment amount should be negative.
+					if(isVoidingRefund) {
+						textAmount.Text=approvedAmt.ToString("F");//Voiding a refund. Payment amount should be positive.
+					}
 					textNote.Text+=payNote;
 				}
 				_payment.Receipt=receipt;
@@ -4173,6 +4176,7 @@ namespace OpenDental {
 			bool xAdjust=false;
 			bool xReturn=false;
 			bool xVoid=false;
+			bool isVoidingRefund=false;
 			double approvedAmt=0;
 			double additionalFunds=0;
 			string xChargeToken="";
@@ -4240,6 +4244,9 @@ namespace OpenDental {
 						xVoid=true;
 					}
 					_isCCDeclined=false;
+				}
+				if(line.StartsWith("AMOUNT=")) {
+					isVoidingRefund=line.Contains("(");//Amount is "(X.XX)". Indicates negative and that the type of transaction being voided is "Return"
 				}
 				if(line.StartsWith("APPROVEDAMOUNT=")) {
 					approvedAmt=PIn.Double(line.Substring(15));
@@ -4355,7 +4362,7 @@ namespace OpenDental {
 			}
 			else if(xVoid) {//For prepaid cards, tranType is set to 0 "Purchase", therefore xVoid will be false.
 				XchargeMilestone="Check Void";
-				HandleVoidPayment(resultText,approvedAmt,receipt,CreditCardSource.XServer);
+				HandleVoidPayment(resultText,approvedAmt,receipt,CreditCardSource.XServer,isVoidingRefund);
 				return resultText;
 			}
 			XchargeMilestone="Check Additional Funds";

@@ -184,5 +184,8 @@ namespace OpenDental {
 			return provNumNew;
 		}
 
+		public static void LaunchPurchasePage(Patient patient,double purchaseAmt) {
+			TryLaunchCareCreditPage(CareCreditLandingPage.PR, patient, patient.PriProv, patient.ClinicNum, CareCredit.IsMerchantNumberByProv, purchaseAmt:purchaseAmt);
+		}
 	}
 }

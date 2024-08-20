@@ -9,7 +9,7 @@ namespace UnitTestsCore {
 
 		///<summary>Inserts the new clinic, refreshes the cache and then returns the clinic.</summary>
 		public static Clinic CreateClinic(string description="",long emailAddressNum=0,string address="",Def regionDef=null,bool isHidden=false,bool createClinicGuid=false,
-			bool isTextingEnabled=false,double smsMonthlyLimit=0,bool useSecureEmail=false) 
+			bool isTextingEnabled=false,double smsMonthlyLimit=0,bool useSecureEmail=false,bool useSecureStatements=false) 
 		{
 			Clinic clinic=new Clinic();
 			clinic.Description=description;
@@ -41,6 +41,7 @@ namespace UnitTestsCore {
 				ClinicPrefs.Upsert(PrefName.MassEmailGuid,clinic.ClinicNum,"GUID");
 				ClinicPrefs.Upsert(PrefName.MassEmailSecret,clinic.ClinicNum,"SECRET");
 			}
+			ClinicPrefs.Upsert(PrefName.EmailStatementsSecure,clinic.ClinicNum,useSecureStatements ? EmailPlatform.Secure.ToString() : EmailPlatform.Unsecure.ToString());
 			if(createClinicGuid) {
 				ClinicPrefs.InsertPref(PrefName.WebAppClinicGuid,clinic.ClinicNum,Guid.NewGuid().ToString());
 			}
@@ -50,7 +51,7 @@ namespace UnitTestsCore {
 		}
 
 		///<summary>Returns the practice as clinic zero.</summary>
-		public static Clinic CreatePracticeClinic(string practiceTitle="The Land of Mordor",long emailAddressNum=0,bool isTextingEnabled=false,double smsMonthlyLimit = 0,bool useSecureEmail = false) {
+		public static Clinic CreatePracticeClinic(string practiceTitle="The Land of Mordor",long emailAddressNum=0,bool isTextingEnabled=false,double smsMonthlyLimit=0,bool useSecureEmail=false,bool useSecureStatements=false) {
 			if(emailAddressNum!=0) {
 				Prefs.UpdateLong(PrefName.EmailDefaultAddressNum,emailAddressNum);
 			}
@@ -62,6 +63,7 @@ namespace UnitTestsCore {
 			PrefT.UpdateInt(PrefName.EmailSecureStatus,(int)hostedEmailStatusExpected);
 			PrefT.UpdateString(PrefName.MassEmailGuid,"GUID");
 			PrefT.UpdateString(PrefName.MassEmailSecret,"SECRET");
+			PrefT.UpdateString(PrefName.EmailStatementsSecure,useSecureStatements ? EmailPlatform.Secure.ToString() : EmailPlatform.Unsecure.ToString());
 			return Clinics.GetPracticeAsClinicZero();
 		}
 

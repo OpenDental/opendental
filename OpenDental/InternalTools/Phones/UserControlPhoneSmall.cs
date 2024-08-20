@@ -162,6 +162,10 @@ namespace OpenDental {
 					employee.IsWorkingHome=isAtHome;
 					Employees.UpdateChanged(employee,employeeOld,true);
 				}
+				if(PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
+					//So teacher has their status updated when they clock in
+					Signalods.SetInvalid(InvalidType.Children);
+				}
 			}
 			PhoneUI.Available(phoneTile,isAtHome);
 			FillTile();

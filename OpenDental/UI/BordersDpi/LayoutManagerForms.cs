@@ -898,10 +898,16 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 					scaledFont*=0.96f;//We've been at .92 in the past. This keeps controls from growing significantly bigger than at 100%.
 				}
 				if(control.Controls[i].Font.Bold){
-					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
+					if(control.Controls[i].Font.Size!=scaledFont){
+						//Job 55866-If we set the font to the same size it already is, a TextChanged event fires.
+						//This was causing signature to get cleared from ProcedureInfo and GroupNote.
+						control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
+					}
 				}
 				else{
-					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont);
+					if(control.Controls[i].Font.Size!=scaledFont){
+						control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont);
+					}
 				}
 				if(control.Controls[i] is System.Windows.Forms.ListBox listbox2){
 					listbox2.ClearSelected();//jordan If it crashes on this line, then the top of this file regarding ListBoxes.

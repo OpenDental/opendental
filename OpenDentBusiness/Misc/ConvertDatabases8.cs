@@ -1841,5 +1841,24 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}//End B55522
 		}//End of 24_2_20()
+	
+		private static void To24_2_21() {
+			//Start E54726
+			//For the new pref 'EmailStatementsSecure': if we find that a Preference row exists for the older pref, 'EmailDefaultSendPlatform', then insert the new pref with a default value matching that of the older pref. Otherwise, hard code the new pref's value to 'Secure' (which is the default in OD).
+			string command="SELECT ValueString FROM preference WHERE PrefName='EmailDefaultSendPlatform'";
+			string valueString=Db.GetScalar(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('EmailStatementsSecure','"+(string.IsNullOrWhiteSpace(valueString) ? "Secure" : POut.String(valueString))+"')";
+			Db.NonQ(command);
+			//Similar to above, if we find that a ClinicPref row exists for the older clinicpref, 'EmailDefaultSendPlatform', for any existing clinics, then insert the new clinicpref with a default value matching that of the older clinicpref for each clinic. Otherwise, do nothing.
+			command="SELECT * FROM clinicpref WHERE PrefName='EmailDefaultSendPlatform'";
+			DataTable table=Db.GetTable(command);
+			long clinicNum;
+			for(int i=0;i<table.Rows.Count;i++){
+				clinicNum=PIn.Long(table.Rows[i]["ClinicNum"].ToString());
+				command="INSERT INTO clinicpref(PrefName,ClinicNum,ValueString) VALUES('EmailStatementsSecure',"+POut.Long(clinicNum)+",'"+POut.String(table.Rows[i]["ValueString"].ToString())+"')";
+				Db.NonQ(command);
+			}
+			//End E54726
+		}//End of 24_2_21()
 	}
 }

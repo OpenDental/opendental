@@ -7,10 +7,10 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="300" Height="120" 
-             Text="Edit BadgeId" MinMaxBoxes="False" >
+             Text="Edit Badge ID" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Label x:Name="labelBadgeID" Width="86" Height="18" Margin="10,49,0,0" Text="Badge ID" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelUserName" Width="88" Height="18" Margin="10,23,0,0" Text="UserName" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelUserName" Width="88" Height="18" Margin="10,23,0,0" Text="Username" HAlign="Right" VAlign="Center" />
 		<ui:TextBox x:Name="textBadgeID" Width="58" Height="20" Margin="98,48,0,0" TabIndexOD="0" />
 		<ui:TextBox x:Name="textUserName" Width="145" Height="20" Margin="98,21,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />

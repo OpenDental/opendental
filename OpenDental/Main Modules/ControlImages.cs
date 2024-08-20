@@ -630,7 +630,7 @@ namespace OpenDental{
 			//SelectTreeNode must come before Show. Must come after bounds are set for the zoom to be correct.
 			controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);//must come before Show, but after bounds set.
 			formImageFloat.SetControlImageDisplay(controlImageDisplay);
-			SelectTreeNode1(nodeTypeAndKey);
+			SelectTreeNode1(nodeTypeAndKey,isChartModuleFloater:true);
 			formImageFloat.Show();//triggers Activated, then imageSelector.SetSelected
 			formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);//#2
 			//the above line can trigger a resize due to dpi change, so once more:
@@ -642,13 +642,13 @@ namespace OpenDental{
 		}
 
 		///<summary>Fired when user clicks on tree and also for automated selection that's not by mouse, such as image import, image paste, etc.  Can pass in NULL to clear the image.  localPathImported will be set only if using Cloud storage and an image was imported.  We want to use the local version instead of re-downloading what was just uploaded.  nodeObjTag does not need to be ref to same object, but must match type and priKey.</summary>
-		public void SelectTreeNode1(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
+		public void SelectTreeNode1(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="",bool isChartModuleFloater=false) {
 			//Select the node always, but perform additional tasks when necessary (i.e. load an image, or mount).	
 			if(nodeTypeAndKey!=null && nodeTypeAndKey.NodeType!=EnumImageNodeType.None){	
 				imageSelector.SetSelected(nodeTypeAndKey.NodeType,nodeTypeAndKey.PriKey);//this is redundant when user is clicking, but harmless 
 			}
 			ControlImageDisplay controlImageDisplay=null;
-			if(controlImageDock.ControlImageDisplay_!=null && controlImageDock.ControlImageDisplay_.GetNodeTypeAndKey().IsMatching(nodeTypeAndKey)){
+			if(controlImageDock.ControlImageDisplay_!=null && controlImageDock.ControlImageDisplay_.GetNodeTypeAndKey().IsMatching(nodeTypeAndKey) && !isChartModuleFloater) {//Ignore Image Module Dock if launching a floater in Chart Module
 				//The one we want is docked
 				controlImageDisplay=controlImageDock.ControlImageDisplay_;
 				controlImageDock.Select();
@@ -1218,9 +1218,8 @@ namespace OpenDental{
 				return;//Unexplained error
 			}
 			string ext=ImageStore.GetExtension(document);
-			if(ext==".jpg" || ext==".jpeg" || ext==".gif" 
-				|| document.ImgType==ImageType.Radiograph || document.ImgType==ImageType.Photo) 
-			{
+			List<string> listImageExtensions=new List<string> {".bmp",".dcm",".dicom",".gif",".jpg",".jpeg",".png",".tif",".tiff"};
+			if(listImageExtensions.Contains(ext)) {
 				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,GetDocumentShowing(0));
 				frmDocInfo.ShowDialog();
 				if(frmDocInfo.IsDialogCancel) {

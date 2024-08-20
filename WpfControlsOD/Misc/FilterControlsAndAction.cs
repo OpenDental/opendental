@@ -109,6 +109,11 @@ but understand that RefreshFromDb will happen on the main thread in this case, w
 				listBox.MouseUp+=Control_ChangedImmediate;
 				return;
 			}
+			if(frameworkElement is RadioButton radioButton){
+				//this was not done in FormODBase
+				radioButton.MouseUp+=Control_ChangedImmediate;
+				return;
+			}
 			if(frameworkElement is TextBox textBox){
 				textBox.TextChanged+=Control_Changed;
 				_listTextboxes.Add(textBox);

@@ -100,7 +100,13 @@ namespace OpenDental{
 			_perioExam=new PerioExam();
 			_perioExam.PatNum=_patient.PatNum;
 			_perioExam.ExamDate=DateTime.Today;
-			_perioExam.ProvNum=_patient.PriProv;
+			_perioExam.ProvNum=Security.CurUser.ProvNum;
+			if(_perioExam.ProvNum==0) {//No provider attached to logged in user.
+				_perioExam.ProvNum=_patient.SecProv;//Typically hygienist
+			}
+			if(_perioExam.ProvNum==0) {
+				_perioExam.ProvNum=_patient.PriProv;//Fall back to patient's primary provider.
+			}
 			_perioExam.DateTMeasureEdit=MiscData.GetNowDateTime();
 			PerioExams.Insert(_perioExam);
 			PerioMeasures.SetSkipped(_perioExam.PerioExamNum,GetSkippedTeeth());
@@ -650,7 +656,7 @@ namespace OpenDental{
 			textRedFurc.Text=PrefC.GetString(PrefName.PerioRedFurc);
 			textRedMob.Text =PrefC.GetString(PrefName.PerioRedMob);
 			Program program=Programs.GetCur(ProgramName.BolaAI);
-			ProgramProperty programProperty=ProgramProperties.GetPropForProgByDesc(program.ProgramNum,ProgramProperties.PropertyDescs.ClinicHideButton,_patient.ClinicNum);
+			ProgramProperty programProperty=ProgramProperties.GetPropForProgByDesc(program.ProgramNum,ProgramProperties.PropertyDescs.ClinicHideButton,Clinics.ClinicNum);
 			if(program.Enabled) {
 				if(programProperty==null) {
 					butListen.Visible=false;

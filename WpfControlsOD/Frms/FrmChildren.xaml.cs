@@ -46,13 +46,13 @@ namespace OpenDental {
 			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn gridColumn=new GridColumn("First Name",150);
+			GridColumn gridColumn=new GridColumn("First Name",80);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Last Name",150);
+			gridColumn=new GridColumn("Last Name",80);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Birthdate",150);
+			gridColumn=new GridColumn("Birthdate",100);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Primary Room",100);
+			gridColumn=new GridColumn("Primary Room",75);
 			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listChildren.Count;i++) {

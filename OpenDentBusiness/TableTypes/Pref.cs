@@ -562,7 +562,7 @@ namespace OpenDentBusiness {
 		///<summary>If true, then checkboxes for Tooth Chart Ortho Mode and Show Ortho Grids will get automatically checked and unchecked</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		ChartOrthoTabAutomaticCheckboxes,
-		///<summary>Used by HQ only. True if this is the Daycare database. For this to work properly, the ODHQ flag must also be set.</summary>
+		///<summary>Used by internal daycare only. True if this is the Daycare database.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		ChildDaycare,
 		ClaimAttachExportPath,
@@ -955,9 +955,7 @@ namespace OpenDentBusiness {
 		EmailAlertMaxConsecutiveFails,
 		/// <summary>FK to EmailAddress.EmailAddressNum.  It is not required that a default be set.</summary>
 		EmailDefaultAddressNum,
-		///<summary>Enum EmailPlatform.  Determines if the default email sender will be Insecure(standard email), Secure(EmailHosting), or 
-		///Direct(Secure WebMail).  Even though there are more options, only these three are currently supported.  While EmailPlatform is a Flags enum,
-		///this preference should only be set to single value.</summary>
+		///<summary>Enum EmailPlatform stored as string.  Determines if the default email sender will be Insecure(standard email), Secure(EmailHosting), or Direct(Secure WebMail).  Even though there are more options, only these three are currently supported.  While EmailPlatform is a Flags enum, this preference should only be set to single value. Used in ClinicPref table.</summary>
 		EmailDefaultSendPlatform,
 		///<summary>Bool which indicates, where applicable, all emails being sent should have the EmailDisclaimerTemplate appended to the end of the EmailBody.</summary>
 		EmailDisclaimerIsOn,
@@ -1007,6 +1005,9 @@ namespace OpenDentBusiness {
 		EmailSendExternalTimeoutMs,
 		/// <summary>Deprecated. Use emailaddress.SMTPserver instead.</summary>
 		EmailSMTPserver,
+		/// <summary>PrefValue is of type EmailPlatform, stored as string. 
+		/// Clinic based pref which determines which email platform should be used to send statements during billing.</summary>
+		EmailStatementsSecure,
 		/// <summary>Deprecated. Use emailaddress.EmailUsername instead.</summary>
 		EmailUsername,
 		/// <summary>Deprecated. Use emailaddress.UseSSL instead.</summary>

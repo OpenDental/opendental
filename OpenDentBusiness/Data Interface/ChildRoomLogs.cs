@@ -226,6 +226,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Creates a ChildRoomLog leaving entry if the most recent log in the given list IsComing. The passed-in list should contain logs for one child or teacher.</summary>
 		public static void CreateChildRoomLogLeaving(List<ChildRoomLog> listChildRoomLogs) {
+			//No need to check MiddleTierRole; no call to db.
 			if(listChildRoomLogs.Count==0) {//No need for leaving entry if the child has no logs for today
 				return;
 			}

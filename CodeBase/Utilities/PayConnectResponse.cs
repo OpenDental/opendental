@@ -24,6 +24,7 @@ namespace CodeBase {
 		public string CardVerificationMethod;
 		public TransactionType TransType;
 		public EmvData EMV;
+		public string CardHolder;
 
 		public class EmvData {
 			public string AppId;

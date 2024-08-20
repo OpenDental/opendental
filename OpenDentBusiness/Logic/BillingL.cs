@@ -374,10 +374,6 @@ namespace OpenDentBusiness {
 						message.Attachments.Add(emailAttach);
 						message.SentOrReceived=EmailSentOrReceived.Sent;
 						message.MsgDateTime=DateTime.Now;
-						long clinicNumPat=0;
-						if(PrefC.HasClinicsEnabled) {
-							clinicNumPat=patient.ClinicNum;
-						}
 						if(PrefC.GetBool(PrefName.BillingEmailIncludeAutograph)) {
 							EmailAutograph emailAutograph=EmailAutographs.GetForOutgoing(listEmailAutographs,emailAddress);
 							if(emailAutograph!=null) {
@@ -395,8 +391,15 @@ namespace OpenDentBusiness {
 								}
 							}
 						}
+						long clinicNumPat=0;
+						if(PrefC.HasClinicsEnabled) {
+							clinicNumPat=patient.ClinicNum;
+							if(clinicNumPat==0) { //set 0 clinic to use default clinic settings
+							clinicNumPat=PrefC.GetLong(PrefName.EmailSecureDefaultClinic);
+							}
+						}
 						bool useSecureEmail=
-							Enum.TryParse(ClinicPrefs.GetPrefValue(PrefName.EmailDefaultSendPlatform,clinicNumPat),out EmailPlatform emailPlatform)
+							Enum.TryParse(ClinicPrefs.GetPrefValue(PrefName.EmailStatementsSecure,clinicNumPat),out EmailPlatform emailPlatform)
 							&& emailPlatform==EmailPlatform.Secure
 							&& Clinics.IsSecureEmailEnabled(clinicNumPat);
 						if(useSecureEmail) {

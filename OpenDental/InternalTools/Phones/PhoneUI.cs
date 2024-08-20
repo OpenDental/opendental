@@ -342,6 +342,11 @@ namespace OpenDental {
 			EmpCur.ClockStatus=Lan.g("enumTimeClockStatus",TimeClockStatus.Home.ToString());
 			Employees.UpdateChanged(EmpCur,EmpOld, true);
 			PhoneAsterisks.SetQueueForExtension(phone.Extension,AsteriskQueues.None);
+			//Automatically create a leaving log when an employee clocks out
+			if(PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
+				List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForEmployee(employeeNum,DateTime.Now);
+				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
+			}
 		}
 
 		public static void Break(PhoneTile tile) {
@@ -377,6 +382,11 @@ namespace OpenDental {
 			Employees.UpdateChanged(EmpCur,EmpOld, true);
 			Phones.SetPhoneStatus(ClockStatusEnum.Break,extension);
 			PhoneAsterisks.SetQueueForExtension(phone.Extension,AsteriskQueues.None);
+			//Automatically create a leaving log when an employee goes on break
+			if(PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
+				List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForEmployee(employeeNum,DateTime.Now);
+				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
+			}
 		}
 
 		//ChanSpy---------------------------------------------------

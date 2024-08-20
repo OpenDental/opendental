@@ -253,9 +253,14 @@ using WpfControls.UI;
 
 		///<summary></summary>
 		[Category("OD")]
+		[Description("Set false to hide 'Copy Cell Text' and 'Copy Rows'.")]
+		[DefaultValue(true)]
+		public bool ContextMenuShowDefaults { get; set; } = true;
+
+		///<summary></summary>
+		[Category("OD")]
 		[Description("Set to false to disable showing any context menu that you may have set for the grid.")]
 		[DefaultValue(true)]
-		//Not implemented
 		public bool ContextMenuShows { get; set; } = true;
 
 		///<summary>Allow rows to drop down other rows. Leave enough space in the row's first cell to display a drop down arrow. Rows that can drop down must have a parent row set.</summary>
@@ -1604,6 +1609,7 @@ using WpfControls.UI;
 			//Wiki links
 			//We can't do this earlier because there is no ContextMenuChanged event in WPF
 			if(!ContextMenuShows) {
+				this.ContextMenu=null;
 				return;
 			}
 			Point point=e.GetPosition(canvasMain);
@@ -1645,6 +1651,19 @@ using WpfControls.UI;
 			if(contextMenu is null){
 				contextMenu=new ContextMenu();
 				ContextMenu=contextMenu;
+			}
+			if(!ContextMenuShowDefaults) {
+				//Remove any default menu items in place when there is more than one grid sharing the same context menu
+				List<MenuItem> listMenuItemsRemove=contextMenu.GetMenuItems();
+				MenuItem menuItemCopyRemove=listMenuItemsRemove.Find(x => x.Tag?.ToString()=="copy");
+				contextMenu.Remove(menuItemCopyRemove);
+				MenuItem menuItemCopyRowsRemove=listMenuItemsRemove.Find(x => x.Tag?.ToString() == "copyrows");
+				contextMenu.Remove(menuItemCopyRowsRemove);
+				//Only remove the separator if the default items are present
+				if(menuItemCopyRemove!=null && menuItemCopyRowsRemove!=null) {
+					contextMenu.RemoveAt(contextMenu.Items.Count-1);
+				}
+				return;//Kick out after the row is highlighted and before the default items are added
 			}
 			List<MenuItem> listMenuItems=contextMenu.GetMenuItems();
 			//Copy Cell-----------------------------------------------------

@@ -10,6 +10,8 @@ using PdfSharp.Pdf;
 using System.IO;
 using PdfSharp.Pdf.IO;
 using PdfSharp.Drawing;
+using OpenDental;
+using DataConnectionBase;
 
 namespace UnitTests.Billing_Tests {
 	///<summary>FormBilling was refactored for 24.2 and business logic was extracted to ODBiz\Logic\BillingL.cs.
@@ -409,7 +411,9 @@ namespace UnitTests.Billing_Tests {
 				BillingSetup billingSetup=SetupBilling(true,numPatsPerFam:1,numClinics:3,isHtmlEmailAutograph:isHtmlAutograph,
 				funcGetStatementMode:(a,b,c) =>{ return StatementMode.Email; },
 				//1 clinic uses secure, other 2 not secure.
-				funcGetClinicUsesSecureEmail:(clinicIndex) =>{ return clinicIndex==0; });
+				funcGetClinicUsesSecureEmail:(clinicIndex) =>{ return clinicIndex==0; },
+				//must set clinic 0 to use secure statements in order for billing statements to be sent securely over email
+				funcGetClinicUsesSecureStatements: (clinicIndex) =>{return clinicIndex==0;});
 				SendStatementsIO sendStatementsIO = new SendStatementsIOTest(
 				listStatementNumsToSend:billingSetup.ListStatements.Select(x => x.StatementNum).ToList(),
 				actionSendEmail:(clinicNum,emailMessage,emailAddress,isSecure) => {
@@ -1010,6 +1014,45 @@ namespace UnitTests.Billing_Tests {
 			}
 			Assert.IsTrue(didThrow);
 		}
+		
+		/// <summary>Test sending of secure statements. Check that whether or not EmailDefaultSendPlatform is set to secure, clinics can be set to send statements securely based on EmailStatementsSecure pref (if EmailSecureStatus is enabled for that clinic.</summary>
+		[TestMethod]
+		public void Billing_Email_Secure(){
+			bool hasException=false;
+			BillingSetup billingSetup=SetupBilling(true,numPatsPerFam:1,numClinics:5,
+				funcGetStatementMode:(a,b,c) =>{ return StatementMode.Email; },
+				funcGetClinicUsesSecureEmail:(clinicIndex) =>{ return true; },
+				funcGetClinicUsesSecureStatements:(clinicIndex) => { return clinicIndex%2!=0; });//1 and 3 send statements secure
+			//set clinics 3 and 4 to send email unsecure. Can't be set in SetupBilling because we only want this pref disabled
+			//the code below is updating the old pref (EmailDefaultSendPlatform) to prove that the old pref is ignored when determining whether or not to send secure statements over email. Sending secure statements is determined by the new pref, EmailStatementsSecure, which is set above by funcGetClinicUsesSecureStatements
+			ClinicPrefs.Upsert(PrefName.EmailDefaultSendPlatform,billingSetup.ListClinics[3].ClinicNum,EmailPlatform.Unsecure.ToString());
+			ClinicPrefs.Upsert(PrefName.EmailDefaultSendPlatform,billingSetup.ListClinics[4].ClinicNum,EmailPlatform.Unsecure.ToString());
+			SendStatementsIO sendStatementsIO = new SendStatementsIOTest(
+				listStatementNumsToSend:billingSetup.ListStatements.Select(x => x.StatementNum).ToList(),
+				actionSendEmail:(clinicNum,emailMessage,emailAddress,isSecure) => {
+					int clinicIndex=billingSetup.ListClinics.FindIndex(x => x.ClinicNum==clinicNum);
+					if(clinicIndex==1 || clinicIndex==3){
+						try{
+							Assert.IsTrue(isSecure);
+							Assert.AreEqual(EmailSentOrReceived.SecureEmailSent,emailMessage.SentOrReceived);
+						}
+						catch(Exception ex){
+							hasException=true;
+						}
+					}
+					else {
+						try{
+							Assert.IsFalse(isSecure);
+							Assert.AreEqual(EmailSentOrReceived.Sent,emailMessage.SentOrReceived);
+						}
+						catch(Exception ex){
+							hasException=true;
+						}
+					}
+				});
+				BillingL.SendStatements(sendStatementsIO);
+				Assert.IsFalse(hasException);//check that none of the asserts within the Action failed
+		}
 		#endregion
 
 		private class LogWriterBillingTest : LogWriter {
@@ -1130,7 +1173,8 @@ namespace UnitTests.Billing_Tests {
 			Func<int /*clinicindex 0 based*/,int /*famindex 0 based*/,int /*patindex 0 based*/,int /*statementindex 0 based*/,AutoCommStatus> funcGetSmsSendStatus = null,
 			Func<int /*clinicindex 0 based*/,bool> funcGetClinicUsesSecureEmail=null,
 			Func<int /*clinicindex 0 based*/,int /*famindex 0 based*/,int /*patindex 0 based*/,bool> funcGetPatientBillingTypeIsEmail = null,
-			Func<int /*clinicindex 0 based*/,int /*famindex 0 based*/,int /*patindex 0 based*/,Patient,Clinic,List<Procedure>> funcGetPatientProcsForAging = null) {
+			Func<int /*clinicindex 0 based*/,int /*famindex 0 based*/,int /*patindex 0 based*/,Patient,Clinic,List<Procedure>> funcGetPatientProcsForAging = null,
+			Func<int /*clinicindex 0 based*/, bool> funcGetClinicUsesSecureStatements=null) {
 			BillingSetup ret=new BillingSetup();
 			//Setup billing types. Patients will be given a BillingType below.
 			DefT.DeleteAllForCategory(DefCat.BillingTypes);
@@ -1170,6 +1214,10 @@ namespace UnitTests.Billing_Tests {
 					ProcedureT.CreateProcedure(pat,"D0120",ProcStat.C,"",10.00,DateTime_.Today,doInsert: false,clinicNum: clinic?.ClinicNum??0,dateTStamp: DateTime_.Now) 
 				};
 			});
+			//Default to non secure.
+			funcGetClinicUsesSecureStatements=ODMethodsT.Coalesce(funcGetClinicUsesSecureStatements,(clinicIndex) => {
+				return false;
+			});
 			if(!isClinicsOn) {
 				numClinics=1;
 			}
@@ -1187,10 +1235,10 @@ namespace UnitTests.Billing_Tests {
 				ret.ListEmailAutographs.Add(EmailAutographT.CreateEmailAutograph(email.EmailUsername,autographText: autographText,description: autographDesc));
 				Clinic clinicGuar=null;
 				if(isClinicsOn) {
-					clinicGuar=ClinicT.CreateClinic(description: "Clinic"+clinicIndex.ToString(),email.EmailAddressNum,isTextingEnabled: true,smsMonthlyLimit: 10_000,useSecureEmail: funcGetClinicUsesSecureEmail(clinicIndex));
+					clinicGuar=ClinicT.CreateClinic(description: "Clinic"+clinicIndex.ToString(),email.EmailAddressNum,isTextingEnabled: true,smsMonthlyLimit: 10_000,useSecureEmail: funcGetClinicUsesSecureEmail(clinicIndex),useSecureStatements:funcGetClinicUsesSecureStatements(clinicIndex));
 				}
 				else {
-					clinicGuar=ClinicT.CreatePracticeClinic("Practice Clinic",email.EmailAddressNum,isTextingEnabled: true,smsMonthlyLimit: 10_000,useSecureEmail: funcGetClinicUsesSecureEmail(clinicIndex));
+					clinicGuar=ClinicT.CreatePracticeClinic("Practice Clinic",email.EmailAddressNum,isTextingEnabled: true,smsMonthlyLimit: 10_000,useSecureEmail: funcGetClinicUsesSecureEmail(clinicIndex),useSecureStatements:funcGetClinicUsesSecureStatements(clinicIndex));
 				}
 				ret.ListClinics.Add(clinicGuar);
 				for(int famIndex = 0;famIndex<numFamsPerClinic;famIndex++) {

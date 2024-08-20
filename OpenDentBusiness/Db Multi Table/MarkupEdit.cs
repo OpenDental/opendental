@@ -734,17 +734,17 @@ namespace OpenDentBusiness {
 					//Groups[2] represents the outermost set of parenthesis in the regex above.
 					//Example: In a table row like: <td Width="100"><p>*1<br/>*2</p></td>
 					//Groups[2] refers to the contents ofthe opening and closing <td> tags, namely <p>*1<br/>*2</p>
-					string strCellcontent=match.Groups[2].Value.Replace("<br/>","\n");//Newlines are needed for the recursive calls below.
+					string strCellContent=match.Groups[2].Value.Replace("<br/>","\n");//Newlines are needed for the recursive calls below.
 					//Recursively process the content of this table cell.
-					strCellcontent=ProcessList(strCellcontent,prefixChars);
-					if(strCellcontent.Contains(otherPrefixChar)) {
-						strCellcontent=ProcessList(strCellcontent,otherPrefixChar);
+					strCellContent=ProcessList(strCellContent,prefixChars);
+					if(strCellContent.Contains(otherPrefixChar)) {
+						strCellContent=ProcessList(strCellContent,otherPrefixChar);
 					}
-					strCellcontent=strCellcontent.Replace("\n","<br/>");//But back the <br/>s we removed for the recursion above.
+					strCellContent=strCellContent.Replace("\n","<br/>");//But back the <br/>s we removed for the recursion above.
 					//We will now have too many <br/>s since there is an implicit <br/> between <li> tags.
 					//Reduce those groupings by only 1 so that any intentional formatting is preserved.
-					strCellcontent=ReduceTagGroupingsByOne(strCellcontent,"<br/>");
-					lines[i]=lines[i].Replace(match.Groups[2].Value,strCellcontent);
+					strCellContent=ReduceTagGroupingsByOne(strCellContent,"<br/>");
+					lines[i]=lines[i].Replace(match.Groups[2].Value,strCellContent);
 				}
 				else {//List(s) are present outside of tables
 					string line=lines[i];
@@ -772,7 +772,7 @@ namespace OpenDentBusiness {
 						isWithinListTag=true;
 					}
 					//Add the approriate closing ol/ul tag if this is the end of a list (the next line is not a list item).
-					if(i == lines.Length-1 || !lines[i+1].Contains(prefixChars)) {
+					if(i==lines.Length-1 || !lines[i+1].StartsWith(prefixChars)) {
 						line=$"{line}</{listTag}>";
 						isWithinListTag=false;
 					}

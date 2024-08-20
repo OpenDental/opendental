@@ -1004,7 +1004,7 @@ namespace OpenDentBusiness {
 			string zip=chargeData.Zip;
 			long clinicNumCur=chargeData.RecurringCharge.ClinicNum;
 			double amount=0;
-			PayConnect2.PayConnect2Response response=PayConnect2.PostCreateTransactionByToken(patCur,exp.ToString("MMyy"),chargeData.PayConnectToken,zip,PayConnect2.FormatAmountForApi(chargeData.RecurringCharge.ChargeAmt),clinicNumCur,PayConnect2.TransactionType.Sale);
+			PayConnect2.PayConnect2Response response=PayConnect2.PostCreateTransactionByToken(patCur,exp.ToString("MMyy"),chargeData.PayConnectToken,zip,PayConnect2.FormatAmountForApi(chargeData.RecurringCharge.ChargeAmt),clinicNumCur,PayConnect2.TransactionType.Sale,PayConnect2.TransactionFrequency.Recurring);
 			if(response.ResponseType==PayConnect2.ResponseType.Error) {
 				string errorMessage="";
 				if(response.ErrorResponse.ErrorType==PayConnect2.ErrorType.Validation) {
@@ -1074,7 +1074,7 @@ namespace OpenDentBusiness {
 			}
 			string receipt=PayConnect.BuildReceiptString(transType.SALE,payConnectResponse.RefNumber,patCur.GetNameFLnoPref(),
 			payConnectResponse.CardNumber,null,payConnectResponse.AuthCode,payConnectResponse.Description,null,
-			payConnectResponse.Amount,false,clinicNumCur);
+			payConnectResponse.Amount,false,clinicNumCur,cardHolder:payConnectResponse.CardHolder);
 			//AmountSurcharged will be 0 for clinics that don't have surcharging turned on.
 			CreatePayment(patCur,chargeData,strBuilderResultText.ToString(),amount,receipt,CreditCardSource.PayConnect,merchantFee:(double)payConnectResponse.AmountSurcharged);
 			strBuilderResultFile.AppendLine(strBuilderResultText.ToString());

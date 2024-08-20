@@ -1186,7 +1186,7 @@ namespace UnitTests.Benefits_Test {
 			listProcs=new List<Procedure> { proc2 };
 			ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc2.ProcNum).InsPayEst);//Reached frequency limitation
+			Assert.AreEqual(100,listClaimProcs.First(x => x.ProcNum==proc2.ProcNum).InsPayEst);//Reached frequency limitation
 		}
 
 		[TestMethod]
@@ -1217,6 +1217,45 @@ namespace UnitTests.Benefits_Test {
 			ClaimT.CreateClaim(new List<Procedure> { proc3 },ins);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(0,ins.ListAllClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);
+		}
+
+		///<summary>A procedure exists with an ADA code of D1201, and is part of the Sealant codegroup.
+		///Another procedure exists with an ADA code of D1201.1, and is not part of the Sealant codegroup.
+		///A patient with insurance has an age limit of 14 years for the Sealant codegroup.
+		///The procedure that is not part of the Sealants codegroup should not have its insurance estimates
+		///affected by the patient's Sealant age limit.</summary>
+		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_AgeLimits_CodeGroupOverlap)]
+		[Documentation.VersionAdded("24.1")]
+		[Documentation.Description(
+		@"A procedure exists with an ADA code of D1201, and is part of the Sealant codegroup.
+		Another procedure exists with an ADA code of D1201.1, and is not part of the Sealant codegroup.
+		A patient with insurance has an age limit of 14 years for the Sealant codegroup.
+		The procedure that is not part of the Sealants codegroup should not have its insurance estimates
+		affected by the patient's Sealant age limit.")]
+		[TestMethod]
+		public void Benefits_AgeLimits_CodeGroupOverlap() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
+			CodeGroupT.ClearCodeGroupTable();
+			//Create a procedure code that has the same first five characters as an existing code in a code group.
+			ProcedureCodeT.AddIfNotPresent("D1201");
+			ProcedureCodeT.AddIfNotPresent("D1201.1");
+			long codeNum=ProcedureCodes.GetCodeNum("D1201.1");
+			CodeGroup codeGroup=CodeGroupT.Upsert("AgeLimGroup","D1201",EnumCodeGroupFixed.Sealant);
+			Patient pat=PatientT.CreatePatient(suffix,birthDate:DateTime.Now.AddYears(-30));
+			InsuranceInfo ins=InsuranceT.AddInsurance(pat,suffix);
+			//Add an age limitation benefit for the procedure in the new code group.
+			ins.ListBenefits.Add(BenefitT.CreateAgeLimitation(ins.PriInsPlan.PlanNum,EbenefitCategory.None,13,codeGroupNum:codeGroup.CodeGroupNum));
+			ins.ListBenefits.Add(BenefitT.CreateCategoryPercent(ins.PriInsPlan.PlanNum,EbenefitCategory.RoutinePreventive,100));
+			Procedure proc=ProcedureT.CreateProcedure(pat,"D1201",ProcStat.C,"",100);
+			Procedure proc2=ProcedureT.CreateProcedure(pat,"D1201.1",ProcStat.C,"",100);
+			List<Procedure> listProcedures=new List<Procedure>{ proc, proc2 };
+			ins.ComputeEstimatesForProcs(listProcedures);
+			ins.CreateClaim();
+			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
+			//The patient's age limit should not impact the coverage of a benefit outside that code group.
+			Assert.AreEqual(0,ins.ListAllClaimProcs.Find(x=>x.ProcNum==proc.ProcNum).InsPayEst);
+			Assert.AreEqual(100,ins.ListAllClaimProcs.Find(x=>x.ProcNum==proc2.ProcNum).InsPayEst);
 		}
 
 		[TestMethod]

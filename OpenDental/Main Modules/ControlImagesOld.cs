@@ -2162,9 +2162,40 @@ namespace OpenDental {
 				ex.DoNothing();
 				return;
 			}
-			if(bitmapPaste==null) {
-				MessageBox.Show(Lan.g(this,"No bitmap present on clipboard"));
+			string[] stringArrayFileNames=null;
+			if(bitmapPaste==null) {//No image was found so look for a file path to an image instead
+				try {
+					stringArrayFileNames=ODClipboard.GetFileDropList();
+				}
+				catch(Exception ex) {
+					ex.DoNothing();//do nothing here, the array should remain null and a message box will show below if necessary
+				}
+			}
+			List<string> listFilePaths=stringArrayFileNames?.ToList();//Null if no files on clipboard
+			if(listFilePaths==null && bitmapPaste==null) {
+				MsgBox.Show("There are no images on your clipboard.");
 				return;
+			}
+			if(listFilePaths!=null) {
+				if(listFilePaths.Count>1) {
+					MsgBox.Show("You can only paste one image at a time.");
+					return;
+				}
+				if(!File.Exists(listFilePaths[0])) {
+					MsgBox.Show("The file on the clipboard could not be located. It may have been moved, deleted or renamed.");
+					return;
+				}
+				Bitmap bitmapFromFile;
+				try {
+					bitmapFromFile=new Bitmap(listFilePaths[0]);
+				}
+				catch {
+					MsgBox.Show(this,"An invalid file type was pasted.");
+					return;
+				}
+				//We need to release the file lock
+				bitmapPaste=new Bitmap(bitmapFromFile);
+				bitmapFromFile?.Dispose();
 			}
 			Document doc;
 			NodeIdTag nodeIdTag=new NodeIdTag();

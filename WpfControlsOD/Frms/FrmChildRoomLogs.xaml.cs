@@ -27,6 +27,7 @@ namespace OpenDental {
 			InitializeComponent();
 			Load+=FrmChildRoomLogs_Load;
 			comboChildRoom.SelectionChangeCommitted+=comboChildRoom_SelectionChangeCommitted;
+			gridMain.CellDoubleClick+=GridMain_CellDoubleClick;
 		}
 
 		private void FrmChildRoomLogs_Load(object sender,EventArgs e) {
@@ -84,6 +85,7 @@ namespace OpenDental {
 					Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listChildRoomLogs[i].EmployeeNum);
 					string employeeName=employee.FName+" "+employee.LName;
 					gridRow.Cells.Add(employeeName);
+					gridRow.ColorBackG=Color.FromRgb(255,240,240);//Match the color in the classroom grids
 					//Find the current number of employees
 					if(listChildRoomLogs[i].IsComing) {
 						countEmployees++;
@@ -131,6 +133,14 @@ namespace OpenDental {
 			}
 			gridMain.EndUpdate();
 			gridMain.ScrollToEnd();
+		}
+
+		private void GridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			ChildRoomLog childRoomLog=gridMain.SelectedTag<ChildRoomLog>();
+			FrmChildMapLog frmChildMapLog=new FrmChildMapLog();
+			frmChildMapLog.ChildRoomNumInitial=childRoomLog.ChildRoomNum;
+			frmChildMapLog.DateTimeInitial=childRoomLog.DateTDisplayed;
+			frmChildMapLog.ShowDialog();
 		}
 
 		private void comboChildRoom_SelectionChangeCommitted(object sender,EventArgs e) {

@@ -95,7 +95,7 @@ namespace OpenDental {
 			gridClinics.BeginUpdate();
 			gridClinics.Columns.Clear();
 			GridColumn col;
-			col=new GridColumn(Lan.g(this,"Clinic"),200);
+			col=new GridColumn(Lan.g(this,"Clinic"),150);
 			gridClinics.Columns.Add(col);
 			col=new GridColumn("Secure Email Enabled",65,HorizontalAlignment.Center);
 			col.Tag=new OnGridCellClick((clinicNum) => ToggleClinicEnabled(clinicNum));
@@ -104,6 +104,10 @@ namespace OpenDental {
 			col.Tag=new OnGridCellClick((clinicNum) => SetDefaultSecureEmailClinic(clinicNum));
 			gridClinics.Columns.Add(col);
 			col=new GridColumn("Default Send",65,HorizontalAlignment.Center);
+			col.ListDisplayStrings=_listEmailPlatforms.Select(x => x.GetDescription(true)).ToList();
+			col.Tag=_listEmailPlatforms;
+			gridClinics.Columns.Add(col);
+			col=new GridColumn("Statement Send",65,HorizontalAlignment.Center);
 			col.ListDisplayStrings=_listEmailPlatforms.Select(x => x.GetDescription(true)).ToList();
 			col.Tag=_listEmailPlatforms;
 			gridClinics.Columns.Add(col);
@@ -118,11 +122,15 @@ namespace OpenDental {
 				bool isSecureEmailActivated=Clinics.IsSecureEmailSignedUp(clinic.ClinicNum);
 				bool isSecureEmailEnabled=Clinics.IsSecureEmailEnabled(clinic.ClinicNum);
 				EmailPlatform emailPlatformDefault=PIn.Enum<EmailPlatform>(ClinicPrefs.GetPrefValue(PrefName.EmailDefaultSendPlatform,clinic.ClinicNum),true);
+				EmailPlatform emailPlatformStatements=PIn.Enum<EmailPlatform>(ClinicPrefs.GetPrefValue(PrefName.EmailStatementsSecure,clinic.ClinicNum),true); //throws error invalid pref name
 				row.Cells.Add(Clinics.GetAbbr(clinic.ClinicNum,listClinics));
 				AddSignupCell(row,hasCredentials,isSecureEmailActivated,isSecureEmailEnabled,new EventHandler((o,e) => SignupSecureEmail(clinic.ClinicNum)));
 				row.Cells.Add(new GridCell(clinicNumDefault==clinic.ClinicNum ? "X" : ""));
 				row.Cells.Add(new GridCell($"{emailPlatformDefault.GetDescription(true)}") {
 					ComboSelectedIndex=_listEmailPlatforms.FindIndex(x => x==emailPlatformDefault),
+				});
+				row.Cells.Add(new GridCell($"{emailPlatformStatements.GetDescription(true)}") {
+					ComboSelectedIndex=_listEmailPlatforms.FindIndex(x => x==emailPlatformStatements),
 				});
 				row.Cells.Add("");
 				row.Tag=clinic;
@@ -206,6 +214,10 @@ namespace OpenDental {
 			if(clinicNum==0) {
 				Prefs.UpdateString(PrefName.EmailDefaultSendPlatform,emailPlatform.ToString());
 				DataValid.SetInvalid(InvalidType.Prefs);
+			}
+			else if(gridClinics.Columns[e.Col].Heading=="Statement Send"){
+				ClinicPrefs.Upsert(PrefName.EmailStatementsSecure,clinicNum,emailPlatform.ToString());
+				DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			}
 			else {
 				ClinicPrefs.Upsert(PrefName.EmailDefaultSendPlatform,clinicNum,emailPlatform.ToString());

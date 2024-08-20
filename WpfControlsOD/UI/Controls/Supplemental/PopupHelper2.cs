@@ -44,13 +44,6 @@ namespace WpfControls.UI {
 			}
 			listStringMatches=GetURLsFromText(contextMenuItemText);
 			for(int i=0;i<listStringMatches.Count;i++) {
-				try {
-					MailAddress emailAddress=new MailAddress(listStringMatches[i]);
-					continue;//'match' is a valid email address, which at this time we don't want to create a ContextMenu Web link for.
-				}
-				catch(FormatException fe) {
-					fe.DoNothing();//Not a valid email address format, so it should be a web link.  Carry on to creating the item in the ContextMenu.
-				}
 				string title=listStringMatches[i];
 				if(title.Length>24) {
 					title=title.Substring(0,24)+"...";
@@ -93,13 +86,12 @@ namespace WpfControls.UI {
 
 		///<summary>Returns a list of strings from the given text that are URLs.</summary>
 		public static List<string> GetURLsFromText(string text) {
-			string singleMatch=@"(http:\/\/|https:\/\/)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=,()]*)";
-			//The first match matches normal URLs. The second match matches URLs surrounded in parenthesis. It also checks the next character
-			//after a closing parenthesis to make sure the parenthesis was not simply found somewhere in the URL. The next character can be
-			//punctuation and it will match fine. Otherwise, it will default to the normal URL match. The parenthesis are stripped out after the
-			//match
-			string urlRegexString=$@"({singleMatch})|(\({singleMatch}\)(?!([-a-zA-Z0-9\@:%_\+~#\&//=()])))";
-			List<string> listStringMatches=Regex.Matches(text,urlRegexString)
+			//Regular expresion used to help identify URLs. This is not all encompassing.
+			//There will be URLs that do not match this but this should work for 99%.
+			//The url regex is generous enough to match urls fine and excludes emails well, but matches some files too.
+			//These files get cleaned out though.
+			string urlPattern=@"(?<!@)\b(?:https?:\/\/)?(?:www\.)?(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?\b(?!(?:\\))";
+			List<string> listStringMatches=Regex.Matches(text,urlPattern)
 				.OfType<Match>()
 				.Select(m => m.Groups[0].Value)
 				.Distinct()
@@ -107,6 +99,9 @@ namespace WpfControls.UI {
 			for(int i=listStringMatches.Count-1;i>=0;i--) {
 				if(listStringMatches[i].StartsWith("(") && listStringMatches[i].EndsWith(")")) {
 					listStringMatches[i]=listStringMatches[i].Substring(1,listStringMatches[i].Length-2);
+				}
+				if(ODFileUtils.IsKnownFileType(listStringMatches[i])){
+					listStringMatches.RemoveAt(i);
 				}
 				listStringMatches[i]=listStringMatches[i].TrimEnd('.');
 				Regex rgx=new Regex(@"[\\]{1}");

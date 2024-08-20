@@ -96,6 +96,7 @@
 			this.contextMenuPayment = new System.Windows.Forms.ContextMenu();
 			this.menuItemAllocateUnearned = new System.Windows.Forms.MenuItem();
 			this.menuItemIncomeTransfer = new System.Windows.Forms.MenuItem();
+			this.menuItemSendCareCreditCSS = new System.Windows.Forms.MenuItem();
 			this.menuPrepayment = new System.Windows.Forms.MenuItem();
 			this.menuItemSendPaymentToDevice = new System.Windows.Forms.MenuItem();
 			this.menuItemSendMsgToPay = new System.Windows.Forms.MenuItem();
@@ -240,10 +241,10 @@
 			// contextMenuIns
 			// 
 			this.contextMenuIns.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuInsPri,
-            this.menuInsSec,
-            this.menuInsMedical,
-            this.menuInsOther});
+						this.menuInsPri,
+						this.menuInsSec,
+						this.menuInsMedical,
+						this.menuInsOther});
 			// 
 			// menuInsPri
 			// 
@@ -282,13 +283,13 @@
 			// contextMenuStatement
 			// 
 			this.contextMenuStatement.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemStatementWalkout,
-            this.menuItemStatementEmail,
-            this.menuItemReceipt,
-            this.menuItemInvoice,
-            this.menuItemLimited,
-            this.menuItemLimitedCustom,
-            this.menuItemStatementMore});
+						this.menuItemStatementWalkout,
+						this.menuItemStatementEmail,
+						this.menuItemReceipt,
+						this.menuItemInvoice,
+						this.menuItemLimited,
+						this.menuItemLimitedCustom,
+						this.menuItemStatementMore});
 			// 
 			// menuItemStatementWalkout
 			// 
@@ -335,10 +336,10 @@
 			// contextMenuRepeat
 			// 
 			this.contextMenuRepeat.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemRepeatStand,
-            this.menuItemRepeatEmail,
-            this.menuItemRepeatCanada,
-            this.menuItemRepeatSignupPortal});
+						this.menuItemRepeatStand,
+						this.menuItemRepeatEmail,
+						this.menuItemRepeatCanada,
+						this.menuItemRepeatSignupPortal});
 			// 
 			// menuItemRepeatStand
 			// 
@@ -922,11 +923,12 @@
 			// contextMenuPayment
 			// 
 			this.contextMenuPayment.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemAllocateUnearned,
-            this.menuItemIncomeTransfer,
-            this.menuPrepayment,
-            this.menuItemSendPaymentToDevice,
-            this.menuItemSendMsgToPay});
+						this.menuItemAllocateUnearned,
+						this.menuItemIncomeTransfer,
+						this.menuPrepayment,
+						this.menuItemSendPaymentToDevice,
+						this.menuItemSendMsgToPay,
+						this.menuItemSendCareCreditCSS});
 			this.contextMenuPayment.Popup += new System.EventHandler(this.contextMenuPayment_Popup);
 			// 
 			// menuItemAllocateUnearned
@@ -959,11 +961,17 @@
 			this.menuItemSendMsgToPay.Text = "Send Message-to-Pay";
 			this.menuItemSendMsgToPay.Click += new System.EventHandler(this.menuItemSendMessageToPay_Click);
 			// 
+			// menuItemSendCareCreditCSS
+			// 
+			this.menuItemSendCareCreditCSS.Index = 5;
+			this.menuItemSendCareCreditCSS.Text = "Get Care Credit Self-Service Link";
+			this.menuItemSendCareCreditCSS.Click += new System.EventHandler(this.menuItemSendCareCreditCSS_Click);
+			// 
 			// contextMenuPayPlan
 			// 
 			this.contextMenuPayPlan.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemDynamicPayPlan,
-            this.menuItemInsPayPlan});
+						this.menuItemDynamicPayPlan,
+						this.menuItemInsPayPlan});
 			// 
 			// menuItemDynamicPayPlan
 			// 
@@ -980,8 +988,8 @@
 			// contextMenuAdjust
 			// 
 			this.contextMenuAdjust.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemSalesTax,
-            this.menuItemAddMultAdj});
+						this.menuItemSalesTax,
+						this.menuItemAddMultAdj});
 			// 
 			// menuItemSalesTax
 			// 
@@ -998,14 +1006,14 @@
 			// contextMenuAcctGrid
 			// 
 			this.contextMenuAcctGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemAddAdj,
-            this.menuItemAddRefund,
-            this.menuItemEditPayPlanCharge,
-            this.menuItemDeletePayPlanCharge,
-            this.menuItemSnipAttachment,
-            this.menuItemSelectImage,
-            this.menuItemPasteAttachment,
-            this.menuItemAttachmentHistory});
+						this.menuItemAddAdj,
+						this.menuItemAddRefund,
+						this.menuItemEditPayPlanCharge,
+						this.menuItemDeletePayPlanCharge,
+						this.menuItemSnipAttachment,
+						this.menuItemSelectImage,
+						this.menuItemPasteAttachment,
+						this.menuItemAttachmentHistory});
 			this.contextMenuAcctGrid.Popup += new System.EventHandler(this.contextMenuAcctGrid_Popup);
 			// 
 			// menuItemAddAdj
@@ -1959,6 +1967,7 @@
 		private System.Windows.Forms.MenuItem menuItemAddMultAdj;
 		private System.Windows.Forms.MenuItem menuItemDynamicPayPlan;
 		private System.Windows.Forms.MenuItem menuItemIncomeTransfer;
+		private System.Windows.Forms.MenuItem menuItemSendCareCreditCSS;
 		private System.Windows.Forms.MenuItem menuItemInsPayPlan;
 		private System.Windows.Forms.MenuItem menuItemInvoice;
 		private System.Windows.Forms.MenuItem menuItemLimited;

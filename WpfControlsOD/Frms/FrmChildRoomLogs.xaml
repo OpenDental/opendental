@@ -11,7 +11,7 @@
 	<Grid Background="#FFFCFDFE" >
 		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,41,10,10" Title="ChildRoomLog" />
 		<ui:ComboBox x:Name="comboChildRoom" Margin="0,11,282,0" Height="21" HorizontalAlignment="Right" Width="80"/>
-		<ui:Label x:Name="labelChildRoom" Margin="0,13,362,0" Height="18" HAlign="Right" VAlign="Center" Text="Child Room" HorizontalAlignment="Right" Width="76"/>
+		<ui:Label x:Name="labelChildRoom" Margin="0,13,362,0" Height="18" HAlign="Right" VAlign="Center" Text="Classroom" HorizontalAlignment="Right" Width="76"/>
 		<ui:TextVDate x:Name="textVDateLog" Margin="0,12,100,0" Height="20" HorizontalAlignment="Right" Width="94"/>
 		<ui:Label x:Name="labelDateLog" Margin="0,13,194,0" Height="18" HAlign="Right" VAlign="Center" Text="Date of Logs" HorizontalAlignment="Right" Width="79"/>
 		<ui:Button x:Name="butRefresh" Margin="0,10,10,0" Height="24" Text="Refresh" Click="butRefresh_Click" HorizontalAlignment="Right" Width="62"/>

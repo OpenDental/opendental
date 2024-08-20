@@ -211,7 +211,7 @@ namespace OpenDental {
 			}
 			else {
 				if(!listMain.SelectedIndices.IsNullOrEmpty()) {
-					SheetDef sheetDef=ListSheetDefs[listMain.SelectedIndices[0]];
+					SheetDef sheetDef=listMain.GetSelected<SheetDef>();
 					if(sheetDef.SheetDefNum!=0) {
 						SheetDefs.GetFieldsAndParameters(sheetDef);
 					}

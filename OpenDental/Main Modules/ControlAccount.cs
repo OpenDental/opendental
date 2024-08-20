@@ -386,6 +386,7 @@ namespace OpenDental {
 
 		private void contextMenuPayment_Popup(object sender, EventArgs e) {
 			menuItemIncomeTransfer.Visible=PrefC.GetBool(PrefName.ShowIncomeTransferManager);
+			menuItemSendCareCreditCSS.Visible=Programs.GetCur(ProgramName.CareCredit).Enabled;
 		}
 
 		///<summary>This gets run just prior to the contextMenuQuickCharge menu displaying to the user.</summary>
@@ -1257,6 +1258,15 @@ namespace OpenDental {
 			using FormIncomeTransferManage formIncomeTransferManage=new FormIncomeTransferManage(_family,_patient);
 			formIncomeTransferManage.ShowDialog();
 			ModuleSelected(_patient.PatNum);
+		}
+
+		private void menuItemSendCareCreditCSS_Click(object sender,EventArgs e) {
+			using FormAmountEdit formAmountEdit=new FormAmountEdit("Amount: ");
+			formAmountEdit.Amount=PIn.Decimal(labelPatEstBalAmt.Text);
+			formAmountEdit.ShowDialog();
+			if(formAmountEdit.DialogResult==DialogResult.OK) {
+				CareCreditL.LaunchPurchasePage(_patient,decimal.ToDouble(formAmountEdit.Amount));
+			}
 		}
 
 		private void menuItemInvoice_Click(object sender,EventArgs e) {
