@@ -17,8 +17,9 @@ using CodeBase;
 using OpenDentBusiness.Mobile;
 using System.Threading;
 using System.Text.RegularExpressions;
+using OpenDental;
 
-namespace OpenDental.Main_Modules
+namespace OpenDentBusiness.ODSMS
 {
 
     [Serializable]
@@ -81,13 +82,13 @@ namespace OpenDental.Main_Modules
         /// This sets up the constants which map 'texted' to the Appointment Confirmed category for texted, etc.
         /// </summary>
         /// <returns></returns>
-        public static async Task InitializeAsyncSMSHandling()
+        public static async System.Threading.Tasks.Task InitializeAsyncSMSHandling()
         {
 
             while (!DataConnection.HasDatabaseConnection)
             {
                 Console.WriteLine("Waiting for database connection...");
-                await Task.Delay(5000); // Wait for 5 seconds before checking again
+                await System.Threading.Tasks.Task.Delay(5000); // Wait for 5 seconds before checking again
             }
 
             // The ToLower on both sides is because I keep forgetting and copy/pasting text with capitals.
@@ -177,10 +178,10 @@ namespace OpenDental.Main_Modules
             if (smsIsWorking)
             {
                 // SMS is working
-                if (ODSMS.wasSmsBroken)
+                if (OpenDentBusiness.ODSMS.ODSMS.wasSmsBroken)
                 {
                     // SMS was previously broken but is now restored
-                    MsgBox.Show("SMS is restored. Birthday texts and reminders will be sent now.");
+                    OpenDental.MsgBox.Show("SMS is restored. Birthday texts and reminders will be sent now.");
                     ODSMSLogger.Instance.Log("SMS has been restored", EventLogEntryType.Information);
                     ODSMS.USE_ODSMS = true;
                 }
@@ -571,7 +572,7 @@ namespace OpenDental.Main_Modules
         /// <param name="msgFrom"></param>
         /// <param name="msgGUID"></param>
         /// <returns></returns>
-        async public static Task processOneReceivedSMS(string msgText, string msgTime, string msgFrom, string msgGUID)
+        async public static System.Threading.Tasks.Task processOneReceivedSMS(string msgText, string msgTime, string msgFrom, string msgGUID)
         {
 
             ODSMSLogger.Instance.Log("SMS inner loop - downloaded a single SMS", EventLogEntryType.Information, logToEventLog: false);
@@ -864,7 +865,7 @@ namespace OpenDental.Main_Modules
 
         /// <summary>
         /// </summary>
-        private static async Task ClearProcessedSMSMessages()
+        private static async System.Threading.Tasks.Task ClearProcessedSMSMessages()
         {
             await FetchAndProcessSmsMessages("&remove=1");
             return;
@@ -874,7 +875,7 @@ namespace OpenDental.Main_Modules
         /// This processes all the SMS messages received since it as last called (5 minutes is the default timer) - typically just 1 SMS.  It calls ProcessSmsMessage for each SMS
         /// </summary>
         /// <returns></returns>
-        private static async Task FetchAndProcessSmsMessages(string removeStr = "")
+        private static async System.Threading.Tasks.Task FetchAndProcessSmsMessages(string removeStr = "")
         {
             await fetchAndProcessSemaphore.WaitAsync();
             try
@@ -948,7 +949,7 @@ namespace OpenDental.Main_Modules
         /// <param name="msgTime"></param>
         /// <param name="msgGUID"></param>
         /// <returns></returns>
-        private static async Task ProcessSmsMessage(string msgFrom, string msgText, string msgTime, string msgGUID)
+        private static async System.Threading.Tasks.Task ProcessSmsMessage(string msgFrom, string msgText, string msgTime, string msgGUID)
         {
             string logMessage = $"SMS from {msgFrom} at time {msgTime} with body {msgText} - GUID: {msgGUID}";
             ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Information);
@@ -1016,11 +1017,11 @@ namespace OpenDental.Main_Modules
                 // Always wait for an hour between checks
                 if (ODSMS.DEBUG_NUMBER.IsNullOrEmpty())
                 {
-                    await Task.Delay(TimeSpan.FromHours(1));
+                    await System.Threading.Tasks.Task.Delay(TimeSpan.FromHours(1));
                 }
                 else
                 {
-                    await Task.Delay(TimeSpan.FromMinutes(3));
+                    await System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(3));
                 }
                 }
         }
@@ -1029,18 +1030,18 @@ namespace OpenDental.Main_Modules
         /// OD needs the database connected and the user set before we can do anything useful.  This function waits for that to happen.
         /// </summary>
         /// <returns></returns>
-        public static async Task WaitForDatabaseAndUserInitialization()
+        public static async System.Threading.Tasks.Task WaitForDatabaseAndUserInitialization()
         {
             while (!DataConnection.HasDatabaseConnection)
             {
                 ODSMSLogger.Instance.Log("Waiting for database connection...", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
-                await Task.Delay(5000); // Wait for 5 seconds before checking again
+                await System.Threading.Tasks.Task.Delay(5000); // Wait for 5 seconds before checking again
             }
 
             while (Security.CurUser == null || Security.CurUser.UserNum == 0) // Assuming UserNum is an integer and 0 or null indicates uninitialized
             {
                 ODSMSLogger.Instance.Log("Waiting for user information to be initialized...", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
-                await Task.Delay(5000); // Wait for 5 seconds before checking again
+                await System.Threading.Tasks.Task.Delay(5000); // Wait for 5 seconds before checking again
             }
         }
 
@@ -1057,7 +1058,7 @@ namespace OpenDental.Main_Modules
 
             while (true)
             {
-                await Task.Delay(60 * 1000); // Check SMS once a minute
+                await System.Threading.Tasks.Task.Delay(60 * 1000); // Check SMS once a minute
                 ODSMSLogger.Instance.Log("Checking for new SMS now", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
 
                 try

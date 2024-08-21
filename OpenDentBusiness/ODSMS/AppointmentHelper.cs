@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 
-namespace OpenDental.Main_Modules
+namespace OpenDentBusiness.ODSMS
 {
 
     internal static class AppointmentHelper

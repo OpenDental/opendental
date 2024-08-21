@@ -13,7 +13,7 @@ using System.Threading;
 using OpenDentBusiness;
 using Microsoft.Win32;
 using DataConnectionBase;
-using OpenDental.Main_Modules;
+//using OpenDental.Main_Modules;
 
 namespace OpenDental {
 	static class ProgramEntry {
@@ -140,7 +140,7 @@ namespace OpenDental {
 
             try  // Print a better message of ODSMS is unavailable.
             {
-                if (ODSMS.USE_ODSMS)  // Check if the module is enabled
+                if (OpenDental.ODSMS.ODSMS.USE_ODSMS)  // Check if the module is enabled
                 {
                     // Empty block, do nothing.  
                 }
@@ -152,30 +152,30 @@ namespace OpenDental {
                 throw new ApplicationException("ODSMS module is not initialized or an error occurred while accessing it. Please check your VPN connection.", ex);
             }
 
-            if (ODSMS.USE_ODSMS)  // Check The module is enabled
+            if (OpenDental.ODSMS.ODSMS.USE_ODSMS)  // Check The module is enabled
 			{
-                OpenDental.Main_Modules.AsyncSMSHandling.InitializeAsyncSMSHandling();
+                OpenDental.ODSMS.AsyncSMSHandling.InitializeAsyncSMSHandling();
 
-                if (!ODSMS.DEBUG_NUMBER.IsNullOrEmpty()) // Debug number is set.  We're running in debug mode
+                if (!OpenDental.ODSMS.ODSMS.DEBUG_NUMBER.IsNullOrEmpty()) // Debug number is set.  We're running in debug mode
 				{
                     MsgBox.Show("DEBUG MODE!!");
 
                     // Process the simulated SMS
                     System.Threading.Tasks.Task.Run(async () =>
                     {
-                        await OpenDental.Main_Modules.AsyncSMSHandling.WaitForDatabaseAndUserInitialization();
+                        await OpenDental.ODSMS.AsyncSMSHandling.WaitForDatabaseAndUserInitialization();
 
                         // await OpenDental.Main_Modules.AsyncSMSHandling.processOneReceivedSMS(debugMsgText, debugMsgTime, debugMsgFrom, debugMsgGUID);
                     });
 
-                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever());
-                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.ODSMS.AsyncSMSHandling.receiveSMSforever());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.ODSMS.AsyncSMSHandling.SMSDailyTasks());
                 }
-                else if (ODSMS.RUN_SCHEDULED_TASKS) // True if this is the computer that actually does the work
+                else if (OpenDental.ODSMS.ODSMS.RUN_SCHEDULED_TASKS) // True if this is the computer that actually does the work
 				{
                     MsgBox.Show("This computer will send/receive SMS");
-                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.receiveSMSforever());
-                    System.Threading.Tasks.Task.Run(() => OpenDental.Main_Modules.AsyncSMSHandling.SMSDailyTasks());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.ODSMS.AsyncSMSHandling.receiveSMSforever());
+                    System.Threading.Tasks.Task.Run(() => OpenDental.ODSMS.AsyncSMSHandling.SMSDailyTasks());
                 }
             }
 

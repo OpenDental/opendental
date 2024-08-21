@@ -2804,8 +2804,6 @@
     <Compile Include="Logic\aaLogicUI.cs" />
     <Compile Include="Logic\AppointmentL.cs" />
     <Compile Include="Logic\UserOdPrefL.cs" />
-    <Compile Include="Main Modules\AppointmentHelper.cs" />
-    <Compile Include="Main Modules\AsyncSMSHandling.cs" />
     <Compile Include="Main Modules\ControlAccount.Designer.cs">
       <DependentUpon>ControlAccount.cs</DependentUpon>
     </Compile>
@@ -2842,7 +2840,6 @@
     <Compile Include="Main Modules\FormOpenDentalMenus.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main Modules\ODSMSLogger.cs" />
     <Compile Include="Misc\DbmInfo.cs" />
     <Compile Include="Misc\Result.cs" />
     <Compile Include="Misc\WebServiceRequest.cs" />

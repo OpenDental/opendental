@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Windows.Forms; // Assuming this is a Windows Forms application
 
-namespace OpenDental.Main_Modules
+namespace OpenDentBusiness.ODSMS
 {
     internal class ODSMSLogger
     {

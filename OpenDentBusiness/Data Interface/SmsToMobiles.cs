@@ -294,45 +294,13 @@ namespace OpenDentBusiness
 			Crud.SmsToMobileCrud.Update(smsToMobile, oldSmsToMobile);
 		}
 
-        public static async Task<int> getQueueSizeAsync()
-        {
-			int queueSizeInt = 0;
-            try
-            {
-                string checkStr = "http/request-server-status?" + ODSMS.AUTH;
-                HttpResponseMessage httpResponseMessage = await sharedClient.GetAsync(checkStr);
-                var text = await httpResponseMessage.Content.ReadAsStringAsync();
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(text);
-                XmlNode messagesInSendQueueNode = xmlDoc.SelectSingleNode("//MessagesInSendQueue");
-                if (messagesInSendQueueNode != null)
-                {
-                    string queueSize = messagesInSendQueueNode.InnerText;
-                    queueSizeInt = int.Parse(queueSize);
-                    Console.WriteLine("MessagesInSendQueue: " + queueSize);
-
-                }
-                else
-                {
-                    Console.WriteLine("The <MessagesInSendQueue> element was not found.");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                //                 ODSMSLogger.Instance.Log($"Error checking Diafaan queue size: {ex.Message}", EventLogEntryType.Error);
-                Console.WriteLine($"Error checking Diafaan queue size: {ex.Message}");
-                EventLog.WriteEntry("ODSMS", "Something bad happened checking Diafaan status", EventLogEntryType.Error, 101, 1, new byte[10]);
-            }
-            return queueSizeInt;
-        }
 
         async static Task<bool> SmsGo(string url, string mobilePhoneNumber, string authedpath)
         {
             if (sharedClient == null)
             {
                 sharedClient = new HttpClient();
-                sharedClient.BaseAddress = new Uri(ODSMS.URL);
+                sharedClient.BaseAddress = new Uri(OpenDentBusiness.ODSMS.ODSMS.URL);
             }
 
             try
@@ -393,9 +361,9 @@ namespace OpenDentBusiness
 
         public static async Task<bool> SendSmsMessageAsync(SmsToMobile msg)
         {
-            if (!string.IsNullOrEmpty(ODSMS.DEBUG_NUMBER))  // Do not send to a real patient if debug is set
+            if (!string.IsNullOrEmpty(OpenDentBusiness.ODSMS.ODSMS.DEBUG_NUMBER))  // Do not send to a real patient if debug is set
             {
-                msg.MobilePhoneNumber = ODSMS.DEBUG_NUMBER;
+                msg.MobilePhoneNumber = OpenDentBusiness.ODSMS.ODSMS.DEBUG_NUMBER;
             }
 
             if (msg.MobilePhoneNumber[0] == '+')  // Remove the + from the phone number
@@ -407,7 +375,7 @@ namespace OpenDentBusiness
                 msg.MobilePhoneNumber = "64" + msg.MobilePhoneNumber.Substring(1);
             }
 
-            string auth = ODSMS.AUTH;
+            string auth = OpenDentBusiness.ODSMS.ODSMS.AUTH;
             string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
             EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
             Console.WriteLine(send);
@@ -435,7 +403,7 @@ namespace OpenDentBusiness
 			{
 				throw new Exception("No messages to send.");
 			}
-			if (ODSMS.USE_ODSMS)
+			if (OpenDentBusiness.ODSMS.ODSMS.USE_ODSMS)
 			{
                 foreach (var msg in listMessages)
                 {
