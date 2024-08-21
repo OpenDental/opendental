@@ -2525,7 +2525,9 @@
     <Compile Include="Forms\FormDashboardWidgets.designer.cs">
       <DependentUpon>FormDashboardWidgets.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormFeeSchedTools.cs" />
+    <Compile Include="Forms\FormFeeSchedTools.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormLimitedStatementSelect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4243,7 +4245,9 @@
     <Compile Include="Forms\FormAuditOrtho.designer.cs">
       <DependentUpon>FormAuditOrtho.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEmailCertRegister.cs" />
+    <Compile Include="Forms\FormEmailCertRegister.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormEmailCertRegister.designer.cs">
       <DependentUpon>FormEmailCertRegister.cs</DependentUpon>
     </Compile>
@@ -4463,7 +4467,9 @@
     <Compile Include="Forms\FormEhrLabOrderImport.Designer.cs">
       <DependentUpon>FormEhrLabOrderImport.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormOIDRegistryInternal.cs" />
+    <Compile Include="Forms\FormOIDRegistryInternal.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormOIDRegistryInternal.Designer.cs">
       <DependentUpon>FormOIDRegistryInternal.cs</DependentUpon>
     </Compile>
@@ -4683,11 +4689,15 @@
     <Compile Include="Forms\FormEhrQualityMeasureEdit2014.Designer.cs">
       <DependentUpon>FormEhrQualityMeasureEdit2014.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrQualityMeasures.cs" />
+    <Compile Include="Forms\FormEhrQualityMeasures.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormEhrQualityMeasures.Designer.cs">
       <DependentUpon>FormEhrQualityMeasures.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrQualityMeasures2014.cs" />
+    <Compile Include="Forms\FormEhrQualityMeasures2014.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormEhrQualityMeasures2014.Designer.cs">
       <DependentUpon>FormEhrQualityMeasures2014.cs</DependentUpon>
     </Compile>
@@ -4805,7 +4815,9 @@
     <Compile Include="Forms\FormPaymentPlanOptions.designer.cs">
       <DependentUpon>FormPaymentPlanOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormCodeSystemsImport.cs" />
+    <Compile Include="Forms\FormCodeSystemsImport.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormCodeSystemsImport.designer.cs">
       <DependentUpon>FormCodeSystemsImport.cs</DependentUpon>
     </Compile>
@@ -4815,7 +4827,9 @@
     <Compile Include="Forms\FormCommPrefPicker.Designer.cs">
       <DependentUpon>FormCommPrefPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEHR.cs" />
+    <Compile Include="Forms\FormEHR.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormEHR.Designer.cs">
       <DependentUpon>FormEHR.cs</DependentUpon>
     </Compile>
@@ -5344,7 +5358,9 @@
     <Compile Include="Forms\FormApptPrintSetup.designer.cs">
       <DependentUpon>FormApptPrintSetup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrProvKeyEditCust.cs" />
+    <Compile Include="Forms\FormEhrProvKeyEditCust.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormEhrProvKeyEditCust.designer.cs">
       <DependentUpon>FormEhrProvKeyEditCust.cs</DependentUpon>
     </Compile>
@@ -5471,7 +5487,9 @@
     <Compile Include="Forms\FormIcd9s.designer.cs">
       <DependentUpon>FormIcd9s.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEhrSetup.cs" />
+    <Compile Include="Forms\FormEhrSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormEhrSetup.designer.cs">
       <DependentUpon>FormEhrSetup.cs</DependentUpon>
     </Compile>
@@ -5934,11 +5952,15 @@
     <Compile Include="Forms\FormProcEditAll.designer.cs">
       <DependentUpon>FormProcEditAll.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormRequestEdit.cs" />
+    <Compile Include="Forms\FormRequestEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormRequestEdit.designer.cs">
       <DependentUpon>FormRequestEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormFeatureRequest.cs" />
+    <Compile Include="Forms\FormFeatureRequest.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormSheetFieldCheckBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6243,7 +6265,9 @@
     <Compile Include="Forms\FormReportsMore.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormRegistrationKeyEdit.cs" />
+    <Compile Include="Forms\FormRegistrationKeyEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormReqNeededEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6547,8 +6571,12 @@
     <Compile Include="Forms\FormLetterEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormLetterMergeEdit.cs" />
-    <Compile Include="Forms\FormLetterMerges.cs" />
+    <Compile Include="Forms\FormLetterMergeEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormLetterMerges.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormLetters.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -7009,7 +7037,9 @@
     <Compile Include="Main Modules\FormCommandLinePassOff.Designer.cs">
       <DependentUpon>FormCommandLinePassOff.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main Modules\FormOpenDental.cs" />
+    <Compile Include="Main Modules\FormOpenDental.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Main Modules\ProgramEntry.cs" />
     <Compile Include="Misc\SetupWizard.cs" />
     <Compile Include="Misc\ClassConvertDatabase.cs" />

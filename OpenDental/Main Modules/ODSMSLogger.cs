@@ -41,7 +41,9 @@ namespace OpenDental.Main_Modules
                     _writer.Close();
                 }
 
-                _writer = new StreamWriter(_currentLogFile, append: true);
+                // Open file with shared access, just in case there's two
+                FileStream logFileStream = new FileStream(_currentLogFile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                _writer = new StreamWriter(logFileStream);
             }
             catch (Exception ex)
             {

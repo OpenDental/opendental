@@ -16,6 +16,7 @@ using System.Runtime.Serialization;
 using CodeBase;
 using OpenDentBusiness.Mobile;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace OpenDental.Main_Modules
 {
@@ -575,6 +576,7 @@ namespace OpenDental.Main_Modules
 
             ODSMSLogger.Instance.Log("SMS inner loop - downloaded a single SMS", EventLogEntryType.Information, logToEventLog: false);
             string guidFilePath = Path.Combine(sms_folder_path, msgGUID);
+            string cleanedText = Regex.Replace(msgText.ToUpper(), "[^A-Z]", "");
 
             byte[] bytesToWrite = Encoding.UTF8.GetBytes(msgText);
 
@@ -586,7 +588,8 @@ namespace OpenDental.Main_Modules
             var patients = Patients.GetPatientsByPhone(msgFrom.Substring(3), "+64", new List<PhoneType> { PhoneType.WirelessPhone });
             var time = DateTime.Parse(msgTime);
 
-            Console.WriteLine($"Number of matching patients: {patients.Count}");
+            ODSMSLogger.Instance.Log($"Number of matching patients: {patients.Count}", EventLogEntryType.Information, logToEventLog: false);
+
             if (patients.Count > 20)
             {
                 ODSMSLogger.Instance.Log("Too many patients match this number! Assuming a dummy entry", EventLogEntryType.Information);
@@ -617,17 +620,21 @@ namespace OpenDental.Main_Modules
             sms.MsgPart = 1;
             sms.Flags = " ";
 
-            if (msgText.ToUpper() == "YES" || msgText.ToUpper() == "Y")
+            if (cleanedText == "YES" || cleanedText == "Y")
             {
                 if (patients.Count < 10)  // Only consider automated replies if a single patient matches
                 {
+                    ODSMSLogger.Instance.Log("About to handle automated SMS", EventLogEntryType.Information, logToEventLog: false);
+
                     bool wasHandled = handleAutomatedConfirmation(patients);
                     if (wasHandled)
                     {
                         sms.SmsStatus = SmsFromStatus.ReceivedRead;
+                        ODSMSLogger.Instance.Log("Success handling automated SMS", EventLogEntryType.Information, logToEventLog: false);
                     }
                     else
                     {
+                        ODSMSLogger.Instance.Log("Failure handling automated SMS", EventLogEntryType.Warning);
                         // We're not sure what they're confirming, so we'll ask them to call the practice
                         string matchSMSmessage = "Thank you for your reply but we've had trouble matching it to an appointment. Could you please give us a call?";
                         SmsToMobile matchSMS = new SmsToMobile
