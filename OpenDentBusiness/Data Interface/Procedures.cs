@@ -3085,7 +3085,7 @@ namespace OpenDentBusiness {
 							+"SELECT patplan.PatNum,MIN(patplan.Ordinal) minOrdinal "
 							+"FROM patplan "
 							+"INNER JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum "
-							+"INNER JOIN insplan ON insplan.PlanNum=inssub.PlanNum AND !insplan.IsMedical "
+							+"INNER JOIN insplan ON insplan.PlanNum=inssub.PlanNum "//AND !insplan.IsMedical "
 							+"GROUP BY patplan.PatNum"
 						+") p ON patient.PatNum=p.PatNum "
 						+"LEFT JOIN patplan ON patplan.PatNum=patient.PatNum AND (patplan.Ordinal=p.MinOrdinal OR patplan.Ordinal=1) "

@@ -6905,8 +6905,8 @@
         <EnumValue name="PayPortalSwitchedToCorrectClinic">106 - Payment Portal - Switched to selected patient's clinic</EnumValue>
         <EnumValue name="PayPortalRequestedCodeViaEmail">107 - Payment Portal - User requested an email authentication code</EnumValue>
         <EnumValue name="PayPortalRequestedCodeViaSms">108 - Payment Portal - User requested a text authentication code</EnumValue>
-        <EnumValue name="PayPortalAuthenticatedViaEmail">109 - Payment Portal - User verfied identity with an email authentication code</EnumValue>
-        <EnumValue name="PayPortalAuthenticatedViaSms">110 - Payment Portal - User verfied identity with an SMS authentication code</EnumValue>
+        <EnumValue name="PayPortalAuthenticatedViaEmail">109 - Payment Portal - User verified identity with an email authentication code</EnumValue>
+        <EnumValue name="PayPortalAuthenticatedViaSms">110 - Payment Portal - User verified identity with an SMS authentication code</EnumValue>
         <EnumValue name="PayPortalUseAmountDue">111 - Payment Portal - User opted to pay amount due</EnumValue>
         <EnumValue name="PayPortalEnteredPayAmount">112 - Payment Portal - User entered a custom amount to pay</EnumValue>
         <EnumValue name="PayPortalSelectedPaymentMethod">113 - Payment Portal - User selected an existing payment method</EnumValue>
@@ -10250,6 +10250,7 @@
             ListPrimaryKeys =&gt; [PayPlan.PatNum,PayPlan.PayPlanNum]</EnumValue>
         <EnumValue name="ODT_ExamSheetsAll"></EnumValue>
         <EnumValue name="ODT_ExamSheet"></EnumValue>
+        <EnumValue name="ODM_NewTextMessage">Occurs when a new text message is received. This is a workaround due to android push notifications no longer being supported for xamarin.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="DeviceId" type="varchar(255)">
@@ -15573,7 +15574,7 @@
       <summary>FK to sheetdef.SheetDefNum.  The SheetDef that was used to create this sheet. Will be 0 if an internal sheet or if the sheet was created before 17.2. Can be 0 for sheets that were created from web forms that were associated to web form sheet defs missing this value at HQ. The original purpose of this column was to use it in connection with RefID of the Sheet and SheetDef to automate the updating of forms such as office policies when they change significantly. It is now also used when making a copy of a sheet.</summary>
     </column>
     <column order="16" name="DocNum" type="bigint(20)" fk="document">
-      <summary>FK to document.DocNum.  Referrel letters are stored as PDF in the A to Z folder.</summary>
+      <summary>FK to document.DocNum.  Referral letters are stored as PDF in the A to Z folder.</summary>
     </column>
     <column order="17" name="ClinicNum" type="bigint(20)" fk="clinic">
       <summary>FK to clinic.ClinicNum. Used by webforms to limit the sheets displayed based on the currently selected clinic.</summary>

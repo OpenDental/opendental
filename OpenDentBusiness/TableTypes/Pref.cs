@@ -806,7 +806,7 @@ namespace OpenDentBusiness {
 		DoseSpotDateLastAccessCheck,
 		///<summary>The ICD Diagnosis Code version primarily used by the practice.  Value of '9' for ICD-9, and '10' for ICD-10.</summary>
 		DxIcdVersion,
-		///<summary>The last known date and time that the dynamic payplan service ran.</summary>
+		///<summary>For payment plans (formerly known as dynamic payment plans). This only gets updated when charges are issued for payment plans through the background service. It uses this date time to allow it to run exactly once per day. Charges can be manually run for a single payment plan at any time, but that won't affect this pref.</summary>
 		[PrefName(ValueType=PrefValueType.DATETIME)]
 		DynamicPayPlanLastDateTime,
 		///<summary>FK to definition.DefNum Identifies a specific hidden PaySplitUnearnedType to allow unearned money to stay attached to dynamic payment plans (hides this money from the income transfer system).</summary>

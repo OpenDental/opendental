@@ -166,8 +166,8 @@
         <EnumValue name="PayPortalSwitchedToCorrectClinic">106 - Payment Portal - Switched to selected patient's clinic</EnumValue>
         <EnumValue name="PayPortalRequestedCodeViaEmail">107 - Payment Portal - User requested an email authentication code</EnumValue>
         <EnumValue name="PayPortalRequestedCodeViaSms">108 - Payment Portal - User requested a text authentication code</EnumValue>
-        <EnumValue name="PayPortalAuthenticatedViaEmail">109 - Payment Portal - User verfied identity with an email authentication code</EnumValue>
-        <EnumValue name="PayPortalAuthenticatedViaSms">110 - Payment Portal - User verfied identity with an SMS authentication code</EnumValue>
+        <EnumValue name="PayPortalAuthenticatedViaEmail">109 - Payment Portal - User verified identity with an email authentication code</EnumValue>
+        <EnumValue name="PayPortalAuthenticatedViaSms">110 - Payment Portal - User verified identity with an SMS authentication code</EnumValue>
         <EnumValue name="PayPortalUseAmountDue">111 - Payment Portal - User opted to pay amount due</EnumValue>
         <EnumValue name="PayPortalEnteredPayAmount">112 - Payment Portal - User entered a custom amount to pay</EnumValue>
         <EnumValue name="PayPortalSelectedPaymentMethod">113 - Payment Portal - User selected an existing payment method</EnumValue>
@@ -231,6 +231,7 @@
             ListPrimaryKeys =&gt; [PayPlan.PatNum,PayPlan.PayPlanNum]</EnumValue>
         <EnumValue name="ODT_ExamSheetsAll"></EnumValue>
         <EnumValue name="ODT_ExamSheet"></EnumValue>
+        <EnumValue name="ODM_NewTextMessage">Occurs when a new text message is received. This is a workaround due to android push notifications no longer being supported for xamarin.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="DeviceId" type="varchar(255)">

@@ -1630,7 +1630,9 @@ namespace OpenDentBusiness.Eclaims {
 					//Update the config file .pem references automatically. Customer might still need to restart CCDWS.
 					string configText=File.ReadAllText(configFilePath);
 					string configTextModified=configText.Replace("OD_2018-02-26_2023-03-02_staging.pem","OD_2023-02-05_2028-02-09_staging.pem");
-					configTextModified=configTextModified.Replace("OD_2018-05-17_2023-05-21_prod.pem","OD_2023-02-05_2028-02-09_prod.pem");
+					configTextModified=configTextModified.Replace("OD_2018-05-17_2023-05-21_prod.pem","OD_2023-02-20_2028-02-24_prod.pem");
+					configTextModified=configTextModified.Replace("OD_2023-02-05_2028-02-09_prod.pem","OD_2023-02-20_2028-02-24_prod.pem");
+					configTextModified=configTextModified.Replace("<vendor_prod_cert_filename>.pem","OD_2023-02-20_2028-02-24_prod.pem");
 					if(configText!=configTextModified) {
 						try {
 							File.WriteAllText(configFilePath,configTextModified);

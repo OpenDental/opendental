@@ -1164,7 +1164,7 @@ namespace OpenDentBusiness {
 		} 
 
 		///<summary>Issues charges for all active dynamic payment plans in a database. Called by the OpenDentalService.PaymentPlanThread.</summary>
-		public static void IssueChargesDueForDynamicPaymentPlans(List<PayPlan> listDynamicPayPlans,LogWriter log) {
+		public static void IssueChargesDueForDynamicPaymentPlans(List<PayPlan> listDynamicPayPlans,LogWriter log,bool isOpenDentalService=false) {
 			//no remoting role check; no call to db
 			Signalods.SetInvalid(InvalidType.Prefs);
 			try {
@@ -1245,11 +1245,16 @@ namespace OpenDentBusiness {
 					}
 				}
 			}
+			catch(Exception ex){
+				log.WriteLine(ex.Message,LogLevel.Error);
+			}
 			finally {
-				//This instance of Open Dental service is no longer running the dynamic payment plan logic.  Update the database to indicate this fact.
-				Prefs.UpdateDateT(PrefName.DynamicPayPlanLastDateTime,MiscData.GetNowDateTime());
-				Prefs.UpdateDateT(PrefName.DynamicPayPlanStartDateTime,DateTime.MinValue);
-				Signalods.SetInvalid(InvalidType.Prefs);
+				if(isOpenDentalService){
+					//This instance of Open Dental service is no longer running the dynamic payment plan logic.  Update the database to indicate this fact.
+					Prefs.UpdateDateT(PrefName.DynamicPayPlanLastDateTime,MiscData.GetNowDateTime());
+					Prefs.UpdateDateT(PrefName.DynamicPayPlanStartDateTime,DateTime.MinValue);
+					Signalods.SetInvalid(InvalidType.Prefs);
+				}
 			}
 		}
 
