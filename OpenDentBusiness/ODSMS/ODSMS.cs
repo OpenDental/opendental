@@ -2,10 +2,9 @@
 using System;
 using System.IO;
 using System.Diagnostics;
-using System.Windows.Shapes;
 using System.Net.Http;
 using System.Xml;
-using Task = System.Threading.Tasks.Task;
+using System.Threading.Tasks;
 using OpenDentBusiness;
 using DataConnectionBase;
 
@@ -13,31 +12,43 @@ namespace OpenDentBusiness.ODSMS
 {
     public static class ODSMS
     {
-        // Set variables here and they'll be used by the program.    
-        public static bool USE_ODSMS = true; // Set to false to disable ODSMS completely, and try to use the Open Dental eServices
-        public static bool SEND_SMS = true;   // Set to false for disabling all sending.  Not set anywhere except here
-        public static bool WRITE_TO_DATABASE = true;   // Set to false for disabling writing in the comm log, or updating appointments. Generally try to 'say we are doing something but not actually do it', as much as we can.
+        // Configuration variables
+        public static bool USE_ODSMS = true;
+        public static bool SEND_SMS = true;
+        public static bool WRITE_TO_DATABASE = true;
 
-        // These are maintained internal state.  You shouldn't need to touch them
-        public static bool wasSmsBroken = false; // Default this to false, so that we don't panic if SMS starts working
-        public static bool initialStartup = true; // Set to false after the first call to the hourly/daily job
+        // Internal state
+        public static bool wasSmsBroken = false;
+        public static bool initialStartup = true;
         public static HttpClient sharedClient = null;
 
-        // Variables from the configuraton file
-        public static string AUTH;  // username/password for diafaan
-        public static string URL;   // URL for diafaan
-        public static string DEBUG_NUMBER = "";   // Set in the config.  Leave empty and everything works like normal.  If not empty all SMS go to this number 
-        public static bool RUN_SCHEDULED_TASKS = false;   // should we receive text on this computer? Send birthday reminders? Set based on the configuration file
-        public static string PRACTICE_PHONE_NUMBER = ""; // The phone number of the practice in international format
+        // Variables from the configuration file
+        public static string AUTH;
+        public static string URL;
+        public static string DEBUG_NUMBER = "";
+        public static bool RUN_SCHEDULED_TASKS = false;
+        public static string PRACTICE_PHONE_NUMBER = "";
 
         public static string sms_folder_path = @"L:\msg_guids\";
 
         static ODSMS()
         {
             string MachineName = Environment.MachineName;
-            // Not ODEnvironment.MachineNmae - if you remote into a machine and run OD there, treat it as that machine
 
-            // Set up event log -- must be run as Administrator
+            InitializeEventLog();
+
+            string configPath = @"L:\odsms.txt";
+            ValidateConfigPath(configPath);
+            LoadConfiguration(configPath, MachineName);
+
+            sharedClient = new HttpClient();
+            sharedClient.BaseAddress = new Uri(URL);
+
+            LogConfigurationStatus(MachineName);
+        }
+
+        private static void InitializeEventLog()
+        {
             if (!EventLog.SourceExists("ODSMS"))
             {
                 EventLog.CreateEventSource("ODSMS", "Application");
@@ -48,23 +59,27 @@ namespace OpenDentBusiness.ODSMS
                 Console.WriteLine("Event source 'ODSMS' already exists.");
             }
 
-            EventLog.WriteEntry("ODSMS", "Running custom build of Open Dental on " + MachineName, EventLogEntryType.Information, 101, 1, new byte[10]);
+            EventLog.WriteEntry("ODSMS", "Running custom build of Open Dental on " + Environment.MachineName, EventLogEntryType.Information, 101, 1, new byte[10]);
+        }
 
-            string configPath = @"L:\odsms.txt";
-
-            if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(configPath)))
+        private static void ValidateConfigPath(string configPath)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(configPath)))
             {
-                throw new DirectoryNotFoundException($"Directory not found: {System.IO.Path.GetDirectoryName(configPath)}");
+                throw new DirectoryNotFoundException($"Directory not found: {Path.GetDirectoryName(configPath)}");
             }
 
-            if (!System.IO.File.Exists(configPath))
+            if (!File.Exists(configPath))
             {
                 throw new FileNotFoundException("Config file not found", configPath);
             }
+        }
 
+        private static void LoadConfiguration(string configPath, string MachineName)
+        {
             try
             {
-                foreach (string line in System.IO.File.ReadLines(configPath))
+                foreach (string line in File.ReadLines(configPath))
                 {
                     if (line.StartsWith("AUTH:"))
                         AUTH = line.Replace("AUTH:", "");
@@ -92,19 +107,24 @@ namespace OpenDentBusiness.ODSMS
                 throw;
             }
 
+            ValidateConfiguration();
+        }
+
+        private static void ValidateConfiguration()
+        {
             if (AUTH == null || URL == null)
             {
                 throw new ArgumentNullException("AUTH or URL", "One or both of AUTH or URL was not set in odsms.txt");
             }
 
-            if (PRACTICE_PHONE_NUMBER.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(PRACTICE_PHONE_NUMBER))
             {
-                throw new ArgumentNullException("Forgot to sent PHONE: in the configuraton file");
+                throw new ArgumentNullException("Forgot to set PHONE: in the configuration file");
             }
+        }
 
-            sharedClient = new HttpClient();
-            sharedClient.BaseAddress = new Uri(URL);
-
+        private static void LogConfigurationStatus(string MachineName)
+        {
             if (RUN_SCHEDULED_TASKS)
             {
                 EventLog.WriteEntry("ODSMS", "Name matches, enabling SMS reception", EventLogEntryType.Information, 101, 1, new byte[10]);
@@ -117,7 +137,7 @@ namespace OpenDentBusiness.ODSMS
             EventLog.WriteEntry("ODSMS", "Successfully loaded odsms.txt config file", EventLogEntryType.Information, 101, 1, new byte[10]);
         }
 
-        public static async System.Threading.Tasks.Task<bool> CheckSMSConnection()
+        public static async Task<bool> CheckSMSConnection()
         {
             try
             {
@@ -193,11 +213,11 @@ namespace OpenDentBusiness.ODSMS
 
         public static void EnsureSmsFolderExists()
         {
-            if (!System.IO.Directory.Exists(sms_folder_path))
+            if (!Directory.Exists(sms_folder_path))
             {
                 ODSMSLogger.Instance.Log("SMS MSG GUIDs folder not found - creating", EventLogEntryType.Warning);
-                MsgBox.Show("SMS folder not found - creating. If this is at the practice then quit OpenDental and contact Corrin");
-                System.IO.Directory.CreateDirectory(sms_folder_path);
+                System.Windows.MessageBox.Show("SMS folder not found - creating. If this is at the practice then quit OpenDental and contact Corrin");
+                Directory.CreateDirectory(sms_folder_path);
             }
         }
     }

@@ -673,9 +673,10 @@
     <Compile Include="ODEvents\ODEvents.cs" />
     <Compile Include="ODEvents\MiddleTierConnectionEvent.cs" />
     <Compile Include="ODSMS\AppointmentHelper.cs" />
-    <Compile Include="ODSMS\AsyncSMSHandling.cs" />
     <Compile Include="ODSMS\ODSMS.cs" />
     <Compile Include="ODSMS\ODSMSLogger.cs" />
+    <Compile Include="ODSMS\ReceiveSMS.cs" />
+    <Compile Include="ODSMS\SendSMS.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

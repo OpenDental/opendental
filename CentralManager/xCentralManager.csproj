@@ -147,9 +147,7 @@
     <Compile Include="FormCentralManager.Designer.cs">
       <DependentUpon>FormCentralManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormCentralReportSetup.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FormCentralReportSetup.cs" />
     <Compile Include="FormCentralReportSetup.Designer.cs">
       <DependentUpon>FormCentralReportSetup.cs</DependentUpon>
     </Compile>

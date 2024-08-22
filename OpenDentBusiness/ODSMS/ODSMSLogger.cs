@@ -42,7 +42,7 @@ namespace OpenDentBusiness.ODSMS
                 }
 
                 // Open file with shared access, just in case there's two
-                FileStream logFileStream = new FileStream(_currentLogFile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                FileStream logFileStream = new FileStream(_currentLogFile, FileMode.Append, FileAccess.Write, FileShare.Write);
                 _writer = new StreamWriter(logFileStream);
             }
             catch (Exception ex)
@@ -95,8 +95,11 @@ namespace OpenDentBusiness.ODSMS
                 {
                     CheckForNewDay();
                     string json = JsonConvert.SerializeObject(logEntry);
-                    _writer.WriteLine(json);
-                    _writer.Flush();
+                    if (_writer != null) // Writer is null if we failed to open the log file
+                    {
+                        _writer.WriteLine(json);
+                        _writer.Flush();
+                    }
                 }
             }
             catch (Exception ex)
