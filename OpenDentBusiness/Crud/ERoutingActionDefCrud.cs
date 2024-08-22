@@ -55,6 +55,7 @@ namespace OpenDentBusiness.Crud{
 				eRoutingActionDef.DateTLastModified   = PIn.DateT (row["DateTLastModified"].ToString());
 				eRoutingActionDef.ForeignKey          = PIn.Long  (row["ForeignKey"].ToString());
 				eRoutingActionDef.ForeignKeyType      = (OpenDentBusiness.EnumERoutingDefFKType)PIn.Int(row["ForeignKeyType"].ToString());
+				eRoutingActionDef.LabelOverride       = PIn.String(row["LabelOverride"].ToString());
 				retVal.Add(eRoutingActionDef);
 			}
 			return retVal;
@@ -74,6 +75,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DateTLastModified");
 			table.Columns.Add("ForeignKey");
 			table.Columns.Add("ForeignKeyType");
+			table.Columns.Add("LabelOverride");
 			foreach(ERoutingActionDef eRoutingActionDef in listERoutingActionDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eRoutingActionDef.ERoutingActionDefNum),
@@ -84,6 +86,7 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (eRoutingActionDef.DateTLastModified,false),
 					POut.Long  (eRoutingActionDef.ForeignKey),
 					POut.Int   ((int)eRoutingActionDef.ForeignKeyType),
+					            eRoutingActionDef.LabelOverride,
 				});
 			}
 			return table;
@@ -103,7 +106,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ERoutingActionDefNum,";
 			}
-			command+="ERoutingDefNum,ERoutingActionType,ItemOrder,SecDateTEntry,DateTLastModified,ForeignKey,ForeignKeyType) VALUES(";
+			command+="ERoutingDefNum,ERoutingActionType,ItemOrder,SecDateTEntry,DateTLastModified,ForeignKey,ForeignKeyType,LabelOverride) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eRoutingActionDef.ERoutingActionDefNum)+",";
 			}
@@ -114,7 +117,8 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.Now()+","
 				+    POut.DateT (eRoutingActionDef.DateTLastModified)+","
 				+    POut.Long  (eRoutingActionDef.ForeignKey)+","
-				+    POut.Int   ((int)eRoutingActionDef.ForeignKeyType)+")";
+				+    POut.Int   ((int)eRoutingActionDef.ForeignKeyType)+","
+				+"'"+POut.String(eRoutingActionDef.LabelOverride)+"')";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -139,7 +143,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ERoutingActionDefNum,";
 			}
-			command+="ERoutingDefNum,ERoutingActionType,ItemOrder,SecDateTEntry,DateTLastModified,ForeignKey,ForeignKeyType) VALUES(";
+			command+="ERoutingDefNum,ERoutingActionType,ItemOrder,SecDateTEntry,DateTLastModified,ForeignKey,ForeignKeyType,LabelOverride) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eRoutingActionDef.ERoutingActionDefNum)+",";
 			}
@@ -150,7 +154,8 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.Now()+","
 				+    POut.DateT (eRoutingActionDef.DateTLastModified)+","
 				+    POut.Long  (eRoutingActionDef.ForeignKey)+","
-				+    POut.Int   ((int)eRoutingActionDef.ForeignKeyType)+")";
+				+    POut.Int   ((int)eRoutingActionDef.ForeignKeyType)+","
+				+"'"+POut.String(eRoutingActionDef.LabelOverride)+"')";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -169,7 +174,8 @@ namespace OpenDentBusiness.Crud{
 				//SecDateTEntry not allowed to change
 				+"DateTLastModified   =  "+POut.DateT (eRoutingActionDef.DateTLastModified)+", "
 				+"ForeignKey          =  "+POut.Long  (eRoutingActionDef.ForeignKey)+", "
-				+"ForeignKeyType      =  "+POut.Int   ((int)eRoutingActionDef.ForeignKeyType)+" "
+				+"ForeignKeyType      =  "+POut.Int   ((int)eRoutingActionDef.ForeignKeyType)+", "
+				+"LabelOverride       = '"+POut.String(eRoutingActionDef.LabelOverride)+"' "
 				+"WHERE ERoutingActionDefNum = "+POut.Long(eRoutingActionDef.ERoutingActionDefNum);
 			Db.NonQ(command);
 		}
@@ -202,6 +208,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="ForeignKeyType = "+POut.Int   ((int)eRoutingActionDef.ForeignKeyType)+"";
 			}
+			if(eRoutingActionDef.LabelOverride != oldERoutingActionDef.LabelOverride) {
+				if(command!="") { command+=",";}
+				command+="LabelOverride = '"+POut.String(eRoutingActionDef.LabelOverride)+"'";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -231,6 +241,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eRoutingActionDef.ForeignKeyType != oldERoutingActionDef.ForeignKeyType) {
+				return true;
+			}
+			if(eRoutingActionDef.LabelOverride != oldERoutingActionDef.LabelOverride) {
 				return true;
 			}
 			return false;

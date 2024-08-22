@@ -802,6 +802,9 @@ namespace OpenDentBusiness{
 		///<summary>255 - Allow users to edit BadgeIds in the userod table.</summary>
 		[Description("BadgeId Edit")]
 		BadgeIdEdit,
+		///<summary>256 - Internal Child Daycare only. Allow users to make changes to the daycare.</summary>
+		[Description("Child Daycare Edit")]
+		ChildDaycareEdit,
 	}
 }
 

@@ -221,7 +221,7 @@
 			// labelFamFinancial
 			// 
 			this.labelFamFinancial.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelFamFinancial.Location = new System.Drawing.Point(6, 544);
+			this.labelFamFinancial.Location = new System.Drawing.Point(6, 374);
 			this.labelFamFinancial.Name = "labelFamFinancial";
 			this.labelFamFinancial.Size = new System.Drawing.Size(170, 16);
 			this.labelFamFinancial.TabIndex = 9;
@@ -696,7 +696,7 @@
 			this.gridAcctPat.ColorSelectedRow = System.Drawing.Color.DarkSalmon;
 			this.gridAcctPat.Location = new System.Drawing.Point(6, 163);
 			this.gridAcctPat.Name = "gridAcctPat";
-			this.gridAcctPat.Size = new System.Drawing.Size(170, 358);
+			this.gridAcctPat.Size = new System.Drawing.Size(170, 180);
 			this.gridAcctPat.TabIndex = 72;
 			this.gridAcctPat.Title = "Select Patient";
 			this.gridAcctPat.TranslationName = "TableAccountPat";
@@ -748,7 +748,7 @@
 			this.textFinNote.BackColor = System.Drawing.SystemColors.Window;
 			this.textFinNote.DetectLinksEnabled = false;
 			this.textFinNote.DetectUrls = false;
-			this.textFinNote.Location = new System.Drawing.Point(6, 563);
+			this.textFinNote.Location = new System.Drawing.Point(6, 394);
 			this.textFinNote.Name = "textFinNote";
 			this.textFinNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.FinancialNotes;
 			this.textFinNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -761,7 +761,7 @@
 			// checkUseSuperFam
 			// 
 			this.checkUseSuperFam.BackColor = System.Drawing.SystemColors.Window;
-			this.checkUseSuperFam.Location = new System.Drawing.Point(7, 521);
+			this.checkUseSuperFam.Location = new System.Drawing.Point(7, 349);
 			this.checkUseSuperFam.Name = "checkUseSuperFam";
 			this.checkUseSuperFam.Size = new System.Drawing.Size(135, 17);
 			this.checkUseSuperFam.TabIndex = 74;
@@ -1864,7 +1864,6 @@
 			this.panelTotalOwes.ResumeLayout(false);
 			this.tabControlShow.ResumeLayout(false);
 			this.tabMain.ResumeLayout(false);
-			this.tabMain.PerformLayout();
 			this.tabShow.ResumeLayout(false);
 			this.tabShow.PerformLayout();
 			this.groupBoxFamilyIns.ResumeLayout(false);

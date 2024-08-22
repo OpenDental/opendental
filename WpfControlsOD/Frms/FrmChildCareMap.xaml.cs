@@ -34,6 +34,8 @@ namespace OpenDental {
 		///<summary>Gets filled when a grid is right clicked on for the context menu options.</summary>
 		private long _childRoomNumClicked;
 		private Grid _gridChildRoomClick;
+		///<summary>Set true to disable editing. This should be set true for parents wanting to see where their children are at from ther workstations. False by default.</summary>
+		public bool ViewOnly=false;
 
 		///<summary></summary>
 		public FrmChildCareMap() {
@@ -51,7 +53,7 @@ namespace OpenDental {
 			gridChildRoom7.ContextMenu=_contextMenu;
 			gridChildRoom8.ContextMenu=_contextMenu;
 			_contextMenuAbsent=new ContextMenu(this);
-			_contextMenuAbsent.Add(new MenuItem("Send to Primary Classroom",menuItemSendToPrimary_Click));
+			_contextMenuAbsent.Opened+=ContextMenuAbsent_Opened;
 			gridChildrenAbsent.ContextMenu=_contextMenuAbsent;
 		}
 
@@ -103,6 +105,9 @@ namespace OpenDental {
 			//Call all fillgrids
 			FillAllGrids();
 			GlobalFormOpenDental.EventProcessSignalODs+=GlobalFormOpenDental_EventProcessSignalODs;
+			if(ViewOnly) {
+				SetViewOnly();
+			}
 		}
 
 		private void GlobalFormOpenDental_EventProcessSignalODs(object sender,List<Signalod> listSignalods) {
@@ -116,7 +121,7 @@ namespace OpenDental {
 		}
 
 		private void FillAllGrids() {
-			FillGridTeachersAbsent();
+			FillGridTeachersUnassigned();
 			FillGridChildrenAbsent();
 			FillGridSpecified(gridChildRoom1);
 			FillGridSpecified(gridChildRoom2);
@@ -128,7 +133,9 @@ namespace OpenDental {
 			FillGridSpecified(gridChildRoom8);
 		}
 
-		private void FillGridTeachersAbsent() {
+		private void FillGridTeachersUnassigned() {
+			//Remember which teacher was selected after fill grid
+			Employee employeeSelected=gridTeachersUnassigned.SelectedTag<Employee>();
 			List<Employee> listEmployeesAbsent=Employees.GetDeepCopy();
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllEmployeesForDate(DateTime.Today.Date);
 			List<long> listEmployeeNumsUnique=listChildRoomLogs.FindAll(x => x.EmployeeNum!=0).Select(y => y.EmployeeNum).Distinct().ToList();
@@ -142,6 +149,7 @@ namespace OpenDental {
 				listEmployeesAbsent.RemoveAll(x => x.EmployeeNum==listEmployeeNumsUnique[i]);
 			}
 			List<Employee> listEmployeesSorted=listEmployeesAbsent.OrderBy(x => x.LName).ToList();
+			listEmployeesSorted.RemoveAll(x => x.IsHidden);//Remove all hidden before the fillgrid
 			//Begin to fill the grid
 			gridTeachersUnassigned.BeginUpdate();
 			gridTeachersUnassigned.Columns.Clear();
@@ -152,9 +160,6 @@ namespace OpenDental {
 			gridTeachersUnassigned.ListGridRows.Clear();
 			for(int i=0;i<listEmployeesSorted.Count;i++) {
 				Employee employee=listEmployeesSorted[i];
-				if(employee.IsHidden) {
-					continue;
-				}
 				GridRow gridRow=new GridRow();
 				gridRow.Cells.Add(employee.FName+" "+employee.LName);
 				gridRow.ColorBackG=Color.FromRgb(255,240,240);
@@ -163,9 +168,20 @@ namespace OpenDental {
 				gridTeachersUnassigned.ListGridRows.Add(gridRow);
 			}
 			gridTeachersUnassigned.EndUpdate();
+			//Reselect the employee after the fill grid
+			if(employeeSelected==null) {
+				return;//No employee was selected
+			}
+			int idx=gridTeachersUnassigned.ListGridRows.FindIndex(x => ((Employee)x.Tag).EmployeeNum==employeeSelected.EmployeeNum);
+			if(idx==-1) {
+				return;//If for some reason the EmployeeNum was not found
+			}
+			gridTeachersUnassigned.SetSelected(idx);
 		}
 
 		private void FillGridChildrenAbsent() {
+			//Remember which child was selected after the fill grid
+			Child childSelected=gridChildrenAbsent.SelectedTag<Child>();
 			List<Child> listChildrenAbsent=Children.GetAll();
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllChildrenForDate(DateTime.Now.Date);
 			List<long> listChildNumsUnique=listChildRoomLogs.Select(x => x.ChildNum).Distinct().ToList();
@@ -178,6 +194,7 @@ namespace OpenDental {
 				listChildrenAbsent.RemoveAll(x => x.ChildNum==listChildNumsUnique[i]);//Remove from absent list since they are present
 			}
 			List<Child> listChildrenSorted=listChildrenAbsent.OrderBy(x => x.LName).ToList();
+			listChildrenSorted.RemoveAll(x => x.IsHidden);//Remove all hidden before the fillgrid
 			//Begin to fill the grid
 			gridChildrenAbsent.BeginUpdate();
 			gridChildrenAbsent.Columns.Clear();
@@ -185,18 +202,26 @@ namespace OpenDental {
 			gridChildrenAbsent.Columns.Add(gridColumn);
 			gridChildrenAbsent.ListGridRows.Clear();
 			for(int i=0;i<listChildrenSorted.Count;i++) {
-				if(listChildrenSorted[i].IsHidden) {
-					continue;
-				}
 				GridRow gridRow=new GridRow();
 				gridRow.Cells.Add(Children.GetName(listChildrenSorted[i]));
 				gridRow.Tag=listChildrenSorted[i];
 				gridChildrenAbsent.ListGridRows.Add(gridRow);
 			}
 			gridChildrenAbsent.EndUpdate();
+			//Reselect the child after the fill grid
+			if(childSelected==null) {
+				return;//No child was selected
+			}
+			int idx=gridChildrenAbsent.ListGridRows.FindIndex(x => ((Child)x.Tag).ChildNum==childSelected.ChildNum);
+			if(idx==-1) {
+				return;//If for some reason the ChildNum was not found
+			}
+			gridChildrenAbsent.SetSelected(idx);
 		}
 
 		private void FillGridSpecified(Grid grid) {
+			//Remember which child or employee was selected after the fill grid
+			ChildRoomLog childRoomLogSelected=grid.SelectedTag<ChildRoomLog>();
 			List<Child> listChildren=Children.GetAll();
 			double countChildren=0;
 			double countEmployees=0;
@@ -266,10 +291,31 @@ namespace OpenDental {
 				gridRowFinal.Cells.Add("Current Ratio: ?");
 			}
 			else {
+				double ratioChange=countChildren/countEmployees;
 				gridRowFinal.Cells.Add("Current Ratio: "+(countChildren/countEmployees).ToString());
 			}
+			ChildRoomLog childRoomLogFinal=new ChildRoomLog();//Final row needs a tag for reselecting row
+			gridRowFinal.Tag=childRoomLogFinal;
 			grid.ListGridRows.Add(gridRowFinal);
 			grid.EndUpdate();
+			//Reselect the child after the fill grid
+			if(childRoomLogSelected==null) {
+				return;//No row was selected
+			}
+			int idx=0;
+			if(childRoomLogSelected.ChildNum!=0) {//Child row
+				idx=grid.ListGridRows.FindIndex(x => ((ChildRoomLog)x.Tag).ChildNum==childRoomLogSelected.ChildNum);
+			}
+			else if(childRoomLogSelected.EmployeeNum!=0) {//Employee row
+				idx=grid.ListGridRows.FindIndex(x => ((ChildRoomLog)x.Tag).EmployeeNum==childRoomLogSelected.EmployeeNum);
+			}
+			else {//Ratio change row
+				idx=grid.ListGridRows.FindIndex(x => ((ChildRoomLog)x.Tag).ChildNum==0 && ((ChildRoomLog)x.Tag).EmployeeNum==0);
+			}
+			if(idx==-1) {
+				return;//If for some reason the previosly selected row was not found
+			}
+			grid.SetSelected(idx);
 		}
 
 		private void ContextMenu_Opened(object sender,EventArgs e) {
@@ -277,6 +323,23 @@ namespace OpenDental {
 			Grid grid=(Grid)contextMenu.PlacementTarget;
 			_childRoomNumClicked=long.Parse(grid.Tag.ToString());
 			_gridChildRoomClick=grid;
+		}
+
+		///<summary>Instead of setting the menu item text to something generic like "Send to Default Room", we set it here so it can be dynamic for each child's primary room such as "Send to Preschool 1".</summary>
+		private void ContextMenuAbsent_Opened(object sender,EventArgs e) {
+			_contextMenuAbsent.Items.Clear();//Clear out any items from the last right click
+			ContextMenu contextMenu=(ContextMenu)sender;
+			Grid grid=(Grid)contextMenu.PlacementTarget;
+			Child childSelected=grid.SelectedTag<Child>();
+			if(childSelected==null) {
+				return;
+			}
+			string roomId=ChildRooms.GetRoomId(childSelected.ChildRoomNumPrimary);//DB gets hit here
+			if(string.IsNullOrEmpty(roomId)) {
+				_contextMenuAbsent.Add(new MenuItem("Send to ?",menuItemSendToPrimary_Click));
+				return;
+			}
+			_contextMenuAbsent.Add(new MenuItem("Send to "+roomId,menuItemSendToPrimary_Click));
 		}
 
 		private void menuItemRemove_Click(object sender,EventArgs e) {
@@ -301,7 +364,23 @@ namespace OpenDental {
 			//Refresh
 			FillGridSpecified(_gridChildRoomClick);
 			FillGridChildrenAbsent();
-			FillGridTeachersAbsent();
+			FillGridTeachersUnassigned();
+			//Do selection after the child or teacher has been moved
+			int idx=0;
+			if(childRoomLog.ChildNum!=0) {//Child was moved
+				idx=gridChildrenAbsent.ListGridRows.FindIndex(x => ((Child)x.Tag).ChildNum==childRoomLog.ChildNum);
+				if(idx==-1) {
+					return;//In case the ChildNum was not found
+				}
+				gridChildrenAbsent.SetSelected(idx);
+				return;
+			}
+			//Teacher was moved
+			idx=gridTeachersUnassigned.ListGridRows.FindIndex(x => ((Employee)x.Tag).EmployeeNum==childRoomLog.EmployeeNum);
+			if(idx==-1) {
+				return;//In case the EmployeeNum was not found
+			}
+			gridTeachersUnassigned.SetSelected(idx);
 		}
 
 		private void menuItemSendToPrimary_Click(object sender,EventArgs e) {
@@ -311,6 +390,10 @@ namespace OpenDental {
 				return;
 			}
 			Child childSelected=(Child)gridChildrenAbsent.ListGridRows[idxSelected].Tag;
+			if(childSelected.ChildRoomNumPrimary==0) {
+				MsgBox.Show("The selected child does not have a primary room.");
+				return;
+			}
 			//If for some reason a child is already in a room due to a delay in syncing, create a leaving entry if needed
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(childSelected.ChildNum,DateTime.Now);
 			ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
@@ -325,6 +408,13 @@ namespace OpenDental {
 			//Sync and refresh
 			Signalods.SetInvalid(InvalidType.Children);
 			FillAllGrids();
+			//Do selection after the child has been moved
+			Grid grid=GetChildRoomGrid(childSelected.ChildRoomNumPrimary);
+			int idx=grid.ListGridRows.FindIndex(x => ((ChildRoomLog)x.Tag).ChildNum==childSelected.ChildNum);
+			if(idx==-1) {
+				return;//If for some reason the ChildNum was not found
+			}
+			grid.SetSelected(idx);
 		}
 
 		private void butChildren_Click(object sender,EventArgs e) {
@@ -384,11 +474,18 @@ namespace OpenDental {
 			Signalods.SetInvalid(InvalidType.Children);
 			//Refresh
 			FillAllGrids();
+			//Do selection after the child has been moved
+			Grid grid=GetChildRoomGrid(childRoomNum);
+			int idx=grid.ListGridRows.FindIndex(x => ((ChildRoomLog)x.Tag).ChildNum==child.ChildNum);
+			if(idx==-1) {
+				return;//If for some reason the ChildNum was not found
+			}
+			grid.SetSelected(idx);
 		}
 
 		private void butAddTeacher_Grid_Click(object sender,EventArgs e) {
 			//Determine which room the click was for
-			int childRoomNum=(int)((Button)sender).Tag;
+			long childRoomNum=(int)((Button)sender).Tag;
 			//Select an employee/teacher
 			FrmChildTeacherSelect frmChildTeacherSelect=new FrmChildTeacherSelect();
 			frmChildTeacherSelect.ShowDialog();
@@ -419,10 +516,58 @@ namespace OpenDental {
 			Signalods.SetInvalid(InvalidType.Children);
 			//Refresh
 			FillAllGrids();
+			//Do selection after the teacher has been moved
+			Grid grid=GetChildRoomGrid(childRoomNum);
+			int idx=grid.ListGridRows.FindIndex(x => ((ChildRoomLog)x.Tag).EmployeeNum==employee.EmployeeNum);
+			if(idx==-1) {
+				return;//If for some reason the EmployeeNum was not found
+			}
+			grid.SetSelected(idx);
+		}
+
+		///<summary>Returns the childroom grid based on the childRoomNum passed in. Will return null if the passed in num does not match a grid.</summary>
+		/// <param name="childRoomNum"></param>
+		/// <returns></returns>
+		private Grid GetChildRoomGrid(long childRoomNum) {
+			Grid grid;
+			switch (childRoomNum) {
+				case 1:
+					grid=gridChildRoom1;
+					break;
+				case 2:
+					grid=gridChildRoom2;
+					break;
+				case 3:
+					grid=gridChildRoom3;
+					break;
+				case 4:
+					grid=gridChildRoom4;
+					break;
+				case 5:
+					grid=gridChildRoom5;
+					break;
+				case 6:
+					grid=gridChildRoom6;
+					break;
+				case 7:
+					grid=gridChildRoom7;
+					break;
+				case 8:
+					grid=gridChildRoom8;
+					break;
+				default:
+					grid=null;
+					break;
+			}
+			return grid;
+		}
+
+		private void butViewOnly_Click(object sender,EventArgs e) {
+			SetViewOnly();
 		}
 
 		///<summary>Set to view only for maps parents will be able to see but not interact with.</summary>
-		private void butViewOnly_Click(object sender,EventArgs e) {
+		private void SetViewOnly() {
 			//Disable buttons
 			butChildren.Visible=false;
 			butClassrooms.Visible=false;
@@ -453,9 +598,16 @@ namespace OpenDental {
 			butViewLogs_Grid8.Visible=false;
 			butAddChild_Grid8.Visible=false;
 			butAddTeacher_Grid8.Visible=false;
-			//Remove menu items from the context menus
-			_contextMenu.RemoveAt(0);
-			_contextMenuAbsent.RemoveAt(0);
+			//Set context menus to null. Setting ContextMenuShows to false will still show the context menu when clicking on the canvasView and not the canvasMain
+			gridChildrenAbsent.ContextMenu=null;
+			gridChildRoom1.ContextMenu=null;
+			gridChildRoom2.ContextMenu=null;
+			gridChildRoom3.ContextMenu=null;
+			gridChildRoom4.ContextMenu=null;
+			gridChildRoom5.ContextMenu=null;
+			gridChildRoom6.ContextMenu=null;
+			gridChildRoom7.ContextMenu=null;
+			gridChildRoom8.ContextMenu=null;
 		}
 	}
 }

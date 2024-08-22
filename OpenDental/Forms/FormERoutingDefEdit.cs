@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using CodeBase;
-using Interop.QBFC10;
-using Microsoft.VisualBasic;
 using OpenDental.UI;
 using OpenDentBusiness;
 
@@ -20,7 +16,6 @@ namespace OpenDental {
 		private List<ERoutingDefLink> _listERoutingDefLinks;
 		private bool _hasChanged=false;
 		private string _descriptionOrig;
-
 
 		public FormERoutingDefEdit(long clinicNum) {
 			InitializeComponent();
@@ -48,27 +43,29 @@ namespace OpenDental {
 		public void FormPatientFlowEdit_Load(object sender,EventArgs e) {
 			textBoxDescription.Text=_eRoutingDef.Description;
 			labelGenAppts.Visible=false;
-			List<EnumERoutingActionType> listEnumERoutingActionType=typeof(EnumERoutingActionType).GetEnumValues()
-				.AsEnumerable<EnumERoutingActionType>()
-				.Where(x => x!=EnumERoutingActionType.None)
-				.ToList();
-			comboActionType.Items.AddListEnum(listEnumERoutingActionType);
 			comboLinkType.Items.AddListEnum<EnumERoutingType>(new List<EnumERoutingType>() { EnumERoutingType.General, EnumERoutingType.Appointment, EnumERoutingType.BillingType } );
 			FillActionsGrid();
 			FillLinkTypesGrid();
 		}
 
 		private void FillActionsGrid() {
+			int indexCur=gridERoutingActions.GetSelectedIndex();
 			gridERoutingActions.BeginUpdate();
 			gridERoutingActions.ListGridRows.Clear();
 			gridERoutingActions.Columns.Clear();
-			gridERoutingActions.Columns.Add(new UI.GridColumn() { Heading="Action Type" });
+			gridERoutingActions.Columns.Add(new GridColumn() { Heading=Lang.g(nameof(FormERoutingDefEdit),"Action Type"), IsWidthDynamic=true });
+			gridERoutingActions.Columns.Add(new GridColumn() { Heading=Lang.g(nameof(FormERoutingDefEdit),"Label Override"), IsWidthDynamic=true});
+			gridERoutingActions.Columns.Add(new GridColumn() { Heading=Lang.g(nameof(FormERoutingDefEdit),"Default"), ColWidth=60, TextAlign=HorizontalAlignment.Center});
 			_listERoutingActionDefs.ForEach(x => {
 				gridERoutingActions.ListGridRows.Add(
-					new UI.GridRow(x.ERoutingActionType.GetDescription()) { Tag=x }
+					new UI.GridRow(new string[]{x.ERoutingActionType.GetDescription(), x.LabelOverride, x.ForeignKey!=0 ? "X": ""}) { Tag=x }
 					);
 			});
 			gridERoutingActions.EndUpdate();
+			if(indexCur < gridERoutingActions.ListGridRows.Count){
+				//If there was a previously selected entry, select it again. If it was deleted, who cares.
+				gridERoutingActions.SetSelected(indexCur);
+			}
 		}
 
 		private void FillLinkTypesGrid() {
@@ -143,71 +140,50 @@ namespace OpenDental {
 
 		#region Event Handlers
 
+		/// <summary>Opens an edit form for the chosen eRoutingActionDef.
+		/// Refreshes page if saved. </summary>
 		private void gridERoutingActions_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			if(sender is GridOD grid) {
 				if(grid.ListGridRows[e.Row].Tag is ERoutingActionDef eRoutingActionDef) {
-					switch(eRoutingActionDef.ERoutingActionType) {
-						//The only difference between exam sheet and consent form behavior is that sheetDefs are chosen from a different category.
-						case EnumERoutingActionType.ExamSheet:
-						case EnumERoutingActionType.ConsentForm:
-							//Fetch applicable sheets
-							//Allow the user to pick one
-							List<SheetDef> listSheetDefs=null;
-							if(eRoutingActionDef.ERoutingActionType==EnumERoutingActionType.ExamSheet) {
-								listSheetDefs=SheetDefs.GetWhere(x=>x.SheetType==SheetTypeEnum.ExamSheet && x.HasMobileLayout);
-							}
-							else if(eRoutingActionDef.ERoutingActionType==EnumERoutingActionType.ConsentForm) {
-								listSheetDefs=SheetDefs.GetWhere(x=>x.SheetType==SheetTypeEnum.Consent && x.HasMobileLayout);
-							}
-							listSheetDefs=listSheetDefs.FindAll(x=>x.HasMobileLayout);
-							FrmSheetPicker formSheetPicker=new FrmSheetPicker();
-							formSheetPicker.ListSheetDefs=listSheetDefs;
-							formSheetPicker.AllowMultiSelect=false;
-							formSheetPicker.RequireSelection=false;
-							SheetDef sheetDefAttached=listSheetDefs.FirstOrDefault(x=>x.SheetDefNum==eRoutingActionDef.ForeignKey);
-							if(sheetDefAttached!=null) {
-								//There is currently a sheet attached to this ERoutingActionDef, set it in the picker form.
-								formSheetPicker.ListSheetDefsSelected=new List<SheetDef> {sheetDefAttached};
-							}
-							if(formSheetPicker.ShowDialog()) {
-								//If user pressed ok, attach that sheetDef to the eRoutingAction.
-								if(formSheetPicker.ListSheetDefsSelected.IsNullOrEmpty()) {
-									//User selected nothing.
-									eRoutingActionDef.ForeignKey=0;
-									eRoutingActionDef.ForeignKeyType=EnumERoutingDefFKType.None;
-								}
-								else {
-									eRoutingActionDef.ForeignKey=formSheetPicker.ListSheetDefsSelected.First().SheetDefNum;
-									eRoutingActionDef.ForeignKeyType=EnumERoutingDefFKType.SheetDef;
-								}
-								_hasChanged=true;
-							}
-							break;
-						default: return;
-					}
+					ShowERoutingActionDefEditHelper(eRoutingActionDef);
 				}
 			}
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(comboActionType.SelectedItem == null) {
-				MsgBox.Show(this,"Please select an Action to add.");
-				return;
-			}
-			_listERoutingActionDefs.Add(new ERoutingActionDef() { 
-				ERoutingActionType=(EnumERoutingActionType)comboActionType.SelectedItem,
-				ItemOrder=_listERoutingActionDefs.Count 
-			});
-			FillActionsGrid();
-			_hasChanged=true;
-			gridERoutingActions.SetSelected(_listERoutingActionDefs.Count-1);
+			//Automatically launch the edit window upon adding.
+			ShowERoutingActionDefEditHelper(null);
 		}
 
-		private void butRemove_Click(object sender,EventArgs e) {
-			_listERoutingActionDefs.Remove(gridERoutingActions.SelectedTag<ERoutingActionDef>());
-			ReorderListItemOrders();
-			FillActionsGrid();
+		/// <summary>Shows edit form, and manages the list of eRoutingActionDefs for new. </summary>
+		private void ShowERoutingActionDefEditHelper(ERoutingActionDef eRoutingActionDef){
+		bool isAddingNew=false;
+			if(eRoutingActionDef==null){
+			//If we are adding a new eRoutingActionDef, instanciate it and set a flag.
+				isAddingNew=true;
+				eRoutingActionDef=new ERoutingActionDef() { 
+					ERoutingActionType=EnumERoutingActionType.None,
+					ItemOrder=_listERoutingActionDefs.Count 
+				};
+			}
+			FrmERoutingActionDefEdit frmERoutingActionDefEdit=new FrmERoutingActionDefEdit(eRoutingActionDef);
+			if(frmERoutingActionDefEdit.ShowDialog()) {
+				//If the eRouting action is new, add it to the list. Set the changed flag and refresh the UI.
+				if(isAddingNew){
+					_listERoutingActionDefs.Add(eRoutingActionDef);
+					gridERoutingActions.SetSelected(_listERoutingActionDefs.Count-1);
+				}
+			}
+			else{
+			//User canelled or delted. If the eRoutingActionDef is null, remove it from the list.
+				if(frmERoutingActionDefEdit.ERoutingActionDefCur==null){
+					//ERoutingActionDef was deleted. re-assign action order.
+					_listERoutingActionDefs.Remove(eRoutingActionDef);
+					ReorderListItemOrders();
+				}
+			}
 			_hasChanged=true;
+			FillActionsGrid();
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {
@@ -333,6 +309,5 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 		#endregion
-
 	}
 }

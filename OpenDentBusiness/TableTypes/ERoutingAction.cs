@@ -23,6 +23,8 @@ namespace OpenDentBusiness {
 		public long ForeignKey;
 		/// <summary> Enum:EnumERoutingFKType Indicates the type of object that ForeignKey references. None=0, Sheet=1 </summary>
 		public EnumERoutingFKType ForeignKeyType;
+		/// <summary> Override for the title of the eRouting Action. This will be shown in the eClipboard UI instead of EnumERoutingActionType description if it is present. </summary>
+		public string LabelOverride;
 	}
 
 	/// <summary>Indicates the type of object that ForeignKey references. None=0, Sheet=1</summary>

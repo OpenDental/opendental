@@ -315,6 +315,7 @@
       <Enumeration name="MobileNotificationType">
         <summary>The different types of mobile notifications. Preserve order. CI = Checkin portion of app (eClipboard). ODM = ODMobile</summary>
         <EnumValue name="ODT_PrintError"></EnumValue>
+        <EnumValue name="ODM_NewTextMessage">Occurs when a new text message is received. This is a workaround due to android push notifications no longer being supported for xamarin.</EnumValue>
       </Enumeration>
     </column>
   </table>

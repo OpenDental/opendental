@@ -139,7 +139,10 @@ namespace OpenDental {
 			_patNum=0;
 			_clinicNum=0;
 			_patient=Patients.GetPat(_emailMessage.PatNum);//we could just as easily pass this in.
-			if(_patient!=null) {
+			if(_patient==null) {//_patient is null
+				butAddImage.Visible=false;
+			}
+			else {
 				_patNum=_patient.PatNum;
 				_clinicNum=_patient.ClinicNum;
 			}

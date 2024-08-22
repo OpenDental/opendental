@@ -57,4 +57,12 @@ The daycare has a "map" window that contains grids for each of the classrooms an
 Parents will be able to check in/out their children. If they have their employee badge they will be able to scan it and have their children come up in a listbox to check in or out. If they do not have their badge, they will be able to pick their children from a list of all the children and check them in or out.
 
 Children will also have their own badges and be able to check themselves in/out as well.
+
+The following SQL was run on the MServer206 daycare database on 8/21/2024 instead of adding to ConvertDatabase8
+SQL
+ALTER TABLE grouppermission MODIFY PermType smallint NOT NULL;
+SELECT DISTINCT UserGroupNum FROM grouppermission;
+INSERT INTO grouppermission (UserGroupNum,PermType) VALUES (1,257); //AdminGroup
+INSERT INTO grouppermission (UserGroupNum,PermType) VALUES (2,257); //Regular Users (teachers)
+//Parents do not get this permission
 */

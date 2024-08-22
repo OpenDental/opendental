@@ -14,6 +14,7 @@ namespace OpenDental {
 	public partial class FormEmailInbox:FormODBase {
 		///<summary>Do not access directly.  Instead use AddressInbox.</summary>
 		private EmailAddress _emailAddress=null;
+		private bool _hasBeenScaledForZoom=false;
 		///<summary>Should always match the combobox 1:1.</summary>
 		///<summary>Unfiltered list of emails showing in the Inbox.</summary>
 		private List<EmailMessage> _listEmailMessagesInbox;
@@ -61,6 +62,14 @@ namespace OpenDental {
 			if(!comboEmailAddress.Items.GetAll<EmailAddress>().IsNullOrEmpty()) {//Since Resize() is called once before Load(), we must ensure FillComboEmail() has been called at least once.
 				FillInboxOrSent();
 			}
+			if(!_hasBeenScaledForZoom) {
+				if(WindowState==FormWindowState.Normal) {
+					//Manually scale the hieight and width since we launch this form in maximized mode, the form's Restore.bounds property will not automatically scale to account for any potential zoom setting.
+					Height=LayoutManager.Scale(735);//Maximum allowed height
+					Width=LayoutManager.Scale(1246);//Maximum allowed width
+					_hasBeenScaledForZoom=true;
+				}
+			}
 		}
 
 		private void FormEmailInbox_Load(object sender,EventArgs e) {
@@ -100,9 +109,6 @@ namespace OpenDental {
 				}
 				throw ex;
 			}
-			//Manually scale the hieight and width since we launch this form in maximized mode, the form's Restore.bounds property will not automatically scale to account for any potential zoom setting.
-			Height=LayoutManager.Scale(735);//Maximum allowed height
-			Width=LayoutManager.Scale(1246);//Maximum allowed width
 			Cursor=Cursors.Default;
 		}
 

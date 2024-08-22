@@ -1660,7 +1660,7 @@ using WpfControls.UI;
 				MenuItem menuItemCopyRowsRemove=listMenuItemsRemove.Find(x => x.Tag?.ToString() == "copyrows");
 				contextMenu.Remove(menuItemCopyRowsRemove);
 				//Only remove the separator if the default items are present
-				if(menuItemCopyRemove!=null && menuItemCopyRowsRemove!=null) {
+				if(contextMenu.Items.Count>0 && menuItemCopyRemove!=null && menuItemCopyRowsRemove!=null) {
 					contextMenu.RemoveAt(contextMenu.Items.Count-1);
 				}
 				return;//Kick out after the row is highlighted and before the default items are added

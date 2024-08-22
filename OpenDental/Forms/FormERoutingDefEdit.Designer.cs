@@ -30,10 +30,7 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
-			this.butRemove = new OpenDental.UI.Button();
 			this.gridERoutingActions = new OpenDental.UI.GridOD();
-			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
-			this.comboActionType = new OpenDental.UI.ComboBox();
 			this.butAdd = new OpenDental.UI.Button();
 			this.groupBoxActions = new OpenDental.UI.GroupBox();
 			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
@@ -46,7 +43,6 @@ namespace OpenDental{
 			this.comboLinkType = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.groupBoxOD1.SuspendLayout();
 			this.groupBoxActions.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
 			this.groupBoxOD3.SuspendLayout();
@@ -55,7 +51,7 @@ namespace OpenDental{
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(831, 413);
+			this.butSave.Location = new System.Drawing.Point(925, 377);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 8;
@@ -67,7 +63,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 413);
+			this.butDelete.Location = new System.Drawing.Point(12, 377);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
 			this.butDelete.TabIndex = 7;
@@ -94,7 +90,7 @@ namespace OpenDental{
 			// 
 			this.butDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDown.Location = new System.Drawing.Point(226, 140);
+			this.butDown.Location = new System.Drawing.Point(436, 137);
 			this.butDown.Name = "butDown";
 			this.butDown.Size = new System.Drawing.Size(75, 24);
 			this.butDown.TabIndex = 6;
@@ -105,57 +101,27 @@ namespace OpenDental{
 			// 
 			this.butUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butUp.Location = new System.Drawing.Point(226, 110);
+			this.butUp.Location = new System.Drawing.Point(436, 107);
 			this.butUp.Name = "butUp";
 			this.butUp.Size = new System.Drawing.Size(75, 24);
 			this.butUp.TabIndex = 5;
 			this.butUp.Text = "&Up";
 			this.butUp.Click += new System.EventHandler(this.butUp_Click);
 			// 
-			// butRemove
-			// 
-			this.butRemove.Icon = OpenDental.UI.EnumIcons.DeleteX;
-			this.butRemove.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butRemove.Location = new System.Drawing.Point(226, 243);
-			this.butRemove.Name = "butRemove";
-			this.butRemove.Size = new System.Drawing.Size(75, 24);
-			this.butRemove.TabIndex = 3;
-			this.butRemove.Text = "&Remove";
-			this.butRemove.Click += new System.EventHandler(this.butRemove_Click);
-			// 
 			// gridERoutingActions
 			// 
-			this.gridERoutingActions.Location = new System.Drawing.Point(3, 21);
+			this.gridERoutingActions.Location = new System.Drawing.Point(3, 3);
 			this.gridERoutingActions.Name = "gridERoutingActions";
-			this.gridERoutingActions.Size = new System.Drawing.Size(214, 246);
+			this.gridERoutingActions.Size = new System.Drawing.Size(427, 246);
 			this.gridERoutingActions.TabIndex = 5;
 			this.gridERoutingActions.Title = "Actions";
-			this.gridERoutingActions.TitleVisible = false;
 			this.gridERoutingActions.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridERoutingActions_CellDoubleClick);
-			// 
-			// groupBoxOD1
-			// 
-			this.groupBoxOD1.Controls.Add(this.comboActionType);
-			this.groupBoxOD1.Controls.Add(this.butAdd);
-			this.groupBoxOD1.Location = new System.Drawing.Point(223, 21);
-			this.groupBoxOD1.Name = "groupBoxOD1";
-			this.groupBoxOD1.Size = new System.Drawing.Size(174, 83);
-			this.groupBoxOD1.TabIndex = 14;
-			this.groupBoxOD1.Text = "Add Action";
-			// 
-			// comboActionType
-			// 
-			this.comboActionType.Location = new System.Drawing.Point(3, 19);
-			this.comboActionType.Name = "comboActionType";
-			this.comboActionType.Size = new System.Drawing.Size(155, 21);
-			this.comboActionType.TabIndex = 4;
-			this.comboActionType.Text = "comboBoxActionType";
 			// 
 			// butAdd
 			// 
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(3, 46);
+			this.butAdd.Location = new System.Drawing.Point(436, 3);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(75, 24);
 			this.butAdd.TabIndex = 2;
@@ -164,33 +130,32 @@ namespace OpenDental{
 			// 
 			// groupBoxActions
 			// 
+			this.groupBoxActions.Controls.Add(this.butAdd);
 			this.groupBoxActions.Controls.Add(this.gridERoutingActions);
-			this.groupBoxActions.Controls.Add(this.groupBoxOD1);
 			this.groupBoxActions.Controls.Add(this.butDown);
 			this.groupBoxActions.Controls.Add(this.butUp);
-			this.groupBoxActions.Controls.Add(this.butRemove);
 			this.groupBoxActions.Location = new System.Drawing.Point(12, 111);
 			this.groupBoxActions.Name = "groupBoxActions";
-			this.groupBoxActions.Size = new System.Drawing.Size(412, 286);
+			this.groupBoxActions.Size = new System.Drawing.Size(516, 252);
 			this.groupBoxActions.TabIndex = 15;
-			this.groupBoxActions.Text = "Actions";
+			this.groupBoxActions.Text = "";
 			// 
 			// groupBoxOD2
 			// 
 			this.groupBoxOD2.Controls.Add(this.butRemoveLinkType);
 			this.groupBoxOD2.Controls.Add(this.gridLinkTypes);
 			this.groupBoxOD2.Controls.Add(this.groupBoxOD3);
-			this.groupBoxOD2.Location = new System.Drawing.Point(433, 111);
+			this.groupBoxOD2.Location = new System.Drawing.Point(534, 111);
 			this.groupBoxOD2.Name = "groupBoxOD2";
-			this.groupBoxOD2.Size = new System.Drawing.Size(473, 286);
+			this.groupBoxOD2.Size = new System.Drawing.Size(466, 252);
 			this.groupBoxOD2.TabIndex = 16;
-			this.groupBoxOD2.Text = "eRouting Triggers";
+			this.groupBoxOD2.Text = "";
 			// 
 			// butRemoveLinkType
 			// 
 			this.butRemoveLinkType.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butRemoveLinkType.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butRemoveLinkType.Location = new System.Drawing.Point(260, 243);
+			this.butRemoveLinkType.Location = new System.Drawing.Point(260, 225);
 			this.butRemoveLinkType.Name = "butRemoveLinkType";
 			this.butRemoveLinkType.Size = new System.Drawing.Size(75, 24);
 			this.butRemoveLinkType.TabIndex = 15;
@@ -199,11 +164,11 @@ namespace OpenDental{
 			// 
 			// gridLinkTypes
 			// 
-			this.gridLinkTypes.Location = new System.Drawing.Point(3, 21);
+			this.gridLinkTypes.Location = new System.Drawing.Point(3, 3);
 			this.gridLinkTypes.Name = "gridLinkTypes";
 			this.gridLinkTypes.Size = new System.Drawing.Size(248, 246);
 			this.gridLinkTypes.TabIndex = 17;
-			this.gridLinkTypes.TitleVisible = false;
+			this.gridLinkTypes.Title = "eRouting Triggers";
 			// 
 			// groupBoxOD3
 			// 
@@ -211,9 +176,9 @@ namespace OpenDental{
 			this.groupBoxOD3.Controls.Add(this.butAddLinkType);
 			this.groupBoxOD3.Controls.Add(this.butAddSpecificTypes);
 			this.groupBoxOD3.Controls.Add(this.comboLinkType);
-			this.groupBoxOD3.Location = new System.Drawing.Point(257, 21);
+			this.groupBoxOD3.Location = new System.Drawing.Point(257, 3);
 			this.groupBoxOD3.Name = "groupBoxOD3";
-			this.groupBoxOD3.Size = new System.Drawing.Size(199, 143);
+			this.groupBoxOD3.Size = new System.Drawing.Size(206, 143);
 			this.groupBoxOD3.TabIndex = 17;
 			this.groupBoxOD3.Text = "Add Trigger Type";
 			// 
@@ -267,7 +232,7 @@ namespace OpenDental{
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(435, 66);
+			this.label3.Location = new System.Drawing.Point(534, 68);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(413, 40);
 			this.label3.TabIndex = 18;
@@ -277,7 +242,7 @@ namespace OpenDental{
 			// 
 			// FormERoutingDefEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(925, 449);
+			this.ClientSize = new System.Drawing.Size(1015, 413);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.groupBoxOD2);
@@ -290,7 +255,6 @@ namespace OpenDental{
 			this.Name = "FormERoutingDefEdit";
 			this.Text = "eRouting Def Edit";
 			this.Load += new System.EventHandler(this.FormPatientFlowEdit_Load);
-			this.groupBoxOD1.ResumeLayout(false);
 			this.groupBoxActions.ResumeLayout(false);
 			this.groupBoxOD2.ResumeLayout(false);
 			this.groupBoxOD3.ResumeLayout(false);
@@ -307,10 +271,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private UI.Button butDown;
 		private UI.Button butUp;
-		private UI.Button butRemove;
 		private UI.GridOD gridERoutingActions;
-		private UI.GroupBox groupBoxOD1;
-		private UI.ComboBox comboActionType;
 		private UI.Button butAdd;
 		private UI.GroupBox groupBoxActions;
 		private UI.GroupBox groupBoxOD2;

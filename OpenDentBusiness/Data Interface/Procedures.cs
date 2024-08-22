@@ -3112,7 +3112,7 @@ namespace OpenDentBusiness {
 							+"SELECT patplan.PatNum,MIN(patplan.Ordinal) minOrdinal "
 							+"FROM patplan "
 							+"INNER JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum "
-							+"INNER JOIN insplan ON insplan.PlanNum=inssub.PlanNum AND !insplan.IsMedical "
+							+"INNER JOIN insplan ON insplan.PlanNum=inssub.PlanNum "//AND !insplan.IsMedical "
 							+"GROUP BY patplan.PatNum"
 						+") p ON patient.PatNum=p.PatNum "
 						+"LEFT JOIN patplan ON patplan.PatNum=patient.PatNum AND (patplan.Ordinal=p.MinOrdinal OR patplan.Ordinal=1) "
@@ -4937,11 +4937,14 @@ namespace OpenDentBusiness {
 		///toothSurface is a ref because the value can run through some tidy functions for display.</summary>
 		public static bool ValidateToothValue(string toothNumLabel,ref string toothSurface,Action<string> actionOnFailure=null) {
 			//No need to check MiddleTierRole; no call to db.
-			if(Tooth.IsValidEntry(toothNumLabel)){
-				toothSurface=Tooth.SurfTidyForDisplay(toothSurface,Tooth.Parse(toothNumLabel));
+			if(toothNumLabel=="") {
+				toothSurface=Tooth.SurfTidyForDisplay(toothSurface,"");
 			}
-			else{
-				toothSurface=Tooth.SurfTidyForDisplay(toothSurface, "");
+			else {
+				if(!Tooth.IsValidEntry(toothNumLabel)) {
+					return false;
+				}
+				toothSurface=Tooth.SurfTidyForDisplay(toothSurface,Tooth.Parse(toothNumLabel));
 			}
 			if(toothSurface=="") { 
 				actionOnFailure?.Invoke(Lans.g(nameof(Procedures), "No surfaces selected."));

@@ -41,7 +41,8 @@ namespace OpenDental {
 			gridActions.Columns.Add(new UI.GridColumn("Date Complete", 150, textAlign: HorizontalAlignment.Center));
 			_listActions.ForEach(action => {
 				GridRow row = new GridRow();
-				row.Cells.Add(new GridCell(action.ERoutingActionType.GetDescription()));
+				//Use LabelOverride in place of description when set.
+				row.Cells.Add(new GridCell(string.IsNullOrWhiteSpace(action.LabelOverride)?action.ERoutingActionType.GetDescription():action.LabelOverride));
 				row.Cells.Add(new GridCell() { Text = action.IsComplete ? "Complete" : "Incomplete", ColorText = action.IsComplete ? Color.ForestGreen : Color.Red });
 				row.Cells.Add(new GridCell(action.UserNum == 0 ? "" : Userods.GetName(action.UserNum)));
 				row.Cells.Add(new GridCell(action.DateTimeComplete == DateTime.MinValue ? "" : action.DateTimeComplete.ToString("G")));

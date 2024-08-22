@@ -194,6 +194,10 @@ namespace OpenDental{
 			if(!PayPeriods.HasPayPeriodForDate(DateTime.Today)) {
 				MsgBox.Show(this,"No dates exist for this pay period.  Time clock events will not display until pay periods have been created for this date range");
 			}
+			if(PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
+				//So teacher has their status updated when they clock in
+				Signalods.SetInvalid(InvalidType.Children);
+			}
 		}
 
 		private void butClockOut_Click(object sender,EventArgs e) {
@@ -239,6 +243,12 @@ namespace OpenDental{
 			ModuleSelected(_patNum);
 			if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {
 				Phones.SetPhoneStatus(Phones.GetClockStatusFromEmp(_employee.ClockStatus),Phones.GetExtensionForEmp(_employee.EmployeeNum),_employee.EmployeeNum);
+			}
+			//Automatically create a leaving log when an employee clocks out
+			if(PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
+				List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForEmployee(_employee.EmployeeNum,DateTime.Now);
+				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
+				Signalods.SetInvalid(InvalidType.Children);
 			}
 		}
 
@@ -347,11 +357,17 @@ namespace OpenDental{
 
 		private void butDaycare_Click(object sender,EventArgs e) {
 			FrmChildCareMap frmChildCareMap=new FrmChildCareMap();
+			if(!Security.IsAuthorized(EnumPermType.ChildDaycareEdit,true)) {
+				frmChildCareMap.ViewOnly=true;
+			}
 			frmChildCareMap.Show();
 		}
 
 		private void butDaycareCheckIn_Click(object sender,EventArgs e) {
 			FrmChildCheckIn frmChildCheckIn=new FrmChildCheckIn();
+			if(!Security.IsAuthorized(EnumPermType.ChildDaycareEdit,false)) {
+				return;
+			}
 			frmChildCheckIn.Show();
 		}
 

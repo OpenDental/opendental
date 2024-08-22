@@ -101,14 +101,6 @@ namespace OpenDental {
 				MsgBox.Show("This child must have a first name.");
 				return;
 			}
-			if(textLastName.Text=="") {
-				MsgBox.Show("This child must have a last name.");
-				return;
-			}
-			if(!textBirthdate.IsValid() || textBirthdate.Text=="") {
-				MsgBox.Show("This child must have a birthdate.");
-				return;
-			}
 			ChildCur.FName=textFirstName.Text;
 			ChildCur.LName=textLastName.Text;
 			ChildCur.BirthDate=textBirthdate.Value;

@@ -2793,14 +2793,19 @@ End of Checklist================================================================
 				&& string.IsNullOrWhiteSpace(textCity.Text) 
 				&& string.IsNullOrWhiteSpace(textState.Text) 
 				&& string.IsNullOrWhiteSpace(textZip.Text);
-			//Only verify address if pres is active, signed up for support, address is not empty, and at least one address field has changed.
-			if(!allAddressFieldsAreEmpty
-				&& (IsNew
+			//Only verify address if pref is active, signed up for support, address is not empty, and at least one address field has changed.
+			//Skip address validation when the country box is visible and filled with text. This should only happen at HQ for foreign customers.
+			bool isTextCountryVisibleAndFilled=((string.IsNullOrWhiteSpace(textCountry.Text) && textCountry.Visible==true)
+				||  textCountry.Visible==false);
+			bool hasChanges=(IsNew
 					||_addressOld.Address1!=textAddress.Text
 					|| _addressOld.Address2!=textAddress2.Text
 					|| _addressOld.City!=textCity.Text
 					|| _addressOld.State!=textState.Text.ToUpper()
-					|| _addressOld.Zip!=textZip.Text)
+					|| _addressOld.Zip!=textZip.Text);
+			if(!allAddressFieldsAreEmpty 
+				&& hasChanges
+				&& isTextCountryVisibleAndFilled
 				&& PatientL.CanVerifyPatientAddressInteraction())
 			{
 				Address address=new Address();

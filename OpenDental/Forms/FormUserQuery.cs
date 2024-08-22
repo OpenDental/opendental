@@ -305,7 +305,7 @@ namespace OpenDental {
 			else {
 				saveFileDialog2=new SaveFileDialog {
 					AddExtension=true,
-					Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*",
+					Filter="Text files(*.txt)|*.txt|All files(*.*)|*.*",
 					FilterIndex=0
 				};
 				if(_userQuery==null || _userQuery.FileName==null || _userQuery.FileName==""){//.FileName==null)

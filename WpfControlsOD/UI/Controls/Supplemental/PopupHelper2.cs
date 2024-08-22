@@ -102,11 +102,13 @@ namespace WpfControls.UI {
 				}
 				if(ODFileUtils.IsKnownFileType(listStringMatches[i])){
 					listStringMatches.RemoveAt(i);
+					continue;
 				}
 				listStringMatches[i]=listStringMatches[i].TrimEnd('.');
 				Regex rgx=new Regex(@"[\\]{1}");
 				if(rgx.IsMatch(listStringMatches[i])) {
 					listStringMatches.RemoveAt(i);
+					continue;
 				}
 			}
 			return listStringMatches;

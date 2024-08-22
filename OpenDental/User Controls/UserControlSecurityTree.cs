@@ -559,6 +559,12 @@ namespace OpenDental {
 				node.Nodes.Add(node2);
 				treePermissions.Nodes.Add(node);
 			}
+			#region Child Daycare
+			if(PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
+				node=SetNode(EnumPermType.ChildDaycareEdit);
+				treePermissions.Nodes.Add(node);
+			}
+			#endregion
 			#endregion
 			treePermissions.ExpandAll();
 		}

@@ -1860,5 +1860,14 @@ namespace OpenDentBusiness {
 			}
 			//End E54726
 		}//End of 24_2_21()
+
+		private static void To24_2_22() {
+			//Start I52398
+			string command="ALTER TABLE eroutingactiondef ADD LabelOverride VARCHAR(255) NOT NULL DEFAULT ''";
+			Db.NonQ(command);
+			command="ALTER TABLE eroutingaction ADD LabelOverride VARCHAR(255) NOT NULL DEFAULT ''";
+			Db.NonQ(command);
+			//End I52398
+		}//End of 24_2_22()
 	}
 }

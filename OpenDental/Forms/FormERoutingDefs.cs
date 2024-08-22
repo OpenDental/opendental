@@ -69,6 +69,9 @@ namespace OpenDental {
 				newAction.ERoutingDefNum=eRoutingDefNum;
 				newAction.ItemOrder=listERoutingActions[i].ItemOrder;
 				newAction.ERoutingActionType=listERoutingActions[i].ERoutingActionType;
+				newAction.ForeignKeyType=listERoutingActions[i].ForeignKeyType;
+				newAction.ForeignKey=listERoutingActions[i].ForeignKey;
+				newAction.LabelOverride=listERoutingActions[i].LabelOverride;
 				ERoutingActionDefs.Insert(newAction);
 			}
 			List<ERoutingDefLink> listERoutingDefLinks=ERoutingDefLinks.GetListERoutingTypesForERoutingDefNum(eRoutingDefOrig.ERoutingDefNum);

@@ -334,9 +334,15 @@ namespace OpenDental{
 					address.State=stateAbbr.Abbr;
 				}
 				else {
-					//State could not be matched. show error.
-					MsgBox.Show(sender, "State could not be found. Use the two letter abbreviation instead.","Warning");
-					return null;
+					//State could not be matched. show error, but allow them to save anyways.
+					if(MsgBox.Show(sender,MsgBoxButtons.YesNo, "State could not be matched to a two letter abbreviation. Import anyways?","Warning")) {
+						//Just return the address they entered.
+						return address;
+					}
+					else {
+						//Returning null means they cancelled the interaction.
+						return null;
+					}
 				}
 			}
 			address=PatientL.VerifyPatientAddressInteractionHelper(address,sender);

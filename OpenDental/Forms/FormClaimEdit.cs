@@ -4171,9 +4171,9 @@ namespace OpenDental{
 			//Claim is flagged as Received and the user entered payment information while the window was open.
 			if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.Received) && _isPaymentEntered) {
 				//Is the user authorized to send claims.
-				if(Security.IsAuthorized(EnumPermType.ClaimSend,true)) {
+				if(_claim.ClaimType!="PreAuth" && Security.IsAuthorized(EnumPermType.ClaimSend,true)) {
 					//Consider the preferences for automatically changing the claim status or prompting the user to take action on other insurance.
-					if(PrefC.GetBool(PrefName.ClaimMedReceivedPromptForPrimaryClaim) && _claim.MedType.In(EnumClaimMedType.Medical,EnumClaimMedType.Institutional) && _claim.ClaimType!="PreAuth") {
+					if(PrefC.GetBool(PrefName.ClaimMedReceivedPromptForPrimaryClaim) && _claim.MedType.In(EnumClaimMedType.Medical,EnumClaimMedType.Institutional)) {
 						ClaimL.PromptForPrimaryOrSecondaryClaim(_listClaimProcsForClaim,false);//Check for unsent primary claimprocs.
 					}
 					else if(PrefC.GetBool(PrefName.PromptForSecondaryClaim)) {

@@ -288,6 +288,9 @@
     <Compile Include="Frms\FrmChildRooms.xaml.cs">
       <DependentUpon>FrmChildRooms.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frms\FrmERoutingActionDefEdit.xaml.cs">
+      <DependentUpon>FrmERoutingActionDefEdit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\Frm_BasicTemplate.xaml.cs">
       <DependentUpon>Frm_BasicTemplate.xaml</DependentUpon>
     </Compile>
@@ -856,6 +859,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frms\FrmChildRooms.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmERoutingActionDefEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

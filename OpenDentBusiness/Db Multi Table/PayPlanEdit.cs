@@ -1228,11 +1228,16 @@ namespace OpenDentBusiness {
 					ApplyPrepaymentsToCharges(payplan,listPayPlanChargesNew,listPaySplits,log);
 				}
 			}
+			catch(Exception ex){
+				log.WriteLine(ex.Message,LogLevel.Error);
+			}
 			finally {
-				//This instance of Open Dental service is no longer running the dynamic payment plan logic.  Update the database to indicate this fact.
-				Prefs.UpdateDateT(PrefName.DynamicPayPlanLastDateTime,MiscData.GetNowDateTime());
-				Prefs.UpdateDateT(PrefName.DynamicPayPlanStartDateTime,DateTime.MinValue);
-				Signalods.SetInvalid(InvalidType.Prefs);
+				if(isOpenDentalService){
+					//This instance of Open Dental service is no longer running the dynamic payment plan logic.  Update the database to indicate this fact.
+					Prefs.UpdateDateT(PrefName.DynamicPayPlanLastDateTime,MiscData.GetNowDateTime());
+					Prefs.UpdateDateT(PrefName.DynamicPayPlanStartDateTime,DateTime.MinValue);
+					Signalods.SetInvalid(InvalidType.Prefs);
+				}
 			}
 		}
 

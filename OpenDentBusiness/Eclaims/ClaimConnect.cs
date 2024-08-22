@@ -1648,25 +1648,24 @@ namespace OpenDentBusiness.Eclaims {
 				xconnectClaim.accidentDate=claim.AccidentDate.ToString("yyyy-MM-dd");
 			}
 			xconnectClaim.acciendentState=claim.AccidentST;
-			if(claim.OrthoDate.Year>1880) {
-				xconnectClaim.orthoPlacementDate=claim.OrthoDate.ToString("yyyy-MM-dd");
-			}
 			List<long> listPatNumsForGuarantors=new List<long>();
 			List<long> listGuarantors=Patients.GetGuarantorsForPatNums(listPatNumsForGuarantors);
 			if(listGuarantors.Count==0) {//They are their own guarantor
 				listGuarantors.Add(claim.PatNum);
 			}
 			PatientNote patientNote=PatientNotes.Refresh(claim.PatNum,listGuarantors[0]);
-			DateTime dateFirstOrthoProc=Procedures.GetFirstOrthoProcDate(patientNote);
-			int txTimeInMonths=0;
-			if(dateFirstOrthoProc!=DateTime.MinValue) {
-				int txMonthsTotal=(patientNote.OrthoMonthsTreatOverride==-1?PrefC.GetByte(PrefName.OrthoDefaultMonthsTreat):patientNote.OrthoMonthsTreatOverride);
-				DateSpan dateSpan=new DateSpan(dateFirstOrthoProc,DateTime.Today);
-				txTimeInMonths=OrthoSchedules.CalculateAutoOrthoTimeInMonths(dateFirstOrthoProc,dateSpan,txMonthsTotal);
-			}
-			xconnectClaim.orthoTreatmentMonths=txTimeInMonths.ToString();
-			xconnectClaim.orthoRemainingMonths=claim.OrthoRemainM.ToString();
 			xconnectClaim.orthoRelated=claim.IsOrtho;
+			if(claim.IsOrtho) {
+				if(claim.OrthoDate.Year>1880) {
+					xconnectClaim.orthoPlacementDate=claim.OrthoDate.ToString("yyyy-MM-dd");
+				}
+				if(claim.OrthoTotalM>0) {
+					xconnectClaim.orthoTreatmentMonths=claim.OrthoTotalM.ToString();
+				}
+				if(claim.OrthoRemainM>0) {
+					xconnectClaim.orthoRemainingMonths=claim.OrthoRemainM.ToString();
+				}
+			}
 			if(!claim.PriorAuthorizationNumber.IsNullOrEmpty()) {
 				xconnectClaim.preAuthorizationId=claim.PriorAuthorizationNumber;
 			}

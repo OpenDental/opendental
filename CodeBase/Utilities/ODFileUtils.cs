@@ -314,12 +314,17 @@ namespace CodeBase {
 			_listKnownFileTypes=_listKnownFileTypes.OrderBy(x=>x).ToList();//Organize the list.
 		}
 
-		///<summary>Returns true if it's a known filetype, false otherwise. Can take in a full path or just the extension.</summary>
+		///<summary>Returns true if it's a known filetype, false otherwise. Can take in a full path or just the extension. Returns false if there are invalid characters in the filepath.</summary>
 		public static bool IsKnownFileType(string path){
 			if(_listKnownFileTypes==null){
 				GetListKnownFileTypes();
 			}
-			return _listKnownFileTypes.Contains(Path.GetExtension(path.ToLower()));
+			try{
+				return _listKnownFileTypes.Contains(Path.GetExtension(path.ToLower()));
+			}
+			catch{
+				return false;//There is an issue with the path, so it's not a known filetype.
+			}
 		}
 
 

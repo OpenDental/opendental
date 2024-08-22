@@ -131,11 +131,11 @@ namespace OpenDental {
 			_keyboardInput="";//Clear out input after user has been found
 			//At this point we found a user match
 			if(PrefC.GetBool(PrefName.SecurityBadgesRequirePassword)) {
+				textPassword.Text="";//because the numbers from the card ended up here
 				if(PrefC.GetBool(PrefName.UserNameManualEntry)) {
 					textUser.Text=userod.UserName;//Manual entry does not use a listbox
 					return;
 				}
-				textPassword.Text="";//because the numbers from the card ended up here
 				textFilterName.Text=userod.UserName;//Use the filter to set the name
 				return;
 			}
