@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControls.UI"
         mc:Ignorable="d"
-        Title="ToolTip" Height="Auto" Width="Auto" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="Manual" SizeToContent="WidthAndHeight">
+        Title="ToolTip" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="Manual" SizeToContent="WidthAndHeight">
 	<Border Background="LightYellow" BorderThickness="1" BorderBrush="DarkGray">
-		<TextBlock Name="textBlock" x:FieldModifier="internal" Margin="5,3,5,2" TextWrapping="Wrap" Text="This is example text. The window will resize to match."/>
+		<TextBlock Name="textBlock" x:FieldModifier="internal" Margin="5,3,5,2" TextWrapping="Wrap" MaxWidth="200" Text="This is example text. The window will resize to match. How long does it need to get to wrap"/>
 	</Border>
 </Window>

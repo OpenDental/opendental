@@ -50,6 +50,12 @@ namespace OpenDentBusiness {
 		public string ConditionalValue;
 		///<summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft. Only used in RadioButtons for now.</summary>
 		public EnumEFormLabelAlign LabelAlign;
+		//<summary>The amount of space below each field. Overrided the global default. -1 will indicate to use that default. That way, 0 means 0 space.</summary>
+		public int SpaceBelow;
+		//<summary>Allows reporting on fields that don't have DbLink.</summary>
+		public string ReportableName;
+		//<summary>If a field is locked, it stops a patient from editing the text when presented to them. Example is a consent form.</summary>
+		public bool IsLocked;
 
 		public EFormFieldDef(){
 			//We frequently create these from scratch instead of from db.
@@ -60,6 +66,7 @@ namespace OpenDentBusiness {
 			PickListDb="";
 			ConditionalParent="";
 			ConditionalValue="";
+			SpaceBelow=-1;
 		}
 
 		public EFormFieldDef Copy() {

@@ -250,5 +250,121 @@ namespace OpenDentBusiness{
 			Signalods.SetInvalid(InvalidType.Children);
 		}
 
+		///<summary>For mixed age groups. Oregon law has specific numbers of teachers required for a classroom that has children over and under two years old. These requirements are outlined here https://www.oregon.gov/delc/providers/CCLD_Library/CCLD-0084-Rules-for-Certified-Child-Care-Centers-EN.pdf in the table on page 46. This method takes two paremeters, the total number of children and the number of children under the age of two. Returns the number of teachers required based on the table.</summary>
+		public static int GetNumberTeachersMixed(int totalChildren,int childrenUnderTwo) {
+			//No need to check MiddleTierRole; no call to db.
+			if(totalChildren<1) {
+				return 0;//No teachers required if there are no children present
+			}
+			if(totalChildren>16) {
+				//If for some reason the max of 16 is exceeded, return -1 to indicate something is wrong
+				return -1;
+			}
+			int teachersRequired=0;
+			if(childrenUnderTwo==0) {
+				if(totalChildren<11) {
+					teachersRequired=1;
+				}
+				else {
+					teachersRequired=2;
+				}
+			}
+			else if(childrenUnderTwo==1) {
+				if(totalChildren<9) {
+					teachersRequired=1;
+				}
+				else {
+					teachersRequired=2;
+				}
+			}
+			else if(childrenUnderTwo==2) {
+				if(totalChildren<8) {
+					teachersRequired=1;
+				}
+				else {
+					teachersRequired=2;
+				}
+			}
+			else if(childrenUnderTwo==3) {
+				if(totalChildren<7) {
+					teachersRequired=1;
+				}
+				else {
+					teachersRequired=2;
+				}
+			}
+			else if(childrenUnderTwo==4) {
+				if(totalChildren<15) {
+					teachersRequired=2;
+				}
+				else {
+					teachersRequired=3;
+				}
+			}
+			else if(childrenUnderTwo==5) {
+				if(totalChildren<13) {
+					teachersRequired=2;
+				}
+				else {
+					teachersRequired=3;
+				}
+			}
+			else if(childrenUnderTwo==6) {
+				if(totalChildren<12) {
+					teachersRequired=2;
+				}
+				else {
+					teachersRequired=3;
+				}
+			}
+			else if(childrenUnderTwo==7) {
+				if(totalChildren<11) {
+					teachersRequired=2;
+				}
+				else {
+					teachersRequired=3;
+				}
+			}
+			else if(childrenUnderTwo==8) {
+				if(totalChildren<9) {
+					teachersRequired=2;
+				}
+				else {
+					teachersRequired=3;
+				}
+			}
+			else if(childrenUnderTwo==9) {
+				teachersRequired=3;
+			}
+			else if(childrenUnderTwo==10) {
+				if(totalChildren<16) {
+					teachersRequired=3;
+				}
+				else {
+					teachersRequired=4;
+				}
+			}
+			else if(childrenUnderTwo==11) {
+				if(totalChildren<15) {
+					teachersRequired=3;
+				}
+				else {
+					teachersRequired=4;
+				}
+			}
+			else if(childrenUnderTwo==12) {
+				if(totalChildren<13) {
+					teachersRequired=3;
+				}
+				else {
+					teachersRequired=4;
+				}
+			}
+			else {
+				teachersRequired=4;//13 or higher childrenUnderTwo requires 4 teachers
+			}
+			return teachersRequired;
+		}
+
 	}
 }

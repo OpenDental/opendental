@@ -68,11 +68,15 @@ namespace OpenDental {
 			bool isSignedUp=Clinics.IsSecureEmailSignedUp(0);
 			bool isEnabled=Clinics.IsSecureEmailEnabled(0);
 			EmailPlatform emailPlatformDefault=PIn.Enum<EmailPlatform>(ClinicPrefs.GetPrefValue(PrefName.EmailDefaultSendPlatform,0),true);
+			EmailPlatform emailStatementsDefault=PIn.Enum<EmailPlatform>(ClinicPrefs.GetPrefValue(PrefName.EmailStatementsSecure,0),true);
 			checkEnabled.Checked=isSignedUp && isEnabled;
 			comboPlatform.Items.Clear();
+			comboStatements.Items.Clear();
 			if(isSignedUp) {
 				comboPlatform.Items.AddListEnum(_listEmailPlatforms);
 				comboPlatform.SelectedIndex=_listEmailPlatforms.FindIndex(x => x==emailPlatformDefault);
+				comboStatements.Items.AddListEnum(_listEmailPlatforms);
+				comboStatements.SelectedIndex=_listEmailPlatforms.FindIndex(x => x==emailStatementsDefault);
 			}
 		}
 
@@ -87,6 +91,12 @@ namespace OpenDental {
 		private void comboPlatform_SelectionChangeCommitted(object sender,EventArgs e) {
 			EmailPlatform emailPlatform=(EmailPlatform)comboPlatform.SelectedItem;
 			Prefs.UpdateString(PrefName.EmailDefaultSendPlatform,emailPlatform.ToString());
+			DataValid.SetInvalid(InvalidType.Prefs);
+		}
+
+		private void comboStatements_SelectionChangeCommitted(object sender,EventArgs e) {
+			EmailPlatform emailPlatformStatements=(EmailPlatform)comboStatements.SelectedItem;
+			Prefs.UpdateString(PrefName.EmailStatementsSecure,emailPlatformStatements.ToString());
 			DataValid.SetInvalid(InvalidType.Prefs);
 		}
 
@@ -174,10 +184,13 @@ namespace OpenDental {
 			checkEnabled.Visible=!hasClinicsEnabled && isSignedUpClinic0;
 			labelPlatform.Visible=!hasClinicsEnabled && isSignedUpClinic0;
 			comboPlatform.Visible=!hasClinicsEnabled && isSignedUpClinic0;
+			labelStatements.Visible=!hasClinicsEnabled && isSignedUpClinic0;
+			comboStatements.Visible=!hasClinicsEnabled && isSignedUpClinic0;
 			butSignup.Visible=!hasClinicsEnabled && !isSignedUpClinic0;
 			butSignup.Enabled=allowEdit;
 			checkEnabled.Enabled=allowEdit && isSignedUpClinic0;
 			comboPlatform.Enabled=allowEdit && isSignedUpClinic0;
+			comboStatements.Enabled=allowEdit && isSignedUpClinic0;
 			groupSetup.Enabled=allowEdit && areAnyClinicsSignedUp;
 		}
 

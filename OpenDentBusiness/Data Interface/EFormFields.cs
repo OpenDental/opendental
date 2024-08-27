@@ -62,6 +62,9 @@ namespace OpenDentBusiness{
 			eFormField.ConditionalParent=eFormFieldDef.ConditionalParent;
 			eFormField.ConditionalValue=eFormFieldDef.ConditionalValue;
 			eFormField.LabelAlign=eFormFieldDef.LabelAlign;
+			eFormField.SpaceBelow=eFormFieldDef.SpaceBelow;
+			eFormField.ReportableName=eFormFieldDef.ReportableName;
+			eFormField.IsLocked=eFormFieldDef.IsLocked;
 			return eFormField;
 		}
 
@@ -82,6 +85,9 @@ namespace OpenDentBusiness{
 			eFormFieldDef.ConditionalParent=eFormField.ConditionalParent;
 			eFormFieldDef.ConditionalValue=eFormField.ConditionalValue;
 			eFormFieldDef.LabelAlign=eFormField.LabelAlign;
+			eFormFieldDef.SpaceBelow=eFormField.SpaceBelow;
+			eFormFieldDef.ReportableName=eFormField.ReportableName;
+			eFormFieldDef.IsLocked=eFormField.IsLocked;
 			return eFormFieldDef;
 		}
 

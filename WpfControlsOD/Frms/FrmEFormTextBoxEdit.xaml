@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="615" Height="360" 
+             Width="615" Height="384" 
              Text="Edit TextBox" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="22,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
@@ -28,7 +28,7 @@
 		<ui:CheckBox x:Name="checkIsTextWrap" Height="20" Margin="64,176,0,0" Width="130" Text="Text Wraps" CheckAlign="MiddleRight"/>
 		<ui:Label Height="18" Margin="198,177,0,0" Text="and box expands down as text is added" VAlign="Center" Width="263" />
 		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="80,100,0,0" Width="114" Text="Required" CheckAlign="MiddleRight"/>
-		<ui:GroupBox Height="80" Margin="22,210,0,0" Width="470" Text="Conditional Logic. This field will show...">
+		<ui:GroupBox Height="80" Margin="22,230,0,0" Width="470" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
 			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
@@ -36,5 +36,8 @@
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click" />
 		</ui:GroupBox>
+		<ui:TextVInt x:Name="textVIntSpaceBelow" Width="54" Height="20" Margin="181,200,0,0" ShowZero="True"/>
+		<ui:Label Width="98" Height="18" Margin="82,200,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="239,200,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
 	</Grid>
 </local:FrmODBase>

@@ -221,11 +221,34 @@
   </table>
   <table name="eroutingaction">
     <summary></summary>
+    <column order="3" name="ERoutingActionType" type="tinyint(4)">
+      <summary>Enum:EnumERoutingActionType </summary>
+      <Enumeration name="EnumERoutingActionType">
+        <summary></summary>
+        <EnumValue name="None">0-Shouldn't be present in db. Used in UI when user has not yet picked an action type.</EnumValue>
+        <EnumValue name="PerioChart">1-Perio Chart</EnumValue>
+        <EnumValue name="TreatmentPlan">2-Treatment Plan</EnumValue>
+        <EnumValue name="PaymentPlan">3-Payment Plan</EnumValue>
+        <EnumValue name="ChartProcedures">4-Chart Procedures</EnumValue>
+        <EnumValue name="Imaging">5-Imaging</EnumValue>
+        <EnumValue name="CompleteAppointment">6-Complete Appointment</EnumValue>
+        <EnumValue name="TakePayment">7-Take Payment</EnumValue>
+        <EnumValue name="ScheduleFollowup">8-Schedule Follow up</EnumValue>
+        <EnumValue name="eRx">9-ERX</EnumValue>
+        <EnumValue name="ExamSheet">10-Exam Sheet</EnumValue>
+        <EnumValue name="ConsentForm">11-Consent Form</EnumValue>
+        <EnumValue name="Medical">12-Medical</EnumValue>
+        <EnumValue name="ChecklistItem">13-Checklist Item</EnumValue>
+      </Enumeration>
+    </column>
     <column order="7" name="ForeignKeyType" type="tinyint(4)">
       <summary> Enum:EnumERoutingFKType Indicates the type of object that ForeignKey references. None=0, Sheet=1 </summary>
     </column>
     <column order="8" name="ForeignKey" type="bigint(20)">
       <summary> FK to attached object. Type is indicated by ForeignKeyType. Sheet for Consent forms. </summary>
+    </column>
+    <column order="9" name="LabelOverride" type="varchar(255)">
+      <summary> Override for the title of the eRouting Action. This will be shown in the eClipboard UI instead of EnumERoutingActionType description if it is present. </summary>
     </column>
   </table>
   <table name="eroutingactiondef">
@@ -235,6 +258,9 @@
     </column>
     <column order="7" name="ForeignKey" type="bigint(20)">
       <summary> FK to attached object. Type is indicated by ForeignKeyType. SheetDef for Consent forms. </summary>
+    </column>
+    <column order="8" name="LabelOverride" type="varchar(255)">
+      <summary> Override for the title of the eRouting Action. This will be shown in the eClipboard UI instead of EnumERoutingActionType description if it is present. </summary>
     </column>
   </table>
   <table name="eserviceshortguid">
@@ -258,6 +284,7 @@
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
+        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -315,7 +342,6 @@
       <Enumeration name="MobileNotificationType">
         <summary>The different types of mobile notifications. Preserve order. CI = Checkin portion of app (eClipboard). ODM = ODMobile</summary>
         <EnumValue name="ODT_PrintError"></EnumValue>
-        <EnumValue name="ODM_NewTextMessage">Occurs when a new text message is received. This is a workaround due to android push notifications no longer being supported for xamarin.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -390,6 +416,7 @@
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
+        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
       </Enumeration>
     </column>
   </table>

@@ -53,6 +53,14 @@ namespace OpenDental {
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
 			textCondValue.Text=EFormL.CondValueStrConverter(ListEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
+			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+			if(EFormFieldCur.SpaceBelow==-1){
+				textVIntSpaceBelow.Text="";
+			}
+			else{
+				textVIntSpaceBelow.Value=EFormFieldCur.SpaceBelow;
+			}
 			textLabel.Focus();
 		}
 
@@ -129,6 +137,12 @@ namespace OpenDental {
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(ListEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
+			if(textVIntSpaceBelow.Text==""){
+				EFormFieldCur.SpaceBelow=-1;
+			}
+			else{
+				EFormFieldCur.SpaceBelow=textVIntSpaceBelow.Value;
+			}
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

@@ -6,16 +6,17 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="450" Height="188" 
+             Width="450" Height="205" 
              Text="Edit Child Room" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" Margin="0,0,0,0" >
 		<ui:Label x:Name="labelRoomId" Width="95" Height="18" Margin="40,17,0,0" Text="Room ID" HAlign="Right" VAlign="Center" />
 		<ui:TextBox x:Name="textRoomId" Width="113" Height="20" Margin="135,16,0,0" TabIndexOD="0" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
-		<ui:Label x:Name="labelNotes" Width="77" Height="18" Margin="58,70,0,0" Text="Notes" HAlign="Right" VAlign="Center" />
-		<ui:TextRich x:Name="textNotes" Width="208" Margin="135,70,0,0" Height="72" TabIndexOD="2" />
+		<ui:Label x:Name="labelNotes" Width="77" Height="18" Margin="58,93,0,0" Text="Notes" HAlign="Right" VAlign="Center" />
+		<ui:TextRich x:Name="textNotes" Width="208" Margin="135,93,0,0" Height="72" TabIndexOD="2" />
 		<ui:Label x:Name="labelRatio" Width="132" Height="18" Margin="3,44,0,0" Text="Child-Teacher Ratio" HAlign="Right" VAlign="Center" />
-		<ui:TextVDouble x:Name="textVDoubleRatio" Width="69" Height="20" Margin="135,43,0,0" TabIndexOD="1" />
-		<ui:Label x:Name="labelInstructions" Width="231" Height="18" Margin="207,44,0,0" Text="Number of children allowed per teacher" VAlign="Center" />
+		<ui:TextBox x:Name="textRatio" Width="41" Height="20" Margin="135,43,0,0" TabIndexOD="1" />
+		<ui:Label x:Name="labelInstructions" Width="231" Height="18" Margin="181,45,0,0" Text="Number of children allowed per teacher" VAlign="Center" />
+		<ui:CheckBox x:Name="checkMixedRatio" Margin="51,68,0,0" Height="20" Width="97" CheckAlign="MiddleRight" Text="Mixed Ratio"/>
 	</Grid>
 </local:FrmODBase>

@@ -51,7 +51,7 @@ private ToolTip toolTip;
 
 		public ToolTip() {
 			InitializeComponent();
-			//if we want to do multiline, we would need to add a property that lets user set Window.MaxWidth.
+			
 		}
 
 		///<summary>This tooltip will respond to the mouseMove event of the control it's assigned to. The action should handle the point from the mouseMove with a hit test, and should then call SetString to show or hide the tooltip. An extremely simple action would just always return a certain string without any hit test.</summary>
@@ -77,6 +77,14 @@ private ToolTip toolTip;
 				return;
 			}
 			textBlock.Text=stringToShow;
+			double zoom=ComputerPrefs.LocalComputer.Zoom/100f;
+			if(zoom==0){
+				zoom=1;
+			}
+			textBlock.FontSize=11.5*zoom;
+			//This isn't perfect. If I change zoom, then the font does change here immediately.
+			//But 30 lines down, the window Width and Height does not change the first time.
+			//It changes the second time. Rare edge case, that is too hard to fix right now.
 			if(Visibility==Visibility.Visible || TimeSpanDelay==TimeSpan.Zero){
 				//if already showing, change it immediately
 				SetVisible(frameworkElement);
@@ -84,6 +92,7 @@ private ToolTip toolTip;
 			}
 			//was not showing and there's a delay
 			//Note that this will get hit repeatedly if the user is moving mouse prior to timer tick.
+			//This is good because the text won't show until they pause for a certain amount of time.
 			if(_dispatcherTimer!=null){//timer has already started
 				_dispatcherTimer.Stop();
 				_dispatcherTimer.Start();
@@ -102,6 +111,12 @@ private ToolTip toolTip;
 			Topmost = true;
 			Activate();
 			Topmost = false;
+			PresentationSource presentationSource = PresentationSource.FromVisual(frameworkElement);
+			double scaleWindows=presentationSource.CompositionTarget.TransformToDevice.M11;//example 1.5. For this screen only.
+			//Automatic Window.SizeToContent wasn't working well enough on my 4k monitor. 
+			//Also, the Max width of 200 is arbitrary. If we need more control, that could become a property.
+			Height=textBlock.ActualHeight/scaleWindows;
+			Width=textBlock.ActualWidth/scaleWindows;
 			Point pointRelToElement=Mouse.GetPosition(frameworkElement);
 			//The line below makes it easier to debug, but adds some complexity.
 			//Point pointRelToElement=pointInControl.Value;
@@ -129,8 +144,11 @@ private ToolTip toolTip;
 				//would spill off right of screen
 				pointDesktop.X=screen.WorkingArea.Right-ActualWidth;
 			}
-			Left=pointDesktop.X;
-			Top=pointDesktop.Y;
+			//Left and Top are the only way to set location,
+			//but Windows expects them to be in DIPs, as explained in Dpi.cs
+			Point pointDIP=new Point(pointDesktop.X/scaleWindows,pointDesktop.Y/scaleWindows);
+			Left=pointDIP.X;
+			Top=pointDIP.Y;
 		}
 
 		private void _dispatcherTimer_Tick(object sender,EventArgs e) {

@@ -35,6 +35,8 @@ namespace OpenDental{
 			this.comboPlatform = new OpenDental.UI.ComboBox();
 			this.labelPlatform = new System.Windows.Forms.Label();
 			this.butSignup = new OpenDental.UI.Button();
+			this.labelStatements = new System.Windows.Forms.Label();
+			this.comboStatements = new OpenDental.UI.ComboBox();
 			this.groupSetup.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -148,9 +150,29 @@ namespace OpenDental{
 			this.butSignup.Text = "Sign up";
 			this.butSignup.Click += new System.EventHandler(this.butSignup_Click);
 			// 
+			// labelStatements
+			// 
+			this.labelStatements.Location = new System.Drawing.Point(161, 157);
+			this.labelStatements.Name = "labelStatements";
+			this.labelStatements.Size = new System.Drawing.Size(165, 23);
+			this.labelStatements.TabIndex = 141;
+			this.labelStatements.Text = "Statement Send";
+			this.labelStatements.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboStatements
+			// 
+			this.comboStatements.Location = new System.Drawing.Point(330, 159);
+			this.comboStatements.Name = "comboStatements";
+			this.comboStatements.Size = new System.Drawing.Size(121, 21);
+			this.comboStatements.TabIndex = 142;
+			this.comboStatements.Text = "comboBox1";
+			this.comboStatements.SelectionChangeCommitted += new System.EventHandler(this.comboStatements_SelectionChangeCommitted);
+			// 
 			// FormSecureEmailSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
+			this.Controls.Add(this.comboStatements);
+			this.Controls.Add(this.labelStatements);
 			this.Controls.Add(this.butSignup);
 			this.Controls.Add(this.labelPlatform);
 			this.Controls.Add(this.comboPlatform);
@@ -180,5 +202,7 @@ namespace OpenDental{
 		private UI.ComboBox comboPlatform;
 		private System.Windows.Forms.Label labelPlatform;
 		private UI.Button butSignup;
+		private System.Windows.Forms.Label labelStatements;
+		private UI.ComboBox comboStatements;
 	}
 }

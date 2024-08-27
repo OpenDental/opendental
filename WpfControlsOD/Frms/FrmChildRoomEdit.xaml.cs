@@ -26,12 +26,28 @@ namespace OpenDental {
 		public FrmChildRoomEdit() {
 			InitializeComponent();
 			Load+=FrmChildRoomEdit_Load;
+			checkMixedRatio.Click+=CheckMixedRatio_Click;
 		}
 
 		private void FrmChildRoomEdit_Load(object sender,EventArgs e) {
 			textRoomId.Text=ChildRoomCur.RoomId;
-			textVDoubleRatio.Value=ChildRoomCur.Ratio;
+			if(ChildRoomCur.Ratio==-1) {//-1 indicates a mixed ratio
+				checkMixedRatio.Checked=true;
+				textRatio.IsEnabled=false;
+			}
+			else{
+				textRatio.Text=ChildRoomCur.Ratio.ToString();
+			}
 			textNotes.Text=ChildRoomCur.Notes;
+		}
+
+		private void CheckMixedRatio_Click(object sender,EventArgs e) {
+			if(checkMixedRatio.Checked==true) {
+				textRatio.Text="";
+				textRatio.IsEnabled=false;
+				return;
+			}
+			textRatio.IsEnabled=true;
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
@@ -39,12 +55,25 @@ namespace OpenDental {
 				MsgBox.Show("This child room must have an ID.");
 				return;
 			}
-			if(!textVDoubleRatio.IsValid()) {
-				return;
+			int ratio=0;
+			if(checkMixedRatio.Checked==true) {
+				ratio=-1;
+			}
+			else {
+				try {
+					ratio=PIn.Int(textRatio.Text);
+				}
+				catch {
+					MsgBox.Show("Ratio must be value like 4 or 10.");
+					return;
+				}
+				if(ratio<0 || ratio>10) {
+					MsgBox.Show("Ratio should be a value like 4 or 10.");
+					return;
+				}
 			}
 			ChildRoomCur.RoomId=textRoomId.Text;
-			double ratio=Math.Round(textVDoubleRatio.Value,1);//Round to 1 decimal
-			bool ratioHasChanged=ChildRoomCur.Ratio!=ratio;
+			bool ratioHasChanged=(int)Math.Round(ChildRoomCur.Ratio,0)!=ratio;
 			ChildRoomCur.Ratio=ratio;
 			ChildRoomCur.Notes=textNotes.Text;
 			if(ChildRoomCur.IsNew) {

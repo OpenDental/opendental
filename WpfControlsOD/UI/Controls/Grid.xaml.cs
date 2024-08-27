@@ -1599,6 +1599,13 @@ using WpfControls.UI;
 			DrawRowSelections();
 		}
 
+		///<summary>ContextMenuShows logic needs to be for the canvasView as well. Otherwise right clicking on a space without a row will still show the ContextMenu.</summary>
+		private void canvasView_MouseRightButtonUp(object sender,MouseButtonEventArgs e) {
+			if(!ContextMenuShows) {
+				this.ContextMenu=null;
+			}
+		}
+
 		private void canvasMain_MouseRightButtonUp(object sender,MouseButtonEventArgs e) {
 			//Context menus are added to grids in various places.
 			//We want to add a few extra items to any existing contextMenu or to a null contextMenu:

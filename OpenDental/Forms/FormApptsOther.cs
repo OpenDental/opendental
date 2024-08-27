@@ -654,6 +654,7 @@ namespace OpenDental {
 			if(!PrefC.HasClinicsEnabled) {
 				idxDate=2;
 			}
+			List<Procedure> listProcedures=Procedures.GetProcsMultApts(ListApptOthers.Select(x => x.AptNum).ToList());
 			for(int i=0;i<ListApptOthers.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(ListApptOthers[i].AptStatus.ToString());
@@ -698,7 +699,11 @@ namespace OpenDental {
 							}
 						}
 						else {
-							if(idxPlannedApt>=0) {
+							List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(ListApptOthers[i].AptNum,listProcedures,true);
+							bool hasCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus==ProcStat.C);
+							bool hasNonCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus!=ProcStat.C);
+							if(idxPlannedApt>=0 && (!hasCompletedProcedures || hasNonCompletedProcedures)) {
+								//Planned appt is incomplete and has either no completed procedures or at least one non-completed procedure
 								strText+="#"+(idxPlannedApt+1);
 							}
 							else {

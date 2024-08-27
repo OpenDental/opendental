@@ -613,6 +613,72 @@ namespace UnitTests.ClaimProcs_Tests {
 
 		#endregion Secondary PPO
 
+		#region Medicaid COB
+		///<summary>Validates the values in the insurance estimates and payments grid within the procedure info window.</summary>
+		[TestMethod]
+		[Documentation.Numbering(Documentation.EnumTestNum.ClaimProcs_ComputeBaseEst_MedicaidCOB)]
+		[Documentation.VersionAdded("24.1")]
+		[Documentation.Description(@"The patient has three insurance plans. The primary and secondary are PPO percentage plans with a 40% coverage for procedure D6110 and a carrier allowed amount of $500 each. The tertiary is a category percentage plan with 40% coverage for D6110 and SecondaryMedicaid COB. The subscriber is self for all plans. One procedure, D6110, with a fee of $1000, is treatment planned. When opening the Procedure Info window, the insurance estimates and payments grid should reflect the following:
+<table>
+	<tr>
+		<td><b>Pri/Sec</b></td>
+		<td><b>Ins Est</b></td>
+		<td><b>Write-off</b></td>
+	</tr>
+	<tr>
+		<td>Pri</td>
+		<td>200.00</td>
+		<td>500.00</td>
+	</tr>
+	<tr>
+		<td>Sec</td>
+		<td>200.00</td>
+		<td>0.00</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>100.00</td>
+		<td></td>
+	</tr>
+</table>")]
+		public void ClaimProcs_ComputeBaseEst_MedicaidCOB() {
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient patient=PatientT.CreatePatient(suffix);
+			string procStr="D6110";
+			Procedure procedure=ProcedureT.CreateProcedure(patient,procStr,ProcStat.TP,"",1000);
+			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"PPO "+suffix);
+			long feeSchedNumMedicaid=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"PPO "+suffix);
+			//Create fees for each fee schedule
+			FeeT.CreateFee(feeSchedNum,procedure.CodeNum,500);
+			FeeT.CreateFee(feeSchedNum,procedure.CodeNum,500);
+			FeeT.CreateFee(feeSchedNumMedicaid,procedure.CodeNum);
+			//Create primary, secondary, and tertiary insurance plans
+			InsuranceInfo insurance=InsuranceT.AddInsurance(patient,"Pri "+suffix,"p",feeSchedNum,cobRule:EnumCobRule.Standard);
+			insurance.AddInsurance(patient,"Sec "+suffix,"p",feeSchedNum,2,false,cobRule:EnumCobRule.Standard);
+			insurance.AddInsurance(patient,"Tert "+suffix,"",feeSchedNumMedicaid,3,cobRule:EnumCobRule.SecondaryMedicaid);
+			insurance.AddBenefit(BenefitT.CreatePercentForProc(insurance.ListInsPlans[0].PlanNum,procedure.CodeNum,40));
+			insurance.AddBenefit(BenefitT.CreatePercentForProc(insurance.ListInsPlans[1].PlanNum,procedure.CodeNum,40));
+			insurance.AddBenefit(BenefitT.CreatePercentForProc(insurance.ListInsPlans[2].PlanNum,procedure.CodeNum,40));
+			List<ClaimProcHist> listClaimProcHists=new List<ClaimProcHist>();
+			List<ClaimProcHist> listClaimProcHistsLoop=new List<ClaimProcHist>();
+			//Compute and check primary claimproc
+			ClaimProc claimProcPri=ClaimProcT.CreateClaimProc(patient.PatNum,procedure.ProcNum,insurance.ListInsPlans[0].PlanNum,insurance.ListInsSubs[0].InsSubNum,DateTime.Today,cps:ClaimProcStatus.Estimate);
+			ClaimProcs.ComputeBaseEst(claimProcPri,procedure,insurance.ListInsPlans[0],insurance.ListPatPlans[0].PatPlanNum,insurance.ListBenefits,listClaimProcHists,listClaimProcHistsLoop,insurance.ListPatPlans,claimProcPri.InsPayEst,claimProcPri.InsPayEst,patient.Age,0,insurance.ListInsPlans,insurance.ListInsSubs,insurance.ListSubLinks,false,null,null);
+			Assert.AreEqual(200,claimProcPri.InsPayEst);
+			Assert.AreEqual(500,claimProcPri.WriteOffEst);
+			//Compute and check secondary claimproc
+			ClaimProc claimProcSec=ClaimProcT.CreateClaimProc(patient.PatNum,procedure.ProcNum,insurance.ListInsPlans[1].PlanNum,insurance.ListInsSubs[1].InsSubNum,DateTime.Today,cps:ClaimProcStatus.Estimate);
+			ClaimProcs.ComputeBaseEst(claimProcSec,procedure,insurance.ListInsPlans[1],insurance.ListPatPlans[1].PatPlanNum,insurance.ListBenefits,listClaimProcHists,listClaimProcHistsLoop,insurance.ListPatPlans,claimProcPri.InsPayEst,claimProcPri.InsPayEst,patient.Age,claimProcSec.WriteOff,insurance.ListInsPlans,insurance.ListInsSubs,insurance.ListSubLinks,false,null,null);
+			Assert.AreEqual(200,claimProcSec.InsPayEst);
+			Assert.AreEqual(0,claimProcSec.WriteOffEst);
+			//Compute and check tertiary claimproc
+			ClaimProc claimProcTert=ClaimProcT.CreateClaimProc(patient.PatNum,procedure.ProcNum,insurance.ListInsPlans[2].PlanNum,insurance.ListInsSubs[2].InsSubNum,DateTime.Today,cps:ClaimProcStatus.Estimate);
+			ClaimProcs.ComputeBaseEst(claimProcTert,procedure,insurance.ListInsPlans[2],insurance.ListPatPlans[2].PatPlanNum,insurance.ListBenefits,listClaimProcHists,listClaimProcHistsLoop,insurance.ListPatPlans,claimProcPri.InsPayEst+claimProcSec.InsPayEst,claimProcPri.InsPayEst+claimProcSec.InsPayEst,patient.Age,claimProcPri.WriteOffEst+claimProcSec.WriteOffEst,insurance.ListInsPlans,insurance.ListInsSubs,insurance.ListSubLinks,false,null,null);
+			Assert.AreEqual(100,claimProcTert.InsPayEst);
+			Assert.AreEqual(-1,claimProcTert.WriteOffEst);
+		}
+		#endregion Medicaid COB
+
 		///<summary>This unit test is the first one that looks at the values showing in the claimproc window.
 		///This catches situations where the only "bug" is just a display issue in that window.
 		///Validates the values in the claimproc window when opened from the Chart module.</summary>

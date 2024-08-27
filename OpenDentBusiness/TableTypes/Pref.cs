@@ -939,6 +939,9 @@ namespace OpenDentBusiness {
 		EConnectorSmsNotificationFrequency,
 		///<summary>A JSON string of disparate pieces of information regarding the eConnector.</summary>
 		EConnectorStatistics,
+		///<summary>This is the global default space below all eForm fields. It can be overridden for each field using EFormField.SpacingBelow. Initial value is 10. Can be between 0 and 100.</summary>
+		[PrefName(ValueType=PrefValueType.INT)]
+		EformsSpaceBelowEachField,
 		EHREmailFromAddress,
 		EHREmailPassword,
 		EHREmailPOPserver,

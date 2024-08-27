@@ -567,6 +567,9 @@ namespace OpenDental {
 
 		///<summary>Verify Security.CurUser is allowed to change this tile's status.</summary>
 		private static bool CheckUserCanChangeStatus(Phone phoneCur) {
+			if(phoneCur==null) {
+				return false;
+			}
 			if(Security.CurUser.EmployeeNum==phoneCur.EmployeeNum) { //User is changing their own tile. This is always allowed.
 				return true;
 			}

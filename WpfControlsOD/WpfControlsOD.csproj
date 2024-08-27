@@ -90,6 +90,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
@@ -257,6 +258,9 @@
     </Compile>
     <Compile Include="Frms\FrmChildParentEdit.xaml.cs">
       <DependentUpon>FrmChildParentEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Frms\FrmEFormSetup.xaml.cs">
+      <DependentUpon>FrmEFormSetup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Frms\FrmEFormFieldChildren.xaml.cs">
       <DependentUpon>FrmEFormFieldChildren.xaml</DependentUpon>
@@ -819,6 +823,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frms\FrmChildParentEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Frms\FrmEFormSetup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

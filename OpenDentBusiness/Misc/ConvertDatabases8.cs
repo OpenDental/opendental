@@ -1869,5 +1869,28 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End I52398
 		}//End of 24_2_22()
+
+		private static void To24_2_23() {
+			//Start S53342
+			string command="INSERT INTO preference(PrefName,ValueString) VALUES('EformsSpaceBelowEachField','10')";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfield ADD SpaceBelow INT NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfield ADD ReportableName VARCHAR(255) NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfield ADD IsLocked tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD SpaceBelow INT NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD ReportableName VARCHAR(255) NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD IsLocked tinyint NOT NULL";
+			Db.NonQ(command);
+			command="UPDATE eformfield SET SpaceBelow=-1";
+			Db.NonQ(command);
+			command="UPDATE eformfielddef SET SpaceBelow=-1";
+			Db.NonQ(command);
+			//End S53342
+		}//End of 24_2_23
 	}
 }

@@ -90,7 +90,7 @@ namespace WpfControls.UI {
 			//There will be URLs that do not match this but this should work for 99%.
 			//The url regex is generous enough to match urls fine and excludes emails well, but matches some files too.
 			//These files get cleaned out though.
-			string urlPattern=@"(?<!@)\b(?:https?:\/\/)?(?:www\.)?(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?\b(?!(?:\\))";
+			string urlPattern=@"(?<!@)\b(?:https?:\/\/)?(?:www\.)?(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}(?:(?:\/|:)[^\s]*)?\b(?!(?:\\))";
 			List<string> listStringMatches=Regex.Matches(text,urlPattern)
 				.OfType<Match>()
 				.Select(m => m.Groups[0].Value)
@@ -100,9 +100,11 @@ namespace WpfControls.UI {
 				if(listStringMatches[i].StartsWith("(") && listStringMatches[i].EndsWith(")")) {
 					listStringMatches[i]=listStringMatches[i].Substring(1,listStringMatches[i].Length-2);
 				}
-				if(ODFileUtils.IsKnownFileType(listStringMatches[i])){
-					listStringMatches.RemoveAt(i);
-					continue;
+				if(!listStringMatches[i].StartsWith("http") && !listStringMatches[i].StartsWith("www.")){
+					if(ODFileUtils.IsKnownFileType(listStringMatches[i])){
+						listStringMatches.RemoveAt(i);
+						continue;
+					}
 				}
 				listStringMatches[i]=listStringMatches[i].TrimEnd('.');
 				Regex rgx=new Regex(@"[\\]{1}");

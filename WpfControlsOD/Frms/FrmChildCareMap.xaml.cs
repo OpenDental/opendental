@@ -225,6 +225,7 @@ namespace OpenDental {
 			List<Child> listChildren=Children.GetAll();
 			double countChildren=0;
 			double countEmployees=0;
+			int countUnderTwo=0;
 			//Get room logs for today for a specific room
 			List<ChildRoomLog> listChildRoomLogsToday=ChildRoomLogs.GetChildRoomLogs(long.Parse(grid.Tag.ToString()),DateTime.Now.Date);
 			List<long> listEmployeeNumsUnique=listChildRoomLogsToday.FindAll(x => x.EmployeeNum!=0).Select(y => y.EmployeeNum).Distinct().ToList();
@@ -268,6 +269,9 @@ namespace OpenDental {
 					Child child=listChildren.Find(x => x.ChildNum==listChildRoomLogs[i].ChildNum);
 					gridCell.Text=Children.GetName(child);
 					countChildren++;
+					if(DateTime.Now.AddYears(-2)<child.BirthDate) {
+						countUnderTwo++;
+					}
 				}
 				else {//Employee/teacher entry
 					Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listChildRoomLogs[i].EmployeeNum);
@@ -287,12 +291,26 @@ namespace OpenDental {
 			}
 			//Final row is the child to teacher ratio
 			GridRow gridRowFinal=new GridRow();
-			if(countEmployees==0) {//No employees, stop division by 0.
-				gridRowFinal.Cells.Add("Current Ratio: ?");
+			ChildRoom childRoom=ChildRooms.GetOne(long.Parse(grid.Tag.ToString()));
+			if(childRoom.Ratio==-1) {//-1 indicates a mixed ratio
+				int teachersRequired=ChildRoomLogs.GetNumberTeachersMixed(totalChildren:(int)countChildren,childrenUnderTwo:countUnderTwo);
+				gridRowFinal.Cells.Add("Ratio: Mixed, Children: "+countChildren+", Under2: "+countUnderTwo+", Teachers: "+countEmployees+"/"+teachersRequired);//Example: Ratio:Mixed, Kids:2, Under2:1, Teachers:1/1
 			}
 			else {
-				double ratioChange=countChildren/countEmployees;
-				gridRowFinal.Cells.Add("Current Ratio: "+(countChildren/countEmployees).ToString());
+				string ratio="";
+				if(countEmployees==0) {//Stop division by 0
+					ratio="?";
+				}
+				else {
+					ratio=(countChildren/countEmployees).ToString();
+				}
+				if(childRoom.Ratio==0) {//Stop division by 0
+					gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+"/?");
+				}
+				else {
+					double teachersRequired=Math.Ceiling(countChildren/childRoom.Ratio);
+					gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+"/"+teachersRequired);
+				}
 			}
 			ChildRoomLog childRoomLogFinal=new ChildRoomLog();//Final row needs a tag for reselecting row
 			gridRowFinal.Tag=childRoomLogFinal;
@@ -348,11 +366,11 @@ namespace OpenDental {
 				MsgBox.Show("Select a row first.");
 				return;
 			}
-			if(_gridChildRoomClick.ListGridRows[idxSelected].Tag==null) {
-				MsgBox.Show("This row cannot be removed");
-				return;//Every row except the current ratio will have a tag
-			}
 			ChildRoomLog childRoomLog=(ChildRoomLog)_gridChildRoomClick.ListGridRows[idxSelected].Tag;
+			if(childRoomLog.ChildNum==0 && childRoomLog.EmployeeNum==0) {//Final row has a tag with default values
+				MsgBox.Show("This row cannot be removed");
+				return;
+			}
 			List<ChildRoomLog> listChildRoomLogs=new List<ChildRoomLog>();
 			if(childRoomLog.ChildNum!=0) {//Child row selected
 				listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(childRoomLog.ChildNum,DateTime.Now.Date);
@@ -598,16 +616,17 @@ namespace OpenDental {
 			butViewLogs_Grid8.Visible=false;
 			butAddChild_Grid8.Visible=false;
 			butAddTeacher_Grid8.Visible=false;
-			//Set context menus to null. Setting ContextMenuShows to false will still show the context menu when clicking on the canvasView and not the canvasMain
-			gridChildrenAbsent.ContextMenu=null;
-			gridChildRoom1.ContextMenu=null;
-			gridChildRoom2.ContextMenu=null;
-			gridChildRoom3.ContextMenu=null;
-			gridChildRoom4.ContextMenu=null;
-			gridChildRoom5.ContextMenu=null;
-			gridChildRoom6.ContextMenu=null;
-			gridChildRoom7.ContextMenu=null;
-			gridChildRoom8.ContextMenu=null;
+			//Disable context menus
+			gridChildrenAbsent.ContextMenuShows=false;
+			gridChildRoom1.ContextMenuShows=false;
+			gridChildRoom2.ContextMenuShows=false;
+			gridChildRoom3.ContextMenuShows=false;
+			gridChildRoom4.ContextMenuShows=false;
+			gridChildRoom5.ContextMenuShows=false;
+			gridChildRoom6.ContextMenuShows=false;
+			gridChildRoom7.ContextMenuShows=false;
+			gridChildRoom8.ContextMenuShows=false;
+
 		}
 	}
 }

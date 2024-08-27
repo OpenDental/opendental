@@ -19,26 +19,44 @@ namespace OpenDental {
 		public FrmChildRooms() {
 			InitializeComponent();
 			Load+=FrmFamilyMemberSelect_Load;
-			listBoxChildRooms.MouseDoubleClick+=listBoxChildRooms_MouseDoubleClick;
+			gridMain.CellDoubleClick+=GridMain_CellDoubleClick;
 		}
 
 		private void FrmFamilyMemberSelect_Load(object sender, System.EventArgs e) {
-			FillListBox();
+			FillGrid();
 		}
 
-		private void FillListBox() {
-			listBoxChildRooms.Items.Clear();
+		private void FillGrid() {
 			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
-			listBoxChildRooms.Items.AddList(listChildRooms,x => x.RoomId);
+			gridMain.BeginUpdate();
+			gridMain.Columns.Clear();
+			GridColumn gridColumn=new GridColumn("Room ID",75);
+			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Allowed Ratio",75,HorizontalAlignment.Center);
+			gridMain.Columns.Add(gridColumn);
+			gridMain.ListGridRows.Clear();
+			for(int i=0;i<listChildRooms.Count;i++) {
+				GridRow gridRow=new GridRow();
+				gridRow.Cells.Add(listChildRooms[i].RoomId);
+				if(listChildRooms[i].Ratio==-1) {
+					gridRow.Cells.Add("Mixed");
+				}
+				else {
+					gridRow.Cells.Add(listChildRooms[i].Ratio.ToString());
+				}
+				gridRow.Tag=listChildRooms[i];
+				gridMain.ListGridRows.Add(gridRow);
+			}
+			gridMain.EndUpdate();
 		}
 
-		private void listBoxChildRooms_MouseDoubleClick(object sender,MouseButtonEventArgs e) {
-			ChildRoom childRoomSelected=listBoxChildRooms.GetSelected<ChildRoom>();
+		private void GridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			ChildRoom childRoomSelected=gridMain.SelectedTag<ChildRoom>();
 			FrmChildRoomEdit frmChildRoomEdit=new FrmChildRoomEdit();
 			frmChildRoomEdit.ChildRoomCur=childRoomSelected;
 			frmChildRoomEdit.ShowDialog();
 			if(frmChildRoomEdit.IsDialogOK) {
-				FillListBox();
+				FillGrid();
 			}
 		}
 
@@ -49,7 +67,7 @@ namespace OpenDental {
 			frmChildRoomEdit.ChildRoomCur=childRoom;
 			frmChildRoomEdit.ShowDialog();
 			if(frmChildRoomEdit.IsDialogOK) {
-				FillListBox();
+				FillGrid();
 			}
 		}
 

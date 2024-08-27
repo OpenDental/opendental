@@ -2005,12 +2005,13 @@ namespace OpenDentBusiness {
 			List<Recall> listRecalls=new List<Recall>();//only for OmhNy
 			List<long> listPatNumsWithCompletedProcs=new List<long>();//only for OmhNy
 			//RecallPastDue is not a part of the table and must be added manually by grabbing the recall data.
+			List<Procedure> listProceduresComplete=new List<Procedure>();//only for OmhNy
 			if(PrefC.GetBool(PrefName.OmhNy)) {
 				if(listPatNums.Count==0) {
 					listPatNums=listPatNumStrs.Select(x => PIn.Long(x)).ToList();
 				}
 				listRecalls=Recalls.GetList(listPatNums);
-				listPatNumsWithCompletedProcs=Procedures.GetAllPatNumsWithCompletedProcs(listPatNums);
+				listProceduresComplete=Procedures.GetMostRecentCompletedProcedureForPatNums(listPatNums);
 				PtDataTable.Columns.Add("RecallPastDue");
 			}
 			PtDataTable.Columns.OfType<DataColumn>().ForEach(x => x.DataType=typeof(string));
@@ -2076,14 +2077,15 @@ namespace OpenDentBusiness {
 				r["CreditType"]=dRow["CreditType"].ToString();
 				r["MedurgNote"]=dRow["MedUrgNote"].ToString();
 				r["Ward"]=dRow["Ward"].ToString();
-				date=PIn.Date(dRow["AdmitDate"].ToString());
-				if(date.Year>1880) {
-					r["AdmitDate"]=date.ToShortDateString();
+				DateTime dateAdmit=PIn.Date(dRow["AdmitDate"].ToString());
+				DateTime dateDischarge=DateTime.MinValue;
+				if(dateAdmit.Year>1880) {
+					r["AdmitDate"]=dateAdmit.ToShortDateString();
 				}
 				long patNum=PIn.Long(r["PatNum"].ToString());
-				date=listEhrPatients.Find(x=>x.PatNum==patNum)?.DischargeDate??new DateTime();
-				if(date.Year>1880) {
-					r["DischargeDate"]=date.ToShortDateString();
+				dateDischarge=listEhrPatients.Find(x=>x.PatNum==patNum)?.DischargeDate??new DateTime();
+				if(dateDischarge.Year>1880) {
+					r["DischargeDate"]=dateDischarge.ToShortDateString();
 				}
 				#region New York Mental Health
 				if(PrefC.GetBool(PrefName.OmhNy)) {
@@ -2091,15 +2093,15 @@ namespace OpenDentBusiness {
 						.FindAll(x => x.PatNum==patNum)
 						.OrderBy(x => x.RecallTypeNum).ToList();//at their request, not sure why
 					string description="ORANGE";
-					bool hasCompletedProc=listPatNumsWithCompletedProcs.Exists(x => x==patNum);
-					if(hasCompletedProc) {
+					bool hasCompletedProc=listProceduresComplete.Exists(x => x.PatNum==patNum && dateDischarge<=dateAdmit && x.DateComplete>=dateAdmit);//Currently admitted and has a procedure completed after being admitted
+					if(hasCompletedProc || dateDischarge>dateAdmit) {//Has completed procedure or is currently Discharged
 						description="BLACK";
 					}
 					//Recall that has a due date within 14 days or less... or recall is overdue
 					Recall recallPastDue=listRecallsPat.Find(x => x.DateDue.Year>1880 
 						&& x.DateDue.AddDays(-14)<=DateTime.Today
 						&& RecallTypes.GetDescription(x.RecallTypeNum).In("PROPHY","CHILD PROPHY","ANNUAL EXAM","6 MONTH EXAM","PANO X-RAY","PERIO SRP(UR)","PERIO SRP(UL)","PERIO SRP(LR)","PERIO SRP(LL)"));
-					if(recallPastDue!=null) {
+					if(recallPastDue!=null && hasCompletedProc) {
 						description=RecallTypes.GetDescription(recallPastDue.RecallTypeNum);
 					}
 					r["RecallPastDue"]=description;

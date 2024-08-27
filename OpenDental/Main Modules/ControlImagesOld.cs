@@ -2313,6 +2313,10 @@ namespace OpenDental {
 					//Not needed for _odWebView2 as WebView2 will automatically show a print preview when printing
 				}
 				else {
+					if(ODEnvironment.IsCloudServer) {
+						PrinterL.TryPrintOrDebugClassicPreview(printDocument_PrintPage,Lan.g(this,"Image printed."));
+						return;
+					}
 					PrintDocument pd=new PrintDocument();//TODO: Implement ODprintout pattern
 					pd.PrintPage+=new PrintPageEventHandler(printDocument_PrintPage);
 					PrintDialog dlg=new PrintDialog();

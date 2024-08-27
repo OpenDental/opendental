@@ -121,6 +121,11 @@ namespace OpenDental {
 			}
 		}
 
+		private void butSetup_Click(object sender,EventArgs e) {
+			FrmEFormSetup frmEFormSetup=new FrmEFormSetup();
+			frmEFormSetup.ShowDialog();
+		}
+
 		///<summary>Opens File Explorer and lets the user select a previously exported eFormDef. This should only allow users to import an eFormDef that was exported using Open Dental.</summary>
 		private void butImport_Click(object sender,EventArgs e) {
 			Cursor=Cursors.Wait;

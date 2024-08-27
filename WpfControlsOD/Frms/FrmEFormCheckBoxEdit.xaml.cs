@@ -62,7 +62,10 @@ namespace OpenDental {
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
 			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
-			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255)));
+			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(
+				x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255))
+				&& x.ConditionalParent!="" //for a new checkbox, ValueLabel might be blank
+			);
 			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
 		}
 

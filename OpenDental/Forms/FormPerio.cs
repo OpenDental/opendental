@@ -785,7 +785,7 @@ namespace OpenDental{
 			g.DrawString(clinicName,new Font("Arial",11),Brushes.Black
 				,new RectangleF(xPos,yPos,650,25),stringFormat);
 			yPos+=20;
-			g.DrawString(_patient.GetNameFL(),new Font("Arial",11),Brushes.Black
+			g.DrawString(_patient.GetNameFLFormal()+" (DOB: "+_patient.Birthdate.ToShortDateString()+")",new Font("Arial",11),Brushes.Black
 				,new RectangleF(xPos,yPos,650,25),stringFormat);
 			yPos+=20;
 			string time=MiscData.GetNowDateTime().ToShortDateString();
@@ -1231,6 +1231,7 @@ namespace OpenDental{
 			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
 			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
 			FillGrid(!_isExamInUse);
+			contrPerio.ColRowSelected=new ColRow(-1,-1);//Set this so no cell is highlighted on saved image. JobNum:56018
 			//Document doc=new Document();
 			//try {
 			using Bitmap bitmapPerioPrintImage=new Bitmap(LayoutManager.Scale(750),LayoutManager.Scale(1000));
@@ -1266,9 +1267,9 @@ namespace OpenDental{
 				new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
 			y+=sizeF.Height;
 			//Patient name
-			string patName=_patient.GetNameFLFormal();
-			sizeF=g.MeasureString(patName,font);
-			g.DrawString(patName,font,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
+			string patNameAndBirthdate=_patient.GetNameFLFormal()+" (DOB: "+_patient.Birthdate.ToShortDateString()+")";
+			sizeF=g.MeasureString(patNameAndBirthdate,font);
+			g.DrawString(patNameAndBirthdate,font,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
 			y+=sizeF.Height;
 			//Date
 			//We put the current datetime here because the specific exam dates are listed in the form.

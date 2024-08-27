@@ -25,6 +25,20 @@ namespace OpenDentBusiness {
 			return Crud.StatementCrud.SelectOne(statementNum);
 		}
 
+		///<summary>Gets a list of statements optionally filtered for the API. Returns an empty list if not found.</summary>
+		public static List<Statement> GetStatementsForApi(int limit,int offset,long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Statement>>(MethodBase.GetCurrentMethod(),limit,offset,patNum);
+			}
+			string command="SELECT * FROM statement ";
+			if(patNum>0) {
+				command+="WHERE PatNum="+POut.Long(patNum)+" ";
+			}
+			command+="ORDER BY StatementNum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.StatementCrud.SelectMany(command);
+		}
+
 		///<summary>Gets a list of statements based on the passed in primary keys. If clinics are enabled and the preference 
 		///PrintStatementsAlphabetically is set, the statements will be sorted by patients last name then first name.
 		///Otherwise statements will be ordered in the order of the listStatementNums passed in.</summary>

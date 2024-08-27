@@ -19,7 +19,7 @@ using CodeBase;
 
 namespace OpenDental {
 	/*
-	Control Groups
+	Control Groups:
 	Each field is represented by a group of controls.
 	For example, we might have a label with a textbox below it. That's one field.
 	There are many different ways to stack the controls you need that will depend on your language.
@@ -45,10 +45,12 @@ namespace OpenDental {
 	You will not have to support drag, drop, hover, and selection in the setup window.
 	So try to imagine it simpler:
 	There must be a certain amount of white space around each field.
-	We plan to give users more control of this white space eventually, but for now, I've used 10 pix.
 	You must have a very solid plan for how to create this white space. There are lots of ways to get it wrong.
+	Most of this space is 10 pix for now, but we are gradually giving users more control.
+	For example, they now have control over vertical spacing below each field.
+	We plan to give them control over more spacing in the future.
 	Each field should have right and bottom margins.
-	We plan to give users control over right and bottom spacing, so it's a requirement.
+	It's required to do it this way because of how we give users control.
 	It also works great with various stacking scenarios.
 	By simply adding a right and bottom margin to every field,
 		 you get both spacing between fields as well as the overall bottom and right page margins.
@@ -134,8 +136,13 @@ namespace OpenDental {
 		private List<int> _listSelectedIndices=new List<int>();
 		///<summary>This is a copy of the selected indices whenever we start dragging to select multiple.</summary>
 		private List<int> _listSelectedIndicesWhenSelectionStart=new List<int>();
-		///<summary>This is the vertical and horizontal white space between each field, as well as the margins of the entire page. Later, this can be split into multiple variables or even database fields.</summary>
-		private double _margins=10;
+		private double _marginTopOfPage=10;
+		private double _marginLeftOfPage=10;
+		///<summary>This also creates the margin for the right of the page. Right now, that's no problem since they are all the same. I think any page margin in the future would be in addition to this, not instead of it.</summary>
+		private double _marginRightOfField=10;
+		///<summary>This is stored in a db pref and set on load. This also creates the margin at the bottom of the page. In the future, we could do something different at the bottom of the page, either replacing or supplementing this.</summary>
+		private double _marginBelowFields;
+		private double _marginRightOfRadioButton=10;
 		private int _mouseDownIndex;
 		///<summary>The actual page count, including all hidden fields. User only sees _pageCountFiltered.</summary>
 		private int _pageCount;
@@ -324,8 +331,8 @@ namespace OpenDental {
 					|| ListEFormFields[i-1].FieldType==EnumEFormFieldType.PageBreak)//top of other pages
 				{
 					Border borderTopOfPage=CreateBorderForDrop();
-					borderTopOfPage.Height=_margins;
-					borderTopOfPage.Margin=new Thickness(left:_margins,0,right:_margins,0);
+					borderTopOfPage.Height=_marginTopOfPage;
+					borderTopOfPage.Margin=new Thickness(left:_marginLeftOfPage,0,right:_marginRightOfField,0);
 					DragLocation dragLocationTopOfPage=new DragLocation();
 					dragLocationTopOfPage.Idx=i;
 					dragLocationTopOfPage.IsHorizStacking=false;
@@ -337,7 +344,7 @@ namespace OpenDental {
 				}
 				if(i==0//first row
 					|| !ListEFormFields[i].IsHorizStacking//or it belongs on a new line
-					//There's an edge case for the first item on a page being set to horiz.
+					//There might be an edge case for the first item on a page being set to horiz.
 					//That will be ignored as invalid. Here's how to do that:
 					|| ListEFormFields[i-1].FieldType==EnumEFormFieldType.PageBreak)
 				{
@@ -346,12 +353,12 @@ namespace OpenDental {
 					//But because we need a margin on the left of the page,
 					//and that margin needs to be filled with a border for hover effects,
 					//we will actually fill this stackpanel with grids.
-					wrapPanel.Margin=new Thickness(left:_margins,0,0,0);
+					wrapPanel.Margin=new Thickness(left:_marginLeftOfPage,0,0,0);
 					gridWrap=new Grid();
 					//gridWrap.Tag=_pageCount;
 					//This drag/drop border is to the left of the entire wrap panel
 					Border borderLeftOfWrap=CreateBorderForDrop();
-					borderLeftOfWrap.Width=_margins;
+					borderLeftOfWrap.Width=_marginLeftOfPage;
 					borderLeftOfWrap.HorizontalAlignment=HorizontalAlignment.Left;
 					DragLocation dragLocationLeftOfWrap=new DragLocation();
 					dragLocationLeftOfWrap.Idx=i;
@@ -395,10 +402,9 @@ namespace OpenDental {
 					AddTextBox(gridForField,ListEFormFields[i]);
 				}
 				//Always add a margin to the right of each field
-				//Yes, this even works for the last row because we want the item moved to right of the last row.
-//old:We will end up with a margin to the right of each page break, but we won't show those
+				//Yes, this even works for the last row because we want a border to right of the last row.
 				Border borderRightOfField=CreateBorderForDrop();
-				borderRightOfField.Width=_margins;
+				borderRightOfField.Width=_marginRightOfField;
 				borderRightOfField.HorizontalAlignment=HorizontalAlignment.Right;
 				DragLocation dragLocationRightOfField=new DragLocation();
 				dragLocationRightOfField.Idx=i+1;
@@ -432,9 +438,9 @@ namespace OpenDental {
 						//it's really above its corresponding wrap panel.
 						//But no point in refactoring to make that more obvious.
 						Border borderTopOfWrap=CreateBorderForDrop();
-						borderTopOfWrap.Height=_margins;
+						borderTopOfWrap.Height=_marginBelowFields;
 						borderTopOfWrap.VerticalAlignment=VerticalAlignment.Bottom;
-						borderTopOfWrap.Margin=new Thickness(left:_margins,0,right:_margins,0);
+						borderTopOfWrap.Margin=new Thickness(left:_marginLeftOfPage,0,right:_marginRightOfField,0);
 						DragLocation dragLocationTopOfWrap=new DragLocation();
 						dragLocationTopOfWrap.Idx=i+1;
 						//This is the primary for the field below only if that field is not the first of a horiz stack group
@@ -600,7 +606,7 @@ namespace OpenDental {
 			borderSelect.Visibility=Visibility.Collapsed;
 		}
 
-		private void Grid_MouseMove(object sender,MouseEventArgs e) {
+		private void GridMain_MouseMove(object sender,MouseEventArgs e) {
 			if(!_isDraggingSelector){
 				return;
 			}
@@ -632,12 +638,12 @@ namespace OpenDental {
 				//test all 4 corners
 				//Points are relative to entire control, not StackPanel
 				//Our gridForFields include the right margin that isn't really part of the field.
-				Point pointUL=PointFromScreen(gridForField.PointToScreen(new Point(0,0)));
+				Point pointFieldUL=PointFromScreen(gridForField.PointToScreen(new Point(0,0)));
 				//Point pointUR=PointFromScreen(gridForField.PointToScreen(new Point(gridForField.ActualWidth,0)));
 				//Point pointBL=PointFromScreen(gridForField.PointToScreen(new Point(0,gridForField.ActualHeight)));
-				Point pointBR=PointFromScreen(gridForField.PointToScreen(new Point(gridForField.ActualWidth,gridForField.ActualHeight)));
+				Point pointFieldBR=PointFromScreen(gridForField.PointToScreen(new Point(gridForField.ActualWidth,gridForField.ActualHeight)));
 				//this rectangle won't be tangled
-				Rect rectField=new Rect(pointUL.X,pointUL.Y,pointBR.X-pointUL.X-_margins,pointBR.Y-pointUL.Y);
+				Rect rectField=new Rect(pointFieldUL.X,pointFieldUL.Y,width:pointFieldBR.X-pointFieldUL.X-_marginRightOfField,height:pointFieldBR.Y-pointFieldUL.Y);
 				if(rectSelector.IntersectsWith(rectField)){
 					if(_listSelectedIndicesWhenSelectionStart.Contains(i)){
 						_listSelectedIndices.Remove(i);
@@ -669,8 +675,8 @@ namespace OpenDental {
 					continue;
 				}
 				Point point=e.GetPosition(gridForField);
-				Rect rectBounds=new Rect(0,0,gridForField.ActualWidth-_margins,gridForField.ActualHeight);
-				if(rectBounds.Contains(point)){
+				Rect rectFieldBounds=new Rect(0,0,gridForField.ActualWidth-_marginRightOfField,gridForField.ActualHeight);
+				if(rectFieldBounds.Contains(point)){
 					_mouseDownIndex=i;
 					break;
 				}
@@ -791,6 +797,7 @@ namespace OpenDental {
 			ListEFormFields.InsertRange(idxTo,listEFormFields);
 			_borderDropHover=null;
 			int countSelected=_listSelectedIndices.Count;
+			_listSelectedIndices.Clear();
 			RefreshLayout();
 			for(int i=0;i<countSelected;i++){
 				SetSelected(idxTo+i);
@@ -1201,6 +1208,7 @@ namespace OpenDental {
 		}*/
 
 		private void CtrlEFormFill_Loaded(object sender,RoutedEventArgs e) {
+			_marginBelowFields=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 			if(!IsSetupMode){
 				return;
 			}
@@ -1210,9 +1218,9 @@ namespace OpenDental {
 			stackPanel.MouseLeftButtonUp+=StackPanel_MouseLeftButtonUp;
 			stackPanel.MouseMove+=StackPanel_MouseMove;
 			stackPanel.KeyDown+=StackPanel_KeyDown;
-			grid.MouseLeftButtonDown+=Grid_MouseLeftButtonDown;
-			grid.MouseLeftButtonUp+=Grid_MouseLeftButtonUp;
-			grid.MouseMove+=Grid_MouseMove;
+			gridMain.MouseLeftButtonDown+=Grid_MouseLeftButtonDown;
+			gridMain.MouseLeftButtonUp+=Grid_MouseLeftButtonUp;
+			gridMain.MouseMove+=GridMain_MouseMove;
 		}
 
 		///<summary>This method is called when the timer interval has elapsed.</summary>
@@ -1381,7 +1389,7 @@ namespace OpenDental {
 		private void AddDateField(Grid gridForField,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
 			gridForField.Children.Add(stackPanel2);
-			double widthAvail=stackPanel.ActualWidth-_margins*2;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1442,7 +1450,7 @@ namespace OpenDental {
 			//The other reason it's a textbox is because that's how wpf shows flow documents.
 			textRich.richTextBox.BorderThickness=new Thickness(0);
 			gridForField.Children.Add(textRich);
-			double widthAvail=stackPanel.ActualWidth-_margins*2;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1495,7 +1503,7 @@ namespace OpenDental {
 			//For Delete, the row objects get deleted, then following rows get moved up, and finally, grid loses row at end.
 			StackPanel stackPanelVert=new StackPanel();
 			gridForField.Children.Add(stackPanelVert);
-			double widthAvail=stackPanel.ActualWidth-_margins*2;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1706,14 +1714,14 @@ namespace OpenDental {
 			gridForField.Children.Add(border);
 			Label label = new Label();
 			gridForField.Children.Add(label);
-			double widthAvail=stackPanel.ActualWidth-_margins*2-1;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField-1;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
 			label.Width=widthAvail;
 			//this control is unique and will not have borders to left, right, or bottom for drag/drop.
 			//so we set some margins here
-			gridForField.Margin=new Thickness(0,0,right:_margins,bottom:_margins);
+			gridForField.Margin=new Thickness(0,0,right:_marginRightOfField,bottom:_marginBelowFields);
 			label.Padding=new Thickness(4,0,0,3);
 			label.Content="(page break)";
 			label.VerticalAlignment=VerticalAlignment.Center;
@@ -1741,7 +1749,7 @@ namespace OpenDental {
 				stackPanelRadio.Orientation=Orientation.Horizontal;
 			}
 			gridForField.Children.Add(stackPanelRadio);
-			double widthAvail=stackPanel.ActualWidth-_margins*2;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1840,7 +1848,7 @@ namespace OpenDental {
 				radioButton.HorizontalAlignment=HorizontalAlignment.Stretch;
 				radioButton.VerticalAlignment=VerticalAlignment.Stretch;
 				radioButton.textBlock.Margin=new Thickness(left:1,0,0,0);//instead of 4 to make it closer
-				radioButton.Margin=new Thickness(0,0,right:_margins,0);
+				radioButton.Margin=new Thickness(0,0,right:_marginRightOfRadioButton,0);
 				radioButton.Text=listPickVis[i];
 				radioButton.FontSize=FontSize*eFormField.FontScale/100;
 				if(!IsSetupMode){
@@ -1867,7 +1875,7 @@ namespace OpenDental {
 		private void AddSigBox(Grid gridForField,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
 			gridForField.Children.Add(stackPanel2);
-			double widthAvail=stackPanel.ActualWidth-_margins*2;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1923,7 +1931,7 @@ namespace OpenDental {
 		private void AddTextBox(Grid gridForField,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
 			gridForField.Children.Add(stackPanel2);
-			double widthAvail=stackPanel.ActualWidth-_margins*2;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -2005,7 +2013,7 @@ namespace OpenDental {
 			columnDefinition.Width=new GridLength(1,GridUnitType.Auto);//main content
 			gridForField.ColumnDefinitions.Add(columnDefinition);
 			columnDefinition=new ColumnDefinition();
-			columnDefinition.Width=new GridLength(_margins);
+			columnDefinition.Width=new GridLength(_marginRightOfField);
 			gridForField.ColumnDefinitions.Add(columnDefinition);
 			//We are adding the border here because we use Children[1], for example, in import.
 			//This allows us to not fiddle with that code, because the border is child 0.

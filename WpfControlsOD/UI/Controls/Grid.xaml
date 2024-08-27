@@ -46,7 +46,7 @@
 				</Canvas>
 			</Border>
 			<Border Grid.Row="1" Grid.Column="1" Background="#DFEAF5" BorderThickness="1,0,0,1" BorderBrush="#787878"/>
-			<Canvas x:Name="canvasView" x:FieldModifier="internal" Grid.Row="2" ClipToBounds="True" Background="White">
+			<Canvas x:Name="canvasView" x:FieldModifier="internal" Grid.Row="2" ClipToBounds="True" Background="White" MouseRightButtonUp="canvasView_MouseRightButtonUp">
 				<Canvas x:Name="canvasMain" x:FieldModifier="internal" Height="224" Width="252" Background="White" MouseLeftButtonDown="canvasMain_MouseLeftButtonDown" MouseMove="canvasMain_MouseMove" MouseLeave="canvasMain_MouseLeave" MouseRightButtonUp="canvasMain_MouseRightButtonUp" MouseLeftButtonUp="canvasMain_MouseLeftButtonUp"/>
 			</Canvas>
 			<Border Grid.Column="1" Grid.Row="2" BorderThickness="1,0,0,0" BorderBrush="DarkGray">

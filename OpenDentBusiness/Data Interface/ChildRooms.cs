@@ -124,13 +124,6 @@ namespace OpenDentBusiness{
 			return Crud.ChildRoomCrud.SelectMany(command);
 		}
 		
-		///<summary>Gets one ChildRoom from the db.</summary>
-		public static ChildRoom GetOne(long childRoomNum){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<ChildRoom>(MethodBase.GetCurrentMethod(),childRoomNum);
-			}
-			return Crud.ChildRoomCrud.SelectOne(childRoomNum);
-		}
 		#endregion Methods - Get
 		#region Methods - Modify
 		///<summary></summary>
@@ -156,6 +149,14 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT * FROM childroom ORDER BY RoomId";
 			return Crud.ChildRoomCrud.TableToList(Db.GetTable(command));
+		}
+
+		///<summary>Gets one ChildRoom from the db.</summary>
+		public static ChildRoom GetOne(long childRoomNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<ChildRoom>(MethodBase.GetCurrentMethod(),childRoomNum);
+			}
+			return Crud.ChildRoomCrud.SelectOne(childRoomNum);
 		}
 
 		///<summary></summary>

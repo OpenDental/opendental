@@ -14,7 +14,7 @@ namespace OpenDentBusiness{
 		public string RoomId;
 		///<summary>Any notes for a classroom.</summary>
 		public string Notes;
-		///<summary>Tracks the ratio of children to teachers for a given classroom. Example: A room with 21 children and 2 teachers would have a ratio of 10.5/1. We will always do over 1 so the ratio will be stored as 10.5.</summary>
+		///<summary>Tracks the allowed ratio of children to teachers for a given classroom. The actual ratio is calculated during runtime. Example: 10 or 5. Can be zero if they didn't set anything. Will be -1 for mixed age. Calculated ratio (not this one) could have decimal in it.</summary>
 		public double Ratio;
 
 		public ChildRoom Copy(){

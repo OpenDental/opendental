@@ -6,14 +6,15 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="362" Height="360" 
+             Width="362" Height="378" 
              Text="eForm Defs" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
-		<ui:Grid x:Name="gridMain" Margin="0,64,0,56" Title="eForm Defs" Width="338" VerticalAlignment="Stretch" HorizontalAlignment="Center" />
+		<ui:Grid x:Name="gridMain" Margin="0,80,0,56" Title="eForm Defs" Width="338" VerticalAlignment="Stretch" HorizontalAlignment="Center" />
 		<ui:Button x:Name="butImport" Width="80" Height="23" Margin="12,0,0,18" Text="Import" Click="butImport_Click" VerticalAlignment="Bottom" />
 		<ui:Button x:Name="butExport" Width="80" Height="23" Margin="97,0,0,18" Text="Export" Click="butExport_Click" VerticalAlignment="Bottom" />
 		<ui:Button x:Name="butAdd" Width="75" Height="23" Margin="181,0,0,18" Text="Add" Click="butAdd_Click" Icon="Add" VerticalAlignment="Bottom" />
 		<ui:Button x:Name="butDuplicate" Width="90" Margin="260,0,0,18" Text="Duplicate" Click="butDuplicate_Click" Icon="Add" Height="23" VerticalAlignment="Bottom" />
-		<ui:Label x:Name="labelHead" Width="309" Height="50" Margin="12,6,0,0" Text="This is a list of eForms available for patients.&#10;The list can be edited freely without affecting existing eForms already attached to patients." VAlign="Bottom" />
+		<ui:Label x:Name="labelHead" Width="309" Height="50" Margin="12,29,0,0" Text="This is a list of eForms available for patients.&#10;The list can be edited freely without affecting existing eForms already attached to patients." />
+		<ui:Button x:Name="butSetup" Width="64" Height="23" Margin="0,0,0,0" Text="Setup" Click="butSetup_Click" />
 	</Grid>
 </local:FrmODBase>

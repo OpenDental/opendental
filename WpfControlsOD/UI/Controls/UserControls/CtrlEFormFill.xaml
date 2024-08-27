@@ -9,7 +9,7 @@
              d:DesignHeight="600" d:DesignWidth="500"
 				 FontSize="12">
 	<Border Background="White" BorderBrush="Silver" BorderThickness="1">
-		<Grid x:Name="grid" x:FieldModifier="internal">
+		<Grid x:Name="gridMain" x:FieldModifier="internal">
 			<ScrollViewer Name="scrollViewer" x:FieldModifier="internal" VerticalScrollBarVisibility="Visible"  HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,30" Focusable="False">
 				<StackPanel Name="stackPanel" x:FieldModifier="internal" Focusable="True"/>
 			</ScrollViewer>
