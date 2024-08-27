@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing.Printing;
+using System.ServiceProcess;
 using System.Windows.Forms;
 
 namespace CodeBase {
@@ -41,6 +42,11 @@ namespace CodeBase {
 		///<summary>Returns true if printer can be validated.
 		///If false then SettingsErrorCode will contain more detailed information.</summary>
 		public bool HasValidSettings() {
+			ServiceController serviceControllerPrintSpooler=new ServiceController("Print Spooler");
+			if(serviceControllerPrintSpooler==null || serviceControllerPrintSpooler.Status!=ServiceControllerStatus.Running) {
+				SettingsErrorCode=PrintoutErrorCode.InactivePrintSpoolerService;
+				return false;
+			}
 			try {
 				SettingsErrorCode=PrintoutErrorCode.Success;
 				if(PrinterSettings.InstalledPrinters.Count==0) {
@@ -243,6 +249,9 @@ namespace CodeBase {
 		///<summary>5</summary>
 		[Description("Error: An error occurred while attempting to connect to the printer.")]
 		PrinterConnectionError,
+		///<summary>6</summary>
+		[Description("Error: No active print spooler service found.")]
+		InactivePrintSpoolerService,
 	}
 	
 	///<summary></summary>

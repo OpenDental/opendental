@@ -67,6 +67,23 @@ namespace OpenDentBusiness {
 			return Db.GetList(command,Crud.ProcedureCrud.RowToObj);
 		}
 
+		///<summary>Gets the most recently completed procedure, if any, for each patNum in listPatNums.</summary>
+		public static List<Procedure> GetMostRecentCompletedProcedureForPatNums(List<long> listPatNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),listPatNums);
+			}
+			string command="SELECT * FROM procedurelog procedurelogall"
+				+" INNER JOIN ("
+					+" SELECT ProcNum, PatNum, MAX(DateComplete) FROM procedurelog"
+					+" WHERE ProcStatus="+POut.Int((int)ProcStat.C)
+					+" And DateComplete>"+POut.Date(DateTime.MinValue)
+					+" And PatNum IN"+" ("+String.Join(",",listPatNums)+")"
+					+" GROUP BY PatNum"
+				+" ) procedurelogmax"
+				+" ON procedurelogall.ProcNum = procedurelogmax.ProcNum";
+			return Db.GetList(command,Crud.ProcedureCrud.RowToObj);
+		}
+
 		///<summary>Gets a list of distinct PatNums who have at least one completed procedure.</summary>
 		public static List<long> GetAllPatNumsWithCompletedProcs(List<long> listPatNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

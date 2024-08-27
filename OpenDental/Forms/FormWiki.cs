@@ -547,7 +547,7 @@ namespace OpenDental {
 				e.Cancel=true;
 				return;
 			}
-			else if(e.Url.ToString().Contains("wikifile:") && !ODBuild.IsThinfinity()) {
+			else if(e.Url.ToString().Contains("wikifile:") && !ODEnvironment.IsCloudInstance) {
 				string fileName=e.Url.ToString().Substring(e.Url.ToString().LastIndexOf("wikifile:")+9).Replace("/","\\");
 				if(!File.Exists(fileName)) {
 					MessageBox.Show(Lan.g(this,"File does not exist: ")+fileName);
@@ -563,7 +563,7 @@ namespace OpenDental {
 				e.Cancel=true;
 				return;
 			}
-			else if(e.Url.ToString().Contains("folder:") && !ODBuild.IsThinfinity()) {
+			else if(e.Url.ToString().Contains("folder:") && !ODEnvironment.IsCloudInstance) {
 				string folderName=e.Url.ToString().Substring(e.Url.ToString().LastIndexOf("folder:")+7).Replace("/","\\");
 				if(!Directory.Exists(folderName)) {
 					MessageBox.Show(Lan.g(this,"Folder does not exist: ")+folderName);
@@ -613,11 +613,20 @@ namespace OpenDental {
 			}
 			else if(e.Url.ToString().StartsWith("http")) {//navigating outside of wiki by clicking a link
 				try {
-					System.Diagnostics.Process.Start(e.Url.ToString());
+					if(ODCloudClient.IsAppStream) {
+						ODCloudClient.LaunchFileWithODCloudClient(e.Url.ToString());
+					}
+					else {
+						System.Diagnostics.Process.Start(e.Url.ToString());
+					}
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
 				}
+				e.Cancel=true;//Stops the page from loading in FormWiki.
+				return;
+			}
+			else {
 				e.Cancel=true;//Stops the page from loading in FormWiki.
 				return;
 			}
@@ -669,10 +678,29 @@ namespace OpenDental {
 
 		private void webBrowserWiki_NewWindow(object sender,CancelEventArgs e) {
 			//right click option
+			if(wikiLinkMouseHoverName==null) {
+				e.Cancel=true;
+				return;
+			}
+			if(wikiLinkMouseHoverName.StartsWith("http")) {
+				try {
+					if(ODCloudClient.IsAppStream) {
+						ODCloudClient.LaunchFileWithODCloudClient(wikiLinkMouseHoverName);
+					}
+					else {
+						System.Diagnostics.Process.Start(wikiLinkMouseHoverName);
+					}
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+				}
+				e.Cancel=true;
+				return;
+			}
 			if(wikiLinkMouseHoverName.StartsWith("wiki:")) {
 				NavigateToWiki(wikiLinkMouseHoverName,isNewWindow:true);
-				e.Cancel=true;
 			}
+			e.Cancel=true;
 			return;
 		}
 

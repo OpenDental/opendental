@@ -1155,6 +1155,7 @@ namespace OpenDental{
 			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
 			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
 			FillGrid(!_isExamInUse);
+			contrPerio.ColRowSelected=new ColRow(-1,-1);//Set this so no cell is highlighted on saved image. JobNum:56018
 			//Document doc=new Document();
 			//try {
 			using Bitmap bitmapPerioPrintImage=new Bitmap(LayoutManager.Scale(750),LayoutManager.Scale(1000));

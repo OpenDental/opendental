@@ -5,6 +5,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ServiceProcess;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -43,7 +44,12 @@ This is similar to the OpenDental.ODprintout, but adapted for WPF and kept as si
 
 		///<summary>Returns true if there is a valid printer installed on this machine. If false then SettingsErrorCode will contain more detailed information.</summary>
 		public bool HasValidSettings() {
-		SettingsErrorCode=PrintoutErrorCode.Success;
+			SettingsErrorCode=PrintoutErrorCode.Success;
+			ServiceController serviceControllerPrintSpooler=new ServiceController("Print Spooler");
+			if(serviceControllerPrintSpooler==null || serviceControllerPrintSpooler.Status!=ServiceControllerStatus.Running) {
+				SettingsErrorCode=PrintoutErrorCode.InactivePrintSpoolerService;
+				return false;
+			}
 			if(PrinterSettings.InstalledPrinters.Count==0) {
 				SettingsErrorCode=PrintoutErrorCode.NoInstalledPrinter;
 				return false;

@@ -172,9 +172,18 @@ namespace CodeBase {
 			}
 		}
 
+		///<summary>Returns '.../temp/opendental' temp path.</summary>
+		public static string GetTempFolderPath() {
+			string tempPathOD=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental");
+			if(!Directory.Exists(tempPathOD)) {
+				Directory.CreateDirectory(tempPathOD);
+			}
+			return tempPathOD;
+		}
+
 		///<summary>Returns '.../temp/opendental/ODCloudFileTransfer' temp path.</summary>
 		private static string GetFileTransferTempPath() {
-			string tempPath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","ODCloudFileTransfer");
+			string tempPath=ODFileUtils.CombinePaths(GetTempFolderPath(),"ODCloudFileTransfer");
 			if(!Directory.Exists(tempPath)) {
 				Directory.CreateDirectory(tempPath);
 			}
@@ -234,7 +243,7 @@ namespace CodeBase {
 				return null;
 			}
 			byte[] bytes=Convert.FromBase64String(resultData);
-			string tempFile=ODFileUtils.CreateRandomFile(ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental"),".pdf");
+			string tempFile=ODFileUtils.CreateRandomFile(GetTempFolderPath(),".pdf");
 			File.WriteAllBytes(tempFile,bytes);
 			return tempFile;
 		}
@@ -535,7 +544,7 @@ namespace CodeBase {
 			string fileName=@"data_"+args.FileIdentifier+".txt";
 			string watcherPath=ODFileUtils.CombinePaths(FileWatcherDirectory,@"response");
 			_responseFilePath=ODFileUtils.CombinePaths(watcherPath,fileName);
-			string tempRequestFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","request_"+fileName);
+			string tempRequestFilePath=ODFileUtils.CombinePaths(GetTempFolderPath(),"request_"+fileName);
 			try {
 				if(!Directory.Exists(watcherPath)) {
 					Directory.CreateDirectory(watcherPath);
@@ -548,7 +557,7 @@ namespace CodeBase {
 				throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
 			}
 			DateTime start=DateTime.Now;
-			string tempResponseFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","response_"+fileName);
+			string tempResponseFilePath=ODFileUtils.CombinePaths(GetTempFolderPath(),"response_"+fileName);
 			void waitForResponse() {
 				while(!_hasReceivedResponse && (DateTime.Now-start).TotalSeconds<timeoutSecs) {
 					try {
@@ -802,7 +811,7 @@ namespace CodeBase {
 			else if(IsAppStream) {
 				ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(request);
 				string fileName=@"data_"+args.FileIdentifier+".txt";
-				string tempRequestFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","request_"+fileName);
+				string tempRequestFilePath=ODFileUtils.CombinePaths(GetTempFolderPath(),"request_"+fileName);
 				try {
 					File.WriteAllText(tempRequestFilePath,request);
 					File.Move(tempRequestFilePath,ODFileUtils.CombinePaths(FileWatcherDirectory,fileName));
@@ -964,9 +973,16 @@ namespace CodeBase {
 			MessageBox.Show(response);
 		}
 
-		///<summary>Calls the ImportFile method on the CloudClient. Splits the response string received into file name and data. Writes a new file to the FileTransferTempPath and returns the path string of the newly written file.</summary>
+		///<summary>Calls the ImportFile method on the CloudClient. Splits the response string received into file name and data. Writes a new file to the FileTransferTempPath and returns the path string of the newly written file. Returns blank if file was not created for any reason.</summary>
 		public static string ImportFileForCloud() {
-			string importFile=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ImportFile,timeoutSecs:120);
+			string importFile="";
+			try {
+				importFile=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ImportFile,timeoutSecs:120);
+			}
+			catch(ODException odEx) {
+				MessageBox.Show(odEx.Message);
+				return "";
+			}
 			if(importFile.IsNullOrEmpty()){
 				return "";
 			}
