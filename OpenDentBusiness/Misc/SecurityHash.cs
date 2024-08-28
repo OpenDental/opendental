@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2024,8,26);
+		public static DateTime DateStart=new DateTime(2024,8,28);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -24,12 +24,13 @@ namespace OpenDentBusiness.Misc {
 		///<summary>This method is NOT safe to invoke during database conversions. It is only to be called AFTER all conversions have taken place in order to avoid a rare table lockup. 
 		///Runs a hashing algorithm over all tables for which Open Dental is enforcing database integrity. Overwrites any existing SecurityHashes with new ones for recent entries. </summary>
 		public static void UpdateHashing() {
-			RunPaysplit();
-			RunAppointment();
-			RunPatient();
-			RunPayPlan();
-			RunClaim();
+			//Ordered by threaded then non-threaded, then largest to smallest
 			RunClaimProc();
+			RunPaysplit();
+			RunPatient();
+			RunAppointment();
+			RunClaim();
+			RunPayPlan();
 			string updating="Updating database.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 		}

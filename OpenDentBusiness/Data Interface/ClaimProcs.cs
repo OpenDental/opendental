@@ -2097,10 +2097,14 @@ namespace OpenDentBusiness{
 				//Since BaseEst is greater than MaxPtoP, BaseEst changed to 90.
 				if(paidOtherInsTotTemp != -1) {
 					double maxPossibleToPay=0;
-					if(insPlan.CobRule.In(EnumCobRule.Basic,EnumCobRule.SecondaryMedicaid)) {
+					if(insPlan.CobRule==EnumCobRule.Basic 
+						|| (insPlan.CobRule==EnumCobRule.SecondaryMedicaid && PatPlans.GetOrdinal(claimProc.InsSubNum,listPatPlans)==2)) 
+					{
 						maxPossibleToPay=allowed-paidOtherInsTotTemp;
 					}
-					else if(insPlan.CobRule==EnumCobRule.Standard) {
+					else if(insPlan.CobRule==EnumCobRule.Standard 
+						|| (insPlan.CobRule==EnumCobRule.SecondaryMedicaid && PatPlans.GetOrdinal(claimProc.InsSubNum,listPatPlans)>2)) 
+					{//If COB is SecondaryMedicaid, but the plan is not ordinal 2, default to standard COB.
 						double patPortionTot=procFee - paidOtherInsTotTemp - writeOffOtherIns;//patPortion for InsEstTotal
 						maxPossibleToPay=Math.Min(claimProc.BaseEst,patPortionTot);//The lesser of what insurance would pay if they were primary, and the patient portion.
 					}
@@ -2121,10 +2125,14 @@ namespace OpenDentBusiness{
 				}
 				if(paidOtherInsBaseTemp != -1) {
 					double maxPossibleToPay=0;
-					if(insPlan.CobRule.In(EnumCobRule.Basic,EnumCobRule.SecondaryMedicaid)) {
+					if(insPlan.CobRule==EnumCobRule.Basic 
+						|| (insPlan.CobRule==EnumCobRule.SecondaryMedicaid && PatPlans.GetOrdinal(claimProc.InsSubNum,listPatPlans)==2)) 
+					{
 						maxPossibleToPay=allowed-paidOtherInsBaseTemp;
 					}
-					else if(insPlan.CobRule==EnumCobRule.Standard) {
+					else if(insPlan.CobRule==EnumCobRule.Standard 
+						|| (insPlan.CobRule==EnumCobRule.SecondaryMedicaid && PatPlans.GetOrdinal(claimProc.InsSubNum,listPatPlans)>2)) 
+					{//If COB is SecondaryMedicaid, but the plan is not ordinal 2, default to standard COB.
 						double patPortionBase=procFee - paidOtherInsBaseTemp - writeOffOtherIns;//patPortion for BaseEst
 						maxPossibleToPay=Math.Min(claimProc.BaseEst,patPortionBase);
 					}
@@ -2195,9 +2203,9 @@ namespace OpenDentBusiness{
 						break;
 				}
 			}
-			else if(insPlan.CobRule==EnumCobRule.SecondaryMedicaid && PatPlans.GetOrdinal(claimProc.InsSubNum,listPatPlans)!=1) {
-				//If a plan is Secondary Medicaid, any amount that has not been written off by another insurance or paid will be written off. This should
-				//cause the patient portion to be 0.
+			else if(insPlan.CobRule==EnumCobRule.SecondaryMedicaid && PatPlans.GetOrdinal(claimProc.InsSubNum,listPatPlans)==2) {
+				//If a plan is Secondary Medicaid and ordinal 2, any amount that has not been written off by another insurance or paid will be written off.
+				//This should cause the patient portion to be 0.
 				claimProc.WriteOffEst=procFee-paidOtherInsTot-writeOffOtherIns-claimProc.InsEstTotal;
 				if(claimProc.WriteOffEst < 0) {
 					claimProc.WriteOffEst=0;

@@ -74,6 +74,7 @@ namespace OpenDental {
 			_filterControlsAndAction.SetInterval(300);
 			//_filterControlsAndAction.SetMinChars(2);
 			_filterControlsAndAction.ActionComplete=FillGrid;
+			FillGrid(RefreshFromDb());
 		}
 
 		private void FillGrid(object objectData) {

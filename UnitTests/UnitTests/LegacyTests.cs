@@ -203,7 +203,8 @@ namespace UnitTests.Documentation{
 		ChartModules_GetProcDescriptPlanned_NoApptAttachedPlannedApptHasProcsSomePlannedApptProcsComplete=182,
 		ChartModules_GetProcDescriptPlanned_NoApptAttachedPlannedApptHasProcsNoPlannedApptProcsComplete=183,
 		ChartModules_GetProcDescriptPlanned_NoApptAttachedPlannedApptHasNoProcs=184,
-		Benefits_AgeLimits_CodeGroupOverlap=185
+		Benefits_AgeLimits_CodeGroupOverlap=185,
+		ClaimProcs_ComputeBaseEst_MedicaidCOB=186
 		//Add new items to enum here at end of list
 	}
 }
