@@ -120,6 +120,7 @@ namespace OpenDental{
 				labelExportPath.Font=new System.Drawing.Font(labelExportPath.Font,FontStyle.Bold);
 				labelReportPath.Font=new System.Drawing.Font(labelReportPath.Font,FontStyle.Bold);
 				labelClientProgram.Font=new System.Drawing.Font(labelClientProgram.Font,FontStyle.Bold);
+				label2.Font=new System.Drawing.Font(label2.Font,FontStyle.Bold);
 			}
 			if(ClinicNum!=0) {
 				textDescription.ReadOnly=true;
@@ -312,7 +313,6 @@ namespace OpenDental{
 				_clearinghouseClin.IsClaimExportAllowed=checkIsClaimExportAllowed.Checked;
 				_clearinghouseClin.IsEraDownloadAllowed=listBoxEraBehavior.GetSelected<EraBehaviors>();
 				_clearinghouseClin.IsAttachmentSendAllowed=checkAllowAttachSend.Checked;
-				_clearinghouseClin.LocationID=textLocationID.Text;
 				if(textExportPath.Text==ClearinghouseHq.ExportPath) {
 					_clearinghouseClin.ExportPath="";//The value is the same as the default.  Save blank so that default can be updated dynamically.
 				}
@@ -348,6 +348,12 @@ namespace OpenDental{
 				}
 				else {
 					_clearinghouseClin.LoginID=textLoginID.Text;
+				}
+				if(textLocationID.Text==ClearinghouseHq.LocationID) {
+					_clearinghouseClin.LocationID="";//The value is the same as the default.  Save blank so that default can be updated dynamically
+				}
+				else {
+					_clearinghouseClin.LocationID=textLocationID.Text;
 				}
 				if(textSenderName.Text==ClearinghouseHq.SenderName) {
 					_clearinghouseClin.SenderName="";//The value is the same as the default.  Save blank so that default can be updated dynamically.

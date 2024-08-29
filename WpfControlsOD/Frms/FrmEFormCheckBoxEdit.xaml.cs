@@ -67,6 +67,14 @@ namespace OpenDental {
 				&& x.ConditionalParent!="" //for a new checkbox, ValueLabel might be blank
 			);
 			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
+			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+			if(EFormFieldCur.SpaceBelow==-1){
+				textSpaceBelow.Text="";
+			}
+			else{
+				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+			}
 		}
 
 		private void ComboDbLink_SelectionTrulyChanged(object sender,EventArgs e) {
@@ -264,6 +272,20 @@ namespace OpenDental {
 					return;
 				}
 			}
+			int spaceBelow=-1;
+			if(textSpaceBelow.Text!=""){
+				try{
+					spaceBelow=Convert.ToInt32(textSpaceBelow.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space Below first.");
+					return;
+				}
+				if(spaceBelow<0 || spaceBelow>200){
+					MsgBox.Show(this,"Space Below value is invalid.");
+					return;
+				}
+			}
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
 			if(comboDbLink.SelectedIndex==0){//None
@@ -283,6 +305,7 @@ namespace OpenDental {
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			EFormFieldCur.SpaceBelow=spaceBelow;
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

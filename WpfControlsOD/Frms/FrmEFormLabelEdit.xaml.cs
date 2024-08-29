@@ -59,6 +59,14 @@ namespace OpenDental {
 			for(int i=0;i<listStaticTextFields.Count;i++) {
 				listBoxFields.Items.Add(listStaticTextFields[i].ToString());
 			}
+			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+			if(EFormFieldCur.SpaceBelow==-1){
+				textSpaceBelow.Text="";
+			}
+			else{
+				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+			}
 			LayoutToolBar();
 		}
 
@@ -307,12 +315,27 @@ namespace OpenDental {
 				}
 				//we are not going to test for a replacement that spans two paragraphs. We're only looking within each paragraph
 			}
+			int spaceBelow=-1;
+			if(textSpaceBelow.Text!=""){
+				try{
+					spaceBelow=Convert.ToInt32(textSpaceBelow.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space Below first.");
+					return;
+				}
+				if(spaceBelow<0 || spaceBelow>200){
+					MsgBox.Show(this,"Space Below value is invalid.");
+					return;
+				}
+			}
 			//end validation
 			EFormFieldCur.ValueLabel=EFormFields.SerializeFlowDocument(flowDocument);
 			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.Width=textVIntWidth.Value;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
+			EFormFieldCur.SpaceBelow=spaceBelow;
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

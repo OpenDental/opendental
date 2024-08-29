@@ -69,6 +69,9 @@ namespace OpenDentBusiness {
 
 		///<summary>Gets the most recently completed procedure, if any, for each patNum in listPatNums.</summary>
 		public static List<Procedure> GetMostRecentCompletedProcedureForPatNums(List<long> listPatNums) {
+			if(listPatNums.IsNullOrEmpty()) {
+				return new List<Procedure>();
+			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),listPatNums);
 			}

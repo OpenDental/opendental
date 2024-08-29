@@ -626,7 +626,7 @@ namespace OpenDentBusiness{
 						)procSplit ON procSplit.ProcNum=procedurelog.ProcNum
 					UNION ALL 
 						SELECT adjustment.PatNum,adjustment.AdjAmt + COALESCE(adjSplit.SplitAmt,0) Fee,payplanlink.PayPlanLinkNum LinkNum
-							,0 ProcNum,DATE('0001-01-01') AgeDate 
+							,0 ProcNum,adjustment.AdjDate AgeDate 
 						FROM payplanlink 
 						INNER JOIN adjustment ON adjustment.AdjNum=payplanlink.FKey 
 							AND payplanlink.LinkType={POut.Int((int)PayPlanLinkType.Adjustment)} 

@@ -43,9 +43,9 @@ namespace OpenDental {
 			// checkEnterpriseNoneApptViewDefaultDisabled
 			// 
 			this.checkEnterpriseNoneApptViewDefaultDisabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEnterpriseNoneApptViewDefaultDisabled.Location = new System.Drawing.Point(3, 76);
+			this.checkEnterpriseNoneApptViewDefaultDisabled.Location = new System.Drawing.Point(3, 78);
 			this.checkEnterpriseNoneApptViewDefaultDisabled.Name = "checkEnterpriseNoneApptViewDefaultDisabled";
-			this.checkEnterpriseNoneApptViewDefaultDisabled.Size = new System.Drawing.Size(452, 24);
+			this.checkEnterpriseNoneApptViewDefaultDisabled.Size = new System.Drawing.Size(451, 20);
 			this.checkEnterpriseNoneApptViewDefaultDisabled.TabIndex = 292;
 			this.checkEnterpriseNoneApptViewDefaultDisabled.Text = "Do not include \'None\' Appointment View when other views are available";
 			// 

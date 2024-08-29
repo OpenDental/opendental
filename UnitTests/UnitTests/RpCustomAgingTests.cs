@@ -155,6 +155,27 @@ namespace UnitTests.RpCustomAgingTests_Tests {
 			Assert.IsTrue(listAgingPats.FirstOrDefault().BalOverNinety==50);//Attached transaction used as credit towards oldest charge
 		}
 
+		[TestMethod]
+		public void RpCustomAging_ComputeAging_PayPlanDynamicProcedureAndAdjustmentDate() {
+			//Create a patient and set complete a procedure for 61 days ago and an adjustment for 31 days ago
+			Patient patient=PatientT.CreatePatient();
+			Procedure procedure=ProcedureT.CreateProcedure(patient,"D0210",ProcStat.C,"",50,DateTime.Today.AddDays(-61));
+			Adjustment adjustment=AdjustmentT.MakeAdjustment(patient.PatNum,10,DateTime.Today.AddDays(-31));
+			List<Procedure> listProcedures=new List<Procedure>();
+			List<Adjustment> listAdjustments=new List<Adjustment>();
+			listProcedures.Add(procedure);
+			listAdjustments.Add(adjustment);
+			//Create a DPP for the procedure and adjustment that starts today
+			PayPlanT.CreateDynamicPaymentPlan(patient.PatNum,patient.PatNum,DateTime.Today,0,0,60,listProcedures,listAdjustments);
+			AgingOptions agingOptions=GetAgingOptions(ageAccount:AgeOfAccount.Any,ageCredits:true,negativeBalOptions:AgingOptions.NegativeBalAgingOptions.Include);
+			List<AgingPat> listAgingPats=RpCustomAging.GetAgingList(agingOptions);
+			//Ensure all charges are on payplan date, not procedure or adjustment date
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalZeroThirty==60);
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalThirtySixty==0);
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalSixtyNinety==0);
+			Assert.IsTrue(listAgingPats.FirstOrDefault().BalOverNinety==0);
+		}
+
 		private void InitializePatientData(bool hasNegativeBalance=false,DateTime dateToday=default) {
 			double balance=100;
 			if(hasNegativeBalance) {

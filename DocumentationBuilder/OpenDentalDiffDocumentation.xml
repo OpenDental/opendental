@@ -150,6 +150,15 @@
         <EnumValue name="LeftLeft">1-Left of the remainder of the field, and left aligned within that space.</EnumValue>
       </Enumeration>
     </column>
+    <column order="18" name="SpaceBelow" type="int(11)">
+      <summary></summary>
+    </column>
+    <column order="19" name="ReportableName" type="varchar(255)">
+      <summary></summary>
+    </column>
+    <column order="20" name="IsLocked" type="tinyint(4)">
+      <summary></summary>
+    </column>
   </table>
   <table name="eformfielddef">
     <summary></summary>
@@ -217,6 +226,15 @@
         <EnumValue name="TopLeft">0-Default</EnumValue>
         <EnumValue name="LeftLeft">1-Left of the remainder of the field, and left aligned within that space.</EnumValue>
       </Enumeration>
+    </column>
+    <column order="16" name="SpaceBelow" type="int(11)">
+      <summary></summary>
+    </column>
+    <column order="17" name="ReportableName" type="varchar(255)">
+      <summary></summary>
+    </column>
+    <column order="18" name="IsLocked" type="tinyint(4)">
+      <summary></summary>
     </column>
   </table>
   <table name="eroutingaction">

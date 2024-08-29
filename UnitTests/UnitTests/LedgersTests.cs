@@ -741,6 +741,28 @@ namespace UnitTests.Ledgers_Tests {
 		}
 
 		[TestMethod]
+		public void LedgersTests_ComputeAging_PayPlanDynamicProcedureAndAdjustmentAsOfDate() {
+			PrefT.UpdateInt(PrefName.PayPlansVersion,(int)PayPlanVersions.DoNotAge);
+			//Create a patient and set complete a procedure for 31 days ago and a positive adjustment for 31 days ago
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient patient=PatientT.CreatePatient(fName:"Aging_PayPlanDynamic",suffix:suffix);
+			Procedure procedure=ProcedureT.CreateProcedure(patient,"D0210",ProcStat.C,"",50,DateTime.Today.AddDays(-31));
+			Adjustment adjustment=AdjustmentT.MakeAdjustment(patient.PatNum,10,DateTime.Today.AddDays(-31));
+			List<Procedure> listProcedures=new List<Procedure>();
+			List<Adjustment> listAdjustments=new List<Adjustment>();
+			listProcedures.Add(procedure);
+			listAdjustments.Add(adjustment);
+			//Create a DPP for the procedure and adjustment that starts today
+			PayPlanT.CreateDynamicPaymentPlan(patient.PatNum,patient.PatNum,DateTime.Today,0,0,60,listProcedures,listAdjustments);
+			Dictionary<long,DataRow> dictionaryAging=Ledgers.GetAgingGuarTransTable(DateTime.Today.AddDays(-31),null,isHistoric:true);
+			//Procedure and attachment should show in charges 0-30 with an as of date 31 days ago
+			Assert.AreEqual(60,PIn.Double(dictionaryAging[patient.Guarantor]["Charges_0_30"].ToString()));
+			Assert.AreEqual(0,PIn.Double(dictionaryAging[patient.Guarantor]["Charges_31_60"].ToString()));
+			Assert.AreEqual(0,PIn.Double(dictionaryAging[patient.Guarantor]["Charges_61_90"].ToString()));
+			Assert.AreEqual(0,PIn.Double(dictionaryAging[patient.Guarantor]["ChargesOver90"].ToString()));
+		}
+
+		[TestMethod]
 		public void LedgersTests_GetAgingGuarTransTable_IgnoreInsPayEstOnTpProcs() {
 			//Canadians often have strange estimates (and in this database, NotReceived claimprocs) associated to TP procedures.
 			//This unit test will be for asserting that claimprocs associated to TP procedures are IGNORED.

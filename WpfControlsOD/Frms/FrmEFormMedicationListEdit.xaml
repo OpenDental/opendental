@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="1030" Height="720" 
+             Width="1030" Height="745" 
              Text="Edit MedicationList" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
@@ -53,7 +53,7 @@
 			<ui:CheckBox x:Name="checkSyncCol2OverwriteDate" Height="20" Margin="8,70,0,0" Width="177" Text="Import Col 2 Overwrite Date" CheckAlign="MiddleRight"/>
 		</ui:GroupBox>
 		<ui:CheckBox x:Name="checkAdvanced" Height="20" Margin="28,309,0,0" Width="200" Text="Show Advanced Settings"/>
-		<ui:GroupBox Height="80" Margin="42,570,0,0" Width="470" Text="Conditional Logic. This field will show...">
+		<ui:GroupBox Height="80" Margin="42,592,0,0" Width="470" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
 			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
@@ -61,5 +61,8 @@
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click" />
 		</ui:GroupBox>
+		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="201,563,0,0" />
+		<ui:Label Width="98" Height="18" Margin="102,563,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="259,563,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
 	</Grid>
 </local:FrmODBase>

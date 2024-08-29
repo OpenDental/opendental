@@ -3539,6 +3539,29 @@ namespace OpenDentBusiness{
 					Appointments.Update(appointmentScheduled,listAppointments[i]);
 				}
 			}
+			else {//Saving a non-planned appt
+				//Get a list of associated planned AptNums for the procedures selected
+				List<long> listPlannedAptNums=listProceduresForAppt
+					.FindAll(x => listProceduresSelected.Any(y => y.ProcNum==x.ProcNum) && x.PlannedAptNum!=0)
+					.Select(x => x.PlannedAptNum)
+					.Distinct()
+					.ToList();
+				//Get all associated planned appts and order them from newest to oldest.
+				//Example: When two procedures are attached to two different planned appts.
+				List<Appointment> listAppointmentsPlanned=listAppointments
+					.FindAll(x => listPlannedAptNums.Contains(x.AptNum))
+					.OrderByDescending(x => x.AptDateTime)
+					.ThenByDescending(x => x.SecDateTEntry)
+					.ToList();
+				if(listAppointmentsPlanned.Count!=0) {
+					//Set NextAptNum to the newest planned appt
+					appointment.NextAptNum=listAppointmentsPlanned[0].AptNum;
+				}
+				else {
+					//Scheduled appt no longer has any associated planned appts
+					appointment.NextAptNum=0;
+				}
+			}
 			Procedures.ProcsAptNumHelper(listProceduresForAppt,appointment,listAppointments,listSelectedIndices,listProcNumsAttachedStart,isPlanned);			
 			apptSaveHelperResult.DoRunAutomation=Procedures.UpdateProcsInApptHelper(listProceduresForAppt,patient,appointment,appointmentOld,listInsPlans,listInsSubs,listSelectedIndices,
 				removeCompleteProcs,updateProcFees);

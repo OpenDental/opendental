@@ -56,10 +56,10 @@ namespace OpenDental {
 			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
 			if(EFormFieldCur.SpaceBelow==-1){
-				textVIntSpaceBelow.Text="";
+				textSpaceBelow.Text="";
 			}
 			else{
-				textVIntSpaceBelow.Value=EFormFieldCur.SpaceBelow;
+				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
 			}
 			textLabel.Focus();
 		}
@@ -122,6 +122,20 @@ namespace OpenDental {
 					return;
 				}
 			}
+			int spaceBelow=-1;
+			if(textSpaceBelow.Text!=""){
+				try{
+					spaceBelow=Convert.ToInt32(textSpaceBelow.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space Below first.");
+					return;
+				}
+				if(spaceBelow<0 || spaceBelow>200){
+					MsgBox.Show(this,"Space Below value is invalid.");
+					return;
+				}
+			}
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
 			if(comboDbLink.SelectedIndex==0){//None
@@ -137,12 +151,7 @@ namespace OpenDental {
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(ListEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
-			if(textVIntSpaceBelow.Text==""){
-				EFormFieldCur.SpaceBelow=-1;
-			}
-			else{
-				EFormFieldCur.SpaceBelow=textVIntSpaceBelow.Value;
-			}
+			EFormFieldCur.SpaceBelow=spaceBelow;
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

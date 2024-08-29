@@ -87,6 +87,14 @@ namespace OpenDental {
 				&& x.ConditionalParent!="" //for a new radiobutton, ValueLabel might be blank
 			);
 			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
+			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+			if(EFormFieldCur.SpaceBelow==-1){
+				textSpaceBelow.Text="";
+			}
+			else{
+				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+			}
 		}
 
 		private class VisDb{
@@ -466,6 +474,20 @@ Any or all items are allowed to have no label by leaving that value in the first
 					return;
 				}
 			}
+			int spaceBelow=-1;
+			if(textSpaceBelow.Text!=""){
+				try{
+					spaceBelow=Convert.ToInt32(textSpaceBelow.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space Below first.");
+					return;
+				}
+				if(spaceBelow<0 || spaceBelow>200){
+					MsgBox.Show(this,"Space Below value is invalid.");
+					return;
+				}
+			}
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
 			if(checkLabelAlign.Checked==true){
@@ -501,6 +523,7 @@ Any or all items are allowed to have no label by leaving that value in the first
 				EFormFieldCur.PickListVis+=_listVisDbs[i].Vis;
 				EFormFieldCur.PickListDb+=_listVisDbs[i].Db;
 			}
+			EFormFieldCur.SpaceBelow=spaceBelow;
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

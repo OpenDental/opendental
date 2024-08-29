@@ -56,6 +56,14 @@ namespace OpenDental {
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
 			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
+			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+			if(EFormFieldCur.SpaceBelow==-1){
+				textSpaceBelow.Text="";
+			}
+			else{
+				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+			}
 		}
 
 		private void CheckAdvanced_Click(object sender,EventArgs e) {
@@ -150,6 +158,20 @@ namespace OpenDental {
 				MsgBox.Show("Please fix entry errors first.");
 				return;
 			}
+			int spaceBelow=-1;
+			if(textSpaceBelow.Text!=""){
+				try{
+					spaceBelow=Convert.ToInt32(textSpaceBelow.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space Below first.");
+					return;
+				}
+				if(spaceBelow<0 || spaceBelow>200){
+					MsgBox.Show(this,"Space Below value is invalid.");
+					return;
+				}
+			}
 			//end of validation
 			_eFormMedListLayout.Title=textTitle.Text;
 			_eFormMedListLayout.HeaderCol1=textHeaderCol1.Text;
@@ -170,6 +192,7 @@ namespace OpenDental {
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
 			//not saved to db here. That happens when clicking Save in parent window.
+			EFormFieldCur.SpaceBelow=spaceBelow;
 			IsDialogOK=true;
 		}
 
