@@ -3534,22 +3534,69 @@ namespace OpenDentBusiness{
 				}
 			}
 			if(appointment.AptStatus==ApptStatus.Planned) {
-				List<Appointment> listAppointmentsChecks=listAppointments;
+				//We must go to db to get these procedures because AptNum is wrong.
+				List<Procedure> listProceduresForPatient=Procedures.Refresh(appointment.PatNum);
+				List<long> listSelectedProcNums=listProceduresSelected.Select(x => x.ProcNum).ToList();
 				for(int i = 0; i<listAppointments.Count;i++) {
 					if(listAppointments[i].AptNum==appointment.AptNum || listAppointments[i].AptStatus==ApptStatus.Planned) {
 						continue;
 					}
-					//We must go to db to get these procedures because AptNum is wrong.
-					if(!listProceduresSelected.Any(x=>Procedures.GetOneProc(x.ProcNum,false).AptNum==listAppointments[i].AptNum)) {
-						continue;
-					}
-					//We now know that the scheduled appt in this loop has one of our procs attached.
-					//Mark this appointment as being derived from the planned appointment we are saving.
-					//It's harmless if we set this field on multiple scheduled appts.
-					//In that case, when putting a planned appt on the pinboard, it will just use the first one it finds.
 					Appointment appointmentScheduled=listAppointments[i].Copy();
-					appointmentScheduled.NextAptNum=appointment.AptNum;//planned AptNum
+					List<Procedure> listProceduresForApptSched=listProceduresForPatient.FindAll(x => x.AptNum==appointmentScheduled.AptNum);
+					//Get a list of existing planned AptNums associated to the scheduled appt
+					List<long> listOverlappingAptNums=listProceduresForApptSched
+						.FindAll(x => x.PlannedAptNum!=0)
+						.Select(x => x.PlannedAptNum)
+						.Distinct()
+						.ToList();
+					bool isExistingOverlapped=listOverlappingAptNums.Contains(appointment.AptNum);
+					bool hasOverlappedProcedure=listProceduresForApptSched.Exists(x => listSelectedProcNums.Contains(x.ProcNum));
+					if(!isExistingOverlapped && hasOverlappedProcedure) {
+						//Attaching procedures associated to the scheduled appt to the planned appt
+						listOverlappingAptNums.Add(appointment.AptNum);
+					}
+					else if(isExistingOverlapped && !hasOverlappedProcedure) {
+						//Removing associated procedures from an existing planned appt
+						listOverlappingAptNums.RemoveAll(x => x==appointment.AptNum);
+					}
+					//Get all associated planned appts and order them from newest to oldest.
+					List<Appointment> listPlannedAppointments=listAppointments
+						.FindAll(x => listOverlappingAptNums.Contains(x.AptNum))
+						.OrderByDescending(x => x.AptDateTime)
+						.ThenByDescending(x => x.SecDateTEntry)
+						.ToList();
+					if(listPlannedAppointments.Count==0) {
+						//Scheduled appt no longer has any associated planned appts
+						appointmentScheduled.NextAptNum=0;
+					}
+					else {
+						//Set NextAptNum to the newest planned appt
+						appointmentScheduled.NextAptNum=listPlannedAppointments[0].AptNum;
+					}
 					Appointments.Update(appointmentScheduled,listAppointments[i]);
+				}
+			}
+			else {//Saving a non-planned appt
+				//Get a list of associated planned AptNums for the procedures selected
+				List<long> listPlannedAptNums=listProceduresForAppt
+					.FindAll(x => listProceduresSelected.Any(y => y.ProcNum==x.ProcNum) && x.PlannedAptNum!=0)
+					.Select(x => x.PlannedAptNum)
+					.Distinct()
+					.ToList();
+				//Get all associated planned appts and order them from newest to oldest.
+				//Example: When two procedures are attached to two different planned appts.
+				List<Appointment> listPlannedAppointments=listAppointments
+					.FindAll(x => listPlannedAptNums.Contains(x.AptNum))
+					.OrderByDescending(x => x.AptDateTime)
+					.ThenByDescending(x => x.SecDateTEntry)
+					.ToList();
+				if(listPlannedAppointments.Count==0) {
+					//Scheduled appt no longer has any associated planned appts
+					appointment.NextAptNum=0;
+				}
+				else {
+					//Set NextAptNum to the newest planned appt
+					appointment.NextAptNum=listPlannedAppointments[0].AptNum;
 				}
 			}
 			Procedures.ProcsAptNumHelper(listProceduresForAppt,appointment,listAppointments,listSelectedIndices,listProcNumsAttachedStart,isPlanned);			
