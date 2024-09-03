@@ -20,6 +20,8 @@ namespace OpenDental {
 		public EFormDef EFormDefCur;
 		///<summary></summary>
 		public bool IsPreviousStackable;
+		///<summary>If set to true, then this field can have "space below" set.</summary>
+		public bool IsLastInHorizStack;
 		///<summary>All the siblings</summary>
 		public List<EFormField> _listEFormFields;
 
@@ -52,13 +54,19 @@ namespace OpenDental {
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
 			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
-			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
-			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
-			if(EFormFieldCur.SpaceBelow==-1){
-				textSpaceBelow.Text="";
+			if(IsLastInHorizStack){
+				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+				labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+				if(EFormFieldCur.SpaceBelow==-1){
+					textSpaceBelow.Text="";
+				}
+				else{
+					textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+				}
 			}
 			else{
-				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+				labelSpaceDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
+				textSpaceBelow.IsEnabled=false;
 			}
 			textLabel.Focus();
 		}

@@ -12,7 +12,7 @@ namespace OpenDentBusiness {
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long EFormNum;
-		///<summary>Enum:EnumEFormType 0=None, 1=PatientForm, 2=MedicalHistory, 3=Consent.</summary>
+		///<summary>Enum:EnumEFormType 0=PatientForm, 1=MedicalHistory, 2=Consent. This doesn't actually do anything, and all fields are available for all types, but that might eventually change if more types are added.</summary>
 		public EnumEFormType FormType;
 		///<summary>FKey to patient.PatNum.</summary>
 		public long PatNum;
@@ -31,10 +31,8 @@ namespace OpenDentBusiness {
 
 	}
 
-	///<summary>Different types of EForms that can be used. They don't actually do anything, and all fields are available from all types, but that might eventually change if more types are added.</summary>
+	///<summary>Different types of EForms that can be used.</summary>
 	public enum EnumEFormType {
-		//<summary>0 - Not used yet, but just in case.</summary>//this didn't make any sense.
-		//None,
 		///<summary>0 - Includes patient information and insurance information.</summary>
 		[Description("Patient Form")]
 		PatientForm,

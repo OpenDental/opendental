@@ -195,18 +195,19 @@ namespace OpenDentBusiness{
 			return true;
 		}
 		
-		/*
-		Only pull out the methods below as you need them.  Otherwise, leave them commented out.
-
-		///<summary></summary>
-		public static List<EForm> Refresh(long patNum){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<EForm>>(MethodBase.GetCurrentMethod(),patNum);
+		///<summary>Loops through all the fields and appends together all the ValueStrings. All the ValueStrings must have been filled first, and it excludes all SigBox types. The order is critical.</summary>
+		public static string GetSignatureKeyData(List<EFormField> listEFormFields) {
+			//No need to check MiddleTierRole; no call to db
+			//The fields will already be sorted by ItemOrder
+			StringBuilder stringBuilder=new StringBuilder();
+			for(int i=0;i<listEFormFields.Count;i++) {
+				if(listEFormFields[i].FieldType.In(EnumEFormFieldType.SigBox)) {
+					continue;
+				}
+				stringBuilder.Append(listEFormFields[i].ValueString);
 			}
-			string command="SELECT * FROM eform WHERE PatNum = "+POut.Long(patNum);
-			return Crud.EFormCrud.SelectMany(command);
+			return stringBuilder.ToString();
 		}
-		*/
 	}
 
 	public class EFormValidation {

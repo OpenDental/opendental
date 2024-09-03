@@ -69,7 +69,7 @@ If all the fields on a page are hidden, that page gets hidden.
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long EFormDefNum;
-		///<summary>Enum:EnumEFormType 0=None, 1=PatientForm, 2=MedicalHistory, 3=Consent.</summary>
+		///<summary>Enum:EnumEFormType 0=PatientForm, 1=MedicalHistory, 2=Consent. This doesn't actually do anything, and all fields are available for all types, but that might eventually change if more types are added.</summary>
 		public EnumEFormType FormType;
 		///<summary>The title of the EFormDef. Set by the user.</summary>
 		public string Description;
@@ -97,6 +97,10 @@ https://www.youtube.com/watch?v=4V-wbDuVtFg
 Ours are similar.
 
 Next:
+Locking an EForm should not make it dim and should not disable nav buttons.
+ClearSigs whenever we change a field
+Permission to edit complete EForm, use Sheet permission?
+Required fields never actually got implemented
 When filling forms, changing window width does not perform another layout.
 Enhance FormWebForms to include eForms
 Slight enhancements to FormPatientPickWebForm for wording
@@ -104,7 +108,6 @@ What about FormPatientPickWebForm?
 and .IsWebForm
 WebForms_Preference.ColorBorder
 Background color
-RyanH: SigBox implement
 Conditional dates/ages
 
 Widths in a future version: We might add:
@@ -128,9 +131,14 @@ Medications are more complex than Allergies and Problems, so we use a special co
 
 Future enhancements, in order of priority:
 Add functionality in FormSheetImport to allow EForms.
-Sort out prefill vs import. Probably make them separate.
-Duplicate fields to speed up building a new form.
 Branding, using colors, logos, and images, using MobileBrandingProfile.
+Signatures
+	Unlock button
+	SignatureBoxWrapper.GetIsTypedFromWebForms()
+	DateTimeSig: ??
+	CanElectronicallySign: ??
+	IsSigProvRestricted: not needed because provs don't sign patient forms
+
 Language Translation. 
 	Not sure what we'll translate exactly, maybe labels, picklists for comboboxes and radiobuttons, meds, problems, allergies, etc.
 	Because we use dynamic layout, we don't need to maintain that awful layout syncing that sheets use for languages.

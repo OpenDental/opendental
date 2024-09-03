@@ -90,6 +90,10 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				frmEFormTextBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
 				frmEFormTextBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormTextBoxEdit.IsPreviousStackable=isPreviousStackable;
+				frmEFormTextBoxEdit.IsLastInHorizStack=false;
+				if(ctrlEFormFill.ListIndicesLastInHorizStack.Exists(x=>x==idx)){
+					frmEFormTextBoxEdit.IsLastInHorizStack=true;
+				}
 				frmEFormTextBoxEdit.ShowDialog();
 				if(frmEFormTextBoxEdit.IsDialogCancel){
 					return;
@@ -106,6 +110,10 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				frmEFormLabelEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormLabelEdit.EFormDefCur=EFormDefCur;
 				frmEFormLabelEdit.IsPreviousStackable=isPreviousStackable;
+				frmEFormLabelEdit.IsLastInHorizStack=false;
+				if(ctrlEFormFill.ListIndicesLastInHorizStack.Exists(x=>x==idx)){
+					frmEFormLabelEdit.IsLastInHorizStack=true;
+				}
 				frmEFormLabelEdit.ShowDialog();
 				if(frmEFormLabelEdit.IsDialogCancel){
 					return;
@@ -122,6 +130,10 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				frmEFormDateFieldEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormDateFieldEdit.EFormDefCur=EFormDefCur;
 				frmEFormDateFieldEdit.IsPreviousStackable=isPreviousStackable;
+				frmEFormDateFieldEdit.IsLastInHorizStack=false;
+				if(ctrlEFormFill.ListIndicesLastInHorizStack.Exists(x=>x==idx)){
+					frmEFormDateFieldEdit.IsLastInHorizStack=true;
+				}
 				frmEFormDateFieldEdit.ShowDialog();
 				if(frmEFormDateFieldEdit.IsDialogCancel){
 					return;
@@ -138,6 +150,10 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				frmEFormCheckBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
 				frmEFormCheckBoxEdit.EFormDefCur=EFormDefCur;
 				frmEFormCheckBoxEdit.IsPreviousStackable=isPreviousStackable;
+				frmEFormCheckBoxEdit.IsLastInHorizStack=false;
+				if(ctrlEFormFill.ListIndicesLastInHorizStack.Exists(x=>x==idx)){
+					frmEFormCheckBoxEdit.IsLastInHorizStack=true;
+				}
 				frmEFormCheckBoxEdit.ShowDialog();
 				if(frmEFormCheckBoxEdit.IsDialogCancel){
 					return;

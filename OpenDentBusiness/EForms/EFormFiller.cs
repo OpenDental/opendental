@@ -263,12 +263,13 @@ namespace OpenDentBusiness {
 						eForm.ListEFormFields[i].ValueString=JsonConvert.SerializeObject(listEFormMeds);
 					}
 				}
-				//if(eForm.ListEFormFields[i].DbLink=="medsNone") {
-				//	if(listMedicationPats.Count==0){
-				//		eForm.ListEFormFields[i].ValueString="X";
-				//	}
-				//}
-				/*if(eForm.ListEFormFields[i].DbLink=="medsOther") {
+				/*
+				if(eForm.ListEFormFields[i].DbLink=="medsNone") {
+					if(listMedicationPats.Count==0){
+						eForm.ListEFormFields[i].ValueString="X";
+					}
+				}
+				if(eForm.ListEFormFields[i].DbLink=="medsOther") {
 					//get list of meds already covered by checkboxes
 					List<string> listStrMedsChecks=eForm.ListEFormFields.FindAll(x=>x.DbLink.StartsWith("med:")).Select(x=>x.DbLink.Substring(4)).ToList();
 					List<string> listStrMedsToAdd=new List<string>();
@@ -288,21 +289,21 @@ namespace OpenDentBusiness {
 						listStrMedsToAdd.Add(strMed);
 					}
 					eForm.ListEFormFields[i].ValueString=string.Join(", ",listStrMedsToAdd);
+				}
+				if(eForm.ListEFormFields[i].DbLink.StartsWith("med:")){
+					//get the checkbox med that we are looking at
+					string strMedCheck=eForm.ListEFormFields[i].DbLink.Substring(4);
+					for(int a=0;a<listMedicationPats.Count;a++){
+						Medication medication=Medications.GetMedication(listMedicationPats[a].MedicationNum);
+						string strMedDes=listMedicationPats[a].MedDescript;//used if this medicationPat came from an eRx or eForms import and medication is null
+						if(medication!=null){
+							strMedDes=medication.MedName;
+						}
+						if(strMedDes==strMedCheck) {//if the patient has this med, "check the box"
+							eForm.ListEFormFields[i].ValueString="X";
+						}
+					}
 				}*/
-				//if(eForm.ListEFormFields[i].DbLink.StartsWith("med:")){
-				//	//get the checkbox med that we are looking at
-				//	string strMedCheck=eForm.ListEFormFields[i].DbLink.Substring(4);
-				//	for(int a=0;a<listMedicationPats.Count;a++){
-				//		Medication medication=Medications.GetMedication(listMedicationPats[a].MedicationNum);
-				//		string strMedDes=listMedicationPats[a].MedDescript;//used if this medicationPat came from an eRx or eForms import and medication is null
-				//		if(medication!=null){
-				//			strMedDes=medication.MedName;
-				//		}
-				//		if(strMedDes==strMedCheck) {//if the patient has this med, "check the box"
-				//			eForm.ListEFormFields[i].ValueString="X";
-				//		}
-				//	}
-				//}
 				if(eForm.ListEFormFields[i].DbLink=="MiddleI") {
 					eForm.ListEFormFields[i].ValueString=patient.MiddleI;
 				}

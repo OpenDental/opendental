@@ -728,7 +728,7 @@ namespace OpenDental {
 				butChangePat.Enabled=false;
 				return;
 			}
-			if(SheetCur.PatNum!=0 && !Security.IsAuthorized(EnumPermType.SheetDelete,SheetCur.DateTimeSheet,true,true,0,-1,SheetCur.SheetDefNum,0)) {
+			if(SheetCur.PatNum!=0 && !Security.IsAuthorized(EnumPermType.SheetDelete,SheetCur.DateTimeSheet,suppressMsgBox:true,suppressLockDateMessage:true,0,-1,SheetCur.SheetDefNum,0)) {
 				butDelete.Enabled=false;
 			}
 			if(SheetCur.IsDeleted && !IsStatement && !IsInTerminal) {
@@ -740,7 +740,7 @@ namespace OpenDental {
 				butAddField.Visible=false;
 			}
 			//from here on, only applies to existing sheets.
-			if(!Security.IsAuthorized(EnumPermType.SheetEdit,SheetCur.DateTimeSheet,false,false,0,-1,SheetCur.SheetDefNum,0)) {
+			if(!Security.IsAuthorized(EnumPermType.SheetEdit,SheetCur.DateTimeSheet,suppressMsgBox:false,suppressLockDateMessage:false,procCodeNum:0,procCodeFee:-1,SheetCur.SheetDefNum,fKey:0)) {
 				butSave.Visible=false;
 				panelMain.Enabled=false;
 				butOK.Enabled=false;
@@ -2080,8 +2080,6 @@ namespace OpenDental {
 				string signature=sigBox.GetSignature(keyData);
 				sheetField.DateTimeSig=DateTime.MinValue;
 				if(signature!="") {
-					//This line of code is more readable, but uses ternary operator
-					//field.FieldValue=(sigBox.GetSigIsTopaz()?1:0)+signature;
 					sheetField.FieldValue="0";
 					if(sigBox.GetSigIsTopaz()) {
 						sheetField.FieldValue="1";

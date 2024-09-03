@@ -110,6 +110,8 @@ namespace OpenDental {
 		public bool IsSetupMode;
 		///<summary>This is referenced extensively by the parent form. Items are sometimes changed directly, and sometimes converted to EFormFieldDefs, manipulated, and then converted back to EFormFields.</summary>
 		public List<EFormField> ListEFormFields;
+		///<summary>Stores the indices of all the EFormFields that are at the rightmost position of a horizontal stack.</summary>
+		public List<int> ListIndicesLastInHorizStack;
 		#endregion Fields - public
 
 		#region Fields - private
@@ -285,6 +287,22 @@ namespace OpenDental {
 					ListEFormFields[i].ValueString=textBox.Text;
 				}
 			}
+			//After pulling all other fields, we can pull signatures from sigboxes 
+			for(int i=0;i<ListEFormFields.Count;i++){
+				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
+					continue;
+				}
+				Grid gridForField=ListEFormFields[i].TagOD as Grid;
+				StackPanel stackPanel=gridForField.Children[1] as StackPanel;
+				WpfControls.UI.SignatureBoxWrapper signatureBoxWrapper=stackPanel.Children[1] as WpfControls.UI.SignatureBoxWrapper;
+				string keyData=EForms.GetSignatureKeyData(ListEFormFields);
+				string signature="0";
+				if(signatureBoxWrapper.GetSigIsTopaz()){
+					signature="1";
+				}
+				signature+=signatureBoxWrapper.GetSignature(keyData);
+				ListEFormFields[i].ValueString=signature;
+			}
 		}
 
 		///<summary>Will never be 0 because 1-based.</summary>
@@ -311,6 +329,7 @@ namespace OpenDental {
 		///<summary>Fixes stacking, clears the stackpanel, adds back all new fresh controls to the stackpanel, scrolls back to the same offset as before, reselects if one was selected.</summary>
 		public void RefreshLayout(){
 			FixAllStacking();
+			ListIndicesLastInHorizStack=new List<int>();
 			int idxSelected=-1;
 			if(_listSelectedIndices.Count==1){
 				idxSelected=_listSelectedIndices[0];
@@ -425,6 +444,16 @@ namespace OpenDental {
 				borderRightOfField.Tag=dragLocationRightOfField;
 				gridForField.Children.Add(borderRightOfField);
 				Grid.SetColumn(borderRightOfField,1);
+				if(dragLocationRightOfField.IsRightOfWrap
+					&& ListEFormFields[i].FieldType.In(
+						EnumEFormFieldType.TextField,
+						EnumEFormFieldType.DateField,
+						EnumEFormFieldType.Label,
+						EnumEFormFieldType.CheckBox
+						))//Field types that are not horiz stackable do not need to be added to the list as we already know they are alone in their own horiz stack
+				{
+					ListIndicesLastInHorizStack.Add(i);
+				}
 				if(i==ListEFormFields.Count-1//last row
 					|| !ListEFormFields[i+1].IsHorizStacking)//the next field is not horizontal stacking
 				{
@@ -438,7 +467,14 @@ namespace OpenDental {
 						//it's really above its corresponding wrap panel.
 						//But no point in refactoring to make that more obvious.
 						Border borderTopOfWrap=CreateBorderForDrop();
-						borderTopOfWrap.Height=_marginBelowFields;
+						double spaceBelow;
+						if(ListEFormFields[i].SpaceBelow==-1){
+							spaceBelow=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+						}
+						else{
+							spaceBelow=ListEFormFields[i].SpaceBelow;
+						}
+						borderTopOfWrap.Height=spaceBelow;
 						borderTopOfWrap.VerticalAlignment=VerticalAlignment.Bottom;
 						borderTopOfWrap.Margin=new Thickness(left:_marginLeftOfPage,0,right:_marginRightOfField,0);
 						DragLocation dragLocationTopOfWrap=new DragLocation();
@@ -1208,7 +1244,9 @@ namespace OpenDental {
 		}*/
 
 		private void CtrlEFormFill_Loaded(object sender,RoutedEventArgs e) {
-			_marginBelowFields=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			if(!DesignerProperties.GetIsInDesignMode(this)){
+				_marginBelowFields=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			}
 			if(!IsSetupMode){
 				return;
 			}
@@ -1920,12 +1958,31 @@ namespace OpenDental {
 				labelCondChild.Foreground=Brushes.Red;
 			}
 			stackPanel2.Children.Add(stackPanelLabel);
-			Rectangle rectangle=new Rectangle();
-			rectangle.Width=stackPanel2.Width;
-			rectangle.Height=150;
-			rectangle.Stroke=Brushes.Silver;
-			rectangle.StrokeThickness=1;
-			stackPanel2.Children.Add(rectangle);
+			if(IsSetupMode){
+				Rectangle rectangle=new Rectangle();
+				rectangle.HorizontalAlignment=HorizontalAlignment.Left;
+				rectangle.Width=362;
+				rectangle.Height=79;
+				rectangle.Stroke=Brushes.Silver;
+				rectangle.StrokeThickness=1;
+				stackPanel2.Children.Add(rectangle);
+			}
+			else{
+				WpfControls.UI.SignatureBoxWrapper signatureBoxWrapper=new WpfControls.UI.SignatureBoxWrapper();
+				signatureBoxWrapper.Width=362;
+				signatureBoxWrapper.Height=79;
+				string keyData=EForms.GetSignatureKeyData(ListEFormFields);
+				bool isSigTopaz=false;
+				string signature=eFormField.ValueString;
+				if(signature.Length>0){
+					if(signature.Substring(0,1)=="1"){
+						isSigTopaz=true;
+					}
+					signature=signature.Substring(1);
+				}
+				signatureBoxWrapper.FillSignature(isSigTopaz,keyData,signature);
+				stackPanel2.Children.Add(signatureBoxWrapper);
+			}			
 		}
 
 		private void AddTextBox(Grid gridForField,EFormField eFormField){

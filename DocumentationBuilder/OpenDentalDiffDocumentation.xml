@@ -151,13 +151,13 @@
       </Enumeration>
     </column>
     <column order="18" name="SpaceBelow" type="int(11)">
-      <summary></summary>
+      <summary>The amount of space below each field. Overrides the global default. -1 will indicate to use that default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
     </column>
     <column order="19" name="ReportableName" type="varchar(255)">
-      <summary></summary>
+      <summary>Allows reporting on fields that don't have DbLink.</summary>
     </column>
     <column order="20" name="IsLocked" type="tinyint(4)">
-      <summary></summary>
+      <summary>If a field is locked, it stops a patient from editing the text when presented to them. Example is a consent form.</summary>
     </column>
   </table>
   <table name="eformfielddef">
@@ -228,13 +228,13 @@
       </Enumeration>
     </column>
     <column order="16" name="SpaceBelow" type="int(11)">
-      <summary></summary>
+      <summary>The amount of space below each field. Overrides the global default. -1 will indicate to use that default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
     </column>
     <column order="17" name="ReportableName" type="varchar(255)">
-      <summary></summary>
+      <summary>Allows reporting on fields that don't have DbLink.</summary>
     </column>
     <column order="18" name="IsLocked" type="tinyint(4)">
-      <summary></summary>
+      <summary>If a field is locked, it stops a patient from editing the text when presented to them. Example is a consent form.</summary>
     </column>
   </table>
   <table name="eroutingaction">

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using OpenDentBusiness;
 using WpfControls.UI;
+using CodeBase;
 
 namespace OpenDental {
 	/// <summary></summary>
@@ -29,6 +31,7 @@ namespace OpenDental {
 		public FrmEFormFillEdit() {
 			InitializeComponent();
 			Load+=FrmEFormFillEdit_Load;
+			FormClosing+=FrmEFormFillEdit_FormClosing;
 		}
 		#endregion Constructor
 
@@ -40,6 +43,21 @@ namespace OpenDental {
 			_maskedSSNOld=EFormCur.ListEFormFields.Find(x=>x.DbLink=="SSN")?.ValueString;//null is ok
 			textDescription.Text=EFormCur.Description;
 			textDateTime.Text=EFormCur.DateTimeShown.ToShortDateString()+" "+EFormCur.DateTimeShown.ToShortTimeString();
+			bool isSigned=false;
+			for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
+				if(EFormCur.ListEFormFields[i].FieldType.In(EnumEFormFieldType.SigBox)
+					&& EFormCur.ListEFormFields[i].ValueString.Length>1) 
+				{
+					isSigned=true;
+					break;
+				}
+			}
+			if(isSigned) {
+				ctrlEFormFill.IsEnabled=false;
+			}
+			else{
+				butUnlock.Visible=false;
+			}
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -74,9 +92,43 @@ namespace OpenDental {
 		private void butPrint_Click(object sender,EventArgs e) {
 			
 		}
+
+		private void butUnlock_Click(object sender,EventArgs e) {
+			ctrlEFormFill.IsEnabled=true;
+			butUnlock.Visible=false;
+		}
+
+		private void FrmEFormFillEdit_FormClosing(object sender,CancelEventArgs e) {
+			for(int i=0;i<EFormCur.ListEFormFields.Count;i++){
+				if(EFormCur.ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
+					continue;
+				}
+				System.Windows.Controls.Grid gridForField=EFormCur.ListEFormFields[i].TagOD as System.Windows.Controls.Grid;
+				System.Windows.Controls.StackPanel stackPanel=gridForField.Children[1] as System.Windows.Controls.StackPanel;
+				SignatureBoxWrapper signatureBoxWrapper=stackPanel.Children[1] as SignatureBoxWrapper;
+				signatureBoxWrapper?.SetTabletState(0);
+			}
+		}
 		#endregion Methods - event handlers
 
 		#region Methods - private
+//todo: This will be called each time we change any field
+		private void ClearSigs(){
+			for(int i=0;i<EFormCur.ListEFormFields.Count;i++){
+				if(EFormCur.ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
+					continue;
+				}
+				//todo:
+				//When any field values change, the user is purposefully "invalidating" the old signature. They can resign.
+				//But maybe only clear it if it was signed when this form was opened.
+				//If it was unsigned when opened, they should be able to sign in any order.
+				//Or if they signed it again since opening, that should count too.
+				//So maybe the boolean should be if it was signed this session.
+				//Use event, and use FrmCommItem as an example.
+				//sigBox.ClearSignature(clearTopazTablet:false);
+			}
+		}
+
 		///<summary>If an error won't allow, then it shows a MsgBox and then returns false.</summary>
 		private bool TryToSaveData() {
 			DateTime dateTimeShown=DateTime.MinValue;
@@ -116,15 +168,12 @@ namespace OpenDental {
 				ctrlEFormFill.SetVisibilities(eFormValidation.PageNum);
 				return false;
 			}
-			if(!TryToSaveData()) {//This method never returns false.
+			if(!TryToSaveData()) {
 				return false;
 			}
 			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,"EForm: "+EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
 			return true;
 		}
-
 		#endregion Methods - private
-
-
 	}
 }

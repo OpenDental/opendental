@@ -28,6 +28,8 @@ namespace OpenDental {
 		public List<EFormField> _listEFormFields;
 		///<summary></summary>
 		public bool IsPreviousStackable;
+		///<summary>If set to true, then this field can have "space below" set.</summary>
+		public bool IsLastInHorizStack;
 		private string _openingBracket;
 
 		///<summary></summary>
@@ -59,13 +61,19 @@ namespace OpenDental {
 			for(int i=0;i<listStaticTextFields.Count;i++) {
 				listBoxFields.Items.Add(listStaticTextFields[i].ToString());
 			}
-			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
-			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
-			if(EFormFieldCur.SpaceBelow==-1){
-				textSpaceBelow.Text="";
+			if(IsLastInHorizStack){
+				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+				labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+				if(EFormFieldCur.SpaceBelow==-1){
+					textSpaceBelow.Text="";
+				}
+				else{
+					textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+				}
 			}
 			else{
-				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+				labelSpaceDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
+				textSpaceBelow.IsEnabled=false;
 			}
 			LayoutToolBar();
 		}
