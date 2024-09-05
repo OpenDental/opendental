@@ -637,11 +637,19 @@ namespace OpenDental.UI {
 			}
 			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoWrap);
 			stringFormat.LineAlignment=StringAlignment.Center;
+			string txtShow="";
+			try{
+				txtShow=GetDisplayText(widthMax);
+				//B53988 blind fix attempt for out of range error.
+			}
+			catch{
+				return;
+			}
 			if(Enabled){
-				g.DrawString(GetDisplayText(widthMax),this.Font,Brushes.Black,rectangleFString,stringFormat);//in combobox
+				g.DrawString(txtShow,this.Font,Brushes.Black,rectangleFString,stringFormat);//in combobox
 			}
 			else{
-				g.DrawString(GetDisplayText(widthMax),this.Font,_brushDisabledText,rectangleFString,stringFormat);//in combobox
+				g.DrawString(txtShow,this.Font,_brushDisabledText,rectangleFString,stringFormat);//in combobox
 			}
 		}
 
@@ -782,7 +790,9 @@ namespace OpenDental.UI {
 				}
 				return _clinicSelectedNoPermission.Abbr;
 			}
-			if(_listIndicesSelected.Count==0){
+			if(_listIndicesSelected.Count==0 
+				|| _listClinics.Count==0)//B53988 blind fix attempt for out of range error.
+			{
 				return "";
 			}
 			if(_listIndicesSelected.Contains(0) && _listClinics[0].ClinicNum==CLINIC_NUM_ALL){

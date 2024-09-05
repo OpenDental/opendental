@@ -928,9 +928,16 @@ namespace CodeBase {
 			MessageBox.Show(response);
 		}
 
-		///<summary>Calls the ImportFile method on the CloudClient. Splits the response string received into file name and data. Writes a new file to the FileTransferTempPath and returns the path string of the newly written file.</summary>
+		///<summary>Calls the ImportFile method on the CloudClient. Splits the response string received into file name and data. Writes a new file to the FileTransferTempPath and returns the path string of the newly written file. Returns blank if file was not created for any reason.</summary>
 		public static string ImportFileForCloud() {
-			string importFile=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ImportFile,timeoutSecs:120);
+			string importFile="";
+			try {
+				importFile=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ImportFile,timeoutSecs:120);
+			}
+			catch(ODException odEx) {
+				MessageBox.Show(odEx.Message);
+				return "";
+			}
 			if(importFile.IsNullOrEmpty()){
 				return "";
 			}
