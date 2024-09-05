@@ -551,7 +551,9 @@ Here is the desired behavior:
 				WpfControls.UI.UnmountedObj unmountedObj=new WpfControls.UI.UnmountedObj();
 				unmountedObj.MountItem_=_listMountItems[i];
 				unmountedObj.Document_=_documentArrayShowing[i];//could be null
-				unmountedObj.SetBitmap(_bitmapArrayShowing[i]);//could be null
+				if(_bitmapArrayShowing[i]!=null) {//could be null
+					unmountedObj.SetBitmap(_bitmapArrayShowing[i]);
+				}
 				listUnmountedObjs.Add(unmountedObj);
 			}
 			return listUnmountedObjs;

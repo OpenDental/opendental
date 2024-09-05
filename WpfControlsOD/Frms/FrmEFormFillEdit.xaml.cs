@@ -20,8 +20,7 @@ namespace OpenDental {
 		#region Fields
 		///<summary>This is the object we are editing.</summary>
 		public EForm EFormCur;
-		//<summary>All the fields for this eForm. We could have instead used the list attached to the EForm, but using a separate list like this as soon as we are able matches all our existing patterns better. If we are comming from Patient Forms and clicked "Add EForm", this list is referenced from there and EFormCur.ListEFormFields will have the same list. If we double click on an exisiting eForm, this list will be fields from the database.</summary>
-		//public List<EFormField> ListEFormFields;
+		private bool _isLoaded;
 		///<summary>Used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.</summary>
 		private string _maskedSSNOld;
 		#endregion Fields
@@ -31,6 +30,7 @@ namespace OpenDental {
 		public FrmEFormFillEdit() {
 			InitializeComponent();
 			Load+=FrmEFormFillEdit_Load;
+			SizeChanged+=FrmEFormFillEdit_SizeChanged;
 			FormClosing+=FrmEFormFillEdit_FormClosing;
 		}
 		#endregion Constructor
@@ -53,11 +53,24 @@ namespace OpenDental {
 				}
 			}
 			if(isSigned) {
-				ctrlEFormFill.IsEnabled=false;
+				ctrlEFormFill.IsReadOnly=true;
 			}
 			else{
 				butUnlock.Visible=false;
 			}
+			_isLoaded=true;
+		}
+
+		private void FrmEFormFillEdit_SizeChanged(object sender,System.Windows.SizeChangedEventArgs e) {
+			if(!_isLoaded){
+				return;
+			}
+			ctrlEFormFill.FillFieldsFromControls();
+			ctrlEFormFill.RefreshLayout();
+			//The one thing this doesn't do perfectly is
+			//if already signed in this session, then size changed, then change text,
+			//signature disappears when it shouldn't. 
+			//I can live with that. User can just sign again. Why would they be resizing that much anyway?
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -94,7 +107,8 @@ namespace OpenDental {
 		}
 
 		private void butUnlock_Click(object sender,EventArgs e) {
-			ctrlEFormFill.IsEnabled=true;
+			//this button will not be needed in the eClipboard
+			ctrlEFormFill.IsReadOnly=false;
 			butUnlock.Visible=false;
 		}
 

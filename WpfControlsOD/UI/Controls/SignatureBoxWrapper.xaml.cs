@@ -65,7 +65,7 @@ How to use the SignatureBoxWrapper control:
 			signatureBoxWrapper.FillSignature(sigIsTopaz, keyData, signature);
 		}
 
-		///<summary>This can be used to determine whether the signature has changed since the control was created.  It is, however, preferrable to have the parent form use the SignatureChanged event to track changes.</summary>
+		///<summary>This can be used to determine whether the signature has changed since the control was created.  Or you can use the SignatureChanged event to track changes.</summary>
 		public bool GetSigChanged(){
 			return signatureBoxWrapper.GetSigChanged();
 		}

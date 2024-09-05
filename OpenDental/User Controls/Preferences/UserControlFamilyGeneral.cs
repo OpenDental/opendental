@@ -111,6 +111,9 @@ namespace OpenDental {
 			if(!PrefC.GetBool(PrefName.ShowFeatureSuperfamilies)) {//Keep if here so values only get set to prefName values upon FillFamilyGeneral()
 				groupBoxSuperFamily.Visible=false;
 			}
+			if(CultureInfo.CurrentCulture.Name!="en-US") {
+				checkAddressVerifyWithUSPS.Visible=false;
+			}
 			//always set superFamily controls in case groupBox becomes visible after formPreferences is first opened
 			foreach(SortStrategy option in Enum.GetValues(typeof(SortStrategy))) {
 				comboSuperFamSort.Items.Add(option.GetDescription());

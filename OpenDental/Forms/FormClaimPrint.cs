@@ -111,6 +111,15 @@ namespace OpenDental{
 				ODprintout.CurPrintout.PrintDoc.PrinterSettings=printerSettings;
 				ODprintout.CurPrintout.PrintDoc.DefaultPageSettings=pageSettings;
 				ODprintout.CurPrintout.PrintDoc.OriginAtMargins=isOriginAtMargins??ODprintout.CurPrintout.PrintDoc.OriginAtMargins;
+				Printer printer=Printers.GetFirstOrDefault(x => x.PrintSit==printSituation);
+				if(printer==null) {//if printer is not set for situation, use default
+					printer=Printers.GetFirstOrDefault(x => x.PrintSit==PrintSituation.Default);
+				}
+				if(printer!=null && printer.IsVirtualPrinter) {
+					//The user wants to print another document, come up with a new file name so that we don't overwrite the previous file.
+					string printFileName=PrinterL.GetFilePrinterPath(printer);
+					ODprintout.CurPrintout.PrintDoc.PrinterSettings.PrintFileName=printFileName;
+				}
 				return ODprintout.CurPrintout.TryPrint();
 			}
 			return PrinterL.TryPrint(ODprintout.CurPrintout);

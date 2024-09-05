@@ -142,7 +142,12 @@ namespace OpenDental {
 				return;
 			}
 			List<Child> listChildrenSelected=listBoxAbsent.GetListSelected<Child>();
+			List<string> listChildNamesNoPrimary=new List<string>();
 			for(int i=0;i<listChildrenSelected.Count;i++) {
+				if(listChildrenSelected[i].ChildRoomNumPrimary==0) {
+					listChildNamesNoPrimary.Add(listChildrenSelected[i].FName);
+					continue;//Children with no primary room will remain in the checked out listbox
+				}
 				//In case someone using the map checks in the child right before the parent attempts to
 				List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(listChildrenSelected[i].ChildNum,DateTime.Now);
 				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
@@ -158,6 +163,11 @@ namespace OpenDental {
 			Signalods.SetInvalid(InvalidType.Children);
 			//Refresh to show changes
 			FillListBoxes();
+			if(listChildNamesNoPrimary.Count!=0) {
+				MsgBox.Show("The following children have no primary room set: "
+					+string.Join(", ",listChildNamesNoPrimary)
+					+". Ask the front desk employee for help.");
+			}
 		}
 
 		private void butCheckOut_Click(object sender,EventArgs e) {

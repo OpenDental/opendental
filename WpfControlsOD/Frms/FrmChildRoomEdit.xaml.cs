@@ -93,6 +93,7 @@ namespace OpenDental {
 				ChildRoomLogs.Insert(childRoomLog);
 				Signalods.SetInvalid(InvalidType.Children);
 			}
+			Signalods.SetInvalid(InvalidType.Children);
 			IsDialogOK=true;
 		}
 

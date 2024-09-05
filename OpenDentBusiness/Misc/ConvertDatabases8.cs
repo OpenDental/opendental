@@ -1892,5 +1892,13 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End S53342
 		}//End of 24_2_23
+
+		private static void To24_2_26() {
+			if(!CultureInfo.CurrentCulture.Name.EndsWith("US")) {
+				//Bug fix for B55924
+				string command="UPDATE preference SET ValueString=0 WHERE ValueString=1 AND PrefName='AddressVerifyWithUSPS'";
+				Db.NonQ(command);
+			}//End of 24_2_26
+		}
 	}
 }

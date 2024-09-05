@@ -220,10 +220,12 @@ namespace OpenDentBusiness{
 					smsFromMobile.CommlogNum=Commlogs.Insert(commlog);
 				}
 				Insert(smsFromMobile);
-				//Alert ODMobile where applicable.
-				PushNotificationUtils.ODM_NewTextMessage(smsFromMobile,smsFromMobile.PatNum);
-				//This is a workaround due to android push notifications no longer being supported for xamarin. Will only notify android users when ODMobile is running.
-				MobileNotifications.ODM_NewTextMessage(smsFromMobile,smsFromMobile.PatNum);
+				if(MobileAppDevices.IsClinicSignedUpForMobileWeb(smsFromMobile.ClinicNum)){//Check if clinic is signed up for ODMobile, and if so, send notifications.
+					//Alert ODMobile where applicable.
+					PushNotificationUtils.ODM_NewTextMessage(smsFromMobile,smsFromMobile.PatNum);
+					//This is a workaround due to android push notifications no longer being supported for xamarin. Will only notify android users when ODMobile is running.
+					MobileNotifications.ODM_NewTextMessage(smsFromMobile,smsFromMobile.PatNum);
+				}
 			}
 			//We used to update the SmsNotification indicator via a queries and a signal here.  Now managed by the eConnector.
 		}

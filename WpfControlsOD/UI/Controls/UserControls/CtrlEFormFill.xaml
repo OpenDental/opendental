@@ -13,6 +13,7 @@
 			<ScrollViewer Name="scrollViewer" x:FieldModifier="internal" VerticalScrollBarVisibility="Visible"  HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,30" Focusable="False">
 				<StackPanel Name="stackPanel" x:FieldModifier="internal" Focusable="True"/>
 			</ScrollViewer>
+			<Rectangle x:Name="rectangleBlocker" Fill="Transparent" Visibility="Collapsed" Margin="0,0,0,30" IsHitTestVisible="True"/>
 			<Border BorderBrush="Silver" BorderThickness="0,1,0,0" VerticalAlignment="Bottom" Height="30"/>
 			<Border x:Name="borderSelect" BorderBrush="Blue" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,40,0,0" Width="100" Height="80"/>
 			<ui:Button x:Name="butPrevious" Width="75" VerticalAlignment="Bottom" Height="24" Margin="2,0,0,2" Text="Previous" Click="butPrevious_Click" />

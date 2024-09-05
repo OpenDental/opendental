@@ -7,10 +7,9 @@ namespace OpenDental {
 		#region Fields
 		public System.Windows.Forms.RadioButton radioHuman;
 		public System.Windows.Forms.TextBox textTitle;
-		private System.ComponentModel.Container components = null;// Required designer variable.
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butCopy;
-		private OpenDental.UI.Button butExport;
+		private OpenDental.UI.Button butExportTxt;
 		private OpenDental.UI.Button butFavorite;
 		private OpenDental.UI.Button butPaste;
 		private OpenDental.UI.Button butPrint;
@@ -30,6 +29,7 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormUserQuery));
 			this.butPaste = new OpenDental.UI.Button();
 			this.butCopy = new OpenDental.UI.Button();
@@ -48,7 +48,7 @@ namespace OpenDental {
 			this.printPreviewDialog2 = new System.Windows.Forms.PrintPreviewDialog();
 			this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
 			this.butPrint = new OpenDental.UI.Button();
-			this.butExport = new OpenDental.UI.Button();
+			this.butExportTxt = new OpenDental.UI.Button();
 			this.butPrintPreview = new OpenDental.UI.Button();
 			this.textQuery = new OpenDental.ODcodeBox();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -61,6 +61,8 @@ namespace OpenDental {
 			this.splitContainer = new OpenDental.UI.SplitContainer();
 			this.splitterPanel1 = new OpenDental.UI.SplitterPanel();
 			this.splitterPanel2 = new OpenDental.UI.SplitterPanel();
+			this.butExportCsv = new OpenDental.UI.Button();
+			this.toolTipExport = new System.Windows.Forms.ToolTip(this.components);
 			this.groupBox1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.splitContainer.SuspendLayout();
@@ -228,24 +230,24 @@ namespace OpenDental {
 			this.butPrint.Text = "&Print";
 			this.butPrint.Click += new System.EventHandler(this.butPrint_Click);
 			// 
-			// butExport
+			// butExportTxt
 			// 
-			this.butExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butExport.Image = global::OpenDental.Properties.Resources.butExport;
-			this.butExport.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butExport.Location = new System.Drawing.Point(1118, 689);
-			this.butExport.Name = "butExport";
-			this.butExport.Size = new System.Drawing.Size(79, 24);
-			this.butExport.TabIndex = 14;
-			this.butExport.Text = "&Export";
-			this.butExport.Click += new System.EventHandler(this.butExport_Click);
+			this.butExportTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butExportTxt.Image = global::OpenDental.Properties.Resources.butExport;
+			this.butExportTxt.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butExportTxt.Location = new System.Drawing.Point(1114, 690);
+			this.butExportTxt.Name = "butExportTxt";
+			this.butExportTxt.Size = new System.Drawing.Size(83, 24);
+			this.butExportTxt.TabIndex = 14;
+			this.butExportTxt.Text = "Export .&txt";
+			this.butExportTxt.Click += new System.EventHandler(this.butExportTxt_Click);
 			// 
 			// butPrintPreview
 			// 
 			this.butPrintPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrintPreview.Image = global::OpenDental.Properties.Resources.butPreview;
 			this.butPrintPreview.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrintPreview.Location = new System.Drawing.Point(1018, 690);
+			this.butPrintPreview.Location = new System.Drawing.Point(919, 690);
 			this.butPrintPreview.Name = "butPrintPreview";
 			this.butPrintPreview.Size = new System.Drawing.Size(94, 24);
 			this.butPrintPreview.TabIndex = 16;
@@ -387,13 +389,26 @@ namespace OpenDental {
 			this.splitterPanel2.Size = new System.Drawing.Size(1274, 412);
 			this.splitterPanel2.TabIndex = 14;
 			// 
+			// butExportCsv
+			// 
+			this.butExportCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butExportCsv.Image = global::OpenDental.Properties.Resources.butExport;
+			this.butExportCsv.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butExportCsv.Location = new System.Drawing.Point(1019, 690);
+			this.butExportCsv.Name = "butExportCsv";
+			this.butExportCsv.Size = new System.Drawing.Size(89, 24);
+			this.butExportCsv.TabIndex = 19;
+			this.butExportCsv.Text = "Export .&csv";
+			this.butExportCsv.Click += new System.EventHandler(this.butExportCsv_Click);
+			// 
 			// FormUserQuery
 			// 
 			this.ClientSize = new System.Drawing.Size(1276, 720);
+			this.Controls.Add(this.butExportCsv);
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.butPrintPreview);
 			this.Controls.Add(this.butPrint);
-			this.Controls.Add(this.butExport);
+			this.Controls.Add(this.butExportTxt);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormUserQuery";
 			this.Text = "User Query";
@@ -434,5 +449,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelPrintOrientation;
 		private System.Windows.Forms.RadioButton radioPortrait;
 		private System.Windows.Forms.RadioButton radioLandscape;
+		private UI.Button butExportCsv;
+		private System.Windows.Forms.ToolTip toolTipExport;
+		private System.ComponentModel.IContainer components;
 	}
 }

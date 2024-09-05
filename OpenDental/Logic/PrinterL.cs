@@ -295,12 +295,11 @@ namespace OpenDental {
 			return true;
 		}
 
-		private static string GetFilePrinterPath(Printer printer){
+		public static string GetFilePrinterPath(Printer printer){
 			if(!printer.IsVirtualPrinter){
 				return "";
 			}
 			string aToZFullPath=ODFileUtils.RemoveTrailingSeparators(ImageStore.GetPreferredAtoZpath());
-			string aToZDirectory=aToZFullPath.Substring(aToZFullPath.LastIndexOf(Path.DirectorySeparatorChar)+1);
 			return Path.Combine(aToZFullPath,DateTime.Now.ToString("MM_dd_yy_H_mm_ss_fff")+"."+printer.FileExtension);
 		}
 

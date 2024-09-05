@@ -97,10 +97,7 @@ https://www.youtube.com/watch?v=4V-wbDuVtFg
 Ours are similar.
 
 Next:
-Locking an EForm should not make it dim and should not disable nav buttons.
-ClearSigs whenever we change a field
 Permission to edit complete EForm, use Sheet permission?
-Required fields never actually got implemented
 When filling forms, changing window width does not perform another layout.
 Enhance FormWebForms to include eForms
 Slight enhancements to FormPatientPickWebForm for wording

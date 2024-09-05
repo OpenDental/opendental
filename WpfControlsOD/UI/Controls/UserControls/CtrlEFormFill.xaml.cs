@@ -132,6 +132,8 @@ namespace OpenDental {
 		private bool _isDraggingSelector;
 		///<summary>We must combine this class level field with Mouse.LeftButton==MouseButtonState.Pressed to avoid two different edge case bugs. Using _isMouseDown prevents bug in following scenario: a combobox above this control has a dropdown that user clicks on. This causes the dropdown to close, triggering a mouse move in here while mouse is still down. Using _isMouseDown lets us ignore this because we didn't actually mouse down in here.</summary>
 		private bool _isMouseDown;
+		///<summary>Property backer</summary>
+		private bool _isReadOnly;
 		///<summary>This is a list of the borders that are used for drag drop.</summary>
 		private List<Border> _listBordersDrops=new List<Border>();
 		///<summary>This is the only internal storage for tracking selected indices. Not guaranteed to be ordered least to greatest.</summary>
@@ -176,6 +178,24 @@ namespace OpenDental {
 		#endregion Events
 
 		#region Properties
+		///<summary>This isn't used in setup mode. Nav buttons will still work.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool IsReadOnly { 
+			get{
+				return _isReadOnly;
+			}
+			set{
+				_isReadOnly=value;
+				if(_isReadOnly){
+					rectangleBlocker.Visibility=Visibility.Visible;
+				}
+				else{
+					rectangleBlocker.Visibility=Visibility.Collapsed;
+				}
+			}
+		} 
+
 		///<summary>Gets or sets the selected indices.</summary>
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1421,6 +1441,7 @@ namespace OpenDental {
 			checkBox.Click+=(sender,e)=> {
 				FillFieldsFromControls(eFormField);
 				SetVisibilities(_pageShowing,forceRefresh:true);
+				ClearSignatures();
 			};
 		}
 
@@ -1477,6 +1498,7 @@ namespace OpenDental {
 			textVDate.Height=18;
 			textVDate.Text=eFormField.ValueString;
 			textVDate.FontSize=FontSize*eFormField.FontScale/100;
+			textVDate.TextChanged+=(sender,e)=>ClearSignatures();
 			stackPanel2.Children.Add(textVDate);
 		}
 
@@ -1529,6 +1551,7 @@ namespace OpenDental {
 				paragraph.Inlines.Add(runCondChild);
 			}
 			textRich.richTextBox.Document=flowDocument;
+			textRich.TextChanged+=(sender,e)=>ClearSignatures();
 		}
 
 		private void AddMedicationList(Grid gridForField,EFormField eFormField) {
@@ -1702,12 +1725,14 @@ namespace OpenDental {
 				textBoxMed.Width=widthCol1;
 				textBoxMed.Text=listEFormMeds[i].MedName;
 				textBoxMed.FontSize=fontSize;
+				textBoxMed.TextChanged+=(sender,e)=>ClearSignatures();
 				Grid.SetRow(textBoxMed,i+1);
 				WpfControls.UI.TextBox textBoxFreq=new WpfControls.UI.TextBox();
 				gridMeds.Children.Add(textBoxFreq);
 				textBoxFreq.Width=widthCol2;
 				textBoxFreq.Text=listEFormMeds[i].StrengthFreq;
 				textBoxFreq.FontSize=fontSize;
+				textBoxFreq.TextChanged+=(sender,e)=>ClearSignatures();
 				Grid.SetRow(textBoxFreq,i+1);
 				Grid.SetColumn(textBoxFreq,1);
 				WpfControls.UI.Button buttonDelete=new WpfControls.UI.Button();
@@ -1904,6 +1929,7 @@ namespace OpenDental {
 				radioButton.Click+=(sender,e)=>{
 					FillFieldsFromControls(eFormField);
 					SetVisibilities(_pageShowing,forceRefresh:true);
+					ClearSignatures();
 				};
 				wrapPanelRadio.Children.Add(radioButton);
 			}
@@ -2043,7 +2069,25 @@ namespace OpenDental {
 			}
 			textBox.Text=eFormField.ValueString;
 			textBox.FontSize=FontSize*eFormField.FontScale/100;
+			textBox.TextChanged+=(sender,e)=>ClearSignatures();
 			stackPanel2.Children.Add(textBox);
+		}
+
+		private void ClearSignatures() {
+			for(int i=0;i<ListEFormFields.Count;i++){
+				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
+					continue;
+				}
+				Grid gridForField=ListEFormFields[i].TagOD as Grid;
+				StackPanel stackPanel=gridForField.Children[1] as StackPanel;
+				WpfControls.UI.SignatureBoxWrapper signatureBoxWrapper=stackPanel.Children[1] as WpfControls.UI.SignatureBoxWrapper;
+				if(signatureBoxWrapper.GetSigChanged()){
+					//if the user already signed during this session, then they don't want to clear it again.
+				}
+				else{
+					signatureBoxWrapper.ClearSignature();
+				}
+			}
 		}
 
 		///<summary>Creates a new border, sets some values, and adds it to _listBordersDrops.</summary>

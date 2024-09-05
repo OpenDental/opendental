@@ -4981,9 +4981,9 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="FormType" type="tinyint(4)">
-      <summary>Enum:EnumEFormType 0=None, 1=PatientForm, 2=MedicalHistory, 3=Consent.</summary>
+      <summary>Enum:EnumEFormType 0=PatientForm, 1=MedicalHistory, 2=Consent. This doesn't actually do anything, and all fields are available for all types, but that might eventually change if more types are added.</summary>
       <Enumeration name="EnumEFormType">
-        <summary>Different types of EForms that can be used. They don't actually do anything, and all fields are available from all types, but that might eventually change if more types are added.</summary>
+        <summary>Different types of EForms that can be used.</summary>
         <EnumValue name="PatientForm">0 - Includes patient information and insurance information.</EnumValue>
         <EnumValue name="MedicalHistory">1 - </EnumValue>
         <EnumValue name="Consent">2 - .</EnumValue>
@@ -5008,9 +5008,9 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="FormType" type="tinyint(4)">
-      <summary>Enum:EnumEFormType 0=None, 1=PatientForm, 2=MedicalHistory, 3=Consent.</summary>
+      <summary>Enum:EnumEFormType 0=PatientForm, 1=MedicalHistory, 2=Consent. This doesn't actually do anything, and all fields are available for all types, but that might eventually change if more types are added.</summary>
       <Enumeration name="EnumEFormType">
-        <summary>Different types of EForms that can be used. They don't actually do anything, and all fields are available from all types, but that might eventually change if more types are added.</summary>
+        <summary>Different types of EForms that can be used.</summary>
         <EnumValue name="PatientForm">0 - Includes patient information and insurance information.</EnumValue>
         <EnumValue name="MedicalHistory">1 - </EnumValue>
         <EnumValue name="Consent">2 - .</EnumValue>
@@ -5053,7 +5053,7 @@
     </column>
     <column order="6" name="ValueString" type="text">
       <summary>The data as entered by patient or pulled from the db. We do not need this in EFormFieldDef because that has no patient or db data. Used differently for different types:
-            TextField: value in textBox. For allergiesOther, medsOther, and problemsOther, this is a comma-delimited list. Spaces by commas are ok. Like this: "Aspirin, Iodine, Latex"Label: Not used because no patient input.DateField: date in culture format, like 4/25/2024.Checkbox: "X" or blank "".RadioButton: String value chosen by patient. Pulled from PickListDb, not PickListVis. When importing, empty signifies that patient did not enter any choice, so do not import.ComboBox (not yet added): String value chosen by patient.SigBox: Just the raw drawing info. Example: 45,68;48,70;49,72;0,0;55,88;etc. It's simply a sequence of points, separated by semicolons. 0,0 represents pen up. Same format as used for all signatures in OD, but here we do not subsequently encrypt based on a hash of data. Does not get imported.MedicationList: This holds a list of EFormMed objects, serialized as json.</summary>
+            TextField: value in textBox. For allergiesOther, medsOther, and problemsOther, this is a comma-delimited list. Spaces by commas are ok. Like this: "Aspirin, Iodine, Latex"Label: Not used because no patient input.DateField: date in culture format, like 4/25/2024.Checkbox: "X" or blank "".RadioButton: String value chosen by patient. Pulled from PickListDb, not PickListVis. When importing, empty signifies that patient did not enter any choice, so do not import.ComboBox (not yet added): String value chosen by patient.SigBox: First char is 0 for our sigbox and 1 for Topaz. The remainder is the signature string. See OpenDentBusiness\UI\SignatureBoxWrapper.cs for details. Same format as used for all signatures in OD. Does not get imported.MedicationList: This holds a list of EFormMed objects, serialized as json.</summary>
     </column>
     <column order="7" name="ItemOrder" type="int(11)">
       <summary>0 based.</summary>

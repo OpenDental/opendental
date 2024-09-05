@@ -57,7 +57,12 @@ namespace OpenDental {
 			}
 			List<Child> listChildren=listBoxChildren.GetListSelected<Child>();
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllChildrenForDate(DateTime.Now.Date);
+			List<string> listChildNamesNoPrimary=new List<string>();
 			for(int i=0;i<listChildren.Count;i++) {
+				if(listChildren[i].ChildRoomNumPrimary==0) {
+					listChildNamesNoPrimary.Add(listChildren[i].FName);
+					continue;//Children with no primary room will remain in the checked out listbox
+				}
 				//Create leaving entry if needed
 				List<ChildRoomLog> listChildRoomLogsOneChild=listChildRoomLogs.FindAll(x => x.ChildNum==listChildren[i].ChildNum);
 				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogsOneChild);
@@ -71,9 +76,14 @@ namespace OpenDental {
 				ChildRoomLogs.Insert(childRoomLog);
 			}
 			string msg="Checked in: ";
-			msg+=string.Join(", ",listChildren.Select(x => x.FName));
+			msg+=string.Join(", ",listChildren.FindAll(x => x.ChildRoomNumPrimary!=0).Select(y => y.FName));
 			MsgBox.Show(msg);
 			Signalods.SetInvalid(InvalidType.Children);
+			if(listChildNamesNoPrimary.Count!=0) {
+				MsgBox.Show("The following children have no primary room set: "
+					+string.Join(", ",listChildNamesNoPrimary)
+					+". Ask the front desk employee for help.");
+			}
 			IsDialogOK=true;
 		}
 

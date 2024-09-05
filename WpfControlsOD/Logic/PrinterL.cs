@@ -11,6 +11,7 @@ using OpenDental;
 using OpenDentBusiness;
 using OpenDental.Drawing;
 using CodeBase;//for PrintoutErrorCode
+using System.IO;
 
 namespace WpfControls {
 //Jordan is the only one allowed to edit this file.
@@ -91,6 +92,14 @@ then change:
 				message+="\r\n"+Lang.g(nameof(PrinterL),"If you do have a printer installed, restarting the workstation may solve the problem.");
 			}
 			return message;
+		}
+
+		public static string GetFilePrinterPath(Printer printer){
+			if(!printer.IsVirtualPrinter){
+				return "";
+			}
+			string aToZFullPath=ODFileUtils.RemoveTrailingSeparators(ImageStore.GetPreferredAtoZpath());
+			return Path.Combine(aToZFullPath,DateTime.Now.ToString("MM_dd_yy_H_mm_ss_fff")+"."+printer.FileExtension);
 		}
 
 		///<summary>Launches FormPrintPreview for the given printDoc.  Returns true if dialog result was OK; Otherwise false.</returns>
