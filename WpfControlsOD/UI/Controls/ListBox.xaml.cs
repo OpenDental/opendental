@@ -361,6 +361,9 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				SetColors();
 				return;//don't deselect anything, but preserve the clicked index in case they drag up
 			}
+			if(_mouseDownIndex<0) {//If they clicked slightly below the items in the listbox, stop them from de-selecting an index.
+				return;
+			}
 			_listSelectedOrig=new List<int>(_listSelectedIndices);//for both multi and single, we need to remember this
 			if(SelectionMode==SelectionMode.MultiExtended) {
 				CalcSelectedIndices();

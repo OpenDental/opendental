@@ -74,8 +74,8 @@ namespace OpenDental {
 			}
 			catch(Exception ex) {
 				webBrowserWiki.DocumentText="";
-				if(MessageBox.Show(this,Lan.g(this,"This page is broken and cannot be viewed.  Error message:")+" "+ex.Message
-					+"\r\n\r\n"+Lan.g(this,"Would you like to edit this wiki page?"),
+				FriendlyException.Show("This page is broken and cannot be viewed.",ex);
+				if(MessageBox.Show(this,Lan.g(this,"Would you like to edit this wiki page?"),
 					Lan.g(this,"Wiki page content error"),MessageBoxButtons.YesNo)==DialogResult.No)
 				{
 					return;
