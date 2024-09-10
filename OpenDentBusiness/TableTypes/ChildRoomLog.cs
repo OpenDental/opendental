@@ -26,7 +26,7 @@ namespace OpenDentBusiness{
 		public long ChildRoomNum;
 		///<summary>Tracks when an allowed ratio has been changed for a room. This stores the new allowed ratio.</summary>
 		public double RatioChange;
-		
+
 		public ChildRoomLog Copy(){
 			return (ChildRoomLog)this.MemberwiseClone();
 		}

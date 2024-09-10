@@ -3304,8 +3304,9 @@ namespace OpenDentBusiness {
 		///<summary>Converts a date to an age. If age is over 115, then returns 0.</summary>
 		public static int DateToAge(DateTime date){
 			//No need to check MiddleTierRole; no call to db.
-			if(date.Year<1880)
+			if(date.Year<1880){
 				return 0;
+			}
 			if(date.Month < DateTime.Now.Month){//birthday in previous month
 				return DateTime.Now.Year-date.Year;
 			}

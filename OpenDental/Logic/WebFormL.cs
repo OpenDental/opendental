@@ -395,7 +395,10 @@ namespace OpenDental {
 				}
 				// Only prompt the user if this is a new name/birthday combo
 				if(lastActionChosen==null) {
-					using FormPatientPickWebForm formPatientPickWebForm=new FormPatientPickWebForm(webFormsSheet,listWebSheetNumsForPat.Count,sheet);
+					using FormPatientPickWebForm formPatientPickWebForm=new FormPatientPickWebForm();
+					formPatientPickWebForm.WebFormsSheetCur=webFormsSheet;
+					formPatientPickWebForm.CountMatchingSheets=listWebSheetNumsForPat.Count;
+					formPatientPickWebForm.SheetCemt=sheet;
 					formPatientPickWebForm.LnameEntered=lName;
 					formPatientPickWebForm.FnameEntered=fName;
 					formPatientPickWebForm.DateBirthEntered=bDate;

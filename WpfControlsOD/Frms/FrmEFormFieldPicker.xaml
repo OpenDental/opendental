@@ -6,17 +6,19 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="655" Height="560" 
+             Width="795" Height="560" 
              Text="EForm Field Picker" MinMaxBoxes="False">
-    <Grid Background="#FFFCFDFE" >
-        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="OK" Click="butSave_Click" />
-        <ui:Label x:Name="labelSelect" Height="55" Margin="25,10,0,0" Text="Select the field below which will be the parent responsible for showing or hiding this field. Only check boxes and radio buttons are available" Width="289" HAlign="Left" VAlign="Bottom" />
-        <ui:ListBox x:Name="listBoxFieldLabels" Width="270" Height="480" Margin="25,70,0,0"/>
-        <ui:Label Height="55" Margin="330,10,0,0" Text="The fields below are not available to use because they are not unique. Change them to be unique if you need to use them." Width="270" HAlign="Left" VAlign="Bottom" />
-        <ui:ListBox x:Name="listBoxDups" Width="270" Height="255" Margin="330,70,0,0"/>
-        <ui:GroupBox x:Name="groupParentValue" Height="79" Width="270" Margin="330,357,0,0">
-            <ui:ComboBox x:Name="comboParentValue" Margin="16,48,0,0" Width="240" Height="21"/>
-            <ui:Label Height="35" Margin="14,11,0,0" Width="245" Text="Child fields will show if the parent field at the left has the following value"/>
-        </ui:GroupBox>
-    </Grid>
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="OK" Click="butSave_Click" />
+		<ui:Label x:Name="labelSelect" Height="65" Margin="25,10,0,0" Text="Select the field below which will be the parent responsible for showing or hiding this field. Only check boxes, radio buttons, and dates are available. For an Age condition, pick the Birthdate field." Width="289" HAlign="Left" VAlign="Bottom" />
+		<ui:ListBox x:Name="listBoxFieldLabels" Width="270" Height="470" Margin="25,80,0,0"/>
+		<ui:Label Height="55" Margin="330,230,0,0" Text="The fields below are not available to use because they are not unique. Change them to be unique if you need to use them." Width="270" HAlign="Left" VAlign="Bottom" />
+		<ui:ListBox x:Name="listBoxDups" Width="270" Height="255" Margin="330,290,0,0"/>
+		<ui:GroupBox x:Name="groupParentValue" Height="78" Width="435" Margin="325,80,0,0">
+			<ui:TextBox x:Name="textCondValue" Margin="160,37,0,0" Width="189" Height="21"/>
+			<ui:Label Height="18" Margin="14,11,0,0" Width="321" Text="Child fields will show if the parent field at the left ..."/>
+			<ui:Label Width="143" Height="18" Margin="15,39,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
+			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="354,35,0,0" Text="Pick" Click="butPickValue_Click" />
+		</ui:GroupBox>
+	</Grid>
 </local:FrmODBase>

@@ -29,7 +29,8 @@ namespace OpenDental {
 			Load+=FrmEFormsRadioButtonsEdit_Load;
 			PreviewKeyDown+=FrmEFormRadioButtonsEdit_PreviewKeyDown;
 			comboDbLink.SelectionTrulyChanged+=ComboDbLink_SelectionTrulyChanged;
-			checkLabelAlign.Click+=CheckLabelAlign_Click;
+			checkLabelLeft.Click+=CheckLabelLeft_Click;
+			checkLabelRight.Click+=CheckLabelRight_Click;
 			gridMain.CellTextChanged+=GridMain_CellTextChanged;
 			gridMain.CellSelectionCommitted+=GridMain_CellSelectionCommitted;
 		}
@@ -37,7 +38,8 @@ namespace OpenDental {
 		private void FrmEFormsRadioButtonsEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			textLabel.Text=EFormFieldCur.ValueLabel;
-			checkLabelAlign.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.LeftLeft;
+			checkLabelLeft.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.LeftLeft;
+			checkLabelRight.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.Right;
 			textVIntWidth.Value=EFormFieldCur.Width;
 			List<string> listAvailRadio=EFormFieldsAvailable.GetList_RadioButtons();
 			comboDbLink.Items.AddList(listAvailRadio);
@@ -58,6 +60,15 @@ namespace OpenDental {
 			SetVisibilities();
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
+			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+			if(EFormFieldCur.SpaceBelow==-1){
+				textSpaceBelow.Text="";
+			}
+			else{
+				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+			}
+			textReportableName.Text=EFormFieldCur.ReportableName;
 			//only set list from obj one time upon opening.
 			_listVisDbs=new List<VisDb>();
 			List<string> listVisOrig=new List<string>();
@@ -81,20 +92,12 @@ namespace OpenDental {
 			}
 			FillGrid();
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
+			textCondValue.Text=EFormL.ConvertCondDbToVis(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
 			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(
 				x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255))
 				&& x.ConditionalParent!="" //for a new radiobutton, ValueLabel might be blank
 			);
 			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
-			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
-			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
-			if(EFormFieldCur.SpaceBelow==-1){
-				textSpaceBelow.Text="";
-			}
-			else{
-				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
-			}
 		}
 
 		private class VisDb{
@@ -106,7 +109,7 @@ namespace OpenDental {
 
 		///<summary>This sets visibilities for various situations.</summary>
 		private void SetVisibilities(){
-			if(checkLabelAlign.Checked==true){
+			if(checkLabelLeft.Checked==true){
 				labelWidth.Visible=true;
 				textVIntWidth.Visible=true;
 				labelWidthComment.Visible=true;
@@ -180,7 +183,17 @@ namespace OpenDental {
 			gridMain.EndUpdate();
 		}
 
-		private void CheckLabelAlign_Click(object sender,EventArgs e) {
+		private void CheckLabelLeft_Click(object sender,EventArgs e) {
+			if(checkLabelLeft.Checked==true){
+				checkLabelRight.Checked=false;
+			}
+			SetVisibilities();
+		}
+
+		private void CheckLabelRight_Click(object sender,EventArgs e) {
+			if(checkLabelRight.Checked==true){
+				checkLabelLeft.Checked=false;
+			}
 			SetVisibilities();
 		}
 
@@ -399,20 +412,11 @@ Any or all items are allowed to have no label by leaving that value in the first
 			if(frmEFormFieldPicker.IsDialogCancel){
 				return;
 			}
-			textCondParent.Text=frmEFormFieldPicker.LabelSelected;
+			textCondParent.Text=frmEFormFieldPicker.ParentSelected;
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			if(textCondParent.Text==""){
-				MsgBox.Show("Please enter a name in the Parent field first.");
-				return;
-			}
-			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
-			if(conditionValueSetter.ErrorMsg!="") {
-				MsgBox.Show(conditionValueSetter.ErrorMsg);
-				return;
-			}
-			textCondValue.Text=conditionValueSetter.SelectedValue;
+			textCondValue.Text=EFormL.PickCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void FrmEFormRadioButtonsEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
@@ -490,13 +494,18 @@ Any or all items are allowed to have no label by leaving that value in the first
 			}
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
-			if(checkLabelAlign.Checked==true){
+			if(checkLabelLeft.Checked==true){
 				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.LeftLeft;
+				EFormFieldCur.Width=textVIntWidth.Value;
+			}
+			else if(checkLabelRight.Checked==true){
+				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.Right;
+				EFormFieldCur.Width=0;
 			}
 			else{
 				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.TopLeft;
+				EFormFieldCur.Width=0;
 			}
-			EFormFieldCur.Width=textVIntWidth.Value;
 			if(comboDbLink.SelectedIndex==0){//None
 				EFormFieldCur.DbLink="";
 			}
@@ -511,8 +520,8 @@ Any or all items are allowed to have no label by leaving that value in the first
 			}
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
-			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.ReportableName=textReportableName.Text;
 			EFormFieldCur.PickListVis="";
 			EFormFieldCur.PickListDb="";
 			for(int i=0;i<_listVisDbs.Count;i++){
@@ -523,7 +532,8 @@ Any or all items are allowed to have no label by leaving that value in the first
 				EFormFieldCur.PickListVis+=_listVisDbs[i].Vis;
 				EFormFieldCur.PickListDb+=_listVisDbs[i].Db;
 			}
-			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(_listEFormFields,textCondParent.Text,textCondValue.Text);
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

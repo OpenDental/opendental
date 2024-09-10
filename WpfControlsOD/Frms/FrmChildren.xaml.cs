@@ -52,6 +52,8 @@ namespace OpenDental {
 			gridMain.Columns.Add(gridColumn);
 			gridColumn=new GridColumn("Birthdate",100);
 			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Age",40,HorizontalAlignment.Center);
+			gridMain.Columns.Add(gridColumn);
 			gridColumn=new GridColumn("Primary Room",75);
 			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
@@ -63,9 +65,14 @@ namespace OpenDental {
 				gridRow.Cells.Add(listChildren[i].FName);
 				gridRow.Cells.Add(listChildren[i].LName);
 				gridRow.Cells.Add(listChildren[i].BirthDate.ToShortDateString());
+				int age=DateTime.Today.Year-listChildren[i].BirthDate.Year;
+				gridRow.Cells.Add(age.ToString());
 				ChildRoom childRoom=listChildRooms.Find(x => x.ChildRoomNum==listChildren[i].ChildRoomNumPrimary);
 				if(childRoom!=null) {
 					gridRow.Cells.Add(childRoom.RoomId);
+				}
+				else {
+					gridRow.Cells.Add("");
 				}
 				gridRow.Tag=listChildren[i];
 				gridMain.ListGridRows.Add(gridRow);

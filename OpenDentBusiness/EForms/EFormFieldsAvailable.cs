@@ -173,16 +173,16 @@ namespace OpenDentBusiness {
 				case "PreferContactMethod":
 				case "PreferConfirmMethod":
 				case "PreferRecallMethod":
-					listStrings.Add("None");
-					listStrings.Add("DoNotCall");
-					listStrings.Add("HmPhone");
-					listStrings.Add("WkPhone");
-					listStrings.Add("WirelessPh");
-					listStrings.Add("Email");
-					listStrings.Add("SeeNotes");
-					listStrings.Add("Mail");
-					listStrings.Add("TextMessage");
-					//Include all 9 by default, but make them human readable.
+					listStrings.Add(ContactMethod.None.ToString());
+					listStrings.Add(ContactMethod.DoNotCall.ToString());
+					listStrings.Add(ContactMethod.HmPhone.ToString());
+					listStrings.Add(ContactMethod.WkPhone.ToString());
+					listStrings.Add(ContactMethod.WirelessPh.ToString());
+					listStrings.Add(ContactMethod.Email.ToString());
+					listStrings.Add(ContactMethod.SeeNotes.ToString());
+					listStrings.Add(ContactMethod.Mail.ToString());
+					listStrings.Add(ContactMethod.TextMessage.ToString());
+					//Include all 9 by default, but make them human readable in the vis.
 					break;
 				case "StudentStatus":
 					listStrings.Add("N");
@@ -235,7 +235,7 @@ namespace OpenDentBusiness {
 					listStrings.Add("Home Phone");
 					listStrings.Add("Work Phone");
 					listStrings.Add("Wireless");
-					listStrings.Add("eMail");
+					listStrings.Add("EMail");
 					listStrings.Add("See Notes");
 					listStrings.Add("Mail");
 					listStrings.Add("Text");

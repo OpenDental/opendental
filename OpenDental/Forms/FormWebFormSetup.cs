@@ -403,6 +403,55 @@ namespace OpenDental {
 					return;
 				}
 			}
+			string unlinkWebForm=Lan.g(this," Click 'Preferences' in the eServices Automated Messaging window to change web form selections.");
+			//check if any web form to be deleted is linked to ApptNewPatientThankYouWebSheetDefID ClinicPref by WebSheetDefID
+			if(PrefC.HasClinicsEnabled) {
+				List<ClinicPref> listClinicPrefs=ClinicPrefs.GetPrefAllClinics(PrefName.ApptNewPatientThankYouWebSheetDefID,includeDefault:false);
+				listClinicPrefs.RemoveAll(x => string.IsNullOrWhiteSpace(x.ValueString) || x.ValueString=="0"); //remove any clinics where the pref is not set
+				List<ClinicPref> listClinicPrefMatches=listClinicPrefs
+					//check if any of the web form IDs in clinicprefs match the web form IDs to be deleted
+					.Where(x => listWebForms_SheetDefs.Any(y => POut.Long(y.WebSheetDefID)==x.ValueString))
+					//Don't bother blocking if webform is linked to a hidden clinic.
+					.Where(x => !(Clinics.GetClinic(x.ClinicNum)??new Clinic(){IsHidden=true}).IsHidden)
+					.ToList();
+				if(listClinicPrefMatches.Count!=0) {
+					List<string> listDescriptions=new List<string>();
+					for(int i = 0;i<listWebForms_SheetDefs.Count;i++) {
+						//only add the sheet ids that are also in clinic prefs
+						if(listClinicPrefMatches.Any(x => PIn.Long(x.ValueString)==listWebForms_SheetDefs[i].WebSheetDefID)) {
+							//store the descriptions for each web form to access in error msgs
+							listDescriptions.Add(listWebForms_SheetDefs[i].Description);
+						}
+					}
+					//skip logic below if 10 or more clinics have these webforms in use
+					if(listClinicPrefMatches.Count>=10) {
+						MsgBox.Show(Lan.g(this,"Cannot delete New Patient Thank-You Web Form(s) '")+string.Join(", ",listDescriptions)+Lan.g(this,"'. More than 10 clinics are linked.\r\n\r\n")+unlinkWebForm);
+						return;
+					}
+					List<Clinic> listClinics=new List<Clinic>();
+					for(int i = 0;i<listClinicPrefMatches.Count;i++) {
+						//get the clinics associated with each clinic pref
+						listClinics.Add(Clinics.GetFirstOrDefault(x => x.ClinicNum==listClinicPrefMatches[i].ClinicNum));
+					}
+					List<ClinicPref> listClinicPrefDefaults=ClinicPrefs.GetPrefAllClinics(PrefName.AutoMsgingUseDefaultPref,includeDefault:false);
+					listClinicPrefDefaults.RemoveAll(x => string.IsNullOrWhiteSpace(x.ValueString) || x.ValueString=="0"); //remove any clinics where the pref is not set
+					listClinicPrefDefaults.RemoveAll(x => !listClinicPrefMatches.Any(y => y.ClinicNum==x.ClinicNum)); //remove any clinic prefs not associated with a web form to be deleted
+					//store clinics which have 'use defaults' set but have a separate webform selected which will be deleted
+					List<Clinic> listClinicDefaults=listClinics.FindAll(x => listClinicPrefDefaults.Any(y => y.ClinicNum==x.ClinicNum));
+					if(listClinicPrefDefaults.Count>0) {
+						MsgBox.Show(Lan.g(this,"Cannot delete New Patient Thank-You Web Form(s) '")+string.Join(", ",listDescriptions)+Lan.g(this,"'.\r\n\r\nThe following clinics are set to use the default web form, you will need to disable 'use defaults' and change the underlying web form selection:\r\n")+string.Join(", ",listClinicDefaults.Select(x => x.Abbr))+"\r\n\r\n"+unlinkWebForm);
+						return;
+					}
+					MsgBox.Show(Lan.g(this,"Cannot delete New Patient Thank-You Web Form(s) '")+string.Join(", ",listDescriptions)+Lan.g(this,"'.\r\n\r\nChange the web form selection for the following clinics:\r\n")+string.Join(", ",listClinics.Select(x => x.Abbr))+"\r\n\r\n"+unlinkWebForm);
+					return;
+				}
+			}
+			//check if any web form to be deleted is linked to ApptNewPatientThankYouWebSheetDefID Pref by WebSheetDefID
+			long webSheetDefID=PrefC.GetLong(PrefName.ApptNewPatientThankYouWebSheetDefID);
+			if(listWebForms_SheetDefs.Any(x => x.WebSheetDefID==webSheetDefID)) {
+				MsgBox.Show(Lan.g(this,"Cannot delete New Patient Thank-You Web Form '")+listWebForms_SheetDefs.Find(x => x.WebSheetDefID==webSheetDefID).Description+Lan.g(this,"'. Unlink this form before continuing.\r\n\r\n")+unlinkWebForm);
+					return;
+			}
 			Cursor=Cursors.WaitCursor;
 			for(int i=0;i<listWebForms_SheetDefs.Count;i++) {
 				if(!WebForms_SheetDefs.DeleteSheetDef(listWebForms_SheetDefs[i].WebSheetDefID)) {

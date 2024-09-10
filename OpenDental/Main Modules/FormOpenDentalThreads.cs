@@ -987,9 +987,9 @@ namespace OpenDental {
 				return;
 			}
 			ODThread odThreadUpdateFormText=new ODThread((int)TimeSpan.FromSeconds(1).TotalMilliseconds,(o) => {
-				string mainTitleText=PatientL.GetMainTitleSamePat();
 				//The Form.Text property is thead safe. Will invoke as a safety precaution still as the assignment will be nearly instant.
 				this.Invoke(() => {
+					string mainTitleText=PatientL.GetMainTitleSamePat();
 					this.Text=mainTitleText;
 				});
 			});

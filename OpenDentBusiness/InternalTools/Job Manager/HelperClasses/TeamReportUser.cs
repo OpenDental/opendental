@@ -17,96 +17,85 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 			UserName=userName;
 			_listTeamReportJobs=listTeamReportJobs;
 		}
-
+		
 		///<summary>Fetches all needed data for passed in teams and date range,
 		///and creates a TeamReportUser for each team member. Returns them in a list.</summary>
 		public static List<TeamReportUser> CreateListForTeam(List<JobTeam> listJobTeamsToReport,DateTime dateTimeFrom,DateTime dateTimeTo,List<JobTeam> listJobTeamsAll) {
 			List<Userod> listUserods=Userods.GetListByJobTeams(listJobTeamsToReport);
-			List<Job> listJobsUnfiltered=GetCachedJobsForTeam(listUserods);
-			List<Job> listJobs=listJobsUnfiltered.FindAll(x => x.DateTimeEntry.Date <= dateTimeTo.Date);//Filter by to date
-			List<JobReview> listJobReviews=JobReviews.GetListForTeamReport(listJobs,listUserods,dateTimeFrom,dateTimeTo);
-			listJobs.AddRange(GetUncachedJobsForTeam(listJobs,listJobReviews));
-			FillLogListsForJobs(listJobs,listJobReviews);
-			List<JobReview> listJobReviewsInDateRange=listJobReviews.FindAll(x => x.DateTStamp.Between(dateTimeFrom,dateTimeTo) && x.TimeReview > TimeSpan.Zero);
+			List<Job> listJobs=Jobs.GetListForTeamReport(listUserods,dateTimeFrom,dateTimeTo);
+			List<JobReview> listJobReviewsInDateRange=GetJobReviewsInDateRangeFromJobs(listJobs,dateTimeFrom,dateTimeTo);
 			List<Def> listPriorityDefs=Defs.GetDefsForCategory(DefCat.JobPriorities);
 			List<JobLink> listTeamJobLinks=JobLinks.GetListForJobsByType(listJobs,JobLinkType.JobTeam);
-			return CreateTeamReportUsersFromLists(listUserods,listJobReviewsInDateRange,listJobs,listTeamJobLinks,listJobTeamsAll,listPriorityDefs);
-		}
-
-		private static List<Job> GetCachedJobsForTeam(List<Userod> listUserods) {
-			long onHoldDefNum=Defs.GetDefsForCategory(DefCat.JobPriorities).First(x => x.ItemValue=="OnHold").DefNum;
-			List<long> listUserNums=listUserods.Select(x => x.UserNum).ToList();
-			return JobManagerCore.ListJobsAll.FindAll(x => (
-					//User is job owner
-					listUserNums.Contains(x.UserNumEngineer)
-					|| (listUserNums.Contains(x.UserNumExpert) && x.UserNumEngineer == 0)
-					|| (listUserNums.Contains(x.UserNumConcept) && x.UserNumEngineer == 0 && x.UserNumExpert == 0)
-				)
-				// Job is not project, not on hold, and in an active phase
-				&&	x.Priority != onHoldDefNum
-				&&	x.Category != JobCategory.Project
-				&&	x.PhaseCur.In(JobPhase.Concept,JobPhase.Definition,JobPhase.Development,JobPhase.Quote)
-			).ToList();
-		}
-
-		private static List<Job> GetUncachedJobsForTeam(List<Job> listCachedJobs,List<JobReview> listJobReviews) {
-			List<long> listCachedJobNums=listCachedJobs.Select(x => x.JobNum).ToList();
-			List<long> listUncachedJobNums=listJobReviews
-				.FindAll(x => !listCachedJobNums.Contains(x.JobNum))
-				.Select(x => x.JobNum)
-				.ToList();
-			return Jobs.GetMany(listUncachedJobNums);
-		}
-		
-		private static List<JobReview> FillLogListsForJobs(List<Job> listJobs,List<JobReview> listJobReviews) {
-			foreach(Job job in listJobs) {
-				job.ListJobTimeLogs=listJobReviews.FindAll(x=>x.JobNum==job.JobNum && x.ReviewStatus==JobReviewStatus.TimeLog);
-				job.ListJobReviews=listJobReviews.FindAll(x => x.JobNum==job.JobNum && x.ReviewStatus!=JobReviewStatus.TimeLog);
-			}
-			return listJobReviews;
-		}
-
-		private static List<TeamReportUser> CreateTeamReportUsersFromLists(
-			List<Userod> listUserods,
-			List<JobReview> listJobReviewsInDateRange,
-			List<Job> listJobs,
-			List<JobLink> listTeamJobLinks,
-			List<JobTeam> listJobTeams,
-			List<Def> listJobPriorityDefs)
-		{
 			List<TeamReportUser> listTeamReportUsers=new List<TeamReportUser>();
 			foreach(Userod userod in listUserods) {
-				List<JobReview> listJobReviewsByUserInDateRange=listJobReviewsInDateRange.FindAll(x=> x.ReviewerNum==userod.UserNum);
-				List<Job> listJobsForJobReportUser=FilterJobsForJobReportUser(userod.UserNum,listJobs,listJobReviewsByUserInDateRange);
+				List<JobReview> listJobReviewsForUserInDateRange=FilterJobReviewsForUser(userod.UserNum,listJobs,listJobReviewsInDateRange);
+				List<Job> listJobsForJobReportUser=FilterJobsForJobReportUser(userod.UserNum,listJobs,listJobReviewsForUserInDateRange);
 				List<TeamReportJob> listTeamReportJobs=TeamReportJob.CreateListForUser(
 					userod.UserNum,
 					listJobsForJobReportUser,
 					listTeamJobLinks,
-					listJobTeams,
-					listJobPriorityDefs,
-					listJobReviewsByUserInDateRange
+					listJobTeamsAll,
+					listPriorityDefs,
+					listJobReviewsForUserInDateRange
 				);
 				listTeamReportUsers.Add(new TeamReportUser(userod.UserName,listTeamReportJobs));
 			}
 			return listTeamReportUsers;
 		}
 
+		private static List<JobReview> GetJobReviewsInDateRangeFromJobs(List<Job> listJobs,DateTime dateTimeFrom,DateTime dateTimeTo) {
+			if(listJobs == null) { 
+				return new List<JobReview>();
+			}
+			List<JobReview> listReviewsAndTimeLogs=new List<JobReview>();
+			listReviewsAndTimeLogs.AddRange(
+				listJobs
+				.SelectMany(x => x.ListJobReviews)
+				.Where(x => x.DateTStamp.Between(dateTimeFrom,dateTimeTo))
+				.ToList()
+			);
+			listReviewsAndTimeLogs.AddRange(
+				listJobs
+				.SelectMany(x => x.ListJobTimeLogs)
+				.Where(x => x.DateTStamp.Between(dateTimeFrom,dateTimeTo))
+				.ToList()
+			);
+			return listReviewsAndTimeLogs;
+		}
+
+		private static List<JobReview> FilterJobReviewsForUser(long userNum,List<Job> listJobs,List<JobReview> listJobReviews) {
+			if(listJobs == null || listJobReviews == null) { 
+				return new List<JobReview>();
+			}
+			List<long> listJobNumsWithUserAsEngineer=listJobs
+			.Where(x => x.UserNumEngineer==userNum)
+			.Select(x => x.JobNum)
+			.ToList();
+			//Time logs made by user or reviews made for job's on which user is engineer.
+			return listJobReviews.FindAll(x => 
+				x.ReviewerNum==userNum
+				|| (listJobNumsWithUserAsEngineer.Contains(x.JobNum) && x.ReviewStatus!=JobReviewStatus.TimeLog)
+			);
+		}
+
 		///<summary>Gets all jobs with time logged by user in date range and all jobs without time logged by user in the date range 
 		/// that user owns. Here, ownership is when the user is the submitter on a job with no expert or engineer,
 		/// the expert on a job with no engineer, or the engineer.</summary>
-		private static List<Job> FilterJobsForJobReportUser(long userNum,List<Job>listJobs,List<JobReview> listUserJobReviewsInDateRange) {
+		private static List<Job> FilterJobsForJobReportUser(long userNum,List<Job> listJobs,List<JobReview> listUserJobReviewsInDateRange) {
+			if(listJobs == null || listUserJobReviewsInDateRange == null) { 
+				return new List<Job>();
+			}
 			List<long> listJobNumsForUserReviewsInDateRange=listUserJobReviewsInDateRange.Select(x => x.JobNum).ToList();
-			List<Job> listJobsWithUserReviewsInDateRange=listJobs.FindAll(x => listJobNumsForUserReviewsInDateRange.Contains(x.JobNum)).ToList();
-			List<Job> listJobsOwnedByUserNoReviewsInDateRange=listJobs.FindAll(x => 
-				!listJobNumsForUserReviewsInDateRange.Contains(x.JobNum)
-				&& (//user is owner of job
+			return  listJobs.FindAll(x => 
+				//Job has review related to user in date range
+				listJobNumsForUserReviewsInDateRange.Contains(x.JobNum) ||
+				(//OR user is owner of job
 					(userNum==x.UserNumConcept && x.UserNumExpert==0 && x.UserNumEngineer==0)
 					|| (userNum==x.UserNumExpert && x.UserNumEngineer==0)
 					|| userNum==x.UserNumEngineer
 				)
 			);
-			List<Job> listJobsForJobReportUser=listJobsWithUserReviewsInDateRange.Concat(listJobsOwnedByUserNoReviewsInDateRange).ToList();
-			return listJobsForJobReportUser;
+
 		}
 		#endregion Create List For Job Team
 

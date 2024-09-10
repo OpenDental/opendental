@@ -23,9 +23,9 @@ namespace OpenDental {
 		///<summary>Indicates all downloaded websheets that match this websheet's FName, LName, Email, and Birthdate should be discarded.</summary>
 		private bool _isDiscardAll=false;
 		///<summary>The number of matching webforms that match this sheet.</summary>
-		private int _countMatchingSheets;
-		private WebForms_Sheet _webFormsSheet;
-		private Sheet _sheetCemt;
+		public int CountMatchingSheets;
+		public WebForms_Sheet WebFormsSheetCur;
+		public Sheet SheetCemt;
 		private bool _isWebForm;
 
 		///<summary>Indicates all downloaded websheets that match this websheet's FName, LName, Email, and Birthdate should be discarded.</summary>
@@ -33,25 +33,22 @@ namespace OpenDental {
 			return _isDiscardAll;
 		}
 
-		public FormPatientPickWebForm(WebForms_Sheet webFormsSheet,int countMatchingSheets,Sheet sheetCemt=null) {
+		public FormPatientPickWebForm() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_webFormsSheet=webFormsSheet;
-			_sheetCemt=sheetCemt;
-			_isWebForm=_webFormsSheet!=null;
-			_countMatchingSheets=countMatchingSheets;
 		}
 
 		private void FormPatientPickWebForm_Load(object sender,EventArgs e) {
+			_isWebForm=WebFormsSheetCur!=null;
 			textLName.Text=LnameEntered;
 			textFName.Text=FnameEntered;
 			textBirthdate.Text=DateBirthEntered.ToShortDateString();
 			if(HasMoreThanOneMatch) {
 				labelExplanation.Text=Lan.g(this,"More than one matching patient was found for this submitted web form.");
 			}
-			if(_sheetCemt!=null && _sheetCemt.SheetFields.Any(x => x.FieldName=="isTransfer" && PIn.Bool(x.FieldValue))) {
-				string strCemtSendClinic=_sheetCemt.SheetFields.FirstOrDefault(x => x.FieldName=="sendClinicCEMT")?.FieldValue??"";
+			if(SheetCemt!=null && SheetCemt.SheetFields.Any(x => x.FieldName=="isTransfer" && PIn.Bool(x.FieldValue))) {
+				string strCemtSendClinic=SheetCemt.SheetFields.FirstOrDefault(x => x.FieldName=="sendClinicCEMT")?.FieldValue??"";
 				if(!string.IsNullOrEmpty(strCemtSendClinic)) {
 					labelExplanation.Text+="\r\n"+Lan.g(this,"Patient was transferred from clinic:")+"  "+strCemtSendClinic;
 				}
@@ -68,19 +65,19 @@ namespace OpenDental {
 		private void FillClinicText() {
 			string strClinic="";
 			if(_isWebForm) {
-				if(_webFormsSheet.ClinicNum==0) {
+				if(WebFormsSheetCur.ClinicNum==0) {
 					strClinic="Headquarters";
 				}
 				else {
-					strClinic=Clinics.GetAbbr(_webFormsSheet.ClinicNum);
+					strClinic=Clinics.GetAbbr(WebFormsSheetCur.ClinicNum);
 				}
 			}
-			else if(_sheetCemt!=null) {
-				if(_sheetCemt.ClinicNum==0) {
+			else if(SheetCemt!=null) {
+				if(SheetCemt.ClinicNum==0) {
 					strClinic="Headquarters";
 				}
 				else {
-					strClinic=Clinics.GetAbbr(_sheetCemt.ClinicNum);
+					strClinic=Clinics.GetAbbr(SheetCemt.ClinicNum);
 				}
 			}
 			textClinic.Text=strClinic;
@@ -122,10 +119,10 @@ namespace OpenDental {
 		private void butView_Click(object sender,EventArgs e) {
 			Sheet sheet;
 			if(_isWebForm) {
-				sheet=SheetUtil.CreateSheetFromWebSheet(0,_webFormsSheet);
+				sheet=SheetUtil.CreateSheetFromWebSheet(0,WebFormsSheetCur);
 			}
 			else {
-				sheet=_sheetCemt;
+				sheet=SheetCemt;
 			}
 			FormSheetFillEdit.ShowForm(sheet,isReadOnly:true);
 		}
@@ -166,8 +163,8 @@ namespace OpenDental {
 
 		private void butDiscard_Click(object sender,EventArgs e) {
 			string msg=Lan.g(this,"Are you sure you want to discard this webform");
-			if(_countMatchingSheets>1) {
-				msg+=Lan.g(this," and all ")+(_countMatchingSheets-1)
+			if(CountMatchingSheets>1) {
+				msg+=Lan.g(this," and all ")+(CountMatchingSheets-1)
 					+Lan.g(this," remaining webforms that match this name, birthdate, email, and phone numbers?");
 			}
 			else {

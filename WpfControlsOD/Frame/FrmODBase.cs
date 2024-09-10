@@ -161,8 +161,9 @@ How to:
 		HasHelpButton can be set false, but that's rare.
 -BitmapImage
 		This is the new object for storing bitmaps. You can specify BitmapImage.StreamSource to load any bitmap.
+		See OpenDental.Drawing.Graphics.ConvertBitmapFromWpf() and ConvertBitmapToWpf().
 		It does not implement the IDisposable interface, so no worry about memory leaks. The GC handles these completely automatically.
-		But the GC does wait until the BitmapImage goes out of scope. Set it to null if you want to clean up a long-lived bitmap.
+		But the GC does wait until the BitmapImage goes out of scope. Set it to null if you want to clean up a long-lived BitmapImage.
 -DialogResult
 		We use IsDialogOK instead of the old DialogResult enum.
 		IsDialogCancel can be used instead if the code would read better. There's no functional difference.

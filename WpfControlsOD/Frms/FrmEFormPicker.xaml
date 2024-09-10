@@ -9,7 +9,7 @@
              Width="459" Height="359" 
              Text="Pick eForm" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Label x:Name="labelHead" Width="301" Height="18" Margin="29,9,0,0" Text="Pick from the list of example internal eForms" />
+		<ui:Label x:Name="labelHead" Width="356" Height="18" Margin="29,9,0,0" Text="Pick from the list of example internal eForms" />
 		<ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30,36,128,26"/>
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,27" Text="_OK" Click="butOK_Click" />
 		<ui:Button x:Name="butBlank" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,27,300" Text="Blank" Click="butBlank_Click"  />

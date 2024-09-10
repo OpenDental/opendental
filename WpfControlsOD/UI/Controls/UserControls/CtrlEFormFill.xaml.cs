@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
@@ -112,6 +113,7 @@ namespace OpenDental {
 		public List<EFormField> ListEFormFields;
 		///<summary>Stores the indices of all the EFormFields that are at the rightmost position of a horizontal stack.</summary>
 		public List<int> ListIndicesLastInHorizStack;
+		public int PagesPrinted;
 		#endregion Fields - public
 
 		#region Fields - private
@@ -158,6 +160,8 @@ namespace OpenDental {
 		private int _pageShowingFiltered;
 		///<summary>In coords of this entire control.</summary>
 		private Point _pointMouseDown;
+		///<summary>This the index (not count) of the last stackPanel child that we have printed.</summary>
+		private int _printedStackPanelChildren;
 		///<summary>This is class level because when multiple random numbers are quickly generated, they are based on the system clock and will be identical unless Random is reused.</summary>
 		private Random _random=new Random();
 		#endregion Fields - private
@@ -344,6 +348,92 @@ namespace OpenDental {
 				return _listSelectedIndices;
 			}
 			return new List<int>();
+		}
+
+		public bool Pd_PrintPage(Graphics g) {
+			if(PagesPrinted==0){
+				_printedStackPanelChildren=0;
+				SetVisibilities(pgRequested:-1,forceRefresh:true);
+				stackPanel.UpdateLayout();
+			}
+			double yPos=0;//yPos is for this page only
+			for(int i=0;i<stackPanel.Children.Count;i++){
+				if(_printedStackPanelChildren>=i){
+					//this is how we start part way down after the first page
+					//example, we've printed 0 to 4, so _printedStackPanelChildren=4.
+					//On second page, at i==4, 4>=4 is true so kicks out. at i=5, 4>=5 is false, so it prints.
+					continue;
+				}
+				FrameworkElement frameworkElement=(FrameworkElement)stackPanel.Children[i];
+				Grid gridWrap=frameworkElement as Grid; 
+				if(gridWrap is null){
+					//alternative is borderTopOfPage/Wrap
+					//g.DrawFrameworkElement(frameworkElement,0,yPos);//no need to draw
+					yPos+=frameworkElement.ActualHeight;
+					_printedStackPanelChildren=i;
+					continue;
+				}
+				//see if there's room to draw
+				if(frameworkElement.ActualHeight>g.Height){
+					//This element is taller than the whole page.
+					//For now, just print what we can. Later enhancement could chop up a single gridWrap, which is probably a huge label.
+				}
+				else if(yPos+frameworkElement.ActualHeight>g.Height){
+					PagesPrinted++;
+					return true;//There will be another page. On the next page, yPos will be higher up, so it will fit
+				}
+				//Look for page break
+				for(int k=0;k<gridWrap.Children.Count;k++){
+					WrapPanel wrapPanel=gridWrap.Children[k] as WrapPanel;
+					if(wrapPanel is null){
+						continue;//alternative is borderLeftOfWrap
+					}
+					Grid gridForField=(Grid)wrapPanel.Children[0];
+					//a page break has no children in its gridForField except for the borderOverlayFieldHover and borderRightOfField
+					if(gridForField.Children.Count==2){
+						g.DrawLine(Colors.SlateGray,_marginLeftOfPage,yPos,800,yPos);
+					}
+				}
+				if(frameworkElement.ActualHeight==0){
+					//a pageBreak will also be 0 height
+					_printedStackPanelChildren=i;
+					continue;
+				}
+				//Look for sigBox
+				bool isSigBox=false;
+				for(int k=0;k<gridWrap.Children.Count;k++){
+					WrapPanel wrapPanel=gridWrap.Children[k] as WrapPanel;
+					if(wrapPanel is null){
+						continue;//alternative is borderLeftOfWrap
+					}
+					Grid gridForField=(Grid)wrapPanel.Children[0];
+					//many wrapPanels will have more than one child gridForField, but for sigs, we only care about first.
+					EFormField eFormField=ListEFormFields.Find(x=>x.TagOD==gridForField);
+					if(eFormField is null){
+						continue;
+					}
+					if(eFormField.FieldType!=EnumEFormFieldType.SigBox){
+						continue;
+					}
+					StackPanel stackPanel2=(StackPanel)gridForField.Children[1];//child 0 is borderOverlayFieldHover
+					StackPanel stackPanelLabel=(StackPanel)stackPanel2.Children[0];
+					g.DrawFrameworkElement(stackPanelLabel,_marginLeftOfPage,yPos);
+					yPos+=stackPanelLabel.ActualHeight;
+					WpfControls.UI.SignatureBoxWrapper signatureBoxWrapper=(WpfControls.UI.SignatureBoxWrapper)stackPanel2.Children[1];
+					BitmapImage bitmapImage=signatureBoxWrapper.GetBitmapImage();
+					g.DrawImage(bitmapImage,_marginLeftOfPage,yPos);
+					yPos+=frameworkElement.ActualHeight;
+					_printedStackPanelChildren=i;
+					isSigBox=true;
+				}
+				if(isSigBox){
+					continue;
+				}
+				g.DrawFrameworkElement(frameworkElement,0,yPos);
+				yPos+=frameworkElement.ActualHeight;
+				_printedStackPanelChildren=i;
+			}
+			return false;//no more pages.
 		}
 
 		///<summary>Fixes stacking, clears the stackpanel, adds back all new fresh controls to the stackpanel, scrolls back to the same offset as before, reselects if one was selected.</summary>
@@ -543,7 +633,7 @@ namespace OpenDental {
 			SetColors();
 		}
 
-		///<summary>Sets visibility of each field for pages and conditional logic.</summary>
+		///<summary>Sets visibility of each field for pages and conditional logic. Pass in pgRequested -1 to show all pages.</summary>
 		public void SetVisibilities(int pgRequested, bool forceRefresh=false){
 			int pgGranted=pgRequested;
 			if(pgRequested<1){
@@ -555,19 +645,24 @@ namespace OpenDental {
 			if(!forceRefresh && _pageShowing==pgGranted){
 				return;
 			}
-			_pageShowing=pgGranted;
-			if(IsSetupMode) {//Show all pages in Setup Mode.
+			if(pgRequested!=-1){//don't change pageShowing in this case
+				_pageShowing=pgGranted;
+			}
+			if(pgRequested==-1){
+				//don't do the things in the elses
+			}
+			else if(IsSetupMode) {//Show all pages in Setup Mode.
 				label.Text=_pageShowing.ToString()+"/"+_pageCount.ToString();
 			}
 			else {//Only show visible pages when patient is filling out the eForm.
 				_pageCountFiltered=_pageCount;
-				SetIsHiddenFlag();
+				SetIsHiddenConditFlags();
 				for(int i=1;i<=_pageCount;i++) {
-					List<EFormField> listEFormFields=ListEFormFields.FindAll(x=>x.Page==i && x.FieldType!=EnumEFormFieldType.PageBreak);
-					if(listEFormFields.IsNullOrEmpty()) {
+					List<EFormField> listEFormFieldsThisPage=ListEFormFields.FindAll(x=>x.Page==i && x.FieldType!=EnumEFormFieldType.PageBreak);
+					if(listEFormFieldsThisPage.IsNullOrEmpty()) {
 						continue;
 					}
-					if(listEFormFields.All(x=>x.IsHiddenCondit)) {
+					if(listEFormFieldsThisPage.All(x=>x.IsHiddenCondit)) {
 						_pageCountFiltered--;
 					}
 				}
@@ -576,7 +671,10 @@ namespace OpenDental {
 			for(int i=0;i<ListEFormFields.Count;i++){
 				//first, pages
 				Grid gridForField=(Grid)ListEFormFields[i].TagOD;
-				if(ListEFormFields[i].Page==_pageShowing){
+				if(pgRequested==-1){
+					gridForField.Visibility=Visibility.Visible;
+				}
+				else if(ListEFormFields[i].Page==_pageShowing){
 					gridForField.Visibility=Visibility.Visible;
 				}
 				else{
@@ -587,28 +685,7 @@ namespace OpenDental {
 				if(IsSetupMode){
 					continue;//we don't hide for conditional logic in setup
 				}
-				if(ListEFormFields[i].ConditionalParent==""){
-					continue;
-				}
-				EFormField eFormFieldParent=ListEFormFields.Find(x=>x.ValueLabel==ListEFormFields[i].ConditionalParent);
-				if(eFormFieldParent is null){
-					continue;//they might have set the ConditionalParent string wrong
-				}
-				bool isConditionMet=false;
-				if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons 
-					&& EFormFields.ConvertValueStringDbToVis(eFormFieldParent)==ListEFormFields[i].ConditionalValue)
-				{
-					isConditionMet=true;
-				}
-				if(eFormFieldParent.FieldType==EnumEFormFieldType.CheckBox 
-					&& eFormFieldParent.ValueString==ListEFormFields[i].ConditionalValue)
-				{
-					isConditionMet=true;
-				}
-				if(isConditionMet){
-					gridForField.Visibility=Visibility.Visible;
-				}
-				else{
+				if(ListEFormFields[i].IsHiddenCondit){
 					gridForField.Visibility=Visibility.Collapsed;
 				}
 			}
@@ -619,12 +696,15 @@ namespace OpenDental {
 					continue;
 				}
 				DragLocation dragLocation=border.Tag as DragLocation;
+				if(pgRequested==-1){
+					uIElementCollection[i].Visibility=Visibility.Visible;
+					continue;
+				}
 				if(dragLocation.Page!=_pageShowing) {
 					uIElementCollection[i].Visibility=Visibility.Collapsed;
 					continue;
 				}
 				uIElementCollection[i].Visibility=Visibility.Visible;
-				
 			}
 		}
 		#endregion Methods - public
@@ -838,18 +918,23 @@ namespace OpenDental {
 					idxTo--;
 				}
 			}
-			if(_listSelectedIndices.Count==1){
-				//Again, only for single
+			if(_listSelectedIndices.Count==1 && idxTo!=ListEFormFields.Count){
+				//Again, only for single. If adding field to the end of a form, no need to alter destination (See Example3 for idxTo==ListEFormFields.Count scenario).
 				//We alter destination here after removal, because otherwise we risk changing the field we are moving.
 				//Example: move idx 4 to 3, up from single to end of row:
 				//   loop will have removed field 4 from list.
 				//   this will alter the new 4 which is the old 5
 				//Example2: move idx 3 to 5, from end of row to middle of next row.
-				//   look will have removed field 3 from list.
+				//   loop will have removed field 3 from list.
 				//   idxTo was 5, but is now 4
 				//   this will alter the new 4, which is the old 5
+				//Example3: There are 5 fields, indexes 0 through 4.
+				//   move idx 3 to 5, from beginning of row to end of row 
+				//   loop will have removed field 3 from list.
+				//   idxTo was 5, but is now 4 which is still impossible because we only have indexes 0 through 3.
 				ListEFormFields[idxTo].IsHorizStacking=dragLocation.IsHorizStackingNext;
 			}
+			//for Example3, we had 5 fields: 0 to 4. We removed one, so now we have 0,1,2,3. InsertRange(4... puts it after 3.
 			ListEFormFields.InsertRange(idxTo,listEFormFields);
 			_borderDropHover=null;
 			int countSelected=_listSelectedIndices.Count;
@@ -1182,7 +1267,7 @@ namespace OpenDental {
 					//This is used to show which page number the patient is on. This is not always the same value as _pageShowing. This is just for visuals, nothing more. 
 					_pageShowingFiltered++;
 				}
-				SetIsHiddenFlag();
+				SetIsHiddenConditFlags();
 				while(true) {
 					List<EFormField> listEFormFields=ListEFormFields.FindAll(x=>x.Page==pgRequested && x.FieldType!=EnumEFormFieldType.PageBreak).ToList();
 					if(listEFormFields!=null && listEFormFields.All(x=>x.IsHiddenCondit)) {
@@ -1209,7 +1294,7 @@ namespace OpenDental {
 					//This is used to show which page number the patient is on. This is not always the same value as _pageShowing. This is just for visuals, nothing more. 
 					_pageShowingFiltered--;
 				}
-				SetIsHiddenFlag();
+				SetIsHiddenConditFlags();
 				while(true) {
 					List<EFormField> listEFormFields=ListEFormFields.FindAll(x=>x.Page==pgRequested && x.FieldType!=EnumEFormFieldType.PageBreak).ToList();
 					if(listEFormFields!=null && listEFormFields.All(x=>x.IsHiddenCondit)) {
@@ -1499,7 +1584,16 @@ namespace OpenDental {
 			textVDate.Text=eFormField.ValueString;
 			textVDate.FontSize=FontSize*eFormField.FontScale/100;
 			textVDate.TextChanged+=(sender,e)=>ClearSignatures();
+			textVDate.LostFocus+=(sender,e)=>{
+				FillFieldsFromControls(eFormField);
+				SetVisibilities(_pageShowing,forceRefresh:true);
+				//this is so that Age conditions will be tested
+			};
 			stackPanel2.Children.Add(textVDate);
+		}
+
+		private void TextVDate_LostFocus(object sender,RoutedEventArgs e) {
+			throw new NotImplementedException();
 		}
 
 		private void AddLabel(Grid gridForField,EFormField eFormField){
@@ -1808,7 +1902,9 @@ namespace OpenDental {
 			if(eFormField.LabelAlign==EnumEFormLabelAlign.TopLeft){
 				stackPanelRadio.Orientation=Orientation.Vertical;
 			}
-			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
+			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft
+				|| eFormField.LabelAlign==EnumEFormLabelAlign.Right)
+			{
 				stackPanelRadio.Orientation=Orientation.Horizontal;
 			}
 			gridForField.Children.Add(stackPanelRadio);
@@ -1869,7 +1965,6 @@ namespace OpenDental {
 				labelCondChild.Content="(cnd)";
 				labelCondChild.Foreground=Brushes.Red;
 			}
-			stackPanelRadio.Children.Add(stackPanelLabel);
 			WrapPanel wrapPanelRadio=new WrapPanel();
 			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
 				Graphics g=Graphics.MeasureBegin();
@@ -1933,7 +2028,16 @@ namespace OpenDental {
 				};
 				wrapPanelRadio.Children.Add(radioButton);
 			}
-			stackPanelRadio.Children.Add(wrapPanelRadio);
+			if(eFormField.LabelAlign==EnumEFormLabelAlign.TopLeft
+				|| eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft)
+			{
+				stackPanelRadio.Children.Add(stackPanelLabel);
+				stackPanelRadio.Children.Add(wrapPanelRadio);
+			}
+			if(eFormField.LabelAlign==EnumEFormLabelAlign.Right){
+				stackPanelRadio.Children.Add(wrapPanelRadio);
+				stackPanelRadio.Children.Add(stackPanelLabel);
+			}
 		}
 
 		private void AddSigBox(Grid gridForField,EFormField eFormField){
@@ -2073,6 +2177,7 @@ namespace OpenDental {
 			stackPanel2.Children.Add(textBox);
 		}
 
+		///<summary>Gets called whenever the patient changes a field. Clears existing signatures unless they just signed it in this session.</summary>
 		private void ClearSignatures() {
 			for(int i=0;i<ListEFormFields.Count;i++){
 				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
@@ -2262,14 +2367,18 @@ namespace OpenDental {
 		}
 
 		///<summary>This method will set a flag which is used to skip "empty" pages. It only gets called when filling out a form. We don't want to skip pages when they are in setup mode.</summary>
-		private void SetIsHiddenFlag() {
+		private void SetIsHiddenConditFlags() {
 			for(int i=0;i<ListEFormFields.Count;i++) {
+				ListEFormFields[i].IsHiddenCondit=false;
 				if(ListEFormFields[i].ConditionalParent=="") {
 					continue;
 				}
-				EFormField eFormFieldParent=ListEFormFields.Find(x=>x.ValueLabel==ListEFormFields[i].ConditionalParent);
+				EFormField eFormFieldParent=ListEFormFields.Find(x=>
+					x.ValueLabel!=""
+					&& x.ValueLabel.Substring(0,Math.Min(x.ValueLabel.Length,255))==ListEFormFields[i].ConditionalParent
+					&& x.FieldType.In(EnumEFormFieldType.CheckBox,EnumEFormFieldType.RadioButtons,EnumEFormFieldType.DateField));
 				if(eFormFieldParent is null) {
-					continue;
+					continue;//they might have set the ConditionalParent string wrong
 				}
 				bool isConditionMet=false;
 				if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons 
@@ -2281,6 +2390,37 @@ namespace OpenDental {
 					&& eFormFieldParent.ValueString==ListEFormFields[i].ConditionalValue)
 				{
 					isConditionMet=true;
+				}
+				if(eFormFieldParent.FieldType==EnumEFormFieldType.DateField){
+					//We didn't bother to check the name of the field even though it was really only designed for Birthdate
+					isConditionMet=true;//this is our fallback if anything below goes wrong. We do NOT want it to fallback to false.
+					DateTime dateBirth=DateTime.MinValue;
+					try{
+						dateBirth=DateTime.Parse(eFormFieldParent.ValueString);
+					}
+					catch{}
+					if(dateBirth!=DateTime.MinValue){
+						int agePatient=Patients.DateToAge(dateBirth);
+						int ageCondition=-1;
+						if(ListEFormFields[i].ConditionalValue.StartsWith("<") || ListEFormFields[i].ConditionalValue.StartsWith(">")){
+							try{
+								ageCondition=int.Parse(ListEFormFields[i].ConditionalValue.Substring(1));
+							}
+							catch{ }
+						}
+						if(ageCondition!=-1){
+							if(ListEFormFields[i].ConditionalValue.StartsWith("<")){
+								if(agePatient>=ageCondition){//flipped because we're setting to false
+									isConditionMet=false;
+								}
+							}
+							if(ListEFormFields[i].ConditionalValue.StartsWith(">")){
+								if(agePatient<=ageCondition){
+									isConditionMet=false;
+								}
+							}
+						}
+					}
 				}
 				if(isConditionMet){
 					ListEFormFields[i].IsHiddenCondit=false;
@@ -2312,4 +2452,6 @@ namespace OpenDental {
 		}
 		#endregion Classes nested
 	}
+
+	
 }

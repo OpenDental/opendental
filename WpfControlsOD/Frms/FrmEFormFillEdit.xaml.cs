@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using OpenDentBusiness;
 using WpfControls.UI;
 using CodeBase;
+using OpenDental.Drawing;
 
 namespace OpenDental {
 	/// <summary></summary>
@@ -103,7 +104,12 @@ namespace OpenDental {
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
-			
+			Printout printout=new Printout();
+			printout.FuncPrintPage=ctrlEFormFill.Pd_PrintPage;
+			printout.thicknessMarginInches=new Thickness(0.5);
+			ctrlEFormFill.PagesPrinted=0;
+			WpfControls.PrinterL.TryPrintOrDebugClassicPreview(printout);
+			ctrlEFormFill.RefreshLayout();//todo: have this run while the preview window is still open?
 		}
 
 		private void butUnlock_Click(object sender,EventArgs e) {

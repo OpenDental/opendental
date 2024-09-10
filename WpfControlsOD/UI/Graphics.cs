@@ -6,11 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Media.Converters;
+using System.Xml;
 
 namespace OpenDental.Drawing {
 /*
@@ -88,6 +90,10 @@ WPF
 	This is especially important when measuring a string to lay it out on the screen.
 	In that case, Font has a few helpers to help with size conversions.
 	Also, MeasureString has an optional parameter for includePadding. This is typically false for WPF layout purposes.
+			Graphics g=Graphics.MeasureBegin();
+			double width=g.MeasureString("some text").Width;
+			//or:
+			double height=g.MeasureString("some text",width).Height;
 */
 	///<summary>Designed to mimic System.Drawing.Graphics by drawing onto a canvas.</summary>
 	public class Graphics {
@@ -102,15 +108,18 @@ WPF
 		#endregion Ctor
 
 		#region Properties
+		///<summary>Printable width of the canvas.</summary>
 		public double Width{
 			get=>_canvas.Width;
 		}
 
+		///<summary>Printable height of the canvas.</summary>
 		public double Height{
 			get=>_canvas.Height;
 		}
 		#endregion Properties
 
+		///<summary>Renders whatever is on the canvas into a bitmap. Use BitmapInit prior to drawing on the canvas.</summary>
 		public BitmapImage BitmapCreate(){
 			_canvas.Measure(new Size(_canvas.Width,_canvas.Height));
 			_canvas.Arrange(new Rect(new Size(_canvas.Width, _canvas.Height)));
@@ -129,6 +138,7 @@ WPF
 			return bitmapImage;
 		}
 
+		///<summary>Use this before drawing on a canvas that you want to turn into a bitmap.</summary>
 		public static Graphics BitmapInit(double width,double height){
 			Graphics g=new Graphics();
 			g._canvas=new Canvas();
@@ -139,6 +149,94 @@ WPF
 
 		public void Clear(Color color){
 			FillRectangle(color,0,0,_canvas.Width-1,_canvas.Height-1);
+		}
+
+		/*
+		///<summary>If you have a control on the screen that you want to print, use this to make a deep copy because it won't let you attach the original to any document.</summary>
+		public static T CopyControl<T>(T frameworkElement){
+			string stringXaml = XamlWriter.Save(frameworkElement);
+			//This section was an attempt to get around the XamlParseException could not register named object.
+			//None of it worked.
+			//XmlDocument xmlDocument = new XmlDocument();
+			//xmlDocument.LoadXml(stringXaml);
+			//// Rrename all 'x:Name' attributes in the XML
+			//XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xmlDocument.NameTable);
+			//namespaceManager.AddNamespace("x","http://schemas.microsoft.com/winfx/2006/xaml");
+			//XmlNodeList nameAttributes = xmlDocument.SelectNodes("//*[@x:Name]",namespaceManager);
+			//foreach(XmlNode node in nameAttributes) {
+			//	XmlAttribute nameAttribute = node.Attributes["x:Name"];
+			//	if(nameAttribute != null) {
+			//		//Remove 'x:Name'
+			//		//node.Attributes.Remove(nameAttribute); 
+			//		//That didn't work, so maybe renamed them
+			//		//nameAttribute.Value = $"{nameAttribute.Value}_{Guid.NewGuid().ToString("N")}";
+			//		//nope
+			//	}
+			//}
+			////Convert modified XmlDocument back to string
+			//using(StringWriter sw = new StringWriter())
+			//using(XmlWriter xmlWriter = XmlWriter.Create(sw)) {
+			//	xmlDocument.WriteTo(xmlWriter);
+			//	xmlWriter.Flush();
+			//	stringXaml = sw.ToString();
+			//}
+			//From here down is the original basic method to make a simple copy
+			StringReader stringReader = new StringReader(stringXaml);
+			XmlReader xmlReader = XmlReader.Create(stringReader);
+			return (T)XamlReader.Load(xmlReader);
+		}*/
+
+		public static System.Drawing.Bitmap ConvertBitmapFromWpf(BitmapImage bitmapImage){
+			using MemoryStream memoryStream=new MemoryStream();
+			BitmapEncoder bitmapEncoder=new PngBitmapEncoder();
+			bitmapEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+			bitmapEncoder.Save(memoryStream);
+			System.Drawing.Bitmap bitmap=new System.Drawing.Bitmap(memoryStream);
+			return bitmap;
+		}
+		
+		public static BitmapImage ConvertBitmapToWpf(System.Drawing.Bitmap bitmap){
+			BitmapImage bitmapImage=new BitmapImage();
+			using MemoryStream memoryStream = new MemoryStream();
+			//todo: support for filetypes other than png?
+			bitmap.Save(memoryStream,System.Drawing.Imaging.ImageFormat.Png);
+			memoryStream.Position = 0;
+			bitmapImage.BeginInit();
+			bitmapImage.StreamSource = memoryStream;
+			bitmapImage.CacheOption = BitmapCacheOption.OnLoad;//makes it load into memory during EndInit
+			bitmapImage.EndInit();
+			bitmapImage.Freeze();
+			return bitmapImage;
+		}
+
+		///<summary>If you have a control on the screen, you can draw it onto the canvas using this method. Doesn't work for signatureBoxes.</summary>
+		public void DrawFrameworkElement(FrameworkElement frameworkElement,double x,double y){
+			double width=frameworkElement.ActualWidth;
+			double height=frameworkElement.ActualHeight;
+			frameworkElement.Measure(new Size(width,height));
+			frameworkElement.Arrange(new Rect(new Size(width,height)));
+			//handle rounding errors that would cut off the bottom row of pixels
+			int pixelWidth=(int)Math.Ceiling(width);
+			int pixelHeight=(int)Math.Ceiling(height);
+			RenderTargetBitmap renderTargetBitmap=new RenderTargetBitmap(pixelWidth,pixelHeight,96,96,PixelFormats.Pbgra32);
+			renderTargetBitmap.Render(frameworkElement);
+			Image image=new Image();
+			image.Source=renderTargetBitmap;
+			image.Width=width;
+			image.Height=height;
+			Canvas.SetLeft(image,x);
+			Canvas.SetTop(image,y);
+			_canvas.Children.Add(image);
+		}
+
+		public void DrawImage(BitmapImage bitmapImage,double x, double y){
+			Image image=new Image();
+			image.Source=bitmapImage;
+			image.Width=bitmapImage.Width;
+			image.Height=bitmapImage.Height;
+			Canvas.SetLeft(image,x);
+			Canvas.SetTop(image,y);
+			_canvas.Children.Add(image);
 		}
 
 		public void DrawLine(Color color,double x1,double y1,double x2,double y2) {
@@ -291,10 +389,10 @@ WPF
 		}
 
 		///<summary>Boilerplate example at the top of this file. includePadding is true by default to mimic WinForms. But if you truly want to just measure the text with no whitespace, like in WPF display, set it to false.</summary>
-		public Size MeasureString(string text,Font font=null,double width=double.PositiveInfinity,bool includePadding=true){
+		public Size MeasureString(string text,Font font=null,double widthMax=double.PositiveInfinity,bool includePadding=true){
 			TextBlock textBlock=new TextBlock();
-			if(width<double.PositiveInfinity){
-				textBlock.Width=width;
+			if(widthMax<double.PositiveInfinity){
+				textBlock.Width=widthMax;
 			}
 			//note: we could add an optional parameter to exclude padding to tightly measure the actual text
 			//This padding was an attempt to duplicate the old WinForms code.
@@ -467,10 +565,11 @@ WPF
 			set=>Size=value*72/96;
 		}
 
+		///<summary>This gives you a Segoe UI 11.5, which is our standard in all WPF windows.</summary>
 		public static Font ForWpf(){
 			Font font=new Font();
 			font.Name="Segoe UI";
-			font.Size=11.5;
+			font.SizeDip=11.5;
 			return font;
 		}
 	}

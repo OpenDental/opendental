@@ -38,7 +38,7 @@ namespace OpenDental {
 			}
 			udpMessage+=","+pat.FName.Replace(",","").Trim();//Remove commas from data, because they are the separator.
 			udpMessage+=","+pat.LName.Replace(",","").Trim();//Remove commas from data, because they are the separator.
-			udpMessage+=","+pat.Birthdate.ToString("MM/dd/yyyy");
+			udpMessage+=","+pat.Birthdate.ToString("MM'/'dd'/'yyyy");//Slashes are literals to prevent them from changing to localized separator
 			udpMessage+=","+((pat.Gender==PatientGender.Female)?"female":"male");
 			udpMessage+=","+(pat.Address+" "+pat.Address2).Replace(",","").Trim();//Remove commas from data, because they are the separator.
 			udpMessage+=","+pat.City.Replace(",","").Trim();//Remove commas from data, because they are the separator.

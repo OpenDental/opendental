@@ -48,7 +48,8 @@ namespace OpenDental {
 			double countChildren=0;
 			double countEmployees=0;
 			int countUnderTwo=0;
-			double ratioAllowed=ChildRoomLogs.GetPreviousRatio(comboChildRoom.GetSelectedKey<ChildRoom>(x=>x.ChildRoomNum),textVDateLog.Value);
+			long childRoomNum=comboChildRoom.GetSelectedKey<ChildRoom>(x=>x.ChildRoomNum);
+			double ratioAllowed=ChildRoomLogs.GetPreviousRatio(childRoomNum,textVDateLog.Value);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn gridColumn=new GridColumn("Child",100);
@@ -65,8 +66,15 @@ namespace OpenDental {
 			gridMain.Columns.Add(gridColumn);
 			gridColumn=new GridColumn("Allowed Ratio",85,HorizontalAlignment.Center);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Current Ratio",85,HorizontalAlignment.Center);
-			gridMain.Columns.Add(gridColumn);
+			ChildRoom childRoom=ChildRooms.GetOne(childRoomNum);
+			if(childRoom.Ratio==-1) {//If currenlty a mixed ratio, then total children column
+				gridColumn=new GridColumn("Total Children",85,HorizontalAlignment.Center);
+				gridMain.Columns.Add(gridColumn);
+			}
+			else {//If currently not a mixed ratio, then current ratio column
+				gridColumn=new GridColumn("Current Ratio",85,HorizontalAlignment.Center);
+				gridMain.Columns.Add(gridColumn);
+			}
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listChildRoomLogs.Count;i++) {
 				GridRow gridRow=new GridRow();
@@ -109,11 +117,7 @@ namespace OpenDental {
 					gridRow.Cells.Add("");
 					gridRow.Cells.Add("");
 				}
-				GridCell gridCell=new GridCell(listChildRoomLogs[i].DateTDisplayed.ToLongTimeString());
-				if(listChildRoomLogs[i].DateTDisplayed!=listChildRoomLogs[i].DateTEntered) {
-					gridCell.ColorText=Colors.Red;//Color red if the Displayed and Entered dates do not match
-				}
-				gridRow.Cells.Add(gridCell);
+				gridRow.Cells.Add(listChildRoomLogs[i].DateTDisplayed.ToLongTimeString());
 				if(listChildRoomLogs[i].ChildNum==0 && listChildRoomLogs[i].EmployeeNum==0) {
 					gridRow.Cells.Add("");//RatioChange does not get a location status
 				}
@@ -131,20 +135,28 @@ namespace OpenDental {
 					//Calculate the number of teachers needed for the current mixed ratio
 					double teachersRequired=ChildRoomLogs.GetNumberTeachersMixed(totalChildren:(int)countChildren,childrenUnderTwo:countUnderTwo);
 					if(teachersRequired==0) {
-						gridRow.Cells.Add(countEmployees+"/?");
+						gridRow.Cells.Add(countEmployees+" of 0");
 					}
 					else {
-						gridRow.Cells.Add(countEmployees+"/"+teachersRequired);
+						GridCell gridCell=new GridCell(countEmployees+" of "+teachersRequired);
+						if(countEmployees<teachersRequired) {
+							gridCell.ColorText=Colors.Red;
+						}
+						gridRow.Cells.Add(gridCell);
 					}
 				}
 				else {
 					gridRow.Cells.Add("");
 					if(ratioAllowed==0) {//Stop division by 0
-						gridRow.Cells.Add(countEmployees+"/?");
+						gridRow.Cells.Add(countEmployees+" of 0");
 					}
 					else {
 						double teachersRequired=Math.Ceiling(countChildren/ratioAllowed);
-						gridRow.Cells.Add(countEmployees+"/"+teachersRequired);
+						GridCell gridCell=new GridCell(countEmployees+" of "+teachersRequired);
+						if(countEmployees<teachersRequired) {
+							gridCell.ColorText=Colors.Red;
+						}
+						gridRow.Cells.Add(gridCell);
 					}
 				}
 				if(ratioAllowed==-1) {
@@ -153,17 +165,21 @@ namespace OpenDental {
 				else {
 					gridRow.Cells.Add(ratioAllowed.ToString());
 				}
-				//Calculate current ratio
-				if(countEmployees==0) {//There are no employees. Stops division by 0.
-					gridRow.Cells.Add("?");
+				if(childRoom.Ratio==-1) {//Total number of kids
+					gridRow.Cells.Add(countChildren.ToString());
 				}
-				else {
-					double ratioCurrent=countChildren/countEmployees;
-					gridCell=new GridCell(ratioCurrent.ToString());
-					if(ratioAllowed!=-1 && ratioCurrent>ratioAllowed) {
-						gridCell.ColorText=Colors.Red;
+				else {//Calculate current ratio
+					if(countEmployees==0) {//There are no employees. Stops division by 0.
+						gridRow.Cells.Add("0");
 					}
-					gridRow.Cells.Add(gridCell);
+					else {
+						double ratioCurrent=Math.Ceiling(countChildren/countEmployees);//Round up so there are not fractions of children
+						GridCell gridCell=new GridCell(ratioCurrent.ToString());
+						if(ratioAllowed!=-1 && ratioCurrent>ratioAllowed) {
+							gridCell.ColorText=Colors.Red;
+						}
+						gridRow.Cells.Add(gridCell);
+					}
 				}
 				gridRow.Tag=listChildRoomLogs[i];
 				gridMain.ListGridRows.Add(gridRow);
@@ -173,11 +189,46 @@ namespace OpenDental {
 		}
 
 		private void GridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			ChildRoomLog childRoomLogSelected=gridMain.SelectedTag<ChildRoomLog>();
+			if(childRoomLogSelected.EmployeeNum==0 && childRoomLogSelected.ChildNum==0) {
+				MsgBox.Show("Cannot edit a ratio change log.");
+				return;
+			}
+			FrmChildRoomLogEdit frmChildRoomLogEdit=new FrmChildRoomLogEdit();
+			frmChildRoomLogEdit.ChildRoomLogCur=childRoomLogSelected;
+			frmChildRoomLogEdit.ShowDialog();
+			if(frmChildRoomLogEdit.IsDialogCancel) {
+				return;
+			}
+			FillGrid();
+		}
+
+		private void butViewSnapshot_Click(object sender,EventArgs e) {
+			if(gridMain.GetSelectedIndex()==-1) {
+				MsgBox.Show("Select a log first.");
+				return;
+			}
 			ChildRoomLog childRoomLog=gridMain.SelectedTag<ChildRoomLog>();
 			FrmChildMapLog frmChildMapLog=new FrmChildMapLog();
 			frmChildMapLog.ChildRoomNumInitial=childRoomLog.ChildRoomNum;
 			frmChildMapLog.DateTimeInitial=childRoomLog.DateTDisplayed;
 			frmChildMapLog.ShowDialog();
+		}
+
+		private void butAddLog_Click(object sender,EventArgs e) {
+			FrmChildRoomLogEdit frmChildRoomLogEdit=new FrmChildRoomLogEdit();
+			ChildRoomLog childRoomLog=new ChildRoomLog();
+			childRoomLog.IsNew=true;
+			childRoomLog.DateTEntered=DateTime.Now;
+			childRoomLog.DateTDisplayed=DateTime.Now;
+			childRoomLog.IsComing=true;
+			childRoomLog.ChildRoomNum=comboChildRoom.GetSelectedKey<ChildRoom>(x=>x.ChildRoomNum);
+			frmChildRoomLogEdit.ChildRoomLogCur=childRoomLog;
+			frmChildRoomLogEdit.ShowDialog();
+			if(frmChildRoomLogEdit.IsDialogCancel) {
+				return;
+			}
+			FillGrid();
 		}
 
 		private void comboChildRoom_SelectionChangeCommitted(object sender,EventArgs e) {

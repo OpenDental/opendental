@@ -62,7 +62,8 @@ namespace OpenDental {
 				.Select(y => y.EmployeeNum).Distinct().ToList();
 			for(int i=0;i<listEmployeeNumsUnique.Count;i++) {
 				ChildRoomLog childRoomLog=listChildRoomLogsFiltered.FindAll(x => x.EmployeeNum==listEmployeeNumsUnique[i])
-					.OrderByDescending(y => y.ChildRoomLogNum).First();
+					.OrderByDescending(y => y.DateTDisplayed)
+					.ThenBy(z => z.IsComing).First();
 				if(!childRoomLog.IsComing) {
 					continue;//Employee is not present in the room
 				}
@@ -71,7 +72,8 @@ namespace OpenDental {
 			List<long> listChildNumsUnique=listChildRoomLogsFiltered.FindAll(x => x.ChildNum!=0).Select(y => y.ChildNum).Distinct().ToList();
 			for(int i=0;i<listChildNumsUnique.Count;i++) {
 				ChildRoomLog childRoomLog=listChildRoomLogsFiltered.FindAll(x => x.ChildNum==listChildNumsUnique[i])
-					.OrderByDescending(y => y.ChildRoomLogNum).First();
+					.OrderByDescending(y => y.DateTDisplayed)
+					.ThenBy(z => z.IsComing).First();
 				if(!childRoomLog.IsComing) {
 					continue;//Child is not present in this room
 				}

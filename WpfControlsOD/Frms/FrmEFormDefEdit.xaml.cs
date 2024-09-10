@@ -559,7 +559,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				return;
 			}
 			for(int i=0;i<listSelectedIndices.Count;i++) {
-				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].ConditionalParent=frmEFormFieldPicker.LabelSelected;
+				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].ConditionalParent=frmEFormFieldPicker.ParentSelected;
 				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].ConditionalValue=frmEFormFieldPicker.ValueSelected;
 			}
 			ctrlEFormFill.RefreshLayout();
@@ -586,7 +586,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				return;
 			}
 			for(int i=0;i<listSelectedIndices.Count;i++) {
-				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].ConditionalParent=frmEFormFieldPicker.LabelSelected;
+				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].ConditionalParent=frmEFormFieldPicker.ParentSelected;
 				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].ConditionalValue=frmEFormFieldPicker.ValueSelected;
 			}
 			ctrlEFormFill.RefreshLayout();

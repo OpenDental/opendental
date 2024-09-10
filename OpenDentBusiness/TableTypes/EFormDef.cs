@@ -97,15 +97,28 @@ https://www.youtube.com/watch?v=4V-wbDuVtFg
 Ours are similar.
 
 Next:
-Permission to edit complete EForm, use Sheet permission?
-When filling forms, changing window width does not perform another layout.
-Enhance FormWebForms to include eForms
-Slight enhancements to FormPatientPickWebForm for wording
-What about FormPatientPickWebForm?
+RyanH:
+Talk about max Frm height
+LanguagePat query, crud, backport
+bug: space below wording is bad on a new field.
+Implement IsLocked for TextField and CheckBox. Just in the setup window
+Implement conditional age UI for all other fields, copying textbox
+Refine the 3 built-in forms according to my interative instructions
+RyanR:
+Implement IsLocked in eClipboard UI
+
+Enhance FormWebForms to include eForms. I don't think eForms get retrieved, but do they still show on that form?
+	For sheets, they show if DateTimeSheet is within search range and IsWebForm is true.
+	We could just mirror that for eForms. Or IsWebForm probably doesn't even matter.
+	For eForms, DateTimeShown is the field that is analagous to DateTimeSheet. 
+	Both are the dates that show at the lower left of the fill window,
+	and both are the dates used for showing in commlog and also indicate when they were filled out.
+(done) Slight enhancements to FormPatientPickWebForm for wording
 and .IsWebForm
 WebForms_Preference.ColorBorder
 Background color
 Conditional dates/ages
+Permission to edit complete EForm, use Sheet permission?
 
 Widths in a future version: We might add:
  Proportional widths, either * or %.
@@ -127,10 +140,8 @@ Flex uses categories that get expanded. Those don't look useful to me.
 Medications are more complex than Allergies and Problems, so we use a special control.
 
 Future enhancements, in order of priority:
-Add functionality in FormSheetImport to allow EForms.
 Branding, using colors, logos, and images, using MobileBrandingProfile.
 Signatures
-	Unlock button
 	SignatureBoxWrapper.GetIsTypedFromWebForms()
 	DateTimeSig: ??
 	CanElectronicallySign: ??

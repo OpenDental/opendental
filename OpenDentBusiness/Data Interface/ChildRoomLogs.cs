@@ -122,29 +122,6 @@ namespace OpenDentBusiness{
 			return Crud.ChildRoomLogCrud.SelectOne(childRoomLogNum);
 		}
 		#endregion Methods - Get
-		#region Methods - Modify
-		///<summary></summary>
-		public static void Update(ChildRoomLog childRoomLog){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoomLog);
-				return;
-			}
-			Crud.ChildRoomLogCrud.Update(childRoomLog);
-		}
-		///<summary></summary>
-		public static void Delete(long childRoomLogNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoomLogNum);
-				return;
-			}
-			Crud.ChildRoomLogCrud.Delete(childRoomLogNum);
-		}
-		#endregion Methods - Modify
-		#region Methods - Misc
-		
-
-		
-		#endregion Methods - Misc
 		*/
 
 		///<summary>Get all the logs for a specified ChildRoom and filtered by the given date.</summary>
@@ -224,14 +201,33 @@ namespace OpenDentBusiness{
 			return Crud.ChildRoomLogCrud.Insert(childRoomLog);
 		}
 
+		///<summary></summary>
+		public static void Update(ChildRoomLog childRoomLog){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoomLog);
+				return;
+			}
+			Crud.ChildRoomLogCrud.Update(childRoomLog);
+		}
+
+		///<summary></summary>
+		public static void Delete(long childRoomLogNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),childRoomLogNum);
+				return;
+			}
+			Crud.ChildRoomLogCrud.Delete(childRoomLogNum);
+		}
+
 		///<summary>Creates a ChildRoomLog leaving entry if the most recent log in the given list IsComing. The passed-in list should contain logs for one child or teacher.</summary>
 		public static void CreateChildRoomLogLeaving(List<ChildRoomLog> listChildRoomLogs) {
 			//No need to check MiddleTierRole; no call to db.
 			if(listChildRoomLogs.Count==0) {//No need for leaving entry if the child has no logs for today
 				return;
 			}
-			//OrderBy PK in case there are multiple entries with the same time
-			ChildRoomLog childRoomLogOld=listChildRoomLogs.OrderByDescending(x => x.ChildRoomLogNum).First();
+			//OrderBy DateTDisplayed and IsComing in case there are multiple entries with the same time
+			ChildRoomLog childRoomLogOld=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed)
+				.ThenBy(y => y.IsComing).First();
 			if(!childRoomLogOld.IsComing) {//Most recent entry is already leaving
 				return;
 			}

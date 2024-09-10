@@ -9,7 +9,7 @@ using PdfSharp.Drawing;
 using CodeBase;
 
 namespace OpenDentBusiness{
-	///<summary>One field on a sheetDef.</summary>
+	///<summary>One field on a sheetDef. Language translations are handled by the LanguagePat table.</summary>
 	[Serializable()]
 	[CrudTable(IsSynchable=true)]
 	public class SheetFieldDef:TableBase {

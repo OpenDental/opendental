@@ -126,8 +126,9 @@ namespace OpenDentBusiness {
 							+"WHEN payplanlink.AmountOverride!=0 THEN payplanlink.AmountOverride "//If override isn't zero, use it in sum
 							+"ELSE (CASE "//Otherwise, use adjustment amount or total proc fee for linked production
 								+"WHEN payplanlink.LinkType="+POut.Int((int)PayPlanLinkType.Adjustment)+" THEN adjustment.AdjAmt "
-								+"WHEN payplanlink.LinkType="+POut.Int((int)PayPlanLinkType.Procedure)+" "
-								+"THEN procedurelog.ProcFee*GREATEST(1,procedurelog.BaseUnits+procedurelog.UnitQty) "
+								+"WHEN payplanlink.LinkType="+POut.Int((int)PayPlanLinkType.Procedure)+" THEN (CASE "
+									+"WHEN procedurelog.ProcStatus=1 THEN procedurelog.ProcFee-procedurelog.DiscountPlanAmt-procedurelog.Discount "//TP'd
+									+"ELSE procedurelog.ProcFee END)*GREATEST(1,procedurelog.BaseUnits+procedurelog.UnitQty)"
 								+"ELSE 0 END)"
 							//Factor in non-payplan pay splits, adjustments to procedures, and insurance estimates, payments, writeoffs, and estimated writeoffs
 							+"-COALESCE(sumsplit.SumSplit,0)+COALESCE(sumprocadj.SumProcAdj,0)-COALESCE(sumins.SumIns,0) "

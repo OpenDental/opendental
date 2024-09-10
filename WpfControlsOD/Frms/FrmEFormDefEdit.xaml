@@ -20,7 +20,7 @@
 			<ui:Button x:Name="butPageBreak" Margin="0,245,0,0" Text="Page Break" Click="butPageBreak_Click" Height="24" Width="87" HorizontalAlignment="Center"  />
 			<ui:Button x:Name="butMedicationList" Margin="0,207,0,0" Text="Medication List" Height="24" Width="87"  HorizontalAlignment="Center" Click="butMedicationList_Click"  />
 		</ui:GroupBox>
-		<ui:GroupBox x:Name="groupConditional" Height="100" Width="101" Margin="20,545,0,0">
+		<ui:GroupBox x:Name="groupConditional" Height="100" Width="101" Margin="20,499,0,0">
 			<ui:Label Width="98" Height="34" Margin="0,1,0,0" Text="Set conditional parent for" VAlign="Center" HorizontalAlignment="Center" />
 			<ui:Button x:Name="butSetCondition" Text="Multiple Fields" Click="butSetCondition_Click" Height="24" Width="87" HorizontalAlignment="Center" Margin="0,40,0,0"/>
 			<ui:Button x:Name="butSetPageCondition" Margin="0,67,0,0" Text="Entire Page" Click="butSetPageCondition_Click" Height="24" Width="87" HorizontalAlignment="Center"/>
@@ -33,8 +33,10 @@
 		<ui:ComboBox x:Name="comboType" Width="131" Height="21" Margin="8,71,0,0"/>
 		<ui:Label x:Name="labelModFormTitle" Height="18" Margin="5,6,0,0" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" />
 		<ui:Label x:Name="labelModFormTitle_Copy" Height="18" Margin="5,52,0,0" Text="Type" Width="88" VAlign="Center" HorizontalContentAlignment="Left" />
-		<ui:Button x:Name="butCopy" Margin="27,453,0,0" Text="Copy Ctrl-C" Height="24" Width="87" Click="butCopy_Click"  />
-		<ui:Button x:Name="butPaste" Margin="27,480,0,0" Text="Paste Ctrl-V" Height="24" Width="87" Click="butPaste_Click" />
-		<ui:Button x:Name="butCut" Margin="27,426,0,0" Text="Cut Ctrl-X" Height="24" Width="87" Click="butCut_Click"   />
+		<ui:Button x:Name="butCopy" Margin="27,431,0,0" Text="Copy Ctrl-C" Height="24" Width="87" Click="butCopy_Click"  />
+		<ui:Button x:Name="butPaste" Margin="27,458,0,0" Text="Paste Ctrl-V" Height="24" Width="87" Click="butPaste_Click" />
+		<ui:Button x:Name="butCut" Margin="27,404,0,0" Text="Cut Ctrl-X" Height="24" Width="87" Click="butCut_Click"   />
+		<ui:ComboBox x:Name="comboLanguage" Width="131" Height="21" Margin="8,631,0,0"/>
+		<ui:Label x:Name="labelModFormTitle_Copy1" Height="18" Margin="5,612,0,0" Text="Language" Width="88" VAlign="Center" HorizontalContentAlignment="Left" />
 	</Grid>
 </local:FrmODBase>

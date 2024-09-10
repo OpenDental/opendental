@@ -31,10 +31,8 @@ namespace OpenDental {
 		private void FrmEFormsTextBoxEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			textLabel.Text=EFormFieldCur.ValueLabel;
-			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
-			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
+			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
 			if(EFormFieldCur.SpaceBelow==-1){
@@ -43,6 +41,8 @@ namespace OpenDental {
 			else{
 				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
 			}
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.ConvertCondDbToVis(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -60,20 +60,11 @@ namespace OpenDental {
 			if(frmEFormFieldPicker.IsDialogCancel){
 				return;
 			}
-			textCondParent.Text=frmEFormFieldPicker.LabelSelected;
+			textCondParent.Text=frmEFormFieldPicker.ParentSelected;
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			if(textCondParent.Text==""){
-				MsgBox.Show("Please enter a name in the Parent field first.");
-				return;
-			}
-			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
-			if(conditionValueSetter.ErrorMsg!="") {
-				MsgBox.Show(conditionValueSetter.ErrorMsg);
-				return;
-			}
-			textCondValue.Text=conditionValueSetter.SelectedValue;
+			textCondValue.Text=EFormL.PickCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void FrmEFormTextBoxEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
@@ -103,12 +94,12 @@ namespace OpenDental {
 			}
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
-			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
-			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
-			//not saved to db here. That happens when clicking Save in parent window.
+			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}
 	}

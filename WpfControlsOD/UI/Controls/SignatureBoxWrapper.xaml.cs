@@ -65,6 +65,17 @@ How to use the SignatureBoxWrapper control:
 			signatureBoxWrapper.FillSignature(sigIsTopaz, keyData, signature);
 		}
 
+		///<summary>Gets a bitmap representation of the entire control. Used in printing.</summary>
+		public BitmapImage GetBitmapImage(){
+			System.Drawing.Bitmap bitmap=signatureBoxWrapper.GetSigImage();
+			using System.Drawing.Graphics g=System.Drawing.Graphics.FromImage(bitmap);
+			g.DrawRectangle(System.Drawing.Pens.SlateGray,0,0,bitmap.Width-1,bitmap.Height-1);
+			BitmapImage bitmapImage=OpenDental.Drawing.Graphics.ConvertBitmapToWpf(bitmap);
+			g?.Dispose();
+			bitmap?.Dispose();
+			return bitmapImage;
+		}
+
 		///<summary>This can be used to determine whether the signature has changed since the control was created.  Or you can use the SignatureChanged event to track changes.</summary>
 		public bool GetSigChanged(){
 			return signatureBoxWrapper.GetSigChanged();

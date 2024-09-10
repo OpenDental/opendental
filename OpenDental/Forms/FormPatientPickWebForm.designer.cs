@@ -51,9 +51,9 @@ namespace OpenDental{
 			// 
 			this.labelExplanation.Location = new System.Drawing.Point(12, 5);
 			this.labelExplanation.Name = "labelExplanation";
-			this.labelExplanation.Size = new System.Drawing.Size(597, 42);
+			this.labelExplanation.Size = new System.Drawing.Size(597, 18);
 			this.labelExplanation.TabIndex = 4;
-			this.labelExplanation.Text = "An exact matching patient could not be found for this submitted web form.";
+			this.labelExplanation.Text = "An exact matching patient could not be found for this submitted form";
 			// 
 			// gridMain
 			// 
@@ -80,8 +80,7 @@ namespace OpenDental{
 			this.groupWebFormInfo.Name = "groupWebFormInfo";
 			this.groupWebFormInfo.Size = new System.Drawing.Size(350, 134);
 			this.groupWebFormInfo.TabIndex = 6;
-			this.groupWebFormInfo.TabStop = false;
-			this.groupWebFormInfo.Text = "Web Form Info";
+			this.groupWebFormInfo.Text = "Form Info";
 			// 
 			// labelClinic
 			// 
@@ -181,7 +180,7 @@ namespace OpenDental{
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(281, 20);
 			this.label5.TabIndex = 8;
-			this.label5.Text = "Or, you can select a patient from the main list.";
+			this.label5.Text = "Or, you can select a patient from the main list";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// butSelect
@@ -208,13 +207,13 @@ namespace OpenDental{
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(389, 20);
 			this.label6.TabIndex = 10;
-			this.label6.Text = "Or, you can create a new patient to attach this form to.";
+			this.label6.Text = "Or, you can create a new patient to attach this form to";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// butSkip
 			// 
 			this.butSkip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSkip.Location = new System.Drawing.Point(444, 434);
+			this.butSkip.Location = new System.Drawing.Point(489, 443);
 			this.butSkip.Name = "butSkip";
 			this.butSkip.Size = new System.Drawing.Size(75, 24);
 			this.butSkip.TabIndex = 12;
@@ -236,12 +235,12 @@ namespace OpenDental{
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(310, 20);
 			this.label1.TabIndex = 14;
-			this.label1.Text = "Or, you can discard all web forms for this patient.";
+			this.label1.Text = "Or, you can discard all forms for this patient";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// FormPatientPickWebForm
 			// 
-			this.ClientSize = new System.Drawing.Size(626, 470);
+			this.ClientSize = new System.Drawing.Size(576, 479);
 			this.Controls.Add(this.butSkip);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDiscard);
@@ -255,7 +254,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelExplanation);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPatientPickWebForm";
-			this.Text = "Pick Patient for Web Form";
+			this.Text = "Pick Patient for Form";
 			this.Load += new System.EventHandler(this.FormPatientPickWebForm_Load);
 			this.groupWebFormInfo.ResumeLayout(false);
 			this.groupWebFormInfo.PerformLayout();

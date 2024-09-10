@@ -62,13 +62,6 @@ namespace OpenDental {
 			}
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
-			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.CondValueStrConverter(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
-			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(
-				x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255))
-				&& x.ConditionalParent!="" //for a new checkbox, ValueLabel might be blank
-			);
-			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
 			if(IsLastInHorizStack){
 				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 				labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
@@ -83,6 +76,14 @@ namespace OpenDental {
 				labelSpaceDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
 				textSpaceBelow.IsEnabled=false;
 			}
+			textReportableName.Text=EFormFieldCur.ReportableName;
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.ConvertCondDbToVis(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
+			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(
+				x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255))
+				&& x.ConditionalParent!="" //for a new checkbox, ValueLabel might be blank
+			);
+			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
 		}
 
 		private void ComboDbLink_SelectionTrulyChanged(object sender,EventArgs e) {
@@ -242,20 +243,11 @@ namespace OpenDental {
 			if(frmEFormFieldPicker.IsDialogCancel){
 				return;
 			}
-			textCondParent.Text=frmEFormFieldPicker.LabelSelected;
+			textCondParent.Text=frmEFormFieldPicker.ParentSelected;
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			if(textCondParent.Text==""){
-				MsgBox.Show("Please enter a name in the Parent field first.");
-				return;
-			}
-			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
-			if(conditionValueSetter.ErrorMsg!="") {
-				MsgBox.Show(conditionValueSetter.ErrorMsg);
-				return;
-			}
-			textCondValue.Text=conditionValueSetter.SelectedValue;
+			textCondValue.Text=EFormL.PickCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void FrmEFormRadioButtonsEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
@@ -311,9 +303,11 @@ namespace OpenDental {
 			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true && checkIsRequired.Visible;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
-			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(_listEFormFields,textCondParent.Text,textCondValue.Text);
 			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.ReportableName=textReportableName.Text;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormField eFormFieldParent=_listEFormFields.Find(x=>x.ValueLabel==EFormFieldCur.ConditionalParent);
+			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(_listEFormFields,textCondParent.Text,textCondValue.Text);
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

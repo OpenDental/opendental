@@ -96,7 +96,7 @@ namespace OpenDentBusiness {
 						"ELSE tranbyproc.TranDate " +
 					"END) TranDate," +
 					"SUM(tranbyproc.TranAmount) TranAmount "+
-					"FROM ((";
+					"FROM (";
 			}
 			string transQueries="";
 			if(ageOptions.AgingInc.HasFlag(AgingOptions.AgingInclude.ProcedureFees)) {
@@ -138,7 +138,7 @@ namespace OpenDentBusiness {
 				transQueries += GetInsEstAgingQuery(ageOptions);
 			}
 			if(_isAgedByProc) {
-				transQueries+=@") tranbyproc)
+				transQueries+=@") tranbyproc
 				GROUP BY tranbyproc.PatNum,tranbyproc.AgedProcNum,tranbyproc.TranDate,"+tranType+"," +
 				"(CASE "+
 					"WHEN tranbyproc.AgedProcNum=0 AND tranbyproc.TranAmount >= 0 THEN 'credit' "+

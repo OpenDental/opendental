@@ -2287,6 +2287,7 @@ namespace OpenDental{
 			if(moduleBar==null){
 				return;
 			}
+			userControlDashboard.SuspendLayout();//Prevents scrollbar flicker
 			LayoutManager.MoveLocation(lightSignalGrid1,new Point(0,LayoutManager.Scale(489)));
 			LayoutManager.MoveWidth(lightSignalGrid1,moduleBar.Width-1);
 			//LayoutManager.SynchRecursive(userControlDashboard);
@@ -2350,6 +2351,7 @@ namespace OpenDental{
 				splitContainer.Panel2Collapsed=true;
 			}
 			ResizeDashboard();
+			userControlDashboard.ResumeLayout();
 			FillSignalButtons(null);//Refresh using cache only, do not run query, because this is fired a lot when resizing window or docked task control.
 		}
 
@@ -2362,7 +2364,7 @@ namespace OpenDental{
 			}
 			splitContainer.SplitterDistance=Math.Max(splitContainer.Width-splitContainer.SplitterWidth-width
 				-userControlDashboard.Margin.Left-widthScrollBar,0);
-			LayoutManager.MoveSize(userControlDashboard,new Size(width,splitContainer.Height));
+			LayoutManager.MoveSize(userControlDashboard,new Size(splitContainer.Panel2.Width,splitContainer.Panel2.Height));
 		}
 
 		private void splitContainer_SplitterMoved(object sender,EventArgs e) {

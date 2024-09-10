@@ -21,7 +21,7 @@ namespace OpenDentBusiness {
 		///<summary>Used differently for different types:
 		///<para>TextField, DateField, CheckBox: The label next to or above the textbox, or checkbox.</para>
 		///<para>RadioButtons: The label above the group of radiobuttons. Labels on each radiobutton are in SelectionList.</para>
-		///<para>Label: This label is the only thing that shows. A label is always a WPF FlowDocument, which is an XML format. This allows extensive rich text formatting, like bold, color, paragraph formatting, etc. This format can be used directly in OD proper, but it will need to be converted for some other languages using external tools. BUT, prior to that, it must be run through a method that adjusts all the font sizes. FlowDocuments only support absolute font sizes instead of relative font sizes. We use 11.5 as the base font size and all other fonts are considered to be relative to this base. So if a font size of 13.8 is present in the FlowDocument, that does not mean to use 13.8; it instead means to use 120%. If your chosen base font size on a mobile device is 16, then the conversion method needs to convert the 13.8 to 19.2 prior to using the FlowDocument.</para>
+		///<para>Label: This label is the only thing that shows. A label is always a WPF FlowDocument, which is an XML format. This allows extensive rich text formatting, like bold, color, paragraph formatting, etc. This format can be used directly in OD proper, but it will need to be converted for some other programming languages using external tools. BUT, prior to that, it must be run through a method that adjusts all the font sizes. FlowDocuments only support absolute font sizes instead of relative font sizes. We use 11.5 as the base font size and all other fonts are considered to be relative to this base. So if a font size of 13.8 is present in the FlowDocument, that does not mean to use 13.8; it instead means to use 120%. If your chosen base font size on a mobile device is 16, then the conversion method needs to convert the 13.8 to 19.2 prior to using the FlowDocument.</para>
 		///<para>PageBreak: Not used.</para>
 		///<para>SigBox: Optional label above sig box.</para>
 		///<para>MedicationList: This holds an EFormMedListLayout object, serialized as json, including the Title, column headers, column widths, etc.</para>
@@ -46,15 +46,15 @@ namespace OpenDentBusiness {
 		public bool IsRequired;
 		///<summary>This string is the label of the field that acts as the parent for conditional logic. Empty string by default indicates no parent. Truncated to the first 255 characters. </summary>
 		public string ConditionalParent;
-		///<summary>When this field has a conditional parent, it will only show if the value of this field matches the value of the parent. For radio buttons, it matches the value of one of the radiobuttons. For checkboxes, a match is "X". If radiobutton text is too long, it matches the first 255 characters.</summary>
+		///<summary>When this field has a conditional parent, it will only show if the value of this field matches the value of the parent. For radio buttons, it matches the value of one of the radiobuttons. For checkboxes, a match is "X". If radiobutton text is too long, it matches the first 255 characters. For age conditions, it must start with greaterthan or lessthan. Example ">14".</summary>
 		public string ConditionalValue;
-		///<summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft. Only used in RadioButtons for now.</summary>
+		///<summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft, 2-Right. Only used in RadioButtons for now.</summary>
 		public EnumEFormLabelAlign LabelAlign;
 		///<summary>The amount of space below each field. Overrides the global default. -1 will indicate to use that default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
 		public int SpaceBelow;
 		///<summary>Allows reporting on fields that don't have DbLink.</summary>
 		public string ReportableName;
-		///<summary>If a field is locked, it stops a patient from editing the text when presented to them. Example is a consent form.</summary>
+		///<summary>If a field is locked, it stops a patient from editing the text when presented to them. Example is a consent form. Only available for TextField and CheckBox. This flag is set here in the EFormFieldDef and then EFormField inherits it with no UI to change it later. See additional notes in EFormField.</summary>
 		public bool IsLocked;
 
 		public EFormFieldDef(){

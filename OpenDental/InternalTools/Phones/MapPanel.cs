@@ -708,8 +708,8 @@ namespace OpenDental.InternalTools.Phones{
 			float deltaZoom=_zoomValue*(float)e.Delta/SystemInformation.MouseWheelScrollDelta/8f;//For example, -15 
 			float zoomValNew=_zoomValue+deltaZoom;
 			//Converting to a float causes the int.maxvalue to still wrap around to a negative value, removed 100 from the maximum to avoid this error.
-			if(zoomValNew>=int.MaxValue){
-				zoomValNew=(float)int.MaxValue-100;
+			if(zoomValNew>=1000000){
+				zoomValNew=999999;
 			}
 			if(zoomValNew<1){
 				zoomValNew=1;

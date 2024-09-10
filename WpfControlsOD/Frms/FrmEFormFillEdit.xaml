@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="750" Height="719" 
-             Text="Module Form Def Edit" MinMaxBoxes="False">
+             Text="Fill eForm" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="8,8,112,92"/>
 		<ui:Button x:Name="butPrint" Width="75" VerticalAlignment="Bottom" Height="24" Margin="285,0,0,10" Text="Print" Click="butPrint_Click" />

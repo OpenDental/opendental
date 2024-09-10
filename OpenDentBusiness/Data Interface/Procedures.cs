@@ -3437,7 +3437,10 @@ namespace OpenDentBusiness {
 			if(proc.ProcDate<DateTime.Today && proc.ProcStatus==ProcStat.C) {
 				isHistorical=true;//Don't automatically create an estimate for completed procedures, especially if they are older than today.  Very important after a conversion from another software.
 				//Special logic in place only for capitation plans:
-				if(planList.Any(x => x.PlanType=="c") //11/19/2012 js We had a specific complaint where changing plan type to capitation automatically added WOs to historical procs.
+
+				List<InsSub> listInsSubsForPatPlanActive=subList.FindAll(x => patPlans.Any(y => x.InsSubNum==y.InsSubNum));
+				List<InsPlan> listInsPlansForPatActive=planList.FindAll(x => listInsSubsForPatPlanActive.Any(y => x.PlanNum==y.PlanNum));
+				if(listInsPlansForPatActive.Any(x => x.PlanType=="c") //11/19/2012 js We had a specific complaint where changing plan type to capitation automatically added WOs to historical procs.
 					&& !listClaimProcsAll.Any(x => x.ProcNum==proc.ProcNum 
 						&& x.Status.In(ClaimProcStatus.CapClaim,ClaimProcStatus.CapComplete,ClaimProcStatus.CapEstimate))) 
 				{

@@ -27,6 +27,17 @@ namespace OpenDentBusiness{
 			return Crud.JobReviewCrud.SelectOne(jobReviewNum);
 		}
 
+		public static List<JobReview> GetReviewsAndTimeLogsForJobs(params long[] arrayJobNums) {
+			if(arrayJobNums==null || arrayJobNums.Length==0) {
+				return new List<JobReview>();
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<JobReview>>(MethodBase.GetCurrentMethod(),arrayJobNums);
+			}
+			string command=$"SELECT * FROM jobreview WHERE JobNum IN ({string.Join(",",arrayJobNums)})";
+			return Crud.JobReviewCrud.SelectMany(command);
+		}
+
 		public static List<JobReview> GetReviewsForJobs(params long[] arrayJobNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<JobReview>>(MethodBase.GetCurrentMethod(),arrayJobNums);
@@ -53,26 +64,6 @@ namespace OpenDentBusiness{
 			List<JobReview> listReviews=Crud.JobReviewCrud.SelectMany(command);
 			return listReviews;
 		}
-
-		public static List<JobReview> GetListForTeamReport(List<Job> listCachedReportJobs,List<Userod> listTeamMembers,DateTime dateFrom,DateTime dateTo) {
-			if(listTeamMembers.IsNullOrEmpty()) {
-				return new List<JobReview>();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<JobReview>>(MethodBase.GetCurrentMethod(),listCachedReportJobs,listTeamMembers,dateFrom,dateTo);
-			}
-			string command=@$"
-				SELECT * FROM jobreview 
-				WHERE JobNum IN (
-					SELECT JobNum
-					FROM jobreview
-					WHERE ReviewerNum IN({POut.String(string.Join(",",listTeamMembers.Select(x => x.UserNum).ToList()))})
-					AND DateTStamp BETWEEN {POut.DateT(dateFrom)} AND {POut.DateT(dateTo)}
-				)
-				OR JobNum IN({POut.String(string.Join(",",listCachedReportJobs.Select(x => x.JobNum).ToList()))})";
-			return Crud.JobReviewCrud.SelectMany(command);
-		}
-
 
 		public static DataTable GetOutstandingForUser(long userNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

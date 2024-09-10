@@ -14,7 +14,6 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 			private string _jobTeamName;
 			private Def _priority;
 			private double _hoursLoggedInDateRange;
-			private double _percentOfUserTotalHoursInDateRange;
 			private TeamReportLogType _logType;
 			private DateTime _dateTimeLastLog;
 			private bool _hasReviewMarkedDone;
@@ -64,30 +63,15 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 				List<JobReview> listJobReviewsByUserInDateRange)
 			{
 				List<TeamReportJob> listTeamReportJobs=new List<TeamReportJob>();
-				double userTotalHoursInDateRange=listJobReviewsByUserInDateRange.Sum(x => x.Hours);
 				foreach(Job job in listJobsForUser) {
-					List<TeamReportJob> listTeamReportJobsForJob=CreateTeamReportJobsForJob(job.JobNum,listJobReviewsByUserInDateRange);
-					//Get data common to all TeamReportJobs for a Job.
-					long jobTeamNum=listTeamJobLinks.FirstOrDefault(x => x.JobNum==job.JobNum)?.FKey ?? 0;
-					string jobTeamName=listJobTeams.FirstOrDefault(x => x.JobTeamNum==jobTeamNum)?.TeamName ?? "";
-					Def priority=listDefsJobPriority.FirstOrDefault(x => x.DefNum==job.Priority) ?? new Def();
-					bool hasReviewMarkedDone=job.ListJobReviews.Any(x => x.ReviewStatus==JobReviewStatus.Done);
-					string statusLastReview=job.ListJobReviews
-						.OrderByDescending(x => x.DateTStamp)
-						.ThenByDescending(x => x.JobReviewNum)
-						.FirstOrDefault()?.ReviewStatus.ToString() ?? "";
-					DateTime dateTimeLastLog=GetDateTimeLastLogOrMinDate(job);
-					bool isUserOwner=IsUserJobOwner(job,userNum);
+					List<TeamReportJob> listTeamReportJobsForJob=CreateTeamReportJobsForJob(userNum,job.JobNum,listJobReviewsByUserInDateRange);
 					SetCommonFieldsForList(
 						listTeamReportJobsForJob,
-						userTotalHoursInDateRange,
 						job,
-						jobTeamName,
-						priority,
-						hasReviewMarkedDone,
-						statusLastReview,
-						dateTimeLastLog,
-						isUserOwner
+						listTeamJobLinks,
+						listJobTeams,
+						listDefsJobPriority,
+						userNum
 					);
 					listTeamReportJobs.AddRange(listTeamReportJobsForJob);
 				}
@@ -98,17 +82,22 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 			///If the sum for both is zero, a TeamReportJob is made representing the user's ownership of an active job.
 			///Otherwise, a TeamReportJob is made for each bucket with time greater than zero to represent
 			///the Review and TimeLog time logged by the user within the date range.</summary>
-			private static List<TeamReportJob> CreateTeamReportJobsForJob(long jobNum,List<JobReview> listJobReviewsByUserInDateRange) {
+			private static List<TeamReportJob> CreateTeamReportJobsForJob(long userNum,long jobNum,List<JobReview> listJobReviewsByUserInDateRange) {
 				TimeSpan timeSpanTimeLogs=TimeSpan.Zero;
 				TimeSpan timeSpanReviewLogs=TimeSpan.Zero;
 				foreach(JobReview jobReview in listJobReviewsByUserInDateRange) {
 					if(jobReview.JobNum!=jobNum) {
 						continue;
 					}
+					//User logged time on this job.
 					if(jobReview.ReviewStatus==JobReviewStatus.TimeLog) {
 						timeSpanTimeLogs+=jobReview.TimeReview;
 					}
-					else {//All other JobReviewStatuses are for reviews
+					//User is engineer on job and another user reviewed it.
+					else if(jobReview.ReviewerNum!=userNum) {
+						timeSpanTimeLogs+=jobReview.TimeReview;
+					}
+					else {//All other logs are for reviews by user.
 						timeSpanReviewLogs+=jobReview.TimeReview;
 					}
 				}
@@ -151,25 +140,21 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 				);
 			}
 
-			private static void SetCommonFieldsForList(
-				List<TeamReportJob> listTeamReportJob,
-				double userTotalHoursInDateRange,
-				Job job,
-				string jobTeamName,
-				Def priority,
-				bool hasReviewMarkedDone,
-				string statusLastReview,
-				DateTime dateTimeLastLog,
-				bool isUserOwner)
-			{
-				foreach(TeamReportJob teamReportJob in listTeamReportJob) {
+			private static void SetCommonFieldsForList(List<TeamReportJob> listTeamReportJobs,Job job,List<JobLink> listTeamJobLinks,List<JobTeam> listJobTeams,List<Def> listDefsJobPriority,long userNum) {
+				long jobTeamNum=listTeamJobLinks.FirstOrDefault(x => x.JobNum==job.JobNum)?.FKey ?? 0;
+				string jobTeamName=listJobTeams.FirstOrDefault(x => x.JobTeamNum==jobTeamNum)?.TeamName ?? "";
+				Def priority=listDefsJobPriority.FirstOrDefault(x => x.DefNum==job.Priority) ?? new Def();
+				bool hasReviewMarkedDone=job.ListJobReviews.Any(x => x.ReviewStatus==JobReviewStatus.Done);
+				string statusLastReview=job.ListJobReviews
+					.OrderByDescending(x => x.DateTStamp)
+					.ThenByDescending(x => x.JobReviewNum)
+					.FirstOrDefault()?.ReviewStatus.ToString() ?? "";
+				DateTime dateTimeLastLog=GetDateTimeLastLogOrMinDate(job);
+				bool isUserOwner=IsUserJobOwner(job,userNum);
+				foreach(TeamReportJob teamReportJob in listTeamReportJobs) {
 					//Set members common to all TeamReportJobs for job.
 					teamReportJob._job=job;
 					teamReportJob._jobTeamName=jobTeamName;
-					teamReportJob._percentOfUserTotalHoursInDateRange=CalcPercentOfUserTotalHours(
-						teamReportJob._hoursLoggedInDateRange
-						,userTotalHoursInDateRange
-					);
 					teamReportJob._dateTimeLastLog=dateTimeLastLog;
 					teamReportJob._priority=priority;
 					teamReportJob._hasReviewMarkedDone=hasReviewMarkedDone;
@@ -193,15 +178,6 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 					//JobNum breaks ties
 					.ThenBy(x => x._job.JobNum)
 					.ToList();
-			}
-
-			private static double CalcPercentOfUserTotalHours(double hoursLoggedInDateRange,double userTotalHoursInDateRange) {
-				if(userTotalHoursInDateRange==0) {
-					return 0;//Avoid dividing by zero which gives NaN result.
-				}
-				else {
-					return 100d*(hoursLoggedInDateRange/userTotalHoursInDateRange);
-				}
 			}
 			#endregion Create List For User
 

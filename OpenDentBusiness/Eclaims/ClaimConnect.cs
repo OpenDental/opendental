@@ -1299,7 +1299,7 @@ namespace OpenDentBusiness.Eclaims {
 			return specialty;
 		}
 
-		/// <summary>Truns Claim.PatRelat into an acceptable XConnect patient relationship</summary>
+		///<summary>Turns Claim.PatRelat into an acceptable XConnect patient relationship</summary>
 		public static string GetXConnectPatientRelation(Relat relat) {
 			string relationship="";
 			switch (relat) {
@@ -1368,7 +1368,7 @@ namespace OpenDentBusiness.Eclaims {
 		public string lastName;
 		///<summary>Required.</summary>
 		public string entityType;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string type;
 
 		///<summary>Mimics billing address logic inside X837_5010.</summary>
@@ -1406,9 +1406,13 @@ namespace OpenDentBusiness.Eclaims {
 				//xconnectAddress.phoneExt="";//We don't havea field for this.
 				xconnectAddress.fax=clinic.Fax;
 			}
-			xconnectAddress.entityType=POut.Int((int)EnumXConnectAddressEntityType.Individual);
 			if(providerBill.IsNotPerson) {
 				xconnectAddress.entityType=POut.Int((int)EnumXConnectAddressEntityType.Organization);
+			}
+			else {
+				xconnectAddress.entityType=POut.Int((int)EnumXConnectAddressEntityType.Individual);
+				xconnectAddress.firstName=providerBill.FName;
+				xconnectAddress.lastName=providerBill.LName;
 			}
 			xconnectAddress.type=POut.Int((int)EnumXConnectAddressType.Default);//Default. Never a paytoAddress always a physical address.
 			return xconnectAddress;
@@ -1490,96 +1494,95 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary></summary>
 	public class XConnectAttachmentStatus {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool hasAttachment;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string dxcAttachmentId;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string viewedDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public int status;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string description;
 	}
 
 	///<summary></summary>
 	public class XConnectCategoryCode {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string code;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string statusCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string entityCode;
 	}
 
 	///<summary>https://developer.dentalxchange.com/claim-api#tag/ClaimModel</summary>
 	public class XConnectClaim {
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public XConnectProvider[] providers;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public XConnectPayer payer;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public XConnectPatient patient;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public XConnectPatient subscriber;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectPatient[] additionalSubscribers;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public XConnectClaimItem[] items;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public EnumXConnectClaimType type;
-		///<summary>Optional. This is DentalXChange’s account number, it’s called Group ID (From Email). We will never need this because it is inferred from API key.</summary
-		[JsonIgnore]
-		public int dxcGroupId;
+		///<summary>Optional. This is DentalXChange’s account number, it’s called Group ID (From Email). We will never need this because it is inferred from API key.</summary>
+		public int? dxcGroupId=null;
 		///<summary>Optional. Is when sending a claim that is a followup to a PreAuth?</summary>
 		public string dxcClaimId;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string providerClaimId;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string dxcAttachmentId;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public bool infoSign;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public bool benefitSign;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string neaNumber;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string facilityCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string facilityName;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string facilityId;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string facilityIdType;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string accidentCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string accidentDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string acciendentState;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string orthoPlacementDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string orthoTreatmentMonths;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string orthoRemainingMonths;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool orthoRelated;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string preAuthorizationId;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string refferalId; //double check
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string note;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string delayReasonCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string[] missingTeeth;
 		///<summary>Optional.</summary>
 		public string[] diagnosisCodes;
-		///<summary>Optional.</summary
-		public int submissionReasonCode;
-		///<summary>Optional. This is the payer’s assigned unique id for each claim, and is used for submission of claim following a preauthorization (this is not needed for Claim Validation) (From Email).</summary
+		///<summary>Optional.</summary>
+		public int? submissionReasonCode=null;
+		///<summary>Optional. This is the payer’s assigned unique id for each claim, and is used for submission of claim following a preauthorization (this is not needed for Claim Validation) (From Email).</summary>
 		public string documentControlNumber;
 
 		///<summary></summary>
@@ -1595,7 +1598,7 @@ namespace OpenDentBusiness.Eclaims {
 			XConnectProvider xConnectProviderRendering=XConnectProvider.FromProvider(providerRendering,clinic,carrier.ElectID,EnumXConnectProviderType.RENDERING);
 			xconnectClaim.providers=new XConnectProvider[] { xConnectProviderBill,xConnectProviderRendering };
 			xconnectClaim.patient=XConnectPatient.FromPatient(patient,claim.InsSubNum,claim.ClaimType,EnumXConnectPatientMemberType.PATIENT,claim.PatRelat);
-			xconnectClaim.subscriber=xconnectClaim.patient;
+			xconnectClaim.subscriber=XConnectPatient.FromPatient(patient,claim.InsSubNum,claim.ClaimType,EnumXConnectPatientMemberType.SUBSCRIBER,claim.PatRelat);
 			//Find out if the patient is a guarantor
 			List<XConnectPatient> listXConnectPatientsAdditionalSubs=new List<XConnectPatient>();
 			if(patient.Guarantor==patient.PatNum) {//not sure if this is the right approach for this
@@ -1695,46 +1698,46 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary>https://developer.dentalxchange.com/claim-api#tag/ClaimItemModel This represents a procedure attached to the claim.</summary>
 	public class XConnectClaimItem {
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string controlNumber;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string startDate;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string endDate;
-		///<summary>Required</summary
+		///<summary>Required</summary>
 		public int quantity;
-		///<summary>Required</summary
+		///<summary>Required</summary>
 		public double fee;
-		///<summary>Optional</summary
-		public double tax;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
+		public double? tax=null;
+		///<summary>Optional</summary>
 		public string prothesisCode;//Only for medical
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string prothesisPlacementDate;//Only for medical
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string quadrant;
-		///<summary>Required</summary
+		///<summary>Required</summary>
 		public string procedureCode;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string procedureModifier1;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string procedureModifier2;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string procedureModifier3;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string procedureModifier4;
 		///<summary>Optional.This is NPI or TIN that identifies the facility / practice location (From Email).</summary>
 		public string facilityIdentifier;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string comment;
 		///<summary>Optional.This is for claims with more than one payer. 
 		///This is the amount primary payer paid on the claim, when submitting to secondary payer (From Email). </summary>
-		public double amountPaidByPayer;
+		public double? amountPaidByPayer=null;
 		///<summary>Optional.Date of Payment from amountPaidByPayer (From Email).</summary>
 		public string dateOfPayment;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public XConnectTooth[] tooth;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public int[] diagnosisPointers;
 		///<summary>Optional.Adjustments based on payment from primary (From Email).
 		///DentalXChange says this is an array of Objects but their API says it is a singular object.</summary>
@@ -1908,9 +1911,9 @@ namespace OpenDentBusiness.Eclaims {
 	}
 
 	public class XConnectClaimItemAdjustment {
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public EnumXConnectAdjustmentGroupCode adjustmentGroupCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectClaimItemAdjustmentDetail[] adjustmentDetails;
 		public XConnectClaimItemAdjustment FromAdjustment(Adjustment adjustment) {
 			XConnectClaimItemAdjustment xconnectClaimItemAdjustment = new XConnectClaimItemAdjustment();
@@ -1922,7 +1925,7 @@ namespace OpenDentBusiness.Eclaims {
 		///<summary>Required.<summary>
 		public string reasonCode;
 		///<summary>Optional.<summary>
-		public double quantity;
+		public double? quantity=null;
 		///<summary>Required.<summary>
 		public double adjustmentAmount;
 
@@ -1930,79 +1933,79 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary></summary>
 	public class XConnectClaimItemResponse {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string controlNumber;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string quantity;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string startDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string endDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectStatus itemStatus;
 	}
 
 	///<summary></summary>
 	public class  XConnectClaimStatus {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string dxcClaimId;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectStatus claimStatus;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectDXCStatus dxcStatus;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectAttachmentStatus attachmentStatus;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectClaimItemResponse[] claimItems;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string[] warnings;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string edi;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string xml;
 	}
 
 	///<summary></summary>
 	public class XConnectDXCStatus {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectClaimError[] claimErrors;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectClaimItemError[] claimItemErrors;
 	}
 
 	///<summary></summary>
 	public class XConnectClaimError {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string claimPart;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string code;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string description;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string category;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public int statusCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string entityId;
 	}
 
 	///<summary></summary>
 	public class XConnectClaimItemError {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public int claimItem;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string code;
 	}
 
 	///<summary>https://developer.dentalxchange.com/claim-api#tag/PayerModel</summary>
 	public class XConnectPayer {
-		///<summary>Required</summary
+		///<summary>Required</summary>
 		public string payerIdCode;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public XConnectAddress address;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public string employerName;
-		///<summary>Optional</summary
+		///<summary>Optional</summary>
 		public XConnectPayerCob coordinationOfBenefits;
 
 		public static XConnectPayer FromCarrier(Carrier carrier,Patient patient,bool hasAdjustments) {
@@ -2019,15 +2022,15 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary></summary>
 	public class XConnectPayerCob {
-			///<summary>Required.</summary
+			///<summary>Required.</summary>
 		public string datePaid;
-			///<summary>Required.</summary
+			///<summary>Required.</summary>
 		public double amountPaid;
-			///<summary>Optional.</summary
+			///<summary>Optional.</summary>
 		public double amountPaidToPatient;
-			///<summary>Optional.</summary
+			///<summary>Optional.</summary>
 		public double patientResponsibillity;
-			///<summary>Optional.</summary
+			///<summary>Optional.</summary>
 		public double totalNonCoveredAmount;
 
 		public static XConnectPayerCob FromClaim(Claim claim) {
@@ -2048,35 +2051,35 @@ namespace OpenDentBusiness.Eclaims {
 	///<summary>https://developer.dentalxchange.com/claim-api#tag/PatientModel
 	//XConnect Patient object and Suscriber are the same. We have patient and subscriber to account for the X12 spec (From Email). ///</summary>
 	public class XConnectPatient {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectAddress address;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectPayer payer;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public EnumXConnectPatientMemberType memberType;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public EnumXConnectPatientGender gender;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string memberId;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string dateOfBirth;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string sequenceCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string planName;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string relationship;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string groupNumber;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string studentCode;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string maritalStatus;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string schoolName;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string schoolCity;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string schoolState;
 
 		///<summary></summary>
@@ -2126,23 +2129,23 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary>https://developer.dentalxchange.com/claim-api#tag/ProviderModel</summary>
 	public class XConnectProvider {
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public EnumXConnectProviderType type;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public EnumXConnectProviderSpecialty specialty;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string licenseNumber;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string licenseState;
 		///<summary>Optional. NPI needs to be reported in Billing or Rendering providers as in 5010 there is no NPI in PayTo loop (From Email).</summary>
 		public string billingNpi;
 		///<summary>Optional. NPI needs to be reported in Billing or Rendering providers as in 5010 there is no NPI in PayTo loop (From Email)</summary>
 		public string renderingNpi;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string taxId;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string socialSecurityNumber;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public XConnectAddress[] addresses;
 		///<summary>Optional.</summary>
 		public XConnectProviderCredentials[] credentials;
@@ -2211,46 +2214,46 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary></summary>
 	public class XConnectProviderCredentials {
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string type;
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public string value;
 	}
 
 	///<summary></summary>
 		public class XConnectResponseStatus {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public long code;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string description;
 	}
 
 	///<summary></summary>
 	public class XConnectStatus {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public double submittedAmount;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public double paidAmount;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string statusDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string adjudicationDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string paymentMethod;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string paymentDate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string checkNumber;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string message;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectCategoryCode[] categoryCodes;
 	}
 
 	public class XConnectTooth {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string surface;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string toothNumber;
 
 		public static List<XConnectTooth> FromProc(Procedure procedure) {
@@ -2308,33 +2311,33 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary></summary>
 	public class XConnectValidateClaim {
-		///<summary>Required.</summary
+		///<summary>Required.</summary>
 		public XConnectClaim claim;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool validateForAttachment;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool matchProvider;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool autoAddProvider;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool saveOnError;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool allowDuplicate;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool writeEdi;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public bool writeXml;
 	}
 
 	///<summary></summary>
 	public class XConnectWebResponse {
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectResponseStatus status;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public string[] messages;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public int transactionId;
-		///<summary>Optional.</summary
+		///<summary>Optional.</summary>
 		public XConnectClaimStatus response;
 	}
 
@@ -2391,7 +2394,7 @@ namespace OpenDentBusiness.Eclaims {
 	///<summary>https://developer.dentalxchange.com/claim-api#tag/PatientModel</summary>
 	public enum EnumXConnectPatientMemberType {
 		PATIENT,
-		SUSCRIBER,
+		SUBSCRIBER,
 		ADDITIONAL_SUBSCRIBER
 	}
 

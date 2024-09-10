@@ -216,6 +216,12 @@
     <Compile Include="UI Testing\FormGraphicsTests.Designer.cs">
       <DependentUpon>FormGraphicsTests.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI Testing\FormInputBoxTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI Testing\FormInputBoxTests.Designer.cs">
+      <DependentUpon>FormInputBoxTests.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI Testing\FormSplitContainerTests.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -478,6 +484,9 @@
     <Compile Include="UnitTests\WikiPagesTests.cs" />
     <EmbeddedResource Include="UI Testing\FormGraphicsTests.resx">
       <DependentUpon>FormGraphicsTests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI Testing\FormInputBoxTests.resx">
+      <DependentUpon>FormInputBoxTests.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI Testing\FormSplitContainerTests.resx">
       <DependentUpon>FormSplitContainerTests.cs</DependentUpon>

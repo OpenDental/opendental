@@ -235,6 +235,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Frame\UIManager.cs" />
+    <Compile Include="Frms\FrmChildRoomLogEdit.xaml.cs">
+      <DependentUpon>FrmChildRoomLogEdit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\FrmChildMapLog.xaml.cs">
       <DependentUpon>FrmChildMapLog.xaml</DependentUpon>
     </Compile>
@@ -794,6 +797,10 @@
     <Compile Include="UI\Progress\ProgressWin.cs" />
     <Compile Include="UI\ToothChart\Sparks3DInterface.cs" />
     <Compile Include="UI\ToothChart\ToothChartRelay.cs" />
+    <Page Include="Frms\FrmChildRoomLogEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Frms\FrmChildMapLog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

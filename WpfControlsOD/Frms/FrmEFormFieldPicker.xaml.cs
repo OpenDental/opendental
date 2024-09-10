@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using OpenDentBusiness;
+using WpfControls;
 using WpfControls.UI;
 using CodeBase;
 
@@ -17,7 +18,7 @@ namespace OpenDental {
 		///<summary>This is set from the parent form.</summary>
 		public List<EFormField> ListEFormFields;
 		///<summary>Upon closing, this is the label from the selected eForm field.</summary>
-		public string LabelSelected;
+		public string ParentSelected;
 		///<summary>Upon closing, this is the value from the selected eForm field. This will only have a value when multiple fields are selected and setting the condition; otherwise, null.</summary>
 		public string ValueSelected;
 		///<summary>Set to true to show groupParentValue and change some wording. Used for multiple fields and for entire page.</summary>
@@ -31,8 +32,8 @@ namespace OpenDental {
 		public FrmEFormFieldPicker() {
 			InitializeComponent();
 			Load+=FrmEFormFieldPicker_Load;
-			listBoxFieldLabels.MouseDoubleClick+=ListBoxFieldLabels_MouseDoubleClick;
-			listBoxFieldLabels.SelectionChangeCommitted+=ListBoxFieldLabels_SelectionChangeCommitted;
+			//listBoxFieldLabels.MouseDoubleClick+=ListBoxFieldLabels_MouseDoubleClick;
+			//listBoxFieldLabels.SelectionChangeCommitted+=ListBoxFieldLabels_SelectionChangeCommitted;
 		}
 
 
@@ -46,14 +47,22 @@ namespace OpenDental {
 			for(int i=0;i<ListEFormFields.Count;i++) {
 				if(!ListEFormFields[i].FieldType.In(
 					EnumEFormFieldType.CheckBox,
-					EnumEFormFieldType.RadioButtons))
+					EnumEFormFieldType.RadioButtons,
+					EnumEFormFieldType.DateField))
 				{
 					continue;
+				}
+				if(ListEFormFields[i].ValueLabel==""){
+					continue;
+				}
+				string parent=ListEFormFields[i].ValueLabel;
+				if(parent.Length>255){
+					parent=parent.Substring(0,255);
 				}
 				if(ListSelectedIndices.Contains(i)) {//Don't add the label if it was selected.
 					continue;
 				}
-				_listStrings.Add(ListEFormFields[i].ValueLabel);
+				_listStrings.Add(parent);
 			}
 			for(int i=0;i<_listStrings.Count;i++) {
 				if(_listStrings.Count(x=> x==_listStrings[i])==1){ 
@@ -72,6 +81,11 @@ namespace OpenDental {
 			}
 		}
 
+		private void butPickValue_Click(object sender,EventArgs e) {
+			textCondValue.Text=EFormL.PickCondValue(ListEFormFields,listBoxFieldLabels.SelectedItem.ToString(),textCondValue.Text);
+		}
+
+		/*
 		private void ListBoxFieldLabels_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(listBoxFieldLabels.Items.Count<=0 || listBoxFieldLabels.SelectedIndex==-1) {
 				return;
@@ -103,8 +117,23 @@ namespace OpenDental {
 				comboParentValue.Items.Add("Unchecked");
 				return;
 			}
-		}
+			//Dates
+//todo:
+			for(int i=0;i<ListEFormFields.Count;i++) {
+				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.CheckBox) {
+					continue;
+				}
+				if(ListEFormFields[i].ValueLabel!=labelSelected) {
+					continue;
+				}
+				comboParentValue.Items.Clear();
+				comboParentValue.Items.Add("Checked");
+				comboParentValue.Items.Add("Unchecked");
+				return;
+			}
+		}*/
 
+		/*
 		private void ListBoxFieldLabels_MouseDoubleClick(object sender,MouseButtonEventArgs e) {
 			if(listBoxFieldLabels.Items.Count<=0 || listBoxFieldLabels.SelectedIndex==-1) {
 				return;
@@ -140,43 +169,27 @@ namespace OpenDental {
 			LabelSelected=labelSelected;
 			ValueSelected=valueSelected;
 			IsDialogOK=true;
-		}
+		}*/
 
 		private void butSave_Click(object sender, EventArgs e) {
 			if(listBoxFieldLabels.SelectedIndex==-1) {
 				MsgBox.Show("Please select an item first.");
 				return;
 			}
-			if(groupParentValue.Visible && comboParentValue.SelectedIndex==-1) {
-				MsgBox.Show("Please select a value before continuing");
-				return;
-			}
-			string labelSelected=listBoxFieldLabels.GetSelected<string>();
-			if(_listStrings.Count(x=>x==labelSelected)>1){//I don't think this is possible since listBoxFieldsLabels doesn't show duplicate labels as options to choose from.
+			//if(groupParentValue.Visible && textCondValue.Text=="") {//no, allow them to set it to blank
+			//	MsgBox.Show("Please select a value before continuing");
+			//	return;
+			//}
+			string parent=listBoxFieldLabels.GetSelected<string>();
+			if(_listStrings.Count(x=>x==parent)>1){//I don't think this is possible since listBoxFieldsLabels doesn't show duplicate labels as options to choose from.
 				MsgBox.Show("That label is used more than once. The parent field must have a unique label.");
 				return;
 			}
-			if(labelSelected.Length>255) {
-				labelSelected=labelSelected.Substring(0,255);
+			if(parent.Length>255) {
+				parent=parent.Substring(0,255);
 			}
-			string valueSelected=comboParentValue.GetStringSelectedItems();
-			for(int i=0;i<ListEFormFields.Count;i++) {
-				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.CheckBox) {
-					continue;
-				}
-				if(ListEFormFields[i].ValueLabel!=labelSelected) {
-					continue;
-				}
-				if(valueSelected=="Checked") {//Change it to "X" to store it in the database and for validating.
-					valueSelected="X";
-				}
-				else {//Unchecked
-					valueSelected="";
-				}
-				break;
-			}
-			LabelSelected=labelSelected;
-			ValueSelected=valueSelected;
+			ValueSelected=EFormL.ConvertCondVisToDb(ListEFormFields,parent,textCondValue.Text);
+			ParentSelected=parent;
 			IsDialogOK=true;
 		}
 	}

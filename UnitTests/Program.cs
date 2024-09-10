@@ -23,6 +23,7 @@ namespace UnitTests {
 			//Application.Run(new FormGroupBoxTests());
 			//Application.Run(new FormMonthCalendarTests());
 			//Application.Run(new FormImageSelectorTests());
+			Application.Run(new FormInputBoxTests());
 			//Application.Run(new FormLayoutManagerTests());
 			//Application.Run(new FormProgressTests());
 			//Application.Run(new FormSandboxJordan());
@@ -33,7 +34,7 @@ namespace UnitTests {
 			//Application.Run(new FormToothChartTests());
 			//Application.Run(new FormTextBoxTests());
 			//OpenDental.Dpi.SetUnaware();
-			Application.Run(new FormWpfConverter());
+			//Application.Run(new FormWpfConverter());
 		}
 	}
 }

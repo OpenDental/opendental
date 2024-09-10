@@ -30,7 +30,8 @@ namespace OpenDental {
 		private void FrmEFormPicker_Load(object sender,EventArgs e) {
 			Lang.F(this);
 			if(!IsInternalPicker){
-				labelHead.Visible=false;
+				//later on, we will make labelHead.Visible=false, but for now we will reuse it to warn users
+				labelHead.Text="eForms is a new feature that is not yet available to patients";
 				butBlank.Visible=false;
 				labelAdd.Visible=false;
 			}

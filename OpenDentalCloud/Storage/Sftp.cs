@@ -56,6 +56,7 @@ namespace OpenDentalCloud {
 			private static string _stashRootFolderPath=ODFileUtils.CombinePaths(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),"OpenDental","Stash");
 			private static string _stashInstanceFolderPath=ODFileUtils.CombinePaths(_stashRootFolderPath,Process.GetCurrentProcess().Id.ToString());
 			internal SftpClient _client;
+			public static bool DoUseStash=true;
 
 			public Download(string host,string user,string pass,int port=22) {
 				_client=Init(host,user,pass,port);
@@ -70,33 +71,36 @@ namespace OpenDentalCloud {
 				string fullFilePath=ODFileUtils.CombinePaths(Folder,FileName,'/');
 				SftpFileAttributes attribute=_client.GetAttributes(fullFilePath);
 				string stashFilePath=null;
-				try {
-					stashFilePath=ODFileUtils.CombinePaths(_stashInstanceFolderPath,fullFilePath);
-					string stashFileParentDir=Directory.GetParent(stashFilePath).FullName;
-					if(!Directory.Exists(stashFileParentDir)) {
-						Directory.CreateDirectory(stashFileParentDir);
-					}
-					if(File.Exists(stashFilePath)) {
-						FileInfo stashFileInfo=new FileInfo(stashFilePath);
-						while((DateTime.Now-stashFileInfo.CreationTime).TotalSeconds < 15) {//while recently created (currently being written to)
-							if(stashFileInfo.LastWriteTime==attribute.LastWriteTime) {
-								break;
+				if(DoUseStash) {
+					try {
+						stashFilePath=ODFileUtils.CombinePaths(_stashInstanceFolderPath,fullFilePath);
+						string stashFileParentDir=Directory.GetParent(stashFilePath).FullName;
+						if(!Directory.Exists(stashFileParentDir)) {
+							Directory.CreateDirectory(stashFileParentDir);
+						}
+						if(File.Exists(stashFilePath)) {
+							FileInfo stashFileInfo=new FileInfo(stashFilePath);
+							while((DateTime.Now-stashFileInfo.CreationTime).TotalSeconds < 15) {//while recently created (currently being written to)
+								if(stashFileInfo.LastWriteTime==attribute.LastWriteTime) {
+									break;
+								}
+								Thread.Sleep(10);
 							}
-							Thread.Sleep(10);
+							if(stashFileInfo.LastWriteTime==attribute.LastWriteTime) {
+								ByteArray=ProtectedData.Unprotect(File.ReadAllBytes(stashFilePath),null,DataProtectionScope.CurrentUser);
+								return;
+							}
 						}
-						if(stashFileInfo.LastWriteTime==attribute.LastWriteTime) {
-							ByteArray=ProtectedData.Unprotect(File.ReadAllBytes(stashFilePath),null,DataProtectionScope.CurrentUser);
-							return;
+						else {
+							//Create immediately as an empty file so that any read attempts will know that the file is in the process of being downloaded.
+							FileStream fileStream=File.Create(stashFilePath);
+							fileStream.Dispose();
 						}
 					}
-					else {
-						//Create immediately as an empty file so that any read attempts will know that the file is in the process of being downloaded.
-						FileStream fileStream=File.Create(stashFilePath);
-						fileStream.Dispose();
+					catch(Exception ex) {
+						ex.DoNothing();//If anything goes wrong, use SFTP normally without relying on the stash.
+						stashFilePath="";
 					}
-				}
-				catch(Exception ex) {
-					ex.DoNothing();//If anything goes wrong, use SFTP normally without relying on the stash.
 				}
 				using(MemoryStream stream=new MemoryStream()) {
 					SftpDownloadAsyncResult res=(SftpDownloadAsyncResult)_client.BeginDownloadFile(fullFilePath,stream);
@@ -109,7 +113,7 @@ namespace OpenDentalCloud {
 					}
 					_client.EndDownloadFile(res);
 					ByteArray=stream.ToArray();
-					if(!stashFilePath.IsNullOrEmpty()) {
+					if(DoUseStash && !stashFilePath.IsNullOrEmpty()) {
 						File.WriteAllBytes(stashFilePath,ProtectedData.Protect(ByteArray,null,DataProtectionScope.CurrentUser));
 						File.SetLastWriteTime(stashFilePath,attribute.LastWriteTime);//Must be last operation
 					}

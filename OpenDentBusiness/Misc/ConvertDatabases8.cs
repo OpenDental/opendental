@@ -1900,5 +1900,14 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}//End of 24_2_26
 		}
+
+		private static void To24_2_27() {
+			//Start S53342
+			string command="ALTER TABLE languagepat ADD EFormFieldDefNum bigint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE languagepat ADD INDEX (EFormFieldDefNum)";
+			Db.NonQ(command);
+			//End S53342
+		}//End of 24_2_27
 	}
 }

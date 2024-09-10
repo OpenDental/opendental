@@ -44,6 +44,7 @@ namespace OpenDentBusiness {
 			table.Columns.Add("DocNum");
 			table.Columns.Add("dx");
 			table.Columns.Add("Dx");
+			table.Columns.Add("EFormNum");
 			table.Columns.Add("EmailMessageHideIn");
 			table.Columns.Add("EmailMessageHtmlType");
 			table.Columns.Add("EmailMessageNum");
@@ -210,6 +211,7 @@ namespace OpenDentBusiness {
 					row["DocNum"]=0;
 					row["dx"]=Defs.GetValue(DefCat.Diagnosis,PIn.Long(rowProc["Dx"].ToString()));
 					row["Dx"]=rowProc["Dx"].ToString();
+					row["EFormNum"]=0;
 					row["EmailMessageNum"]=0;
 					row["FormPatNum"]=0;
 					row["HideGraphics"]=rowProc["HideGraphics"].ToString();
@@ -467,6 +469,7 @@ namespace OpenDentBusiness {
 					row["DocNum"]=0;
 					row["dx"]="";
 					row["Dx"]="";
+					row["EFormNum"]=0;
 					row["EmailMessageNum"]=0;
 					row["FormPatNum"]=0;
 					row["HideGraphics"]="";
@@ -563,6 +566,7 @@ namespace OpenDentBusiness {
 							row["DocNum"]=0;
 							row["dx"]="";
 							row["Dx"]="";
+							row["EFormNum"]=0;
 							row["EmailMessageNum"]=0;
 							row["FormPatNum"]=0;
 							row["HideGraphics"]="";
@@ -652,6 +656,7 @@ namespace OpenDentBusiness {
 					row["DocNum"]=0;
 					row["dx"] = "";
 					row["Dx"] = "";
+					row["EFormNum"]=0;
 					row["EmailMessageNum"] = 0;
 					row["FormPatNum"] = rawForm.Rows[i]["FormPatNum"].ToString();
 					row["HideGraphics"]="";
@@ -736,6 +741,7 @@ namespace OpenDentBusiness {
 					row["DocNum"]=0;
 					row["dx"]="";
 					row["Dx"]="";
+					row["EFormNum"]=0;
 					row["EmailMessageNum"]=0;
 					row["FormPatNum"]=0;
 					row["HideGraphics"]="";
@@ -839,6 +845,7 @@ namespace OpenDentBusiness {
 					row["DocNum"]=0;
 					row["dx"]="";
 					row["Dx"]="";
+					row["EFormNum"]=0;
 					row["EmailMessageNum"]=0;
 					row["FormPatNum"]=0;
 					row["HideGraphics"]="";
@@ -963,6 +970,7 @@ namespace OpenDentBusiness {
 					row["DocNum"]=0;
 					row["dx"]="";
 					row["Dx"]="";
+					row["EFormNum"]=0;
 					row["EmailMessageNum"]=0;
 					row["FormPatNum"]=0;
 					row["HideGraphics"]="";
@@ -1127,6 +1135,7 @@ namespace OpenDentBusiness {
 				row["DocNum"]=0;
 				row["dx"]="";
 				row["Dx"]="";
+				row["EFormNum"]=0;
 				row["EmailMessageNum"]=0;
 				row["FormPatNum"]=0;
 				row["HideGraphics"]="";
@@ -1217,6 +1226,7 @@ namespace OpenDentBusiness {
 					row["DocNum"]=0;
 					row["dx"]="";
 					row["Dx"]="";
+					row["EFormNum"]=0;
 					row["EmailMessageNum"]=rawEmail.Rows[i]["EmailMessageNum"].ToString();
 					row["FormPatNum"]=0;
 					row["HideGraphics"]="";
@@ -1273,15 +1283,10 @@ namespace OpenDentBusiness {
 				}
 				#endregion email
 			}
-			if(componentsToLoad.ShowSheets) {
-				#region sheet
-				string sigPresentCase="AVG(CASE WHEN FieldValue!='' THEN 1 ELSE 0 END) AS SigPresent ";
-				//Oracle cannot use CLOB columns when DISTINCT, ORDER BY, or GROUP BY is used.
-				//Since we only care about the sheer presence of data, we'll look at the first character (or byte) of the CLOB column by using SUBSTR.
-				if(DataConnection.DBtype==DatabaseType.Oracle) {
-					sigPresentCase="AVG(CASE WHEN DBMS_LOB.SUBSTR(FieldValue,1)!='' THEN 1 ELSE 0 END) AS SigPresent ";
-				}
-				command="SELECT PatNum,Description,sheet.SheetNum,sheet.DocNum,DateTimeSheet,SheetType,"+sigPresentCase
+			if(componentsToLoad.ShowSheetsEForms) {
+				#region sheets and eForms
+				command="SELECT PatNum,Description,sheet.SheetNum,sheet.DocNum,sheet.IsDeleted,DateTimeSheet,SheetType,"
+					+"AVG(CASE WHEN FieldValue!='' THEN 1 ELSE 0 END) AS SigPresent "
 					+"FROM sheet "
 					+"LEFT JOIN sheetfield ON sheet.SheetNum=sheetfield.SheetNum "
 					+"AND sheetfield.FieldType="+POut.Long((int)SheetFieldType.SigBox)+" "
@@ -1333,9 +1338,13 @@ namespace OpenDentBusiness {
 						}
 					}
 					row["description"]+=rawSheet.Rows[i]["Description"].ToString();
+					if(rawSheet.Rows[i]["IsDeleted"].ToString()=="1"){
+						row["description"]+=" (deleted)";
+					}
 					row["DocNum"]=rawSheet.Rows[i]["DocNum"].ToString();
 					row["dx"]="";
 					row["Dx"]="";
+					row["EFormNum"]=0;
 					row["EmailMessageNum"]=0;
 					row["FormPatNum"]=0;
 					row["HideGraphics"]="";
@@ -1397,7 +1406,7 @@ namespace OpenDentBusiness {
 					row["EmailMessageHtmlType"]="0";
 					rows.Add(row);
 				}
-				#endregion sheet
+				#endregion sheets and eForms
 			}
 			#region Sorting
 			if(componentsToLoad.UseMobileOrder) {
@@ -2299,7 +2308,7 @@ namespace OpenDentBusiness {
 			public bool ShowProcNotes;
 			public bool ShowReferred;
 			public bool ShowRX;
-			public bool ShowSheets;
+			public bool ShowSheetsEForms;
 			public bool ShowTasks;
 			public bool ShowTreatPlan;
 			public bool UseMobileOrder=false;
@@ -2322,7 +2331,7 @@ namespace OpenDentBusiness {
 			ShowProcNotes=isAllEnabled;
 			ShowReferred=isAllEnabled;
 			ShowRX=isAllEnabled;
-			ShowSheets=isAllEnabled;
+			ShowSheetsEForms=isAllEnabled;
 			ShowTasks=isAllEnabled;
 			ShowTreatPlan=isAllEnabled;
 		}
@@ -2359,7 +2368,7 @@ namespace OpenDentBusiness {
 			ShowProcNotes=showProcNotes;
 			ShowReferred=showReferred;
 			ShowRX=showRX;
-			ShowSheets=showSheets;
+			ShowSheetsEForms=showSheets;
 			ShowTasks=showTasks;
 			ShowTreatPlan=showTreatPlan;
 		}

@@ -200,6 +200,57 @@ namespace OpenDentBusiness {
 			return Crud.JobCrud.SelectMany(command);
 		}
 
+		///<summary>Gets a list of jobs for a list of Userods. Includes jobs owned by users that are not canceled, complete, or on hold, jobs that have reviews in the given date range for which a user is the assigned engineer, and jobs that have hours logged by a user. Only jobs created before the TO date are considered.</summary>
+		public static List<Job> GetListForTeamReport(List<Userod> listTeamMembers,DateTime dateFrom,DateTime dateTo) {
+			if(listTeamMembers.IsNullOrEmpty()) {
+				return new List<Job>();
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Job>>(MethodBase.GetCurrentMethod(),listTeamMembers,dateFrom,dateTo);
+			}
+			long onHoldDefNum=Defs.GetDefsForCategory(DefCat.JobPriorities).First(x => x.ItemValue=="OnHold").DefNum;
+			string pOutStringTeamUserNums=POut.String(string.Join(",",listTeamMembers.Select(x => x.UserNum).ToList()));
+			string command=@$"
+				SELECT DISTINCT job.*
+				FROM job
+				LEFT JOIN jobreview ON jobreview.JobNum = job.JobNum
+				WHERE 
+				( "
+					//Team member owns the job and it is not on hold, canceled, or completed
+					+$@"
+					(
+						(
+							(job.UserNumConcept IN ({pOutStringTeamUserNums}) AND job.UserNumEngineer = 0 AND job.UserNumExpert = 0)
+							OR (job.UserNumExpert IN ({pOutStringTeamUserNums}) AND job.UserNumEngineer = 0)
+							OR job.UserNumEngineer IN ({pOutStringTeamUserNums})
+						)
+						AND job.PhaseCur NOT IN ({POut.Enum(JobPhase.Complete)},{POut.Enum(JobPhase.Cancelled)})
+						AND job.Priority != {POut.Long(onHoldDefNum)}
+					)
+					OR "
+					//Team member logged time in date range or team member is engineer on job and a review was logged in date range
+					+$@"
+					(
+						(
+							jobreview.ReviewerNum IN ({pOutStringTeamUserNums})
+							OR (job.UserNumEngineer IN ({pOutStringTeamUserNums}) AND jobreview.ReviewStatus != {POut.Enum(JobReviewStatus.TimeLog)})
+						)
+						AND jobreview.DateTStamp BETWEEN {POut.DateT(dateFrom)} AND {POut.DateT(dateTo)}
+					)
+				)
+				AND "
+				//Job was created before the report's TO date.
+				+$@"job.DateTimeEntry <= {POut.DateT(dateTo)}";
+			List<Job> listJobs=Crud.JobCrud.SelectMany(command);
+			//Fill in memory lists for time logs and reviews
+			List<JobReview> listJobReviews=JobReviews.GetReviewsAndTimeLogsForJobs(listJobs.Select(x => x.JobNum).ToArray());
+			foreach(Job job in listJobs) {
+				job.ListJobTimeLogs=listJobReviews.FindAll(x => x.JobNum==job.JobNum && x.ReviewStatus==JobReviewStatus.TimeLog);
+				job.ListJobReviews=listJobReviews.FindAll(x => x.JobNum==job.JobNum && x.ReviewStatus!=JobReviewStatus.TimeLog);
+			}
+			return listJobs;
+		}
+
 		///<summary>Returns all jobs for the date range and phases passed in.  An empty list of phases will be treated as "Any" phase.
 		///Optionally pass in a list of JobNums to exclude from the result set.</summary>
 		public static List<Job> GetForSearch(DateTime dateFrom,DateTime dateTo,List<JobPhase> listPhases,List<long> listPriorities,

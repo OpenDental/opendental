@@ -48,7 +48,8 @@ namespace OpenDental {
 			//Determine which children are present
 			for(int i=0;i<listChildNumsUnique.Count;i++) {
 				ChildRoomLog childRoomLog=listChildRoomLogs.FindAll(x => x.ChildNum==listChildNumsUnique[i])
-					.OrderByDescending(y => y.ChildRoomLogNum).First();
+					.OrderByDescending(y => y.DateTDisplayed)
+					.ThenBy(z => z.IsComing).First();
 				if(!childRoomLog.IsComing) {
 					continue;//Child is absent
 				}

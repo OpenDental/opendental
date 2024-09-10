@@ -49,12 +49,10 @@ namespace OpenDental {
 				labelStackable.Text="previous field is not stackable";
 				checkIsHorizStacking.IsEnabled=false;
 			}
+			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			textVIntWidth.Value=EFormFieldCur.Width;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			checkIsTextWrap.Checked=EFormFieldCur.IsTextWrap;
-			checkIsRequired.Checked=EFormFieldCur.IsRequired;
-			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.CondValueStrConverter(ListEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);//This is used to make checkbox values, "X" and "", more user readable by converting them to "Checked" and "Unchecked".
 			if(IsLastInHorizStack){
 				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 				labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
@@ -69,6 +67,10 @@ namespace OpenDental {
 				labelSpaceDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
 				textSpaceBelow.IsEnabled=false;
 			}
+			//checkIsLocked.Checked=EFormFieldCur.IsLocked;
+			textReportableName.Text=EFormFieldCur.ReportableName;
+			textCondParent.Text=EFormFieldCur.ConditionalParent;
+			textCondValue.Text=EFormL.ConvertCondDbToVis(ListEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
 			textLabel.Focus();
 		}
 
@@ -87,20 +89,11 @@ namespace OpenDental {
 			if(frmEFormFieldPicker.IsDialogCancel){
 				return;
 			}
-			textCondParent.Text=frmEFormFieldPicker.LabelSelected;
+			textCondParent.Text=frmEFormFieldPicker.ParentSelected;
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			if(textCondParent.Text==""){
-				MsgBox.Show("Please enter a name in the Parent field first.");
-				return;
-			}
-			EFormConditionValueSetter conditionValueSetter=EFormL.SetCondValue(ListEFormFields,textCondParent.Text,textCondValue.Text);
-			if(conditionValueSetter.ErrorMsg!="") {
-				MsgBox.Show(conditionValueSetter.ErrorMsg);
-				return;
-			}
-			textCondValue.Text=conditionValueSetter.SelectedValue;
+			textCondValue.Text=EFormL.PickCondValue(ListEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -153,13 +146,15 @@ namespace OpenDental {
 				EFormFieldCur.DbLink=comboDbLink.GetSelected<string>();
 			}
 			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
+			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			EFormFieldCur.Width=textVIntWidth.Value;
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.IsTextWrap=checkIsTextWrap.Checked==true;
-			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
-			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.CondValueStrConverter(ListEFormFields,textCondParent.Text,textCondValue.Text);//This is used to convert the user readable checkbox values, "Checked" and "Unchecked", into "X" and "" which are what we store in the database. 
+			//EFormFieldCur.IsLocked=checkIsLocked.Checked==true;
 			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.ReportableName=textReportableName.Text;
+			EFormFieldCur.ConditionalParent=textCondParent.Text;
+			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(ListEFormFields,textCondParent.Text,textCondValue.Text);
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

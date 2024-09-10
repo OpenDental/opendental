@@ -33,7 +33,7 @@ This is similar to the OpenDental.ODprintout, but adapted for WPF and kept as si
 		public PrintoutErrorCode SettingsErrorCode=PrintoutErrorCode.Success;
 		///<summary>Optional. Default is left:0.25,top:0.4,right:0.25,bottom:0.4.</summary>
 		public Thickness thicknessMarginInches;
-		///<summary>This should point to a method that takes a GraphicsWPF as an argument. Gets called for each page, just like the old WinForms. Should return true if it has more pages.</summary>
+		///<summary>This should point to a method that takes a Graphics as an argument. Gets called for each page, just like the old WinForms. Should return true if it has more pages.</summary>
 		public Func<Graphics,bool> FuncPrintPage;
 		///<summary>This is just what shows in the UI of the printer in Windows.</summary>
 		public string Descript;

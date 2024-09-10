@@ -15,5 +15,7 @@
 		<ui:TextVDate x:Name="textVDateLog" Margin="0,12,100,0" Height="20" HorizontalAlignment="Right" Width="94"/>
 		<ui:Label x:Name="labelDateLog" Margin="0,13,194,0" Height="18" HAlign="Right" VAlign="Center" Text="Date of Logs" HorizontalAlignment="Right" Width="79"/>
 		<ui:Button x:Name="butRefresh" Margin="0,10,10,0" Height="24" Text="Refresh" Click="butRefresh_Click" HorizontalAlignment="Right" Width="62"/>
+		<ui:Button x:Name="butViewSnapshot" Margin="12,10,0,0" Height="24" Width="87" Text="View Snapshot" Click="butViewSnapshot_Click" />
+		<ui:Button x:Name="butAddLog" Margin="104,10,0,0" Height="24" Width="80" Text="Add Log" Icon="Add" Click="butAddLog_Click" />
 	</Grid>
 </local:FrmODBase>

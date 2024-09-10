@@ -5,82 +5,132 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfControls.UI;
+using CodeBase;
 
 namespace WpfControls {
 	public class EFormL {
-		/// <summary>Returns an error msg and a SelectedValue.</summary>
-		public static EFormConditionValueSetter SetCondValue(List<EFormField> listEFormFields,string condParent,string condValue) {
-			EFormConditionValueSetter conditionValueSetter=new EFormConditionValueSetter();
-			//first radiobuttons
-			for(int i=0;i<listEFormFields.Count;i++){
-				if(listEFormFields[i].FieldType!=EnumEFormFieldType.RadioButtons){
-					continue;
-				}
-				if(listEFormFields[i].ValueLabel!=condParent){
-					continue;
-				}
-				List<string> listStrPick=listEFormFields[i].PickListVis.Split(',').ToList();
-				int idxSelected=listStrPick.IndexOf(condValue);//can be -1
-				InputBox inputBox=new InputBox("",listStrPick,idxSelected);
+		/// <summary>Shows InputBox to user to let them pick a value. Pass in an existingValue to prefill.</summary>
+		public static string PickCondValue(List<EFormField> listEFormFields,string condParent,string existingValue) {
+			if(condParent==""){
+				MsgBox.Show("Please enter a name in the Parent field first.");
+				return existingValue;
+			}
+			List<EFormField> listEFormFieldsParent=listEFormFields.FindAll(x=>x.ValueLabel==condParent);
+			if(listEFormFieldsParent.Count==0){
+				MsgBox.Show("Parent field name could not be found.");
+				return existingValue;
+			}
+			if(listEFormFieldsParent.Count>1){
+				MsgBox.Show("There are duplicate fields with that parent name.");
+				return existingValue;
+			}
+			EFormField eFormFieldParent=listEFormFieldsParent[0];
+			if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons){
+				List<string> listStrPick=eFormFieldParent.PickListVis.Split(',').ToList();
+				int idxSelected=listStrPick.IndexOf(existingValue);//can be -1
+				InputBox inputBox=new InputBox(prompt:"",listSelections:listStrPick,selectedIndex:idxSelected);
 				inputBox.ShowDialog();
 				if(inputBox.IsDialogCancel){
-					return conditionValueSetter;
+					return existingValue;
 				}
 				//yes, this works even if no selected index. inputBox forces selected index
-				conditionValueSetter.SelectedValue=listStrPick[inputBox.SelectedIndex];
-				return conditionValueSetter;
+				return listStrPick[inputBox.SelectedIndex];
 			}
-			//then checkboxes (untested)
-			for(int i=0;i<listEFormFields.Count;i++){
-				if(listEFormFields[i].FieldType!=EnumEFormFieldType.CheckBox){
-					continue;
-				}
-				if(listEFormFields[i].ValueLabel!=condParent){
-					continue;
-				}
+			if(eFormFieldParent.FieldType==EnumEFormFieldType.CheckBox){
 				List<string> listStrCheck=new List<string>();
 				listStrCheck.Add("Checked");
 				listStrCheck.Add("Unchecked");
-				int idxSelected=listStrCheck.IndexOf(condValue);//can be -1;
-				InputBox inputBox=new InputBox("",listStrCheck,idxSelected);
+				int idxSelected=listStrCheck.IndexOf(existingValue);//can be -1;
+				InputBox inputBox=new InputBox(prompt:"",listSelections:listStrCheck,selectedIndex:idxSelected);
 				inputBox.ShowDialog();
 				if(inputBox.IsDialogCancel) {
-					return conditionValueSetter;
+					return existingValue;
 				}
-				conditionValueSetter.SelectedValue=listStrCheck[inputBox.SelectedIndex];
-				return conditionValueSetter;
+				return listStrCheck[inputBox.SelectedIndex];
 			}
-			conditionValueSetter.ErrorMsg="Parent field name could not be found.";
-			return conditionValueSetter;
+			if(eFormFieldParent.FieldType==EnumEFormFieldType.DateField){
+				List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
+				InputBoxParam inputBoxParamYounger=new InputBoxParam();
+				inputBoxParamYounger.InputBoxType_=InputBoxType.RadioButton;
+				inputBoxParamYounger.Text="Younger than";
+				listInputBoxParams.Add(inputBoxParamYounger);
+				InputBoxParam inputBoxParamOlder=new InputBoxParam();
+				inputBoxParamOlder.InputBoxType_=InputBoxType.RadioButton;
+				inputBoxParamOlder.Text="Older than";
+				listInputBoxParams.Add(inputBoxParamOlder);
+				InputBoxParam inputBoxAge=new InputBoxParam();
+				inputBoxAge.InputBoxType_=InputBoxType.TextBox;
+				inputBoxAge.LabelText="Age";
+				listInputBoxParams.Add(inputBoxAge);
+				InputBox inputBox=new InputBox(listInputBoxParams);
+				//inputBox.SizeInitial=new System.Windows.Size(200,200);
+				inputBox.ShowDialog();
+				if(inputBox.IsDialogCancel) {
+					return existingValue;
+				}
+				RadioButton radioButtonYounger=(RadioButton)inputBox.ListControls[0];
+				RadioButton radioButtonOlder=(RadioButton)inputBox.ListControls[1];
+				TextBox textAge=(TextBox)inputBox.ListControls[2];
+				string retVal="";
+				if(radioButtonYounger.Checked){
+					retVal+="<";
+				}
+				if(radioButtonOlder.Checked){
+					retVal+=">";
+				}
+				retVal+=textAge.Text;
+				return retVal;
+			}
+			return existingValue;
 		}
 
-		public static string CondValueStrConverter(List<EFormField> listEFormFields,string labelSelected,string valueSelected) {
-			for(int i=0;i<listEFormFields.Count;i++) {
-				if(listEFormFields[i].FieldType!=EnumEFormFieldType.CheckBox) {
-					continue;
-				}
-				if(listEFormFields[i].ValueLabel!=labelSelected) {
-					continue;
-				}
-				if(valueSelected=="Checked") {
-					return "X";
-				}
-				if(valueSelected=="Unchecked") {
-					return "";
-				}
-				if(valueSelected=="X") {
-					return "Checked";
-				}
-				if(valueSelected=="") {
-					return "Unchecked";
-				}
+		///<summary>This handles the problem of parent labels that are longer than 255. Also if the parent is a checkBox, then this converts "" or "X" to Checked or Unchecked to make it more user friendly for display. It doesn't alter other types.</summary>
+		public static string ConvertCondDbToVis(List<EFormField> listEFormFields,string parent,string dbVal){
+			//if(parent==""){//this would have worked, but I would rather roll it into the predicate below so that the same predicate can be used elsewhere
+			//	return dbVal;
+			//}
+			//So the trick here is that the parent value coming from the db won't be >255, but eFormFieldParent.ValueLabel certainly could be
+			EFormField eFormFieldParent=listEFormFields.Find(x=>
+				x.ValueLabel!=""
+				&& x.ValueLabel.Substring(0,Math.Min(x.ValueLabel.Length,255))==parent
+				&& x.FieldType.In(EnumEFormFieldType.CheckBox,EnumEFormFieldType.RadioButtons,EnumEFormFieldType.DateField));
+			//note that in the linq above, we did not validate dbVal in any way. We're just trying to find the parent.
+			if(eFormFieldParent is null){
+				return dbVal;
 			}
-			return valueSelected;//If it's not a checkbox, don't change the valueSelected.
+			if(eFormFieldParent.FieldType!=EnumEFormFieldType.CheckBox) {
+				return dbVal;
+			}
+			if(dbVal==""){
+				return "Unchecked";
+			}
+			if(dbVal=="X"){
+				return "Checked";
+			}
+			return dbVal;
 		}
-	}
 
-	public class EFormConditionValueSetter {
-		public string ErrorMsg="";
-		public string SelectedValue="";
+		///<summary>This handles the problem of parent labels that are longer than 255. Also if the parent is a checkBox, then this converts Checked or Unchecked to "" or "X" for storage in db. It doesn't alter other types.</summary>
+		public static string ConvertCondVisToDb(List<EFormField> listEFormFields,string parent,string visVal){
+			EFormField eFormFieldParent=listEFormFields.Find(x=>
+				x.ValueLabel!=""
+				&& x.ValueLabel.Substring(0,Math.Min(x.ValueLabel.Length,255))==parent
+				&& x.FieldType.In(EnumEFormFieldType.CheckBox,EnumEFormFieldType.RadioButtons,EnumEFormFieldType.DateField));
+			if(eFormFieldParent is null){
+				return visVal;
+			}
+			if(eFormFieldParent.FieldType!=EnumEFormFieldType.CheckBox) {
+				return visVal;
+			}
+			if(visVal=="Unchecked"){
+				return "";
+			}
+			if(visVal=="Checked"){
+				return "X";
+			}
+			return "";
+		}
+
 	}
 }

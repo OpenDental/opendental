@@ -48,6 +48,12 @@ then change:
 		private void pd_PrintPage(object sender,PrintPageEventArgs e){
 	to:
 		private bool pd_PrintPage(Graphics g){
+			//series of drawing commands using g. See comments in Graphics. Like this:
+			//Font font=new Font();
+			//g.DrawString("Hello world",font,Colors.Black,0,0);
+			//if has more pages, return true
+			//otherwise, return false
+		}
 */
 	public class PrinterL {
 		private static void CreateFixedDocument(Printout printout){

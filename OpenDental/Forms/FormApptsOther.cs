@@ -691,6 +691,9 @@ namespace OpenDental {
 						row.ColorText=_listDefsProgNoteColors[16].ItemColor;
 						string strText=Lan.g("enumApptStatus","Planned")+" ";
 						int idxPlannedApt=_listPlannedApptsIncomplete.FindIndex(x => x.AptNum==ListApptOthers[i].AptNum);
+						List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(ListApptOthers[i].AptNum,listProcedures,true);
+						bool hasCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus==ProcStat.C);
+						bool hasNonCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus!=ProcStat.C);
 						if(IsShowCompletePlanned) {
 							for(int p=0;p<_listPlannedAppts.Count;p++) {
 								if(_listPlannedAppts[p].AptNum==ListApptOthers[i].AptNum) {
@@ -699,9 +702,6 @@ namespace OpenDental {
 							}
 						}
 						else {
-							List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(ListApptOthers[i].AptNum,listProcedures,true);
-							bool hasCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus==ProcStat.C);
-							bool hasNonCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus!=ProcStat.C);
 							if(idxPlannedApt>=0 && (!hasCompletedProcedures || hasNonCompletedProcedures)) {
 								//Planned appt is incomplete and has either no completed procedures or at least one non-completed procedure
 								strText+="#"+(idxPlannedApt+1);
@@ -710,7 +710,8 @@ namespace OpenDental {
 								continue;
 							}
 						}
-						if(idxPlannedApt<0) {//attached to a completed appointment
+						if(idxPlannedApt<0 || (hasCompletedProcedures && !hasNonCompletedProcedures)) {
+							//Attached to a completed appointment or all attached procedures are complete.
 							strText+=" ("+Lan.g("enumApptStatus",ApptStatus.Complete.ToString())+")";
 						}
 						if(ListApptOthers.FindAll(x => x.NextAptNum==ListApptOthers[i].AptNum)

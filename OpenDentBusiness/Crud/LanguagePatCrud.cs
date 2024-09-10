@@ -47,10 +47,11 @@ namespace OpenDentBusiness.Crud{
 			LanguagePat languagePat;
 			foreach(DataRow row in table.Rows) {
 				languagePat=new LanguagePat();
-				languagePat.LanguagePatNum= PIn.Long  (row["LanguagePatNum"].ToString());
-				languagePat.PrefName      = PIn.String(row["PrefName"].ToString());
-				languagePat.Language      = PIn.String(row["Language"].ToString());
-				languagePat.Translation   = PIn.String(row["Translation"].ToString());
+				languagePat.LanguagePatNum  = PIn.Long  (row["LanguagePatNum"].ToString());
+				languagePat.PrefName        = PIn.String(row["PrefName"].ToString());
+				languagePat.Language        = PIn.String(row["Language"].ToString());
+				languagePat.Translation     = PIn.String(row["Translation"].ToString());
+				languagePat.EFormFieldDefNum= PIn.Long  (row["EFormFieldDefNum"].ToString());
 				retVal.Add(languagePat);
 			}
 			return retVal;
@@ -66,12 +67,14 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("PrefName");
 			table.Columns.Add("Language");
 			table.Columns.Add("Translation");
+			table.Columns.Add("EFormFieldDefNum");
 			foreach(LanguagePat languagePat in listLanguagePats) {
 				table.Rows.Add(new object[] {
 					POut.Long  (languagePat.LanguagePatNum),
 					            languagePat.PrefName,
 					            languagePat.Language,
 					            languagePat.Translation,
+					POut.Long  (languagePat.EFormFieldDefNum),
 				});
 			}
 			return table;
@@ -91,19 +94,24 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="LanguagePatNum,";
 			}
-			command+="PrefName,Language,Translation) VALUES(";
+			command+="PrefName,Language,Translation,EFormFieldDefNum) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(languagePat.LanguagePatNum)+",";
 			}
 			command+=
 				 "'"+POut.String(languagePat.PrefName)+"',"
 				+"'"+POut.String(languagePat.Language)+"',"
-				+"'"+POut.String(languagePat.Translation)+"')";
+				+    DbHelper.ParamChar+"paramTranslation,"
+				+    POut.Long  (languagePat.EFormFieldDefNum)+")";
+			if(languagePat.Translation==null) {
+				languagePat.Translation="";
+			}
+			OdSqlParameter paramTranslation=new OdSqlParameter("paramTranslation",OdDbType.Text,POut.StringParam(languagePat.Translation));
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramTranslation);
 			}
 			else {
-				languagePat.LanguagePatNum=Db.NonQ(command,true,"LanguagePatNum","languagePat");
+				languagePat.LanguagePatNum=Db.NonQ(command,true,"LanguagePatNum","languagePat",paramTranslation);
 			}
 			return languagePat.LanguagePatNum;
 		}
@@ -123,19 +131,24 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="LanguagePatNum,";
 			}
-			command+="PrefName,Language,Translation) VALUES(";
+			command+="PrefName,Language,Translation,EFormFieldDefNum) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(languagePat.LanguagePatNum)+",";
 			}
 			command+=
 				 "'"+POut.String(languagePat.PrefName)+"',"
 				+"'"+POut.String(languagePat.Language)+"',"
-				+"'"+POut.String(languagePat.Translation)+"')";
+				+    DbHelper.ParamChar+"paramTranslation,"
+				+    POut.Long  (languagePat.EFormFieldDefNum)+")";
+			if(languagePat.Translation==null) {
+				languagePat.Translation="";
+			}
+			OdSqlParameter paramTranslation=new OdSqlParameter("paramTranslation",OdDbType.Text,POut.StringParam(languagePat.Translation));
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramTranslation);
 			}
 			else {
-				languagePat.LanguagePatNum=Db.NonQ(command,true,"LanguagePatNum","languagePat");
+				languagePat.LanguagePatNum=Db.NonQ(command,true,"LanguagePatNum","languagePat",paramTranslation);
 			}
 			return languagePat.LanguagePatNum;
 		}
@@ -143,11 +156,16 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one LanguagePat in the database.</summary>
 		public static void Update(LanguagePat languagePat) {
 			string command="UPDATE languagepat SET "
-				+"PrefName      = '"+POut.String(languagePat.PrefName)+"', "
-				+"Language      = '"+POut.String(languagePat.Language)+"', "
-				+"Translation   = '"+POut.String(languagePat.Translation)+"' "
+				+"PrefName        = '"+POut.String(languagePat.PrefName)+"', "
+				+"Language        = '"+POut.String(languagePat.Language)+"', "
+				+"Translation     =  "+DbHelper.ParamChar+"paramTranslation, "
+				+"EFormFieldDefNum=  "+POut.Long  (languagePat.EFormFieldDefNum)+" "
 				+"WHERE LanguagePatNum = "+POut.Long(languagePat.LanguagePatNum);
-			Db.NonQ(command);
+			if(languagePat.Translation==null) {
+				languagePat.Translation="";
+			}
+			OdSqlParameter paramTranslation=new OdSqlParameter("paramTranslation",OdDbType.Text,POut.StringParam(languagePat.Translation));
+			Db.NonQ(command,paramTranslation);
 		}
 
 		///<summary>Updates one LanguagePat in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -163,14 +181,22 @@ namespace OpenDentBusiness.Crud{
 			}
 			if(languagePat.Translation != oldLanguagePat.Translation) {
 				if(command!="") { command+=",";}
-				command+="Translation = '"+POut.String(languagePat.Translation)+"'";
+				command+="Translation = "+DbHelper.ParamChar+"paramTranslation";
+			}
+			if(languagePat.EFormFieldDefNum != oldLanguagePat.EFormFieldDefNum) {
+				if(command!="") { command+=",";}
+				command+="EFormFieldDefNum = "+POut.Long(languagePat.EFormFieldDefNum)+"";
 			}
 			if(command=="") {
 				return false;
 			}
+			if(languagePat.Translation==null) {
+				languagePat.Translation="";
+			}
+			OdSqlParameter paramTranslation=new OdSqlParameter("paramTranslation",OdDbType.Text,POut.StringParam(languagePat.Translation));
 			command="UPDATE languagepat SET "+command
 				+" WHERE LanguagePatNum = "+POut.Long(languagePat.LanguagePatNum);
-			Db.NonQ(command);
+			Db.NonQ(command,paramTranslation);
 			return true;
 		}
 
@@ -184,6 +210,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(languagePat.Translation != oldLanguagePat.Translation) {
+				return true;
+			}
+			if(languagePat.EFormFieldDefNum != oldLanguagePat.EFormFieldDefNum) {
 				return true;
 			}
 			return false;

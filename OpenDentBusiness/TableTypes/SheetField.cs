@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using CodeBase;
 
 namespace OpenDentBusiness{
-	///<summary>One field on a sheet.</summary>
+	///<summary>One field on a sheet. Any language translations have already happened. See SheetFieldDef.</summary>
 	[Serializable()]
 	[CrudTable(IsSynchable=true,HasBatchWriteMethods=true,IsLargeTable=true)]
 	public class SheetField:TableBase {

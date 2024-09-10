@@ -551,7 +551,7 @@ namespace OpenDental {
 			}
 			InputBox inputBox=new InputBox(listInputBoxParams);
 			inputBox.SetTitle(Lan.g("ContrAccount","Outstanding "+claimType+" claims"));
-			inputBox.SizeInitial=new System.Windows.Size(450,220);
+			//inputBox.SizeInitial=new System.Windows.Size(450,220);
 			inputBox.ShowDialog();
 			if(inputBox.IsDialogCancel) {
 				return;

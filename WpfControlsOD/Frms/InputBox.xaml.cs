@@ -16,22 +16,51 @@ using WpfControls.UI;
 using OpenDental.Drawing;
 
 namespace OpenDental {
+/*
+Jordan is the only one allowed to edit this file.
+
+This is fairly easy to use when you have one simple input, like a textbox.
+For more complex situations, you will frequently need to look at the code because it's not very well documented.
+Examples are in UnitTests\UI Testing\FormInputBoxTests.cs
+
+Window size is based on how much space the controls take.
+For a single textbox, it would be 
+width=8(left window border)+32(left margin)+300(widthBigControls)+40(right margin)+8(right window border). Total width = 388
+height=26(top window title)+20(top margin)+18(label)+2(space below label)+20(textbox)+60(bottom margin)+8(bottom window border). Total height=154
+The above numbers are all in 96 dpi pixels. 
+If Windows monitor is set to 150%, for example, then all of the above numbers are multiplied by 1.5.
+But the programmer does not need to worry about that.
+
+Some comments about control layout:
+They are all anchored UL since any other anchoring gets too complex.
+No control size is based on any other control size. 
+Controls and their labels are stacked vertically, and then the window size is adjusted to fit everything.
+Some labels are bigger because they can wrap to multiple lines.
+
+Someday, I will eliminate all the ctor overloads.
+*/
+
 	/// <summary>A quick entry form for various purposes. You can put several different types of controls on this form.</summary>
 	public partial class InputBox : FrmODBase {
 		public bool IsDeleteClicked;
 		private List<InputBoxParam> _listInputBoxParams=new List<InputBoxParam>();
-		private List<System.Windows.Controls.UserControl> _listControls;
+		public List<System.Windows.Controls.UserControl> ListControls;
+		///<summary>This is a separate list from ListControls because users won't need to later query this list. It is not 1:1 with ListControls because some controls lack a label and some controls have an extra label to their right.</summary>
 		private List<Label> _listLabels;
 		///<summary>Only used in one spot. If true, this window will close in 15 seconds if no user input.</summary>
 		public bool HasTimeout=false;
 		///<summary>If true, this window has had 15 seconds without user clicking OK or X, so close the window.</summary>
 		public bool HasTimedOut=false;
 		public Func<string,bool> FuncOkClick;
-		int _curLocationY=2;
-		int _minWidth=250;
-		///<summary>Must use this to set the initial size rather than Size directly, because of layout manager.  Pass in a size in 96 dpi. It will get scaled.</summary>
-		public Size SizeInitial;
 		private DispatcherTimer _dispatcherTimer;
+		///<summary>These are the margins for the entire window, not counting the OK and Delete buttons.</summary>
+		private Thickness _thicknessMargins=new Thickness(left:32,top:20,right:40,bottom:60);
+		///<summary>This is the standard width of textboxes, comboBoxes, etc. It's also the max width for labels, which are sized according to their content, but will wrap instead of getting wider than this.</summary>
+		private double _widthBigControls=300;
+		///<summary>As controls are added, this keeps track of the max. We will use this to size our window later.</summary>
+		private float _widthAllControls;
+		///<summary>As controls are laid out, this is the vertical position. After they are laid out, this tells us how big to make the window.</summary>
+		private float _yPos;
 
 		#region Constructors
 		///<summary></summary>
@@ -84,7 +113,7 @@ namespace OpenDental {
 		///<summary>For checkboxes, returns true if the checkbox is checked.</summary>
 		public bool BoolResult{
 			get{
-				CheckBox checkBox=(CheckBox)_listControls.Find(x => x is CheckBox);
+				CheckBox checkBox=(CheckBox)ListControls.Find(x => x is CheckBox);
 				if(checkBox is null){
 					return false;
 				}
@@ -94,7 +123,7 @@ namespace OpenDental {
 
 		public DateTime DateResult {
 			get {
-				return PIn.Date(((TextVDate)_listControls.Find(x => x is TextVDate)).Text);
+				return PIn.Date(((TextVDate)ListControls.Find(x => x is TextVDate)).Text);
 			}
 		}
 
@@ -110,7 +139,7 @@ namespace OpenDental {
 
 		public string RadioButtonResult{
 			get{
-				List<RadioButton> listRadioButtons=_listControls.OfType<RadioButton>().ToList();
+				List<RadioButton> listRadioButtons=ListControls.OfType<RadioButton>().ToList();
 				if(listRadioButtons.Count>0){
 					RadioButton radioButton=listRadioButtons.Find(x=>x.Checked==true);
 					return radioButton.Text;
@@ -121,7 +150,7 @@ namespace OpenDental {
 
 		public List<int> SelectedIndices {
 			get {
-				System.Windows.Controls.UserControl control = _listControls.Find(x => x is ComboBox || x is ListBox);
+				System.Windows.Controls.UserControl control = ListControls.Find(x => x is ComboBox || x is ListBox);
 				if(control==null) {
 					return new List<int>();
 				}
@@ -146,23 +175,23 @@ namespace OpenDental {
 
 		public string StringResult{
 			get{
-				TextBox textBox=(TextBox)_listControls.Find(x => x.GetType()==typeof(TextBox));
+				TextBox textBox=(TextBox)ListControls.Find(x => x.GetType()==typeof(TextBox));
 				if(textBox!=null){
 					return textBox.Text;
 				}
-				TextVDate textVDate=(TextVDate)_listControls.Find(x=>x.GetType()==typeof(TextVDate));
+				TextVDate textVDate=(TextVDate)ListControls.Find(x=>x.GetType()==typeof(TextVDate));
 				if(textVDate!=null){
 					return textVDate.Text;
 				}
-				TextVDouble textVDouble=(TextVDouble)_listControls.Find(x=>x.GetType()==typeof(TextVDouble));
+				TextVDouble textVDouble=(TextVDouble)ListControls.Find(x=>x.GetType()==typeof(TextVDouble));
 				if(textVDouble!=null){
 					return textVDouble.Text;
 				}
-				TextVTime textVTime=(TextVTime)_listControls.Find(x=>x.GetType()==typeof(TextVTime));
+				TextVTime textVTime=(TextVTime)ListControls.Find(x=>x.GetType()==typeof(TextVTime));
 				if(textVTime!=null){
 					return textVTime.Text;
 				}
-				TextPassword textPassword=(TextPassword)_listControls.Find(x=>x.GetType()==typeof(TextPassword));
+				TextPassword textPassword=(TextPassword)ListControls.Find(x=>x.GetType()==typeof(TextPassword));
 				if(textPassword!=null){
 					return textPassword.Text;
 				}
@@ -173,7 +202,7 @@ namespace OpenDental {
 		///<summary>Will return a TimeSpan of zero if user did not enter anything.</summary>
 		public TimeSpan TimeSpanResult {
 			get {
-				DateTime dateTime=PIn.DateT(((TextVTime)_listControls.Find(x => x is TextVTime)).Text);
+				DateTime dateTime=PIn.DateT(((TextVTime)ListControls.Find(x => x is TextVTime)).Text);
 				return dateTime.TimeOfDay;
 			}
 		}
@@ -192,29 +221,29 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
-			if(_listControls.Where(x => x is TextVDate).Any(x => !((TextVDate)x).IsValid())
-				|| _listControls.Where(x => x is TextVTime).Any(x => !((TextVTime)x).IsValid())) 
+			if(ListControls.Where(x => x is TextVDate).Any(x => !((TextVDate)x).IsValid())
+				|| ListControls.Where(x => x is TextVTime).Any(x => !((TextVTime)x).IsValid())) 
 			{
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
-			if(_listControls.OfType<ComboBox>().Any(x=>!x.IsMultiSelect && x.SelectedIndex==-1)) {//single selection
+			if(ListControls.OfType<ComboBox>().Any(x=>!x.IsMultiSelect && x.SelectedIndex==-1)) {//single selection
 				MsgBox.Show(this,"Please make a selection.");
 				return;
 			}
-			if(_listControls.OfType<ComboBox>().Any(x=>x.IsMultiSelect && x.SelectedIndices.Count==0)) {//multi selection
+			if(ListControls.OfType<ComboBox>().Any(x=>x.IsMultiSelect && x.SelectedIndices.Count==0)) {//multi selection
 				MsgBox.Show(this,"Please make at least one selection.");
 				return;
 			}
-			if(_listControls.OfType<CheckBox>().ToList().Count>1 && _listControls.OfType<CheckBox>().Where(x => x.Checked==true).Count()==0) {
+			if(ListControls.OfType<CheckBox>().ToList().Count>1 && ListControls.OfType<CheckBox>().Where(x => x.Checked==true).Count()==0) {
 				MsgBox.Show(this,"Please make a selection.");
 				return;
 			}
-			if(_listControls.OfType<CheckBox>().ToList().Count>1 && _listControls.OfType<CheckBox>().Where(x => x.Checked==true).Count()>1) {
+			if(ListControls.OfType<CheckBox>().ToList().Count>1 && ListControls.OfType<CheckBox>().Where(x => x.Checked==true).Count()>1) {
 				MsgBox.Show(this,"Can only make one selection.");
 				return;
 			}
-			if(_listControls.OfType<RadioButton>().ToList().Count>1 && _listControls.OfType<RadioButton>().Where(x => x.Checked).Count()==0) {
+			if(ListControls.OfType<RadioButton>().ToList().Count>1 && ListControls.OfType<RadioButton>().Where(x => x.Checked).Count()==0) {
 				MsgBox.Show(this,"Please make a selection.");
 				return;
 			}
@@ -229,38 +258,22 @@ namespace OpenDental {
 		private void InputBox_Load(object sender, EventArgs e){
 			Lang.F(this);
 			AddInputControls();
-			double heightDifference=0;
-			_formFrame.Size=new System.Drawing.Size((int)ScaleF(_minWidth),(int)ScaleF(_curLocationY+90));
-			if(SizeInitial.Width!=0 && SizeInitial.Height!=0){
-				_formFrame.Size=new System.Drawing.Size((int)Math.Round(SizeInitial.Width*ScaleF(1)),(int)Math.Round(SizeInitial.Height*ScaleF(1)));
-			}
-			//Add the controls to form after sizing the window to prevent right-anchored controls from moving.
+			_formFrame.Size=new System.Drawing.Size(
+				(int)ScaleF(8+(float)_thicknessMargins.Left+_widthAllControls+(float)_thicknessMargins.Right+8),
+				(int)ScaleF(26+_yPos+(float)_thicknessMargins.Bottom+8));
+			//if(SizeInitial.Width!=0 && SizeInitial.Height!=0){
+			//	_formFrame.Size=new System.Drawing.Size((int)Math.Round(SizeInitial.Width*ScaleF(1)),(int)Math.Round(SizeInitial.Height*ScaleF(1)));
+			//}
 			for(int i=0;i<_listLabels.Count;i++)	{
-				if(_listLabels[i].Width>=_formFrame.Width/ScaleF(1)) {
-					_listLabels[i].Width=_formFrame.Width/ScaleF(1)-_listLabels[i].Margin.Left*2;
-				}
-				double heightOriginal=_listLabels[i].Height;
-				_listLabels[i].Height=GetPreferredHeight(_listLabels[i].Text,_listLabels[i].Width).Height;
-				if(heightOriginal!=_listLabels[i].Height){
-					_formFrame.Height+=(int)(((int)_listLabels[i].Height-heightOriginal)*ScaleF(1));
-					heightDifference=_listLabels[i].Height-heightOriginal;
-				}
 				grid.Children.Add(_listLabels[i]);
 			}
 			bool isFocusSet=false;
-			for(int i=0;i<_listControls.Count;i++) {
-				Point point=new Point(_listControls[i].Margin.Left,_listControls[i].Margin.Top);
-				if(_listControls[i] is ComboBox || _listInputBoxParams[i].InputBoxType_==InputBoxType.TextBox){
-					_listControls[i].Width=(int)Math.Round(_listControls[i].Width);
-					double right=_formFrame.Width/ScaleF(1)-point.X-_listControls[i].Width;
-					_listControls[i].Margin=new Thickness(left:point.X,top:point.Y+heightDifference,right:right,bottom:0);
-					_listControls[i].Width=double.NaN;
-				}
-				grid.Children.Add(_listControls[i]);
+			for(int i=0;i<ListControls.Count;i++) {
+				grid.Children.Add(ListControls[i]);
 				if(isFocusSet){
 					continue;
 				}
-				if(!_listControls[i].Name.Contains("text")) {
+				if(!ListControls[i].Name.Contains("text")) {
 					//There are about 6 different kinds of textboxes. 
 					//This feels a little hackey, but we control the names, so it will work.
 					continue;
@@ -271,6 +284,7 @@ namespace OpenDental {
 				}));
 				isFocusSet=true;
 			}
+
 		}
 
 		private void InputBox_Shown(object sender,EventArgs e) {
@@ -287,59 +301,51 @@ namespace OpenDental {
 		#endregion Methods - Event Handlers
 
 		#region Methods
-		///<summary>Adds the requested controls to the form.</summary>
+		///<summary>Adds all controls to a list. The controls will later be added to the form. The y positions ignore any height restriction, as the form height will be changed later to match.</summary>
 		private void AddInputControls() {
-			_listControls=new List<System.Windows.Controls.UserControl>();
+			ListControls=new List<System.Windows.Controls.UserControl>();
 			_listLabels=new List<Label>();
-			_curLocationY=12;
-			double controlWidth=385;
-			_minWidth=250;
-			double posX=32;
-			int itemOrder=1;
+			_yPos=(float)_thicknessMargins.Top;
+			double xPos=_thicknessMargins.Left;
+			_widthAllControls=0;
 			for(int i=0;i<_listInputBoxParams.Count;i++) {
 				if(_listInputBoxParams[i]==null) {
 					continue;
 				}
+				int itemOrder=i+1;
 				if(!string.IsNullOrEmpty(_listInputBoxParams[i].LabelText)) {
 					if(i>0) {
-						_curLocationY+=10;
+						_yPos+=10;
 					}
 					Label label=new Label();
 					label.Text=_listInputBoxParams[i].LabelText;
-					//int labelH=label.GetPreferredSize(new Size(controlWidth,0)).Height; // Not supported in WPF
-					label.Measure(new Size(controlWidth,double.PositiveInfinity));
-					double labelH=GetPreferredHeight(label.Text,controlWidth).Height;
-					label.Width=controlWidth;
-					label.Height=labelH;
+					Size size=GetTextSize(label.Text+"some fluff",_widthBigControls);
+					label.Width=size.Width;
+					label.Height=size.Height;
 					label.Name="labelPrompt"+itemOrder;
-					label.HAlign=HorizontalAlignment.Left;
-					label.VAlign=VerticalAlignment.Bottom;
-					label.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
+					label.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
 					label.Tag=_listInputBoxParams[i];
 					_listLabels.Add(label);
-					_curLocationY+=(int)label.Height+2;
+					_yPos+=(int)label.Height+2;
 				}
 				System.Windows.Controls.UserControl control;
 				switch(_listInputBoxParams[i].InputBoxType_) {
 					case InputBoxType.TextBox:
-						double right=_formFrame.Width-posX-controlWidth;
 						if(_listInputBoxParams[i].IsPassswordCharStar){
 							TextPassword textPassword=new TextPassword();
 							textPassword.Name="textBox"+itemOrder;
-							textPassword.Margin=new Thickness(left:posX,top:_curLocationY,right:right,bottom:0);
-							textPassword.Width=controlWidth;
+							textPassword.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
+							textPassword.Width=_widthBigControls;
 							textPassword.Height=20;
-							textPassword.HorizontalAlignment=HorizontalAlignment.Stretch;
 							textPassword.Text=_listInputBoxParams[i].Text;
 							control=textPassword;
 							break;
 						}
 						TextBox textBox=new TextBox();
 						textBox.Name="textBox"+itemOrder;
-						textBox.Margin=new Thickness(left:posX,top:_curLocationY,right:right,bottom:0);
-						textBox.Width=controlWidth;
+						textBox.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
+						textBox.Width=_widthBigControls;
 						textBox.Height=20;
-						textBox.HorizontalAlignment=HorizontalAlignment.Stretch;
 						textBox.Text=_listInputBoxParams[i].Text;
 						if(!String.IsNullOrEmpty(textBox.Text)) {
 							textBox.SelectionStart=0;
@@ -353,8 +359,8 @@ namespace OpenDental {
 					case InputBoxType.TextBoxMultiLine:
 						TextBox textBoxMulti=new TextBox();
 						textBoxMulti.Name="textBox"+itemOrder;
-						textBoxMulti.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
-						textBoxMulti.Width=controlWidth;
+						textBoxMulti.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
+						textBoxMulti.Width=_widthBigControls;
 						textBoxMulti.Height=100;
 						textBoxMulti.IsMultiline=true;
 						textBoxMulti.Text=_listInputBoxParams[i].Text;
@@ -365,9 +371,9 @@ namespace OpenDental {
 					case InputBoxType.CheckBox:
 						CheckBox checkBox=new CheckBox();
 						checkBox.Name="checkBox"+itemOrder;
-						Point point=new Point(posX+_listInputBoxParams[i].PointPosition.X,_curLocationY+_listInputBoxParams[i].PointPosition.Y);
+						Point point=new Point(xPos+_listInputBoxParams[i].PointPosition.X,_yPos+_listInputBoxParams[i].PointPosition.Y);
 						checkBox.Margin=new Thickness(left:point.X,top:point.Y,right:0,bottom:0);
-						checkBox.Width=controlWidth;
+						checkBox.Width=_widthBigControls;//We might be want to improve this
 						checkBox.Height=20;
 						if(_listInputBoxParams[i].SizeParam.Width!=0 && _listInputBoxParams[i].SizeParam.Height!=0){
 							checkBox.Width=_listInputBoxParams[i].SizeParam.Width;
@@ -380,15 +386,13 @@ namespace OpenDental {
 					case InputBoxType.ComboSelect:
 						ComboBox comboBox=new ComboBox();
 						comboBox.Name="comboBox"+itemOrder;
-						comboBox.Width=controlWidth;
+						comboBox.Width=_widthBigControls;
 						comboBox.Height=20;
 						if(_listInputBoxParams[i].SizeParam.Width!=0 && _listInputBoxParams[i].SizeParam.Height!=0){
 							comboBox.Width=_listInputBoxParams[i].SizeParam.Width;
 							comboBox.Height=_listInputBoxParams[i].SizeParam.Height;
 						}
-						double comboRight=_formFrame.Width-posX-comboBox.Width;
-						comboBox.Margin=new Thickness(left:posX,top:_curLocationY,right:comboRight,bottom:0);
-						comboBox.HorizontalAlignment=HorizontalAlignment.Stretch;
+						comboBox.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
 						comboBox.Items.AddList<string>(_listInputBoxParams[i].ListSelections,x=>x);
 						if(_listInputBoxParams[i].ListIndicesSelected.Count>0 && _listInputBoxParams[i].ListIndicesSelected[0].Between(0,comboBox.Items.Count-1)) {
 							comboBox.SetSelected(_listInputBoxParams[i].ListIndicesSelected[0]);//If there is a valid initial selection, select it.
@@ -403,11 +407,9 @@ namespace OpenDental {
 						ComboBox comboBox2=new ComboBox();
 						comboBox2.IsMultiSelect=true;
 						comboBox2.Name="comboBox"+itemOrder;
-						double combo2Right=_formFrame.Width-posX-controlWidth;
-						comboBox2.Margin=new Thickness(left:posX,top:_curLocationY,right:combo2Right,bottom:0);
-						comboBox2.Width=controlWidth;
+						comboBox2.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
+						comboBox2.Width=_widthBigControls;
 						comboBox2.Height=21;
-						comboBox2.HorizontalAlignment=HorizontalAlignment.Stretch;
 						for(int j=0;j<_listInputBoxParams[i].ListSelections.Count;j++) {
 							comboBox2.Items.Add(_listInputBoxParams[i].ListSelections[j]);
 						}
@@ -421,7 +423,7 @@ namespace OpenDental {
 					case InputBoxType.ValidDate:
 						TextVDate textVDate=new TextVDate();
 						textVDate.Name="textVDate"+itemOrder;
-						textVDate.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
+						textVDate.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
 						textVDate.Width=100;
 						textVDate.Height=20;
 						textVDate.Text=_listInputBoxParams[i].Text;
@@ -431,7 +433,7 @@ namespace OpenDental {
 						labelRight.Width=textVDate.Width;
 						labelRight.Text=$"({CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern})"; //Gets the cultural format for date
 						labelRight.Name="labelDateFormat"+itemOrder;
-						Point pointLabel=new Point(posX+textVDate.Width+12,_curLocationY);
+						Point pointLabel=new Point(xPos+textVDate.Width+12,_yPos);
 						labelRight.Margin=new Thickness(left:pointLabel.X,top:pointLabel.Y,right:0,bottom:0);
 						labelRight.Tag=_listInputBoxParams[i];
 						_listLabels.Add(labelRight);
@@ -439,7 +441,7 @@ namespace OpenDental {
 					case InputBoxType.ValidTime:
 						TextVTime textVTime=new TextVTime();
 						textVTime.Name="textVTime"+itemOrder;
-						textVTime.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
+						textVTime.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
 						textVTime.Width=120;
 						textVTime.Height=20;
 						control=textVTime;
@@ -447,7 +449,7 @@ namespace OpenDental {
 					case InputBoxType.ValidDouble:
 						TextVDouble textVDouble=new TextVDouble();
 						textVDouble.Name="textVDouble"+itemOrder;
-						textVDouble.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
+						textVDouble.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
 						textVDouble.Width=120;
 						textVDouble.Height=20;
 						control=textVDouble;
@@ -455,7 +457,7 @@ namespace OpenDental {
 					case InputBoxType.ValidPhone:
 						TextBox textPhone=new TextBox();
 						textPhone.Name="textPhone"+itemOrder;
-						textPhone.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
+						textPhone.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
 						textPhone.Width=140;
 						textPhone.Height=20;
 						textPhone.Text=_listInputBoxParams[i].Text;
@@ -468,19 +470,19 @@ namespace OpenDental {
 					case InputBoxType.ListBoxMulti:
 						ListBox listBox=new ListBox();
 						listBox.Name="listBox"+itemOrder;
-						listBox.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
+						listBox.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
 						listBox.Background=SystemColors.WindowBrush;
 						listBox.SelectionMode=SelectionMode.MultiExtended;
 						listBox.Items.AddList(_listInputBoxParams[i].ListSelections,x => x.ToString());
-						listBox.Width=controlWidth;
+						listBox.Width=_widthBigControls;
 						listBox.Height=95; //Default height used in original Form
 						control=listBox;
 						break;
 					case InputBoxType.RadioButton:
 						RadioButton radioButton=new RadioButton();
 						radioButton.Name="radioButton"+itemOrder;
-						radioButton.Margin=new Thickness(left:posX,top:_curLocationY,right:0,bottom:0);
-						radioButton.Width=controlWidth;
+						radioButton.Margin=new Thickness(left:xPos,top:_yPos,right:0,bottom:0);
+						radioButton.Width=_widthBigControls;
 						radioButton.Height=20;
 						radioButton.Text=_listInputBoxParams[i].Text;
 						control=radioButton;
@@ -488,11 +490,24 @@ namespace OpenDental {
 					default:
 						throw new NotImplementedException("InputBoxType: "+_listInputBoxParams[i].InputBoxType_+" not implemented.");
 				}
-				control.TabIndex=itemOrder++;
+				if(_listInputBoxParams[i].InputBoxType_==InputBoxType.ValidDate){
+					//this is special because of the label to the right.
+					if(200>_widthAllControls){
+						_widthAllControls=212;
+					}
+				}
+				else if(control.Width>_widthAllControls){
+					_widthAllControls=(float)control.Width;
+				}
+				control.TabIndex=i;
 				control.Tag=_listInputBoxParams[i];
-				_listControls.Add(control);
-				_minWidth=(int)Math.Max(_minWidth,control.Width+80);
-				_curLocationY+=(int)control.Height+2;
+				ListControls.Add(control);
+				//control.Width could be 385 form many controls
+				//It could be a bit less for others. For example, date is only 100 (although it also has a label to its right)
+				//Also, it could be bigger if SizeParam was set.
+				//So by setting width no less than 250, and assuming an 80 pix L/R border?, we are leaving 170 as the min width avail for controls.
+				//_minWidth=(int)Math.Max(_minWidth,control.Width+80);
+				_yPos+=(float)control.Height+2;
 			}
 		}
 
@@ -506,12 +521,10 @@ namespace OpenDental {
 			}
 		}
 
-		private Size GetPreferredHeight(string textToMeasure,double width){
-			Font font=new Font();
-			font.Name="Segoe UI";
-			font.Size=9;
+		private Size GetTextSize(string textToMeasure,double widthMax){
+			Font font=Font.ForWpf();
 			Graphics g=Graphics.MeasureBegin();
-			return g.MeasureString(textToMeasure,font,width);
+			return g.MeasureString(textToMeasure,font,widthMax);
 		}
 
 		#endregion Methods
@@ -542,6 +555,7 @@ namespace OpenDental {
 
 	public enum InputBoxType {
 		TextBox,
+		///<summary>Height of the textbox is 100</summary>
 		TextBoxMultiLine,
 		ComboSelect,
 		ComboMultiSelect,

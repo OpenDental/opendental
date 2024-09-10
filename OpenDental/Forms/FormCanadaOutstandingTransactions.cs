@@ -41,22 +41,13 @@ namespace OpenDental {
 			}
 		}
 
-		private void radioVersion2_Click(object sender,EventArgs e) {
-			radioVersion2.Checked=true;
-			radioVersion4Itrans.Checked=false;
-			radioVersion4ToCarrier.Checked=false;
-			groupCarrier.Enabled=false;
-		}
-
 		private void radioVersion4Itrans_Click(object sender,EventArgs e) {
-			radioVersion2.Checked=false;
 			radioVersion4Itrans.Checked=true;
 			radioVersion4ToCarrier.Checked=false;
 			groupCarrier.Enabled=false;
 		}
 
 		private void radioVersion4ToCarrier_Click(object sender,EventArgs e) {
-			radioVersion2.Checked=false;
 			radioVersion4Itrans.Checked=false;
 			radioVersion4ToCarrier.Checked=true;
 			groupCarrier.Enabled=true;
@@ -84,11 +75,8 @@ namespace OpenDental {
 			}
 			string formatVersion="04";
 			Carrier carrier=null;
-			if(radioVersion2.Checked) {
-				formatVersion="02";
-			}
-			else if(radioVersion4ToCarrier.Checked) {
-				carrier=_listCarriers[listCarriers.SelectedIndex];					
+			if(radioVersion4ToCarrier.Checked) {
+				carrier=_listCarriers[listCarriers.SelectedIndex];
 			}
 			try {
 				CanadianOutput.GetOutstandingForDefault(provider,formatVersion,carrier,FormClaimPrint.PrintCdaClaimForm,FormCCDPrint.PrintCCD);

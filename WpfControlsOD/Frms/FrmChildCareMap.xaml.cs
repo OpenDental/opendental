@@ -23,10 +23,8 @@ namespace OpenDental {
 	///<summary></summary>
 	public partial class FrmChildCareMap:FrmODBase {
 		/*
-		There was a bug that occured when a child's two most recent entries were at the same time. When one entry was coming to and the other was leaving, the child ended up showing in both the absent grid and a classroom grid. This occured because when a child was moved to a different room, both a leaving and coming to entry were made, which were at the same exact time.
-		There was another bug that occured when we had a parent and a staff member check in the same child at the exact same time, one in the check in/out window and one in the map. Say the staff member assigns a child to a room when they are in the absent grid, a log for that child will be created. If at a fraction of a second later a parent also tries to sign in the same child, a leaving entry is created for the room the child was just sent to and then a coming to entry is created for the child's primary room. This leaves us with three entries all at the same time, meaning the same child will show up in two of the classroom grids. This may not be a common scenario, but it can be recreated fairly easily in testing.
-		I discussed these issues with AdrianV and JasonS. They suggested using sorting by the primary key of the log table instead of datetime as we are essentially just trying to determine which is the most recent log for a child or teacher. The PKs should increase in order and I do not think we are going to delete any logs as they are a child's documented location history. If there was ever an issue with the daycare or some sort of audit from the state, this information may be important.
-		From testing the use of PK for the map sorting, it seems to be much more bullet proof than using datetime. The two bugs above are no longer an issue. It also seems to work fine while having two maps running at once.
+		There is a bug that occurs if we move a person from one room to another, then they will show up in both the absent grid and the room they were moved to. This occurs because when we move someone two logs are made, one is a leaving log for the room they were in and the other is a coming to log for the room they are entering. When both of the entries are at the same time, the issue occurs. This is because the absent grid looks at all entries for today and sorts by DateTDisplayed and then IsComing, which means it will prioritize leaving entries when there are multiple at the same time. This is incorrect as the person should be in a room at this time. The current fix for this is to automatically add a one second difference between the two logs so that the coming to log is one second ahead. This is just a bandaid fix and the issue will still occur if the times end up being the exact same some other way.
+		This issue also causes similar behavior in the parent check in/out window as it is using similar logic.
 		*/
 		///<summary>Right click options for the classroom grids.</summary>
 		private ContextMenu _contextMenu;
@@ -156,20 +154,24 @@ namespace OpenDental {
 		private void FillGridTeachersUnassigned() {
 			//Remember which teacher was selected after fill grid
 			Employee employeeSelected=gridTeachersUnassigned.SelectedTag<Employee>();
-			List<Employee> listEmployeesAbsent=Employees.GetDeepCopy();
+			//Get logs of all employees for today
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllEmployeesForDate(DateTime.Today.Date);
+			//Get a list of all unique employee nums from today's logs. These are the employees that may be present in a classroom
 			List<long> listEmployeeNumsUnique=listChildRoomLogs.FindAll(x => x.EmployeeNum!=0).Select(y => y.EmployeeNum).Distinct().ToList();
+			//Track the employees that are absent. Start with all employees and remove ones that are present
+			List<Employee> listEmployeesAbsent=Employees.GetDeepCopy();
 			for(int i=0;i<listEmployeeNumsUnique.Count;i++) {
-				//Find the most recent log for the given employee ordering by PK
-				ChildRoomLog childRoomLog=listChildRoomLogs.FindAll(x => x.EmployeeNum==listEmployeeNumsUnique[i])
-					.OrderByDescending(y => y.ChildRoomLogNum).First();
-				if(childRoomLog.IsComing==false) {
-					continue;//If they are absent, then keep in list
+				//Find the most recent log for each employee. When logs are at the same time prioritize leaving entries
+				ChildRoomLog childRoomLogMostRecent=listChildRoomLogs.FindAll(x => x.EmployeeNum==listEmployeeNumsUnique[i])
+					.OrderByDescending(y => y.DateTDisplayed)
+					.ThenBy(z => z.IsComing).First();
+				if(!childRoomLogMostRecent.IsComing) {
+					continue;//Keep in list if they are absent
 				}
-				listEmployeesAbsent.RemoveAll(x => x.EmployeeNum==listEmployeeNumsUnique[i]);
+				listEmployeesAbsent.RemoveAll(x => x.EmployeeNum==listEmployeeNumsUnique[i]);//Remove from list if present in a room
 			}
-			List<Employee> listEmployeesSorted=listEmployeesAbsent.OrderBy(x => x.LName).ToList();
-			listEmployeesSorted.RemoveAll(x => x.IsHidden);//Remove all hidden before the fillgrid
+			List<Employee> listEmployeesSorted=listEmployeesAbsent.OrderBy(x => x.LName).ToList();//Sort by last name
+			listEmployeesSorted.RemoveAll(x => x.IsHidden);//Remove all hidden employees
 			//Begin to fill the grid
 			gridTeachersUnassigned.BeginUpdate();
 			gridTeachersUnassigned.Columns.Clear();
@@ -202,16 +204,21 @@ namespace OpenDental {
 		private void FillGridChildrenAbsent() {
 			//Remember which child was selected after the fill grid
 			Child childSelected=gridChildrenAbsent.SelectedTag<Child>();
+			//Get logs of all children for today
+			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllChildrenForDate(DateTime.Today.Date);
+			//Get a list of all unique child nums from today's logs. These are the children that may be present in a classroom
+			List<long> listChildNumsUnique=listChildRoomLogs.FindAll(x => x.ChildNum!=0).Select(y => y.ChildNum).Distinct().ToList();
+			//Track the children that are absent. Start with all children and remove ones that are present
 			List<Child> listChildrenAbsent=Children.GetAll();
-			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllChildrenForDate(DateTime.Now.Date);
-			List<long> listChildNumsUnique=listChildRoomLogs.Select(x => x.ChildNum).Distinct().ToList();
 			for(int i=0;i<listChildNumsUnique.Count;i++) {
-				//Find the most recent log for the given child ordering by PK
-				ChildRoomLog childRoomLog=listChildRoomLogs.FindAll(x => x.ChildNum==listChildNumsUnique[i]).OrderByDescending(y => y.ChildRoomLogNum).First();
-				if(childRoomLog.IsComing==false) {//If they are absent, then keep in list
-					continue;
+				//Find the most recent log for each child. When logs are at the same time prioritize leaving entries
+				ChildRoomLog childRoomLogMostRecent=listChildRoomLogs.FindAll(x => x.ChildNum==listChildNumsUnique[i])
+					.OrderByDescending(y => y.DateTDisplayed)
+					.ThenBy(z => z.IsComing).First();
+				if(!childRoomLogMostRecent.IsComing) {
+					continue;//Keep in list if they are absent
 				}
-				listChildrenAbsent.RemoveAll(x => x.ChildNum==listChildNumsUnique[i]);//Remove from absent list since they are present
+				listChildrenAbsent.RemoveAll(x => x.ChildNum==listChildNumsUnique[i]);//Remove from list if present in a room
 			}
 			List<Child> listChildrenSorted=listChildrenAbsent.OrderBy(x => x.LName).ToList();
 			listChildrenSorted.RemoveAll(x => x.IsHidden);//Remove all hidden before the fillgrid
@@ -253,9 +260,10 @@ namespace OpenDental {
 			List<ChildRoomLog> listChildRoomLogs=new List<ChildRoomLog>();
 			//Find the employees in this room
 			for(int i=0;i<listEmployeeNumsUnique.Count;i++) {
-				//Find the most recent log for the given employee ordering by PK
+				//Find the most recent log for the given employee ordering by DateTDisplayed and then by IsComing
 				ChildRoomLog childRoomLogEmployee=listChildRoomLogsToday.FindAll(x => x.EmployeeNum==listEmployeeNumsUnique[i])
-					.OrderByDescending(y => y.ChildRoomLogNum).First();
+					.OrderByDescending(y => y.DateTDisplayed)
+					.ThenBy(z => z.IsComing).First();
 				if(!childRoomLogEmployee.IsComing) {
 					continue;//Employee is not present in this room
 				}
@@ -264,9 +272,10 @@ namespace OpenDental {
 			List<long> listChildNumsUnique=listChildRoomLogsToday.FindAll(x => x.ChildNum!=0).Select(y => y.ChildNum).Distinct().ToList();
 			//Find the children in this room
 			for(int i=0;i<listChildNumsUnique.Count;i++) {
-				//Find the most recent log for the given child ordering by PK
+				//Find the most recent log for the given child ordering by DateTDisplayed and then by IsComing
 				ChildRoomLog childRoomLogChild=listChildRoomLogsToday.FindAll(x => x.ChildNum==listChildNumsUnique[i])
-					.OrderByDescending(y => y.ChildRoomLogNum).First();
+					.OrderByDescending(y => y.DateTDisplayed)
+					.ThenBy(z => z.IsComing).First();
 				if(!childRoomLogChild.IsComing) {
 					continue;//Child is not present in this room
 				}
@@ -318,22 +327,22 @@ namespace OpenDental {
 				GridRow gridRowFinal=new GridRow();
 				if(childRoom.Ratio==-1) {//-1 indicates a mixed ratio
 					int teachersRequired=ChildRoomLogs.GetNumberTeachersMixed(totalChildren:(int)countChildren,childrenUnderTwo:countUnderTwo);
-					gridRowFinal.Cells.Add("Ratio: Mixed, Children: "+countChildren+", Under2: "+countUnderTwo+", Teachers: "+countEmployees+"/"+teachersRequired);//Example: Ratio:Mixed, Kids:2, Under2:1, Teachers:1/1
+					gridRowFinal.Cells.Add("Ratio: Mixed, Children: "+countChildren+", Under2: "+countUnderTwo+", Teachers: "+countEmployees+" of "+teachersRequired);//Example: Ratio:Mixed, Kids:2, Under2:1, Teachers:1 of 1
 				}
 				else {
 					string ratio="";
 					if(countEmployees==0) {//Stop division by 0
-						ratio="?";
+						ratio="0";
 					}
 					else {
-						ratio=(countChildren/countEmployees).ToString();
+						ratio=(Math.Ceiling(countChildren/countEmployees)).ToString();
 					}
 					if(childRoom.Ratio==0) {//Stop division by 0
-						gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+"/?");
+						gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+" of 0");
 					}
 					else {
 						double teachersRequired=Math.Ceiling(countChildren/childRoom.Ratio);
-						gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+"/"+teachersRequired);
+						gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+" of "+teachersRequired);
 					}
 				}
 				ChildRoomLog childRoomLogFinal=new ChildRoomLog();//Final row needs a tag for reselecting row
@@ -516,8 +525,9 @@ namespace OpenDental {
 			//If the selected child is currently in a room, remove them using a going log
 			Child child=Children.GetOne(frmChildren.ChildNumSelected);
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(child.ChildNum,DateTime.Now.Date);
-			//OrderBy PK as well in case there are multiple entries with the same time
-			ChildRoomLog childRoomLog=listChildRoomLogs.OrderByDescending(x => x.ChildRoomLogNum).FirstOrDefault();
+			//OrderBy DateTDisplayed and IsComing in case there are multiple entries with the same time
+			ChildRoomLog childRoomLog=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed)
+				.ThenBy(y => y.IsComing).FirstOrDefault();
 			if(childRoomLog!=null) {
 				if(childRoomLog.ChildRoomNum==childRoomNum && childRoomLog.IsComing) {
 					MsgBox.Show("The selected child is already in this room.");
@@ -558,8 +568,9 @@ namespace OpenDental {
 			//If the selected employee is currently in a room, remove them using a going log
 			Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==frmChildTeacherSelect.EmployeeNumSelected);
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForEmployee(employee.EmployeeNum,DateTime.Now.Date);
-			//OrderBy PK as well in case there are multiple entries with the same time
-			ChildRoomLog childRoomLog=listChildRoomLogs.OrderByDescending(x => x.ChildRoomLogNum).FirstOrDefault();
+			//OrderBy DateTDisplayed and IsComing in case there are multiple entries with the same time
+			ChildRoomLog childRoomLog=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed)
+				.ThenBy(y => y.IsComing).FirstOrDefault();
 			if(childRoomLog!=null) {
 				if(childRoomLog.ChildRoomNum==childRoomNum && childRoomLog.IsComing) {
 					MsgBox.Show("The selected teacher is already in this room.");
