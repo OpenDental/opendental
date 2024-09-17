@@ -1890,10 +1890,16 @@ namespace OpenDentBusiness {
 			command+="ORDER BY ItemOrder";
 			//plannedappt.AptNum does refer to the planned appt, but the other fields in the result are for the linked scheduled appt.
 			DataTable rawPlannedAppts=dcon.GetTable(command);
+			command="SELECT * FROM appointment WHERE PatNum="+POut.Long(patNum)+" AND NextAptNum!=0 ORDER BY AptStatus";
+			List<Appointment> listAppointmentsLinkedToPlanned=Crud.AppointmentCrud.SelectMany(command);
 			DataRow aptRow;
 			int itemOrder=1;
-			DateTime dateSched;
 			ApptStatus aptStatus;
+			DateTime dateSched;
+			command="SELECT AptNum FROM appointment WHERE PatNum="+POut.Long(patNum)+" AND AptStatus="+POut.Int((int)ApptStatus.Planned);
+			List<long> listAptNumsPlanned=Db.GetListLong(command);
+			List<Procedure> listProcedures=Procedures.GetProcsMultApts(listAptNumsPlanned);
+			Appointment appointmentLinkToPlanned;
 			for(int i=0;i<rawPlannedAppts.Rows.Count;i++) {
 				aptRow=null;
 				for(int a=0;a<rawApt.Rows.Count;a++) {
@@ -1913,29 +1919,29 @@ namespace OpenDentBusiness {
 				}
 				//end of repair
 				row=table.NewRow();
-				row["AptNum"]=aptRow["AptNum"].ToString();
-				dateSched=PIn.Date(aptRow["AptDateTime"].ToString());
-				aptStatus=(ApptStatus)PIn.Long(aptRow["AptStatus"].ToString());
-				row["AptStatus"]=aptStatus.ToString();
-				if(dateSched.Year<1880) {
-					row["dateSched"]="";
+				//PlannedAppt----------------------------------------------------------------------------
+				long aptNum=PIn.Long(aptRow["AptNum"].ToString());
+				appointmentLinkToPlanned=listAppointmentsLinkedToPlanned.Find(x => x.NextAptNum==aptNum);
+				dateSched=DateTime.MinValue;
+				if(appointmentLinkToPlanned!=null) {
+					dateSched=appointmentLinkToPlanned.AptDateTime;
 				}
-				else {
-					row["dateSched"]=dateSched.ToString(dateTimeFormatString);
-				}
-				row["ProvNum"]=PIn.Long(aptRow["ProvNum"].ToString());
-				row["ItemOrder"]=itemOrder.ToString();
+				List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(aptNum,listProcedures,true);
+				row["AptNum"]=aptNum;
 				row["minutes"]=(aptRow["Pattern"].ToString().Length*5).ToString();
 				row["Note"]=aptRow["Note"].ToString();
-				row["ProcDescript"]=aptRow["ProcDescript"].ToString();
-				if(aptStatus==ApptStatus.Complete) {
-					row["ProcDescript"]=Lans.g("ContrChart","(Completed) ")+row["ProcDescript"];
+				row["ProcDescript"]=GetProcDescriptPlanned(appointmentLinkToPlanned,listProceduresPlannedAppt,dateSched,aptRow["ProcDescript"].ToString());
+				row["ItemOrder"]=itemOrder.ToString();
+				row["ProvNum"]=PIn.Long(aptRow["ProvNum"].ToString());
+				aptStatus=(ApptStatus)PIn.Long(aptRow["AptStatus"].ToString());
+				//Appointment Linked to PlannedAppt----------------------------------------------------------------------------
+				row["AptStatus"]=aptStatus.ToString();
+				row["dateSched"]="";
+				if(appointmentLinkToPlanned!=null) {
+					row["AptStatus"]=(ApptStatus)appointmentLinkToPlanned.AptStatus;
 				}
-				else if(dateSched==DateTime.Today.Date) {
-					row["ProcDescript"]=Lans.g("ContrChart","(Today's) ")+row["ProcDescript"];
-				}
-				else if(rawPlannedAppts.Rows[i]["someAreComplete"].ToString()!="0"){
-					row["ProcDescript"]=Lans.g("ContrChart","(Some procs complete) ")+row["ProcDescript"];
+				if(dateSched.Year>1880) {
+					row["dateSched"]=dateSched.ToString(dateTimeFormatString);
 				}
 				rows.Add(row);
 				itemOrder++;

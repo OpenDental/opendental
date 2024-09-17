@@ -83,11 +83,11 @@ namespace OpenDentBusiness{
 				int printableHeight=sheet.Height-topMargin-bottomMargin;
 				if((field.FieldType==SheetFieldType.SigBox || field.FieldType==SheetFieldType.SigBoxPractice) && field.Height<=printableHeight) {//if Sigbox and can fit a single page
 					int currentPageNum=Convert.ToInt32(Math.Ceiling((double)(field.YPos-topMargin)/printableHeight));
-					int pageMaxY=(currentPageNum*printableHeight)+topMargin;
-					if(field.YPos<=pageMaxY && field.YPos+field.Height>pageMaxY) {//Field is split between 2 pages.
+					int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out int pageCount);
+					if(field.YPos<=bottomCurPage && field.YPos+field.Height>bottomCurPage) {//Field is split between 2 pages.
 						int yPosNew=(currentPageNum*printableHeight)+topMargin+1;//Set to top of next page, plus 1 for padding.
 						int amountChanged=yPosNew-field.YPos;
-						MoveAllDownWhichIntersect(sheet,field,amountChanged);
+						MoveAllDownBelowThis(sheet,field,amountChanged);
 						field.YPos=yPosNew;//Update signature box y position after moving other fields down
 					}
 				}

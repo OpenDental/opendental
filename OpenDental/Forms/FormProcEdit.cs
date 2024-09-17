@@ -2421,6 +2421,7 @@ namespace OpenDental {
 			}
 			_procedure.ClaimNote=textClaimNote.Text;
 			#endregion Additional UI syncing (_procedure fields). In Canada, Procedures.SetCanadianEditFields(...) can also create and/or update rows in the DB.
+			FillFees();//Refresh _listFees for any potential clinic change.
 			//Last chance to run this code before Proc gets updated.
 			Procedures.TryValidateProcFee(_procedure,_procedureOld,_patient,_listFees,_listPatPlans,_listInsSubs,_listInsPlans,_listBenefits,funcYesNoPrompt);
 			bool doClose=Procedures.TryAutoCodesPrompt(ref _procedure,_procedureOld,_procedureCode,(listBoxTeeth.SelectedIndices.Count < 1),_patient,ref _listClaimProcs,funcPromptFormACLI);

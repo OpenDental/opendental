@@ -346,7 +346,7 @@ namespace OpenDental {
 			DateTime dtToday=dtNow.Date;
 			DateTime dateLastAging=PrefC.GetDate(PrefName.DateLastAging);
 			string msgText=Lan.g(this,"Aging has already been calculated for")+" "+dtToday.ToShortDateString()+" "
-				+Lan.g(this,"and does not normally need to run more than once per day.")+"\r\n\r\n"+Lan.g(this,"Run anway?");
+				+Lan.g(this,"and does not normally need to run more than once per day.")+"\r\n\r\n"+Lan.g(this,"Run anyway?");
 			if(dateLastAging.Date==dtToday.Date && MessageBox.Show(this,msgText,"",MessageBoxButtons.YesNo)!=DialogResult.Yes) {
 				return true;
 			}

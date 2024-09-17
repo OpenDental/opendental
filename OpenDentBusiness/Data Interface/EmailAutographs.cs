@@ -68,18 +68,14 @@ namespace OpenDentBusiness{
 		///<summary>Searches the cache of EmailAutographs and returns the first match, otherwise null.</summary>
 		public static EmailAutograph GetForOutgoing(List<EmailAutograph> listAutographs,EmailAddress emailAddressOutgoing) {
 			string emailUsername=EmailMessages.GetAddressSimple(emailAddressOutgoing.EmailUsername);
-			if(string.IsNullOrWhiteSpace(emailUsername)) {
-				return null;
-			}
 			string emailSender=EmailMessages.GetAddressSimple(emailAddressOutgoing.SenderAddress);
-			if(string.IsNullOrWhiteSpace(emailSender)) {
-				return null;
-			}
 			string autographEmail;
 			for(int i=0;i<listAutographs.Count;i++) {
 				autographEmail=EmailMessages.GetAddressSimple(listAutographs[i].EmailAddress.Trim());
 				//Use Contains() because an autograph can theoretically have multiple email addresses associated with it.
-				if(autographEmail.Contains(emailUsername)	|| autographEmail.Contains(emailSender)) {
+				if((!string.IsNullOrWhiteSpace(emailUsername) && autographEmail.Contains(emailUsername)) 
+					|| (!string.IsNullOrWhiteSpace(emailSender) && autographEmail.Contains(emailSender)))
+				{
 					return listAutographs[i];
 				}
 			}

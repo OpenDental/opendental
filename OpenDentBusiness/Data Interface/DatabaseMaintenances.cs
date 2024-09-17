@@ -11068,7 +11068,13 @@ HAVING cnt>1";
 						//In Health.Direct.Agent.IncomingMessage.SerializeMessage(), a trailing newline is sometimes added.
 						emailMessageNew.RawEmailIn=emailMessageNew.RawEmailIn.Substring(0,emailMessageNew.RawEmailIn.Length-2);
 					}
-					if(Crud.EmailMessageCrud.UpdateComparison(emailMessageNew,oldEmailMessage)) {
+					//Remove characters which would not be valid in the database ex:Emojis.
+					//emailMessageNew has character which were stripped when inserted into the database (emailMessageOld).
+					EmailMessage emailMessageNewCopy=emailMessageNew.Copy();
+					emailMessageNewCopy.Subject=SOut.StringParam(emailMessageNew.Subject);
+					emailMessageNewCopy.RawEmailIn=SOut.StringParam(emailMessageNew.RawEmailIn);
+					emailMessageNewCopy.BodyText=SOut.StringParam(emailMessageNew.BodyText);
+					if(Crud.EmailMessageCrud.UpdateComparison(emailMessageNewCopy,oldEmailMessage)) {
 						cleanedCount++;
 					}
 					else {//No changes.

@@ -143,6 +143,9 @@ namespace OpenDental {
 					break;
 				}
 			}
+			if(Height==0) {
+				Height++;
+			}
 			using(Bitmap doubleBufferer=new Bitmap(lineNumberWidth,Height))
 			using(Graphics gDoubleBuffer=Graphics.FromImage(doubleBufferer))
 			{

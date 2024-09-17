@@ -467,6 +467,10 @@ namespace WpfControls.UI{
 					}
 				}
 				int offset=textPointerContentStart.GetOffsetToPosition(textPointerStart);
+				if(offset<0) { //GetOffsetToPosition() could return a negative value if textPointerStart is in the middle of newline characters before ContentStart.
+					textPointerContentStart=textPointerStart;
+					offset=0;
+				}
 				int idxPlain=ConvertIdxToPlain(textPointerContentStart,offset);
 				return idxPlain;
 			}
@@ -1211,16 +1215,16 @@ namespace WpfControls.UI{
 			//Don't need to break into paragraphs.
 			TextPointer textPointerEnd=textPointerStart.GetPositionAtOffset(idxTextPointer);
 			int countParagraphBoundaries=0;
-			while(true){
-				if(textPointerStart.CompareTo(textPointerEnd) >= 0){
+			while(true) {
+				if(textPointerStart.CompareTo(textPointerEnd)>=0) {
 					break;
 				}
-				if(textPointerStart.GetPointerContext(LogicalDirection.Forward)==TextPointerContext.ElementEnd){
-					if(textPointerStart.Parent is Paragraph) {
+				if(textPointerStart.GetPointerContext(LogicalDirection.Forward)==TextPointerContext.ElementEnd) {
+					if(textPointerStart.Parent is Paragraph || textPointerStart.Parent is LineBreak) {
 						countParagraphBoundaries++;
 					}
 				}
-				textPointerStart = textPointerStart.GetNextContextPosition(LogicalDirection.Forward);
+				textPointerStart=textPointerStart.GetNextContextPosition(LogicalDirection.Forward);
 			}
 			return idxTextPointer-countParagraphBoundaries*2;//from RunEnd,ParagraphEnd,ParagraphStart,RunStart to \r\n is a decrease of 2
 		}

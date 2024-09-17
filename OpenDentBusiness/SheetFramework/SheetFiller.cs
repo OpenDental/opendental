@@ -916,27 +916,6 @@ namespace OpenDentBusiness {
 					phone=clinic.Phone;
 				}
 				clinicPatPhone=TelephoneNumbers.ReFormat(phone);
-				//Current selected Clinic-------------------------------------------------------------------------------------------------------
-				Clinic clinicCur=Clinics.GetClinic(Clinics.ClinicNum);
-				if(clinicCur==null) {
-					clinicCurDescription=PrefC.GetString(PrefName.PracticeTitle);
-					clinicCurAddress=PrefC.GetString(PrefName.PracticeAddress);
-					if(PrefC.GetString(PrefName.PracticeAddress2)!="") {
-						clinicCurAddress+=", "+PrefC.GetString(PrefName.PracticeAddress2);
-					}
-					clinicCurCityStZip=PrefC.GetString(PrefName.PracticeCity)+", "+PrefC.GetString(PrefName.PracticeST)+"  "+PrefC.GetString(PrefName.PracticeZip);
-					phone=PrefC.GetString(PrefName.PracticePhone);
-				}
-				else {
-					clinicCurDescription=clinicCur.Description;
-					clinicCurAddress=clinicCur.Address;
-					if(clinicCur.Address2!="") {
-						clinicCurAddress+=", "+clinicCur.Address2;
-					}
-					clinicCurCityStZip=clinicCur.City+", "+clinicCur.State+"  "+clinicCur.Zip;
-					phone=clinicCur.Phone;
-				}
-				clinicCurPhone=TelephoneNumbers.ReFormat(phone);
 				#endregion
 				#region Diseases/Allergies
 				List<Disease> listDiseases=data.ListDiseases;
@@ -1000,6 +979,29 @@ namespace OpenDentBusiness {
 				}
 				#endregion Patient Portal
 			}//End of if(pat!=null)
+			if(pat!=null || sheet.SheetType==SheetTypeEnum.DepositSlip) {
+				//Populate current clinic fields if a patient exists or if the sheet is a Deposit Slip.
+				Clinic clinicCur = Clinics.GetClinic(Clinics.ClinicNum);
+				if(clinicCur==null) {
+					clinicCurDescription=PrefC.GetString(PrefName.PracticeTitle);
+					clinicCurAddress=PrefC.GetString(PrefName.PracticeAddress);
+					if(PrefC.GetString(PrefName.PracticeAddress2)!="") {
+						clinicCurAddress+=", "+PrefC.GetString(PrefName.PracticeAddress2);
+					}
+					clinicCurCityStZip=PrefC.GetString(PrefName.PracticeCity)+", "+PrefC.GetString(PrefName.PracticeST)+"  "+PrefC.GetString(PrefName.PracticeZip);
+					phone=PrefC.GetString(PrefName.PracticePhone);
+				}
+				else {
+					clinicCurDescription=clinicCur.Description;
+					clinicCurAddress=clinicCur.Address;
+					if(clinicCur.Address2!="") {
+						clinicCurAddress+=", "+clinicCur.Address2;
+					}
+					clinicCurCityStZip=clinicCur.City+", "+clinicCur.State+"  "+clinicCur.Zip;
+					phone=clinicCur.Phone;
+				}
+				clinicCurPhone=TelephoneNumbers.ReFormat(phone);
+			}
 			#endregion
 			#region Fill Fields
 			//Fill fields---------------------------------------------------------------------------------------------------------
@@ -1010,6 +1012,12 @@ namespace OpenDentBusiness {
 				//ATTENTION: Any static text fields added here must also be added to StaticTextFields._dictDependencies (exceptions thrown if not).
 				//Setting these dependencies limits the queries run by StaticTextData.GetStaticTextData() to only those required by the current sheet.
 				fldval=field.FieldValue;
+				if(pat!=null || sheet.SheetType==SheetTypeEnum.DepositSlip) {
+					fldval=fldval.Replace(StaticTextField.clinicCurDescription.ToReplacementString(),clinicCurDescription);
+					fldval=fldval.Replace(StaticTextField.clinicCurAddress.ToReplacementString(),clinicCurAddress);
+					fldval=fldval.Replace(StaticTextField.clinicCurCityStZip.ToReplacementString(),clinicCurCityStZip);
+					fldval=fldval.Replace(StaticTextField.clinicCurPhone.ToReplacementString(),clinicCurPhone);
+				}
 				if(pat!=null) {
 					//Use patient's preferred name if they have one, otherwise default to first name.
 					string strPatPreferredOrFName=pat.FName;
@@ -1050,10 +1058,6 @@ namespace OpenDentBusiness {
 					fldval=fldval.Replace(StaticTextField.clinicPatAddress.ToReplacementString(),clinicPatAddress);
 					fldval=fldval.Replace(StaticTextField.clinicPatCityStZip.ToReplacementString(),clinicPatCityStZip);
 					fldval=fldval.Replace(StaticTextField.clinicPatPhone.ToReplacementString(),clinicPatPhone);
-					fldval=fldval.Replace(StaticTextField.clinicCurDescription.ToReplacementString(),clinicCurDescription);
-					fldval=fldval.Replace(StaticTextField.clinicCurAddress.ToReplacementString(),clinicCurAddress);
-					fldval=fldval.Replace(StaticTextField.clinicCurCityStZip.ToReplacementString(),clinicCurCityStZip);
-					fldval=fldval.Replace(StaticTextField.clinicCurPhone.ToReplacementString(),clinicCurPhone);
 					fldval=fldval.Replace(StaticTextField.currentMedications.ToReplacementString(),currentMedications);
 					fldval=fldval.Replace(StaticTextField.DateFirstVisit.ToReplacementString(),dateFirstVisit);
 					fldval=fldval.Replace(StaticTextField.dateLastAppt.ToReplacementString(),dateLastAppt);

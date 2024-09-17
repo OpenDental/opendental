@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace OpenDentBusiness{
-	///<summary>Represents a single document in the images module.</summary>
+	///<summary>Represents a single document in the imaging module.</summary>
 	[Serializable]
 	[CrudTable(AuditPerms=CrudAuditPerm.ImageDelete|CrudAuditPerm.ImageEdit,IsLargeTable=true)]
 	public class Document:TableBase {

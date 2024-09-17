@@ -292,7 +292,6 @@ namespace OpenDental {
 				return;
 			}
 			if(Mouse.LeftButton!=MouseButtonState.Pressed) {//Ensure mouse is dragging
-				_isMouseDown=false;
 				return;
 			}
 			//we are dragging

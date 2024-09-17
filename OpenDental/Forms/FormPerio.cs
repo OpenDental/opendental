@@ -1154,6 +1154,7 @@ namespace OpenDental{
 			contrPerio.SaveCurExam(_perioExam);
 			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
 			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
+			ColRow colRowOriginal=contrPerio.ColRowSelected;//Preserve the currently selected ColRow so it can be set after Save is completed.
 			FillGrid(!_isExamInUse);
 			contrPerio.ColRowSelected=new ColRow(-1,-1);//Set this so no cell is highlighted on saved image. JobNum:56018
 			//Document doc=new Document();
@@ -1219,6 +1220,7 @@ namespace OpenDental{
 				return;
 			}
 			MsgBox.Show(this,"Saved.");
+			contrPerio.SetNewCell(colRowOriginal.Col,colRowOriginal.Row);//Set the ColRow back to original selection
 			/*
 			string patImagePath=ImageStore.GetPatientFolder(PatCur);
 			string filePath="";

@@ -483,7 +483,7 @@ namespace OpenDental {
 
 		private void FormCreditRecurringCharges_FormClosing(object sender,FormClosingEventArgs e) {
 			_recurringChargerator?.DeleteNotYetCharged();
-			_recurringChargerator?.StopCharges();//This will still allow the current card to finish.
+			_recurringChargerator?.StopCharges(true);//This will still allow the current card to finish.
 			ODEvent.Fired-=StopRecurringCharges;
 		}
 

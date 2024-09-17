@@ -280,17 +280,6 @@ namespace OpenDentBusiness{
 		private static string GetVerifyGridListQuery(DateTime dateStart, DateTime dateEnd,DateTime datePatEligibilityLastVerified
 			,DateTime datePlanBenefitsLastVerified,List<long> listClinicNums,List<long> listRegionDefNums,long statusDefNum
 			,long userNum,string carrierName,bool excludePatVerifyWhenNoIns,bool excludePatClones,List<long> listInsFilingCodeNums) {
-			//In some cases, insverify can have more than one row per plan. Using subquery to ensure we get latest DateLastVerified if there are multiple rows for one plan (JobNum:53236)
-			string insVerSubQuery=@"
-				(SELECT iv.* 
-				FROM insverify iv 
-				INNER JOIN (
-				SELECT VerifyType,FKey,MAX(DateLastVerified) AS LatestDateVerified 
-				FROM insverify GROUP BY VerifyType,FKey) insverifylatest 
-				ON iv.VerifyType = insverifylatest.VerifyType
-					AND iv.FKey = insverifylatest.FKey 
-					AND iv.DateLastVerified=insverifylatest.LatestDateVerified 
-				) insverify";
 			//clinicJoin should only be used if the passed in clinicNum is a value other than 0 (Unassigned).
 			string whereClinic="";
 			if(listClinicNums.Contains(-1)) {//All clinics
@@ -336,14 +325,14 @@ namespace OpenDentBusiness{
 					"+(string.IsNullOrEmpty(carrierName) ? "" : "AND carrier.CarrierName LIKE '%"+POut.String(carrierName)+"%'")+@"
 				"+(excludePatClones ? "LEFT JOIN patientlink ON patientlink.PatNumTo=patient.PatNum AND patientlink.LinkType="
 					+POut.Int((int)PatientLinkType.Clone)+" " : "");
-			string insVerifyJoin1=@"INNER JOIN " +insVerSubQuery+@" ON 
+			string insVerifyJoin1=@"INNER JOIN insverify ON 
 					(insverify.VerifyType="+POut.Int((int)VerifyTypes.InsuranceBenefit)+@" 
 					AND insverify.FKey=insplan.PlanNum 
 					AND (insverify.DateLastVerified<"+POut.Date(datePlanBenefitsLastVerified)+@"
 						"+(checkBenefitYear?@"OR (insverify.DateLastVerified<DATE_FORMAT(appointment.AptDateTime,CONCAT('%Y-',LPAD(insplan.MonthRenew,2,'0'),'-01')) 
 							AND DATE_FORMAT(appointment.AptDateTime,CONCAT('%Y-',LPAD(MonthRenew,2,'0'),'-01'))<="+DbHelper.DtimeToDate("appointment.AptDateTime")+")":"")+@") 
 					"+(excludePatVerifyWhenNoIns ? "" : "AND insplan.HideFromVerifyList=0")+@") ";
-			string insVerifyJoin2=@"INNER JOIN " +insVerSubQuery+@" ON 
+			string insVerifyJoin2=@"INNER JOIN insverify ON 
 					(insverify.VerifyType="+POut.Int((int)VerifyTypes.PatientEnrollment)+@"
 					AND insverify.FKey=patplan.PatPlanNum
 					AND (insverify.DateLastVerified<"+POut.Date(datePatEligibilityLastVerified)+@"
@@ -368,7 +357,7 @@ namespace OpenDentBusiness{
 				insVerifyJoin2+
 				whereClause+@"
 				ORDER BY AptDateTime";
-			return command;
+			return "SELECT * FROM ("+command+") AS iv GROUP BY PatPlanNum,FKey HAVING MAX(DateLastVerified)";
 		}
 
 		///<summary>Converts a table of insverify objects into a list of InsVerifyGridObject.</summary>
