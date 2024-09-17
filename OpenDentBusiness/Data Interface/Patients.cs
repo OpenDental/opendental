@@ -5427,7 +5427,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Determines if the user should be given the opportunity to send a text message to the patient when changes have been made to texting settings.</summary>
-		public static bool DoPromptForSms(Patient patient,Patient patientOld) {
+		public static bool DoPromptForOptInSms(Patient patient,Patient patientOld) {
 			if(!Clinics.IsTextingEnabled(patient.ClinicNum)) {
 				return false;//Office doesn't use texting.
 			}
@@ -5443,6 +5443,21 @@ namespace OpenDentBusiness {
 				return false;//Phone number hasn't changed and TxtMsgOK was already YES => No changes, no need to prompt.
 			}
 			return true;
+		}
+
+		///<summary>Determines if the user should be given the opportunity to send a text message to the patient when changes have been made to texting settings.</summary>
+		public static bool DoSendOptOutText(Patient patient, Patient patientOld) {
+			if(!Clinics.IsTextingEnabled(patient.ClinicNum)) {
+				return false;//Office doesn't use texting.
+			}
+			if(patient.TxtMsgOk!=YN.No || string.IsNullOrWhiteSpace(PhoneNumbers.RemoveNonDigitsAndTrimStart(patient.WirelessPhone))) {
+				return false;//TxtMsgOk not set to NO or no phone number, so no need to send a text message.
+			}
+			//we are not checking if phone number changed like in optin because we do not want to send an opt out notification if a patient was previously notified that they were opted out on their old number
+			if(patientOld.TxtMsgOk==YN.Unknown || patientOld.TxtMsgOk==YN.No) {
+				return false;//TxtMsgOK was already 'No' or not set => No behavioral changes, no need to prompt.
+			}
+			return PrefC.GetBool(PrefName.TextOptOutSendNotification);
 		}
 
 		public static Result SetDefaultRelationships(Patient patient,Family family,PatientPosition patientPositionCur) {

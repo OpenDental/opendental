@@ -31,6 +31,7 @@ namespace OpenDental {
 			this.groupBoxPatientEdit = new OpenDental.UI.GroupBox();
 			this.checkAddressVerifyWithUSPS = new OpenDental.UI.CheckBox();
 			this.checkTextMsgOkStatusTreatAsNo = new OpenDental.UI.CheckBox();
+			this.checkDoSendOptOutText = new OpenDental.UI.CheckBox();
 			this.checkAutoFillPatEmail = new OpenDental.UI.CheckBox();
 			this.checkPreferredPronouns = new OpenDental.UI.CheckBox();
 			this.checkSameForFamily = new OpenDental.UI.CheckBox();
@@ -62,7 +63,7 @@ namespace OpenDental {
 			this.groupBoxHIPAA.Controls.Add(this.checkFamPhiAccess);
 			this.groupBoxHIPAA.Controls.Add(this.checkPatientSSNMasked);
 			this.groupBoxHIPAA.Controls.Add(this.checkPatientDOBMasked);
-			this.groupBoxHIPAA.Location = new System.Drawing.Point(20, 238);
+			this.groupBoxHIPAA.Location = new System.Drawing.Point(20, 258);
 			this.groupBoxHIPAA.Name = "groupBoxHIPAA";
 			this.groupBoxHIPAA.Size = new System.Drawing.Size(450, 77);
 			this.groupBoxHIPAA.TabIndex = 310;
@@ -102,6 +103,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxPatientEdit.Controls.Add(this.checkAddressVerifyWithUSPS);
 			this.groupBoxPatientEdit.Controls.Add(this.checkTextMsgOkStatusTreatAsNo);
+			this.groupBoxPatientEdit.Controls.Add(this.checkDoSendOptOutText);
 			this.groupBoxPatientEdit.Controls.Add(this.checkAutoFillPatEmail);
 			this.groupBoxPatientEdit.Controls.Add(this.checkPreferredPronouns);
 			this.groupBoxPatientEdit.Controls.Add(this.checkSameForFamily);
@@ -113,7 +115,7 @@ namespace OpenDental {
 			this.groupBoxPatientEdit.Controls.Add(this.checkGoogleAddress);
 			this.groupBoxPatientEdit.Location = new System.Drawing.Point(20, 10);
 			this.groupBoxPatientEdit.Name = "groupBoxPatientEdit";
-			this.groupBoxPatientEdit.Size = new System.Drawing.Size(450, 225);
+			this.groupBoxPatientEdit.Size = new System.Drawing.Size(450, 245);
 			this.groupBoxPatientEdit.TabIndex = 309;
 			this.groupBoxPatientEdit.Text = "Patient Edit";
 			// 
@@ -121,7 +123,7 @@ namespace OpenDental {
 			// 
 			this.checkAddressVerifyWithUSPS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkAddressVerifyWithUSPS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAddressVerifyWithUSPS.Location = new System.Drawing.Point(18, 197);
+			this.checkAddressVerifyWithUSPS.Location = new System.Drawing.Point(18, 217);
 			this.checkAddressVerifyWithUSPS.Name = "checkAddressVerifyWithUSPS";
 			this.checkAddressVerifyWithUSPS.Size = new System.Drawing.Size(422, 17);
 			this.checkAddressVerifyWithUSPS.TabIndex = 309;
@@ -137,11 +139,21 @@ namespace OpenDental {
 			this.checkTextMsgOkStatusTreatAsNo.TabIndex = 296;
 			this.checkTextMsgOkStatusTreatAsNo.Text = "Text Msg OK, assume default is \'No\' for patients with no selection";
 			// 
+			// checkDoSendOptOutText
+			// 
+			this.checkDoSendOptOutText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkDoSendOptOutText.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkDoSendOptOutText.Location = new System.Drawing.Point(5, 30);
+			this.checkDoSendOptOutText.Name = "checkDoSendOptOutText";
+			this.checkDoSendOptOutText.Size = new System.Drawing.Size(435, 17);
+			this.checkDoSendOptOutText.TabIndex = 310;
+			this.checkDoSendOptOutText.Text = "Send opt-out msg when changing \'Text OK\' status from \'Yes\' to \'No\'";
+			// 
 			// checkAutoFillPatEmail
 			// 
 			this.checkAutoFillPatEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkAutoFillPatEmail.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAutoFillPatEmail.Location = new System.Drawing.Point(15, 90);
+			this.checkAutoFillPatEmail.Location = new System.Drawing.Point(15, 110);
 			this.checkAutoFillPatEmail.Name = "checkAutoFillPatEmail";
 			this.checkAutoFillPatEmail.Size = new System.Drawing.Size(425, 17);
 			this.checkAutoFillPatEmail.TabIndex = 301;
@@ -151,7 +163,7 @@ namespace OpenDental {
 			// 
 			this.checkPreferredPronouns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkPreferredPronouns.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPreferredPronouns.Location = new System.Drawing.Point(18, 150);
+			this.checkPreferredPronouns.Location = new System.Drawing.Point(18, 170);
 			this.checkPreferredPronouns.Name = "checkPreferredPronouns";
 			this.checkPreferredPronouns.Size = new System.Drawing.Size(422, 17);
 			this.checkPreferredPronouns.TabIndex = 308;
@@ -161,7 +173,7 @@ namespace OpenDental {
 			// 
 			this.checkSameForFamily.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkSameForFamily.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkSameForFamily.Location = new System.Drawing.Point(1, 130);
+			this.checkSameForFamily.Location = new System.Drawing.Point(1, 150);
 			this.checkSameForFamily.Name = "checkSameForFamily";
 			this.checkSameForFamily.Size = new System.Drawing.Size(439, 17);
 			this.checkSameForFamily.TabIndex = 305;
@@ -171,7 +183,7 @@ namespace OpenDental {
 			// 
 			this.checkPatientPhoneUsePhonenumberTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkPatientPhoneUsePhonenumberTable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPatientPhoneUsePhonenumberTable.Location = new System.Drawing.Point(25, 173);
+			this.checkPatientPhoneUsePhonenumberTable.Location = new System.Drawing.Point(25, 193);
 			this.checkPatientPhoneUsePhonenumberTable.Name = "checkPatientPhoneUsePhonenumberTable";
 			this.checkPatientPhoneUsePhonenumberTable.Size = new System.Drawing.Size(360, 17);
 			this.checkPatientPhoneUsePhonenumberTable.TabIndex = 306;
@@ -180,7 +192,7 @@ namespace OpenDental {
 			// 
 			// butSyncPhNums
 			// 
-			this.butSyncPhNums.Location = new System.Drawing.Point(391, 170);
+			this.butSyncPhNums.Location = new System.Drawing.Point(391, 190);
 			this.butSyncPhNums.Name = "butSyncPhNums";
 			this.butSyncPhNums.Size = new System.Drawing.Size(49, 21);
 			this.butSyncPhNums.TabIndex = 307;
@@ -191,7 +203,7 @@ namespace OpenDental {
 			// 
 			this.checkPreferredReferrals.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkPreferredReferrals.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPreferredReferrals.Location = new System.Drawing.Point(15, 70);
+			this.checkPreferredReferrals.Location = new System.Drawing.Point(15, 90);
 			this.checkPreferredReferrals.Name = "checkPreferredReferrals";
 			this.checkPreferredReferrals.Size = new System.Drawing.Size(425, 17);
 			this.checkPreferredReferrals.TabIndex = 300;
@@ -201,7 +213,7 @@ namespace OpenDental {
 			// 
 			this.checkAllowPatsAtHQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkAllowPatsAtHQ.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAllowPatsAtHQ.Location = new System.Drawing.Point(15, 110);
+			this.checkAllowPatsAtHQ.Location = new System.Drawing.Point(15, 130);
 			this.checkAllowPatsAtHQ.Name = "checkAllowPatsAtHQ";
 			this.checkAllowPatsAtHQ.Size = new System.Drawing.Size(425, 17);
 			this.checkAllowPatsAtHQ.TabIndex = 302;
@@ -211,7 +223,7 @@ namespace OpenDental {
 			// 
 			this.checkSelectProv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkSelectProv.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkSelectProv.Location = new System.Drawing.Point(1, 50);
+			this.checkSelectProv.Location = new System.Drawing.Point(1, 70);
 			this.checkSelectProv.Name = "checkSelectProv";
 			this.checkSelectProv.Size = new System.Drawing.Size(439, 17);
 			this.checkSelectProv.TabIndex = 295;
@@ -221,7 +233,7 @@ namespace OpenDental {
 			// 
 			this.checkGoogleAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkGoogleAddress.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkGoogleAddress.Location = new System.Drawing.Point(15, 30);
+			this.checkGoogleAddress.Location = new System.Drawing.Point(15, 50);
 			this.checkGoogleAddress.Name = "checkGoogleAddress";
 			this.checkGoogleAddress.Size = new System.Drawing.Size(425, 17);
 			this.checkGoogleAddress.TabIndex = 299;
@@ -234,7 +246,7 @@ namespace OpenDental {
 			this.groupBoxClaimSnapshot.Controls.Add(this.textClaimSnapshotRunTime);
 			this.groupBoxClaimSnapshot.Controls.Add(this.label30);
 			this.groupBoxClaimSnapshot.Controls.Add(this.label31);
-			this.groupBoxClaimSnapshot.Location = new System.Drawing.Point(20, 422);
+			this.groupBoxClaimSnapshot.Location = new System.Drawing.Point(20, 442);
 			this.groupBoxClaimSnapshot.Name = "groupBoxClaimSnapshot";
 			this.groupBoxClaimSnapshot.Size = new System.Drawing.Size(450, 65);
 			this.groupBoxClaimSnapshot.TabIndex = 284;
@@ -286,7 +298,7 @@ namespace OpenDental {
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamSync);
 			this.groupBoxSuperFamily.Controls.Add(this.checkSuperFamAddIns);
 			this.groupBoxSuperFamily.Controls.Add(this.checkCloneCreateSuperFamily);
-			this.groupBoxSuperFamily.Location = new System.Drawing.Point(20, 318);
+			this.groupBoxSuperFamily.Location = new System.Drawing.Point(20, 338);
 			this.groupBoxSuperFamily.Name = "groupBoxSuperFamily";
 			this.groupBoxSuperFamily.Size = new System.Drawing.Size(450, 101);
 			this.groupBoxSuperFamily.TabIndex = 283;
@@ -388,5 +400,6 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxPatientEdit;
 		private UI.GroupBox groupBoxHIPAA;
 		private UI.CheckBox checkAddressVerifyWithUSPS;
+		private UI.CheckBox checkDoSendOptOutText;
 	}
 }

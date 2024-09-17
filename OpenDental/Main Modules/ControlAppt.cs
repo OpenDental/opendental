@@ -1737,7 +1737,7 @@ namespace OpenDental {
 				appointment=Appointments.SchedulePlannedApt(appointment,_patient,listApptFields,appointment.AptDateTime,appointment.Op);//Appointments S-Class handles Signalods
 				isCreate=true;
 				if(procAlreadyAttached) {
-					MsgBox.Show(this,"One or more procedures could not be scheduled because they were already attached to another appointment. Someone probably forgot to update the Next appointment in the Chart module.");
+					MsgBox.Show(this,"One or more procedures could not be scheduled because they were already attached to another appointment. Someone probably forgot to update the planned appointment in the Chart module.");
 					using FormApptEdit formApptEdit=new FormApptEdit(appointment.AptNum);
 					CheckStatus();
 					formApptEdit.IsNew=true;

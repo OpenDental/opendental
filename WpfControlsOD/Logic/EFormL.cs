@@ -2,6 +2,7 @@
 using OpenDentBusiness;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -130,6 +131,21 @@ namespace WpfControls {
 				return "X";
 			}
 			return "";
+		}
+
+		///<summary>Fills a combo language box on a variety of eForm windows. Sets it visible false if the office has not set up any languages.</summary>
+		public static void FillComboLanguage(ComboBox comboLanguage){
+			comboLanguage.Items.Clear();
+			comboLanguage.Items.Add(Lang.g("EFormLanguage","Default"));
+			comboLanguage.SelectedIndex=0;
+			List<string> listLangs=LanguagePats.GetLanguagesForCombo();
+			if(listLangs.Count==0){
+				comboLanguage.Visible=false;
+				return;
+			}
+			for(int i = 0;i<listLangs.Count;i++){
+				comboLanguage.Items.Add(listLangs[i]);
+			}
 		}
 
 	}

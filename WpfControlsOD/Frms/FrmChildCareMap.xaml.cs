@@ -230,7 +230,15 @@ namespace OpenDental {
 			gridChildrenAbsent.ListGridRows.Clear();
 			for(int i=0;i<listChildrenSorted.Count;i++) {
 				GridRow gridRow=new GridRow();
-				gridRow.Cells.Add(Children.GetName(listChildrenSorted[i]));
+				string nameAndAge=Children.GetName(listChildrenSorted[i]);
+				int age=DateTime.Today.Year-listChildrenSorted[i].BirthDate.Year;
+				if(age==0) {
+					nameAndAge+=", <1y";
+				}
+				else {
+					nameAndAge+=", "+age+"y";
+				}
+				gridRow.Cells.Add(nameAndAge);
 				gridRow.Tag=listChildrenSorted[i];
 				gridChildrenAbsent.ListGridRows.Add(gridRow);
 			}
@@ -305,6 +313,15 @@ namespace OpenDental {
 				if(listChildRoomLogs[i].ChildNum!=0) {//Child entry
 					Child child=listChildren.Find(x => x.ChildNum==listChildRoomLogs[i].ChildNum);
 					gridCell.Text=Children.GetName(child);
+					string nameAndAge=Children.GetName(child);
+					int age=DateTime.Today.Year-child.BirthDate.Year;
+					if(age==0) {
+						nameAndAge+=", <1y";
+					}
+					else {
+						nameAndAge+=", "+age+"y";
+					}
+					gridCell.Text=nameAndAge;
 					countChildren++;
 					if(DateTime.Now.AddYears(-2)<child.BirthDate) {
 						countUnderTwo++;
@@ -327,22 +344,15 @@ namespace OpenDental {
 				GridRow gridRowFinal=new GridRow();
 				if(childRoom.Ratio==-1) {//-1 indicates a mixed ratio
 					int teachersRequired=ChildRoomLogs.GetNumberTeachersMixed(totalChildren:(int)countChildren,childrenUnderTwo:countUnderTwo);
-					gridRowFinal.Cells.Add("Ratio: Mixed, Children: "+countChildren+", Under2: "+countUnderTwo+", Teachers: "+countEmployees+" of "+teachersRequired);//Example: Ratio:Mixed, Kids:2, Under2:1, Teachers:1 of 1
+					gridRowFinal.Cells.Add("Ratio: Mixed, Children: "+countChildren+", <2: "+countUnderTwo+", Teachers: "+countEmployees+" of "+teachersRequired);//Example: Ratio:Mixed, Kids:2, Under2:1, Teachers:1 of 1
 				}
 				else {
-					string ratio="";
-					if(countEmployees==0) {//Stop division by 0
-						ratio="0";
-					}
-					else {
-						ratio=(Math.Ceiling(countChildren/countEmployees)).ToString();
-					}
 					if(childRoom.Ratio==0) {//Stop division by 0
-						gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+" of 0");
+						gridRowFinal.Cells.Add("Ratio: "+childRoom.Ratio+", Children: "+countChildren+", Teachers: "+countEmployees+" of 0");
 					}
 					else {
 						double teachersRequired=Math.Ceiling(countChildren/childRoom.Ratio);
-						gridRowFinal.Cells.Add("Ratio: "+ratio+", Children: "+countChildren+", Teachers: "+countEmployees+" of "+teachersRequired);
+						gridRowFinal.Cells.Add("Ratio: "+childRoom.Ratio+", Children: "+countChildren+", Teachers: "+countEmployees+" of "+teachersRequired);
 					}
 				}
 				ChildRoomLog childRoomLogFinal=new ChildRoomLog();//Final row needs a tag for reselecting row

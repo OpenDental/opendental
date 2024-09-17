@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -40,16 +41,35 @@ namespace OpenDental {
 	These horiz wrapPanels then contain the individual fields which stack horizontally and wrap when needed.
 	If EFormField.IsHorizStacking=false, then there will be only one field in that WrapPanel.
 
+	Border Boxes:
+	Each field can have an optional border box that can be turned on by the user.
+	A border never includes multiple fields.
+	This border takes up additional space, making the field bigger in both dimensions.
+	The border does not change the margins and spacing described below.
+	The extra white space that's created within the border should be thought of as padding within the field rather then margins between fields.
+	The user will never have control over this padding.
+	The border itself is not uniform. The bottom takes 6 pixels (5 for shadow) and the other three sides take one pixel.
+	The thickness of the border does not contribute to either the padding or the margins of each field.
+	So the contents of a field is inset by margin + border + padding.
+	All of those values are clearly defined here and must be copied precisely in any implementation.
+	To make the left edges of fields line up whether they have a border or not, we include left padding and left border thickness whether a border is present or not.
+	One way to do that is to define a different border in that case which is white with certain thicknesses.
+	Padding and border thickness on the other three sides should only be present when a border is present.
+	In C#, the way to make this work is for the field to be a child of the border. A C# border can have thickness, margin, and padding.
+
 	Margins and spacing:
 	I apologize for the complexity of this code. 
 	Anyone using this code to try to build a UI in a different language should use a much simpler approach.
 	You will not have to support drag, drop, hover, and selection in the setup window.
 	So try to imagine it simpler:
-	There must be a certain amount of white space around each field.
+	There must be a certain amount of white space around each field (or around each border box).
 	You must have a very solid plan for how to create this white space. There are lots of ways to get it wrong.
-	Most of this space is 10 pix for now, but we are gradually giving users more control.
+	Each of these spaces is well defined at the class level below.
+	Variables are best because we will gradually be giving users more control.
 	For example, they now have control over vertical spacing below each field.
 	We plan to give them control over more spacing in the future.
+	Since this section is about margins, it's really the white space between border boxes.
+	None of this has anything to do with border thickness or padding.
 	Each field should have right and bottom margins.
 	It's required to do it this way because of how we give users control.
 	It also works great with various stacking scenarios.
@@ -64,9 +84,10 @@ namespace OpenDental {
 	Make sure to do it as described above, the simpler way.
 
 	Calculation of Width of Each Field:
-	This is one calculation that you will need to do with each layout.
-	DO follow my algorithm for calculating width for each field.
-	The math is simple, and there's not a shorter way to do it.
+	The calculation of width is contained in a new method: CalcFieldWidth
+	The complexity increased significantly with the addition of percentage width fields.
+	DO follow my exact algorithm for calculating the width for each field.
+	There's not a shorter way to do it.
 	Here's why:
 	It's important to set each field to have a fixed width and auto height.
 	The fixed width is necessary for it to work in the horiz wrapPanel.
@@ -78,23 +99,21 @@ namespace OpenDental {
 	   and radiobutton options will get cut off.
 	Unfortunately, there is no combination of control properties that will achieve this behavior.
 	I've tried lots of different kinds of nesting, max width, stretch, etc. The complexity explodes.
-	Furthermore, we would like to add even more behavior later, like proportional widths.
+	Furthermore, the math must work for both fixed widths and percentage widths.
 	And whatever I come up with here must be very easy to implement in any UI language.
 	I decided that we must always calculate each field width ourselves as part of layout.
 	We still put them in a wrapPanel, and we leave the heights auto, but we must calculate the widths.
 	So set the width of each field container very intentionally according to my algorithm.
 	To determine available width, subtract the right margin (ex 10) from the StackPanel width.
 	The controls inside the field can stretch horizontally to fill; that's easy.
-	We also already know any desired width because that comes to us from the field.
-	As you can see in the algorithm, we must really only do one calculation manually:
-	We must shrink it if it's larger than the available width. That's it.
-	That can be done in any UI language.
+	Once we do the math to set each field with, it all works automatically.
+	This math can be done in any UI language.
 	It also follows that if the screen size changes, we must redo the layout.
 	But screen size really shouldn't be changing unless the user maybe rotates the layout.
 
 	Tags:
 	Tags are used as follows:
-	1. Each EFormField in the list has its TagOD set to the field(grid in our case) that it's associated with.
+	1. Each EFormField in the list has its TagOD set to the field(borderBox actually) that it's associated with.
 			One purpose is to allow us to pull values from the UI into our EFormField objects.
 			Another purpose is to allow our highlighting for hover effects and selection in the setup window,
 				but the patient UI does not need highlighting, so that can be ignored there.
@@ -102,6 +121,63 @@ namespace OpenDental {
 			Finally, the tags allow collapsing for conditional logic.
 	2. We also have DragLocation tags on the various borders that we use for drag/drop.
 			The patient UI clearly does not need those.
+
+	Heirarchy of controls:
+	This heirarchy is unique to this C# implementation.
+	It will be different and simpler in any other language because no support for setup is needed.
+	-scrollViewer
+		-stackPanel
+			-borderTopOfPage
+			-gridWrap
+				-borderLeftOfWrap
+				-wrapPanel (horiz)
+					-gridForField
+						-borderOverlayFieldHover (colspan 2, z-index2, child0)
+						-borderBox (col0, z-index1 child1)
+							-(1 container for field controls, varies by type)
+						-borderRightOfField (col1, child2)
+						-(some drop shadow elements) (col0, z-index0, child3+)
+					-gridForField
+						-borderOverlayFieldHover
+						-borderBox (col0)
+							-(1 container for field controls)
+						-borderRightOfField
+					-gridForField
+						-borderOverlayFieldHover
+						-borderBox (col0)
+							-(1 container for field controls)
+						-borderRightOfField
+			-borderTopOfWrap
+			-gridWrap
+				-borderLeftOfWrap
+				-wrapPanel (horiz)
+					-gridForField
+						-borderOverlayFieldHover
+						-borderBox (col0)
+							-(1 container for field controls)
+						-borderRightOfField
+			-borderTopOfWrap
+			-gridWrap
+				-borderLeftOfWrap
+				-wrapPanel (horiz)
+					-gridForField
+						-borderOverlayFieldHover
+						-borderBox (col0)
+							-(1 container for field controls)
+						-borderRightOfField
+					-gridForField
+						-borderOverlayFieldHover
+						-borderBox (col0)
+							-(1 container for field controls)
+						-borderRightOfField
+					-gridForField
+						-borderOverlayFieldHover
+						-borderBox (col0)
+							-(1 container for field controls)
+						-borderRightOfField
+
+
+
 
 	*/
 	///<summary></summary>
@@ -114,6 +190,8 @@ namespace OpenDental {
 		///<summary>Stores the indices of all the EFormFields that are at the rightmost position of a horizontal stack.</summary>
 		public List<int> ListIndicesLastInHorizStack;
 		public int PagesPrinted;
+		///<summary>Set this whenever comboBox changes. It's the current language being used.  Will be empty string if languages are not set up in pref LanguagesUsedByPatients or if the default language is being used in the parent FrmEFormDefs.</summary>
+		public string LanguageShowing="";
 		#endregion Fields - public
 
 		#region Fields - private
@@ -143,13 +221,18 @@ namespace OpenDental {
 		///<summary>This is a copy of the selected indices whenever we start dragging to select multiple.</summary>
 		private List<int> _listSelectedIndicesWhenSelectionStart=new List<int>();
 		private double _marginTopOfPage=10;
-		private double _marginLeftOfPage=10;
+		private double _marginLeftOfPage=5;
 		///<summary>This also creates the margin for the right of the page. Right now, that's no problem since they are all the same. I think any page margin in the future would be in addition to this, not instead of it.</summary>
 		private double _marginRightOfField=10;
 		///<summary>This is stored in a db pref and set on load. This also creates the margin at the bottom of the page. In the future, we could do something different at the bottom of the page, either replacing or supplementing this.</summary>
 		private double _marginBelowFields;
+		///<summary>This is the margin to the right of each radiobutton within a group.</summary>
 		private double _marginRightOfRadioButton=10;
 		private int _mouseDownIndex;
+		///<summary>=4 The amount of padding on the left side of each field within its border box.</summary>
+		private int _paddingLeft=4;
+		///<summary>=4 The amount of padding on the right side of each field within its border box.</summary>
+		private int _paddingRight=4;
 		///<summary>The actual page count, including all hidden fields. User only sees _pageCountFiltered.</summary>
 		private int _pageCount;
 		///<summary>Because conditional logic can hide entire pages, this is the page count with those hidden pages excluded. This is what user sees at the bottom.</summary>
@@ -164,6 +247,8 @@ namespace OpenDental {
 		private int _printedStackPanelChildren;
 		///<summary>This is class level because when multiple random numbers are quickly generated, they are based on the system clock and will be identical unless Random is reused.</summary>
 		private Random _random=new Random();
+		///<summary>This is the sum of the thickness of the left and right of the border box. It's 1+1=2</summary>
+		private int _thicknessLRBorders=2;
 		#endregion Fields - private
 
 		#region Constructor
@@ -223,10 +308,6 @@ namespace OpenDental {
 		#endregion Properties
 
 		#region Methods - public
-		public void Delete(int idx){
-			ListEFormFields.RemoveAt(idx);
-		}
-
 		///<summary>If a single field is passed in, only that field will be filled. If null, all fields will be filled. We generally call this (and SetVisibilities) for a single field every time a user clicks a checkbox or radiobutton. This is so we can have immediate results for conditional logic. But we don't call it for textboxes, for example, but it's hard to know when to do so.</summary>
 		public void FillFieldsFromControls(EFormField eFormField=null){			
 			for(int i=0;i<ListEFormFields.Count;i++){
@@ -503,32 +584,73 @@ namespace OpenDental {
 					gridWrap.Children.Add(wrapPanel);
 				}
 				//otherwise, keep using the same wrapPanel as before
-				Grid gridForField=CreateGridForField();
-				ListEFormFields[i].TagOD=gridForField;
+				//GridForField-----------------------------------------------------------------------------------------------------------------------------
+				Grid gridForField=new Grid();
+				ColumnDefinition columnDefinition;
+				columnDefinition=new ColumnDefinition();
+				columnDefinition.Width=new GridLength(1,GridUnitType.Auto);//main content
+				gridForField.ColumnDefinitions.Add(columnDefinition);
+				columnDefinition=new ColumnDefinition();
+				columnDefinition.Width=new GridLength(_marginRightOfField);
+				gridForField.ColumnDefinitions.Add(columnDefinition);
+				Border borderOverlayFieldHover=new Border();
+				gridForField.Children.Add(borderOverlayFieldHover);
+				if(IsSetupMode){
+					//borderOverlayFieldHover.BorderThickness=new Thickness(1);//not sure why this is here. Probably a mistake.
+					Grid.SetZIndex(borderOverlayFieldHover,2);//in front of the others
+				}
+				//end of GridForField-----------------------------------------------------------------------------------------------------------------------
+				Border borderBox=new Border();
+				
+				if(ListEFormFields[i].Border==EnumEFormBorder.None){
+					borderBox.BorderThickness=new Thickness(left:1,0,0,0);//only left border thickness remains
+					borderBox.BorderBrush=Brushes.White;
+					borderBox.Margin=new Thickness(0);
+					borderBox.Padding=new Thickness(left:_paddingLeft,top:0,right:0,bottom:0);//only left padding remains
+				}
+				else{
+					borderBox.BorderThickness=new Thickness(1);
+					borderBox.BorderBrush=new SolidColorBrush(ColorOD.Gray_Wpf(220));
+					borderBox.Margin=new Thickness(left:0,top:0,right:0,bottom:5);//leaves room for the drop shadow
+					borderBox.Padding=new Thickness(left:_paddingLeft,top:0,right:_paddingRight,bottom:3);//the contents are all slightly inset.
+				}
+				borderBox.Background=Brushes.White;//The drop shadow includes the contents of the border. This hides all of that.
+				borderBox.CornerRadius=new CornerRadius(3);
+				Grid.SetZIndex(borderBox,1);//in front of drop shadow
+				//DropShadowEffect dropShadowEffect=new DropShadowEffect();
+				//dropShadowEffect.ShadowDepth=3;
+				//dropShadowEffect.BlurRadius=7;
+				//dropShadowEffect.Direction=270;//straight down
+				//dropShadowEffect.Color=Colors.Black;
+				//dropShadowEffect.Opacity=0.2;
+				//borderBox.Effect=dropShadowEffect;
+				//This drop shadow was ugly, so I'm doing it further down with a border instead
+				ListEFormFields[i].TagOD=borderBox;
+				gridForField.Children.Add(borderBox);
 				wrapPanel.Children.Add(gridForField);
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
-					AddCheckBox(gridForField,ListEFormFields[i]);
+					AddCheckBox(borderBox,ListEFormFields[i]);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.DateField){
-					AddDateField(gridForField,ListEFormFields[i]);
+					AddDateField(borderBox,ListEFormFields[i]);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.Label){
-					AddLabel(gridForField,ListEFormFields[i]);
+					AddLabel(borderBox,ListEFormFields[i]);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.MedicationList){
-					AddMedicationList(gridForField,ListEFormFields[i]);
+					AddMedicationList(borderBox,ListEFormFields[i]);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak){
-					AddPageBreak(gridForField,ListEFormFields[i]);
+					AddPageBreak(borderBox,ListEFormFields[i]);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.RadioButtons){
-					AddRadioButtons(gridForField,ListEFormFields[i]);
+					AddRadioButtons(borderBox,ListEFormFields[i]);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.SigBox){
-					AddSigBox(gridForField,ListEFormFields[i]);
+					AddSigBox(borderBox,ListEFormFields[i]);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.TextField){
-					AddTextBox(gridForField,ListEFormFields[i]);
+					AddTextBox(borderBox,ListEFormFields[i]);
 				}
 				//Always add a margin to the right of each field
 				//Yes, this even works for the last row because we want a border to right of the last row.
@@ -554,6 +676,42 @@ namespace OpenDental {
 				borderRightOfField.Tag=dragLocationRightOfField;
 				gridForField.Children.Add(borderRightOfField);
 				Grid.SetColumn(borderRightOfField,1);
+				//Drop shadow------------------------------------------------------------------------------------------------------------------------------------------
+				//This is complicated. I want a lot of control on how it fades off in the corners, so that will add a couple of circles.
+				Ellipse ellipseLL=new Ellipse();
+				RadialGradientBrush radialGradientBrush=new RadialGradientBrush(ColorOD.Gray_Wpf(200),Colors.White);//the first color is at the middle of the circle
+				ellipseLL.Fill=radialGradientBrush;
+				ellipseLL.Width=10;
+				ellipseLL.Height=10;
+				ellipseLL.HorizontalAlignment=HorizontalAlignment.Left;
+				ellipseLL.VerticalAlignment=VerticalAlignment.Bottom;
+				Ellipse ellipseLR=new Ellipse();  
+				ellipseLR.Fill=radialGradientBrush;
+				ellipseLR.Width=10;
+				ellipseLR.Height=10;
+				ellipseLR.HorizontalAlignment=HorizontalAlignment.Right;
+				ellipseLR.VerticalAlignment=VerticalAlignment.Bottom;
+				Border borderDropShadow=new Border();
+				borderDropShadow.Height=10;
+				//borderDropShadow.Width=20;
+				borderDropShadow.VerticalAlignment=VerticalAlignment.Bottom;
+				borderDropShadow.Margin=new Thickness(left:5,top:0,right:5,bottom:0);
+				GradientStopCollection gradientStopCollection=new GradientStopCollection();
+				gradientStopCollection.Add(new GradientStop(ColorOD.Gray_Wpf(190),0));
+				gradientStopCollection.Add(new GradientStop(ColorOD.Gray_Wpf(190),0.5));
+				gradientStopCollection.Add(new GradientStop(ColorOD.Gray_Wpf(225),0.75));
+				gradientStopCollection.Add(new GradientStop(Colors.White,1));
+				LinearGradientBrush linearGradientBrush=new LinearGradientBrush(gradientStopCollection,90);
+				borderDropShadow.Background=//Brushes.Black;
+					linearGradientBrush;
+				//borderDropShadow.CornerRadius=new CornerRadius(topLeft:0,topRight:0,bottomRight:5,bottomLeft:5);
+				Grid.SetZIndex(borderDropShadow,0);
+				if(ListEFormFields[i].Border==EnumEFormBorder.ThreeD){
+					gridForField.Children.Add(ellipseLL);
+					gridForField.Children.Add(ellipseLR);
+					gridForField.Children.Add(borderDropShadow);
+				}
+				//End of drop shadow-----------------------------------------------------------------------------------------------------------------------------------
 				if(dragLocationRightOfField.IsRightOfWrap
 					&& ListEFormFields[i].FieldType.In(
 						EnumEFormFieldType.TextField,
@@ -670,7 +828,8 @@ namespace OpenDental {
 			}
 			for(int i=0;i<ListEFormFields.Count;i++){
 				//first, pages
-				Grid gridForField=(Grid)ListEFormFields[i].TagOD;
+				Border borderBox=(Border)ListEFormFields[i].TagOD;
+				Grid gridForField=(Grid)borderBox.Parent;
 				if(pgRequested==-1){
 					gridForField.Visibility=Visibility.Visible;
 				}
@@ -770,16 +929,13 @@ namespace OpenDental {
 				if(ListEFormFields[i].Page!=_pageShowing){
 					continue;
 				}
-				Grid gridForField=(Grid)ListEFormFields[i].TagOD;
+				Border borderBox=ListEFormFields[i].TagOD as Border;
 				//test all 4 corners
 				//Points are relative to entire control, not StackPanel
-				//Our gridForFields include the right margin that isn't really part of the field.
-				Point pointFieldUL=PointFromScreen(gridForField.PointToScreen(new Point(0,0)));
-				//Point pointUR=PointFromScreen(gridForField.PointToScreen(new Point(gridForField.ActualWidth,0)));
-				//Point pointBL=PointFromScreen(gridForField.PointToScreen(new Point(0,gridForField.ActualHeight)));
-				Point pointFieldBR=PointFromScreen(gridForField.PointToScreen(new Point(gridForField.ActualWidth,gridForField.ActualHeight)));
+				Point pointFieldUL=PointFromScreen(borderBox.PointToScreen(new Point(0,0)));
+				Point pointFieldBR=PointFromScreen(borderBox.PointToScreen(new Point(borderBox.ActualWidth,borderBox.ActualHeight)));
 				//this rectangle won't be tangled
-				Rect rectField=new Rect(pointFieldUL.X,pointFieldUL.Y,width:pointFieldBR.X-pointFieldUL.X-_marginRightOfField,height:pointFieldBR.Y-pointFieldUL.Y);
+				Rect rectField=new Rect(pointFieldUL.X,pointFieldUL.Y,width:pointFieldBR.X-pointFieldUL.X,height:pointFieldBR.Y-pointFieldUL.Y);
 				if(rectSelector.IntersectsWith(rectField)){
 					if(_listSelectedIndicesWhenSelectionStart.Contains(i)){
 						_listSelectedIndices.Remove(i);
@@ -805,13 +961,13 @@ namespace OpenDental {
 			_ignoreMouseMove=false;
 			_mouseDownIndex=-1;
 			for(int i=0;i<ListEFormFields.Count;i++) {
-				Grid gridForField=ListEFormFields[i].TagOD as Grid;
+				Border borderBox=ListEFormFields[i].TagOD as Border;
 				int pageNum=ListEFormFields[i].Page;
 				if(pageNum!=_pageShowing) {
 					continue;
 				}
-				Point point=e.GetPosition(gridForField);
-				Rect rectFieldBounds=new Rect(0,0,gridForField.ActualWidth-_marginRightOfField,gridForField.ActualHeight);
+				Point point=e.GetPosition(borderBox);
+				Rect rectFieldBounds=new Rect(0,0,borderBox.ActualWidth,borderBox.ActualHeight);
 				if(rectFieldBounds.Contains(point)){
 					_mouseDownIndex=i;
 					break;
@@ -833,8 +989,9 @@ namespace OpenDental {
 			//Check if the page break delete button was clicked. If it was, remove the field from the list and refresh the layout.
 			if(ListEFormFields[_mouseDownIndex].FieldType==EnumEFormFieldType.PageBreak) {
 				//can't select a page break, but you can click on the delete button
-				Grid gridForField=ListEFormFields[_mouseDownIndex].TagOD as Grid;
-				WpfControls.UI.Button button=gridForField.Children[3] as WpfControls.UI.Button;
+				Border borderBox=ListEFormFields[_mouseDownIndex].TagOD as Border;
+				Grid gridForPageBreak=borderBox.Child as Grid;
+				WpfControls.UI.Button button=gridForPageBreak.Children[2] as WpfControls.UI.Button;
 				if(button.Visible) {
 					Point point=e.GetPosition(button);
 					Rect rectBounds=new Rect(0,0,button.ActualWidth,button.ActualHeight);
@@ -1101,21 +1258,21 @@ namespace OpenDental {
 							isAttemptingStack=true;
 						}
 						if(isAttemptingStack){
-							if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[_listSelectedIndices[0]].FieldType)){
+							if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[_listSelectedIndices[0]].FieldType)){
 								//The source field that we are trying to move does not allow stacking
 								continue;
 							}
 							if(dragLocation.IsHorizStacking){
 								//check that the field to the left allows stacking
 								if(dragLocation.Idx!=0){//the destination is not 0 (probably already handled when setting IsHorizStacking
-									if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[dragLocation.Idx-1].FieldType)){
+									if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[dragLocation.Idx-1].FieldType)){
 										continue;//not allowed
 									}
 								}
 							}
 							if(dragLocation.IsHorizStackingNext){
 								//check that the field to the right (idx) allows stacking
-								if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[dragLocation.Idx].FieldType)){
+								if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[dragLocation.Idx].FieldType)){
 									continue;//not allowed
 								}
 							}
@@ -1130,14 +1287,15 @@ namespace OpenDental {
 			#region Hover Fields
 			_hoverIndex=-1;
 			for(int i=0;i<ListEFormFields.Count;i++){
-				Grid gridForField=ListEFormFields[i].TagOD as Grid;
+				Border borderBox=ListEFormFields[i].TagOD as Border;
+				Grid gridForField=borderBox.Parent as Grid;
 				int pageNum=ListEFormFields[i].Page;
 				if(pageNum!=_pageShowing) {
 					continue;
 				}
-				Border borderHover=gridForField.Children[0] as Border; 
-				Point point=e.GetPosition(borderHover);
-				Rect rectBounds=new Rect(0,0,borderHover.ActualWidth,borderHover.ActualHeight);
+				Border borderOverlayFieldHover=gridForField.Children[0] as Border; 
+				Point point=e.GetPosition(borderOverlayFieldHover);
+				Rect rectBounds=new Rect(0,0,borderOverlayFieldHover.ActualWidth,borderOverlayFieldHover.ActualHeight);
 				if(!rectBounds.Contains(point)){
 					continue;
 				}
@@ -1169,21 +1327,21 @@ namespace OpenDental {
 							isAttemptingStack=true;
 						}
 						if(isAttemptingStack){
-							if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[_listSelectedIndices[0]].FieldType)){
+							if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[_listSelectedIndices[0]].FieldType)){
 								//The source field that we are trying to move does not allow stacking
 								break;
 							}
 							if(dragLocation.IsHorizStacking){
 								//check that the field to the left allows stacking
-								if(dragLocation.Idx!=0){//the destination is not 0 (probably already handled when setting IsHorizStacking
-									if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[_listSelectedIndices[0]-1].FieldType)){
+								if(dragLocation.Idx!=0 ){//the destination is not 0 (probably already handled when setting IsHorizStacking)
+									if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[dragLocation.Idx-1].FieldType)){
 										break;//not allowed
 									}
 								}
 							}
 							if(dragLocation.IsHorizStackingNext){
 								//check that the field to the right (idx) allows stacking
-								if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[dragLocation.Idx].FieldType)){
+								if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[dragLocation.Idx].FieldType)){
 									break;//not allowed
 								}
 							}
@@ -1471,9 +1629,23 @@ namespace OpenDental {
 		#endregion Method - Event Handlers - Key
 
 		#region Methods - private
-		private void AddCheckBox(Grid gridForField,EFormField eFormField){
+		private void AddCheckBox(Border borderBox,EFormField eFormField){
 			CheckBox checkBox=new CheckBox();
-			gridForField.Children.Add(checkBox);
+			borderBox.Child=checkBox;
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			if(widthAvail<0) {
+				widthAvail=0;
+			}
+			if(eFormField.Width==0) {//not specified
+				//stackPanel2.Width=widthAvail;//so full width
+				//do nothing, use default CheckBox width.
+			}
+			else if(eFormField.Width<widthAvail) {
+				checkBox.Width=eFormField.Width;
+			}
+			else {
+				checkBox.Width=widthAvail;
+			}
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
 			checkBox.VerticalContentAlignment=VerticalAlignment.Center;
@@ -1482,7 +1654,7 @@ namespace OpenDental {
 			Label label=new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0);//default is 5
-			label.Content=eFormField.ValueLabel;
+			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
 				Label labelRequired=new Label();
@@ -1507,7 +1679,7 @@ namespace OpenDental {
 				labelCondParent.Content="(CND)";
 				labelCondParent.Foreground=Brushes.Red;
 			}
-			bool isConditionalChild = false;
+			bool isConditionalChild=false;
 			if(IsSetupMode
 				&& eFormField.ConditionalParent!=""
 				&& ListEFormFields.Exists(x => x.ValueLabel==eFormField.ConditionalParent)) {
@@ -1530,9 +1702,9 @@ namespace OpenDental {
 			};
 		}
 
-		private void AddDateField(Grid gridForField,EFormField eFormField){
+		private void AddDateField(Border borderBox,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
-			gridForField.Children.Add(stackPanel2);
+			borderBox.Child=stackPanel2;
 			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
 			if(widthAvail<0) {
 				widthAvail=0;
@@ -1548,6 +1720,7 @@ namespace OpenDental {
 			}
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
+			stackPanelLabel.Margin=new Thickness(0,0,0,bottom:4);
 			Label label = new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0);//default is 5
@@ -1596,15 +1769,16 @@ namespace OpenDental {
 			throw new NotImplementedException();
 		}
 
-		private void AddLabel(Grid gridForField,EFormField eFormField){
+		private void AddLabel(Border borderBox,EFormField eFormField){
 			WpfControls.UI.TextRich textRich=new WpfControls.UI.TextRich();
 			textRich.SpellCheckIsEnabled=false;
 			//One reason it's a textbox so that office/patient can edit during fill. This is a feature of sheets that we don't want to lose.
 			//And this implementation works better than sheets because it doesn't jump when clicking into it.
 			//The other reason it's a textbox is because that's how wpf shows flow documents.
 			textRich.richTextBox.BorderThickness=new Thickness(0);
-			gridForField.Children.Add(textRich);
+			borderBox.Child=textRich;
 			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1648,7 +1822,7 @@ namespace OpenDental {
 			textRich.TextChanged+=(sender,e)=>ClearSignatures();
 		}
 
-		private void AddMedicationList(Grid gridForField,EFormField eFormField) {
+		private void AddMedicationList(Border borderBox,EFormField eFormField) {
 			//This could be done many different ways in different languages. We chose the following:
 			//This is a vertical stackpanel of 3 items: title, a grid, and a footer with Add button and None checkbox
 			//The grid has a header row as well as a row for each med.
@@ -1657,8 +1831,9 @@ namespace OpenDental {
 			//For Add, grid gets another row at the end.
 			//For Delete, the row objects get deleted, then following rows get moved up, and finally, grid loses row at end.
 			StackPanel stackPanelVert=new StackPanel();
-			gridForField.Children.Add(stackPanelVert);
+			borderBox.Child=stackPanelVert;
 			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1858,33 +2033,36 @@ namespace OpenDental {
 			checkBoxNone.FontSize=fontSize;
 		}
 
-		private void AddPageBreak(Grid gridForField,EFormField eFormField) {
+		private void AddPageBreak(Border borderBox,EFormField eFormField) {
 			//This only needs to be shown for setup, not for patient UI.
 			//This is just to give the user a place to click to remove or move a page break.
 			if(!IsSetupMode) {//If filling out an eForm, don't draw the pagebreak field.
 				return;
 			}
+			Grid gridForPageBreak=new Grid();
+			borderBox.Child=gridForPageBreak;
 			Border border = new Border();
 			border.BorderBrush=new SolidColorBrush(ColorOD.Gray_Wpf(192));
 			border.BorderThickness=new Thickness(1);
 			border.Height=30;
-			gridForField.Children.Add(border);
+			gridForPageBreak.Children.Add(border);//0
 			Label label = new Label();
-			gridForField.Children.Add(label);
-			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField-1;
+			gridForPageBreak.Children.Add(label);//1
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
 			label.Width=widthAvail;
 			//this control is unique and will not have borders to left, right, or bottom for drag/drop.
 			//so we set some margins here
-			gridForField.Margin=new Thickness(0,0,right:_marginRightOfField,bottom:_marginBelowFields);
+			gridForPageBreak.Margin=new Thickness(0,0,right:_marginRightOfField,bottom:_marginBelowFields);
 			label.Padding=new Thickness(4,0,0,3);
 			label.Content="(page break)";
 			label.VerticalAlignment=VerticalAlignment.Center;
 			//add a button to delete
 			WpfControls.UI.Button button = new WpfControls.UI.Button();
-			gridForField.Children.Add(button);
+			gridForPageBreak.Children.Add(button);//2
 			Grid.SetZIndex(button,3);//bring it in front of the hover border so it's clickable
 			//button.Margin=new Thickness(15,0,0,0);
 			button.Icon=WpfControls.UI.EnumIcons.DeleteX;
@@ -1895,7 +2073,7 @@ namespace OpenDental {
 			button.Margin=new Thickness(0,0,right:2,0);
 		}
 
-		private void AddRadioButtons(Grid gridForField,EFormField eFormField){
+		private void AddRadioButtons(Border borderBox,EFormField eFormField){
 			StackPanel stackPanelRadio=new StackPanel();
 			//stackPanelRadio is our main stackPanel
 			//It has two children: stackPanelLabel and wrapPanelRadio
@@ -1907,8 +2085,9 @@ namespace OpenDental {
 			{
 				stackPanelRadio.Orientation=Orientation.Horizontal;
 			}
-			gridForField.Children.Add(stackPanelRadio);
+			borderBox.Child=stackPanelRadio;
 			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -1924,6 +2103,9 @@ namespace OpenDental {
 			label.Content=eFormField.ValueLabel;
 			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
 				stackPanelLabel.Margin=new Thickness(0,0,right:10,0);
+			}
+			else if(eFormField.LabelAlign==EnumEFormLabelAlign.TopLeft){
+				stackPanelLabel.Margin=new Thickness(0,0,0,bottom:5);
 			}
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
@@ -2040,10 +2222,11 @@ namespace OpenDental {
 			}
 		}
 
-		private void AddSigBox(Grid gridForField,EFormField eFormField){
+		private void AddSigBox(Border borderBox,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
-			gridForField.Children.Add(stackPanel2);
+			borderBox.Child=stackPanel2;
 			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
@@ -2115,28 +2298,17 @@ namespace OpenDental {
 			}			
 		}
 
-		private void AddTextBox(Grid gridForField,EFormField eFormField){
+		private void AddTextBox(Border borderBox,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
-			gridForField.Children.Add(stackPanel2);
-			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
-			if(widthAvail<0) {
-				widthAvail=0;
-			}
-			if(eFormField.Width==0){//not specified
-				stackPanel2.Width=widthAvail;//so full width
-			}
-			else if(eFormField.Width<widthAvail){
-				stackPanel2.Width=eFormField.Width;
-			}
-			else{
-				stackPanel2.Width=widthAvail;
-			}
+			borderBox.Child=stackPanel2;
+			stackPanel2.Width=CalcFieldWidth(eFormField);
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
+			stackPanelLabel.Margin=new Thickness(0,0,0,bottom:4);
 			Label label = new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0);//default is 5
-			label.Content=eFormField.ValueLabel;
+			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
 				Label labelRequired=new Label();
@@ -2209,33 +2381,10 @@ namespace OpenDental {
 			return border;
 		}
 
-		private Grid CreateGridForField(){
-			//This is the main container for the eFormField.
-			//TagOD gets set to the eFormField.
-			Grid gridForField=new Grid();
-			//_listGridFields.Add(grid);
-			ColumnDefinition columnDefinition;
-			columnDefinition=new ColumnDefinition();
-			columnDefinition.Width=new GridLength(1,GridUnitType.Auto);//main content
-			gridForField.ColumnDefinitions.Add(columnDefinition);
-			columnDefinition=new ColumnDefinition();
-			columnDefinition.Width=new GridLength(_marginRightOfField);
-			gridForField.ColumnDefinitions.Add(columnDefinition);
-			//We are adding the border here because we use Children[1], for example, in import.
-			//This allows us to not fiddle with that code, because the border is child 0.
-			Border borderOverlayFieldHover=new Border();
-			gridForField.Children.Add(borderOverlayFieldHover);
-			if(IsSetupMode){
-				borderOverlayFieldHover.BorderThickness=new Thickness(1);
-				Grid.SetZIndex(borderOverlayFieldHover,1);//in front of the others
-			}
-			return gridForField;
-		}
-
 		///<summary>Loops through all fields and fixes invalid stacking. Used after a multi drag drop, when first loading to fix any prior db issues, and after editing each field because changing stacking in one field can affect stacking in other fields. Doesn't change orders of any fields.</summary>
 		private void FixAllStacking(){
 			for(int i=0;i<ListEFormFields.Count;i++){
-				if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[i].FieldType)){
+				if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[i].FieldType)){
 					//the simple obvious fix for self
 					ListEFormFields[i].IsHorizStacking=false;
 				}
@@ -2243,7 +2392,7 @@ namespace OpenDental {
 			//Now that all selves are fixed, another loop will check field to left of each
 			for(int i=1;i<ListEFormFields.Count;i++){
 				//if field to left can't stack, neither can this one.
-				if(!EFormFieldDefs.IsHorizStackable(ListEFormFields[i-1].FieldType)){
+				if(!EFormFieldDefs.IsHorizStackableType(ListEFormFields[i-1].FieldType)){
 					ListEFormFields[i].IsHorizStacking=false;
 				}
 			}
@@ -2294,11 +2443,28 @@ namespace OpenDental {
 			return -1;
 		}
 
+		private void SetActionTimer(Action action,double interval) {
+			if(_actionTimer!=action) {//This will prevent the timer from stoping when the mouse is still moving outside of the bounds.
+				action?.Invoke();//Immediately scroll or change the page.
+				_dispatcherTimer.Stop();//Stop any previous timer
+				_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(interval);//Set the intervals
+				_actionTimer=action;
+				_dispatcherTimer.Start();
+			}
+			if(_dispatcherTimer.Interval!=TimeSpan.FromMilliseconds(interval)) {
+				//Speed up or slow down the interval speed. This is dependent on the mouse Y value from the mouseMove method. 
+				_dispatcherTimer.Stop();
+				_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(interval);
+				_dispatcherTimer.Start();
+			}
+		}
+
 		///<summary>Sets background colors for all items, based on selected indices and hover. Also, sets visibility of Delete button on pagebreak field.</summary>
 		private void SetColors(){
 			for(int i=0;i<ListEFormFields.Count;i++){
-				Grid gridForField=ListEFormFields[i].TagOD as Grid;
-				Border border=gridForField.Children[0] as Border;
+				Border borderBox=ListEFormFields[i].TagOD as Border;
+				Grid gridForField=borderBox.Parent as Grid;
+				Border borderOverlayFieldHover=gridForField.Children[0] as Border;
 				Color colorBack=Colors.Transparent;
 				Color colorBorder=Colors.Transparent;
 				if(_listSelectedIndices.Contains(i)){
@@ -2309,16 +2475,17 @@ namespace OpenDental {
 					colorBack=Color.FromArgb(15,0,80,210);
 					colorBorder=Color.FromArgb(45,0,80,210);
 				}
-				border.Background=new SolidColorBrush(colorBack);
-				border.BorderBrush=new SolidColorBrush(colorBorder);
+				borderOverlayFieldHover.Background=new SolidColorBrush(colorBack);
+				borderOverlayFieldHover.BorderBrush=new SolidColorBrush(colorBorder);
 			}
 			//pagebreak Delete button visibility
 			for(int i = 0;i<ListEFormFields.Count;i++) {
 				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.PageBreak) {
 					continue;
 				}
-				Grid gridForField = ListEFormFields[i].TagOD as Grid;
-				WpfControls.UI.Button button = gridForField.Children[3] as WpfControls.UI.Button;
+				Border borderBox=ListEFormFields[i].TagOD as Border;
+				Grid gridForPageBreak=borderBox.Child as Grid;
+				WpfControls.UI.Button button = gridForPageBreak.Children[2] as WpfControls.UI.Button;
 				button.Visible=false;
 				if(_hoverIndex==i) {
 					button.Visible=true;
@@ -2350,20 +2517,86 @@ namespace OpenDental {
 			}
 		}
 
-		private void SetActionTimer(Action action,double interval) {
-			if(_actionTimer!=action) {//This will prevent the timer from stoping when the mouse is still moving outside of the bounds.
-				action?.Invoke();//Immediately scroll or change the page.
-				_dispatcherTimer.Stop();//Stop any previous timer
-				_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(interval);//Set the intervals
-				_actionTimer=action;
-				_dispatcherTimer.Start();
+		///<summary></summary>
+		public double CalcFieldWidth(EFormField eFormField){
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			if(!eFormField.IsWidthPercentage){//only for fixed width
+				widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			}
-			if(_dispatcherTimer.Interval!=TimeSpan.FromMilliseconds(interval)) {
-				//Speed up or slow down the interval speed. This is dependent on the mouse Y value from the mouseMove method. 
-				_dispatcherTimer.Stop();
-				_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(interval);
-				_dispatcherTimer.Start();
+			if(widthAvail<0) {
+				widthAvail=0;
 			}
+			if(!eFormField.IsWidthPercentage){//fixed width
+				if(eFormField.Width==0){//no width specified
+					return widthAvail;//so full width
+				}
+				if(eFormField.Width<widthAvail){//will fit
+					return eFormField.Width;
+				}
+				return widthAvail;//full width
+			}
+			//Width is percentage
+			//Only allowed for the stackable fields: text, label, date, and checkbox.
+			//We must always calcuate the width of all fields within the same stack group
+			//Order does not matter.
+			List<EFormField> listEFormFieldsInStack=EFormFields.GetSiblingsInStack(eFormField,ListEFormFields,eFormField.IsHorizStacking);
+			listEFormFieldsInStack.Add(eFormField);//The list did not include this field
+			List<double> listPercentages=listEFormFieldsInStack.Select(x=>(double)x.Width).ToList();
+			double totalPercent=listPercentages.Sum();
+			//totalPercent is allowed to be less than 100, but not greater:
+			if(totalPercent>100){
+				//Normalize to 100%
+				double ratioNormalize=100d/(double)totalPercent;//this ratio will be <1
+				for(int i=0;i<listPercentages.Count;i++){
+					listPercentages[i]=listPercentages[i]*ratioNormalize;
+				}
+			}
+			//So now they add up to 100 or less
+			widthAvail-=(listPercentages.Count-1)*_marginRightOfField;//subtract all the margins between the fields.
+			//That will get a bit more complex once we let users control their right margins
+			List<int> listWidths=new List<int>();
+			List<int> listAboveMin=new List<int>();
+			for(int i=0;i<listPercentages.Count;i++){
+				int width=(int)(listPercentages[i]*widthAvail/100d);//rounds down
+				//strip off the borderbox
+				if(eFormField.Border==EnumEFormBorder.None){
+					width-=_paddingLeft;
+					width-=1;//left border box thickness
+				}
+				else{//3D
+					width-=_paddingLeft+_paddingRight;
+					width-=_thicknessLRBorders;
+				}
+				if(width<listEFormFieldsInStack[i].MinWidth){//works when no MinWidth specified (=0)
+					//example field width=20, but MinWidth=40, so bump width back up to 40. That's 0 aboveMin.
+					width=listEFormFieldsInStack[i].MinWidth;
+					listAboveMin.Add(0);
+				}
+				else{
+					//example field width=50 and MinWidth=40, so width stays at 50. That's 10 aboveMin (width-minWidth
+					listAboveMin.Add(width-listEFormFieldsInStack[i].MinWidth);
+				}
+				listWidths.Add(width);
+			}
+			//Because we limited to minWidths, we can be over our avail width
+
+			//There's  still a few bugs in this algorithm right here, but it's very close.  Debug tonight.
+
+
+//Todo? We might also have hit a minWidth, but still be within our avail width.
+			double totalAboveMin=listAboveMin.Sum();
+			double totalAboveAvail=widthAvail-listWidths.Sum();
+			if(totalAboveMin==0){
+				return listWidths[listWidths.Count-1];//this is the only one we care about
+			}
+			for(int i=0;i<listWidths.Count;i++){
+				if(listAboveMin[i]==0){
+					continue;
+				}
+				//shrink it proportionally
+				listWidths[i]=listWidths[i]-(int)(totalAboveAvail*listAboveMin[i]/totalAboveMin);
+			}
+			return listWidths[listWidths.Count-1];//this is the only one we care about
 		}
 
 		///<summary>This method will set a flag which is used to skip "empty" pages. It only gets called when filling out a form. We don't want to skip pages when they are in setup mode.</summary>

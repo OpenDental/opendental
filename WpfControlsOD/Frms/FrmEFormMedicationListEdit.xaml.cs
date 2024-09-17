@@ -26,7 +26,7 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmEFormMedicationListEdit() {
 			InitializeComponent();
-			Load+=FrmEFormsRadioButtonsEdit_Load;
+			Load+=FrmEFormsMedicationListEdit_Load;
 			groupAdvanced.Visible=false;
 			checkAdvanced.Click+=CheckAdvanced_Click;
 			checkIsCol2Visible.Click+=CheckIsCol2Visible_Click;
@@ -36,7 +36,7 @@ namespace OpenDental {
 			checkSyncCol2AppendDate.Click+=CheckSyncCol2AppendDate_Click;
 		}
 
-		private void FrmEFormsRadioButtonsEdit_Load(object sender, EventArgs e) {
+		private void FrmEFormsMedicationListEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			_eFormMedListLayout=JsonConvert.DeserializeObject<EFormMedListLayout>(EFormFieldCur.ValueLabel);
 			textTitle.Text=_eFormMedListLayout.Title;
@@ -53,6 +53,7 @@ namespace OpenDental {
 			checkSyncCol2Append.Checked=_eFormMedListLayout.ImportCol2Append;
 			checkSyncCol2AppendDate.Checked=_eFormMedListLayout.ImportCol2AppendDate;
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
+			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
@@ -179,6 +180,12 @@ namespace OpenDental {
 			_eFormMedListLayout.ImportCol2AppendDate=checkSyncCol2AppendDate.Checked==true;
 			EFormFieldCur.ValueLabel=JsonConvert.SerializeObject(_eFormMedListLayout);
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
+			if(checkBorder.Checked==true){
+				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
+			}
+			else{
+				EFormFieldCur.Border=EnumEFormBorder.None;
+			}
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.SpaceBelow=spaceBelow;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;

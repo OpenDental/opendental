@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace OpenDentBusiness {
@@ -176,22 +177,17 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<PatField>>(MethodBase.GetCurrentMethod(),listPatNumsSuperFam);
 			}
+			if(listPatNumsSuperFam.Count==0) {
+				return new List<PatField>();
+			}
 			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols)
 				.FindAll(x=>string.IsNullOrWhiteSpace(x.InternalName));//patfields have DisplayField.InternalName blank.
 			if(listDisplayFields.Count==0) {
 				return new List<PatField>();
 			}
-			string command="SELECT * FROM patfield WHERE (";
-			for(int i=0;i<listDisplayFields.Count;i++) {
-				if(i>0) {
-					command+=" OR ";
-				}
-				command+="FieldName='"+POut.String(listDisplayFields[i].Description)+"'";
-			}
-			if(listPatNumsSuperFam.Count>0) {
-				command+=") AND PatNum IN("+string.Join(",",listPatNumsSuperFam);
-			}
-			command+=")";
+			string displayFieldList=string.Join(",",listDisplayFields.Select(x=>"'"+POut.String(x.Description)+"'"));
+			string patNumList=string.Join(",",listPatNumsSuperFam.Select(x=>POut.Long(x)));
+			string command="SELECT * FROM patfield WHERE FieldName IN("+displayFieldList+") AND PatNum IN("+patNumList+")";
 			return Crud.PatFieldCrud.SelectMany(command);
 		}
 

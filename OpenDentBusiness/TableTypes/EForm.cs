@@ -24,6 +24,8 @@ namespace OpenDentBusiness {
 		///<summary>The date and time when the EForm was lasted edited. Not editable by the user in the UI.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateTEdited;
+		///<summary>Required. Can be any value between 50 and 1000. On wide screens, this limits the width of the form. This is needed on pretty much anything other than a phone. Makes it look consistent across devices and prevents useless white space.</summary>
+		public int MaxWidth;
 
 		///<Summary>Used sparingly prior to db insertion, when we have no other choice.</Summary>
 		[CrudColumn(IsNotDbColumn=true)]

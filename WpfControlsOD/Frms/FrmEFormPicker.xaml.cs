@@ -15,7 +15,7 @@ namespace OpenDental {
 	///<summary>This can be used from FormPatientForms to pick a form for a patient. It can also be used from FrmEFormDefs to pick an internal form to add to list of custom forms.</summary>
 	public partial class FrmEFormPicker:FrmODBase {
 		private List<EFormDef> _listEFormDefs;
-		///<summary>After window closes, and only if IsDialogOK=true. This must also have its ListEFormFieldDefs filled because we may or may not be dealing with an internal EForm. If user clicks Blank, this will be a new EFormDef with no fields and not inserted in db.</summary>
+		///<summary>After window closes, and only if IsDialogOK=true. ListEFormFieldDefs will also be properly filled because we may or may not be dealing with an internal EForm. If user clicks Blank, this will be a new EFormDef with no fields and not inserted in db.</summary>
 		public EFormDef EFormDefSelected;
 		///<summary>Set to true when this Frm is being used from FrmEFormDefs to pick an internal form to add to list of custom forms. Only custom forms will show.</summary>
 		public bool IsInternalPicker;

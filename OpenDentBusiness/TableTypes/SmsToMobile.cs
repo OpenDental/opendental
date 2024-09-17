@@ -189,6 +189,10 @@ namespace OpenDentBusiness {
 		///<summary>27. Used for Payment Portal Msg-To-Pay messages.
 		///Short Code Supported: NO</summary>
 		MsgToPay,
+		///<summary>28. Used when the office checks NO for the patient to receive texts in the patient edit form.
+		///Short Code Supported: NO
+		///</summary>
+		OptOutReply,
 	}
 
 	///<summary>None should never be used, the code should be re-written to not use it.</summary>

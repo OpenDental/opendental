@@ -416,6 +416,14 @@ namespace OpenDental{
 					_listClaimProcs.Add(_listClaimProcsForClaim[i]);	
 				}
 			}
+			//Set date for signature fields. Primary claims will always have date sent in normal workflow. Other claims will use DateSent if available. Otherwise fall back to ProcDate.
+			DateTime dateSignature=DateTime.Today;
+			if(!_listClaimProcs.IsNullOrEmpty()) {//Should never be empty. Need to guarantee behavior for Primary claims remains the same.
+				dateSignature=_listClaimProcs[0].ProcDate;//Date patient was actually in for appointment.
+			}
+			if(_claim.DateSent.Year > 1860) {
+				dateSignature=_claim.DateSent;
+			}
 			List<string> listStringsMissingTeeth=ToothInitials.GetMissingOrHiddenTeeth(listToothInitials);
 			ProcedureCode procedureCode;
 			for(int j=listStringsMissingTeeth.Count-1;j>=0;j--) {//loop backwards to keep index accurate as items are removed
@@ -1347,12 +1355,12 @@ namespace OpenDental{
 						}
 						break;
 					case "PatientReleaseDate":
-						if(_insSub.ReleaseInfo && _claim.DateSent.Year > 1860) {
+						if(_insSub.ReleaseInfo) {
 							if(ClaimFormCur.Items[i].FormatString=="") {
-								_stringArrayDisplay[i]=_claim.DateSent.ToShortDateString();
+								_stringArrayDisplay[i]=dateSignature.ToShortDateString();
 							}
 							else {
-								_stringArrayDisplay[i]=_claim.DateSent.ToString(ClaimFormCur.Items[i].FormatString);
+								_stringArrayDisplay[i]=dateSignature.ToString(ClaimFormCur.Items[i].FormatString);
 							}
 						} 
 						break;
@@ -1362,12 +1370,12 @@ namespace OpenDental{
 						}
 						break;
 					case "PatientAssignmentDate":
-						if(Claims.GetAssignmentOfBenefits(_claim,_insSub) && _claim.DateSent.Year > 1860) {
+						if(Claims.GetAssignmentOfBenefits(_claim,_insSub)) {
 							if(ClaimFormCur.Items[i].FormatString=="") {
-								_stringArrayDisplay[i]=_claim.DateSent.ToShortDateString();
+								_stringArrayDisplay[i]=dateSignature.ToShortDateString();
 							}
 							else {
-								_stringArrayDisplay[i]=_claim.DateSent.ToString(ClaimFormCur.Items[i].FormatString);
+								_stringArrayDisplay[i]=dateSignature.ToString(ClaimFormCur.Items[i].FormatString);
 							}
 						}
 						break;
@@ -1936,12 +1944,12 @@ namespace OpenDental{
 						}
 						break;
 					case "TreatingDentistSigDate":
-						if(providerClaimTreat.SigOnFile && _claim.DateSent.Year > 1860){
+						if(providerClaimTreat.SigOnFile){
 							if(ClaimFormCur.Items[i].FormatString=="") {
-								_stringArrayDisplay[i]=_claim.DateSent.ToShortDateString();
+								_stringArrayDisplay[i]=dateSignature.ToShortDateString();
 							}
 							else {
-								_stringArrayDisplay[i]=_claim.DateSent.ToString(ClaimFormCur.Items[i].FormatString);
+								_stringArrayDisplay[i]=dateSignature.ToString(ClaimFormCur.Items[i].FormatString);
 							}
 						}
 						break;

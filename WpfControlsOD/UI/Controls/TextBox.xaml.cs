@@ -190,7 +190,7 @@ Validating/Validated events are not supported.
 		}
 
 		[Category("OD")]
-		[Description("Set true to prevent user from editing. Enabled false also does this, but that also grays out the text. In WinForms, setting this to true also automatically changed the background color to 240 gray. In WPF, this is not paired, but can be done separately.")]
+		[Description("Set true to prevent user from editing. Enabled false also does this, but that also grays out the text. In WinForms, setting this to true also automatically changed the background color to 240 gray (#F0F0F0). In WPF, this is not paired, but can be done separately.")]
 		public bool ReadOnly {
 			//No need to do this for TextV... because the whole point of those is to validate input, so they would never be ReadOnly.
 			get{

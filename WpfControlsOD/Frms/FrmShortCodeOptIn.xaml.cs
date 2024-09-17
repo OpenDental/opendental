@@ -32,9 +32,9 @@ namespace OpenDental {
 				return;
 			}
 			string script=PrefC.GetString(PrefName.ShortCodeOptInScript);
-			if(PatientCur.ShortCodeOptIn==YN.No) {
-				PrefC.GetString(PrefName.ShortCodeOptedOutScript);
-			}
+			//Previously, we had tried to set ShortCodeOptedOutScript in certain cases right here.
+			//That was wrong behavior and has been removed entirely. This form simply exists to catch patients on their way out the door and ask if they want to opt IN to texting.
+			//SamO 9/16/24 I53372.
 			if(!string.IsNullOrWhiteSpace(script)) {
 				label1.Text=FillInTextTemplate(script,PatientCur);
 			}

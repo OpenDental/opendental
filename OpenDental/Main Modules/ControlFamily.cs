@@ -45,7 +45,6 @@ namespace OpenDental{
 		private Point _pointLastClicked;
 		private SortStrategy _sortStrategySuperFam;
 		private ToolBarOD toolBarMain;
-		private int _widthGridSuperFam;
 		#endregion Fields - Private
 
 		#region Constructor
@@ -754,6 +753,10 @@ namespace OpenDental{
 					#endregion Address2
 					#region AdmitDate
 					case "AdmitDate":
+						if(_patient.AdmitDate.Year<1880) {
+							row.Cells.Add("");
+							break;
+						}
 						row.Cells.Add(_patient.AdmitDate.ToShortDateString());
 						break;
 					#endregion AdmitDate
@@ -820,6 +823,10 @@ namespace OpenDental{
 					#endregion Country
 					#region DischargeDate
 					case "DischargeDate":
+						if(ehrPatient.DischargeDate.Year<1880) {
+							row.Cells.Add("");
+							break;
+						}
 						row.Cells.Add(ehrPatient.DischargeDate.ToShortDateString());
 						break;
 					#endregion DischargeDate
@@ -1858,8 +1865,7 @@ namespace OpenDental{
 				}
 				gridSuperFam.Columns.Add(gridColumn);
 			}
-			_widthGridSuperFam=LayoutManager.Scale(listDisplayFields.Sum(x=>x.ColumnWidth)+SystemInformation.VerticalScrollBarWidth);
-			gridSuperFam.Width=_widthGridSuperFam;
+			gridSuperFam.Width=Math.Max(splitContainerSuperClones.Width,LayoutManager.Scale(listDisplayFields.Sum(x=>x.ColumnWidth)+SystemInformation.VerticalScrollBarWidth));
 			gridSuperFam.ListGridRows.Clear();
 			if(_patient==null) {
 				gridSuperFam.EndUpdate();
@@ -2753,6 +2759,7 @@ namespace OpenDental{
 				gridPatientClones.Columns.Add(new GridColumn(Lan.g(gridPatientClones.TranslationName,"Clinic"),80));
 			}
 			gridPatientClones.Columns.Add(new GridColumn(Lan.g(gridPatientClones.TranslationName,"Specialty"),150){ IsWidthDynamic=true });
+			gridPatientClones.Width=LayoutManager.Scale(gridPatientClones.Columns.Sum(x=>x.ColWidth)+SystemInformation.VerticalScrollBarWidth);
 			gridPatientClones.ListGridRows.Clear();
 			if(_patient==null) {
 				gridPatientClones.EndUpdate();
@@ -3032,23 +3039,18 @@ namespace OpenDental{
 				}
 				//Only show Superfamily and Patient Clone containers if either feature is on and there is information for the enabled feature to show.
 				//The program will still need to be restarted to ensure all UI changes are accurately reflected.
-				bool showPanelForSuperfamilies=PrefC.GetBool(PrefName.ShowFeatureSuperfamilies) && _patient.SuperFamily!=0;
-				bool showPanelForPatientClone=PrefC.GetBool(PrefName.ShowFeaturePatientClone) && _loadData.ListPatientsClones!=null && _loadData.ListPatientsClones.Count > 1;
-				if(showPanelForSuperfamilies || showPanelForPatientClone) {
-					splitContainerSuperClones.Visible=true;
-					if(showPanelForSuperfamilies) {
-						List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
-						_widthGridSuperFam=LayoutManager.Scale(listDisplayFields.Sum(x=>x.ColumnWidth)+SystemInformation.VerticalScrollBarWidth);
-						LayoutManager.MoveWidth(splitContainerSuperClones,_widthGridSuperFam);
-					}
+				bool showSuperfamilyGrid=PrefC.GetBool(PrefName.ShowFeatureSuperfamilies) && _patient.SuperFamily!=0;
+				bool showPatientCloneGrid=PrefC.GetBool(PrefName.ShowFeaturePatientClone) && _loadData.ListPatientsClones!=null && _loadData.ListPatientsClones.Count > 1;
+				splitContainerSuperClones.Visible=showSuperfamilyGrid || showPatientCloneGrid;
+				if(splitContainerSuperClones.Visible) {
+					int widthSuperClonePanel=GetWidthSuperClonesPanel(showSuperfamilyGrid,showPatientCloneGrid);
+					LayoutManager.MoveWidth(splitContainerSuperClones,widthSuperClonePanel);
 					LayoutManager.MoveLocation(gridIns,new Point(splitContainerSuperClones.Right+2,gridIns.Top));
-					LayoutManager.MoveWidth(gridIns,Width-gridIns.Left);
 				}
 				else {
-					splitContainerSuperClones.Visible=false;
 					LayoutManager.MoveLocation(gridIns,splitContainerSuperClones.Location);
-					LayoutManager.MoveWidth(gridIns,Width-gridIns.Left);
 				}
+				LayoutManager.MoveWidth(gridIns,Width-gridIns.Left);
 				if(PrefC.GetBool(PrefName.ShowFeatureSuperfamilies) && toolBarMain.Buttons["AddSuper"]!=null) {
 					toolBarMain.Buttons["AddSuper"].Enabled=true;
 				}
@@ -3156,6 +3158,21 @@ namespace OpenDental{
 				}
 			}
 			toolBarMain.Invalidate();
+		}
+
+		/// <summary></summary>
+		private int GetWidthSuperClonesPanel(bool showPanelForSuperfamilies,bool showPanelForPatientClone) {
+			int widthSuperFam=0;
+			int widthClones=0;
+			if(showPanelForSuperfamilies) {
+				int widthDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols).Sum(x => x.ColumnWidth);
+				widthSuperFam=LayoutManager.Scale(widthDisplayFields+SystemInformation.VerticalScrollBarWidth);
+			}
+			if(showPanelForPatientClone) {
+				int widthColumns=gridPatientClones.Columns.Sum(x => x.ColWidth);
+				widthClones=LayoutManager.Scale(widthColumns+SystemInformation.VerticalScrollBarWidth);
+			}
+			return Math.Max(widthSuperFam,widthClones);
 		}
 		#endregion Methods - Private - Other
 

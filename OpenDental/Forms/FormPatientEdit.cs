@@ -1658,13 +1658,32 @@ End of Checklist================================================================
 
 		///<summary>Offers the user, if necessary, the opportunity to send a text message to the patient when changes have been made to texting settings.</summary>
 		private void PromptForSmsIfNecessary(Patient patientNew,Patient patientOld) {
-			if(!Patients.DoPromptForSms(patientNew,patientOld)) {
+			if(Patients.DoPromptForOptInSms(patientNew,patientOld) 
+				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"Texting settings have changed.  Would you like to send a message now?","Send a message?")) 
+			{
+				string msg=PrefC.GetString(PrefName.ShortCodeOptInScript);
+				msg=FrmShortCodeOptIn.FillInTextTemplate(msg,patientNew);
+				GlobalFormOpenDental.SendTextMessage(patientNew.PatNum,msg);
 				return;
 			}
-			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Texting settings have changed.  Would you like to send a message now?","Send a message?")) {
-				string message=PrefC.GetString(PrefName.ShortCodeOptInScript);
-				message=FrmShortCodeOptIn.FillInTextTemplate(message,patientNew);
-				GlobalFormOpenDental.SendTextMessage?.Invoke(patientNew.PatNum,message);
+			if(!Patients.DoSendOptOutText(patientNew,patientOld)) {
+				return;
+			}
+			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Patient has opted out of texting. Would you like to send an opt out notification message?","Send a message?")) {
+				return;
+			}
+			//ex:[WirelessPhone] has cancelled Appointment Texts and must text [START] to [PhoneProv] to begin receiving Appointment Texts.
+			string message=PrefC.GetString(PrefName.ShortCodeOptedOutScript)
+				//[PhoneProv] tag was already replaced on nightly sync in EServiceSetups.GetTextingOptScript().
+				.Replace("[WirelessPhone]",patientNew.WirelessPhone);
+			try {
+				SmsToMobile smsToMobile=SmsToMobiles.SendSmsSingle(patientNew.PatNum,patientNew.WirelessPhone,message,patientNew.ClinicNum,SmsMessageSource.OptOutReply);
+			}
+			catch(Exception ex) {
+				if(!FormEServicesSetup.ProcessSendSmsException(ex)) {
+					MsgBox.Show(this,ex.Message);
+				}
+				return;
 			}
 		}
 

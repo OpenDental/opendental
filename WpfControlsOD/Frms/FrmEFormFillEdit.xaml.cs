@@ -60,12 +60,24 @@ namespace OpenDental {
 				butUnlock.Visible=false;
 			}
 			_isLoaded=true;
+			SetCtrlWidth();
 		}
 
 		private void FrmEFormFillEdit_SizeChanged(object sender,System.Windows.SizeChangedEventArgs e) {
+			SetCtrlWidth();
+		}
+
+		private void SetCtrlWidth(){
 			if(!_isLoaded){
 				return;
 			}
+			int maxWidth=EFormCur.MaxWidth;//no validation of range needed here
+			int avail=(int)ActualWidth-(int)ctrlEFormFill.Margin.Left-117;
+			if(maxWidth>avail){
+				maxWidth=avail;
+			}
+			ctrlEFormFill.Width=maxWidth;
+			ctrlEFormFill.UpdateLayout();
 			ctrlEFormFill.FillFieldsFromControls();
 			ctrlEFormFill.RefreshLayout();
 			//The one thing this doesn't do perfectly is

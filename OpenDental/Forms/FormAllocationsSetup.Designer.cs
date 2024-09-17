@@ -97,7 +97,7 @@ namespace OpenDental{
 			this.label40.Size = new System.Drawing.Size(189, 54);
 			this.label40.TabIndex = 302;
 			this.label40.Text = "These buttons set all prefs within this window simultaneously.  Changes don\'t get" +
-    " saved until you click OK.";
+    " saved until you click Save.";
 			// 
 			// butLineItem
 			// 

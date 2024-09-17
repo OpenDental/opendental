@@ -32,7 +32,9 @@ namespace OpenDental {
 			gridMain.Columns.Clear();
 			GridColumn gridColumn=new GridColumn("Room ID",75);
 			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Allowed Ratio",75,HorizontalAlignment.Center);
+			gridColumn=new GridColumn("Allowed Ratio",90,HorizontalAlignment.Center);
+			gridMain.Columns.Add(gridColumn);
+			gridColumn=new GridColumn("Notes",150);
 			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listChildRooms.Count;i++) {
@@ -44,6 +46,7 @@ namespace OpenDental {
 				else {
 					gridRow.Cells.Add(listChildRooms[i].Ratio.ToString());
 				}
+				gridRow.Cells.Add(listChildRooms[i].Notes);
 				gridRow.Tag=listChildRooms[i];
 				gridMain.ListGridRows.Add(gridRow);
 			}

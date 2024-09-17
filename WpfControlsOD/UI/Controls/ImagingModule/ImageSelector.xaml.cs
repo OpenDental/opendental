@@ -143,6 +143,11 @@ Only used once in Imaging module.
 		[Browsable(false)]
 		public bool IsContextVisible {get;set; } =true;
 
+		///<summary>Set false to disable the Print option in the right click context menu. True by default.</summary>
+		[Browsable(false)]
+		[DefaultValue(true)]
+		public bool PrintOptionEnabled {get;set;} = true;
+
 		///<summary>Gets or sets the value of the vertical scrollbar.  Does all error checking and invalidates.</summary>
 		[Browsable(false)]
 		[DefaultValue(0)]
@@ -348,7 +353,11 @@ Only used once in Imaging module.
 				//	SelectTreeNode((NodeObjTag)treeNode.Tag);
 				//}
 			}
-			if(keepSelection){
+			if(_nodeObjTagSelected!=null && _nodeObjTagSelected.NodeType==EnumImageNodeType.Category){
+				_nodeObjTagSelected=_listNodeObjTags.FirstOrDefault(x=>x.IsMatching(_nodeObjTagSelected));
+				//if a category was selected, this keeps it selected
+			}
+			else if(keepSelection){
 				//Make sure selection exists. Works with null.
 				//Category might have changed from within info window. This pulls updated version. Null ok.
 				_nodeObjTagSelected=_listNodeObjTags.FirstOrDefault(x=>x.IsMatching(_nodeObjTagSelected));
@@ -1227,6 +1236,11 @@ Only used once in Imaging module.
 				contextMenu.PlacementTarget=this;
 				//Could add Placement, HorizontalOffset and VerticalOffset to control location.
 				contextMenu.IsOpen=true;
+			}
+			for(int i = 0;i<contextMenu.Items.Count;i++) {
+				if(contextMenu.Items[i] is MenuItem menuItem && menuItem.Name=="Print") {
+					menuItem.IsEnabled=PrintOptionEnabled;
+				}
 			}
 		}
 

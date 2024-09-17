@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="614" Height="420" 
+             Width="614" Height="500" 
              Text="Edit Date Field" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
@@ -22,11 +22,11 @@
 		<ui:Label Width="98" Height="18" Margin="88,133,0,0" Text="Width" HAlign="Right" VAlign="Center" />
 		<ui:Label Height="18" Margin="245,133,0,0" Text="leave blank for full width" VAlign="Center" Width="157" />
 		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="187,133,0,0" ShowZero="False"/>
-		<ui:Label Width="98" Height="18" Margin="88,160,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="245,160,0,0" Text="default is 100" VAlign="Center" Width="228" />
-		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="187,160,0,0" MaxVal="300" MinVal="50"/>
+		<ui:Label Width="98" Height="18" Margin="88,230,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="245,230,0,0" Text="default is 100" VAlign="Center" Width="228" />
+		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="187,229,0,0" MaxVal="300" MinVal="50"/>
 		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="70,110,0,0" Width="130" Text="Required" CheckAlign="MiddleRight"/>
-		<ui:GroupBox Height="80" Margin="28,244,0,0" Width="470" Text="Conditional Logic. This field will show...">
+		<ui:GroupBox Height="80" Margin="28,314,0,0" Width="470" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
 			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
@@ -34,12 +34,17 @@
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click" />
 		</ui:GroupBox>
-		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="187,187,0,0" />
-		<ui:Label Width="98" Height="18" Margin="88,187,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="245,187,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="264" />
-		<ui:Label Width="130" Height="18" Margin="56,214,0,0" Text="Reportable Name" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="187,214,0,0"/>
-		<ui:Label Width="344" Height="18" Margin="18,333,0,0" Text="This field is the conditional parent for this many child fields" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textCountChildren" Height="20" Margin="365,333,0,0" ReadOnly="True" ColorBack="#FFF0F0F0" Width="30"/>
+		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="187,257,0,0" />
+		<ui:Label Width="98" Height="18" Margin="88,257,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="245,257,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="264" />
+		<ui:Label Width="130" Height="18" Margin="56,284,0,0" Text="Reportable Name" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="187,284,0,0"/>
+		<ui:Label Width="344" Height="18" Margin="18,403,0,0" Text="This field is the conditional parent for this many child fields" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textCountChildren" Height="20" Margin="365,403,0,0" ReadOnly="True" ColorBack="#FFF0F0F0" Width="30"/>
+		<ui:CheckBox x:Name="checkIsWidthPercentage" Height="20" Margin="41,156,0,0" Width="159" Text="Width Is Percentage" CheckAlign="MiddleRight"/>
+		<ui:Label x:Name="labelWidthIsPercentageNote" Height="18" Margin="205,157,0,0" Text="this applies to all fields in a horizontal stack" VAlign="Center" Width="266" />
+		<ui:Label x:Name="labelMinWidth" Width="120" Height="18" Margin="66,181,0,0" Text="Minimum Width" HAlign="Right" VAlign="Center" />
+		<ui:TextVInt x:Name="textVIntMinWidth" Width="54" Height="20" Margin="187,181,0,0" ShowZero="False"/>
+		<ui:CheckBox x:Name="checkBorder" Height="20" Margin="41,206,0,0" Width="159" Text="Show Border Box" CheckAlign="MiddleRight"/>
 	</Grid>
 </local:FrmODBase>

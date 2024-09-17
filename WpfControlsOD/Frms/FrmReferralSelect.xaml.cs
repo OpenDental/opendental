@@ -128,6 +128,9 @@ namespace OpenDental {
 				if(_listReferrals[i].ReferralNum==selectedRefNum) {
 					indexSelectedRef=gridMain.ListGridRows.Count-1;
 				}
+				if(i>=499){
+					break;//Limit the grid to 500 entries since it can get slow loading a few thousand.
+				}
 			}
 			gridMain.EndUpdate();
 			if(indexSelectedRef>-1) {

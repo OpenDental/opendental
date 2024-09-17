@@ -6,16 +6,15 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="700" Height="590" 
+             Width="835" Height="690" 
              Text="Child Room Logs" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
-		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,41,10,10" Title="ChildRoomLog" />
-		<ui:ComboBox x:Name="comboChildRoom" Margin="0,11,282,0" Height="21" HorizontalAlignment="Right" Width="80"/>
-		<ui:Label x:Name="labelChildRoom" Margin="0,13,362,0" Height="18" HAlign="Right" VAlign="Center" Text="Classroom" HorizontalAlignment="Right" Width="76"/>
-		<ui:TextVDate x:Name="textVDateLog" Margin="0,12,100,0" Height="20" HorizontalAlignment="Right" Width="94"/>
-		<ui:Label x:Name="labelDateLog" Margin="0,13,194,0" Height="18" HAlign="Right" VAlign="Center" Text="Date of Logs" HorizontalAlignment="Right" Width="79"/>
-		<ui:Button x:Name="butRefresh" Margin="0,10,10,0" Height="24" Text="Refresh" Click="butRefresh_Click" HorizontalAlignment="Right" Width="62"/>
+		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,152,10,10" Title="ChildRoomLog" />
+		<ui:Label x:Name="labelChildRoom" Margin="0,10,341,0" Height="18" HAlign="Right" VAlign="Center" Text="Classroom" HorizontalAlignment="Right" Width="76"/>
+		<ui:Label x:Name="labelDateLog" Margin="0,10,167,0" Height="18" HAlign="Right" VAlign="Center" Text="Date of Logs" HorizontalAlignment="Right" Width="79" RenderTransformOrigin="0.274,0.544"/>
 		<ui:Button x:Name="butViewSnapshot" Margin="12,10,0,0" Height="24" Width="87" Text="View Snapshot" Click="butViewSnapshot_Click" />
 		<ui:Button x:Name="butAddLog" Margin="104,10,0,0" Height="24" Width="80" Text="Add Log" Icon="Add" Click="butAddLog_Click" />
+		<ui:ListBox x:Name="listBoxChildRooms" Margin="0,10,246,0" Height="127" HorizontalAlignment="Right" Width="90"/>
+		<ui:MonthCalendar x:Name="monthlyCalendarLog" Margin="0,10,10,0" Height="137" HorizontalAlignment="Right" Width="152"/>
 	</Grid>
 </local:FrmODBase>

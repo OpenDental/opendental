@@ -199,6 +199,32 @@ namespace OpenDentBusiness{
 			return Crud.LabCaseCrud.SelectMany(command);
 		}
 
+		///<summary>Gets a list of labCases optionally filtered for the API. Returns an empty list if not found.</summary>
+		public static List<LabCase> GetLabCasesForApi(int limit,int offset,long patNum,long laboratoryNum,long aptNum,long plannedAptNum,long provNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<LabCase>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,laboratoryNum,aptNum,plannedAptNum,provNum);
+			}
+			string command="SELECT * FROM labcase WHERE DateTStamp>="+POut.DateT(DateTime.MinValue)+" ";
+			if(patNum>0) {
+			command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			if(laboratoryNum>0) {
+				command+="AND LaboratoryNum="+POut.Long(laboratoryNum)+" ";
+			}
+			if(aptNum>-1) {
+				command+="AND AptNum="+POut.Long(aptNum)+" ";
+			}
+			if(plannedAptNum>-1) {
+				command+="AND PlannedAptNum="+POut.Long(plannedAptNum)+" ";
+			}
+			if(provNum>0) {
+				command+="AND ProvNum="+POut.Long(provNum)+" ";
+			}
+			command+="ORDER BY LabCaseNum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.LabCaseCrud.SelectMany(command);
+		}
+
 		///<summary></summary>
 		public static long Insert(LabCase labCase) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

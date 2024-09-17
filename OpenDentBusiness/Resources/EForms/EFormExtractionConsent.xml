@@ -5,6 +5,7 @@
   <FormType>Consent</FormType>
   <Description>Extraction Consent</Description>
   <DateTCreated>2024-05-08T14:36:58</DateTCreated>
+  <MaxWidth>450</MaxWidth>
   <IsInternalHidden>false</IsInternalHidden>
   <ListEFormFieldDefs>
     <EFormFieldDef>

@@ -2096,7 +2096,16 @@ namespace OpenDental{
 		}
 
 		private void ToolBarImport_Click(object sender, EventArgs e){
-			GetOrMakeControlImageDisplay().ToolBarImport_Click(sender,e);
+			long defNumCategory=imageSelector.GetSelectedCategory();
+			EnumImageNodeType enumImageNodeType=imageSelector.GetSelectedType();
+			ControlImageDisplay controlImageDisplay=GetOrMakeControlImageDisplay();
+			//The above line clears out the category information, so we might need to reset that.
+			if(enumImageNodeType==EnumImageNodeType.Category) {
+				NodeTypeAndKey nodeTypeAndKeyCategory=new NodeTypeAndKey(enumImageNodeType,defNumCategory);
+				controlImageDisplay.ClearObjects();
+				controlImageDisplay.SelectTreeNode2(nodeTypeAndKeyCategory);
+			}
+			controlImageDisplay.ToolBarImport_Click(sender,e);
 			//handle the situation where they click cancel and no previous image was selected
 			if(!controlImageDock.IsImageFloatSelected){
 				return;
@@ -2206,7 +2215,15 @@ namespace OpenDental{
 		}
 
 		private void ToolBarPaste_Click(object sender, EventArgs e){
+			long defNumCategory=imageSelector.GetSelectedCategory();
+			EnumImageNodeType enumImageNodeType=imageSelector.GetSelectedType();
 			ControlImageDisplay controlImageDisplay=GetOrMakeControlImageDisplay();
+			//The above line clears out the category information, so we might need to reset that.
+			if(enumImageNodeType==EnumImageNodeType.Category) {
+				NodeTypeAndKey nodeTypeAndKey=new NodeTypeAndKey(enumImageNodeType,defNumCategory);
+				controlImageDisplay.ClearObjects();
+				controlImageDisplay.SelectTreeNode2(nodeTypeAndKey);
+			}
 			controlImageDisplay.ToolBarPaste_Click(sender,e);
 		}
 		
@@ -3691,9 +3708,11 @@ namespace OpenDental{
 			}
 			if(Path.GetExtension(GetDocumentShowing(0).FileName).ToLower()==".pdf"){ 
 				menuItemTreePrint.Enabled=false; //pdf printing is handled in Adobe, so users don't need the menu option
+				imageSelector.PrintOptionEnabled=false;
 			}
 			else {
 				menuItemTreePrint.Enabled=true;
+				imageSelector.PrintOptionEnabled=true;
 			}
 		}
 

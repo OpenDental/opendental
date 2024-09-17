@@ -116,36 +116,38 @@ namespace OpenDentBusiness{
 			Crud.EFormFieldDefCrud.Update(eFormFieldDef);
 		}
 
-		///<summary></summary>
+		///<summary>This also deletes all LanguagePats which are linked to it.</summary>
 		public static void Delete(long eFormFieldDefNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),eFormFieldDefNum);
 				return;
 			}
+			LanguagePats.DeleteForEFormFieldDef(eFormFieldDefNum);
 			Crud.EFormFieldDefCrud.Delete(eFormFieldDefNum);
 		}
 
-		///<summary></summary>
-		public static void DeleteForForm(long eFormDefNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),eFormDefNum);
-				return;
-			}
-			string command="DELETE FROM eformfielddef WHERE EFormDefNum = "+POut.Long(eFormDefNum);
-			Db.NonQ(command);
-		}
+		//We can't do this. We must instead loop through them because we need to delete any LanguagePats
+		//<summary></summary>
+		//public static void DeleteForForm(long eFormDefNum) {
+		//	if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+		//		Meth.GetVoid(MethodBase.GetCurrentMethod(),eFormDefNum);
+		//		return;
+		//	}
+		//	string command="DELETE FROM eformfielddef WHERE EFormDefNum = "+POut.Long(eFormDefNum);
+		//	Db.NonQ(command);
+		//}
 
-		public static List<EFormFieldDef> FromList(List<EFormField> listEFormFields){
-			List<EFormFieldDef> listEFormFieldDefs=new List<EFormFieldDef>();
-			for(int i=0;i<listEFormFields.Count;i++) {
-				EFormFieldDef eFormFieldDef=EFormFields.ToDef(listEFormFields[i]);
-				listEFormFieldDefs.Add(eFormFieldDef);
-			}
-			return listEFormFieldDefs;
-		}
+		//public static List<EFormFieldDef> FromList(List<EFormField> listEFormFields){
+		//	List<EFormFieldDef> listEFormFieldDefs=new List<EFormFieldDef>();
+		//	for(int i=0;i<listEFormFields.Count;i++) {
+		//		EFormFieldDef eFormFieldDef=EFormFields.ToDef(listEFormFields[i]);
+		//		listEFormFieldDefs.Add(eFormFieldDef);
+		//	}
+		//	return listEFormFieldDefs;
+		//}
 
 		///<summary>True for CheckBox, DateField, Label, TextField</summary>
-		public static bool IsHorizStackable(EnumEFormFieldType enumEFormFieldType){
+		public static bool IsHorizStackableType(EnumEFormFieldType enumEFormFieldType){
 			if(enumEFormFieldType.In(
 				EnumEFormFieldType.CheckBox, 
 				EnumEFormFieldType.DateField, 

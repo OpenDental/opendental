@@ -143,6 +143,9 @@ namespace OpenDental {
 					break;
 				}
 			}
+			if(Height==0) {
+				Height++;
+			}
 			using(Bitmap doubleBufferer=new Bitmap(lineNumberWidth,Height))
 			using(Graphics gDoubleBuffer=Graphics.FromImage(doubleBufferer))
 			{
@@ -222,7 +225,8 @@ namespace OpenDental {
 		}
 
 		private void menuItemPaste_Click(object sender,EventArgs e) {
-			this.Paste();
+			DataFormats.Format format=DataFormats.GetFormat("Text");
+			this.Paste(format);
 		}
 
 		private void menuItemCut_Click(object sender,EventArgs e) {

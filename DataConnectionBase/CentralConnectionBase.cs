@@ -86,5 +86,7 @@
 		SupplementalBackups,
 		///<summary>Database that stores hardware monitoring data.</summary>
 		HardwareMonitoring,
+		///<summary>Database for hosting secure email.</summary>
+		SecureEmail,
 	}
 }

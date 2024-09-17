@@ -88,6 +88,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		private bool _isExpanded;
 		private bool _isHover;
 		private bool _isMultiSelect=false;
+		private bool _isMouseDown;
 		///<summary>If selected index is -1, this can be used to store and retrieve the primary key. _textWhenMissing is what shows to the user.</summary>
 		private long _keyWhenMissing=0;//odd note: FormClaimCustomTrackingUpdate sets this to -1 to indicate none, which should be fine.
 		private SolidColorBrush _solidColorBrushHoverBackground=new SolidColorBrush(Color.FromArgb(10,0,100,255));//20% blue wash
@@ -113,6 +114,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			//Height=21;
 			Focusable=true;//so that .Focus() will work in Grid for example
 			MouseLeave+=comboBox_MouseLeave;
+			MouseLeftButtonDown+=comboBox_MouseLeftButtonDown;
 			MouseLeftButtonUp+=comboBox_MouseLeftButtonUp;
 			MouseMove+=comboBox_MouseMove;
 			Items=new ComboBoxItemCollection(this);
@@ -598,10 +600,18 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			SetColors();
 		}
 
+		private void comboBox_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
+			_isMouseDown=true;
+		}
+
 		private void comboBox_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
 			//We're using mouse up because if mouse down was used, and the new window fell on the cursor, and the window position had to be adjusted,
 			//then the mouse would still be down and it would automatically select a group of items.
 			//if(_windowComboPicker != null && _windowComboPicker.IsVisible){//this doesn't work because it would have already just closed when it lost focus
+			if(!_isMouseDown){//Check before setting false. Prevent MouseUp from triggering if MouseDown didn't occur on the combo box.
+				return;
+			}
+			_isMouseDown=false;
 			if(_isExpanded){
 				//_windowComboPicker.Close();//It closes automatically when it loses focus, so this isn't necessary
 				_isExpanded=false;

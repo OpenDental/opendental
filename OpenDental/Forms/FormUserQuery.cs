@@ -396,6 +396,9 @@ namespace OpenDental {
 					cell=cell.Replace("\n","");
 					cell=cell.Replace("\t","");
 					cell=cell.Replace("\"","");
+					if(delimiter=="," && cell.Contains(",")) {
+						cell='"'+cell+'"';//Surround with quotes so Excel does not split into two cells
+					}
 					line+=cell;
 					if(j<_gridResults.Columns.Count-1) {
 						line+=delimiter;

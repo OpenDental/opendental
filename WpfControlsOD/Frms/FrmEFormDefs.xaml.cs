@@ -41,6 +41,8 @@ namespace OpenDental {
 		///<summary></summary>
 		private void FillGrid() {
 			//This code is similar to that in FrmEFormPicker.
+			//Note that the EFormDefs from the db do not have any EFormFieldDefs attached. That happens when user double clicks.
+			//But internal EFormDefs do have their EFormFieldDefs attached.
 			_listEFormDefs=new List<EFormDef>();
 			List<EFormDef> listEFormDefsInternal=EFormInternal.GetAllInternal();
 			List<EFormDef> listEFormDefsCustom=EFormDefs.GetDeepCopy();
@@ -79,37 +81,74 @@ namespace OpenDental {
 		///<summary></summary>
 		private void grid_CellDoubleClick(object sender,GridClickEventArgs e) {
 			EFormDef eFormDef=_listEFormDefs[e.Row];
+			string description=eFormDef.Description;//Only relevant for IsInternal.
+			if(eFormDef.IsInternal){
+				//This works differently than sheets.
+				//When a user double clicks on an internal eFormDef, it opens the editor with a copy of the internal eFormDef.
+				//We must add the copy of the form along with all the fields to the db
+				//so that we have PKs available to attach languagepats to.
+				//If user then clicks Cancel or Delete, we have to delete them all.
+				eFormDef.DateTCreated=DateTime.Now;
+				EFormDefs.Insert(eFormDef);
+				for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++){
+					EFormFieldDefs.Insert(eFormDef.ListEFormFieldDefs[i]);
+				}
+			}
+			else{//custom, so the fields are in the cache
+				eFormDef.ListEFormFieldDefs=EFormFieldDefs.GetDeepCopy().FindAll(x=>x.EFormDefNum==eFormDef.EFormDefNum);
+			}
 			FrmEFormDefEdit frmEFormDefEdit=new FrmEFormDefEdit();
 			frmEFormDefEdit.EFormDefCur=eFormDef;
-			string description=eFormDef.Description;//in case they change it inside.
-			if(eFormDef.IsInternal){
-				//This is going to work differently than sheets. When a user double clicks on an internal eFormDef,
-				//it will open the editor with essentially a copy of the internal eFormDef.
-				//Nothing gets inserted into the database until the user clicks save in the editor.
-				frmEFormDefEdit.EFormDefCur.IsNew=true;//causes it to insert in that window when click Save.
-			}
-			else{//custom, so it's in cache
-				eFormDef.ListEFormFieldDefs=EFormFieldDefs.GetDeepCopy().FindAll(x=>x.EFormDefNum==eFormDef.EFormDefNum);//also works for 0 with new form.
-			}
 			frmEFormDefEdit.ShowDialog();
-			if(frmEFormDefEdit.IsInternalDeleted){
-				//They can't really delete an internal eForm, of course, but we don't tell them that.
-				//If they were in an internal form, then what we really do is mark that internal form as hidden.
-				EFormDef eFormDef2=new EFormDef();
-				eFormDef2.IsInternalHidden=true;
-				eFormDef2.Description=description;
-				EFormDefs.Insert(eFormDef2);
-			}
-			else if(frmEFormDefEdit.IsDialogCancel){
+			//frmEFormDefEdit.EFormDefCur.IsNew=true;//this is not needed because all decisions happen here, not inside the edit window.
+			if(frmEFormDefEdit.IsDialogCancel  && !eFormDef.IsInternal){
+				//nothing to do if they clicked Cancel on an existing eForm 
 				return;
 			}
-			else if(eFormDef.IsInternal){//this means they "saved" from an internal form.
-				//must mark the internal form as hidden because we only want to show their custom form
+			if(frmEFormDefEdit.IsDialogCancel || frmEFormDefEdit.IsDeleted){
+				//They either clicked Cancel or Delete for IsInternal,
+				//or they clicked Delete on a custom form. 
+				//All three situations have the exact same effect here.
+				//We must delete the form and the fields from the db
+				EFormDefs.Delete(eFormDef.EFormDefNum);
+				for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++) {
+					EFormFieldDefs.Delete(eFormDef.ListEFormFieldDefs[i].EFormFieldDefNum);
+				}
+				//Now we must delete all fields that were originally part of this form but were then marked for deletion
+				for(int i=0;i<frmEFormDefEdit.ListEFormFieldDefNumsToDelete.Count;i++){
+					EFormFieldDefs.Delete(frmEFormDefEdit.ListEFormFieldDefNumsToDelete[i]);//also deletes languagepats.
+				}
+			}
+			if(frmEFormDefEdit.IsDialogCancel  && eFormDef.IsInternal){
+				//We've deleted the copy of internal, so there's nothing left to do
+				return;
+			}
+			//Cancel is taken care of. There are 4 scenarios left for Delete and Save
+			if(eFormDef.IsInternal){
+				//They either deleted an internal form or "saved" from an internal form.
+				//In both cases, we must mark the internal form as hidden.
+				//For delete, this makes it go away.
+				//For save, they now see their new one instead.
 				EFormDef eFormDef2=new EFormDef();
 				eFormDef2.IsInternalHidden=true;
 				eFormDef2.Description=description;
 				EFormDefs.Insert(eFormDef2);
 			}
+			if(!frmEFormDefEdit.IsDeleted){
+				//They clicked save on either internal or custom
+				EFormDefs.Update(eFormDef);
+				//Any new fields were already inserted a few lines up or within the form editor.
+				//Also, when user clicked save, it converted fields back to fieldDefs, all properly attached to the eFormDef.
+				//But all of them still need to be updated to the db
+				for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++) {
+					EFormFieldDefs.Update(eFormDef.ListEFormFieldDefs[i]);
+				}
+				//Now we must delete all fields that were originally part of this form but were then marked for deletion
+				for(int i=0;i<frmEFormDefEdit.ListEFormFieldDefNumsToDelete.Count;i++){
+					EFormFieldDefs.Delete(frmEFormDefEdit.ListEFormFieldDefNumsToDelete[i]);//also deletes languagepats.
+				}
+			}
+			//In all 4 of the remaining scenarios, we must refresh what the user sees
 			EFormDefs.RefreshCache();
 			EFormFieldDefs.RefreshCache();
 			_isChanged=true;
@@ -257,17 +296,46 @@ namespace OpenDental {
 				return;
 			}
 			//could be blank or internal at this point
-			string description=frmEFormPicker.EFormDefSelected.Description;//in case they change it inside.
+			EFormDef eFormDef=frmEFormPicker.EFormDefSelected;
+			//The form will have all fields attached, whether it's internal or custom
+			//In both cases, we must add the eForm and all fields to the db right now
+			//so that we have PKs available to attach languagepats to.
+			string description=frmEFormPicker.EFormDefSelected.Description;//Only relevant for IsInternal.
+			eFormDef.DateTCreated=DateTime.Now;
+			EFormDefs.Insert(eFormDef);
+			for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++){//emptly list for blank form
+				EFormFieldDefs.Insert(eFormDef.ListEFormFieldDefs[i]);
+			}
 			FrmEFormDefEdit frmEFormDefEdit=new FrmEFormDefEdit();
-			frmEFormDefEdit.EFormDefCur=frmEFormPicker.EFormDefSelected;//fields already attached
-			frmEFormDefEdit.EFormDefCur.IsNew=true;
+			frmEFormDefEdit.EFormDefCur=eFormDef;//fields already attached and everything is already saved to db
+			//frmEFormDefEdit.EFormDefCur.IsNew=true;//this is not needed because all decisions happen here, not inside the edit window.
 			frmEFormDefEdit.ShowDialog();
-			//since they're adding, nothing to worry about deleting.
-			if(frmEFormDefEdit.IsDialogCancel){
+			if(frmEFormDefEdit.IsDialogCancel || frmEFormDefEdit.IsDeleted){
+				//They either clicked Cancel or Delete. Both have the exact same effect here.
+				EFormDefs.Delete(eFormDef.EFormDefNum);
+				for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++) {
+					EFormFieldDefs.Delete(eFormDef.ListEFormFieldDefs[i].EFormFieldDefNum);
+				}
+				//Now we must delete all fields that were originally part of this form but were then marked for deletion
+				for(int i=0;i<frmEFormDefEdit.ListEFormFieldDefNumsToDelete.Count;i++){
+					EFormFieldDefs.Delete(frmEFormDefEdit.ListEFormFieldDefNumsToDelete[i]);//also deletes languagepats.
+				}
 				return;
 			}
-			else if(frmEFormPicker.EFormDefSelected.IsInternal){//this means they "saved" from an internal form.
-				//must mark the internal form as hidden because we only want to show their custom form
+			//They clicked Save
+			EFormDefs.Update(eFormDef);
+			//Any new fields were already inserted a few lines up or within the form editor.
+			//Also, when user clicked save, it converted fields back to fieldDefs, all properly attached to the eFormDef.
+			//But all of them still need to be updated to the db
+			for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++) {
+				EFormFieldDefs.Update(eFormDef.ListEFormFieldDefs[i]);
+			}
+			//Now we must delete all fields that were originally part of this form but were then marked for deletion
+			for(int i=0;i<frmEFormDefEdit.ListEFormFieldDefNumsToDelete.Count;i++){
+				EFormFieldDefs.Delete(frmEFormDefEdit.ListEFormFieldDefNumsToDelete[i]);//also deletes languagepats.
+			}
+			if(eFormDef.IsInternal){//this means they "saved" from an internal form.
+				//We must mark the internal form as hidden because we only want to show their custom form
 				EFormDef eFormDef2=new EFormDef();
 				eFormDef2.IsInternalHidden=true;
 				eFormDef2.Description=description;
@@ -277,11 +345,9 @@ namespace OpenDental {
 			EFormFieldDefs.RefreshCache();
 			_isChanged=true;
 			FillGrid();
-			//can't think of any easy way to highlight the one they just added.
-			EFormDef eFormDef=_listEFormDefs.OrderByDescending(x=>x.DateTCreated).FirstOrDefault();
-			if(eFormDef!=null){
-				gridMain.SetSelected(_listEFormDefs.IndexOf(eFormDef));
-			}
+			//Highlight the one they just added
+			int idx=_listEFormDefs.FindIndex(x=>x.EFormDefNum==eFormDef.EFormDefNum);
+			gridMain.SetSelected(idx);
 		}
 
 		///<summary>Duplicates an internal or existing custom eFormDef. Adds " Copy" to the eFormDef description.</summary>

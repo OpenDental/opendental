@@ -24,14 +24,15 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmEFormSigBoxEdit() {
 			InitializeComponent();
-			Load+=FrmEFormsTextBoxEdit_Load;
-			PreviewKeyDown+=FrmEFormTextBoxEdit_PreviewKeyDown;
+			Load+=FrmEFormsSigBoxEdit_Load;
+			PreviewKeyDown+=FrmEFormSigBoxEdit_PreviewKeyDown;
 		}
 
-		private void FrmEFormsTextBoxEdit_Load(object sender, EventArgs e) {
+		private void FrmEFormsSigBoxEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			textLabel.Text=EFormFieldCur.ValueLabel;
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
+			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
@@ -67,7 +68,7 @@ namespace OpenDental {
 			textCondValue.Text=EFormL.PickCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
-		private void FrmEFormTextBoxEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
+		private void FrmEFormSigBoxEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
 			if(butSave.IsAltKey(Key.S,e)) {
 				butSave_Click(this,new EventArgs());
 			}
@@ -95,6 +96,12 @@ namespace OpenDental {
 			//end of validation
 			EFormFieldCur.ValueLabel=textLabel.Text;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
+			if(checkBorder.Checked==true){
+				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
+			}
+			else{
+				EFormFieldCur.Border=EnumEFormBorder.None;
+			}
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.SpaceBelow=spaceBelow;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;

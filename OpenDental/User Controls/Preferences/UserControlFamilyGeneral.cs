@@ -105,6 +105,7 @@ namespace OpenDental {
 		#region Methods - Public
 		public void FillFamilyGeneral() {
 			checkTextMsgOkStatusTreatAsNo.Checked=PrefC.GetBool(PrefName.TextMsgOkStatusTreatAsNo);
+			checkDoSendOptOutText.Checked=PrefC.GetBool(PrefName.TextOptOutSendNotification);
 			checkFamPhiAccess.Checked=PrefC.GetBool(PrefName.FamPhiAccess);
 			checkGoogleAddress.Checked=PrefC.GetBool(PrefName.ShowFeatureGoogleMaps);
 			checkSelectProv.Checked=PrefC.GetBool(PrefName.PriProvDefaultToSelectProv);
@@ -175,6 +176,7 @@ namespace OpenDental {
 			//Changed|=Prefs.UpdateBool(PrefName.PatientPhoneUsePhonenumberTable,checkPatientPhoneUsePhonenumberTable.Checked);
 			//claimSnapshotRunTime=new DateTime(1881,01,01,claimSnapshotRunTime.Hour,claimSnapshotRunTime.Minute,claimSnapshotRunTime.Second);
 			Changed|=Prefs.UpdateBool(PrefName.TextMsgOkStatusTreatAsNo,checkTextMsgOkStatusTreatAsNo.Checked);
+			Changed|=Prefs.UpdateBool(PrefName.TextOptOutSendNotification,checkDoSendOptOutText.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.FamPhiAccess,checkFamPhiAccess.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ShowFeatureGoogleMaps,checkGoogleAddress.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.PriProvDefaultToSelectProv,checkSelectProv.Checked);

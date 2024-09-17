@@ -28,15 +28,16 @@ namespace OpenDental {
 		///<summary></summary>
 		private void FrmEformSetup_Load(object sender, EventArgs e) {
 			Lang.F(this);
-			textVInt.Value=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			textVIntSpaceBelowEachField.Value=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
-			if(!textVInt.IsValid()){
+			if(!textVIntSpaceBelowEachField.IsValid()){
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
-			bool changed=Prefs.UpdateInt(PrefName.EformsSpaceBelowEachField,textVInt.Value);
+			bool changed=false;
+			changed|=Prefs.UpdateInt(PrefName.EformsSpaceBelowEachField,textVIntSpaceBelowEachField.Value);
 			if(changed){
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}

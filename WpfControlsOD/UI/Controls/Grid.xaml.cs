@@ -803,16 +803,13 @@ using WpfControls.UI;
 				//}
 				//}
 				gridRow.CanvasText.Children.Add(textBlock);
-				double heightCell;
+				double heightCell=heightFont+1;//for single line.
 				if(WrapText){
-					textBlock.Measure(new Size(textBlock.Width,double.PositiveInfinity));
-					textBlock.Arrange(new Rect(textBlock.DesiredSize));
-					heightCell=textBlock.ActualHeight;
-				}
-				else{
-					textBlock.Measure(new Size(textBlock.Width,textBlock.Height));
-					textBlock.Arrange(new Rect(0,0,textBlock.Width,textBlock.Height));
-					heightCell=textBlock.Height;
+					textBlock.Measure(new Size(textBlock.Width,double.PositiveInfinity));//Measure only fills in the DesiredSize property.
+					if(textBlock.DesiredSize.Height>heightCell){
+						textBlock.Arrange(new Rect(textBlock.DesiredSize));
+						heightCell=textBlock.ActualHeight;
+					}
 				}
 				if(heightCell>gridRow.State.HeightMain){
 					gridRow.State.HeightMain=(int)heightCell;

@@ -1420,7 +1420,7 @@ namespace OpenDentBusiness {
 		LanguageAndRegion,
 		///<summary>Initially set to Declined to Specify.  Indicates which language from the LanguagesUsedByPatients preference is the language that indicates the patient declined to specify.  Text must exactly match a language in the list of available languages.  Can be blank if the user deletes the language from the list of available languages.</summary>
 		LanguagesIndicateNone,
-		///<summary>Comma-delimited list of three-letter language names and custom language names.  The custom language names are the full string name and are not necessarily supported by Microsoft.</summary>
+		///<summary>Comma-delimited list of three-letter language names and custom language names. Example spa for Spanish or fra for French. The custom language names are the full string name and are not necessarily supported by Microsoft. An example value might be "Declined to Specify,spa,fra,Tahitian".</summary>
 		LanguagesUsedByPatients,
 		///<summary>A long. The DefNum of the Adjustment Type that is used to create late charges.</summary>
 		[PrefName(ValueType=PrefValueType.LONG)]
@@ -2312,6 +2312,8 @@ namespace OpenDentBusiness {
 		TerminalClosePassword,
 		///<summary>If true, treat Yes-No-Unknown status of Unknown as if it were a No.</summary>
 		TextMsgOkStatusTreatAsNo,
+		///<summary>If true, then this prompts the office to send an opt out notification text to the patient when changing a patient's 'Text OK' status from 'Yes' (not from unknown) to 'No'. Default is false to not prompt or send any text.</summary>
+		TextOptOutSendNotification,
 		TextingDefaultClinicNum,
 		///<summary>String. Template for sending a payment text for appointment balance.</summary>
 		TextPaymentLinkAppointmentBalance,

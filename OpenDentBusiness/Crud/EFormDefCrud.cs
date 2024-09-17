@@ -52,6 +52,7 @@ namespace OpenDentBusiness.Crud{
 				eFormDef.Description     = PIn.String(row["Description"].ToString());
 				eFormDef.DateTCreated    = PIn.DateT (row["DateTCreated"].ToString());
 				eFormDef.IsInternalHidden= PIn.Bool  (row["IsInternalHidden"].ToString());
+				eFormDef.MaxWidth        = PIn.Int   (row["MaxWidth"].ToString());
 				retVal.Add(eFormDef);
 			}
 			return retVal;
@@ -68,6 +69,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("Description");
 			table.Columns.Add("DateTCreated");
 			table.Columns.Add("IsInternalHidden");
+			table.Columns.Add("MaxWidth");
 			foreach(EFormDef eFormDef in listEFormDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eFormDef.EFormDefNum),
@@ -75,6 +77,7 @@ namespace OpenDentBusiness.Crud{
 					            eFormDef.Description,
 					POut.DateT (eFormDef.DateTCreated,false),
 					POut.Bool  (eFormDef.IsInternalHidden),
+					POut.Int   (eFormDef.MaxWidth),
 				});
 			}
 			return table;
@@ -94,7 +97,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EFormDefNum,";
 			}
-			command+="FormType,Description,DateTCreated,IsInternalHidden) VALUES(";
+			command+="FormType,Description,DateTCreated,IsInternalHidden,MaxWidth) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eFormDef.EFormDefNum)+",";
 			}
@@ -102,7 +105,8 @@ namespace OpenDentBusiness.Crud{
 				     POut.Int   ((int)eFormDef.FormType)+","
 				+"'"+POut.String(eFormDef.Description)+"',"
 				+    POut.DateT (eFormDef.DateTCreated)+","
-				+    POut.Bool  (eFormDef.IsInternalHidden)+")";
+				+    POut.Bool  (eFormDef.IsInternalHidden)+","
+				+    POut.Int   (eFormDef.MaxWidth)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -127,7 +131,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EFormDefNum,";
 			}
-			command+="FormType,Description,DateTCreated,IsInternalHidden) VALUES(";
+			command+="FormType,Description,DateTCreated,IsInternalHidden,MaxWidth) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eFormDef.EFormDefNum)+",";
 			}
@@ -135,7 +139,8 @@ namespace OpenDentBusiness.Crud{
 				     POut.Int   ((int)eFormDef.FormType)+","
 				+"'"+POut.String(eFormDef.Description)+"',"
 				+    POut.DateT (eFormDef.DateTCreated)+","
-				+    POut.Bool  (eFormDef.IsInternalHidden)+")";
+				+    POut.Bool  (eFormDef.IsInternalHidden)+","
+				+    POut.Int   (eFormDef.MaxWidth)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -151,7 +156,8 @@ namespace OpenDentBusiness.Crud{
 				+"FormType        =  "+POut.Int   ((int)eFormDef.FormType)+", "
 				+"Description     = '"+POut.String(eFormDef.Description)+"', "
 				+"DateTCreated    =  "+POut.DateT (eFormDef.DateTCreated)+", "
-				+"IsInternalHidden=  "+POut.Bool  (eFormDef.IsInternalHidden)+" "
+				+"IsInternalHidden=  "+POut.Bool  (eFormDef.IsInternalHidden)+", "
+				+"MaxWidth        =  "+POut.Int   (eFormDef.MaxWidth)+" "
 				+"WHERE EFormDefNum = "+POut.Long(eFormDef.EFormDefNum);
 			Db.NonQ(command);
 		}
@@ -175,6 +181,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="IsInternalHidden = "+POut.Bool(eFormDef.IsInternalHidden)+"";
 			}
+			if(eFormDef.MaxWidth != oldEFormDef.MaxWidth) {
+				if(command!="") { command+=",";}
+				command+="MaxWidth = "+POut.Int(eFormDef.MaxWidth)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -197,6 +207,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eFormDef.IsInternalHidden != oldEFormDef.IsInternalHidden) {
+				return true;
+			}
+			if(eFormDef.MaxWidth != oldEFormDef.MaxWidth) {
 				return true;
 			}
 			return false;

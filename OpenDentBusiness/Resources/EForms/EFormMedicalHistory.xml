@@ -5,6 +5,7 @@
   <FormType>MedicalHistory</FormType>
   <Description>Medical History</Description>
   <DateTCreated>2024-06-04T12:53:03</DateTCreated>
+  <MaxWidth>450</MaxWidth>
   <IsInternalHidden>false</IsInternalHidden>
   <ListEFormFieldDefs>
     <EFormFieldDef>

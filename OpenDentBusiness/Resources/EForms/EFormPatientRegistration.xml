@@ -5,6 +5,7 @@
   <FormType>PatientForm</FormType>
   <Description>Patient Registration</Description>
   <DateTCreated>2024-05-28T09:06:49</DateTCreated>
+  <MaxWidth>450</MaxWidth>
   <IsInternalHidden>false</IsInternalHidden>
   <ListEFormFieldDefs>
     <EFormFieldDef>

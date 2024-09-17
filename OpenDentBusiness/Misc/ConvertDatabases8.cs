@@ -1909,5 +1909,36 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End S53342
 		}//End of 24_2_27
+
+		private static void To24_2_28() {
+			//Start S53342
+			string command="ALTER TABLE eform ADD MaxWidth int NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformdef ADD MaxWidth int NOT NULL";
+			Db.NonQ(command);
+			command="UPDATE eformdef SET MaxWidth =450";
+			Db.NonQ(command);
+			command="UPDATE eform SET MaxWidth =450";
+			Db.NonQ(command);
+			//End S53342
+			//Start I53050
+			command="ALTER TABLE eformfield ADD Border tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfield ADD IsWidthPercentage tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfield ADD MinWidth int NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD Border tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD IsWidthPercentage tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD MinWidth int NOT NULL";
+			Db.NonQ(command);
+			//End I53050
+			//Start I53372
+			command="INSERT INTO preference (PrefName,ValueString) VALUES('TextOptOutSendNotification','0')";
+			Db.NonQ(command);
+			//End I53372
+		}//End of 24_2_28
 	}
 }

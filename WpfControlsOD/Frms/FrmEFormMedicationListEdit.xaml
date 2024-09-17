@@ -6,42 +6,42 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="1030" Height="745" 
+             Width="1105" Height="680" 
              Text="Edit MedicationList" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
-		<ui:Label Width="98" Height="18" Margin="104,93,0,0" Text="Title" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="418,93,0,0" Text="This shows above the list" VAlign="Center" Width="212" />
-		<ui:TextBox x:Name="textTitle" Width="213" Height="20" Margin="201,92,0,0" TabIndexOD="1"/>
-		<ui:Label Width="98" Height="18" Margin="102,537,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="259,537,0,0" Text="default is 100" VAlign="Center" Width="228" />
-		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="201,537,0,0" MaxVal="300" MinVal="50"/>
-		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="84,512,0,0" Width="130" Text="Required" CheckAlign="MiddleRight"/>
-		<ui:Label Height="18" Margin="220,513,0,0" Text="If checked, patient must either enter a med or check None" VAlign="Center" Width="383" />
-		<ui:Label Height="73" Margin="28,20,28,0" Text="A Medication List is a complex field. It consists of a list of medications with an optional second column for strength and frequency. Each medication has a Delete button to its right. There's also an Add button and a None checkbox at the bottom. The None checkbox only shows when the list is empty and allows satisfying a 'required' flag. There's no way to indicate 'no changes', but the office is free to add a separate No Changes checkbox below this list which doesn't actually do anything but which can serve as a visual indicator." HorizontalAlignment="Stretch" />
-		<ui:Label Width="98" Height="18" Margin="104,118,0,0" Text="Header Col 1" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textHeaderCol1" Width="213" Height="20" Margin="201,117,0,0"/>
-		<ui:Label Width="98" Height="18" Margin="104,143,0,0" Text="Header Col 2" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textHeaderCol2" Width="213" Height="20" Margin="201,142,0,0"/>
-		<ui:Label Width="98" Height="18" Margin="104,168,0,0" Text="Width Col 1" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="35" Margin="259,171,0,0" Text="If one of these is left blank, that column will fill remaining space. If both are left blank, they will split 50/50" VAlign="Center" Width="326" />
-		<ui:TextVInt x:Name="textVIntWidthCol1" Width="54" Height="20" Margin="201,167,0,0" MaxVal="800" ShowZero="False"/>
-		<ui:Label Width="98" Height="18" Margin="104,193,0,0" Text="Width Col 2" HAlign="Right" VAlign="Center" />
-		<ui:TextVInt x:Name="textVIntWidthCol2" Width="54" Height="20" Margin="201,192,0,0" MaxVal="800" ShowZero="False"/>
-		<ui:CheckBox x:Name="checkIsCol2Visible" Height="20" Margin="84,216,0,0" Width="130" Text="Is Col 2 Visible" CheckAlign="MiddleRight"/>
-		<ui:Label Height="18" Margin="220,217,0,0" Text="Unchecking this will hide the second column so only the medication names show" VAlign="Center" Width="512" />
-		<ui:CheckBox x:Name="checkPrefillCol1" Height="20" Margin="84,239,0,0" Width="130" Text="Pre-fill Col 1" CheckAlign="MiddleRight"/>
-		<ui:Label Height="18" Margin="220,240,0,0" Text="If unchecked, then the patient would enter their meds from scratch each time" VAlign="Center" Width="512" />
-		<ui:CheckBox x:Name="checkPrefillCol2" Height="20" Margin="84,262,0,0" Width="130" Text="Pre-fill Col 2" CheckAlign="MiddleRight"/>
-		<ui:Label x:Name="labelPreFilCol2" Height="18" Margin="220,263,0,0" Text="This gets filled from the med patient note field, which you might not want the patient to see" VAlign="Center" Width="512" />
-		<ui:CheckBox x:Name="checkSyncCol1" Height="20" Margin="84,285,0,0" Width="130" Text="Import Col 1" CheckAlign="MiddleRight"/>
-		<ui:Label Height="18" Margin="220,286,0,0" Text="Whether meds are prefilled or not, if this is checked, then meds will be imported back into the database after patient fills them out" VAlign="Center" Width="689" />
+		<ui:Label Width="98" Height="18" Margin="104,83,0,0" Text="Title" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="418,83,0,0" Text="This shows above the list" VAlign="Center" Width="212" />
+		<ui:TextBox x:Name="textTitle" Width="213" Height="20" Margin="201,82,0,0" TabIndexOD="1"/>
+		<ui:Label Width="98" Height="18" Margin="102,556,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="259,556,0,0" Text="default is 100" VAlign="Center" Width="228" />
+		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="201,556,0,0" MaxVal="300" MinVal="50"/>
+		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="84,508,0,0" Width="130" Text="Required" CheckAlign="MiddleRight"/>
+		<ui:Label Height="18" Margin="220,509,0,0" Text="If checked, patient must either enter a med or check None" VAlign="Center" Width="383" />
+		<ui:Label Height="73" Margin="28,10,28,0" Text="A Medication List is a complex field. It consists of a list of medications with an optional second column for strength and frequency. Each medication has a Delete button to its right. There's also an Add button and a None checkbox at the bottom. The None checkbox only shows when the list is empty and allows satisfying a 'required' flag. There's no way to indicate 'no changes', but the office is free to add a separate No Changes checkbox below this list which doesn't actually do anything but which can serve as a visual indicator." HorizontalAlignment="Stretch" />
+		<ui:Label Width="98" Height="18" Margin="104,108,0,0" Text="Header Col 1" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textHeaderCol1" Width="213" Height="20" Margin="201,107,0,0"/>
+		<ui:Label Width="98" Height="18" Margin="104,133,0,0" Text="Header Col 2" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textHeaderCol2" Width="213" Height="20" Margin="201,132,0,0"/>
+		<ui:Label Width="98" Height="18" Margin="104,158,0,0" Text="Width Col 1" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="35" Margin="259,161,0,0" Text="If one of these is left blank, that column will fill remaining space. If both are left blank, they will split 50/50" VAlign="Center" Width="326" />
+		<ui:TextVInt x:Name="textVIntWidthCol1" Width="54" Height="20" Margin="201,157,0,0" MaxVal="800" ShowZero="False"/>
+		<ui:Label Width="98" Height="18" Margin="104,183,0,0" Text="Width Col 2" HAlign="Right" VAlign="Center" />
+		<ui:TextVInt x:Name="textVIntWidthCol2" Width="54" Height="20" Margin="201,182,0,0" MaxVal="800" ShowZero="False"/>
+		<ui:CheckBox x:Name="checkIsCol2Visible" Height="20" Margin="84,206,0,0" Width="130" Text="Is Col 2 Visible" CheckAlign="MiddleRight"/>
+		<ui:Label Height="18" Margin="220,207,0,0" Text="Unchecking this will hide the second column so only the medication names show" VAlign="Center" Width="512" />
+		<ui:CheckBox x:Name="checkPrefillCol1" Height="20" Margin="84,229,0,0" Width="130" Text="Pre-fill Col 1" CheckAlign="MiddleRight"/>
+		<ui:Label Height="18" Margin="220,230,0,0" Text="If unchecked, then the patient would enter their meds from scratch each time" VAlign="Center" Width="512" />
+		<ui:CheckBox x:Name="checkPrefillCol2" Height="20" Margin="84,252,0,0" Width="130" Text="Pre-fill Col 2" CheckAlign="MiddleRight"/>
+		<ui:Label x:Name="labelPreFilCol2" Height="18" Margin="220,253,0,0" Text="This gets filled from the med patient note field, which you might not want the patient to see" VAlign="Center" Width="512" />
+		<ui:CheckBox x:Name="checkSyncCol1" Height="20" Margin="84,275,0,0" Width="130" Text="Import Col 1" CheckAlign="MiddleRight"/>
+		<ui:Label Height="18" Margin="220,276,0,0" Text="Whether meds are prefilled or not, if this is checked, then meds will be imported back into the database after patient fills them out" VAlign="Center" Width="689" />
 		<ui:Label
-		Width="314" VAlign="Center" Text="This column shows the name of the medication" Margin="418,118,0,0" Height="18" />
+		Width="314" VAlign="Center" Text="This column shows the name of the medication" Margin="418,108,0,0" Height="18" />
 		<ui:Label
-		Width="314" VAlign="Center" Text="This column shows the strength and frequency" Margin="418,144,0,0" Height="18" />
-		<ui:GroupBox x:Name="groupAdvanced" Width="819" Height="173" Margin="28,329,0,0" TabIndexOD="2">
+		Width="314" VAlign="Center" Text="This column shows the strength and frequency" Margin="418,134,0,0" Height="18" />
+		<ui:GroupBox x:Name="groupAdvanced" Width="819" Height="173" Margin="28,319,0,0" TabIndexOD="2">
 			<ui:Label Height="34" Margin="59,7,0,0" Text="It's hard to import strength and frequency back into the database, so these are unchecked by default. Neither of the two Append options should be used with Prefill." Width="689" />
 			<ui:CheckBox x:Name="checkSyncCol2Overwrite" Height="20" Margin="26,47,0,0" Width="159" Text="Import Col 2 Overwrite" CheckAlign="MiddleRight"/>
 			<ui:Label Height="20" Margin="191,50,0,0" Text="If checked, the value that the patient fills out will overwrite whatever was originally in the database" Width="562" />
@@ -52,8 +52,8 @@
 			<ui:CheckBox x:Name="checkSyncCol2AppendDate" Height="20" Margin="26,138,0,0" Width="159" Text="Import Col 2 Append Date" CheckAlign="MiddleRight"/>
 			<ui:CheckBox x:Name="checkSyncCol2OverwriteDate" Height="20" Margin="8,70,0,0" Width="177" Text="Import Col 2 Overwrite Date" CheckAlign="MiddleRight"/>
 		</ui:GroupBox>
-		<ui:CheckBox x:Name="checkAdvanced" Height="20" Margin="28,309,0,0" Width="200" Text="Show Advanced Settings"/>
-		<ui:GroupBox Height="80" Margin="42,592,0,0" Width="470" Text="Conditional Logic. This field will show...">
+		<ui:CheckBox x:Name="checkAdvanced" Height="20" Margin="28,299,0,0" Width="200" Text="Show Advanced Settings"/>
+		<ui:GroupBox Height="80" Margin="607,509,0,0" Width="470" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
 			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
@@ -61,8 +61,9 @@
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click" />
 		</ui:GroupBox>
-		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="201,563,0,0" />
-		<ui:Label Width="98" Height="18" Margin="102,563,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="259,563,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
+		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="201,582,0,0" />
+		<ui:Label Width="98" Height="18" Margin="102,582,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="259,582,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
+		<ui:CheckBox x:Name="checkBorder" Height="20" Margin="55,531,0,0" Width="159" Text="Show Border Box" CheckAlign="MiddleRight"/>
 	</Grid>
 </local:FrmODBase>

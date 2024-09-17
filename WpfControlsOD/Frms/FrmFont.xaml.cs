@@ -80,6 +80,9 @@ namespace OpenDental {
 				MsgBox.Show("Font scale cannot be less than 50.");
 			}
 			FontScale=textVIntFontScale.Value;
+			if(FontScale==0){
+				FontScale=100;
+			}
 			ColorText=panelColor.ColorBack;
 			if(checkNone.Checked==true){
 				ColorBack=null;

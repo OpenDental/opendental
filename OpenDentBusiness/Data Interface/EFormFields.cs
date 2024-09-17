@@ -65,6 +65,11 @@ namespace OpenDentBusiness{
 			eFormField.SpaceBelow=eFormFieldDef.SpaceBelow;
 			eFormField.ReportableName=eFormFieldDef.ReportableName;
 			eFormField.IsLocked=eFormFieldDef.IsLocked;
+			eFormField.Border=eFormFieldDef.Border;
+			eFormField.IsWidthPercentage=eFormFieldDef.IsWidthPercentage;
+			eFormField.MinWidth=eFormFieldDef.MinWidth;
+			//not a db field, but critical:
+			eFormField.EFormFieldDefNum=eFormFieldDef.EFormFieldDefNum;
 			return eFormField;
 		}
 
@@ -88,6 +93,10 @@ namespace OpenDentBusiness{
 			eFormFieldDef.SpaceBelow=eFormField.SpaceBelow;
 			eFormFieldDef.ReportableName=eFormField.ReportableName;
 			eFormFieldDef.IsLocked=eFormField.IsLocked;
+			eFormFieldDef.Border=eFormField.Border;
+			eFormFieldDef.IsWidthPercentage=eFormField.IsWidthPercentage;
+			eFormFieldDef.MinWidth=eFormField.MinWidth;
+			eFormFieldDef.EFormFieldDefNum=eFormField.EFormFieldDefNum;//this is the special non-db field
 			return eFormFieldDef;
 		}
 
@@ -153,6 +162,88 @@ namespace OpenDentBusiness{
 				return "";
 			}
 			return listPickListVis[idx];
+		}
+
+		///<summary>If isLastInHorizStack then this field can have "space below" set. It could be last in h-stack, or it could be all by itself. IdxNew can't be -1, but it could be list.Count, indicating that the field will be placed after all the others.</summary>
+		public static bool IsLastInHorizStack(EFormField eFormField,List<EFormField> listEFormFields){
+			//Meth.NoCheckMiddleTierRole();
+			int idx=listEFormFields.IndexOf(eFormField);
+			if(idx==listEFormFields.Count-1){//it's the last field
+				return true;
+			}
+			else if(listEFormFields[idx+1].FieldType==EnumEFormFieldType.PageBreak){
+				return true;
+			}
+			else if(!listEFormFields[idx+1].IsHorizStacking){//the next field is not horiz stacking
+				return true;
+			}
+			return false;
+		}
+
+		///<summary></summary>
+		public static bool IsPreviousStackable(EFormField eFormField,List<EFormField> listEFormFields){
+			//Meth.NoCheckMiddleTierRole();
+			int idx=listEFormFields.IndexOf(eFormField);
+			if(idx>0 && EFormFieldDefs.IsHorizStackableType(listEFormFields[idx-1].FieldType)){
+				return true;
+			}
+			return false;
+		}
+
+		///<summary>Guaranteed to never be -1. Could be list.Count, indicating that it's supposed to go after the last item in the list.</summary>
+		public static int GetLastIdxThisPage(List<EFormField> listEFormFields,int page){
+			//Meth.NoCheckMiddleTierRole();
+			int pageCur=1;
+			for(int i=0;i<listEFormFields.Count;i++){
+				if(i==listEFormFields.Count-1){
+					return listEFormFields.Count;//whether or not we have a page number match
+				}
+				if(listEFormFields[i].FieldType!=EnumEFormFieldType.PageBreak){
+					continue;
+				}
+				//so we have a page break
+				if(pageCur==page){
+					return i;//the idx of the page break itself
+				}
+				pageCur++;
+			}
+			return listEFormFields.Count;//even though it's impossible to get to this point.
+		}
+
+		///<summary>Returns all sibings in a horizontal stack, not including the field passed in. If not in a h-stack, then it returns empty list. Even if the current field is not stacking, it can be part of a stack group if the next field is set as stacking. Because this is used from the editor and the user can check or uncheck the stacking box, we must ignore eFormField.IsHorizStacking and instead pass in the current stacking state from the checkbox as isThisFieldHStacking.</summary>
+		public static List<EFormField> GetSiblingsInStack(EFormField eFormField,List<EFormField> listEFormFields,bool isThisFieldHStacking){
+			//Meth.NoCheckMiddleTierRole();
+			List<EFormField> listEFormFieldsRet=new List<EFormField>();
+			//work backward
+			int idx=listEFormFields.IndexOf(eFormField);
+			bool isPreviousSibling=false;
+			if(idx>0 && EFormFieldDefs.IsHorizStackableType(listEFormFields[idx-1].FieldType)//previous must be stackable (probably already enforced)
+				&& isThisFieldHStacking)//and we are stacking
+			{
+				isPreviousSibling=true;
+			}
+			if(isPreviousSibling){
+				listEFormFieldsRet.Add(listEFormFields[idx-1]);
+				//now we can work backward and check to see if previous ones are actually stacked
+				for(int i=idx-1;i>=0;i--){
+					if(!listEFormFields[i].IsHorizStacking){
+						break;//we've reached the end of stacking
+					}
+					//this one was already added.
+					//If it's stacked, then that means we add the previous field (idx-2) and keep going
+					listEFormFieldsRet.Add(listEFormFields[i-1]);
+					//this won't crash at zero because the 0 field won't be stacked.
+				}
+			}
+			//now work forward
+			for(int i=idx+1;i<listEFormFields.Count;i++){
+				if(!listEFormFields[i].IsHorizStacking){
+					break;
+				}
+				//this one is stacked, so add it to our list and keep going
+				listEFormFieldsRet.Add(listEFormFields[i]);
+			}
+			return listEFormFieldsRet;
 		}
 		
 		/*

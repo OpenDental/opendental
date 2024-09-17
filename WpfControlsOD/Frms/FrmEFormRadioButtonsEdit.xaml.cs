@@ -41,6 +41,7 @@ namespace OpenDental {
 			checkLabelLeft.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.LeftLeft;
 			checkLabelRight.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.Right;
 			textVIntWidth.Value=EFormFieldCur.Width;
+			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			List<string> listAvailRadio=EFormFieldsAvailable.GetList_RadioButtons();
 			comboDbLink.Items.AddList(listAvailRadio);
 			if(EFormFieldCur.DbLink==""){//None
@@ -505,6 +506,12 @@ Any or all items are allowed to have no label by leaving that value in the first
 			else{
 				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.TopLeft;
 				EFormFieldCur.Width=0;
+			}
+			if(checkBorder.Checked==true){
+				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
+			}
+			else{
+				EFormFieldCur.Border=EnumEFormBorder.None;
 			}
 			if(comboDbLink.SelectedIndex==0){//None
 				EFormFieldCur.DbLink="";

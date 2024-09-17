@@ -53,6 +53,7 @@ namespace OpenDentBusiness.Crud{
 				eForm.DateTimeShown= PIn.DateT (row["DateTimeShown"].ToString());
 				eForm.Description  = PIn.String(row["Description"].ToString());
 				eForm.DateTEdited  = PIn.DateT (row["DateTEdited"].ToString());
+				eForm.MaxWidth     = PIn.Int   (row["MaxWidth"].ToString());
 				retVal.Add(eForm);
 			}
 			return retVal;
@@ -70,6 +71,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DateTimeShown");
 			table.Columns.Add("Description");
 			table.Columns.Add("DateTEdited");
+			table.Columns.Add("MaxWidth");
 			foreach(EForm eForm in listEForms) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eForm.EFormNum),
@@ -78,6 +80,7 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (eForm.DateTimeShown,false),
 					            eForm.Description,
 					POut.DateT (eForm.DateTEdited,false),
+					POut.Int   (eForm.MaxWidth),
 				});
 			}
 			return table;
@@ -97,7 +100,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EFormNum,";
 			}
-			command+="FormType,PatNum,DateTimeShown,Description,DateTEdited) VALUES(";
+			command+="FormType,PatNum,DateTimeShown,Description,DateTEdited,MaxWidth) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eForm.EFormNum)+",";
 			}
@@ -106,7 +109,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (eForm.PatNum)+","
 				+    POut.DateT (eForm.DateTimeShown)+","
 				+"'"+POut.String(eForm.Description)+"',"
-				+    POut.DateT (eForm.DateTEdited)+")";
+				+    POut.DateT (eForm.DateTEdited)+","
+				+    POut.Int   (eForm.MaxWidth)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -131,7 +135,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EFormNum,";
 			}
-			command+="FormType,PatNum,DateTimeShown,Description,DateTEdited) VALUES(";
+			command+="FormType,PatNum,DateTimeShown,Description,DateTEdited,MaxWidth) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eForm.EFormNum)+",";
 			}
@@ -140,7 +144,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (eForm.PatNum)+","
 				+    POut.DateT (eForm.DateTimeShown)+","
 				+"'"+POut.String(eForm.Description)+"',"
-				+    POut.DateT (eForm.DateTEdited)+")";
+				+    POut.DateT (eForm.DateTEdited)+","
+				+    POut.Int   (eForm.MaxWidth)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -157,7 +162,8 @@ namespace OpenDentBusiness.Crud{
 				+"PatNum       =  "+POut.Long  (eForm.PatNum)+", "
 				+"DateTimeShown=  "+POut.DateT (eForm.DateTimeShown)+", "
 				+"Description  = '"+POut.String(eForm.Description)+"', "
-				+"DateTEdited  =  "+POut.DateT (eForm.DateTEdited)+" "
+				+"DateTEdited  =  "+POut.DateT (eForm.DateTEdited)+", "
+				+"MaxWidth     =  "+POut.Int   (eForm.MaxWidth)+" "
 				+"WHERE EFormNum = "+POut.Long(eForm.EFormNum);
 			Db.NonQ(command);
 		}
@@ -185,6 +191,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="DateTEdited = "+POut.DateT(eForm.DateTEdited)+"";
 			}
+			if(eForm.MaxWidth != oldEForm.MaxWidth) {
+				if(command!="") { command+=",";}
+				command+="MaxWidth = "+POut.Int(eForm.MaxWidth)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -210,6 +220,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eForm.DateTEdited != oldEForm.DateTEdited) {
+				return true;
+			}
+			if(eForm.MaxWidth != oldEForm.MaxWidth) {
 				return true;
 			}
 			return false;

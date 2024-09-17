@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Newtonsoft.Json;
 using OpenDentBusiness;
 using WpfControls.UI;
@@ -21,9 +23,14 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		///<summary>This is the object we are editing. After load, the list of attached EFormFieldDefs must be ignored. Instead, refer to CtrlEFormFill.ListEFormFields.</summary>
 		public EFormDef EFormDefCur;
 		private bool _isLoaded;
-		///<summary>This gets set to true if the user clicked Delete on an internal form.</summary>
-		public bool IsInternalDeleted;
 		private ContextMenu contextMenu;
+		private DispatcherTimer _dispatcherTimer;
+		///<summary>This contains all the EFormFields that were deleted during this session, but only if they were originally part of the eForm. Any field that was created in this session and then deleted does not get included here. Those get truly deleted when user clicks Delete within each field edit window. This list is public because the parent form does all the actual deletions.</summary>
+		public List<long> ListEFormFieldDefNumsToDelete;
+		///<summary>After closing this form, this tracks whether user clicked delete.</summary>
+		public bool IsDeleted;
+		 ///<summary>We don't fire off a signal to update the language cache on other computers until we hit Save in this window. So each edit window has a variable to keep track of whether there are any new translations. That bubbles up to this variable.</summary>
+		private bool _isChangedLanCache;
 
 		#region Constructor
 		///<summary></summary>
@@ -32,77 +39,67 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			Load+=FrmEFormDefEdit_Load;
 			PreviewKeyDown+=FrmEFormDefEdit_PreviewKeyDown;
 			SizeChanged+=FrmEFormDefEdit_SizeChanged;
+			FormClosed+=FrmEFormDefEdit_FormClosed;
 			//gridMain.CellDoubleClick+=gridMain_CellDoubleClick;
 			ctrlEFormFill.IsSetupMode=true;
 			ctrlEFormFill.EventDoubleClickField+=CtrlEFormFill_EventDoubleClickField;
+			textVIntMaxWidth.TextChanged+=TextVIntMaxWidth_TextChanged;
+			_dispatcherTimer=new DispatcherTimer();
+			_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(500);
+			_dispatcherTimer.Tick+=_dispatcherTimer_Tick;
 		}
 		#endregion Constructor
 
 		#region Methods - private Event Handlers
+		private void _dispatcherTimer_Tick(object sender,EventArgs e) {
+			SetCtrlWidth();
+			_dispatcherTimer.Stop();
+		}
 
 		///<summary></summary>
-		private void FrmEFormDefEdit_Load(object sender, EventArgs e) {
-			Lang.F(this);
-			ctrlEFormFill.ListEFormFields=EFormFields.FromListDefs(EFormDefCur.ListEFormFieldDefs);
-			ctrlEFormFill.RefreshLayout();
-			textDescription.Text=EFormDefCur.Description;
-			comboType.Items.AddEnums<EnumEFormType>();
-			comboType.SetSelectedEnum(EFormDefCur.FormType);
-			contextMenu=new ContextMenu(this);
-			//gridMain.ContextMenu=contextMenu;
-			//contextMenu.Add(new MenuItem("Delete",menuDelete_Click));
-			if(!EFormDefCur.IsInternal) {
-				labelTitle.Text="This is a custom eForm, not internal.";
+		private void ComboLanguage_SelectionChangeCommitted(object sender,EventArgs e) {
+			if(comboLanguage.SelectedIndex==0){
+				ctrlEFormFill.LanguageShowing="";
 			}
-			_isLoaded=true;
-		}
-
-		private void FrmEFormDefEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(Keyboard.Modifiers!=ModifierKeys.Control) {
-				return;
+			else{
+				ctrlEFormFill.LanguageShowing=comboLanguage.SelectedItem.ToString();
 			}
-			if(e.Key==Key.X){
-				butCut_Click(this,new EventArgs());
-			}
-			if(e.Key==Key.C){
-				butCopy_Click(this,new EventArgs());
-			}
-			if(e.Key==Key.V){
-				butPaste_Click(this,new EventArgs());
-			}
-		}
-
-		private void FrmEFormDefEdit_SizeChanged(object sender,SizeChangedEventArgs e) {
-			if(!_isLoaded){
-				return;
-			}
-			ctrlEFormFill.RefreshLayout();
+			ctrlEFormFill.RefreshLayout();//This will now have the new translations
 		}
 
 		///<summary></summary>
 		private void CtrlEFormFill_EventDoubleClickField(object sender,int idx) {
 			bool isPreviousStackable=false;
-			if(idx>0 && EFormFieldDefs.IsHorizStackable(ctrlEFormFill.ListEFormFields[idx-1].FieldType)){
+			if(idx>0 && EFormFieldDefs.IsHorizStackableType(ctrlEFormFill.ListEFormFields[idx-1].FieldType)){
 				isPreviousStackable=true;
 			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.TextField){
 				FrmEFormTextBoxEdit frmEFormTextBoxEdit=new FrmEFormTextBoxEdit();
 				frmEFormTextBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
 				frmEFormTextBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
-				frmEFormTextBoxEdit.IsPreviousStackable=isPreviousStackable;
-				frmEFormTextBoxEdit.IsLastInHorizStack=false;
-				if(ctrlEFormFill.ListIndicesLastInHorizStack.Exists(x=>x==idx)){
-					frmEFormTextBoxEdit.IsLastInHorizStack=true;
+				if(comboLanguage.SelectedIndex>0){
+					frmEFormTextBoxEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
 				}
 				frmEFormTextBoxEdit.ShowDialog();
+				_isChangedLanCache|=frmEFormTextBoxEdit.IsChangedLanCache;
 				if(frmEFormTextBoxEdit.IsDialogCancel){
 					return;
 				}
-				if(frmEFormTextBoxEdit.EFormFieldCur==null){
-					ctrlEFormFill.Delete(idx);
-					ctrlEFormFill.RefreshLayout();
-					return;
+				if(ctrlEFormFill.ListEFormFields[idx].IsDeleted){
+					if(ctrlEFormFill.ListEFormFields[idx].IsNew){//the field was added in this session previously
+						//Immediately delete from db
+						EFormFieldDefs.Delete(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);//also deletes languagepats.
+					}
+					else{
+						//Mark it for later deletion. Don't delete yet because user might cancel out of this form window.
+						ListEFormFieldDefNumsToDelete.Add(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);//these will get deleted when user clicks Save
+					}
+					//Whether new field or existing field, remove it from the list
+					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
 				}
+				//Whether saved or deleted, we need to refresh the layout
+				ctrlEFormFill.RefreshLayout();
+				return;
 			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.Label){
 				FrmEFormLabelEdit frmEFormLabelEdit=new FrmEFormLabelEdit();
@@ -119,7 +116,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 					return;
 				}
 				if(frmEFormLabelEdit.EFormFieldCur==null){
-					ctrlEFormFill.Delete(idx);
+					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
 					ctrlEFormFill.RefreshLayout();
 					return;
 				}
@@ -139,7 +136,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 					return;
 				}
 				if(frmEFormDateFieldEdit.EFormFieldCur==null){
-					ctrlEFormFill.Delete(idx);
+					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
 					ctrlEFormFill.RefreshLayout();
 					return;
 				}
@@ -147,22 +144,30 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.CheckBox){
 				FrmEFormCheckBoxEdit frmEFormCheckBoxEdit=new FrmEFormCheckBoxEdit();
 				frmEFormCheckBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
-				frmEFormCheckBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
-				frmEFormCheckBoxEdit.EFormDefCur=EFormDefCur;
-				frmEFormCheckBoxEdit.IsPreviousStackable=isPreviousStackable;
-				frmEFormCheckBoxEdit.IsLastInHorizStack=false;
-				if(ctrlEFormFill.ListIndicesLastInHorizStack.Exists(x=>x==idx)){
-					frmEFormCheckBoxEdit.IsLastInHorizStack=true;
+				frmEFormCheckBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
+				if(comboLanguage.SelectedIndex>0){
+					frmEFormCheckBoxEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
 				}
 				frmEFormCheckBoxEdit.ShowDialog();
+				_isChangedLanCache|=frmEFormCheckBoxEdit.IsChangedLanCache;
 				if(frmEFormCheckBoxEdit.IsDialogCancel){
 					return;
 				}
-				if(frmEFormCheckBoxEdit.EFormFieldCur==null){
-					ctrlEFormFill.Delete(idx);
-					ctrlEFormFill.RefreshLayout();
-					return;
+				if(ctrlEFormFill.ListEFormFields[idx].IsDeleted){
+					if(ctrlEFormFill.ListEFormFields[idx].IsNew){//the field was added in this session previously
+						//Immediately delete from db
+						EFormFieldDefs.Delete(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);//also deletes languagepats.
+					}
+					else{
+						//Mark it for later deletion. Don't delete yet because user might cancel out of this form window.
+						ListEFormFieldDefNumsToDelete.Add(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);//these will get deleted when user clicks Save
+					}
+					//Whether new field or existing field, remove it from the list
+					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
 				}
+				//Whether saved or deleted, we need to refresh the layout
+				ctrlEFormFill.RefreshLayout();
+				return;
 			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.RadioButtons){
 				FrmEFormRadioButtonsEdit frmEFormRadioButtonsEdit=new FrmEFormRadioButtonsEdit();
@@ -173,7 +178,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 					return;
 				}
 				if(frmEFormRadioButtonsEdit.EFormFieldCur==null){
-					ctrlEFormFill.Delete(idx);
+					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
 					ctrlEFormFill.RefreshLayout();
 					return;
 				}
@@ -188,7 +193,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 					return;
 				}
 				if(frmEFormSigBoxEdit.EFormFieldCur==null){
-					ctrlEFormFill.Delete(idx);
+					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
 					ctrlEFormFill.RefreshLayout();
 					return;
 				}
@@ -203,7 +208,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 					return;
 				}
 				if(frmEFormMedicationListEdit.EFormFieldCur==null){
-					ctrlEFormFill.Delete(idx);
+					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
 					ctrlEFormFill.RefreshLayout();
 					return;
 				}
@@ -211,26 +216,104 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			ctrlEFormFill.RefreshLayout();
 			return;
 		}
+
+		private void FrmEFormDefEdit_FormClosed(object sender,EventArgs e) {
+			if(_isChangedLanCache){
+				DataValid.SetInvalid(InvalidType.Languages);
+			}
+		}
+
+		///<summary></summary>
+		private void FrmEFormDefEdit_Load(object sender, EventArgs e) {
+			Lang.F(this);
+			ctrlEFormFill.ListEFormFields=EFormFields.FromListDefs(EFormDefCur.ListEFormFieldDefs);
+			ctrlEFormFill.RefreshLayout();
+			textDescription.Text=EFormDefCur.Description;
+			comboType.Items.AddEnums<EnumEFormType>();
+			comboType.SetSelectedEnum(EFormDefCur.FormType);
+			contextMenu=new ContextMenu(this);
+			WpfControls.EFormL.FillComboLanguage(comboLanguage);
+			labelLanguage.Visibility=comboLanguage.Visibility;//hide them both if no patient languages set up
+			comboLanguage.SelectionChangeCommitted+=ComboLanguage_SelectionChangeCommitted;
+			//gridMain.ContextMenu=contextMenu;
+			//contextMenu.Add(new MenuItem("Delete",menuDelete_Click));
+			if(!EFormDefCur.IsInternal) {
+				labelTitle.Text="This is a custom eForm, not internal.";
+			}
+			_isLoaded=true;
+			textVIntMaxWidth.Value=EFormDefCur.MaxWidth;//this triggers SetCtrlWidth
+			ListEFormFieldDefNumsToDelete=new List<long>();
+		}
+
+		private void FrmEFormDefEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
+			if(Keyboard.Modifiers!=ModifierKeys.Control) {
+				return;
+			}
+			if(e.Key==Key.X){
+				butCut_Click(this,new EventArgs());
+			}
+			if(e.Key==Key.C){
+				butCopy_Click(this,new EventArgs());
+			}
+			if(e.Key==Key.V){
+				butPaste_Click(this,new EventArgs());
+			}
+		}
+
+		private void FrmEFormDefEdit_SizeChanged(object sender,SizeChangedEventArgs e) {
+			//if(!_isLoaded){
+			//	return;
+			//}
+			//ctrlEFormFill.RefreshLayout();
+			SetCtrlWidth();
+		}
+
+		private void TextVIntMaxWidth_TextChanged(object sender,EventArgs e) {
+			if(_dispatcherTimer.IsEnabled){
+				_dispatcherTimer.Stop();
+			}
+			_dispatcherTimer.Start();
+		}
 		#endregion Methods - private Event Handlers
 
 		#region Methods - private Event Handlers, Add buttons
 		private void butTextField_Click(object sender,EventArgs e) {
+			//we must insert an eFormFieldDef in order to have a PK for languages.
+			//It can be completely empty except for the PK. Nothing else matters.
+			EFormFieldDef eFormFieldDef=new EFormFieldDef();
+			EFormFieldDefs.Insert(eFormFieldDef);
+			EFormField eFormField=EFormFields.FromDef(eFormFieldDef);
 			FrmEFormTextBoxEdit frmEFormTextBoxEdit=new FrmEFormTextBoxEdit();
-			EFormField eFormField=new EFormField();
 			eFormField.IsNew=true;
+			//The reason for setting IsNew is so that if user does click Save here, they might still edit this same field later.
+			//If they click delete at that time, then we must handle that properly by completely deleting it instead of just marking it for later deletion.
 			eFormField.FontScale=100;
 			eFormField.FieldType=EnumEFormFieldType.TextField;
 			frmEFormTextBoxEdit.EFormFieldCur=eFormField;
 			frmEFormTextBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
+			int idxNew=ctrlEFormFill.GetSelectedIndex();
+			if(idxNew==-1){
+				idxNew=EFormFields.GetLastIdxThisPage(ctrlEFormFill.ListEFormFields,ctrlEFormFill.GetPageShowing());
+				//guaranteed to not be -1
+			}
+			//We will actually add it to the list.
+			//So any new field will be in the db and in the list prior to launching edit window
+			ctrlEFormFill.ListEFormFields.Insert(idxNew,eFormField);
+			if(comboLanguage.SelectedIndex>0){
+				frmEFormTextBoxEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
+			}
 			frmEFormTextBoxEdit.ShowDialog();
-			if(frmEFormTextBoxEdit.IsDialogCancel){
+			_isChangedLanCache|=frmEFormTextBoxEdit.IsChangedLanCache;
+			if(frmEFormTextBoxEdit.IsDialogCancel || eFormField.IsDeleted){
+				//They either clicked Cancel or Delete.
+				//Both actions are identical for a new field.
+				EFormFieldDefs.Delete(eFormField.EFormFieldDefNum);//also deletes languagepats.
+				ctrlEFormFill.ListEFormFields.Remove(eFormField);
 				return;
 			}
-			if(frmEFormTextBoxEdit.EFormFieldCur==null){
-				//they clicked Delete for some reason, which is the same as cancel.
-				return;
-			}
-			AddNewField(eFormField);//This will refresh the layout and set a selected field.
+			//deprecated: AddNewField(eFormField);
+			ctrlEFormFill.RefreshLayout();
+			ctrlEFormFill.SetSelected(idxNew);
 		}
 
 		private void butLabel_Click(object sender,EventArgs e) {
@@ -242,6 +325,14 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			frmEFormLabelEdit.EFormFieldCur=eFormField;
 			frmEFormLabelEdit.EFormDefCur=EFormDefCur;
 			frmEFormLabelEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+			int idx=ctrlEFormFill.GetSelectedIndex();
+			if(idx==-1){//no fields selected, this field will be placed at the end of the current page.
+				frmEFormLabelEdit.IsLastInHorizStack=true;
+			}
+			if(idx!=-1 && !ctrlEFormFill.ListEFormFields[idx].IsHorizStacking){
+				//if there is an index selected and the field at that index is not horizontal stacking, this new field will be positioned last (or by itself) in a stack.
+				frmEFormLabelEdit.IsLastInHorizStack=true;
+			}
 			frmEFormLabelEdit.ShowDialog();
 			if(frmEFormLabelEdit.IsDialogCancel){
 				return;
@@ -262,6 +353,14 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			frmEFormDateFieldEdit.EFormFieldCur=eFormField;
 			frmEFormDateFieldEdit.EFormDefCur=EFormDefCur;
 			frmEFormDateFieldEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+			int idx=ctrlEFormFill.GetSelectedIndex();
+			if(idx==-1){//no fields selected, this field will be placed at the end of the current page.
+				frmEFormDateFieldEdit.IsLastInHorizStack=true;
+			}
+			if(idx!=-1 && !ctrlEFormFill.ListEFormFields[idx].IsHorizStacking){
+				//if there is an index selected and the field at that index is not horizontal stacking, this new field will be positioned last (or by itself) in a stack.
+				frmEFormDateFieldEdit.IsLastInHorizStack=true;
+			}
 			frmEFormDateFieldEdit.ShowDialog();
 			if(frmEFormDateFieldEdit.IsDialogCancel){
 				return;
@@ -274,23 +373,34 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		}
 
 		private void butCheckBox_Click(object sender,EventArgs e) {
+			//See comments in butTextField_Click.
+			EFormFieldDef eFormFieldDef=new EFormFieldDef();
+			EFormFieldDefs.Insert(eFormFieldDef);
+			EFormField eFormField=EFormFields.FromDef(eFormFieldDef);
 			FrmEFormCheckBoxEdit frmEFormCheckBoxEdit=new FrmEFormCheckBoxEdit();
-			EFormField eFormField=new EFormField();
 			eFormField.IsNew=true;
 			eFormField.FontScale=100;
 			eFormField.FieldType=EnumEFormFieldType.CheckBox;
 			frmEFormCheckBoxEdit.EFormFieldCur=eFormField;
-			frmEFormCheckBoxEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+			frmEFormCheckBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormCheckBoxEdit.EFormDefCur=EFormDefCur;
+			int idxNew=ctrlEFormFill.GetSelectedIndex();
+			if(idxNew==-1){
+				idxNew=EFormFields.GetLastIdxThisPage(ctrlEFormFill.ListEFormFields,ctrlEFormFill.GetPageShowing());
+			}
+			ctrlEFormFill.ListEFormFields.Insert(idxNew,eFormField);
+			if(comboLanguage.SelectedIndex>0){
+				frmEFormCheckBoxEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
+			}
 			frmEFormCheckBoxEdit.ShowDialog();
-			if(frmEFormCheckBoxEdit.IsDialogCancel){
+			_isChangedLanCache|=frmEFormCheckBoxEdit.IsChangedLanCache;
+			if(frmEFormCheckBoxEdit.IsDialogCancel || eFormField.IsDeleted){
+				EFormFieldDefs.Delete(eFormField.EFormFieldDefNum);
+				ctrlEFormFill.ListEFormFields.Remove(eFormField);
 				return;
 			}
-			if(frmEFormCheckBoxEdit.EFormFieldCur==null){
-				//they clicked Delete for some reason, which is the same as cancel.
-				return;
-			}
-			AddNewField(eFormField);//This will refresh the layout and set a selected field.
+			ctrlEFormFill.RefreshLayout();
+			ctrlEFormFill.SetSelected(idxNew);
 		}
 
 		private void butRadioButtons_Click(object sender,EventArgs e) {
@@ -374,17 +484,12 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete entire form?")){
 				return;
 			}
-			if(EFormDefCur.IsInternal){
-				IsInternalDeleted=true;
-				IsDialogCancel=true;
-				return;
-			}
-			if(EFormDefCur.IsNew){
-				IsDialogCancel=true;
-				return;
-			}
-			EFormFieldDefs.DeleteForForm(EFormDefCur.EFormDefNum);
-			EFormDefs.Delete(EFormDefCur.EFormDefNum);
+			//The form deletion actually happens in the parent.
+			//Delete of a new form is equivalent to cancel, and both of those happen in the parent.
+			//Delete of an existing form is also handled in the parent.
+			//Any fields that were added in this session and then deleted are already handled and gone.
+			//Any fields that were originally part of the eFormDef are still present and will be handled in the parent.
+			IsDeleted=true;
 			IsDialogOK=true;
 		}
 
@@ -403,21 +508,28 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			//End of validation
 			EFormDefCur.Description=textDescription.Text;
 			EFormDefCur.FormType=comboType.GetSelected<EnumEFormType>();
-			//This is where everything goes to the database
-			if(EFormDefCur.IsNew){
-				EFormDefCur.DateTCreated=DateTime.Now;
-				EFormDefs.Insert(EFormDefCur);
+			int maxWidth=450;
+			if(textVIntMaxWidth.IsValid()){//instead of telling user about this, we will just ignore errors
+				maxWidth=textVIntMaxWidth.Value;
+				if(maxWidth<50){
+					maxWidth=50;
+				}
+				if(maxWidth>1000){
+					maxWidth=1000;
+				}
 			}
-			else{
-				EFormDefs.Update(EFormDefCur);
-			}
-			//Delete all of the fieldDefs that are on the form from the database and re-insert them.
-			EFormFieldDefs.DeleteForForm(EFormDefCur.EFormDefNum);
-			for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
-				EFormFieldDef eFormFieldDef=EFormFields.ToDef(ctrlEFormFill.ListEFormFields[i]);
-				eFormFieldDef.EFormDefNum=EFormDefCur.EFormDefNum;
-				eFormFieldDef.ItemOrder=i;
-				EFormFieldDefs.Insert(eFormFieldDef);//ignores any existing PK when inserting
+			EFormDefCur.MaxWidth=maxWidth;
+			//All database changes actually happen in the parent form.
+			//Even all the fields that were marked for deletion in ListEFormFieldDefNumsToDelete
+			//We must convert all the EFormFields back into their corresponding EFormFieldDefs, properly attached to the EFormDef
+			//so that the parent can take appropriate action.
+			EFormDefCur.ListEFormFieldDefs.Clear();
+			for(int i = 0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
+				EFormFieldDef eFormFieldDef = EFormFields.ToDef(ctrlEFormFill.ListEFormFields[i]);//this also handles the PK
+				eFormFieldDef.EFormDefNum=EFormDefCur.EFormDefNum;//this won't change in the db
+				eFormFieldDef.ItemOrder=i;//only place where this is fixed
+				//EFormFieldDefs.Update(eFormFieldDef);//this happens in parent
+				EFormDefCur.ListEFormFieldDefs.Add(eFormFieldDef);
 			}
 			IsDialogOK=true;
 		}
@@ -468,8 +580,9 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			for(int i=0;i<listSelectedIndices.Count;i++){
 				EFormField eFormField=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].Copy();
 				eFormField.TagOD=null;
-				//none of this actually matters because when this form is saved, these fields get reset anyway
+				//none of this actually matters because when this field is pasted these get reset anyway
 				eFormField.EFormFieldNum=0;
+				eFormField.EFormFieldDefNum=0;
 				eFormField.EFormNum=0;
 				eFormField.ItemOrder=0;
 				listEFormFields.Add(eFormField);
@@ -509,31 +622,18 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				return;
 			}
 			List<EFormField> listEFormFields=JsonConvert.DeserializeObject<List<EFormField>>(str);
-			if(ctrlEFormFill.ListEFormFields.Count==0) {//This handles when the form is empty and adding the first field.
-				ctrlEFormFill.ListEFormFields.AddRange(listEFormFields);
-				ctrlEFormFill.RefreshLayout();
-				return;
+			for(int i=0;i<listEFormFields.Count;i++){
+				//we must insert an eFormFieldDef in order to have a PK for languages.
+				//It can be completely empty except for the PK. Nothing else matters.
+				EFormFieldDef eFormFieldDef=new EFormFieldDef();
+				EFormFieldDefs.Insert(eFormFieldDef);
+				listEFormFields[i].EFormFieldDefNum=eFormFieldDef.EFormFieldDefNum;
+				listEFormFields[i].IsNew=true;
 			}
 			int idx=ctrlEFormFill.GetSelectedIndex();
-			int pageShowing=ctrlEFormFill.GetPageShowing();//Will never be 0 because 1-based.
-			if(idx>-1 && ctrlEFormFill.ListEFormFields[idx].Page!=pageShowing){
-				idx=-1;//we don't want to paste to that idx because it's on another page.
-			}
 			if(idx==-1){
-				//Set the idx value to the end of the current page showing.
-				int numberOfPageBreaks=0;
-				for(int i=0;i<ctrlEFormFill.ListEFormFields.Count;i++) {
-					if(ctrlEFormFill.ListEFormFields[i].FieldType==EnumEFormFieldType.PageBreak) {
-						numberOfPageBreaks++;
-					}
-					if(numberOfPageBreaks==pageShowing) {
-						idx=i;//the page break at the bottom of the page we are on.
-						break;
-					}
-				}
-				if(idx==-1) {//Still -1. This is because we are looking at the last page.
-					idx=ctrlEFormFill.ListEFormFields.Count-1;
-				}
+				idx=EFormFields.GetLastIdxThisPage(ctrlEFormFill.ListEFormFields,ctrlEFormFill.GetPageShowing());
+				//guaranteed to not be -1
 			}
 			ctrlEFormFill.ListEFormFields.InsertRange(idx,listEFormFields);
 			ctrlEFormFill.RefreshLayout();//This also fixes all stacking
@@ -639,6 +739,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 
 		#region Methods - private
 		private void AddNewField(EFormField eFormField) {
+			//This is getting deprecated. Fields will be added prior to showing their dialog.
 			if(ctrlEFormFill.ListEFormFields.Count==0) {//This handles when the form is empty and adding the first field.
 				ctrlEFormFill.ListEFormFields.Add(eFormField);
 				ctrlEFormFill.RefreshLayout();
@@ -646,7 +747,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			}
 			int idx=ctrlEFormFill.GetSelectedIndex();
 			int pageShowing=ctrlEFormFill.GetPageShowing();//Will never be 0 because 1-based.
-			if(ctrlEFormFill.ListEFormFields[idx].Page!=pageShowing){
+			if(idx>=0 && ctrlEFormFill.ListEFormFields[idx].Page!=pageShowing){//idx may be -1 before hitting this line if no index is selected when adding new field.
 				idx=-1;//we don't want to insert at that idx because it's on another page.
 			}
 			if(idx==-1){
@@ -668,6 +769,29 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			ctrlEFormFill.ListEFormFields.Insert(idx,eFormField);
 			ctrlEFormFill.RefreshLayout();
 			ctrlEFormFill.SetSelected(idx);
+		}
+
+		private void SetCtrlWidth(){
+			if(!_isLoaded){
+				return;
+			}
+			int maxVal=450;
+			if(textVIntMaxWidth.IsValid() && textVIntMaxWidth.Value!=0){
+				maxVal=textVIntMaxWidth.Value;
+				if(maxVal<50){
+					maxVal=50;
+				}
+				if(maxVal>1000){
+					maxVal=1000;
+				}
+			}
+			int avail=(int)ActualWidth-(int)ctrlEFormFill.Margin.Left-30;
+			if(maxVal>avail){
+				maxVal=avail;
+			}
+			ctrlEFormFill.Width=maxVal;
+			ctrlEFormFill.UpdateLayout();
+			ctrlEFormFill.RefreshLayout();
 		}
 		#endregion Methods - private
 	}

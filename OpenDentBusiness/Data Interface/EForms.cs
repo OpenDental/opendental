@@ -60,6 +60,7 @@ namespace OpenDentBusiness{
 			eForm.DateTimeShown=DateTime.Now;
 			eForm.DateTEdited=DateTime.Now;
 			eForm.Description=eFormDef.Description;
+			eForm.MaxWidth=eFormDef.MaxWidth;
 			eForm.ListEFormFields=EFormFields.FromListDefs(eFormDef.ListEFormFieldDefs);
 			return eForm;
 		}

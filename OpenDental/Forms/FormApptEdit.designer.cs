@@ -688,7 +688,7 @@
 			this.labelPlannedComplete.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.labelPlannedComplete.Location = new System.Drawing.Point(921, 1);
 			this.labelPlannedComplete.Name = "labelPlannedComplete";
-			this.labelPlannedComplete.Size = new System.Drawing.Size(227, 26);
+			this.labelPlannedComplete.Size = new System.Drawing.Size(245, 26);
 			this.labelPlannedComplete.TabIndex = 184;
 			this.labelPlannedComplete.Text = "This planned appointment is attached\r\nto a completed appointment.";
 			this.labelPlannedComplete.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

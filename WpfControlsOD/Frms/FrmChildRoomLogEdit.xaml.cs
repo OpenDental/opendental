@@ -30,6 +30,7 @@ namespace OpenDental {
 		public FrmChildRoomLogEdit() {
 			InitializeComponent();
 			Load+=FrmChildRoomLogEdit_Load;
+			checkMixedRatio.Click+=CheckMixedRatio_Click;
 		}
 
 		private void FrmChildRoomLogEdit_Load(object sender,EventArgs e) {
@@ -54,6 +55,14 @@ namespace OpenDental {
 			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
 			comboChildRoom.Items.AddList(listChildRooms,x => x.RoomId);
 			comboChildRoom.SetSelectedKey<ChildRoom>(ChildRoomLogCur.ChildRoomNum,x=>x.ChildRoomNum);//Should be set even when new
+			if(ChildRoomLogCur.RatioChange==-1) {//Mixed age room
+				checkMixedRatio.Checked=true;
+				textRatio.IsEnabled=false;
+			}
+			else {
+				textRatio.Text=ChildRoomLogCur.RatioChange.ToString();
+				//will show 0 if child or teacher
+			}
 		}
 
 		private void butChildSelect_Click(object sender,EventArgs e) {
@@ -89,6 +98,15 @@ namespace OpenDental {
 			textEmployee.Text="";
 		}
 
+		private void CheckMixedRatio_Click(object sender,EventArgs e) {
+			if(checkMixedRatio.Checked==true) {
+				textRatio.Text="";
+				textRatio.IsEnabled=false;
+				return;
+			}
+			textRatio.IsEnabled=true;
+		}
+
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(ChildRoomLogCur.IsNew) {
 				IsDialogCancel=true;
@@ -104,10 +122,22 @@ namespace OpenDental {
 
 		private void butSave_Click(object sender,EventArgs e) {
 			//Validation
-			if((_childNumSelected!=0 && _employeeNumSelected!=0)
-				|| _childNumSelected==0 && _employeeNumSelected==0) {
-				MsgBox.Show("The log must be for a child or a teacher not both.");
-				return;//Both or none had a selection
+			int countLogTypes=0;
+			if(_childNumSelected!=0) {
+				countLogTypes++;
+			}
+			if(_employeeNumSelected!=0) {
+				countLogTypes++;
+			}
+			if(!string.IsNullOrEmpty(textRatio.Text) && textRatio.Text!="0") {
+				countLogTypes++;
+			}
+			if(checkMixedRatio.Checked==true) {
+				countLogTypes++;
+			}
+			if(countLogTypes!=1) {//Multiple or none had a selection
+				MsgBox.Show("The log must be for a child, teacher, or ratio change not multiple.");
+				return;
 			}
 			DateTime dateTimeDisplayed;
 			try {
@@ -121,6 +151,19 @@ namespace OpenDental {
 				MsgBox.Show("A classroom must be selected.");
 				return;
 			}
+			int ratio=0;
+			try {
+				ratio=PIn.Int(textRatio.Text);
+			}
+			catch {
+				MsgBox.Show("Ratio must be a value like 4 or 10.");
+				return;
+			}
+			if(ratio<0 || ratio>10) {
+				MsgBox.Show("Ratio must be a value like 4 or 10.");
+				return;
+			}
+			//End of validation
 			ChildRoomLogCur.DateTEntered=DateTime.Parse(textDateTEntered.Text);
 			ChildRoomLogCur.DateTDisplayed=dateTimeDisplayed;
 			//One of these two will be a non 0 value by this point
@@ -133,6 +176,10 @@ namespace OpenDental {
 				ChildRoomLogCur.IsComing=false;
 			}
 			ChildRoomLogCur.ChildRoomNum=comboChildRoom.GetSelectedKey<ChildRoom>(x=>x.ChildRoomNum);
+			if(checkMixedRatio.Checked==true) {
+				ratio=-1;
+			}
+			ChildRoomLogCur.RatioChange=ratio;
 			if(ChildRoomLogCur.IsNew) {
 				ChildRoomLogs.Insert(ChildRoomLogCur);
 			}

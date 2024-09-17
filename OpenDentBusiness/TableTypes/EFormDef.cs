@@ -52,15 +52,6 @@ We might add a button just for Ins import since everything else will be done aut
 We need to consider where to put various import notes. Flex uses Service Notes for some of it. Commlog entry?
 We might also recommend a checkbox to indicate if insurance has changed. Maybe that should trigger some sort of warning for the office.
 
-Conditional Logic
-To implement this properly, we must include as many examples as possible:
-Do you have insurance?, Yes or No
-I have insurance, checkbox
-Gender, Female
-Our conditional logic will be placed on the field that we want to show or hide.
-1. Parent field ... User can type it in or pick from a list, based on the ValueLabels. This means that ValueLabels are required for now.
-2. Has value... checked, Yes, Female, etc. The value showing, not the db value. Checkboxes will use checked/unchecked for now.
-If all the fields on a page are hidden, that page gets hidden.
 */
 
 	///<summary>EForms are a way for patients to fill out forms. This is similar to sheets, but optimized for dynamic layout instead of fixed layout. The office sets up templates, EFormDefs, which get copied to EForms. Since this is a template EForm, it does not link to a patient. It can be freely changed without affecting any EForms. We also supply internal EFormDefs, which are hard coded as XML rather than being in any office database.</summary>
@@ -78,12 +69,18 @@ If all the fields on a page are hidden, that page gets hidden.
 		public DateTime DateTCreated;
 		///<summary>This is set to true when a user "deletes" an internal form. That way, it won't show anymore. This is the only way to hide an internal form. It gets done automatically when a user "edits" an internal form so that only the custom form will show. The linkage to the internal form is done by matching the Description. So a row where this was set to true would have a description and nothing else. No EFormFieldDefs. Once the user hides an internal eForm in this manner, they can't ever get it back other than by using Add.</summary>
 		public bool IsInternalHidden;
+		///<summary>Required. Can be any value between 50 and 1000. On wide screens, this limits the width of the form. This is needed on pretty much anything other than a phone. Makes it look consistent across devices and prevents useless white space.</summary>
+		public int MaxWidth;
 
-		///<Summary>This is needed for serialization/deserialization of internal EForms. We also leave this list attached to internal EForms for a while because any list would not have a FK way to associate with the EFormDef.</Summary>
+		///<Summary>This is needed for serialization/deserialization of internal EForms. We also leave this list attached to internal EForms for a while for convenience.</Summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public List<EFormFieldDef> ListEFormFieldDefs;
+		///<summary>Not a db field.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public bool IsInternal;
+		///<summary>Not a db field.</summary>
+		[CrudColumn(IsNotDbColumn=true)]
+		public bool IsDeleted;
 
 		public EFormDef Copy() {
 			return (EFormDef)this.MemberwiseClone();
@@ -96,16 +93,24 @@ Flex has multiple videos on how they do their setup. Here's one:
 https://www.youtube.com/watch?v=4V-wbDuVtFg 
 Ours are similar.
 
-Next:
+Jordan:
+So something about when a user tries to set a stacked field to be full width. Right now we silently set a width. Probably a msgbox instead.
+
 RyanH:
-Talk about max Frm height
-LanguagePat query, crud, backport
-bug: space below wording is bad on a new field.
-Implement IsLocked for TextField and CheckBox. Just in the setup window
-Implement conditional age UI for all other fields, copying textbox
+Language translation for all other types, using textBox as example
+Default border=true for new text, date, checkbox, and radiobuttons
 Refine the 3 built-in forms according to my interative instructions
 RyanR:
+Overhaul to follow layout strategy at top of CtrlEFormFill
+Figure out the details for font scaling and size scaling based on font, as described
+Show me screenshots about every day from now on so that we make sure we are both on the same page
 Implement IsLocked in eClipboard UI
+
+Strategy for textbox rectangles vs underlines:
+We will assume underlines is the new norm, and we will change the designer to show that.
+Rectangles might be allowed as an alternative in the UI for the patient if needed, but we probably won't need to do this.
+For multiline textboxes, we will probably stick to rectangles in both designer and patient UI.
+So no db schema changes will be necessary.
 
 Enhance FormWebForms to include eForms. I don't think eForms get retrieved, but do they still show on that form?
 	For sheets, they show if DateTimeSheet is within search range and IsWebForm is true.

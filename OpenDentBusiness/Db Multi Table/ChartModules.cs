@@ -1879,18 +1879,24 @@ namespace OpenDentBusiness {
 			table.Columns.Add("dateSched");
 			table.Columns.Add("AptStatus");
 			List<DataRow> rows=new List<DataRow>();
-			string command="SELECT a.AptNum,a.ItemOrderPlanned,a.AptDateTime,a.Pattern,a.AptStatus,"
+			string command="SELECT appointment.AptNum,appointment.ItemOrderPlanned,appointment.AptDateTime,appointment.Pattern,appointment.AptStatus,"
 				+"COUNT(DISTINCT procedurelog.ProcNum) someAreComplete "
-				+"FROM appointment a "
-				+"LEFT JOIN procedurelog ON procedurelog.PlannedAptNum=a.AptNum	AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.C)+" "
-				+"WHERE a.AptStatus="+POut.Int((int)ApptStatus.Planned)+" AND a.PatNum="+POut.Long(patNum)+" ";
-			command+="GROUP BY a.AptNum ";
-			command+="ORDER BY a.ItemOrderPlanned";
+				+"FROM appointment "
+				+"LEFT JOIN procedurelog ON procedurelog.PlannedAptNum=appointment.AptNum	AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.C)+" "
+				+"WHERE appointment.AptStatus="+POut.Int((int)ApptStatus.Planned)+" AND appointment.PatNum="+POut.Long(patNum)+" ";
+			command+="GROUP BY appointment.AptNum ";
+			command+="ORDER BY appointment.ItemOrderPlanned";
 			DataTable rawPlannedAppts=dcon.GetTable(command);
+			command="SELECT * FROM appointment WHERE PatNum="+POut.Long(patNum)+" AND NextAptNum!=0 ORDER BY AptStatus";
+			List<Appointment> listAppointmentsLinkedToPlanned=Crud.AppointmentCrud.SelectMany(command);
 			DataRow aptRow;
 			int itemOrder=1;
-			DateTime dateSched;
 			ApptStatus aptStatus;
+			DateTime dateSched;
+			command="SELECT AptNum FROM appointment WHERE PatNum="+POut.Long(patNum)+" AND AptStatus="+POut.Int((int)ApptStatus.Planned);
+			List<long> listAptNumsPlanned=Db.GetListLong(command);
+			List<Procedure> listProcedures=Procedures.GetProcsMultApts(listAptNumsPlanned);
+			Appointment appointmentLinkToPlanned;
 			for(int i=0;i<rawPlannedAppts.Rows.Count;i++) {
 				aptRow=null;
 				for(int a=0;a<rawApt.Rows.Count;a++) {
@@ -1910,26 +1916,28 @@ namespace OpenDentBusiness {
 				}
 				//end of repair
 				row=table.NewRow();
-				row["AptNum"]=aptRow["AptNum"].ToString();
-				dateSched=PIn.Date(aptRow["AptDateTime"].ToString());
-				aptStatus=(ApptStatus)PIn.Long(aptRow["AptStatus"].ToString());
-				row["AptStatus"]=aptStatus.ToString();
-				if(dateSched.Year<1880) {
-					row["dateSched"]="";
+				//PlannedAppt----------------------------------------------------------------------------
+				long aptNum=PIn.Long(aptRow["AptNum"].ToString());
+				appointmentLinkToPlanned=listAppointmentsLinkedToPlanned.Find(x => x.NextAptNum==aptNum);
+				dateSched=DateTime.MinValue;
+				if(appointmentLinkToPlanned!=null) {
+					dateSched=appointmentLinkToPlanned.AptDateTime;
 				}
-				else {
-					row["dateSched"]=dateSched.ToString(dateTimeFormatString);
-				}
-				row["ProvNum"]=PIn.Long(aptRow["ProvNum"].ToString());
-				row["ItemOrder"]=itemOrder.ToString();
+				List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(aptNum,listProcedures,isForPlanned:true);
+				row["AptNum"]=aptNum;
 				row["minutes"]=(aptRow["Pattern"].ToString().Length*5).ToString();
 				row["Note"]=aptRow["Note"].ToString();
-				row["ProcDescript"]=aptRow["ProcDescript"].ToString();
-				if(dateSched==DateTime.Today.Date) {
-					row["ProcDescript"]=Lans.g("ContrChart","(Today's) ")+row["ProcDescript"];
+				row["ProcDescript"]=GetProcDescriptPlanned(appointmentLinkToPlanned,listProceduresPlannedAppt,dateSched,aptRow["ProcDescript"].ToString());
+				row["ItemOrder"]=itemOrder.ToString();
+				row["ProvNum"]=PIn.Long(aptRow["ProvNum"].ToString());
+				aptStatus=(ApptStatus)PIn.Long(aptRow["AptStatus"].ToString());
+				row["AptStatus"]=aptStatus.ToString();
+				row["dateSched"]="";
+				if(appointmentLinkToPlanned!=null) {
+					row["AptStatus"]=(ApptStatus)appointmentLinkToPlanned.AptStatus;
 				}
-				else if(rawPlannedAppts.Rows[i]["someAreComplete"].ToString()!="0"){
-					row["ProcDescript"]=Lans.g("ContrChart","(Some procs complete) ")+row["ProcDescript"];
+				if(dateSched.Year>1880) {
+					row["dateSched"]=dateSched.ToString(dateTimeFormatString);
 				}
 				rows.Add(row);
 				itemOrder++;
@@ -2176,10 +2184,11 @@ namespace OpenDentBusiness {
 			procedure.Dx=diagnosisNum;
 			procedure.Prognosis=prognosisNum;
 			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
-			#region ProvNum
+			#region ProvNum and ClinicNum
 			//This strategy for assigning procnum is consistent here, in the Chart Module, but it doesn't seem to be used anywhere else.
 			//For example, in the Appt Module, for recall, etc, the proc is simply whatever appointment we are in.
 			procedure.ProvNum=procedureCode.ProvNumDefault;//use proc default prov if set
+			procedure.ClinicNum=patientData.Patient.ClinicNum;
 			if(procedure.ProvNum==0) {//no proc default prov set, check for appt prov, then use pri prov
 				long provPri=patientData.Patient.PriProv;
 				long provSec=patientData.Patient.SecProv;
@@ -2187,6 +2196,9 @@ namespace OpenDentBusiness {
 				if(listAppointments.Count>0) {
 					provPri=listAppointments[0].ProvNum;
 					provSec=listAppointments[0].ProvHyg;
+					if(PrefC.HasClinicsEnabled) {
+						procedure.ClinicNum=listAppointments[0].ClinicNum;
+					}
 				}
 				if(Providers.GetProv(provPri).IsHidden) {
 					//If the Patient's Primary Provider is hidden, use the patient's clinic's default provider, or practice default provider
@@ -2204,7 +2216,7 @@ namespace OpenDentBusiness {
 					procedure.ProvNum=provPri;
 				}
 			}
-			#endregion ProvNum
+			#endregion ProvNum and ClinicNum
 			#region Note
 			if(procStatNew==ProcStat.C || procStatNew==ProcStat.TP) {
 				string procNoteDefault=ProcCodeNotes.GetNote(procedure.ProvNum,procedure.CodeNum,procStatNew);
@@ -2221,7 +2233,6 @@ namespace OpenDentBusiness {
 				procedure.Note="";
 			}
 			#endregion
-			procedure.ClinicNum=patientData.Patient.ClinicNum;
 			if(procStatNew==ProcStat.R || procStatNew==ProcStat.EO || procStatNew==ProcStat.EC) {
 				procedure.ProcFee=0;
 			}

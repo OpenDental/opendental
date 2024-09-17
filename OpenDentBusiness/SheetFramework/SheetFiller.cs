@@ -166,7 +166,7 @@ namespace OpenDentBusiness {
 			if(sheetParameterAptNum!=null && sheetParameterAptNum.ParamValue!=null && staticTextData!=null && !staticTextData.ListAppts.IsNullOrEmpty()) {
 				aptNum=PIn.Long(sheetParameterAptNum.ParamValue.ToString(),hasExceptions:false);
 			}
-			List<StaticTextReplacement> listStaticTextReplacements=GetStaticTextReplacements(listEnumStaticTextFields,patient,family,staticTextData,staticTextFieldDependency,aptNum);
+			List<StaticTextReplacement> listStaticTextReplacements=GetStaticTextReplacements(listEnumStaticTextFields,patient,family,staticTextData,staticTextFieldDependency,aptNum,sheet.SheetType);
 			ReplaceStaticTextFieldsInSheet(listStaticTextReplacements,sheet,patient,family);
 			FillPatientImages(sheet,patient,staticTextData);
 			Plugins.HookAddCode(null,"SheetFiller.FillFields_end",sheet,stmt,patient);
@@ -233,7 +233,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Pat can be null sometimes.  For example, in deposit slip.</summary>
-		public static List<StaticTextReplacement> GetStaticTextReplacements(List<EnumStaticTextField> listEnumStaticTextFields,Patient patient,Family family,StaticTextData staticTextData,StaticTextFieldDependency staticTextFieldDependency,long aptNum) {
+		public static List<StaticTextReplacement> GetStaticTextReplacements(List<EnumStaticTextField> listEnumStaticTextFields,Patient patient,Family family,StaticTextData staticTextData,StaticTextFieldDependency staticTextFieldDependency,long aptNum,SheetTypeEnum sheetType=SheetTypeEnum.None) {
 			#region Instantiate Strings
 			string activeProblems="";
 			string address="";
@@ -955,27 +955,6 @@ namespace OpenDentBusiness {
 					phone=clinic.Phone;
 				}
 				clinicPatPhone=TelephoneNumbers.ReFormat(phone);
-				//Current selected Clinic-------------------------------------------------------------------------------------------------------
-				Clinic clinicCur=Clinics.GetClinic(Clinics.ClinicNum);
-				if(clinicCur==null) {
-					clinicCurDescription=PrefC.GetString(PrefName.PracticeTitle);
-					clinicCurAddress=PrefC.GetString(PrefName.PracticeAddress);
-					if(PrefC.GetString(PrefName.PracticeAddress2)!="") {
-						clinicCurAddress+=", "+PrefC.GetString(PrefName.PracticeAddress2);
-					}
-					clinicCurCityStZip=PrefC.GetString(PrefName.PracticeCity)+", "+PrefC.GetString(PrefName.PracticeST)+"  "+PrefC.GetString(PrefName.PracticeZip);
-					phone=PrefC.GetString(PrefName.PracticePhone);
-				}
-				else {
-					clinicCurDescription=clinicCur.Description;
-					clinicCurAddress=clinicCur.Address;
-					if(clinicCur.Address2!="") {
-						clinicCurAddress+=", "+clinicCur.Address2;
-					}
-					clinicCurCityStZip=clinicCur.City+", "+clinicCur.State+"  "+clinicCur.Zip;
-					phone=clinicCur.Phone;
-				}
-				clinicCurPhone=TelephoneNumbers.ReFormat(phone);
 				#endregion
 				#region Diseases/Allergies
 				List<Disease> listDiseases=staticTextData.ListDiseases;
@@ -1039,6 +1018,29 @@ namespace OpenDentBusiness {
 				}
 				#endregion Patient Portal
 			}//End of if(pat!=null)
+			if(patient!=null || sheetType==SheetTypeEnum.DepositSlip) {
+				//Populate current clinic fields if a patient exists or if the sheet is a Deposit Slip.
+				Clinic clinicCur=Clinics.GetClinic(Clinics.ClinicNum);
+				if(clinicCur==null) {
+					clinicCurDescription=PrefC.GetString(PrefName.PracticeTitle);
+					clinicCurAddress=PrefC.GetString(PrefName.PracticeAddress);
+					if(PrefC.GetString(PrefName.PracticeAddress2)!="") {
+						clinicCurAddress+=", "+PrefC.GetString(PrefName.PracticeAddress2);
+					}
+					clinicCurCityStZip=PrefC.GetString(PrefName.PracticeCity)+", "+PrefC.GetString(PrefName.PracticeST)+"  "+PrefC.GetString(PrefName.PracticeZip);
+					phone=PrefC.GetString(PrefName.PracticePhone);
+				}
+				else {
+					clinicCurDescription=clinicCur.Description;
+					clinicCurAddress=clinicCur.Address;
+					if(clinicCur.Address2!="") {
+						clinicCurAddress+=", "+clinicCur.Address2;
+					}
+					clinicCurCityStZip=clinicCur.City+", "+clinicCur.State+"  "+clinicCur.Zip;
+					phone=clinicCur.Phone;
+				}
+				clinicCurPhone=TelephoneNumbers.ReFormat(phone);
+			}
 			#endregion
 			List<StaticTextReplacement> listStaticTextReplacements=new List<StaticTextReplacement>();
 			for(int i=0;i<listEnumStaticTextFields.Count;i++){
@@ -1049,7 +1051,7 @@ namespace OpenDentBusiness {
 					case EnumStaticTextField.dateTodayLong: staticTextReplacement.NewValue=DateTime.Today.ToLongDateString(); break;
 					case EnumStaticTextField.practiceTitle: staticTextReplacement.NewValue=PrefC.GetString(PrefName.PracticeTitle); break;
 				}
-				if(patient==null) {
+				if(patient==null && sheetType!=SheetTypeEnum.DepositSlip) {
 					listStaticTextReplacements.Add(staticTextReplacement);
 					continue;
 				}

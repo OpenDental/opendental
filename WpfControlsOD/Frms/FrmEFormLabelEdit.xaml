@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="845" Height="605" 
+             Width="845" Height="658" 
              Text="Edit Label" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:ToolBar x:Name="toolBarMain" Height="25" Width="627"/>
@@ -20,7 +20,7 @@
 		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="172,356,0,0" ShowZero="False"/>
 		<ui:ListBox x:Name="listBoxFields" Width="198" Margin="637,26,0,48" VerticalAlignment="Stretch"/>
 		<ui:Label Height="57" Margin="484,323,0,0" Text="Click on the list to the right to insert a Field into the main text above" Width="147" HAlign="Right" />
-		<ui:GroupBox Height="80" Margin="13,426,0,0" Width="470" Text="Conditional Logic. This field will show...">
+		<ui:GroupBox Height="80" Margin="13,516,0,0" Width="470" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
 			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
@@ -28,8 +28,13 @@
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click" />
 		</ui:GroupBox>
-		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="172,386,0,0" />
-		<ui:Label Width="98" Height="18" Margin="73,386,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="229,386,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="264" />
+		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="172,476,0,0" />
+		<ui:Label Width="98" Height="18" Margin="73,476,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="229,476,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="264" />
+		<ui:CheckBox x:Name="checkIsWidthPercentage" Height="20" Margin="26,386,0,0" Width="159" Text="Width Is Percentage" CheckAlign="MiddleRight"/>
+		<ui:Label x:Name="labelWidthIsPercentageNote" Height="18" Margin="190,387,0,0" Text="this applies to all fields in a horizontal stack" VAlign="Center" Width="266" />
+		<ui:Label x:Name="labelMinWidth" Width="120" Height="18" Margin="51,416,0,0" Text="Minimum Width" HAlign="Right" VAlign="Center" />
+		<ui:TextVInt x:Name="textVIntMinWidth" Width="54" Height="20" Margin="172,416,0,0" ShowZero="False"/>
+		<ui:CheckBox x:Name="checkBorder" Height="20" Margin="26,446,0,0" Width="159" Text="Show Border Box" CheckAlign="MiddleRight"/>
 	</Grid>
 </local:FrmODBase>

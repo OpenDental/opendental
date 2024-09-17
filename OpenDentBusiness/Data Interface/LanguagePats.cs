@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Reflection;
 using System.Linq;
 using System.Text;
@@ -155,6 +156,7 @@ namespace OpenDentBusiness{
 			return Crud.LanguagePatCrud.SelectMany(command);
 		}
 		#endregion Methods - Get
+
 		#region Methods - Modify
 		///<summary></summary>
 		public static long Insert(LanguagePat languagePat){
@@ -196,20 +198,114 @@ namespace OpenDentBusiness{
 			languagePatNew.Translation=translation;
 			Crud.LanguagePatCrud.Update(languagePatNew,languagePatOld);
 		}
+
 		///<summary></summary>
-		//public static void Delete(long languagePatNum) {
-		//	if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-		//		Meth.GetVoid(MethodBase.GetCurrentMethod(),languagePatNum);
-		//		return;
-		//	}
-		//	Crud.LanguagePatCrud.Delete(languagePatNum);
-		//}
+		public static void DeleteForEFormFieldDef(long eFormFieldDefNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),eFormFieldDefNum);
+				return;
+			}
+			string command="DELETE FROM languagepat WHERE EFormFieldDefNum="+POut.Long(eFormFieldDefNum);
+			long count=Db.NonQ(command);
+		}
+
+		public static void Delete(long languagePatNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),languagePatNum);
+				return;
+			}
+			string command="DELETE FROM languagepat WHERE LanguagePatNum="+POut.Long(languagePatNum);
+			long count=Db.NonQ(command);
+		}
 		#endregion Methods - Modify
-		#region Methods - Misc
-		
-		#endregion Methods - Misc
 
+		///<summary>Pulls from cache.</summary>
+		public static string TranslateEFormField(long eFormFieldDefNum,string langDisplay,string defaultText){
+			//Meth.NoCheckMiddleTierRole();
+			string threeLetterISO=GetLang3LetterFromDisplay(langDisplay);
+			if(threeLetterISO.IsNullOrEmpty()){
+				return defaultText;
+			}
+			LanguagePat languagePat=GetFirstOrDefault(x=>x.EFormFieldDefNum==eFormFieldDefNum && x.Language==threeLetterISO);
+			if(languagePat==null){
+				return defaultText;
+			}
+			return languagePat.Translation;
+		}
 
+		///<summary>If it already matches cache, then it does nothing. If different, it saves to db. Returns true if a change was made to db. foreignText can be empty string and that will sync by deleting an existing entry.</summary>
+		public static bool SaveTranslationEFormField(long eFormFieldDefNum,string langDisplay,string foreignText){
+			//Meth.NoCheckMiddleTierRole();
+			string threeLetterISO=GetLang3LetterFromDisplay(langDisplay);
+			if(threeLetterISO.IsNullOrEmpty()){
+				return false;
+			}
+			LanguagePat languagePat=GetFirstOrDefault(x=>x.EFormFieldDefNum==eFormFieldDefNum && x.Language==threeLetterISO);
+			if(foreignText==""){
+				if(languagePat==null){
+					return false;
+				}
+				Delete(languagePat.LanguagePatNum);
+				return true;
+			}
+			if(languagePat==null){
+				languagePat=new LanguagePat();
+				languagePat.EFormFieldDefNum=eFormFieldDefNum;
+				languagePat.Language=threeLetterISO;
+				languagePat.Translation=foreignText;
+				Crud.LanguagePatCrud.Insert(languagePat);
+				return true;
+			}
+			if(languagePat.Translation!=foreignText){
+				languagePat.Translation=foreignText;
+				Crud.LanguagePatCrud.Update(languagePat);
+				return true;
+			}
+			return false;
+		}
+
+		///<summary>Fills a combo language box on a variety of eForm windows. Sets it visible false if the office has not set up any languages in pref LanguagesUsedByPatients.</summary>
+		public static List<string> GetLanguagesForCombo(){
+			//Meth.NoCheckMiddleTierRole();
+			List<string> listLangsFromPref=PrefC.GetString(PrefName.LanguagesUsedByPatients)
+				.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries).ToList()
+				.FindAll(x=>x!=Patients.LANGUAGE_DECLINED_TO_SPECIFY);
+			//Example: "Declined to Specify,spa,fra,Tahitian"
+			//Would result at this point in three items in the list: spa,fra,Tahitian
+			List<string> listRet=new List<string>();
+			for(int i = 0;i<listLangsFromPref.Count;i++){
+				CultureInfo cultureInfo=MiscUtils.GetCultureFromThreeLetter(listLangsFromPref[i]);//converts 3 char to full name
+				if(cultureInfo==null){
+					listRet.Add(listLangsFromPref[i]);//Example Tahitian
+					continue;
+				}
+				listRet.Add(POut.String(cultureInfo.DisplayName));//long version, like Spanish
+			}
+			return listRet;
+		}
+
+		///<summary>Returns the 3 letter ISO code of the language if found. Will also return a custom language like Tahitian if there is no corresponding ISO. Returns null if no match is found within LanguagesUsedByPatients pref.</summary>
+		public static string GetLang3LetterFromDisplay(string languageDisplay){
+			//Meth.NoCheckMiddleTierRole();
+			List<string> listLangsFromPref=PrefC.GetString(PrefName.LanguagesUsedByPatients)
+				.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries).ToList()
+				.FindAll(x=>x!=Patients.LANGUAGE_DECLINED_TO_SPECIFY);
+			//Example: "Declined to Specify,spa,fra,Tahitian"
+			//Would result at this point in three items in the list: spa,fra,Tahitian
+			for(int i=0;i<listLangsFromPref.Count;i++){
+				CultureInfo cultureInfo=MiscUtils.GetCultureFromThreeLetter(listLangsFromPref[i]);
+				if(cultureInfo==null){
+					if(listLangsFromPref[i]==languageDisplay){
+						return listLangsFromPref[i];//Example Tahitian
+					}
+					continue;
+				}
+				if(cultureInfo.DisplayName==languageDisplay){
+					return listLangsFromPref[i];
+				}
+			}
+			return null;//language wasn't found within LanguagesUsedByPatients pref.
+		}
 
 	}
 }

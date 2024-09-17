@@ -334,6 +334,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			Def jobPriority;
 			string text;
 			for(int i=0;i<listJobs.Count;i++) {
+				if(listJobs[i].Category==JobCategory.Project) {
+					continue;
+				}
 				jobPriority=_listJobPriorities.FirstOrDefault(x => x.DefNum==listJobs[i].Priority);
 				row=new GridRow();
 				gridCell=new GridCell(jobPriority.ItemName);
@@ -357,9 +360,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 				text=(jobTeam==null) ? "" : jobTeam.TeamName;
 				row.Cells.Add(text);
 				text=listJobs[i].OwnerNum==0 ? "" : Userods.GetName(listJobs[i].OwnerNum);
-				if(listJobs[i].Category==JobCategory.Project) {
-					text=listJobs[i].UserNumExpert==0 ? Userods.GetName(listJobs[i].UserNumConcept) : Userods.GetName(listJobs[i].UserNumExpert);
-				}
 				row.Cells.Add(text);
 				text=listJobs[i].UserNumExpert==0 ? "Unassigned" : Userods.GetName(listJobs[i].UserNumExpert);
 				row.Cells.Add(text);

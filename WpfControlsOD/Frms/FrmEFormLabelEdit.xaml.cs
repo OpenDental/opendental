@@ -28,9 +28,11 @@ namespace OpenDental {
 		public List<EFormField> _listEFormFields;
 		///<summary></summary>
 		public bool IsPreviousStackable;
-		///<summary>If set to true, then this field can have "space below" set.</summary>
+		///<summary>If set to true, then this field can have "space below" set. It could be last in h-stack, or it could be all by itself.</summary>
 		public bool IsLastInHorizStack;
 		private string _openingBracket;
+		///<summary>This is all sibings in a horizontal stack, not including the field passed in. If not in a h-stack, then this is an empty list. Even if the current field is not stacking, it can be part of a stack group if the next field is set as stacking. So this list gets recalculated each time the user checks or unchecks the stacking box. If this is a new field, then it is not yet in the list, but we do know where it will potientially go, based on IdxNew, and that's what we use to create this list.</summary>
+		private List<EFormField> _listEFormFieldsSiblings;
 
 		///<summary></summary>
 		public FrmEFormLabelEdit() {
@@ -38,6 +40,8 @@ namespace OpenDental {
 			Load+=FrmEFormsLabelEdit_Load;
 			PreviewKeyDown+=FrmEFormLabelEdit_PreviewKeyDown;
 			listBoxFields.MouseDown+=ListBoxFields_MouseDown;
+			checkIsWidthPercentage.Click+=CheckIsWidthPercentage_Click;
+			checkIsHorizStacking.Click+=CheckIsHorizStacking_Click;
 		}
 
 		private void FrmEFormsLabelEdit_Load(object sender, EventArgs e) {
@@ -51,6 +55,20 @@ namespace OpenDental {
 				checkIsHorizStacking.IsEnabled=false;
 			}
 			textVIntWidth.Value=EFormFieldCur.Width;
+			if(EFormFieldCur.IsWidthPercentage){
+				checkIsWidthPercentage.Checked=true;
+				textVIntMinWidth.Value=EFormFieldCur.MinWidth;
+			}
+			else{
+				labelMinWidth.Visible=false;
+				textVIntMinWidth.Visible=false;
+			}
+			_listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,_listEFormFields,checkIsHorizStacking.Checked==true);
+			//this is just for loading. It will recalc each time CheckIsHorizStacking_Click is raised.
+			if(_listEFormFieldsSiblings.Count==0){
+				labelWidthIsPercentageNote.Visible=false;
+			}
+			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			if(IsLastInHorizStack){
 				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
 				labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
@@ -275,6 +293,28 @@ namespace OpenDental {
 			}
 			return true;
 		}
+
+		private void CheckIsHorizStacking_Click(object sender,EventArgs e) {
+			_listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,_listEFormFields,checkIsHorizStacking.Checked==true);
+			if(_listEFormFieldsSiblings.Count>0){
+				labelWidthIsPercentageNote.Visible=true;
+			}
+			else{
+				labelWidthIsPercentageNote.Visible=false;
+			}
+		}
+
+		private void CheckIsWidthPercentage_Click(object sender,EventArgs e) {
+			if(checkIsWidthPercentage.Checked==true){
+				labelMinWidth.Visible=true;
+				textVIntMinWidth.Visible=true;
+			}
+			else{
+				labelMinWidth.Visible=false;
+				textVIntMinWidth.Visible=false;
+			}
+		}
+
 		private void butPickParent_Click(object sender,EventArgs e) {
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
 			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
@@ -292,7 +332,9 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender, EventArgs e) {
-			if(!textVIntWidth.IsValid()){
+			if(!textVIntWidth.IsValid()
+				|| !textVIntMinWidth.IsValid())
+			{
 				MsgBox.Show("Please fix entry errors first.");
 				return;
 			}
@@ -332,6 +374,24 @@ namespace OpenDental {
 			EFormFieldCur.ValueLabel=EFormFields.SerializeFlowDocument(flowDocument);
 			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.Width=textVIntWidth.Value;
+			EFormFieldCur.IsWidthPercentage=checkIsWidthPercentage.Checked==true;
+			//change all siblings to match
+			_listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,_listEFormFields,checkIsHorizStacking.Checked==true);
+			for(int i=0;i<_listEFormFieldsSiblings.Count;i++){
+				_listEFormFieldsSiblings[i].IsWidthPercentage=EFormFieldCur.IsWidthPercentage;
+			}
+			if(textVIntMinWidth.Visible){
+				EFormFieldCur.MinWidth=textVIntMinWidth.Value;
+			}
+			else{
+				EFormFieldCur.MinWidth=0;
+			}
+			if(checkBorder.Checked==true){
+				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
+			}
+			else{
+				EFormFieldCur.Border=EnumEFormBorder.None;
+			}
 			EFormFieldCur.SpaceBelow=spaceBelow;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(_listEFormFields,textCondParent.Text,textCondValue.Text);

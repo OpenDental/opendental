@@ -7,7 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 
-namespace OpenDentBusiness.Crud {
+namespace OpenDentBusiness.Crud{
 	public class PatFieldPickItemCrud {
 		///<summary>Gets one PatFieldPickItem object from the database using the primary key.  Returns null if not found.</summary>
 		public static PatFieldPickItem SelectOne(long patFieldPickItemNum) {
@@ -47,12 +47,12 @@ namespace OpenDentBusiness.Crud {
 			PatFieldPickItem patFieldPickItem;
 			foreach(DataRow row in table.Rows) {
 				patFieldPickItem=new PatFieldPickItem();
-				patFieldPickItem.PatFieldPickItemNum   = PIn.Long  (row["PatFieldPickItemNum"].ToString());
-				patFieldPickItem.PatFieldDefNum= PIn.Long  (row["PatFieldDefNum"].ToString());
-				patFieldPickItem.Name          = PIn.String(row["Name"].ToString());
-				patFieldPickItem.Abbreviation  = PIn.String(row["Abbreviation"].ToString());
-				patFieldPickItem.IsHidden    = PIn.Bool  (row["IsHidden"].ToString());
-				patFieldPickItem.ItemOrder     = PIn.Int   (row["ItemOrder"].ToString());
+				patFieldPickItem.PatFieldPickItemNum= PIn.Long  (row["PatFieldPickItemNum"].ToString());
+				patFieldPickItem.PatFieldDefNum     = PIn.Long  (row["PatFieldDefNum"].ToString());
+				patFieldPickItem.Name               = PIn.String(row["Name"].ToString());
+				patFieldPickItem.Abbreviation       = PIn.String(row["Abbreviation"].ToString());
+				patFieldPickItem.IsHidden           = PIn.Bool  (row["IsHidden"].ToString());
+				patFieldPickItem.ItemOrder          = PIn.Int   (row["ItemOrder"].ToString());
 				retVal.Add(patFieldPickItem);
 			}
 			return retVal;
@@ -153,11 +153,11 @@ namespace OpenDentBusiness.Crud {
 		///<summary>Updates one PatFieldPickItem in the database.</summary>
 		public static void Update(PatFieldPickItem patFieldPickItem) {
 			string command="UPDATE patfieldpickitem SET "
-				+"PatFieldDefNum=  "+POut.Long  (patFieldPickItem.PatFieldDefNum)+", "
-				+"Name          = '"+POut.String(patFieldPickItem.Name)+"', "
-				+"Abbreviation  = '"+POut.String(patFieldPickItem.Abbreviation)+"', "
-				+"IsHidden    =  "+POut.Bool  (patFieldPickItem.IsHidden)+", "
-				+"ItemOrder     =  "+POut.Int   (patFieldPickItem.ItemOrder)+" "
+				+"PatFieldDefNum     =  "+POut.Long  (patFieldPickItem.PatFieldDefNum)+", "
+				+"Name               = '"+POut.String(patFieldPickItem.Name)+"', "
+				+"Abbreviation       = '"+POut.String(patFieldPickItem.Abbreviation)+"', "
+				+"IsHidden           =  "+POut.Bool  (patFieldPickItem.IsHidden)+", "
+				+"ItemOrder          =  "+POut.Int   (patFieldPickItem.ItemOrder)+" "
 				+"WHERE PatFieldPickItemNum = "+POut.Long(patFieldPickItem.PatFieldPickItemNum);
 			Db.NonQ(command);
 		}

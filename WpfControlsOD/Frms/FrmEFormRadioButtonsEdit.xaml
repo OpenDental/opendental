@@ -11,9 +11,9 @@
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="22,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
-		<ui:ComboBox x:Name="comboDbLink" Width="213" Height="21" Margin="180,112,0,0" SelectionChangeCommitted="comboDbLink_SelectionChangeCommitted" />
-		<ui:Label Width="98" Height="18" Margin="79,113,0,0" Text="Db Link" HAlign="Right" VAlign="Center" />
-		<ui:Label Width="351" Height="18" Margin="397,114,0,0" Text="Used when this radio button group is linked to a database field" VAlign="Center" />
+		<ui:ComboBox x:Name="comboDbLink" Width="213" Height="21" Margin="180,134,0,0" SelectionChangeCommitted="comboDbLink_SelectionChangeCommitted" />
+		<ui:Label Width="98" Height="18" Margin="79,135,0,0" Text="Db Link" HAlign="Right" VAlign="Center" />
+		<ui:Label Width="351" Height="18" Margin="397,136,0,0" Text="Used when this radio button group is linked to a database field" VAlign="Center" />
 		<ui:Label Width="98" Height="18" Margin="79,24,0,0" Text="Label" HAlign="Right" VAlign="Center" />
 		<ui:Label Width="351" Height="18" Margin="397,24,0,0" Text="This shows above the group of radio buttons" VAlign="Center" />
 		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="180,23,0,0"/>
@@ -23,11 +23,11 @@
 		<ui:Button x:Name="butUp" Width="68" Height="24" Margin="773,483,0,0" Text="Up" Click="butUp_Click" />
 		<ui:Button x:Name="butDown" Width="79" Height="24" Margin="849,483,0,0" Text="Down" Click="butDown_Click"  />
 		<ui:Button x:Name="butHelp" Width="89" Height="24" Margin="860,160,0,0" Text="Advanced Help" Click="butHelp_Click"  />
-		<ui:Label Width="98" Height="18" Margin="81,184,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="238,184,0,0" Text="default is 100" VAlign="Center" Width="228" />
-		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="180,184,0,0" MaxVal="300" MinVal="50"/>
-		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="79,161,0,0" Width="114" Text="Required" CheckAlign="MiddleRight"/>
-		<ui:GroupBox Height="80" Margin="53,299,0,0" Width="470" Text="Conditional Logic. This field will show...">
+		<ui:Label Width="98" Height="18" Margin="81,206,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="238,206,0,0" Text="default is 100" VAlign="Center" Width="228" />
+		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="180,206,0,0" MaxVal="300" MinVal="50"/>
+		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="79,183,0,0" Width="114" Text="Required" CheckAlign="MiddleRight"/>
+		<ui:GroupBox Height="80" Margin="53,301,0,0" Width="470" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
 			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
@@ -35,21 +35,22 @@
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click"/>
 		</ui:GroupBox>
-		<ui:Label Width="359" Height="18" Margin="33,391,0,0" Text="This field is the conditional parent for this many child fields" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textCountChildren" Width="30" Height="20" Margin="395,390,0,0" ReadOnly="True" ColorBack="#FFF0F0F0"/>
-		<ui:Label x:Name="labelAllergProb" Width="98" Height="18" Margin="81,138,0,0" Text="LabelAllergProb" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textMedAllerProb" Width="213" Height="20" Margin="180,138,0,0" TabIndexOD="1"/>
-		<ui:Button x:Name="butChange" Width="75" Height="24" Margin="400,137,0,0" Text="Change" Click="butChange_Click" />
+		<ui:Label Width="359" Height="18" Margin="33,393,0,0" Text="This field is the conditional parent for this many child fields" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textCountChildren" Width="30" Height="20" Margin="395,392,0,0" ReadOnly="True" ColorBack="#FFF0F0F0"/>
+		<ui:Label x:Name="labelAllergProb" Width="98" Height="18" Margin="81,160,0,0" Text="LabelAllergProb" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textMedAllerProb" Width="213" Height="20" Margin="180,160,0,0" TabIndexOD="1"/>
+		<ui:Button x:Name="butChange" Width="75" Height="24" Margin="400,159,0,0" Text="Change" Click="butChange_Click" />
 		<ui:CheckBox x:Name="checkLabelLeft" Height="20" Margin="79,44,0,0" Width="114" Text="Label at Left" CheckAlign="MiddleRight"/>
 		<ui:Label x:Name="labelWidth" Width="98" Height="18" Margin="81,88,0,0" Text="Width" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="labelWidthComment" Height="18" Margin="238,88,0,0" Text="only applies to label" VAlign="Center" Width="193" />
 		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="180,88,0,0" ShowZero="False"/>
-		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="180,209,0,0" />
-		<ui:Label Width="98" Height="18" Margin="81,209,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="238,209,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
-		<ui:Label Width="130" Height="18" Margin="49,234,0,0" Text="Reportable Name" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="180,234,0,0"/>
+		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="180,231,0,0" />
+		<ui:Label Width="98" Height="18" Margin="81,231,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="238,231,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
+		<ui:Label Width="130" Height="18" Margin="49,256,0,0" Text="Reportable Name" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="180,256,0,0"/>
 		<ui:CheckBox x:Name="checkLabelRight" Height="20" Margin="79,64,0,0" Width="114" Text="Label at Right" CheckAlign="MiddleRight"/>
 		<ui:Label x:Name="labelWidthComment_Copy" Height="18" Margin="198,65,0,0" Text="only useful when radiobuttons have no labels" VAlign="Center" Width="292" />
+		<ui:CheckBox x:Name="checkBorder" Height="20" Margin="34,111,0,0" Width="159" Text="Show Border Box" CheckAlign="MiddleRight"/>
 	</Grid>
 </local:FrmODBase>
