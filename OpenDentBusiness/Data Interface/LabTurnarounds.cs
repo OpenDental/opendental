@@ -28,6 +28,29 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
+		///<summary>Gets one labturnaround for the API. Returns null if not found.</summary>
+		public static LabTurnaround GetOneLabTurnaroundForApi(long labTurnaroundNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<LabTurnaround>(MethodBase.GetCurrentMethod(),labTurnaroundNum);
+			}
+			string command="SELECT * FROM labturnaround WHERE LabTurnaroundNum="+POut.Long(labTurnaroundNum);
+			return Crud.LabTurnaroundCrud.SelectOne(command);
+		}
+
+		///<summary>Gets a list of labturnarounds optionally filtered for the API. Returns an empty list if not found.</summary>
+		public static List<LabTurnaround> GetLabTurnaroundsForApi(int limit,int offset,long laboratoryNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<LabTurnaround>>(MethodBase.GetCurrentMethod(),limit,offset,laboratoryNum);
+			}
+			string command="SELECT * FROM labturnaround ";
+			if(laboratoryNum>0) {
+				command+="WHERE LaboratoryNum="+POut.Long(laboratoryNum)+" ";
+			}
+			command+="ORDER BY LabTurnaroundNum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.LabTurnaroundCrud.SelectMany(command);
+		}
+
 		///<summary>This is used when saving a laboratory.  All labturnarounds for the lab are deleted and recreated.  So the list that's passed in will not have the correct keys set.  The key columns will be ignored.</summary>
 		public static void SetForLab(long labNum,List<LabTurnaround> lablist) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

@@ -1686,7 +1686,7 @@ namespace OpenDental {
 			}
 			int bottomLastField=0;
 			if(SheetCur.SheetFields.Count>0) {
-				bottomLastField=SheetCur.SheetFields.Max(x=>x.Bounds.Bottom);
+				bottomLastField=SheetCur.SheetFields.Max(x=>x.Bounds.Bottom)+1;//+1 for fields that extend to the bottom boundary, such as lines.
 			}
 			int height=LayoutManager.Scale(Math.Max(SheetCur.HeightPage,bottomLastField));//+20 for Hscrollbar?
 			LayoutManager.MoveSize(panelMain,new Size(width,height));

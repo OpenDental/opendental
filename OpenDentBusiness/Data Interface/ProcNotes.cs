@@ -61,6 +61,24 @@ namespace OpenDentBusiness {
 				.Select(x => x.ProcNum).ToList();//return list of ProcNums
 		}
 
+		///<summary>Gets a list of procnotes from the datbase. Used for API.</summary>
+		public static List<ProcNote> GetProcNotesForApi(int limit,int offset,long patNum,long procNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ProcNote>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,procNum);
+			}
+			string command="SELECT * FROM procnote "
+				+"WHERE EntryDateTime>="+POut.DateT(DateTime.MinValue)+" ";//Needed to use WHERE clause so the rest can be AND.
+			if(patNum>0) {
+				command+="AND procnote.PatNum="+POut.Long(patNum)+" ";
+			}
+			if(procNum>0) {
+				command+="AND procnote.ProcNum="+POut.Long(procNum)+" ";
+			}
+			command+="ORDER BY procnotenum DESC "//Ensure order for limit and offset. DESC so the most recent is first, like the UI.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ProcNoteCrud.SelectMany(command);
+		}
+
 		///<summary>Modifies currentNote and returns the new note string. Also checks PrefName.ProcPromptForAutoNote and remots auto notes if needed.</summary>
 		public static string SetProcCompleteNoteHelper(bool isQuickAdd,Procedure procedure,Procedure procedureOld,long provNum,string currentNote="") {
 			string procNoteDefault="";
@@ -93,6 +111,36 @@ namespace OpenDentBusiness {
 				currentNote=Regex.Replace(currentNote,@"\[\[.+?\]\]","");
 			}
 			return currentNote;
+		}
+
+		///<summary>Get a single ProcNote from DB, returns null if not found. </summary>
+		public static ProcNote GetOneProcNote(long procNoteNum) {
+			if(procNoteNum==0) {
+				return null;
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<ProcNote>(MethodBase.GetCurrentMethod(),procNoteNum);
+			}
+			string command="SELECT * FROM procnote "
+				+"WHERE ProcNoteNum = "+POut.Long(procNoteNum);
+			return Crud.ProcNoteCrud.SelectOne(command);
+		}
+
+		///<summary>Helper method for xODApi.ProcNotes POST to use digital signature stamp logic.</summary>
+		public static ProcNote ProcNoteSignatureForApi(ProcNote odbProcNote,string apiSignatureString) {
+			//No need to check MiddleTierRole; no call to db.
+			//OpenDentBusiness.Procedures.GetSignatureKeyData()
+			string keyData=odbProcNote.Note+odbProcNote.UserNum.ToString();
+			keyData=keyData.Replace("\r\n","\n");//We need all newlines to be the same, a mix of \r\n and \n can invalidate the procedure signature.
+			//OpenDentBusiness.UI.SignatureBox.SetKeyString()
+			UTF8Encoding utf8Encoding=new UTF8Encoding();
+			//OpenDental.UI.SignatureBoxWrapper.GetSignature()
+			byte[] hashNew=utf8Encoding.GetBytes("0000000000000000"); //Set it to "0000000000000000" (16 zeros) to indicate no key string to be used for encryption.
+			//OpenDental.UI.SignatureBox.SetAutoKeyData()
+			hashNew=ODCrypt.MD5.Hash(Encoding.UTF8.GetBytes(keyData));
+			//OpenDental.UI.SignatureBox.GetSigString()
+			odbProcNote.Signature=UI.SigBox.EncryptSigString(hashNew,apiSignatureString);
+			return odbProcNote;
 		}
 		
 		/*

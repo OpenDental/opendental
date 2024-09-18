@@ -135,8 +135,8 @@ namespace OpenDental {
 				if(EFormCur.ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
 					continue;
 				}
-				System.Windows.Controls.Grid gridForField=EFormCur.ListEFormFields[i].TagOD as System.Windows.Controls.Grid;
-				System.Windows.Controls.StackPanel stackPanel=gridForField.Children[1] as System.Windows.Controls.StackPanel;
+				System.Windows.Controls.Border borderBox=EFormCur.ListEFormFields[i].TagOD as System.Windows.Controls.Border;
+				System.Windows.Controls.StackPanel stackPanel=borderBox.Child as System.Windows.Controls.StackPanel;
 				SignatureBoxWrapper signatureBoxWrapper=stackPanel.Children[1] as SignatureBoxWrapper;
 				signatureBoxWrapper?.SetTabletState(0);
 			}

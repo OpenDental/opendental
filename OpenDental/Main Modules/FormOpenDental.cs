@@ -3595,13 +3595,15 @@ namespace OpenDental{
 						_dateTimeLastSignalTickInactiveHq=DateTime.Now;
 					}
 				}
-				if(Security.CurUser==null) {
-					//User must be at the log in screen, so no need to process signals. We will need to look for shutdown signals since the last refreshed time when the user attempts to log in.
+				if(Security.CurUser==null || !Userods.GetIsCacheAllowed()) {
+					//User must be at the log in screen or resetting their password, so no need to process signals. We will need to look for shutdown signals since the last refreshed time when the user attempts to log in. 'Userods.GetIsCacheAllowed()' is used to detect edge case when a User is logged in, but is resetting their password so none of the caches are loaded yet.
 					_onlyProcessHighPrioritySignals=true;
 				}
 				//If signal processing was paused due to inactivity or due to Security.CurUser being null (i.e. login screen visible)
 				//and we are now going to process signals again, we need to set _hasSignalProcessingPaused to false
-				if(_onlyProcessHighPrioritySignals && IsWorkStationActive() && Security.CurUser!=null) {
+				//If a user signed in, but is resetting their password, Userods.GetIsCacheAllowed() will result in false,
+				//check it here to determine if we're returning to processing all signals from that case.
+				if(_onlyProcessHighPrioritySignals && IsWorkStationActive() && Security.CurUser!=null && Userods.GetIsCacheAllowed()) {
 					string errorMsg;
 					//When trying to start signal processing back up again, we will shut down OD if:
 					//1. there is a mismatch between the current software version and the program version stored in the db (ProgramVersion pref)

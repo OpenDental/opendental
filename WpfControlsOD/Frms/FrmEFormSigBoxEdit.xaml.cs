@@ -19,7 +19,11 @@ namespace OpenDental {
 		///<summary>We need access to a few other fields of the EFormDef.</summary>
 		public EFormDef EFormDefCur;
 		///<summary>All the siblings</summary>
-		public List<EFormField> _listEFormFields;
+		public List<EFormField> ListEFormFields;
+		///<summary>Set this before opening this window. It's the current language being used in the parent form. Format is the text that's showing in the comboBox. Will be empty string if languages are not set up in pref LanguagesUsedByPatients or if the default language is being used in the parent FrmEFormDefs.</summary>
+		public string LanguageShowing="";
+		///<summary>We don't fire off a signal to update the language cache on other computers until we hit Save in the form window. So each edit window has this variable to keep track of whether there are any new translations. This bubbles up to the parent.</summary>
+		public bool IsChangedLanCache;
 
 		///<summary></summary>
 		public FrmEFormSigBoxEdit() {
@@ -30,6 +34,13 @@ namespace OpenDental {
 
 		private void FrmEFormsSigBoxEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
+			if(LanguageShowing==""){
+				groupLanguage.Visible=false;
+			}
+			else{
+				textLanguage.Text=LanguageShowing;
+				textLabelTranslated.Text=LanguagePats.TranslateEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,EFormFieldCur.ValueLabel);
+			}
 			textLabel.Text=EFormFieldCur.ValueLabel;
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
@@ -43,19 +54,19 @@ namespace OpenDental {
 				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
 			}
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.ConvertCondDbToVis(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
+			textCondValue.Text=EFormL.ConvertCondDbToVis(ListEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
-			//no need to verify with user because they have another chance to cancel in the parent window.
-			EFormFieldCur=null;
+			EFormFieldCur.IsDeleted=true;
+			//No need to check stacking for next field, SigBox is not a h-stackable type.
 			IsDialogOK=true;
 		}
 
 		private void butPickParent_Click(object sender,EventArgs e) {
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
-			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
-			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListEFormFields=ListEFormFields;
+			int idx=ListEFormFields.IndexOf(EFormFieldCur);
 			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
 			frmEFormFieldPicker.ShowDialog();
 			if(frmEFormFieldPicker.IsDialogCancel){
@@ -65,7 +76,7 @@ namespace OpenDental {
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			textCondValue.Text=EFormL.PickCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			textCondValue.Text=EFormL.PickCondValue(ListEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void FrmEFormSigBoxEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
@@ -94,6 +105,12 @@ namespace OpenDental {
 				}
 			}
 			//end of validation
+			if(LanguageShowing!=""){
+				IsChangedLanCache=LanguagePats.SaveTranslationEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,textLabelTranslated.Text);
+				if(IsChangedLanCache){
+					LanguagePats.RefreshCache();
+				}
+			}
 			EFormFieldCur.ValueLabel=textLabel.Text;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
 			if(checkBorder.Checked==true){
@@ -105,7 +122,7 @@ namespace OpenDental {
 			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.SpaceBelow=spaceBelow;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(ListEFormFields,textCondParent.Text,textCondValue.Text);
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

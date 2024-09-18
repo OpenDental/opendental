@@ -315,8 +315,9 @@ namespace OpenDental {
 					continue;
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
-					Grid gridForField=ListEFormFields[i].TagOD as Grid;
-					CheckBox checkBox=gridForField.Children[1] as CheckBox;
+					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
+					Border borderBox=ListEFormFields[i].TagOD as Border;
+					CheckBox checkBox=borderBox.Child as CheckBox;
 					if(checkBox.IsChecked==true) {
 						ListEFormFields[i].ValueString="X";
 						continue;
@@ -324,19 +325,22 @@ namespace OpenDental {
 					ListEFormFields[i].ValueString="";
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.DateField){
-					Grid gridForField=ListEFormFields[i].TagOD as Grid;
-					StackPanel stackPanel=gridForField.Children[1] as StackPanel;
+					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
+					Border borderBox=ListEFormFields[i].TagOD as Border;
+					StackPanel stackPanel=borderBox.Child as StackPanel;
 					WpfControls.UI.TextVDate textVDate=stackPanel.Children[1] as WpfControls.UI.TextVDate;
 					ListEFormFields[i].ValueString=textVDate.Text;
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.Label){
-					Grid gridForField=ListEFormFields[i].TagOD as Grid;
-					WpfControls.UI.TextRich textRich=gridForField.Children[1] as WpfControls.UI.TextRich;
+					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
+					Border borderBox=ListEFormFields[i].TagOD as Border;
+					WpfControls.UI.TextRich textRich=borderBox.Child as WpfControls.UI.TextRich;
 					ListEFormFields[i].ValueLabel=EFormFields.SerializeFlowDocument(textRich.richTextBox.Document);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.MedicationList){
-					Grid gridForField=ListEFormFields[i].TagOD as Grid;
-					StackPanel stackPanelVert=gridForField.Children[1] as StackPanel;
+					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
+					Border borderBox=ListEFormFields[i].TagOD as Border;
+					StackPanel stackPanelVert=borderBox.Child as StackPanel;
 					Grid gridMeds=stackPanelVert.Children[1] as Grid;
 					List<EFormMed> listEFormMeds=new List<EFormMed>();
 					for(int m=1;m<gridMeds.RowDefinitions.Count;m++){//start at row 1 to skip header
@@ -366,8 +370,9 @@ namespace OpenDental {
 					ListEFormFields[i].ValueString=JsonConvert.SerializeObject(listEFormMeds);
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.RadioButtons){
-					Grid gridForField=ListEFormFields[i].TagOD as Grid;
-					StackPanel stackPanel=gridForField.Children[1] as StackPanel;
+					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
+					Border borderBox=ListEFormFields[i].TagOD as Border;
+					StackPanel stackPanel=borderBox.Child as StackPanel;
 					WrapPanel wrapPanel=stackPanel.Children[1] as WrapPanel;
 					UIElementCollection uIElementCollection=wrapPanel.Children;
 					List<string> listPickDb=ListEFormFields[i].PickListDb.Split(',').ToList();
@@ -386,8 +391,9 @@ namespace OpenDental {
 					}
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.TextField){
-					Grid gridForField=ListEFormFields[i].TagOD as Grid;
-					StackPanel stackPanel=gridForField.Children[1] as StackPanel;
+					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
+					Border borderBox=ListEFormFields[i].TagOD as Border;
+					StackPanel stackPanel=borderBox.Child as StackPanel;
 					TextBox textBox=stackPanel.Children[1] as TextBox;
 					ListEFormFields[i].ValueString=textBox.Text;
 				}
@@ -397,8 +403,9 @@ namespace OpenDental {
 				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
 					continue;
 				}
-				Grid gridForField=ListEFormFields[i].TagOD as Grid;
-				StackPanel stackPanel=gridForField.Children[1] as StackPanel;
+				//Grid gridForField=ListEFormFields[i].TagOD as Grid;
+				Border borderBox=ListEFormFields[i].TagOD as Border;
+				StackPanel stackPanel=borderBox.Child as StackPanel;
 				WpfControls.UI.SignatureBoxWrapper signatureBoxWrapper=stackPanel.Children[1] as WpfControls.UI.SignatureBoxWrapper;
 				string keyData=EForms.GetSignatureKeyData(ListEFormFields);
 				string signature="0";
@@ -1648,6 +1655,7 @@ namespace OpenDental {
 			}
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
+			//WPF label is always to the right of the checkbox. We would use our UI.Checkbox if we want to give users a choice.
 			checkBox.VerticalContentAlignment=VerticalAlignment.Center;
 			checkBox.FontSize=FontSize*eFormField.FontScale/100;
 			checkBox.IsChecked=eFormField.ValueString=="X";
@@ -1667,6 +1675,7 @@ namespace OpenDental {
 			}
 			bool isConditionalParent=false;
 			if(IsSetupMode
+				&& eFormField.ValueLabel!=""
 				&& ListEFormFields.Exists(x=>x.ConditionalParent==eFormField.ValueLabel))
 			{
 				isConditionalParent=true;
@@ -1724,7 +1733,7 @@ namespace OpenDental {
 			Label label = new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0);//default is 5
-			label.Content=eFormField.ValueLabel;
+			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
 				Label labelRequired=new Label();
@@ -1734,6 +1743,21 @@ namespace OpenDental {
 				labelRequired.Foreground=Brushes.Red;
 				labelRequired.FontWeight=FontWeights.Bold;
 				stackPanelLabel.Children.Add(labelRequired);
+			}
+			bool isConditionalParent=false;
+			if(IsSetupMode
+				&& eFormField.ValueLabel!=""
+				&& ListEFormFields.Exists(x=>x.ConditionalParent==eFormField.ValueLabel))
+			{
+				isConditionalParent=true;
+			}
+			if(isConditionalParent) {
+				Label labelCondParent=new Label();
+				stackPanelLabel.Children.Add(labelCondParent);
+				labelCondParent.FontSize=FontSize*eFormField.FontScale/100;
+				labelCondParent.Padding=new Thickness(5,0,0,0);//default is 5
+				labelCondParent.Content="(CND)";
+				labelCondParent.Foreground=Brushes.Red;
 			}
 			bool isConditionalChild=false;
 			if(IsSetupMode
@@ -2119,6 +2143,7 @@ namespace OpenDental {
 			}
 			bool isConditionalParent=false;
 			if(IsSetupMode
+				&& eFormField.ValueLabel!=""
 				&& ListEFormFields.Exists(x=>x.ConditionalParent==eFormField.ValueLabel))
 			{
 				isConditionalParent=true;
@@ -2244,7 +2269,7 @@ namespace OpenDental {
 			Label label = new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0,0,0,bottom:5);//default is 5
-			label.Content=eFormField.ValueLabel;
+			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
 				Label labelRequired=new Label();
@@ -2355,8 +2380,8 @@ namespace OpenDental {
 				if(ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
 					continue;
 				}
-				Grid gridForField=ListEFormFields[i].TagOD as Grid;
-				StackPanel stackPanel=gridForField.Children[1] as StackPanel;
+				Border borderBox=ListEFormFields[i].TagOD as Border;
+				StackPanel stackPanel=borderBox.Child as StackPanel;
 				WpfControls.UI.SignatureBoxWrapper signatureBoxWrapper=stackPanel.Children[1] as WpfControls.UI.SignatureBoxWrapper;
 				if(signatureBoxWrapper.GetSigChanged()){
 					//if the user already signed during this session, then they don't want to clear it again.

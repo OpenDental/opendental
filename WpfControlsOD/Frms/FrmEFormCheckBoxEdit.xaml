@@ -15,7 +15,7 @@
 		<ui:Label Width="98" Height="18" Margin="83,126,0,0" Text="Db Link" HAlign="Right" VAlign="Center" />
 		<ui:Label Height="18" Margin="399,128,0,0" Text="Used to link to a database field" VAlign="Center" Width="211" />
 		<ui:Label Width="98" Height="18" Margin="83,98,0,0" Text="Label" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="399,98,0,0" Text="This shows to the left of the checkbox" VAlign="Center" Width="211" />
+		<ui:Label Height="18" Margin="399,98,0,0" Text="Displays to the right of the checkbox" VAlign="Center" Width="211" />
 		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="182,98,0,0" TabIndexOD="1"/>
 		<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="65,180,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
 		<ui:Label x:Name="labelStackable" Height="18" Margin="201,181,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
