@@ -69,6 +69,7 @@ Validating/Validated events are not supported.
 		private bool _isChangingFocusToTextBox;
 		private bool _isMultiline=false;
 		private HorizontalAlignment _hAlign=HorizontalAlignment.Left;	
+		private bool _isUnderline=false;
 		private Thickness _paddingOD;
 		private bool _readOnly;
 		
@@ -86,6 +87,8 @@ Validating/Validated events are not supported.
 			LostFocus+=This_LostFocus;
 			LostKeyboardFocus+=This_LostKeyboardFocus;
 			PreviewMouseLeftButtonDown+=This_PreviewMouseLeftButtonDown;
+			border1.Visibility=Visibility.Collapsed;
+			border2.Visibility=Visibility.Collapsed;
 		}
 
 		#region Events
@@ -105,6 +108,7 @@ Validating/Validated events are not supported.
 			set {
 				_colorBack = value;
 				textBox.Background=new SolidColorBrush(value);
+				border1.Background=new SolidColorBrush(value);
 			}
 		}
 
@@ -162,6 +166,28 @@ Validating/Validated events are not supported.
 				textBox.TextWrapping=TextWrapping.NoWrap;
 				textBox.AcceptsReturn=false;
 					textBox.VerticalScrollBarVisibility=ScrollBarVisibility.Hidden;
+			}
+		}
+
+		[Category("OD")]
+		[Description("Set this true to hide the left, top, and right sides of the textbox. This makes it look more like a web textbox.")]
+		[DefaultValue(false)]
+		public bool IsUnderline{
+			get{
+				return _isUnderline;
+			}
+			set{
+				_isUnderline=value;
+				if(_isUnderline){
+					textBox.Margin=new Thickness(0.5,0.5,0.5,bottom:0);//or it bleeds out
+					border1.Visibility=Visibility.Visible;
+					border2.Visibility=Visibility.Visible;
+				}
+				else{
+					textBox.Margin=new Thickness(0);//back to the normal position
+					border1.Visibility=Visibility.Collapsed;
+					border2.Visibility=Visibility.Collapsed;
+				}
 			}
 		}
 

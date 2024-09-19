@@ -122,6 +122,11 @@ namespace OpenDental {
 			}
 			ListApptOthers=Appointments.GetApptOthersForPat(PatientCur.PatNum);
 			_listPlannedAppts=Appointments.GetRefreshedPlannedAppts(PatientCur.PatNum);
+			//Same ordering as gridMain in FormApptsOther.cs.
+			ListApptOthers=ListApptOthers.OrderBy(appt => {
+				var plannedAppt=_listPlannedAppts.FirstOrDefault(x => x.AptNum==appt.AptNum);
+				return plannedAppt?.ItemOrderPlanned+ListApptOthers.Count??(ListApptOthers.IndexOf(appt));//Place planned appts after non-planned appts. Keep the same ordering amongst non-planned.
+			}).ToList();
 			_listPlannedApptsIncomplete=_listPlannedAppts.FindAll(x => !ListApptOthers.ToList()
 				.Exists(y => y.NextAptNum==x.AptNum && y.AptStatus==ApptStatus.Complete))
 				.OrderBy(x => x.ItemOrderPlanned).ToList();

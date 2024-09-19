@@ -52,6 +52,25 @@ We might add a button just for Ins import since everything else will be done aut
 We need to consider where to put various import notes. Flex uses Service Notes for some of it. Commlog entry?
 We might also recommend a checkbox to indicate if insurance has changed. Maybe that should trigger some sort of warning for the office.
 
+Language Translation
+(still working on this documentation)
+For radiobuttons, we must concat label and all radiobutton labels.
+PickListVis holds the radiobutton labels for the English version.
+We ignore PickListDb because those won't change with different languages.
+Our delimiter will be comma. Like this:
+Example Label,Radio1Span,Radio2Span
+Radiobuttons are already validated to not contain commas.
+Do the same for radiobutton labels, English version.
+Neither labels nor radiobuttons require visible labels.
+So PickListVis might already look like ",,"
+and ValueLabel might also look like ""
+The translation allows empty strings as well, regardless of whether English has empty strings.
+A translation could also look like ",,,".
+The number of items in the translation is critical and must match.
+Rename VisDb to VisDbLang and add a third field.
+Add another column to the grid if this is not default language.
+They are allowed to change both the English and foreign translations in that grid at any time.
+
 */
 
 	///<summary>EForms are a way for patients to fill out forms. This is similar to sheets, but optimized for dynamic layout instead of fixed layout. The office sets up templates, EFormDefs, which get copied to EForms. Since this is a template EForm, it does not link to a patient. It can be freely changed without affecting any EForms. We also supply internal EFormDefs, which are hard coded as XML rather than being in any office database.</summary>
@@ -98,7 +117,8 @@ So something about when a user tries to set a stacked field to be full width. Ri
 
 RyanH:
 Language translation for all other types, using textBox as example
-Default border=true for new text, date, checkbox, and radiobuttons
+Dates should be single lines instead of rectangles when inside border boxes
+Default border=true for new text, date, checkbox, and radiobuttons 
 Refine the 3 built-in forms according to my interative instructions
 RyanR:
 Overhaul to follow layout strategy at top of CtrlEFormFill

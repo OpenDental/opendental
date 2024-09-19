@@ -44,17 +44,19 @@ namespace OpenDental {
 	Border Boxes:
 	Each field can have an optional border box that can be turned on by the user.
 	A border never includes multiple fields.
-	This border takes up additional space, making the field bigger in both dimensions.
+	This border takes up additional space, making the field look bigger in both dimensions.
 	The border does not change the margins and spacing described below.
 	The extra white space that's created within the border should be thought of as padding within the field rather then margins between fields.
 	The user will never have control over this padding.
+	For a fixed width field, the specified width is for the field itself, without the surrounding padding or border box thickness.
 	The border itself is not uniform. The bottom takes 6 pixels (5 for shadow) and the other three sides take one pixel.
 	The thickness of the border does not contribute to either the padding or the margins of each field.
-	So the contents of a field is inset by margin + border + padding.
+	So the contents of a field is surrounded by padding + border + margin.
 	All of those values are clearly defined here and must be copied precisely in any implementation.
 	To make the left edges of fields line up whether they have a border or not, we include left padding and left border thickness whether a border is present or not.
 	One way to do that is to define a different border in that case which is white with certain thicknesses.
 	Padding and border thickness on the other three sides should only be present when a border is present.
+	I want two label fields to be able to get very close to each other vertically when there is no border.
 	In C#, the way to make this work is for the field to be a child of the border. A C# border can have thickness, margin, and padding.
 
 	Margins and spacing:
@@ -106,7 +108,7 @@ namespace OpenDental {
 	So set the width of each field container very intentionally according to my algorithm.
 	To determine available width, subtract the right margin (ex 10) from the StackPanel width.
 	The controls inside the field can stretch horizontally to fill; that's easy.
-	Once we do the math to set each field with, it all works automatically.
+	Once we do the math to set each field width, it all works automatically.
 	This math can be done in any UI language.
 	It also follows that if the screen size changes, we must redo the layout.
 	But screen size really shouldn't be changing unless the user maybe rotates the layout.
@@ -394,7 +396,7 @@ namespace OpenDental {
 					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
 					Border borderBox=ListEFormFields[i].TagOD as Border;
 					StackPanel stackPanel=borderBox.Child as StackPanel;
-					TextBox textBox=stackPanel.Children[1] as TextBox;
+					WpfControls.UI.TextBox textBox=stackPanel.Children[1] as WpfControls.UI.TextBox;
 					ListEFormFields[i].ValueString=textBox.Text;
 				}
 			}
@@ -1817,7 +1819,8 @@ namespace OpenDental {
 			}
 			//textBlock.FontSize=FontSize*eFormField.FontScale/100;//no, this is never set for labels
 			//textBlock.Padding=new Thickness(0);//default is 5
-			FlowDocument flowDocument=EFormFields.DeserializeFlowDocument(eFormField.ValueLabel);
+			string xmlString=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
+			FlowDocument flowDocument=EFormFields.DeserializeFlowDocument(xmlString);
 			bool isConditionalChild=false;
 			if(IsSetupMode
 				&& eFormField.ConditionalParent!=""
@@ -2361,12 +2364,18 @@ namespace OpenDental {
 				labelCondChild.Foreground=Brushes.Red;
 			}
 			stackPanel2.Children.Add(stackPanelLabel);
-			TextBox textBox=new TextBox();
+			WpfControls.UI.TextBox textBox=new WpfControls.UI.TextBox();
+			textBox.HorizontalAlignment=HorizontalAlignment.Stretch;
 			if(eFormField.IsTextWrap){
-				textBox.TextWrapping=TextWrapping.Wrap;
+				textBox.IsMultiline=true;
+				//keep the full outline on 4 sides
 			}
 			else{
-				//textBox.BorderThickness=new Thickness(0,0,0,bottom:1);
+				textBox.Height=20;
+				if(eFormField.Border==EnumEFormBorder.ThreeD){
+					//single row textbox with border gets converted to underline
+					textBox.IsUnderline=true;
+				}
 			}
 			textBox.Text=eFormField.ValueString;
 			textBox.FontSize=FontSize*eFormField.FontScale/100;
@@ -2544,14 +2553,13 @@ namespace OpenDental {
 
 		///<summary></summary>
 		public double CalcFieldWidth(EFormField eFormField){
-			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
-			if(!eFormField.IsWidthPercentage){//only for fixed width
-				widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
-			}
-			if(widthAvail<0) {
-				widthAvail=0;
-			}
+			double widthAvail;
 			if(!eFormField.IsWidthPercentage){//fixed width
+				widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+				widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
+				if(widthAvail<0) {
+					widthAvail=0;
+				}
 				if(eFormField.Width==0){//no width specified
 					return widthAvail;//so full width
 				}
@@ -2577,40 +2585,42 @@ namespace OpenDental {
 				}
 			}
 			//So now they add up to 100 or less
-			widthAvail-=(listPercentages.Count-1)*_marginRightOfField;//subtract all the margins between the fields.
-			//That will get a bit more complex once we let users control their right margins
-			List<int> listWidths=new List<int>();
-			List<int> listAboveMin=new List<int>();
-			for(int i=0;i<listPercentages.Count;i++){
-				int width=(int)(listPercentages[i]*widthAvail/100d);//rounds down
-				//strip off the borderbox
-				if(eFormField.Border==EnumEFormBorder.None){
-					width-=_paddingLeft;
-					width-=1;//left border box thickness
+			widthAvail=stackPanel.ActualWidth-_marginLeftOfPage;
+			if(widthAvail<0) {
+				widthAvail=0;
+			}
+			for(int i=0;i<listEFormFieldsInStack.Count;i++){
+				widthAvail-=_marginRightOfField;
+				//strip off the borderboxes
+				if(listEFormFieldsInStack[i].Border==EnumEFormBorder.None){
+					widthAvail-=_paddingLeft;
+					widthAvail-=1;//left border box thickness
 				}
 				else{//3D
-					width-=_paddingLeft+_paddingRight;
-					width-=_thicknessLRBorders;
+					widthAvail-=_paddingLeft+_paddingRight;
+					widthAvail-=_thicknessLRBorders;
 				}
+			}
+			List<int> listWidths=new List<int>();
+			List<int> listAboveMin=new List<int>();//the excess above each min width
+			for(int i=0;i<listEFormFieldsInStack.Count;i++){
+				int width=(int)(listPercentages[i]*widthAvail/100d);//rounds down
 				if(width<listEFormFieldsInStack[i].MinWidth){//works when no MinWidth specified (=0)
 					//example field width=20, but MinWidth=40, so bump width back up to 40. That's 0 aboveMin.
 					width=listEFormFieldsInStack[i].MinWidth;
 					listAboveMin.Add(0);
 				}
 				else{
-					//example field width=50 and MinWidth=40, so width stays at 50. That's 10 aboveMin (width-minWidth
+					//example field width=50 and MinWidth=40, so width stays at 50. That's 10 aboveMin (width-minWidth)
 					listAboveMin.Add(width-listEFormFieldsInStack[i].MinWidth);
 				}
 				listWidths.Add(width);
 			}
 			//Because we limited to minWidths, we can be over our avail width
-
-			//There's  still a few bugs in this algorithm right here, but it's very close.  Debug tonight.
-
-
 //Todo? We might also have hit a minWidth, but still be within our avail width.
+//Still a bug in this section somewhere
 			double totalAboveMin=listAboveMin.Sum();
-			double totalAboveAvail=widthAvail-listWidths.Sum();
+			double totalAboveAvail=listWidths.Sum()-widthAvail;
 			if(totalAboveMin==0){
 				return listWidths[listWidths.Count-1];//this is the only one we care about
 			}
@@ -2620,8 +2630,16 @@ namespace OpenDental {
 				}
 				//shrink it proportionally
 				listWidths[i]=listWidths[i]-(int)(totalAboveAvail*listAboveMin[i]/totalAboveMin);
+				//but if widthAvail is so small that it's already wrapping, then that might overshoot, so
+				if(listWidths[i]<listEFormFieldsInStack[i].MinWidth){
+					listWidths[i]=listEFormFieldsInStack[i].MinWidth;
+				}
 			}
-			return listWidths[listWidths.Count-1];//this is the only one we care about
+			double retVal=listWidths[listWidths.Count-1];//this is the only one we care about
+			if(retVal>0){
+				retVal-=1;//for rounding errors so it won't be slightly bigger than avail space and wrap prematurely
+			}
+			return retVal;
 		}
 
 		///<summary>This method will set a flag which is used to skip "empty" pages. It only gets called when filling out a form. We don't want to skip pages when they are in setup mode.</summary>

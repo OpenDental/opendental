@@ -65,6 +65,8 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		///<summary>On mouse down, this copy is made.  Use as needed for logic.  No need to clear when done.</summary>
 		private List<int> _listSelectedOrig=new List<int>();
 		private int _mouseDownIndex;
+		/// <summary>Only used when in CheckBox mode. This is the index of the checkbox that is highlighted, but it is not necessarily checked/selected. In checkbox mode, selected indices only refer to the checked boxes, not the highlighted row. This highlight allows user to use arrow keys to move to different rows and then select with spacebar.</summary>
+		private int _indexCheckBoxHighlighted=-1;
 		///<summary>This gets set when the user sets an item that is not present in the list. Selected index is also set to -1.
 		private string _overrideText="";
 		///<summary>If selected index is -1, this can be used to store and retrieve the primary key. _overrideText is what shows to the user.</summary>
@@ -80,6 +82,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			//Width=150;
 			//Height=200;
 			scrollViewer.CanContentScroll=false;//results in physical(pixel) scrolling instead of logical(Item) scrolling.
+			scrollViewer.PreviewKeyDown+=scrollViewer_PreviewKeyDown;
 			Items=new ListBoxItemCollection(this);
 			IsEnabledChanged+=ListBox_IsEnabledChanged;
 			PreviewKeyDown+=ListBox_PreviewKeyDown;
@@ -372,6 +375,13 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 
 		private void Item_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
 			//Focus();
+			Point point=e.GetPosition(this);
+			if(SelectionMode==SelectionMode.CheckBoxes){
+				if(point.X>14){//only set a row to be highlighted if clicking row and not just the checkbox itself
+					_indexCheckBoxHighlighted=IndexFromPoint(point);
+					//SetColors happens in mouse up
+				}
+			}
 			if(SelectionMode==SelectionMode.None
 				|| SelectionMode==SelectionMode.CheckBoxes) //handled instead with checkbox_click event
 			{
@@ -381,7 +391,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			_ignoreMouseMove=true;
 			((IInputElement)sender).CaptureMouse();
 			_ignoreMouseMove=false;
-			Point point=e.GetPosition(this);
 			_mouseDownIndex=IndexFromPoint(point); 
 			if(_mouseDownIndex>Items.Count-1){//clicked below items
 				SetColors();
@@ -416,9 +425,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 
 		private void Item_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
 			((IInputElement)sender).ReleaseMouseCapture();
-			if(SelectionMode==SelectionMode.None
-				|| SelectionMode==SelectionMode.CheckBoxes) 
-			{
+			if(SelectionMode==SelectionMode.None) {
 				return;
 			}
 			_isMouseDown=false;
@@ -477,14 +484,93 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			SetColors();
 		}
 
-		///<summary>Used by autonotes for SelectionMode.CheckBoxes and SelectionMode.One</summary>
-		private void ListBox_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(SelectionMode!=SelectionMode.CheckBoxes && SelectionMode!=SelectionMode.One){
-				return;
+		private void scrollViewer_PreviewKeyDown(object sender,KeyEventArgs e) {
+			if(e.Key==Key.Down || e.Key==Key.Up || e.Key==Key.Right || e.Key==Key.Left){
+				e.Handled=true;
+				//otherwise the arrow button affect the scrollbar
 			}
+		}
+
+		///<summary>Used by autonotes for SelectionMode.CheckBoxes and SelectionMode.One.  Also works for MultiExtended.</summary>
+		private void ListBox_PreviewKeyDown(object sender,KeyEventArgs e) {
 			if(e.Key==Key.Escape){//Closing the form
 				return;
 			}
+			if(SelectionMode==SelectionMode.None){
+				return;
+			}
+			int selectedIndexNew;
+			if(e.Key==Key.Down || e.Key==Key.Right){
+				if(SelectionMode==SelectionMode.CheckBoxes){
+					if(_indexCheckBoxHighlighted==Items.Count-1) {//last item in listbox, already highlighted so no SetColor needed, use MoveScrollBar in case the last item is only partially showing
+						MoveScrollBar();
+						return;
+					}
+					_indexCheckBoxHighlighted+=1;
+					MoveScrollBar();
+				}
+				else{//either MultiExtend or One
+					if(_listSelectedIndices.Count==0){//nothing selected, set to first index
+						_listSelectedIndices.Add(0);
+					}
+					else if(_listSelectedIndices.Last()<Items.Count-1){//if the last selected index is not the last item in listbox
+						selectedIndexNew= _listSelectedIndices.Last()+1;
+						_listSelectedIndices.Clear();
+						_listSelectedIndices.Add(selectedIndexNew);
+					}
+					MoveScrollBar(isCheckboxes:false);
+				}
+				SetColors();
+				return;
+			}
+			if(e.Key==Key.Up || e.Key==Key.Left){
+				if(SelectionMode==SelectionMode.CheckBoxes){
+					if(_indexCheckBoxHighlighted==0){//first item in listbox, already highlighted so no SetColor needed, use MoveScrollBar in case the first item is only partially showing
+						MoveScrollBar();
+						return;
+					}
+					if(_indexCheckBoxHighlighted==-1){//-1 if none highlighted
+						_indexCheckBoxHighlighted=0;
+						MoveScrollBar();
+					}
+					else{
+						_indexCheckBoxHighlighted-=1;
+						MoveScrollBar();
+					}
+				}
+				else{//either MultiExtend or One
+					if(_listSelectedIndices.Count==0){//nothing selected, set to first index
+						_listSelectedIndices.Add(0);
+					}
+					if(_listSelectedIndices.Last()>0){//last selected index is not the first item in listbox
+						selectedIndexNew= _listSelectedIndices.Last()-1;
+						_listSelectedIndices.Clear();
+						_listSelectedIndices.Add(selectedIndexNew);
+					}
+					MoveScrollBar(isCheckboxes:false);
+				}
+				SetColors();
+				return;
+			}
+			if(SelectionMode==SelectionMode.MultiExtended){
+				return;
+			}
+			if(e.Key==Key.Space && SelectionMode==SelectionMode.CheckBoxes){
+				if(_indexCheckBoxHighlighted==-1){
+					return;
+				}
+				Border border = (Border)stackPanel.Children[_indexCheckBoxHighlighted];
+				CheckBox checkBox = (CheckBox)border.Child;
+				if(checkBox.Checked==true){
+					checkBox.Checked=false;
+					_listSelectedIndices.Remove(_indexCheckBoxHighlighted);
+					return;
+				}
+				checkBox.Checked=true;
+				_listSelectedIndices.Add(_indexCheckBoxHighlighted);
+				return;
+			}
+			//from here down is SelectionMode.One
 			List<string> listItems=new List<string>();
 			for(int i=0;i<Items.Count;i++){
 				listItems.Add(Items.GetTextShowingAt(i));
@@ -643,6 +729,47 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				return i;
 			}
 			return -1;
+		}
+
+		/// <summary>Sets the VerticalOffset of the scrollbar in order to make sure that the latest highlighted index is actually fully visible when user is using arrow keys to navigate through options in the listbox.  For example, if the next index down is partially or fully hidden below what is shown with the current scrollbar position, this will move the scrollbar far enough down to show it.  This works for all three SelectionModes that aren't None. isCheckboxes is true if SelectionMode is Checkboxes.</summary>
+		public void MoveScrollBar(bool isCheckboxes=true) {
+			if(_listSelectedIndices.Count<1 && !isCheckboxes){
+				return;
+			}
+			int highlightedIndex;
+			if(isCheckboxes){
+				highlightedIndex=_indexCheckBoxHighlighted;
+			}
+			else{
+				highlightedIndex=_listSelectedIndices.Last();
+			}
+			if(highlightedIndex==-1){
+				return;
+			}
+			double heightAllItems=scrollViewer.ViewportHeight+scrollViewer.ScrollableHeight;
+			double heightSingleItem=heightAllItems/Items.Count;
+			double verticalOffset;
+			if((highlightedIndex*heightSingleItem)<scrollViewer.VerticalOffset){//The top of the item for the latest selected index is above the bounds of the viewport
+				if(scrollViewer.VerticalOffset<heightSingleItem){//If scrollbar is less than the height of one item from the top
+					scrollViewer.ScrollToVerticalOffset(0);//Set scrollbar to the top
+					return;
+				}
+				//Move scrollbar up enough to show the entirety of the latest selected index's item
+				verticalOffset=heightSingleItem*highlightedIndex;
+				scrollViewer.ScrollToVerticalOffset(verticalOffset);
+				return;
+			}
+			if((highlightedIndex+1)*heightSingleItem<=scrollViewer.VerticalOffset+scrollViewer.ViewportHeight){//The latest selected index's item is fully in view, no need to adjust scrollbar
+				return;
+			}
+			//From here down, the bottom of the item for the latest selected index is hidden below the bounds of the viewport
+			if(scrollViewer.VerticalOffset+heightSingleItem>scrollViewer.ScrollableHeight){//If scrollbar is less than the height of one item from the bottom
+				scrollViewer.ScrollToVerticalOffset(scrollViewer.ScrollableHeight);//Set scrollbar to the bottom
+				return;
+			}
+			double valueSelectedIndexBottom=heightSingleItem*(highlightedIndex+1);
+			verticalOffset=valueSelectedIndexBottom-scrollViewer.ViewportHeight;
+			scrollViewer.ScrollToVerticalOffset(verticalOffset);//Move scrollbar down enough to show the entirety of the latest selected index's item
 		}
 
 		///<summary>Sets all rows either selected or unselected.</summary>
@@ -873,6 +1000,24 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		///<summary>Sets background colors for all rows, based on selected indices and hover.</summary>
 		private void SetColors(){
 			if(SelectionMode==SelectionMode.CheckBoxes){
+				if(_indexCheckBoxHighlighted<0){
+					//it's not possible to unhighlight the existing highlight to leave 0 highlighted,
+					//so this is just for startup.
+					return;
+				}
+				for(int i = 0;i<stackPanel.Children.Count;i++){
+					Color colorBack = _colorBack;
+					if(_indexCheckBoxHighlighted==i){
+						if(IsEnabled) {
+							colorBack=_colorSelectedBack;
+						}
+						else{
+							colorBack=Color.FromRgb(230,230,230);
+						}
+					}
+					Border border2 = (Border)stackPanel.Children[i];
+					border2.Background=new SolidColorBrush(colorBack);
+				}
 				return;
 			}
 			//I'm really not sure how the textBlocks get greyed out for IsEnabled.

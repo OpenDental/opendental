@@ -102,24 +102,29 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				return;
 			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.Label){
+				//see comments in FieldType==EnumEFormFieldType.TextField
 				FrmEFormLabelEdit frmEFormLabelEdit=new FrmEFormLabelEdit();
 				frmEFormLabelEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
-				frmEFormLabelEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
-				frmEFormLabelEdit.EFormDefCur=EFormDefCur;
-				frmEFormLabelEdit.IsPreviousStackable=isPreviousStackable;
-				frmEFormLabelEdit.IsLastInHorizStack=false;
-				if(ctrlEFormFill.ListIndicesLastInHorizStack.Exists(x=>x==idx)){
-					frmEFormLabelEdit.IsLastInHorizStack=true;
+				frmEFormLabelEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
+				if(comboLanguage.SelectedIndex>0){
+					frmEFormLabelEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
 				}
 				frmEFormLabelEdit.ShowDialog();
+				_isChangedLanCache|=frmEFormLabelEdit.IsChangedLanCache;
 				if(frmEFormLabelEdit.IsDialogCancel){
 					return;
 				}
-				if(frmEFormLabelEdit.EFormFieldCur==null){
+				if(ctrlEFormFill.ListEFormFields[idx].IsDeleted){
+					if(ctrlEFormFill.ListEFormFields[idx].IsNew){//the field was added in this session previously
+						EFormFieldDefs.Delete(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);
+					}
+					else{
+						ListEFormFieldDefNumsToDelete.Add(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);//these will get deleted when user clicks Save
+					}
 					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
-					ctrlEFormFill.RefreshLayout();
-					return;
 				}
+				ctrlEFormFill.RefreshLayout();
+				return;
 			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.DateField){
 				//see comments in FieldType==EnumEFormFieldType.TextField
@@ -332,31 +337,34 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		}
 
 		private void butLabel_Click(object sender,EventArgs e) {
+			//See comments in butTextField_Click.
+			EFormFieldDef eFormFieldDef=new EFormFieldDef();
+			EFormFieldDefs.Insert(eFormFieldDef);
+			EFormField eFormField=EFormFields.FromDef(eFormFieldDef);
 			FrmEFormLabelEdit frmEFormLabelEdit=new FrmEFormLabelEdit();
-			EFormField eFormField=new EFormField();
 			eFormField.IsNew=true;
 			eFormField.FontScale=100;
 			eFormField.FieldType=EnumEFormFieldType.Label;
 			frmEFormLabelEdit.EFormFieldCur=eFormField;
+			frmEFormLabelEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 			frmEFormLabelEdit.EFormDefCur=EFormDefCur;
-			frmEFormLabelEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
-			int idx=ctrlEFormFill.GetSelectedIndex();
-			if(idx==-1){//no fields selected, this field will be placed at the end of the current page.
-				frmEFormLabelEdit.IsLastInHorizStack=true;
+			int idxNew=ctrlEFormFill.GetSelectedIndex();
+			if(idxNew==-1){
+				idxNew=EFormFields.GetLastIdxThisPage(ctrlEFormFill.ListEFormFields,ctrlEFormFill.GetPageShowing());
 			}
-			if(idx!=-1 && !ctrlEFormFill.ListEFormFields[idx].IsHorizStacking){
-				//if there is an index selected and the field at that index is not horizontal stacking, this new field will be positioned last (or by itself) in a stack.
-				frmEFormLabelEdit.IsLastInHorizStack=true;
+			ctrlEFormFill.ListEFormFields.Insert(idxNew,eFormField);
+			if(comboLanguage.SelectedIndex>0){
+				frmEFormLabelEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
 			}
 			frmEFormLabelEdit.ShowDialog();
-			if(frmEFormLabelEdit.IsDialogCancel){
+			_isChangedLanCache|=frmEFormLabelEdit.IsChangedLanCache;
+			if(frmEFormLabelEdit.IsDialogCancel || eFormField.IsDeleted){
+				EFormFieldDefs.Delete(eFormField.EFormFieldDefNum);
+				ctrlEFormFill.ListEFormFields.Remove(eFormField);
 				return;
 			}
-			if(frmEFormLabelEdit.EFormFieldCur==null){
-				//they clicked Delete for some reason, which is the same as cancel.
-				return;
-			}
-			AddNewField(eFormField);//This will refresh the layout and set a selected field.
+			ctrlEFormFill.RefreshLayout();
+			ctrlEFormFill.SetSelected(idxNew);
 		}
 
 		private void butDateField_Click(object sender,EventArgs e) {
