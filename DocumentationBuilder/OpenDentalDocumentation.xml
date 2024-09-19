@@ -4576,7 +4576,7 @@
     </column>
   </table>
   <table name="document">
-    <summary>Represents a single document in the images module.</summary>
+    <summary>Represents a single document in the imaging module.</summary>
     <column order="0" name="DocNum" type="bigint(20)">
       <summary>Primary key.</summary>
     </column>

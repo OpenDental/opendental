@@ -72,6 +72,11 @@ namespace OpenDental {
 			if(userQuery!=null) {
 				_userQuery=userQuery;
 			}
+			toolTipExport=new ToolTip();
+			toolTipExport.InitialDelay=500;
+			toolTipExport.ReshowDelay=100;
+			toolTipExport.SetToolTip(butExportTxt,Lans.g(this,"Export as tab delimited .txt file"));
+			toolTipExport.SetToolTip(butExportCsv,Lans.g(this,"Export as comma delimited .csv file"));
 		}
 		#endregion Constructor
 
@@ -293,7 +298,16 @@ namespace OpenDental {
 			g.Dispose();
 		}
 
-		private void butExport_Click(object sender,System.EventArgs e) {
+		private void butExportTxt_Click(object sender,System.EventArgs e) {
+			ExportQuery(delimiter:"\t");
+		}
+
+		private void butExportCsv_Click(object sender,EventArgs e) {
+			ExportQuery(delimiter:",");
+		}
+
+			///<summary>Takes in either a comma or tab delimiter to determine if the export should be .csv or .txt. Passing in a comma is for .csv and passing in a tab is for .txt.</summary>
+		private void ExportQuery(string delimiter) {
 			if(_gridResults.ListGridRows.Count==0 && _gridResults.Columns.Count == 0) {
 				MessageBox.Show(Lan.g(this,"Please run query first"));
 				return;
@@ -303,13 +317,22 @@ namespace OpenDental {
 				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"ODUserQueryExport.xls");
 			}
 			else {
-				saveFileDialog2=new SaveFileDialog {
-					AddExtension=true,
-					Filter="Text files(*.txt)|*.txt|All files(*.*)|*.*",
-					FilterIndex=0
-				};
+				saveFileDialog2=new SaveFileDialog();
+				saveFileDialog2.AddExtension=true;
+				saveFileDialog2.FilterIndex=0;
+				if(delimiter=="\t") {
+					saveFileDialog2.Filter="Text files(*.txt)|*.txt|All files(*.*)|*.*";
+				}
+				else {
+					saveFileDialog2.Filter="CSV files(*.csv)|*.csv|All files(*.*)|*.*";
+				}
 				if(_userQuery==null || _userQuery.FileName==null || _userQuery.FileName==""){//.FileName==null)
-					saveFileDialog2.FileName=textTitle.Text;
+					if(textTitle.Text.IsNullOrEmpty()) {
+						saveFileDialog2.FileName="UserQuery";//Filename suggestion instead of being empty
+					}
+					else {
+						saveFileDialog2.FileName=textTitle.Text;
+					}
 				}
 				else{
 					saveFileDialog2.FileName=_userQuery.FileName;
@@ -355,7 +378,7 @@ namespace OpenDental {
 				}
 				line+=columnCaption;
 				if(i<_gridResults.Columns.Count-1) {
-					line+="\t";
+					line+=delimiter;
 				}
 			}
 			try {
@@ -374,9 +397,12 @@ namespace OpenDental {
 					cell=cell.Replace("\n","");
 					cell=cell.Replace("\t","");
 					cell=cell.Replace("\"","");
+					if(delimiter=="," && cell.Contains(",")) {
+						cell='"'+cell+'"';//Surround with quotes so Excel does not split into two cells
+					}
 					line+=cell;
 					if(j<_gridResults.Columns.Count-1) {
-						line+="\t";
+						line+=delimiter;
 					}
 				}
 				try {
@@ -992,7 +1018,8 @@ namespace OpenDental {
 					butAdd.Enabled=true;
 					butCopy.Enabled=true;
 					butPaste.Enabled=true;
-					butExport.Enabled=true;
+					butExportTxt.Enabled=true;
+					butExportCsv.Enabled=true;
 					butPrintPreview.Enabled=true;
 					butPrint.Enabled=true;
 					textTitle.Enabled=true;
@@ -1006,7 +1033,8 @@ namespace OpenDental {
 					butAdd.Enabled=false;
 					butCopy.Enabled=false;
 					butPaste.Enabled=false;
-					butExport.Enabled=false;
+					butExportTxt.Enabled=false;
+					butExportCsv.Enabled=false;
 					butPrintPreview.Enabled=false;
 					butPrint.Enabled=false;
 					textTitle.Enabled=false;
@@ -1021,7 +1049,8 @@ namespace OpenDental {
 					butAdd.Enabled=false;
 					butCopy.Enabled=false;
 					butPaste.Enabled=false;
-					butExport.Enabled=false;
+					butExportTxt.Enabled=false;
+					butExportCsv.Enabled=false;
 					butPrintPreview.Enabled=false;
 					butPrint.Enabled=false;
 					textTitle.Enabled=false;

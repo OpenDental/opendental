@@ -769,6 +769,7 @@ namespace OpenDental {
 			}
 			ListApptOthers=Appointments.GetApptOthersForPat(_patient.PatNum);
 			_listPlannedAppts=PlannedAppts.Refresh(_patient.PatNum);
+			//Same ordering as gridMain in DashApptGrid.cs.
 			ListApptOthers=ListApptOthers.OrderBy(appt => {
 				var plannedAppt=_listPlannedAppts.FirstOrDefault(x => x.AptNum==appt.AptNum);
 				return plannedAppt?.ItemOrder+ListApptOthers.Count??(ListApptOthers.IndexOf(appt));//Place planned appts after non-planned appts. Keep the same ordering amongst non-planned.
