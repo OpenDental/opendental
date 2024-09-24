@@ -126,12 +126,6 @@ Figure out the details for font scaling and size scaling based on font, as descr
 Show me screenshots about every day from now on so that we make sure we are both on the same page
 Implement IsLocked in eClipboard UI
 
-Strategy for textbox rectangles vs underlines:
-We will assume underlines is the new norm, and we will change the designer to show that.
-Rectangles might be allowed as an alternative in the UI for the patient if needed, but we probably won't need to do this.
-For multiline textboxes, we will probably stick to rectangles in both designer and patient UI.
-So no db schema changes will be necessary.
-
 Enhance FormWebForms to include eForms. I don't think eForms get retrieved, but do they still show on that form?
 	For sheets, they show if DateTimeSheet is within search range and IsWebForm is true.
 	We could just mirror that for eForms. Or IsWebForm probably doesn't even matter.
@@ -144,17 +138,6 @@ WebForms_Preference.ColorBorder
 Background color
 Conditional dates/ages
 Permission to edit complete EForm, use Sheet permission?
-
-Widths in a future version: We might add:
- Proportional widths, either * or %.
- Minimum widths are required to make this work, probably at the form level instead of field level.
-Because of the minimum widths, fixed and proportional could be intermingled.
-Once they hit min widths, they would start wrapping.
-Default would be proportional.
-Auto is not needed because we already know how wide each element needs to be
-and textboxes don't really ever need auto width.
-Another nagging detail is that these aren't really min widths 
-because screen could be narrower than specified min width and it must be ignored in that case.
 
 Future Allergies, Problems, Medications:
 There are many possible future improvements. Some are listed below in order of priority, with allergies as an example:

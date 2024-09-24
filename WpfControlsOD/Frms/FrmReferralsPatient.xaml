@@ -6,17 +6,20 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="863" Height="352" 
+             Width="863" Height="475" 
              Text="Referrals for Patient" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Button x:Name="butAddCustom" Width="109" Height="24" Margin="227,10,0,0" Text="Refer Custom" Icon="Add" Click="butAddCustom_Click" />
+		<ui:Button x:Name="butAddCustom" Width="109" Height="24" Margin="12,70,0,0" Text="Custom" Icon="Add" Click="butAddCustom_Click" />
 		<ui:Button x:Name="butUp" Width="70" VerticalAlignment="Bottom" Height="24" Margin="314,0,0,9" Text="_Up" Click="butUp_Click" BitmapFileName="up.gif"  />
 		<ui:Button x:Name="butDown" Width="70" VerticalAlignment="Bottom" Height="24" Margin="402,0,0,9" Text="_Down" Click="butDown_Click" BitmapFileName="down.gif"  />
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,10" Text="OK" Click="butOK_Click" />
-		<ui:CheckBox x:Name="checkShowAll" Width="162" Height="20" Margin="560,18,0,0" Text="Show All" CheckAlign="MiddleLeft" Click="checkShowAll_Click" />
-		<ui:Button x:Name="butAddTo" Width="94" Height="24" Margin="127,10,0,0" Text="Refer To" Icon="Add" Click="butAddTo_Click" />
+		<ui:CheckBox x:Name="checkShowAll" Width="162" Height="20" Margin="678,82,0,0" Text="Show All" CheckAlign="MiddleLeft" Click="checkShowAll_Click" />
+		<ui:Button x:Name="butAddTo" Width="109" Height="24" Margin="12,40,0,0" Text="Refer To" Icon="Add" Click="butAddTo_Click" />
 		<ui:Button x:Name="butSlip" Width="86" VerticalAlignment="Bottom" Height="24" Margin="12,0,0,11" Text="Referral Slip" Click="butSlip_Click" />
-		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,42,12,49" SelectionMode="MultiExtended" Title="Referrals Attached" TranslationName="TableRefList" />
+		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,105,12,49" SelectionMode="MultiExtended" Title="Referrals Attached" TranslationName="TableRefList" />
 		<ui:Button x:Name="butAddFrom" Width="109" Height="24" Margin="12,10,0,0" Text="Referred From" Icon="Add" Click="butAddFrom_Click" />
+		<ui:Label x:Name="label19_Copy" Width="499" Height="18" Margin="126,14,0,0" Text="this can be a source like internet or mailing, or it can be another patient" VAlign="Center" />
+		<ui:Label x:Name="label19_Copy1" Width="189" Height="18" Margin="126,44,0,0" Text="another provider" VAlign="Center" />
+		<ui:LinkLabel x:Name="linkLabel" Width="184" Height="18" Margin="126,73,0,0" Text="rarely used. (more info)" LinkStart="14" LinkLength="9" VAlign="Center" />
 	</Grid>
 </local:FrmODBase>

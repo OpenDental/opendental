@@ -993,6 +993,10 @@ namespace OpenDentBusiness{
 			if(font.Height+2 > (sheet.HeightPage-60-topMargin) || field.FieldValue.Length==0) {
 				return;
 			}
+			textBoxHeight-=textBoxHeight%font.Height;
+			//example:29%14=1. Subtracting 1 makes it integer multiple height.
+			//Any Remaining height will carry over to the next page.
+			//g.MeasureString() overestimates the number of characters that fit when the height allows for a non-integer number of lines.
 			//figure out how many lines of text will fit on the current page
 			heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
 			//if no lines of text will fit on current page or textboxClip's height is smaller than one line, move the entire text box to the next page

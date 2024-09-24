@@ -59,7 +59,7 @@ namespace OpenDentBusiness{
 		///<summary>The datetime this referral was last edited.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.TimeStamp)]
 		public DateTime DateTStamp;
-		///<summary>True if the referral is a preferred referral.</summary>
+		///<summary>True if the referral is a preferred referral. The only purpose is to allow filtering in the list of referrals so that the list can be much shorter.</summary>
 		public bool IsPreferred;
 		///<summary>Represents the name of the business that the referral works for.</summary>
 		public string BusinessName;

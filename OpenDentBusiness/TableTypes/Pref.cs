@@ -649,7 +649,7 @@ namespace OpenDentBusiness {
 		///<summary>DateTime where the time is the only useful part. 
 		///Stores the time of day that the OpenDentalService should create a claimsnapshot.</summary>
 		ClaimSnapshotRunTime,
-		///<summary>Enumeration of type "ClaimSnapshotTrigger".  ClaimCreate by default.  This preference determines how ClaimSnapshots get created. Stored as the enumeration.ToString().</summary>
+		///<summary>Enumeration of type "ClaimSnapshotTrigger".  ClaimCreate by default.  This preference determines how ClaimSnapshots get created. Stored as the enumeration.ToString(). Not available to most users to change. In the rare case that a customer needs it, there are instructions in UserControlFamilyGeneral for how to set it.</summary>
 		ClaimSnapshotTriggerType,
 		///<summary>Boolean. 1 by default. While a claim is being created, claim status "Hold Until Pri Received" doesn't 
 		///make sense if user is creating a primary claim already. However this has been allowed for a long time now so we want users who want to block 
@@ -1767,7 +1767,7 @@ namespace OpenDentBusiness {
 		PracticeTitle,
 		PracticeZip,
 		///<summary>Boolean.  False by default.  If true, checks "Preferred only" in FormReferralSelect.</summary>
-		ShowPreferedReferrals,
+		ShowPreferedReferrals,//spelled wrong and sig root "referral" should be first.
 		///<summary>Enum:EmailType 0=Regular 1=Html 2=RawHtml. Used to determine format for email for patient portal web mail messages.</summary>
 		PortalWebEmailTemplateType,
 		///<summary>Contains perio exam measurement values for every tooth. Must be exactly 192 digits or empty (if no default has been set yet).</summary>

@@ -47,8 +47,9 @@ namespace OpenDental {
 			}
 			string referralDescript=DisplayFields.GetForCategory(DisplayFieldCategory.PatientInformation)
 				.FirstOrDefault(x => x.InternalName=="Referrals")?.Description;
-			if(string.IsNullOrWhiteSpace(referralDescript)) {//either not displaying the Referral field or no description entered, default to 'Referral (other)'
-				referralDescript=Lang.g(this,"Referral (other)");
+			if(string.IsNullOrWhiteSpace(referralDescript)) {//either not displaying the Referral field or no description entered, default to 'Referral'
+				//used to also show (other) here, but that word is already used in automatic import.
+				referralDescript=Lang.g(this,"Referral");
 			}
 			listRefType.Items.Add(Lang.g(this,"To"));
 			listRefType.Items.Add(Lang.g(this,"From"));
@@ -58,7 +59,7 @@ namespace OpenDental {
 			comboProvNum.Items.Clear();
 			comboProvNum.Items.AddProvsFull(Providers.GetDeepCopy(isShort:true));
 			comboProvNum.SetSelectedProvNum(RefAttachCur.ProvNum);
-			if(RefAttachCur.RefType==ReferralType.RefFrom) {
+			if(RefAttachCur.RefType!=ReferralType.RefTo) {//prov is only visible for To
 				butNoneProv.Visible=false;
 				butPickProv.Visible=false;
 				comboProvNum.Visible=false;

@@ -34,7 +34,7 @@ namespace OpenDental {
 		///<summary>We don't fire off a signal to update the language cache on other computers until we hit Save in the form window. So each edit window has this variable to keep track of whether there are any new translations. This bubbles up to the parent.</summary>
 		public bool IsChangedLanCache;
 		///<summary>Keeps track of which label is in use when translating languages. Defaults to textLabel</summary>
-		private TextRich _currentLabel;
+		private TextRich _textRichCurrent;
 
 		///<summary></summary>
 		public FrmEFormLabelEdit() {
@@ -48,18 +48,14 @@ namespace OpenDental {
 			textLabel.Click+=TextLabel_Click;
 		}
 
-		private void TextLabel_Click(object sender,EventArgs e) {
-			_currentLabel=textLabel;
-		}
-
-		private void TextLabelTranslated_Click(object sender,EventArgs e) {
-			_currentLabel=textLabelTranslated;
-		}
-
 		private void FrmEFormsLabelEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			if(LanguageShowing==""){
-				groupLanguage.Visible=false;
+				//Resize textLabel to fill more space
+				textLabel.Height=textLabel.Margin.Top
+					-26//toolbar
+					+textLabel.Height;
+				textLabel.Margin=new Thickness(0,26,0,0);
 			}
 			else{
 				textLanguage.Text=LanguageShowing;
@@ -116,23 +112,23 @@ namespace OpenDental {
 			for(int i=0;i<listStaticTextFields.Count;i++) {
 				listBoxFields.Items.Add(listStaticTextFields[i].ToString());
 			}
-			_currentLabel=textLabel;
+			_textRichCurrent=textLabel;
 			LayoutToolBar();
 		}
 
 		private void LayoutToolBar() {
-			EventHandler eventHandlerCut=(sender,e)=>ApplicationCommands.Cut.Execute(null,_currentLabel.richTextBox);
+			EventHandler eventHandlerCut=(sender,e)=>ApplicationCommands.Cut.Execute(null,_textRichCurrent.richTextBox);
 			toolBarMain.Add(Lans.g(this,"Cut"),eventHandlerCut);
-			EventHandler eventHandlerCopy=(sender,e)=>ApplicationCommands.Copy.Execute(null,_currentLabel.richTextBox);
+			EventHandler eventHandlerCopy=(sender,e)=>ApplicationCommands.Copy.Execute(null,_textRichCurrent.richTextBox);
 			toolBarMain.Add(Lans.g(this,"Copy"),eventHandlerCopy);
-			EventHandler eventHandlerPaste=(sender,e)=>ApplicationCommands.Paste.Execute(null,_currentLabel.richTextBox);
+			EventHandler eventHandlerPaste=(sender,e)=>ApplicationCommands.Paste.Execute(null,_textRichCurrent.richTextBox);
 			toolBarMain.Add(Lans.g(this,"Paste"),eventHandlerPaste);
 			toolBarMain.AddSeparator();
-			EventHandler eventHandlerBold=(sender,e)=>EditingCommands.ToggleBold.Execute(null,_currentLabel.richTextBox);
+			EventHandler eventHandlerBold=(sender,e)=>EditingCommands.ToggleBold.Execute(null,_textRichCurrent.richTextBox);
 			toolBarMain.Add(Lans.g(this,"Bold"),eventHandlerBold);
-			EventHandler eventHandlerItalic=(sender,e)=>EditingCommands.ToggleItalic.Execute(null,_currentLabel.richTextBox);
+			EventHandler eventHandlerItalic=(sender,e)=>EditingCommands.ToggleItalic.Execute(null,_textRichCurrent.richTextBox);
 			toolBarMain.Add(Lans.g(this,"Italic"),eventHandlerItalic);
-			EventHandler eventHandlerUnderline=(sender,e)=>EditingCommands.ToggleUnderline.Execute(null,_currentLabel.richTextBox);
+			EventHandler eventHandlerUnderline=(sender,e)=>EditingCommands.ToggleUnderline.Execute(null,_textRichCurrent.richTextBox);
 			toolBarMain.Add(Lans.g(this,"Underline"),eventHandlerUnderline);
 			toolBarMain.AddSeparator();
 			toolBarMain.Add(Lans.g(this,"Font"),Font_Click);
@@ -140,9 +136,17 @@ namespace OpenDental {
 			toolBarMain.Add(Lans.g(this,"Paragraph"),Paragraph_Click);
 		}
 
+		private void TextLabel_Click(object sender,EventArgs e) {
+			_textRichCurrent=textLabel;
+		}
+
+		private void TextLabelTranslated_Click(object sender,EventArgs e) {
+			_textRichCurrent=textLabelTranslated;
+		}
+
 		private void Font_Click(object sender,EventArgs e) { 
 			FrmFont frmFont=new FrmFont();
-			TextSelection textSelection=_currentLabel.richTextBox.Selection;
+			TextSelection textSelection=_textRichCurrent.richTextBox.Selection;
 			double fontSize=11.5;
 			if(!textSelection.IsEmpty){
 				object objFontSize = textSelection.GetPropertyValue(TextElement.FontSizeProperty);
@@ -189,7 +193,7 @@ namespace OpenDental {
 
 		private void Paragraph_Click(object sender,EventArgs e) { 
 			List<Paragraph> listParagraphs=new List<Paragraph>();
-			TextSelection textSelection=_currentLabel.richTextBox.Selection;
+			TextSelection textSelection=_textRichCurrent.richTextBox.Selection;
 			TextPointer textPointerStart=textSelection.Start;
 			TextPointer textPointerEnd=textSelection.End;
 			if(textPointerStart.CompareTo(textPointerEnd)==0){
@@ -235,18 +239,18 @@ namespace OpenDental {
 				return;
 			}
 			string fieldStr=listBoxFields.SelectedItem.ToString();
-			int idxTextSelectionStart=_currentLabel.SelectionStart;
+			int idxTextSelectionStart=_textRichCurrent.SelectionStart;
 //todo: method for InsertAtCursor
-			if(_currentLabel.SelectionStart < _currentLabel.Text.Length-1) {
-				_currentLabel.Text=_currentLabel.Text.Substring(0,_currentLabel.SelectionStart)
+			if(_textRichCurrent.SelectionStart < _textRichCurrent.Text.Length-1) {
+				_textRichCurrent.Text=_textRichCurrent.Text.Substring(0,_textRichCurrent.SelectionStart)
 					+"["+fieldStr+"]"
-					+_currentLabel.Text.Substring(_currentLabel.SelectionStart);
+					+_textRichCurrent.Text.Substring(_textRichCurrent.SelectionStart);
 			}
 			else{//otherwise, just tack it on the end
-				_currentLabel.Text+="["+fieldStr+"]";
+				_textRichCurrent.Text+="["+fieldStr+"]";
 			}
-			_currentLabel.Select(idxTextSelectionStart+fieldStr.Length+2,0);
-			_currentLabel.Focus();
+			_textRichCurrent.Select(idxTextSelectionStart+fieldStr.Length+2,0);
+			_textRichCurrent.Focus();
 			listBoxFields.ClearSelected();
 		}
 

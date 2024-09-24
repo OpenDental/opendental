@@ -697,7 +697,7 @@ namespace OpenDental{
 		}
 
 		private void FormPerio_ChangeTitle() {
-			if(!Programs.IsEnabled(ProgramName.BolaAI)) {
+			if(!Programs.IsEnabled(ProgramName.BolaAI) || !butBolaLaunch.Visible) {
 				return;
 			}
 			ColRow colRow=contrPerio.ColRowSelected;

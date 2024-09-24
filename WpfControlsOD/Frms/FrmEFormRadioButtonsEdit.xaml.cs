@@ -18,10 +18,14 @@ namespace OpenDental {
 		///<summary>This is the object being edited.</summary>
 		public EFormField EFormFieldCur;
 		///<summary>Siblings</summary>
-		public List<EFormField> _listEFormFields;
+		public List<EFormField> ListEFormFields;
+		///<summary>Set this before opening this window. It's the current language being used in the parent form. Format is the text that's showing in the comboBox. Will be empty string if languages are not set up in pref LanguagesUsedByPatients or if the default language is being used in the parent FrmEFormDefs.</summary>
+		public string LanguageShowing="";
 		///<summary>This is the list showing in the grid. Gets pushed back into our object when user clicks save.</summary>
-		private List<VisDb> _listVisDbs;
+		private List<VisDbLang> _listVisDbLangs;
 		private bool _alreadyAsked;
+		///<summary>We don't fire off a signal to update the language cache on other computers until we hit Save in the form window. So each edit window has this variable to keep track of whether there are any new translations. This bubbles up to the parent.</summary>
+		public bool IsChangedLanCache;
 
 		///<summary></summary>
 		public FrmEFormRadioButtonsEdit() {
@@ -37,6 +41,20 @@ namespace OpenDental {
 
 		private void FrmEFormsRadioButtonsEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
+			List<string> listLangOrig=new List<string>();//stores the language translations for the labels in PickListVis.
+			if(LanguageShowing==""){
+				groupLanguage.Visible=false;
+			}
+			else{
+				textLanguage.Text=LanguageShowing;
+				string strLabels=EFormFieldCur.ValueLabel+","+EFormFieldCur.PickListVis;
+				string strTranslations=LanguagePats.TranslateEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,strLabels);
+				List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
+				textLabelTranslated.Text=listTranslations[0];
+				for(int i=1;i<listTranslations.Count; i++){//add the translated button labels to listPickLang to use when populating _listVisDbLangs.
+					listLangOrig.Add(listTranslations[i]);
+				}
+			}
 			textLabel.Text=EFormFieldCur.ValueLabel;
 			checkLabelLeft.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.LeftLeft;
 			checkLabelRight.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.Right;
@@ -71,7 +89,7 @@ namespace OpenDental {
 			}
 			textReportableName.Text=EFormFieldCur.ReportableName;
 			//only set list from obj one time upon opening.
-			_listVisDbs=new List<VisDb>();
+			_listVisDbLangs=new List<VisDbLang>();
 			List<string> listVisOrig=new List<string>();
 			List<string> listDbOrig=new List<string>();
 			if(!string.IsNullOrEmpty(EFormFieldCur.PickListVis)){
@@ -80,32 +98,32 @@ namespace OpenDental {
 			if(!string.IsNullOrEmpty(EFormFieldCur.PickListDb)){
 				listDbOrig=EFormFieldCur.PickListDb.Split(',').ToList();
 			}
-			if(listVisOrig.Count==listDbOrig.Count){
-				for(int i=0;i<listVisOrig.Count;i++){
-					VisDb visDb=new VisDb();
-					visDb.Vis=listVisOrig[i];
-					visDb.Db=listDbOrig[i];
-					_listVisDbs.Add(visDb);
+			for(int i=0;i<listVisOrig.Count;i++){
+				VisDbLang visDbLang=new VisDbLang();
+				visDbLang.Vis=listVisOrig[i];
+				visDbLang.Db=listDbOrig[i];
+				if(LanguageShowing!=""){//Translating a language.
+					visDbLang.Lang=listLangOrig[i];
 				}
-			}
-			else{
-				//Should never happen. We handle it by not filling the grid with anything at all.
+				_listVisDbLangs.Add(visDbLang);
 			}
 			FillGrid();
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
-			textCondValue.Text=EFormL.ConvertCondDbToVis(_listEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
-			List<EFormField> listEFormFieldsChildren=_listEFormFields.FindAll(
+			textCondValue.Text=EFormL.ConvertCondDbToVis(ListEFormFields,EFormFieldCur.ConditionalParent,EFormFieldCur.ConditionalValue);
+			List<EFormField> listEFormFieldsChildren=ListEFormFields.FindAll(
 				x=>x.ConditionalParent==EFormFieldCur.ValueLabel.Substring(0,Math.Min(EFormFieldCur.ValueLabel.Length,255))
 				&& x.ConditionalParent!="" //for a new radiobutton, ValueLabel might be blank
 			);
 			textCountChildren.Text=listEFormFieldsChildren.Count.ToString();
 		}
 
-		private class VisDb{
+		private class VisDbLang{
 			///<summary>This is what the patient will see.</summary>
 			public string Vis;
 			///<summary>This is the value that gets stored in db, frequently a string version of an enum.</summary>
 			public string Db;
+			///<summary>This is what the patient will see, but translated from Vis into another language.</summary>
+			public string Lang;
 		}
 
 		///<summary>This sets visibilities for various situations.</summary>
@@ -153,10 +171,15 @@ namespace OpenDental {
 			if(comboDbLink.SelectedIndex==0){//no db link
 				gridColumn=new GridColumn("",170);
 				gridColumn.IsEditable=true;
+				if(LanguageShowing!=""){//translating language
+					gridMain.Columns.Add(gridColumn);
+					gridColumn=new GridColumn(Lans.g("TableEFormRadioButton","Translation"),170);
+					gridColumn.IsEditable=true;
+				}
 				gridColumn.IsWidthDynamic=true;
 				gridMain.Columns.Add(gridColumn);
 			}
-			else{
+			else{//db link
 				gridColumn=new GridColumn(Lans.g("TableEFormRadioButton","Visible to Patient"),170);
 				gridColumn.IsEditable=true;
 				gridMain.Columns.Add(gridColumn);
@@ -167,15 +190,24 @@ namespace OpenDental {
 				for(int i=0;i<listDbAll.Count;i++){
 					gridColumn.ListDisplayStrings.Add(listDbAll[i]);
 				}
+				if(LanguageShowing!=""){//translating language
+					gridMain.Columns.Add(gridColumn);
+					gridColumn=new GridColumn(Lans.g("TableEFormRadioButton","Translation"),170);
+					gridColumn.IsEditable=true;
+				}
 				gridColumn.IsWidthDynamic=true;
 				gridMain.Columns.Add(gridColumn);
 			}
 			gridMain.ListGridRows.Clear();
-			for(int i=0;i<_listVisDbs.Count;i++){
+			for(int i=0;i<_listVisDbLangs.Count;i++){
 				GridRow gridRow=new GridRow();
-				gridRow.Cells.Add(_listVisDbs[i].Vis);
+				gridRow.Cells.Add(_listVisDbLangs[i].Vis);
 				if(comboDbLink.SelectedIndex>0){//db link
-					GridCell gridCell=new GridCell(_listVisDbs[i].Db);
+					GridCell gridCell=new GridCell(_listVisDbLangs[i].Db);
+					gridRow.Cells.Add(gridCell);
+				}
+				if(LanguageShowing!=""){
+					GridCell gridCell=new GridCell(_listVisDbLangs[i].Lang);
 					gridRow.Cells.Add(gridCell);
 				}
 				//gridRow.Tag=;//not needed because grid always exactly matches list.
@@ -199,7 +231,7 @@ namespace OpenDental {
 		}
 
 		private void comboDbLink_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(_listVisDbs.Count>0){
+			if(_listVisDbLangs.Count>0){
 				if(!MsgBox.Show(MsgBoxButtons.OKCancel,"Pick list will be reset for this Db Link. Continue?")){
 					return;
 				}
@@ -291,15 +323,18 @@ namespace OpenDental {
 		}
 
 		private void ResetList(){
-			_listVisDbs=new List<VisDb>();
+			_listVisDbLangs=new List<VisDbLang>();
 			string fieldName=comboDbLink.GetSelected<string>();
 			List<string> listVisOrig=EFormFieldsAvailable.GetRadioVisDefault(fieldName);
 			List<string> listDbOrig=EFormFieldsAvailable.GetRadioDbDefault(fieldName);
 			for(int i=0;i<listVisOrig.Count;i++){
-				VisDb visDb=new VisDb();
+				VisDbLang visDb=new VisDbLang();
 				visDb.Vis=listVisOrig[i];
 				visDb.Db=listDbOrig[i];
-				_listVisDbs.Add(visDb);
+				if(LanguageShowing!=""){
+					visDb.Lang=listVisOrig[i];//DbLink changed, reset translations to match default.
+				}
+				_listVisDbLangs.Add(visDb);
 			}
 			FillGrid();
 		}
@@ -321,7 +356,7 @@ Any or all items are allowed to have no label by leaving that value in the first
 
 		private void GridMain_CellSelectionCommitted(object sender,GridClickEventArgs e) {
 			if(gridMain.SelectedCell.Col==1){//not really needed
-				_listVisDbs[gridMain.SelectedCell.Row].Db=gridMain.ListGridRows[gridMain.SelectedCell.Row].Cells[gridMain.SelectedCell.Col].Text;
+				_listVisDbLangs[gridMain.SelectedCell.Row].Db=gridMain.ListGridRows[gridMain.SelectedCell.Row].Cells[gridMain.SelectedCell.Col].Text;
 			}
 		}
 
@@ -329,7 +364,15 @@ Any or all items are allowed to have no label by leaving that value in the first
 			//We need to do this with each text change because a button can grab focus and clear out the grid, and that will be too late.
 			if(gridMain.SelectedCell.Col==0){
 				//string txt=gridMain.ListGridRows[colRow.Row].Cells[colRow.Col].Text;
-				_listVisDbs[gridMain.SelectedCell.Row].Vis=gridMain.ListGridRows[gridMain.SelectedCell.Row].Cells[gridMain.SelectedCell.Col].Text;
+				_listVisDbLangs[gridMain.SelectedCell.Row].Vis=gridMain.ListGridRows[gridMain.SelectedCell.Row].Cells[gridMain.SelectedCell.Col].Text;
+			}
+			if(LanguageShowing!=""){
+				if(comboDbLink.SelectedIndex==0 && gridMain.SelectedCell.Col==1){//No dblink.
+					_listVisDbLangs[gridMain.SelectedCell.Row].Lang=gridMain.ListGridRows[gridMain.SelectedCell.Row].Cells[gridMain.SelectedCell.Col].Text;
+				}
+				else if(gridMain.SelectedCell.Col==2){//dblink in use.
+					_listVisDbLangs[gridMain.SelectedCell.Row].Lang=gridMain.ListGridRows[gridMain.SelectedCell.Row].Cells[gridMain.SelectedCell.Col].Text;
+				}
 			}
 		}
 
@@ -339,17 +382,20 @@ Any or all items are allowed to have no label by leaving that value in the first
 				MsgBox.Show("Please select a row first.");
 				return;
 			}
-			_listVisDbs.RemoveAt(idx);
+			_listVisDbLangs.RemoveAt(idx);
 			FillGrid();
 		}
 
 		private void butAddRow_Click(object sender,EventArgs e) {
-			VisDb visDb=new VisDb();
-			visDb.Vis="Item"+(_listVisDbs.Count+1).ToString();
-			visDb.Db="";
-			_listVisDbs.Add(visDb);
+			VisDbLang visDbLang=new VisDbLang();
+			visDbLang.Vis="Item"+(_listVisDbLangs.Count+1).ToString();
+			visDbLang.Db="";
+			if(LanguageShowing!=""){//Doesn't sync for languages not currently being translated.
+				visDbLang.Lang="Item"+(_listVisDbLangs.Count+1).ToString();
+			}
+			_listVisDbLangs.Add(visDbLang);
 			FillGrid();
-			gridMain.SetSelected(new ColRow(0,_listVisDbs.Count-1));
+			gridMain.SetSelected(new ColRow(0,_listVisDbLangs.Count-1));
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {
@@ -362,9 +408,9 @@ Any or all items are allowed to have no label by leaving that value in the first
 			if(idx==0){
 				return;
 			}
-			VisDb visDb=_listVisDbs[idx-1];
-			_listVisDbs[idx-1]=_listVisDbs[idx];
-			_listVisDbs[idx]=visDb;
+			VisDbLang visDbLang=_listVisDbLangs[idx-1];
+			_listVisDbLangs[idx-1]=_listVisDbLangs[idx];
+			_listVisDbLangs[idx]=visDbLang;
 			FillGrid();
 			ColRow colRow=new ColRow(colRowSelected.Col,idx-1);
 			gridMain.SetSelected(colRow);
@@ -377,12 +423,12 @@ Any or all items are allowed to have no label by leaving that value in the first
 				MsgBox.Show(this,"Please select a row first.");
 				return;
 			}
-			if(idx==_listVisDbs.Count-1){
+			if(idx==_listVisDbLangs.Count-1){
 				return;
 			}
-			VisDb visDb=_listVisDbs[idx+1];
-			_listVisDbs[idx+1]=_listVisDbs[idx];
-			_listVisDbs[idx]=visDb;
+			VisDbLang visDb=_listVisDbLangs[idx+1];
+			_listVisDbLangs[idx+1]=_listVisDbLangs[idx];
+			_listVisDbLangs[idx]=visDb;
 			FillGrid();
 			ColRow colRow=new ColRow(colRowSelected.Col,idx+1);
 			gridMain.SetSelected(colRow);
@@ -400,14 +446,15 @@ Any or all items are allowed to have no label by leaving that value in the first
 
 		private void butDelete_Click(object sender,EventArgs e) {
 			//no need to verify with user because they have another chance to cancel in the parent window.
-			EFormFieldCur=null;
+			EFormFieldCur.IsDeleted=true;
+			//RadioButtons are not h-stackable, so no need to check stacking for next field.
 			IsDialogOK=true;
 		}
 
 		private void butPickParent_Click(object sender,EventArgs e) {
 			FrmEFormFieldPicker frmEFormFieldPicker=new FrmEFormFieldPicker();
-			frmEFormFieldPicker.ListEFormFields=_listEFormFields;
-			int idx=_listEFormFields.IndexOf(EFormFieldCur);
+			frmEFormFieldPicker.ListEFormFields=ListEFormFields;
+			int idx=ListEFormFields.IndexOf(EFormFieldCur);
 			frmEFormFieldPicker.ListSelectedIndices.Add(idx);//Prevents self selection as parent
 			frmEFormFieldPicker.ShowDialog();
 			if(frmEFormFieldPicker.IsDialogCancel){
@@ -417,7 +464,7 @@ Any or all items are allowed to have no label by leaving that value in the first
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			textCondValue.Text=EFormL.PickCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			textCondValue.Text=EFormL.PickCondValue(ListEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void FrmEFormRadioButtonsEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
@@ -455,13 +502,20 @@ Any or all items are allowed to have no label by leaving that value in the first
 
 		private void butSave_Click(object sender, EventArgs e) {
 			AskChangeLabelToMatch();
-			if(_listVisDbs.Count<2){
+			if(_listVisDbLangs.Count<2){
 				MsgBox.Show("Must have at least two items in pick list.");
 				return;
 			}
-			for(int i=0;i<_listVisDbs.Count;i++){
-				if(_listVisDbs[i].Db.Contains(",")
-					|| _listVisDbs[i].Vis.Contains(","))
+			if(textLabel.Text.Contains(",")
+				|| textLabelTranslated.Text.Contains(","))
+			{
+				MsgBox.Show("Labels cannot contain commas.");
+				return;
+			}
+			for(int i=0;i<_listVisDbLangs.Count;i++){
+				if(_listVisDbLangs[i].Db.Contains(",")
+					|| _listVisDbLangs[i].Vis.Contains(",")
+					|| LanguageShowing!="" && _listVisDbLangs[i].Lang.Contains(","))//Or, if translating a language and a translation contains a comma.
 				{
 					MsgBox.Show("Pick list items cannot contain commas.");
 					return;
@@ -472,7 +526,10 @@ Any or all items are allowed to have no label by leaving that value in the first
 				return;
 			}
 			//If the parent is a radiobutton, they have to select a value.
-			EFormField eFormField=_listEFormFields.Find(x=>x.ValueLabel==textCondParent.Text);
+			EFormField eFormField=null;
+			if(textCondParent.Text!=""){
+				eFormField=ListEFormFields.Find(x=>x.ValueLabel==textCondParent.Text);
+			}
 			if(eFormField!=null && eFormField.FieldType==EnumEFormFieldType.RadioButtons) {
 				if(textCondValue.Text.IsNullOrEmpty()) {
 					MsgBox.Show("Please select a value for your parent field.");
@@ -494,6 +551,17 @@ Any or all items are allowed to have no label by leaving that value in the first
 				}
 			}
 			//end of validation
+			string strTranslations=textLabelTranslated.Text+",";
+			for(int i=0;i<_listVisDbLangs.Count;i++){
+				if(i>0){
+					strTranslations+=",";
+				}
+				strTranslations+=_listVisDbLangs[i].Lang;//ex: "ValueLabel,Button1,Button2"
+			}
+			IsChangedLanCache=LanguagePats.SaveTranslationEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,strTranslations);
+			if(IsChangedLanCache){
+				LanguagePats.RefreshCache();
+			}
 			EFormFieldCur.ValueLabel=textLabel.Text;
 			if(checkLabelLeft.Checked==true){
 				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.LeftLeft;
@@ -531,16 +599,17 @@ Any or all items are allowed to have no label by leaving that value in the first
 			EFormFieldCur.ReportableName=textReportableName.Text;
 			EFormFieldCur.PickListVis="";
 			EFormFieldCur.PickListDb="";
-			for(int i=0;i<_listVisDbs.Count;i++){
+			for(int i=0;i<_listVisDbLangs.Count;i++){
 				if(i>0){
 					EFormFieldCur.PickListVis+=",";
 					EFormFieldCur.PickListDb+=",";
 				}
-				EFormFieldCur.PickListVis+=_listVisDbs[i].Vis;
-				EFormFieldCur.PickListDb+=_listVisDbs[i].Db;
+				EFormFieldCur.PickListVis+=_listVisDbLangs[i].Vis;
+				EFormFieldCur.PickListDb+=_listVisDbLangs[i].Db;
 			}
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
-			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(ListEFormFields,textCondParent.Text,textCondValue.Text);
+			LanguagePats.SyncRadioButtonTranslations(EFormFieldCur);//Ensures translations are in sync with PickListVis.
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

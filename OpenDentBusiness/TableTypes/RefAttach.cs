@@ -20,7 +20,7 @@ namespace OpenDentBusiness{
 		public ReferralType RefType;
 		///<summary>Enum:ReferralToStatus 0=None,1=Declined,2=Scheduled,3=Consulted,4=InTreatment,5=Complete.</summary>
 		public ReferralToStatus RefToStatus;
-		///<summary>Why the patient was referred out, or less commonly, the circumstances of the referral source.</summary>
+		///<summary>Why the patient was referred out, or less commonly, the circumstances of the referral source. Also used when importing from forms. A referral is created with LName=Other. It gets attached to the patient with a note here.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string Note;
 		///<summary>Used to track ehr events.  All outgoing referrals default to true.  The incoming ones get a popup asking if it's a transition of care.</summary>
@@ -45,11 +45,11 @@ namespace OpenDentBusiness{
 
 	///<summary></summary>
 	public enum ReferralType {
-		///<summary></summary>
+		///<summary>0-</summary>
 		RefTo,
-		///<summary></summary>
+		///<summary>1-</summary>
 		RefFrom,
-		///<summary></summary>
+		///<summary>2-Rarely used. Neither to nor from. Will not show on reports.</summary>
 		RefCustom
 	}
 

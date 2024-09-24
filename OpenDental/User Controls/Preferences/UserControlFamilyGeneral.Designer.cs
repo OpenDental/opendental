@@ -207,7 +207,7 @@ namespace OpenDental {
 			this.checkPreferredReferrals.Name = "checkPreferredReferrals";
 			this.checkPreferredReferrals.Size = new System.Drawing.Size(425, 17);
 			this.checkPreferredReferrals.TabIndex = 300;
-			this.checkPreferredReferrals.Text = "Show preferred referrals only in the Select Referral window by default";
+			this.checkPreferredReferrals.Text = "In Select Referral window, only show preferred referrals by default";
 			// 
 			// checkAllowPatsAtHQ
 			// 

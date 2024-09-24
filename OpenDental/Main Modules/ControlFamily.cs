@@ -1029,7 +1029,7 @@ namespace OpenDental{
 							else if(listRefs[i].RefType==ReferralType.RefTo) {
 								row.Cells.Add(Lan.g("TablePatient","Referred To"));
 							}
-							else {
+							else {//custom
 								if(!string.IsNullOrWhiteSpace(displayField.Description)) {
 									row.Cells.Add(displayField.Description);
 								}
@@ -1048,10 +1048,13 @@ namespace OpenDental{
 							}
 							else {
 								if(!string.IsNullOrWhiteSpace(referral.DisplayNote)) {
-									refInfo+=$"\r\n{Lan.g("Referral","Display Note")}: {referral.DisplayNote}";
+									refInfo+="\r\n"+Lan.g("Referral","Ref Note")+": "+referral.DisplayNote;
 								}
-								if(!string.IsNullOrWhiteSpace(listRefs[i].Note)) {
-									refInfo+=$"\r\n{Lan.g("RefAttach","Patient Note")}: {listRefs[i].Note}";
+								if(referral.LName=="Other" && referral.FName==""){//imported
+									refInfo+=": "+listRefs[i].Note;
+								}
+								else if(!string.IsNullOrWhiteSpace(listRefs[i].Note)) {
+									refInfo+="\r\n"+Lan.g("RefAttach","Note")+": "+listRefs[i].Note;
 								}
 								row.Cells.Add(refInfo);
 							}

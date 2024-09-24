@@ -34,6 +34,7 @@ namespace OpenDental {
 			PreviewKeyDown+=FrmReferralsPatient_PreviewKeyDown;
 			gridMain.CellDoubleClick+=gridMain_CellDoubleClick;
 			Load+=FrmReferralsPatient_Load;
+			linkLabel.LinkClicked+=LinkLabel_LinkClicked;
 		}
 
 		private void FrmReferralsPatient_Load(object sender,EventArgs e) {
@@ -59,6 +60,11 @@ namespace OpenDental {
 			Plugins.HookAddCode(this,"FormReferralsPatient.Load_end");
 		}
 
+		private void LinkLabel_LinkClicked(object sender,EventArgs e) {
+			string str="Neither To nor From. Will not show on referral reports. Will still show in Letters dropdown. To change the label in front of it, go to DisplayFields, Patient Information. Change the display text for the field called Referrals. This will show in the Family module, in this grid, and in the referral edit window.";
+			MsgBox.Show(str);
+		}
+
 		private void checkShowAll_Click(object sender,EventArgs e) {
 			FillGrid();
 		}
@@ -66,9 +72,10 @@ namespace OpenDental {
 		private void FillGrid() {
 			_listRefAttaches=RefAttaches.RefreshFiltered(PatNum,true,0);
 			string referralDescript=DisplayFields.GetForCategory(DisplayFieldCategory.PatientInformation)
-				.FirstOrDefault(x => x.InternalName=="Referrals")?.Description;
-			if(string.IsNullOrWhiteSpace(referralDescript)) {//either not displaying the Referral field or no description entered, default to 'Referral (other)'
-				referralDescript=Lang.g(this,"Referral (other)");
+				.FirstOrDefault(x => x.InternalName=="Referrals")?.Description; 
+			if(string.IsNullOrWhiteSpace(referralDescript)) {//either not displaying the Referral field or no description entered, default to 'Referral'
+				//used to also show (other) here, but that word is already used in automatic import.
+				referralDescript=Lang.g(this,"Referral");
 			}
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();

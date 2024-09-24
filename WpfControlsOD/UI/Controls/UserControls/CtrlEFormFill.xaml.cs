@@ -2127,7 +2127,10 @@ namespace OpenDental {
 			Label label = new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0,0,0,bottom:0);//default is 5
-			label.Content=eFormField.ValueLabel;
+			string strLabels=eFormField.ValueLabel+","+eFormField.PickListVis;
+			string strTranslations=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,strLabels);
+			List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
+			label.Content=listTranslations[0];
 			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
 				stackPanelLabel.Margin=new Thickness(0,0,right:10,0);
 			}
@@ -2208,6 +2211,10 @@ namespace OpenDental {
 				//I'm getting a width that isn't wide enough, so too much margin on right.
 			}
 			wrapPanelRadio.Orientation=Orientation.Horizontal;//radiobuttons go horizontal as much as possible.
+			List<string> listPickLang=new List<string>();
+			for(int i=1;i<listTranslations.Count;i++){//skip index 0, that's the translated eFormField.ValueLabel.
+				listPickLang.Add(listTranslations[i]);
+			}
 			List<string> listPickVis=eFormField.PickListVis.Split(',').ToList();
 			List<string> listPickDb=eFormField.PickListDb.Split(',').ToList();
 			for(int i=0;i<listPickVis.Count;i++){
@@ -2217,7 +2224,7 @@ namespace OpenDental {
 				radioButton.VerticalAlignment=VerticalAlignment.Stretch;
 				radioButton.textBlock.Margin=new Thickness(left:1,0,0,0);//instead of 4 to make it closer
 				radioButton.Margin=new Thickness(0,0,right:_marginRightOfRadioButton,0);
-				radioButton.Text=listPickVis[i];
+				radioButton.Text=listPickLang[i];
 				radioButton.FontSize=FontSize*eFormField.FontScale/100;
 				if(!IsSetupMode){
 					if(eFormField.DbLink==""){//none

@@ -180,18 +180,29 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				return;
 			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.RadioButtons){
+				//see comments in FieldType==EnumEFormFieldType.TextField
 				FrmEFormRadioButtonsEdit frmEFormRadioButtonsEdit=new FrmEFormRadioButtonsEdit();
 				frmEFormRadioButtonsEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
-				frmEFormRadioButtonsEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+				frmEFormRadioButtonsEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
+				if(comboLanguage.SelectedIndex>0){
+					frmEFormRadioButtonsEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
+				}
 				frmEFormRadioButtonsEdit.ShowDialog();
+				_isChangedLanCache|=frmEFormRadioButtonsEdit.IsChangedLanCache;
 				if(frmEFormRadioButtonsEdit.IsDialogCancel){
 					return;
 				}
-				if(frmEFormRadioButtonsEdit.EFormFieldCur==null){
+				if(ctrlEFormFill.ListEFormFields[idx].IsDeleted){
+					if(ctrlEFormFill.ListEFormFields[idx].IsNew){//the field was added in this session previously
+						EFormFieldDefs.Delete(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);
+					}
+					else{
+						ListEFormFieldDefNumsToDelete.Add(ctrlEFormFill.ListEFormFields[idx].EFormFieldDefNum);//these will get deleted when user clicks Save
+					}
 					ctrlEFormFill.ListEFormFields.RemoveAt(idx);
-					ctrlEFormFill.RefreshLayout();
-					return;
 				}
+				ctrlEFormFill.RefreshLayout();
+				return;
 			}
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.SigBox){
 				//see comments in FieldType==EnumEFormFieldType.TextField
@@ -238,6 +249,12 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		}
 
 		private void FrmEFormDefEdit_FormClosed(object sender,EventArgs e) {
+			for(int i=0;i<EFormDefCur.ListEFormFieldDefs.Count;i++){
+				if(EFormDefCur.ListEFormFieldDefs[i].FieldType==EnumEFormFieldType.RadioButtons){
+					EFormField eFormField=EFormFields.FromDef(EFormDefCur.ListEFormFieldDefs[i]);
+					LanguagePats.SyncRadioButtonTranslations(eFormField);//Ensures translations match up with PickListVis for RadioButtons, whether users save or cancel out of the window.
+				}
+			}
 			if(_isChangedLanCache){
 				DataValid.SetInvalid(InvalidType.Languages);
 			}
@@ -430,22 +447,33 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		}
 
 		private void butRadioButtons_Click(object sender,EventArgs e) {
+			//See comments in butTextField_Click.
+			EFormFieldDef eFormFieldDef=new EFormFieldDef();
+			EFormFieldDefs.Insert(eFormFieldDef);
+			EFormField eFormField=EFormFields.FromDef(eFormFieldDef);
 			FrmEFormRadioButtonsEdit frmEFormRadioButtonsEdit=new FrmEFormRadioButtonsEdit();
-			EFormField eFormField=new EFormField();
 			eFormField.IsNew=true;
 			eFormField.FontScale=100;
 			eFormField.FieldType=EnumEFormFieldType.RadioButtons;
 			frmEFormRadioButtonsEdit.EFormFieldCur=eFormField;
-			frmEFormRadioButtonsEdit._listEFormFields=ctrlEFormFill.ListEFormFields;
+			frmEFormRadioButtonsEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
+			int idxNew=ctrlEFormFill.GetSelectedIndex();
+			if(idxNew==-1){
+				idxNew=EFormFields.GetLastIdxThisPage(ctrlEFormFill.ListEFormFields,ctrlEFormFill.GetPageShowing());
+			}
+			ctrlEFormFill.ListEFormFields.Insert(idxNew,eFormField);
+			if(comboLanguage.SelectedIndex>0){
+				frmEFormRadioButtonsEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
+			}
 			frmEFormRadioButtonsEdit.ShowDialog();
-			if(frmEFormRadioButtonsEdit.IsDialogCancel){
+			_isChangedLanCache|=frmEFormRadioButtonsEdit.IsChangedLanCache;
+			if(frmEFormRadioButtonsEdit.IsDialogCancel || eFormField.IsDeleted){
+				EFormFieldDefs.Delete(eFormField.EFormFieldDefNum);
+				ctrlEFormFill.ListEFormFields.Remove(eFormField);
 				return;
 			}
-			if(frmEFormRadioButtonsEdit.EFormFieldCur==null){
-				//they clicked Delete for some reason, which is the same as cancel.
-				return;
-			}
-			AddNewField(eFormField);//This will refresh the layout and set a selected field.
+			ctrlEFormFill.RefreshLayout();
+			ctrlEFormFill.SetSelected(idxNew);
 		}
 
 		private void butSigBox_Click(object sender,EventArgs e) {

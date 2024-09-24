@@ -570,7 +570,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				_listSelectedIndices.Add(_indexCheckBoxHighlighted);
 				return;
 			}
-			//from here down is SelectionMode.One
+			//from here down is SelectionMode.One or SelectionMode.CheckBoxes
 			List<string> listItems=new List<string>();
 			for(int i=0;i<Items.Count;i++){
 				listItems.Add(Items.GetTextShowingAt(i));

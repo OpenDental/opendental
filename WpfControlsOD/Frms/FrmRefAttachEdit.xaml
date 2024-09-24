@@ -9,37 +9,37 @@
              Width="652" Height="513" 
              Text="Edit Referral Attachment" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Button x:Name="butNoneProv" Width="44" Height="24" Margin="433,164,0,0" Text="None" Click="butNoneProv_Click" />
-		<ui:ComboBox x:Name="comboProvNum" Width="258" Height="21" Margin="151,166,0,0" />
-		<ui:Button x:Name="butPickProv" Width="18" Height="24" Margin="412,164,0,0" Text="..." Click="butPickProv_Click" />
-		<ui:Label x:Name="labelProv" Width="143" Height="18" Margin="6,168,0,0" Text="Referring Provider" HAlign="Right" VAlign="Center" />
-		<ui:TextVDate x:Name="textDateProcCompleted" Width="100" Height="20" Margin="151,429,0,0" />
-		<ui:Label x:Name="labelDateProcComplete" Width="143" Height="18" Margin="6,431,0,0" Text="Date Proc Completed" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textProc" Width="232" Height="20" Margin="151,408,0,0" ColorBack="#FFF0F0F0" ColorText="#FF8B0000" ReadOnly="True" Text="test" />
-		<ui:Label x:Name="labelProc" Width="143" Height="18" Margin="6,410,0,0" Text="Procedure" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelIsTransitionOfCare" Width="195" Height="18" Margin="166,389,0,0" Text="(From or To another doctor)" VAlign="Center" />
-		<ui:CheckBox x:Name="checkIsTransitionOfCare" Width="158" Height="18" Margin="6,389,0,0" Text="Transition of Care" CheckAlign="MiddleRight" />
-		<ui:ListBox x:Name="listRefType" Width="100" Height="43" Margin="151,12,0,0" />
-		<ui:Label x:Name="labelSheets" Width="143" Height="40" Margin="6,321,0,0" Text="Referral Slips
+		<ui:Button x:Name="butNoneProv" Width="44" Height="24" Margin="433,170,0,0" Text="None" Click="butNoneProv_Click" />
+		<ui:ComboBox x:Name="comboProvNum" Width="258" Height="21" Margin="151,172,0,0" />
+		<ui:Button x:Name="butPickProv" Width="18" Height="24" Margin="412,170,0,0" Text="..." Click="butPickProv_Click" />
+		<ui:Label x:Name="labelProv" Width="143" Height="18" Margin="6,174,0,0" Text="Referring Provider" HAlign="Right" VAlign="Center" />
+		<ui:TextVDate x:Name="textDateProcCompleted" Width="100" Height="20" Margin="151,435,0,0" />
+		<ui:Label x:Name="labelDateProcComplete" Width="143" Height="18" Margin="6,437,0,0" Text="Date Proc Completed" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textProc" Width="232" Height="20" Margin="151,414,0,0" ColorBack="#FFF0F0F0" ColorText="#FF8B0000" ReadOnly="True" Text="test" />
+		<ui:Label x:Name="labelProc" Width="143" Height="18" Margin="6,416,0,0" Text="Procedure" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelIsTransitionOfCare" Width="195" Height="18" Margin="166,395,0,0" Text="(From or To another doctor)" VAlign="Center" />
+		<ui:CheckBox x:Name="checkIsTransitionOfCare" Width="158" Height="18" Margin="6,395,0,0" Text="Transition of Care" CheckAlign="MiddleRight" />
+		<ui:ListBox x:Name="listRefType" Width="100" Height="48" Margin="151,12,0,0" />
+		<ui:Label x:Name="labelSheets" Width="143" Height="40" Margin="6,327,0,0" Text="Referral Slips
 (double click to view)" HAlign="Right" />
-		<ui:ListBox x:Name="listSheets" Width="120" Height="69" Margin="151,319,0,0" />
+		<ui:ListBox x:Name="listSheets" Width="120" Height="69" Margin="151,325,0,0" />
 		<ui:Button x:Name="butDetach" Width="81" VerticalAlignment="Bottom" Height="24" Margin="14,0,0,12" Text="Detach" Icon="DeleteX" Click="butDetach_Click" />
-		<ui:Label x:Name="labelRefToStatus" Width="143" Height="18" Margin="6,232,0,0" Text="Status (if referred out)" HAlign="Right" VAlign="Center" />
-		<ui:ComboBox x:Name="comboRefToStatus" Width="180" Height="21" Margin="151,230,0,0" />
-		<ui:Label x:Name="labelNote" Width="143" Height="38" Margin="6,254,0,0" Text="Patient note" HAlign="Right" />
-		<ui:TextBox x:Name="textNote" Width="454" Height="66" Margin="151,252,0,0" IsMultiline="True" TabIndexOD="1" />
-		<ui:Label x:Name="labelReferralNotes" Width="143" Height="38" Margin="6,99,0,0" Text="Notes about referral source" HAlign="Right" />
-		<ui:Label x:Name="labelPatient" Width="98" Height="17" Margin="150,78,0,0" Text="(a patient)" />
-		<ui:TextBox x:Name="textReferralNotes" Width="454" Height="66" Margin="151,97,0,0" ColorBack="#FFF0F0F0" IsMultiline="True" ReadOnly="True" />
-		<ui:TextVDate x:Name="textRefDate" Width="100" Height="20" Margin="151,188,0,0" />
-		<ui:Button x:Name="butChangeReferral" Width="95" Height="24" Margin="510,54,0,0" Text="Change Referral" Click="butChangeReferral_Click" />
-		<ui:Button x:Name="butEditReferral" Width="95" Height="24" Margin="412,54,0,0" Text="_Edit Referral" Click="butEditReferral_Click" />
-		<ui:TextBox x:Name="textOrder" Width="36" Height="20" Margin="151,209,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
-		<ui:TextBox x:Name="textName" Width="258" Height="20" Margin="151,56,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+		<ui:Label x:Name="labelRefToStatus" Width="143" Height="18" Margin="6,238,0,0" Text="Status (if referred out)" HAlign="Right" VAlign="Center" />
+		<ui:ComboBox x:Name="comboRefToStatus" Width="180" Height="21" Margin="151,236,0,0" />
+		<ui:Label x:Name="labelNote" Width="143" Height="38" Margin="6,260,0,0" Text="Patient note" HAlign="Right" />
+		<ui:TextBox x:Name="textNote" Width="454" Height="66" Margin="151,258,0,0" IsMultiline="True" TabIndexOD="1" />
+		<ui:Label x:Name="labelReferralNotes" Width="143" Height="38" Margin="6,105,0,0" Text="Notes about referral source" HAlign="Right" />
+		<ui:Label x:Name="labelPatient" Width="98" Height="17" Margin="150,84,0,0" Text="(a patient)" />
+		<ui:TextBox x:Name="textReferralNotes" Width="454" Height="66" Margin="151,103,0,0" ColorBack="#FFF0F0F0" IsMultiline="True" ReadOnly="True" />
+		<ui:TextVDate x:Name="textRefDate" Width="100" Height="20" Margin="151,194,0,0" />
+		<ui:Button x:Name="butChangeReferral" Width="95" Height="24" Margin="510,60,0,0" Text="Change Referral" Click="butChangeReferral_Click" />
+		<ui:Button x:Name="butEditReferral" Width="95" Height="24" Margin="412,60,0,0" Text="_Edit Referral" Click="butEditReferral_Click" />
+		<ui:TextBox x:Name="textOrder" Width="36" Height="20" Margin="151,215,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+		<ui:TextBox x:Name="textName" Width="258" Height="20" Margin="151,62,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
-		<ui:Label x:Name="labelOrder" Width="143" Height="18" Margin="6,211,0,0" Text="Order" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelOrder" Width="143" Height="18" Margin="6,217,0,0" Text="Order" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="labelRefType" Width="143" Height="18" Margin="6,14,0,0" Text="Referral Type" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelName" Width="143" Height="18" Margin="6,58,0,0" Text="Name" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelRefDate" Width="143" Height="18" Margin="6,190,0,0" Text="Date" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelName" Width="143" Height="18" Margin="6,64,0,0" Text="Name" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelRefDate" Width="143" Height="18" Margin="6,196,0,0" Text="Date" HAlign="Right" VAlign="Center" />
 	</Grid>
 </local:FrmODBase>
