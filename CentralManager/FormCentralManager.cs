@@ -277,6 +277,7 @@ namespace CentralManager {
 			if(_usingMiddleTier) {
 				menuItemUserSettings.Visible = true;
 			}
+			Userods.SetIsCacheAllowed(true);//For SSO, we need to allow UserOD cache
 //todo: this shouldn't be necessary, and I'm wondering if there are other caches that need to be refreshed.
 			DisplayFields.RefreshCache();
 			this.Text+=" - "+Security.CurUser.UserName;
