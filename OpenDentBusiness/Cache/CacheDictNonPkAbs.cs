@@ -118,9 +118,7 @@ namespace OpenDentBusiness {
 			return listAllItems.GroupBy(x => GetDictKey(x)).ToDictionary(x => x.Key,x => GetDictValue(x.First()));
 		}
 
-		#region Sealed Methods
-
-		protected sealed override void GotNewCache(List<T> listAllItems) {
+		protected override void GotNewCache(List<T> listAllItems) {
 			//Keep a duplicate copy of the entire cache of items for when methods 
 			_lock.EnterWriteLock();
 			try {
@@ -131,6 +129,7 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		#region Sealed Methods
 		///<summary>The Non PK version of the CacheDictAbs needs to return the list of all cached items instead of the dictionary because of duplicates.
 		///If the dictionary was utilized then clients would not get all available items from the database (only the web service would have them)</summary>
 		protected sealed override DataTable CacheToTable() {

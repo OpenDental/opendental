@@ -19,6 +19,7 @@ namespace OpenDental {
 		public FormOrthoSetup() {
 			InitializeComponent();
 			InitializeLayoutManager();
+			Font=LayoutManagerForms.FontInitial;
 			Lan.F(this);
 		}
 

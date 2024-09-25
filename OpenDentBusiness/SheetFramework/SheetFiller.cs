@@ -1447,7 +1447,7 @@ namespace OpenDentBusiness {
 							break;
 						case "patient.provider":
 							field.FieldValue=Providers.GetProv(Patients.GetProvNum(pat)).GetFormalName();//Use the patient's default provider.
-							if(refAttachProvNum!=0){
+							if(refAttachProvNum>0){
 								field.FieldValue=Providers.GetProv(refAttachProvNum).GetFormalName();//Referral type is "To", use selected referral's associated provider instead.
 							}
 							break;

@@ -25,6 +25,7 @@ namespace OpenDental {
 		#region Constructors
 		public UserControlMainWindowMisc() {
 			InitializeComponent();
+			Font=LayoutManagerForms.FontInitial;
 		}
 		#endregion Constructors
 

@@ -10,11 +10,13 @@ using DataConnectionBase;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
-	public class Prefs{
+	public class Prefs {
+		public delegate void OnCacheRefreshDelegate();
 		#region CachePattern
 
 		///<summary>Utilizes the NonPkAbs version of CacheDict because it uses PrefName instead of the PK PrefNum.</summary>
-		private class PrefCache : CacheDictNonPkAbs<Pref,string,Pref> {
+		private class PrefCache:CacheDictNonPkAbs<Pref,string,Pref> {
+			public OnCacheRefreshDelegate OnCacheRefresh;
 			protected override List<Pref> GetCacheFromDb() {
 				string command="SELECT * FROM preference";
 				return Crud.PrefCrud.SelectMany(command);
@@ -75,9 +77,12 @@ namespace OpenDentBusiness{
 				}
 				return dictPrefs;
 			}
-
 			protected override DataTable ListToTable(List<Pref> listAllItems) {
 				return Crud.PrefCrud.ListToTable(listAllItems);
+			}
+			protected override void GotNewCache(List<Pref> listAllItems) {
+				base.GotNewCache(listAllItems);
+				ODException.SwallowAnyException(() => OnCacheRefresh?.Invoke());
 			}
 		}
 
@@ -96,6 +101,10 @@ namespace OpenDentBusiness{
 				}
 				return _prefCacheDefault;
 			}
+		}
+
+		public static void AddOnCacheRefreshEvent(OnCacheRefreshDelegate d) {
+			_prefCache.OnCacheRefresh+=d;
 		}
 
 		///<summary>Adds a PrefCache for the given database connection. Used by UnitTestsWeb.</summary>

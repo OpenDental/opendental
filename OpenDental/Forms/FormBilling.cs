@@ -724,16 +724,18 @@ namespace OpenDental {
 						else {
 							if(PrefC.GetBool(PrefName.BillingEmailIncludeAutograph)) {
 								EmailAutograph emailAutograph=EmailAutographs.GetForOutgoing(listEmailAutographs,emailAddress);
-								//Always set the BodyText, we will additionally set HtmlText below if necessary (mimics FormEmailMessageEdit).
-								message.BodyText=EmailMessages.InsertAutograph(message.BodyText,emailAutograph);
-								if(MarkupEdit.ContainsOdHtmlTags(emailAutograph.AutographText)) {
-									//Attempt to convert entire message to html to accomodate for html autograph.
-									ODException.SwallowAnyException(() => {
-										string markup=MarkupEdit.TranslateToXhtml(EmailMessages.InsertAutograph(message.BodyText,emailAutograph),false,isEmail:true);
-										//We got this far so change the message body and html type.
-										message.HtmlText=markup;
-										message.HtmlType=EmailType.Html;
-									});
+								if(emailAutograph!=null) {
+									//Always set the BodyText, we will additionally set HtmlText below if necessary (mimics FormEmailMessageEdit).
+									message.BodyText=EmailMessages.InsertAutograph(message.BodyText,emailAutograph);
+									if(MarkupEdit.ContainsOdHtmlTags(emailAutograph.AutographText)) {
+										//Attempt to convert entire message to html to accomodate for html autograph.
+										ODException.SwallowAnyException(() => {
+											string markup=MarkupEdit.TranslateToXhtml(EmailMessages.InsertAutograph(message.BodyText,emailAutograph),false,isEmail:true);
+											//We got this far so change the message body and html type.
+											message.HtmlText=markup;
+											message.HtmlType=EmailType.Html;
+										});
+									}
 								}
 							}
 							//If IsCloudStorage==true, then we will end up downloading the file again in EmailMessages.SendEmailUnsecure.

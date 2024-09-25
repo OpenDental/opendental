@@ -304,8 +304,6 @@ namespace OpenDentBusiness {
 			if(typeof(KEY_TYPE)!=typeof(string) && typeof(KEY_TYPE)!=typeof(long) && !typeof(KEY_TYPE).IsEnum) {
 				throw new ODException("CacheDictAbs requires KEY_TYPE to be of type string or long.");
 			}
-			//Let anyone that cares know we just got a new cache.
-			GotNewCache(listAllItems);
 			//New instance will be filled and then become _dictAllItems. No read/write lock necessary in this context.
 			Dictionary<KEY_TYPE,VALUE_TYPE> dict=GetDictFromList(listAllItems);
 			List<KEY_TYPE> listShortKeys=GetDictShortKeys(listAllItems);
@@ -320,6 +318,8 @@ namespace OpenDentBusiness {
 			finally {
 				_lock.ExitWriteLock();
 			}
+			//Let anyone that cares know we just got a new cache.
+			GotNewCache(listAllItems);
 		}
 
 		///<summary>Returns if the dictionary is null; otherwise, false.</summary>
