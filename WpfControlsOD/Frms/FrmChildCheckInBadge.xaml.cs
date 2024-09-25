@@ -63,14 +63,16 @@ namespace OpenDental {
 					listChildNamesNoPrimary.Add(listChildren[i].FName);
 					continue;//Children with no primary room will remain in the checked out listbox
 				}
-				//Create leaving entry if needed
-				List<ChildRoomLog> listChildRoomLogsOneChild=listChildRoomLogs.FindAll(x => x.ChildNum==listChildren[i].ChildNum);
-				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogsOneChild);
+				//Stop duplicate logs
+				ChildRoomLog childRoomLogRecent=listChildRoomLogs.FindAll(x => x.ChildNum==listChildren[i].ChildNum)
+					.OrderByDescending(y => y.DateTDisplayed).FirstOrDefault();
+				if(childRoomLogRecent!=null && childRoomLogRecent.ChildRoomNum==listChildren[i].ChildRoomNumPrimary) {
+					continue;
+				}
 				//Create coming to entry
 				ChildRoomLog childRoomLog=new ChildRoomLog();
 				childRoomLog.DateTDisplayed=DateTime.Now;
 				childRoomLog.DateTEntered=DateTime.Now;
-				childRoomLog.IsComing=true;
 				childRoomLog.ChildNum=listChildren[i].ChildNum;
 				childRoomLog.ChildRoomNum=listChildren[i].ChildRoomNumPrimary;
 				ChildRoomLogs.Insert(childRoomLog);
@@ -95,8 +97,12 @@ namespace OpenDental {
 			List<Child> listChildren=listBoxChildren.GetListSelected<Child>();
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllChildrenForDate(DateTime.Now.Date);
 			for(int i=0;i<listChildren.Count;i++) {
-				List<ChildRoomLog> listChildRoomLogsOneChild=listChildRoomLogs.FindAll(x => x.ChildNum==listChildren[i].ChildNum);
-				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogsOneChild);
+				ChildRoomLog childRoomLog=new ChildRoomLog();
+				childRoomLog.DateTEntered=DateTime.Now;
+				childRoomLog.DateTDisplayed=DateTime.Now;
+				childRoomLog.ChildNum=listChildren[i].ChildNum;
+				childRoomLog.ChildRoomNum=0;//Set to 0 to indicate unassigned
+				ChildRoomLogs.Insert(childRoomLog);
 			}
 			string msg="Checked out: ";
 			msg+=string.Join(", ",listChildren.Select(x => x.FName));

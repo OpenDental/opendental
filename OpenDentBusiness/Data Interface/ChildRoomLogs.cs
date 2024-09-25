@@ -135,6 +135,16 @@ namespace OpenDentBusiness{
 			return Crud.ChildRoomLogCrud.SelectMany(command);
 		}
 
+		/// <summary>Get all the logs for a specified date.</summary>
+		public static List<ChildRoomLog> GetChildRoomLogsForDate(DateTime date) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ChildRoomLog>>(MethodBase.GetCurrentMethod(),date);
+			}
+			string command="SELECT * FROM childroomlog WHERE DATE(DateTDisplayed)="+POut.Date(date)
+				+" ORDER BY DateTDisplayed";
+			return Crud.ChildRoomLogCrud.SelectMany(command);
+		}
+
 		///<summary>Returns all child logs for a given date.</summary>
 		public static List<ChildRoomLog> GetAllChildrenForDate(DateTime date) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -217,33 +227,6 @@ namespace OpenDentBusiness{
 				return;
 			}
 			Crud.ChildRoomLogCrud.Delete(childRoomLogNum);
-		}
-
-		///<summary>Creates a ChildRoomLog leaving entry if the most recent log in the given list IsComing. The passed-in list should contain logs for one child or teacher.</summary>
-		public static void CreateChildRoomLogLeaving(List<ChildRoomLog> listChildRoomLogs) {
-			//No need to check MiddleTierRole; no call to db.
-			if(listChildRoomLogs.Count==0) {//No need for leaving entry if the child has no logs for today
-				return;
-			}
-			//OrderBy DateTDisplayed and IsComing in case there are multiple entries with the same time
-			ChildRoomLog childRoomLogOld=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed)
-				.ThenBy(y => y.IsComing).First();
-			if(!childRoomLogOld.IsComing) {//Most recent entry is already leaving
-				return;
-			}
-			ChildRoomLog childRoomLog=new ChildRoomLog();
-			childRoomLog.DateTEntered=DateTime.Now;
-			childRoomLog.DateTDisplayed=DateTime.Now;
-			childRoomLog.IsComing=false;
-			childRoomLog.ChildRoomNum=childRoomLogOld.ChildRoomNum;
-			if(childRoomLogOld.ChildNum!=0) {//Child entry
-				childRoomLog.ChildNum=childRoomLogOld.ChildNum;
-			}
-			else {//Employee/teacher entry
-				childRoomLog.EmployeeNum=childRoomLogOld.EmployeeNum;
-			}
-			Insert(childRoomLog);
-			Signalods.SetInvalid(InvalidType.Children);
 		}
 
 		///<summary>For mixed age groups. Oregon law has specific numbers of teachers required for a classroom that has children over and under two years old. These requirements are outlined here https://www.oregon.gov/delc/providers/CCLD_Library/CCLD-0084-Rules-for-Certified-Child-Care-Centers-EN.pdf in the table on page 46. This method takes two paremeters, the total number of children and the number of children under the age of two. Returns the number of teachers required based on the table.</summary>

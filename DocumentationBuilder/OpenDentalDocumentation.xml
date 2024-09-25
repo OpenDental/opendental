@@ -14363,9 +14363,9 @@
       <summary>Enum:ReferralType 0=RefTo,1=RefFrom,2=RefCustom.</summary>
       <Enumeration name="ReferralType">
         <summary></summary>
-        <EnumValue name="RefTo"></EnumValue>
-        <EnumValue name="RefFrom"></EnumValue>
-        <EnumValue name="RefCustom"></EnumValue>
+        <EnumValue name="RefTo">0-</EnumValue>
+        <EnumValue name="RefFrom">1-</EnumValue>
+        <EnumValue name="RefCustom">2-Rarely used. Neither to nor from. Will not show on reports.</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="RefToStatus" type="tinyint">
@@ -14381,7 +14381,7 @@
       </Enumeration>
     </column>
     <column order="7" name="Note" type="text">
-      <summary>Why the patient was referred out, or less commonly, the circumstances of the referral source.</summary>
+      <summary>Why the patient was referred out, or less commonly, the circumstances of the referral source. Also used when importing from forms. A referral is created with LName=Other. It gets attached to the patient with a note here.</summary>
     </column>
     <column order="8" name="IsTransitionOfCare" type="tinyint(4)">
       <summary>Used to track ehr events.  All outgoing referrals default to true.  The incoming ones get a popup asking if it's a transition of care.</summary>
@@ -14477,7 +14477,7 @@
       <summary>The datetime this referral was last edited.</summary>
     </column>
     <column order="25" name="IsPreferred" type="tinyint(4)">
-      <summary>True if the referral is a preferred referral.</summary>
+      <summary>True if the referral is a preferred referral. The only purpose is to allow filtering in the list of referrals so that the list can be much shorter.</summary>
     </column>
     <column order="26" name="BusinessName" type="varchar(255)">
       <summary>Represents the name of the business that the referral works for.</summary>

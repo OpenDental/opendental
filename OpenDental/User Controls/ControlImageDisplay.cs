@@ -3679,6 +3679,8 @@ Here is the desired behavior:
 			documentImported.ImgType=document.ImgType;
 			documentImported.DateCreated=document.DateCreated;
 			documentImported.ToothNumbers=document.ToothNumbers;
+			documentImported.ProvNum=document.ProvNum;
+			documentImported.PrintHeading=document.PrintHeading;
 			Documents.Update(documentImported);
 			EventFillTree?.Invoke(this,false);//updates tree to immediately include new file
 			NodeTypeAndKey nodeTypeAndKey2=new NodeTypeAndKey(EnumImageNodeType.Document,documentImported.DocNum);

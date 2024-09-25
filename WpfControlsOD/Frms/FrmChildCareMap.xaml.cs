@@ -22,10 +22,6 @@ using WpfControls.UI;
 namespace OpenDental {
 	///<summary></summary>
 	public partial class FrmChildCareMap:FrmODBase {
-		/*
-		There is a bug that occurs if we move a person from one room to another, then they will show up in both the absent grid and the room they were moved to. This occurs because when we move someone two logs are made, one is a leaving log for the room they were in and the other is a coming to log for the room they are entering. When both of the entries are at the same time, the issue occurs. This is because the absent grid looks at all entries for today and sorts by DateTDisplayed and then IsComing, which means it will prioritize leaving entries when there are multiple at the same time. This is incorrect as the person should be in a room at this time. The current fix for this is to automatically add a one second difference between the two logs so that the coming to log is one second ahead. This is just a bandaid fix and the issue will still occur if the times end up being the exact same some other way.
-		This issue also causes similar behavior in the parent check in/out window as it is using similar logic.
-		*/
 		///<summary>Right click options for the classroom grids.</summary>
 		private ContextMenu _contextMenu;
 		///<summary>Right click option for the absent children grid to send a child to their primary room.</summary>
@@ -45,7 +41,7 @@ namespace OpenDental {
 			Load+=FrmChildren_Load;
 			_contextMenu=new ContextMenu(this);
 			_contextMenu.Opened+=ContextMenu_Opened;
-			_contextMenu.Add(new MenuItem("Remove",menuItemRemove_Click));
+			_contextMenu.Add(new MenuItem("Remove",menuItemUnassign_Click));
 			gridChildRoom1.ContextMenu=_contextMenu;
 			gridChildRoom1.CellDoubleClick+=GridChildRoom_CellDoubleClick;
 			gridChildRoom2.ContextMenu=_contextMenu;
@@ -161,11 +157,9 @@ namespace OpenDental {
 			//Track the employees that are absent. Start with all employees and remove ones that are present
 			List<Employee> listEmployeesAbsent=Employees.GetDeepCopy();
 			for(int i=0;i<listEmployeeNumsUnique.Count;i++) {
-				//Find the most recent log for each employee. When logs are at the same time prioritize leaving entries
 				ChildRoomLog childRoomLogMostRecent=listChildRoomLogs.FindAll(x => x.EmployeeNum==listEmployeeNumsUnique[i])
-					.OrderByDescending(y => y.DateTDisplayed)
-					.ThenBy(z => z.IsComing).First();
-				if(!childRoomLogMostRecent.IsComing) {
+					.OrderByDescending(y => y.DateTDisplayed).First();
+				if(childRoomLogMostRecent.ChildRoomNum==0) {
 					continue;//Keep in list if they are absent
 				}
 				listEmployeesAbsent.RemoveAll(x => x.EmployeeNum==listEmployeeNumsUnique[i]);//Remove from list if present in a room
@@ -211,11 +205,9 @@ namespace OpenDental {
 			//Track the children that are absent. Start with all children and remove ones that are present
 			List<Child> listChildrenAbsent=Children.GetAll();
 			for(int i=0;i<listChildNumsUnique.Count;i++) {
-				//Find the most recent log for each child. When logs are at the same time prioritize leaving entries
 				ChildRoomLog childRoomLogMostRecent=listChildRoomLogs.FindAll(x => x.ChildNum==listChildNumsUnique[i])
-					.OrderByDescending(y => y.DateTDisplayed)
-					.ThenBy(z => z.IsComing).First();
-				if(!childRoomLogMostRecent.IsComing) {
+					.OrderByDescending(y => y.DateTDisplayed).First();
+				if(childRoomLogMostRecent.ChildRoomNum==0) {
 					continue;//Keep in list if they are absent
 				}
 				listChildrenAbsent.RemoveAll(x => x.ChildNum==listChildNumsUnique[i]);//Remove from list if present in a room
@@ -261,18 +253,18 @@ namespace OpenDental {
 			double countChildren=0;
 			double countEmployees=0;
 			int countUnderTwo=0;
+			long childRoomNum=long.Parse(grid.Tag.ToString());
 			//Get room logs for today for a specific room
-			List<ChildRoomLog> listChildRoomLogsToday=ChildRoomLogs.GetChildRoomLogs(long.Parse(grid.Tag.ToString()),DateTime.Now.Date);
+			List<ChildRoomLog> listChildRoomLogsToday=ChildRoomLogs.GetChildRoomLogsForDate(DateTime.Now.Date);
 			List<long> listEmployeeNumsUnique=listChildRoomLogsToday.FindAll(x => x.EmployeeNum!=0).Select(y => y.EmployeeNum).Distinct().ToList();
 			//List of logs for people currently in the room
 			List<ChildRoomLog> listChildRoomLogs=new List<ChildRoomLog>();
 			//Find the employees in this room
 			for(int i=0;i<listEmployeeNumsUnique.Count;i++) {
-				//Find the most recent log for the given employee ordering by DateTDisplayed and then by IsComing
+				//Find the most recent log for the given employee ordering by DateTDisplayed
 				ChildRoomLog childRoomLogEmployee=listChildRoomLogsToday.FindAll(x => x.EmployeeNum==listEmployeeNumsUnique[i])
-					.OrderByDescending(y => y.DateTDisplayed)
-					.ThenBy(z => z.IsComing).First();
-				if(!childRoomLogEmployee.IsComing) {
+					.OrderByDescending(y => y.DateTDisplayed).First();
+				if(childRoomLogEmployee.ChildRoomNum!=childRoomNum) {
 					continue;//Employee is not present in this room
 				}
 				listChildRoomLogs.Add(childRoomLogEmployee);
@@ -280,11 +272,10 @@ namespace OpenDental {
 			List<long> listChildNumsUnique=listChildRoomLogsToday.FindAll(x => x.ChildNum!=0).Select(y => y.ChildNum).Distinct().ToList();
 			//Find the children in this room
 			for(int i=0;i<listChildNumsUnique.Count;i++) {
-				//Find the most recent log for the given child ordering by DateTDisplayed and then by IsComing
+				//Find the most recent log for the given child ordering by DateTDisplayed
 				ChildRoomLog childRoomLogChild=listChildRoomLogsToday.FindAll(x => x.ChildNum==listChildNumsUnique[i])
-					.OrderByDescending(y => y.DateTDisplayed)
-					.ThenBy(z => z.IsComing).First();
-				if(!childRoomLogChild.IsComing) {
+					.OrderByDescending(y => y.DateTDisplayed).First();
+				if(childRoomLogChild.ChildRoomNum!=childRoomNum) {
 					continue;//Child is not present in this room
 				}
 				listChildRoomLogs.Add(childRoomLogChild);
@@ -409,25 +400,26 @@ namespace OpenDental {
 			_contextMenuAbsent.Add(new MenuItem("Send to "+roomId,menuItemSendToPrimary_Click));
 		}
 
-		private void menuItemRemove_Click(object sender,EventArgs e) {
+		///<summary>Create single log entry where the ChildRoomNum is 0 to indicate they are unassigned.</summary>
+		private void menuItemUnassign_Click(object sender,EventArgs e) {
 			int idxSelected=_gridChildRoomClick.GetSelectedIndex();
 			if(idxSelected==-1) {
 				MsgBox.Show("Select a row first.");
 				return;
 			}
-			ChildRoomLog childRoomLog=(ChildRoomLog)_gridChildRoomClick.ListGridRows[idxSelected].Tag;
-			if(childRoomLog.ChildNum==0 && childRoomLog.EmployeeNum==0) {//Final row has a tag with default values
+			ChildRoomLog childRoomLogSelected=(ChildRoomLog)_gridChildRoomClick.ListGridRows[idxSelected].Tag;
+			if(childRoomLogSelected.ChildNum==0 && childRoomLogSelected.EmployeeNum==0) {//Final row has a tag with default values
 				MsgBox.Show("This row cannot be removed");
 				return;
 			}
-			List<ChildRoomLog> listChildRoomLogs=new List<ChildRoomLog>();
-			if(childRoomLog.ChildNum!=0) {//Child row selected
-				listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(childRoomLog.ChildNum,DateTime.Now.Date);
-			}
-			else {//Employee row selected
-				listChildRoomLogs=ChildRoomLogs.GetAllLogsForEmployee(childRoomLog.EmployeeNum,DateTime.Now.Date);
-			}
-			ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
+			ChildRoomLog childRoomLog=new ChildRoomLog();
+			childRoomLog.DateTEntered=DateTime.Now;
+			childRoomLog.DateTDisplayed=DateTime.Now;
+			childRoomLog.ChildRoomNum=0;//Set to 0 to indicate unassigned
+			//Either the ChildNum or EmployeeNum will be a non 0 value, not both
+			childRoomLog.ChildNum=childRoomLogSelected.ChildNum;
+			childRoomLog.EmployeeNum=childRoomLogSelected.EmployeeNum;
+			ChildRoomLogs.Insert(childRoomLog);
 			//Refresh
 			FillGridSpecified(_gridChildRoomClick);
 			FillGridChildrenAbsent();
@@ -476,16 +468,12 @@ namespace OpenDental {
 				MsgBox.Show("The selected child does not have a primary room.");
 				return;
 			}
-			//If for some reason a child is already in a room due to a delay in syncing, create a leaving entry if needed
-			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(childSelected.ChildNum,DateTime.Now);
-			ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
 			//Create coming to log for their primary room
 			ChildRoomLog childRoomLog=new ChildRoomLog();
 			childRoomLog.ChildNum=childSelected.ChildNum;
 			childRoomLog.DateTDisplayed=DateTime.Now;
 			childRoomLog.DateTEntered=DateTime.Now;
 			childRoomLog.ChildRoomNum=childSelected.ChildRoomNumPrimary;
-			childRoomLog.IsComing=true;
 			ChildRoomLogs.Insert(childRoomLog);
 			//Sync and refresh
 			Signalods.SetInvalid(InvalidType.Children);
@@ -532,27 +520,22 @@ namespace OpenDental {
 			if(frmChildren.IsDialogCancel) {
 				return;//Kick out if no child was selected
 			}
-			//If the selected child is currently in a room, remove them using a going log
+			//Check if the selected child is already in this room
 			Child child=Children.GetOne(frmChildren.ChildNumSelected);
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(child.ChildNum,DateTime.Now.Date);
-			//OrderBy DateTDisplayed and IsComing in case there are multiple entries with the same time
-			ChildRoomLog childRoomLog=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed)
-				.ThenBy(y => y.IsComing).FirstOrDefault();
-			if(childRoomLog!=null) {
-				if(childRoomLog.ChildRoomNum==childRoomNum && childRoomLog.IsComing) {
+			ChildRoomLog childRoomLogNewest=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed).FirstOrDefault();
+			if(childRoomLogNewest!=null) {
+				if(childRoomLogNewest.ChildRoomNum==childRoomNum) {
 					MsgBox.Show("The selected child is already in this room.");
 					return;//Kick out if they are already in the selected room
 				}
-				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
 			}
 			//Log the child coming to the selected room
 			ChildRoomLog childRoomLogNew=new ChildRoomLog();
 			childRoomLogNew.ChildNum=child.ChildNum;
-			//Add one second so there is a difference between the time leaving the old room and entering the new room
-			childRoomLogNew.DateTEntered=DateTime.Now.AddSeconds(1);
-			childRoomLogNew.DateTDisplayed=DateTime.Now.AddSeconds(1);
+			childRoomLogNew.DateTEntered=DateTime.Now;
+			childRoomLogNew.DateTDisplayed=DateTime.Now;
 			childRoomLogNew.ChildRoomNum=childRoomNum;
-			childRoomLogNew.IsComing=true;
 			ChildRoomLogs.Insert(childRoomLogNew);
 			Signalods.SetInvalid(InvalidType.Children);
 			//Refresh
@@ -575,27 +558,22 @@ namespace OpenDental {
 			if(frmChildTeacherSelect.IsDialogCancel) {
 				return;//Kick out if no employee/teacher was selected
 			}
-			//If the selected employee is currently in a room, remove them using a going log
+			//Check if the selected employee is already in this room
 			Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==frmChildTeacherSelect.EmployeeNumSelected);
 			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForEmployee(employee.EmployeeNum,DateTime.Now.Date);
-			//OrderBy DateTDisplayed and IsComing in case there are multiple entries with the same time
-			ChildRoomLog childRoomLog=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed)
-				.ThenBy(y => y.IsComing).FirstOrDefault();
-			if(childRoomLog!=null) {
-				if(childRoomLog.ChildRoomNum==childRoomNum && childRoomLog.IsComing) {
+			ChildRoomLog childRoomLogNewest=listChildRoomLogs.OrderByDescending(x => x.DateTDisplayed).FirstOrDefault();
+			if(childRoomLogNewest!=null) {
+				if(childRoomLogNewest.ChildRoomNum==childRoomNum) {
 					MsgBox.Show("The selected teacher is already in this room.");
 					return;//Kick out if they are already in the selected room
 				}
-				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
 			}
 			//Log the teacher coming to the selected room
 			ChildRoomLog childRoomLogNew=new ChildRoomLog();
 			childRoomLogNew.EmployeeNum=employee.EmployeeNum;
-			//Add one second so there is a difference between the time leaving the old room and entering the new room
-			childRoomLogNew.DateTEntered=DateTime.Now.AddSeconds(1);
-			childRoomLogNew.DateTDisplayed=DateTime.Now.AddSeconds(1);
+			childRoomLogNew.DateTEntered=DateTime.Now;
+			childRoomLogNew.DateTDisplayed=DateTime.Now;
 			childRoomLogNew.ChildRoomNum=childRoomNum;
-			childRoomLogNew.IsComing=true;
 			ChildRoomLogs.Insert(childRoomLogNew);
 			Signalods.SetInvalid(InvalidType.Children);
 			//Refresh

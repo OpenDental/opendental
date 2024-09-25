@@ -46,13 +46,11 @@ namespace OpenDental {
 				textEmployee.Text=employee.FName+" "+employee.LName;
 				_employeeNumSelected=employee.EmployeeNum;
 			}
-			if(ChildRoomLogCur.IsComing) {
-				radioIn.Checked=true;
-			}
-			else {
-				radioOut.Checked=true;
-			}
 			List<ChildRoom> listChildRooms=ChildRooms.GetAll();
+			ChildRoom childRoom=new ChildRoom();
+			childRoom.ChildRoomNum=0;
+			childRoom.RoomId="Unassigned";
+			comboChildRoom.Items.Add(childRoom.RoomId,childRoom);//Add unassigned option
 			comboChildRoom.Items.AddList(listChildRooms,x => x.RoomId);
 			comboChildRoom.SetSelectedKey<ChildRoom>(ChildRoomLogCur.ChildRoomNum,x=>x.ChildRoomNum);//Should be set even when new
 			if(ChildRoomLogCur.RatioChange==-1) {//Mixed age room
@@ -169,12 +167,6 @@ namespace OpenDental {
 			//One of these two will be a non 0 value by this point
 			ChildRoomLogCur.ChildNum=_childNumSelected;
 			ChildRoomLogCur.EmployeeNum=_employeeNumSelected;
-			if(radioIn.Checked){
-				ChildRoomLogCur.IsComing=true;
-			}
-			else{
-				ChildRoomLogCur.IsComing=false;
-			}
 			ChildRoomLogCur.ChildRoomNum=comboChildRoom.GetSelectedKey<ChildRoom>(x=>x.ChildRoomNum);
 			if(checkMixedRatio.Checked==true) {
 				ratio=-1;

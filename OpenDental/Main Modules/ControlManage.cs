@@ -246,8 +246,12 @@ namespace OpenDental{
 			}
 			//Automatically create a leaving log when an employee clocks out
 			if(PrefC.GetBoolSilent(PrefName.ChildDaycare,false)) {
-				List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForEmployee(_employee.EmployeeNum,DateTime.Now);
-				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
+				ChildRoomLog childRoomLog=new ChildRoomLog();
+				childRoomLog.DateTEntered=DateTime.Now;
+				childRoomLog.DateTDisplayed=DateTime.Now;
+				childRoomLog.EmployeeNum=_employee.EmployeeNum;
+				childRoomLog.ChildRoomNum=0;
+				ChildRoomLogs.Insert(childRoomLog);
 				Signalods.SetInvalid(InvalidType.Children);
 			}
 		}

@@ -48,9 +48,8 @@ namespace OpenDental {
 			//Determine which children are present
 			for(int i=0;i<listChildNumsUnique.Count;i++) {
 				ChildRoomLog childRoomLog=listChildRoomLogs.FindAll(x => x.ChildNum==listChildNumsUnique[i])
-					.OrderByDescending(y => y.DateTDisplayed)
-					.ThenBy(z => z.IsComing).First();
-				if(!childRoomLog.IsComing) {
+					.OrderByDescending(y => y.DateTDisplayed).First();
+				if(childRoomLog.ChildRoomNum==0) {
 					continue;//Child is absent
 				}
 				listChildNumsPresent.Add(listChildNumsUnique[i]);
@@ -149,14 +148,10 @@ namespace OpenDental {
 					listChildNamesNoPrimary.Add(listChildrenSelected[i].FName);
 					continue;//Children with no primary room will remain in the checked out listbox
 				}
-				//In case someone using the map checks in the child right before the parent attempts to
-				List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(listChildrenSelected[i].ChildNum,DateTime.Now);
-				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
 				//Make coming to log
 				ChildRoomLog childRoomLog=new ChildRoomLog();
 				childRoomLog.DateTDisplayed=DateTime.Now;
 				childRoomLog.DateTEntered=DateTime.Now;
-				childRoomLog.IsComing=true;
 				childRoomLog.ChildNum=listChildrenSelected[i].ChildNum;
 				childRoomLog.ChildRoomNum=listChildrenSelected[i].ChildRoomNumPrimary;
 				ChildRoomLogs.Insert(childRoomLog);
@@ -178,8 +173,12 @@ namespace OpenDental {
 			}
 			List<Child> listChildrenSelected=listBoxPresent.GetListSelected<Child>();
 			for(int i=0;i<listChildrenSelected.Count;i++) {
-				List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetAllLogsForChild(listChildrenSelected[i].ChildNum,DateTime.Now.Date);
-				ChildRoomLogs.CreateChildRoomLogLeaving(listChildRoomLogs);
+				ChildRoomLog childRoomLog=new ChildRoomLog();
+				childRoomLog.DateTEntered=DateTime.Now;
+				childRoomLog.DateTDisplayed=DateTime.Now;
+				childRoomLog.ChildNum=listChildrenSelected[i].ChildNum;
+				childRoomLog.ChildRoomNum=0;//Set to 0 to indicate unassigned
+				ChildRoomLogs.Insert(childRoomLog);
 			}
 			//Refresh to show changes
 			FillListBoxes();

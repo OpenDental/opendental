@@ -105,8 +105,9 @@ namespace OpenDental{
 			Deposit deposit=new Deposit();
 			deposit.DateDeposit=DateTime.Today;
 			deposit.BankAccountInfo=PrefC.GetString(PrefName.PracticeBankNumber);
-			if(PrefC.HasClinicsEnabled){
-				deposit.BankAccountInfo=Clinics.GetClinic(Clinics.ClinicNum).BankNumber;
+			Clinic clinic=Clinics.GetClinic(Clinics.ClinicNum);
+			if(PrefC.HasClinicsEnabled && clinic!=null){
+				deposit.BankAccountInfo=clinic.BankNumber;
 			}
 			using FormDepositEdit formDepositEdit=new FormDepositEdit(deposit);
 			formDepositEdit.IsNew=true;

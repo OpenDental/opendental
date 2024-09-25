@@ -153,9 +153,7 @@ namespace OpenDentBusiness{
 						break;
 					default:
 						using(Font font=new Font(field.FontName,field.FontSize,fontstyle)) {
-							int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out int pageCount);
-							int textBoxHeight=bottomCurPage-field.YPos;
-							HeightAndChars heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
+							HeightAndChars heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,int.MaxValue,field.TextAlign);
 							calcH=heightAndChars.Height;
 						}
 						break;

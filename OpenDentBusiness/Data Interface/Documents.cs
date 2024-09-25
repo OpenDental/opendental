@@ -725,18 +725,21 @@ namespace OpenDentBusiness {
 			tableReturn.Columns.Add("MountNum");
 			tableReturn.Columns.Add("filePath");
 			tableReturn.Columns.Add("Description");
+			tableReturn.Columns.Add("PatNum");
 			tableReturn.Columns.Add("Note");
 			tableReturn.Columns.Add("DateCreated");
 			tableReturn.Columns.Add("docCategory");
 			tableReturn.Columns.Add("DocCategory");
 			tableReturn.Columns.Add("ToothNumbers");
+			tableReturn.Columns.Add("ProvNum");
+			tableReturn.Columns.Add("PrintHeading");
 			tableReturn.Columns.Add("DateTStamp");
 			tableReturn.Columns.Add("serverDateTime");
 			command="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(Db.GetScalar(command)); //run first for rigorous inclusion of documents
-			command="SELECT DocNum,FileName,Description,Note,DateCreated,DocCategory,ToothNumbers,DateTStamp FROM document WHERE PatNum='"+POut.Long(patNum)+"' AND MountItemNum=0"; //select all documents not associated with mounts
+			command="SELECT DocNum,FileName,Description,PatNum,Note,DateCreated,DocCategory,ToothNumbers,ProvNum,PrintHeading,DateTStamp FROM document WHERE PatNum='"+POut.Long(patNum)+"' AND MountItemNum=0"; //select all documents not associated with mounts
 			tableDocuments=Db.GetTable(command);
-			command="SELECT MountNum,Description,Note,DocCategory,DateCreated FROM mount WHERE PatNum='"+POut.Long(patNum)+"'"; //select all mounts for patient
+			command="SELECT MountNum,Description,PatNum,Note,DocCategory,DateCreated,ProvNum FROM mount WHERE PatNum='"+POut.Long(patNum)+"'"; //select all mounts for patient
 			tableMounts=Db.GetTable(command);
 			List<Def> listDefsForCategory=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:false);
 			//Add documents to results list
@@ -746,6 +749,7 @@ namespace OpenDentBusiness {
 				row["MountNum"]=0;
 				row["filePath"]=filePath+tableDocuments.Rows[i]["FileName"].ToString();
 				row["Description"]=PIn.Date(tableDocuments.Rows[i]["DateCreated"].ToString()).ToString("d")+": "+tableDocuments.Rows[i]["Description"];
+				row["PatNum"]=PIn.Long(tableDocuments.Rows[i]["PatNum"].ToString());
 				row["Note"]=tableDocuments.Rows[i]["Note"].ToString();
 				row["DateCreated"]=PIn.Date(tableDocuments.Rows[i]["DateCreated"].ToString()).ToString(dateTimeFormatString);//because API is expecting this format
 				long docCategoryDefNum=PIn.Long(tableDocuments.Rows[i]["DocCategory"].ToString());
@@ -753,6 +757,8 @@ namespace OpenDentBusiness {
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
 				row["ToothNumbers"]=tableDocuments.Rows[i]["ToothNumbers"].ToString();
+				row["ProvNum"]=PIn.Long(tableDocuments.Rows[i]["ProvNum"].ToString());
+				row["PrintHeading"]=PIn.Bool(tableDocuments.Rows[i]["PrintHeading"].ToString()).ToString().ToLower();//Since we format bools as lowercase in API
 				row["DateTStamp"]=PIn.Date(tableDocuments.Rows[i]["DateTStamp"].ToString()).ToString(dateTimeFormatString);
 				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);
@@ -762,6 +768,7 @@ namespace OpenDentBusiness {
 				row=tableReturn.NewRow();
 				row["DocNum"]=0;
 				row["MountNum"]=PIn.Long(tableMounts.Rows[i]["MountNum"].ToString());
+				row["PatNum"]=PIn.Long(tableMounts.Rows[i]["PatNum"].ToString());
 				row["filePath"]=""; //not a field for Mounts
 				row["Description"]=PIn.Date(tableMounts.Rows[i]["DateCreated"].ToString()).ToShortDateString()+": "+PIn.String(tableMounts.Rows[i]["Description"].ToString());
 				row["Note"]=tableMounts.Rows[i]["Note"].ToString();
@@ -771,6 +778,8 @@ namespace OpenDentBusiness {
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
 				row["ToothNumbers"]="";//not a field for Mounts
+				row["ProvNum"]=PIn.Long(tableMounts.Rows[i]["ProvNum"].ToString());
+				row["PrintHeading"]=""; //not a field for Mounts
 				row["DateTStamp"]=""; //not a field for Mounts
 				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);

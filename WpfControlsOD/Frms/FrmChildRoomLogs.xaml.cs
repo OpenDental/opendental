@@ -39,14 +39,17 @@ namespace OpenDental {
 		}
 
 		private void FillGrid() {
-			ChildRoom childRoom=listBoxChildRooms.GetSelected<ChildRoom>();
+			//New without IsComing
 			DateTime dateSelected=monthlyCalendarLog.GetDateSelected();
-			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetChildRoomLogs(childRoom.ChildRoomNum,dateSelected);
+			List<ChildRoomLog> listChildRoomLogs=ChildRoomLogs.GetChildRoomLogsForDate(dateSelected);
+			ChildRoom childRoom=listBoxChildRooms.GetSelected<ChildRoom>();
+			double ratioAllowed=ChildRoomLogs.GetPreviousRatio(childRoom.ChildRoomNum,dateSelected);
 			List<Child> listChildren=Children.GetAll();
+			//Keeps track if a person's most recent log was a present log
+			List<ChildRoomLog> listChildRoomLogsPresent=new List<ChildRoomLog>();
 			double countChildren=0;
 			double countEmployees=0;
 			int countUnderTwo=0;
-			double ratioAllowed=ChildRoomLogs.GetPreviousRatio(childRoom.ChildRoomNum,dateSelected);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn gridColumn=new GridColumn("Child",100);
@@ -71,10 +74,21 @@ namespace OpenDental {
 			gridMain.Columns.Add(gridColumn);
 			gridMain.ListGridRows.Clear();
 			for(int i=0;i<listChildRoomLogs.Count;i++) {
-				GridRow gridRow=new GridRow();
 				//A row will be for either a child, an employee(teacher), or a ratio change. The other name row will be set to a default value and the ratio column will be filled
 				//Example: If this is a child row, then the Child column will be filled, but the Teacher be an empty string. The Allowed Ratio column will be filled.
-				if(listChildRoomLogs[i].ChildNum!=0) {//Child entry
+				ChildRoomLog childRoomLog=listChildRoomLogs[i];
+				if(childRoomLog.ChildRoomNum!=childRoom.ChildRoomNum) {
+					//Kick out if this log if for a different room and this person is not present in the current room
+					//Otherwise make a row to show them leaving
+					if(!listChildRoomLogsPresent.Any(x => x.ChildNum==childRoomLog.ChildNum)) {
+						continue;
+					}
+					else if(!listChildRoomLogsPresent.Any(x => x.EmployeeNum==childRoomLog.EmployeeNum)) {
+						continue;
+					}
+				}
+				GridRow gridRow=new GridRow();
+				if(childRoomLog.ChildNum!=0) {//Child row
 					Child child=listChildren.Find(x => x.ChildNum==listChildRoomLogs[i].ChildNum);
 					string childName=Children.GetName(child);
 					gridRow.Cells.Add(childName);
@@ -85,50 +99,57 @@ namespace OpenDental {
 					else {
 						gridRow.Cells.Add(age.ToString());
 					}
-					gridRow.Cells.Add("");
+					gridRow.Cells.Add("");//Skip teacher column
 					//Find the current number of children
-					if(listChildRoomLogs[i].IsComing) {
+					if(childRoomLog.ChildRoomNum==childRoom.ChildRoomNum) {
 						countChildren++;
 						if(dateSelected.AddYears(-2)<child.BirthDate) {
 							countUnderTwo++;
 						}
 					}
-					else {
+					else {//Leaving row
 						countChildren--;
 						if(dateSelected.AddYears(-2)<child.BirthDate) {
 							countUnderTwo--;
 						}
 					}
 				}
-				else if(listChildRoomLogs[i].EmployeeNum!=0) {//Employee entry
-					gridRow.Cells.Add("");
-					gridRow.Cells.Add("");
-					Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listChildRoomLogs[i].EmployeeNum);
+				else if(childRoomLog.EmployeeNum!=0) {//Teacher row
+					gridRow.Cells.Add("");//Skip child column
+					gridRow.Cells.Add("");//Skip age column
+					Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==childRoomLog.EmployeeNum);
 					string employeeName=employee.FName+" "+employee.LName;
 					gridRow.Cells.Add(employeeName);
 					gridRow.ColorBackG=Color.FromRgb(255,240,240);//Match the color in the classroom grids
-					//Find the current number of employees
-					if(listChildRoomLogs[i].IsComing) {
+					if(childRoomLog.ChildRoomNum==childRoom.ChildRoomNum) {
 						countEmployees++;
 					}
-					else {
+					else {//Leaving row
 						countEmployees--;
 					}
 				}
-				else {//RatioChange entry
-					gridRow.Cells.Add("");
-					gridRow.Cells.Add("");
-					gridRow.Cells.Add("");
+				else {//Ratio row
+					gridRow.Cells.Add("");//Skip child column
+					gridRow.Cells.Add("");//Skip age column
+					gridRow.Cells.Add("");//Skip teacher column
 				}
 				gridRow.Cells.Add(listChildRoomLogs[i].DateTDisplayed.ToLongTimeString());
 				if(listChildRoomLogs[i].ChildNum==0 && listChildRoomLogs[i].EmployeeNum==0) {
 					gridRow.Cells.Add("");//RatioChange does not get a location status
 				}
-				else if(listChildRoomLogs[i].IsComing) {
+				else if(childRoomLog.ChildRoomNum==childRoom.ChildRoomNum) {
 					gridRow.Cells.Add("In");
+					listChildRoomLogsPresent.Add(childRoomLog);//Add to present list to track person entering
 				}
 				else {
 					gridRow.Cells.Add("Out");
+					//Remove from present list to track person leaving
+					if(childRoomLog.ChildNum!=0) {
+						listChildRoomLogsPresent.RemoveAll(x => x.ChildNum==childRoomLog.ChildNum);
+					}
+					else {
+						listChildRoomLogsPresent.RemoveAll(x => x.EmployeeNum==childRoomLog.EmployeeNum);
+					}
 				}
 				if(listChildRoomLogs[i].ChildNum==0 && listChildRoomLogs[i].EmployeeNum==0) {//RatioChange entry
 					ratioAllowed=listChildRoomLogs[i].RatioChange;
@@ -165,6 +186,7 @@ namespace OpenDental {
 		}
 
 		private void GridMain_CellDoubleClick(object sender,GridClickEventArgs e) {
+			//When double clicking on an "Out" row the log where the person went to another room will open
 			ChildRoomLog childRoomLogSelected=gridMain.SelectedTag<ChildRoomLog>();
 			FrmChildRoomLogEdit frmChildRoomLogEdit=new FrmChildRoomLogEdit();
 			frmChildRoomLogEdit.ChildRoomLogCur=childRoomLogSelected;
@@ -193,7 +215,6 @@ namespace OpenDental {
 			childRoomLog.IsNew=true;
 			childRoomLog.DateTEntered=DateTime.Now;
 			childRoomLog.DateTDisplayed=DateTime.Now;
-			childRoomLog.IsComing=true;
 			childRoomLog.ChildRoomNum=listBoxChildRooms.GetSelected<ChildRoom>().ChildRoomNum;
 			frmChildRoomLogEdit.ChildRoomLogCur=childRoomLog;
 			frmChildRoomLogEdit.ShowDialog();
