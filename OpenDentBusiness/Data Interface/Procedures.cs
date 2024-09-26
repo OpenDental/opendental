@@ -1552,7 +1552,11 @@ namespace OpenDentBusiness {
 			//Setting a procedure to complete
 			if(oldProcedure.ProcStatus!=ProcStat.C && procedure.ProcStatus==ProcStat.C && !isProcLinkedToOrthoCase) {
 				procedure.DiscountPlanAmt=Adjustments.CreateAdjustmentForDiscountPlan(procedure);
-				if(!CompareDouble.IsZero(procedure.Discount)) { //Discounted Procedure
+				bool hasDiscountAdjustment=Adjustments.GetListForProc(procedure.ProcNum)
+					.Exists(x => x.AdjType==PrefC.GetLong(PrefName.TreatPlanDiscountAdjustmentType) 
+						&& CompareDouble.IsEqual(x.AdjAmt,-procedure.Discount));
+				if(!CompareDouble.IsZero(procedure.Discount) && !hasDiscountAdjustment) {
+					//Discounted Procedure and has no matching discount adjustment
 					Adjustments.CreateAdjustmentForDiscount(procedure);
 				}
 			}
@@ -2775,8 +2779,14 @@ namespace OpenDentBusiness {
 						procFeeHelper.FillData();
 						proc.ProcFee=GetProcFee(procFeeHelper.Pat,procFeeHelper.ListPatPlans,procFeeHelper.ListInsSubs,procFeeHelper.ListInsPlans,proc.CodeNum,
 							proc.ProvNum,proc.ClinicNum,proc.MedicalCode,procFeeHelper.ListBenefitsPrimary,procFeeHelper.ListFees);
-						decimal procCurPatPortion=ClaimProcs.GetPatPortion(proc,listClaimProcs,listAdjustments);
 						decimal procOldPatPortion=ClaimProcs.GetPatPortion(procOld,listClaimProcs,listAdjustments);
+						OrthoProcLink orthoProcLink=OrthoCaseProcedureLinker.CreateOrUpdateOrthoProcLink(procOld,proc);
+						ComputeEstimates(proc,procFeeHelper.Pat.PatNum,ref listClaimProcs,isInitialEntry:false,procFeeHelper.ListInsPlans,
+							procFeeHelper.ListPatPlans,procFeeHelper.ListBenefitsPrimary,histList:null,loopList:null,saveToDb:false,procFeeHelper.Pat.Age,
+							procFeeHelper.ListInsSubs,listClaimProcsAll:null,isClaimProcRemoveNeeded:false,useProcDateOnProc:false,listSubstLinks:null,
+							isForOrtho:false,procFeeHelper.ListFees,lookupFees:null,orthoProcLink,orthoCase:null,orthoSchedule:null,
+							listOrthoProcLinksForOrthoCase:null,blueBookEstimateData:null,listApptNums:null);
+						decimal procCurPatPortion=ClaimProcs.GetPatPortion(proc,listClaimProcs,listAdjustments);
 						if(procCurPatPortion!=procOldPatPortion) {
 							promptText=Lans.g(nameof(Procedures),"The procedure's newly selected provider will change the fee.  Would you like to update the procedure's fee to the newly selected provider's fee?");
 							return true;

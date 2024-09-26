@@ -2557,7 +2557,7 @@ namespace OpenDental{
 				_appointment.AppointmentTypeNum=0;
 			}
 			else {
-				_appointment.AppointmentTypeNum=comboApptType.GetSelected<AppointmentType>().AppointmentTypeNum;
+				_appointment.AppointmentTypeNum=comboApptType.GetSelectedKey<AppointmentType>(x => x.AppointmentTypeNum);
 			}
 			#endregion Set _appointment Fields
 			#region Update ProcDescript for Appt
