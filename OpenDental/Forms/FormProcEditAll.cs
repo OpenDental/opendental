@@ -342,6 +342,18 @@ namespace OpenDental {
 				//Check to see if the ProcFee will change due to the provider changing.
 				string promptText="";
 				procFeeHelper.FillData();
+				Patient patient=Patients.GetPat(patNum);
+				long feeSchedNum=FeeScheds.GetFeeSched(patient,procFeeHelper.ListInsPlans,procFeeHelper.ListPatPlans,procFeeHelper.ListInsSubs,provider.ProvNum);
+				Clinic clinic=comboClinic.GetSelected<Clinic>();
+				if(clinic==null) {
+					procFeeHelper.ListFees=null;
+				}
+				else {
+					procFeeHelper.ListFees=Fees.GetListExact(feeSchedNum,clinic.ClinicNum,provider.ProvNum);
+					if(procFeeHelper.ListFees.Count==0) {
+						procFeeHelper.ListFees=null;
+					}
+				}
 				bool canChangeFees=Procedures.ShouldFeesChange(listProceduresNew,listProceduresOld,ref promptText,procFeeHelper);
 				if(canChangeFees) {
 					if(promptText=="") {//No prompt, so change fees because canFeesChange==true.
@@ -369,14 +381,14 @@ namespace OpenDental {
 					ClaimProcs.TrySetProvFromProc(ListProcedures[i],listClaimProcsForProc);
 					hasChanged=true;
 				}
-				if(changeFees) {
-					ListProcedures[i].ProcFee=Procedures.GetProcFee(procFeeHelper.Pat,procFeeHelper.ListPatPlans,procFeeHelper.ListInsSubs,
-						procFeeHelper.ListInsPlans,ListProcedures[i],procFeeHelper.ListBenefitsPrimary,procFeeHelper.ListFees);
-					hasChanged=true;
-				}
 				if(comboClinic.GetSelected<Clinic>()!=null && comboClinic.GetSelected<Clinic>().ClinicNum!=ListProcedures[i].ClinicNum) {//Using selection
 					ListProcedures[i].ClinicNum=comboClinic.GetSelected<Clinic>().ClinicNum;
 					listClaimProcsForProc.ForEach(x => x.ClinicNum=ListProcedures[i].ClinicNum);
+					hasChanged=true;
+				}
+				if(changeFees) {
+					ListProcedures[i].ProcFee=Procedures.GetProcFee(procFeeHelper.Pat,procFeeHelper.ListPatPlans,procFeeHelper.ListInsSubs,
+						procFeeHelper.ListInsPlans,ListProcedures[i],procFeeHelper.ListBenefitsPrimary,procFeeHelper.ListFees);
 					hasChanged=true;
 				}
 				if(hasChanged) {

@@ -809,24 +809,34 @@ namespace OpenDental {
 				grid.ListGridRows[i].Cells[colResultsIndex].Text="";
 			}
 			bool isVerbose=checkShow.Checked;
-			long databaseSize=MiscData.GetDatabaseSize();
-			TimeSpan totalTime=TimeSpan.FromSeconds((0.00000008d)*databaseSize);
-			string strTotalTime="";
-			if (totalTime.TotalMinutes > 1) {
-				strTotalTime += totalTime.TotalMinutes.ToString("0") + " minutes";
+			if(PrefC.GetBool(PrefName.DatabaseMaintenanceSkipCheckTable)) {//Display informative message that table checks will not be run.
+				string message="Table checks will not be run because the 'DBM Skip Check Table' preference is enabled.";
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,message)) {
+					Cursor=Cursors.Default;
+					ToggleUI(false);
+					return;
+				}
 			}
-			else {
-				strTotalTime += totalTime.TotalSeconds.ToString("0") + " seconds";
-			}
-			string warningMessage="CHECK TABLES will be run first.  This will take an estimated "+strTotalTime+" and may limit users from accessing Open Dental while this action runs. Would you like to continue?";
-			//In binary 6442450944 bytes is 6GBs.
-			//After some testing (0.00000008 seconds per byte) 0.00000008 * 6442450944 = 515 seconds per 6 GBs or about 8 minutes.
-			//A typical small office might take two minutes.
-			//Not sure where we should set this cutoff. If it limits access to OD, we should warn them more. But warnings are annoying.
+			else {//Display warning message if table checks are estimated to take a long time
+				long databaseSize=MiscData.GetDatabaseSize();
+				TimeSpan totalTime=TimeSpan.FromSeconds((0.00000008d)*databaseSize);
+				string strTotalTime="";
+				if (totalTime.TotalMinutes > 1) {
+					strTotalTime += totalTime.TotalMinutes.ToString("0") + " minutes";
+				}
+				else {
+					strTotalTime += totalTime.TotalSeconds.ToString("0") + " seconds";
+				}
+				string warningMessage="CHECK TABLES will be run first.  This will take an estimated "+strTotalTime+" and may limit users from accessing Open Dental while this action runs. Would you like to continue?";
+				//In binary 6442450944 bytes is 6GBs.
+				//After some testing (0.00000008 seconds per byte) 0.00000008 * 6442450944 = 515 seconds per 6 GBs or about 8 minutes.
+				//A typical small office might take two minutes.
+				//Not sure where we should set this cutoff. If it limits access to OD, we should warn them more. But warnings are annoying.
 			if((totalTime.TotalMinutes>4) && !MsgBox.Show(this,MsgBoxButtons.YesNo,warningMessage,"Warning")) {
-				Cursor=Cursors.Default;
-				ToggleUI(false);
-				return;
+					Cursor=Cursors.Default;
+					ToggleUI(false);
+					return;
+				}
 			}
 			StringBuilder stringBuilderLogText=new StringBuilder();
 			Result result=new Result();

@@ -18,7 +18,7 @@ namespace OpenDentBusiness{
 			return Crud.LaboratoryCrud.SelectMany(command);
 		}
 
-		///<summary>Gets one laboratory from database</summary>
+		///<summary>Gets one laboratory from the database.</summary>
 		public static Laboratory GetOne(long laboratoryNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Laboratory>(MethodBase.GetCurrentMethod(),laboratoryNum);
@@ -37,6 +37,17 @@ namespace OpenDentBusiness{
 			string command="SELECT * FROM laboratory "
 				+"WHERE LaboratoryNum IN("+string.Join(",",listLaboratoryNums.Select(x => POut.Long(x)).ToArray())+") "
 				+"ORDER BY Description";
+			return Crud.LaboratoryCrud.SelectMany(command);
+		}
+
+		///<summary>Gets a list of laboratories for the API. Returns an empty list if none found.</summary>
+		public static List<Laboratory> GetLaboratoriesForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Laboratory>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM laboratory ";
+			command+="ORDER BY LaboratoryNum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.LaboratoryCrud.SelectMany(command);
 		}
 
