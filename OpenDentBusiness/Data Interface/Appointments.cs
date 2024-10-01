@@ -19,6 +19,9 @@ namespace OpenDentBusiness{
 		public const string PROMPT_ListAptsToDelete = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment which will result in its deletion.\r\n"
 					+ "Continue?";
+		public const string PROMPT_PlannedProcsConcurrent = "One or more procedures are attached to another planned appointment.\r\n"
+				+ "All selected procedures will be detached from the other planned appointment.\r\n"
+				+ "Continue?";
 		public const string PROMPT_NotPlannedProcsConcurrent = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment.\r\n"
 					+ "Continue?";
@@ -5531,7 +5534,7 @@ namespace OpenDentBusiness{
 		///<summary>Verifies various appointment procedure states. Calls given funcs as validation from the user is needed.</summary>
 		public static bool ProcsAttachedToOtherAptsHelper(List<Procedure> listProceduresInGrid,Appointment appointment, 
 			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,Func<List<long>,bool> funcListAptsToDelete,
-			Func<bool> funcProcsConcurrentAndNotPlanned,List<Procedure> listProceduresAll,Action actionCompletedProceduresBeingMoved)
+			Func<bool> funcProcsConcurrentAndNotPlanned,Func<bool>funcProcsConcurrentAndPlanned,List<Procedure> listProceduresAll,Action actionCompletedProceduresBeingMoved)
 		{
 			bool isPlanned=appointment.AptStatus == ApptStatus.Planned;
 			List<long> listAptNumsToDelete=new List<long>();
@@ -5577,6 +5580,11 @@ namespace OpenDentBusiness{
 			}
 			if(listAptNumsToDelete.Count>0) {
 				if(!funcListAptsToDelete(listAptNumsToDelete)) {
+					return false;
+				}
+			}
+			else if(hasProcsConcurrent && isPlanned) {
+				if(!funcProcsConcurrentAndPlanned()) {
 					return false;
 				}
 			}

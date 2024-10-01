@@ -995,15 +995,32 @@ namespace OpenDentBusiness.Eclaims {
 			List<Carrier> listCarriers=new List<Carrier>() { carrier };
 			//Version 02 is the only version allowed to have a null carrier.
 			if(carrier==null && formatVersion!="02") {
-				//Override the list of carriers with CDA carriers that are in use.
-				listCarriers=Carriers.GetCdaCarriersInUse();
-				//Remove all carriers that do not support ROT request transactions or that do not match the format version.
-				listCarriers.RemoveAll(x => !x.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForOutstandingTrans_04)
-					|| x.CDAnetVersion!=formatVersion);
-				if(listCarriers.IsNullOrEmpty()) {
-					throw new ApplicationException("No carriers found that have sent a claim before, "
-						+"are flagged as 'Is CDAnet Carrier', and support requests for outstanding transactions.\r\n\r\n"
-						+"Send a claim before requesting outstanding transactions or manually pick a specific carrier.");
+				if(network!=null && network.Abbrev.In("TELUS A","TELUS B")) {
+					Carrier carrierAll=new Carrier();
+					carrierAll.CarrierNum=0;
+					carrierAll.CanadianSupportedTypes=CanSupTransTypes.RequestForOutstandingTrans_04;
+					carrierAll.ElectID="999999";
+					carrierAll.CanadianEncryptionMethod=1;//No encryption
+					listCarriers=new List<Carrier>() { carrierAll };
+					if(network.Abbrev=="TELUS B") {
+						Carrier carrierABC=Carriers.GetCdaCarriersInUse().FirstOrDefault(x => x.ElectID=="000090");
+						if(carrierABC!=null) {//Consider Alberta Blue Cross (ABC), but only if it is in use currently.
+							//Alberta Blue Cross (ABC) only accepts direct requests and ignores requests from the network (when Carrier ID = 999999).
+							listCarriers.Add(carrierABC);
+						}
+					}
+				}
+				else {//For ITRANS2, there is a bug where 999999 requests to network for all outstanding simply parrots the request back to us.
+					//Our workaround is to send to each active carrier individually. Override the list of carriers with CDA carriers that are in use.
+					listCarriers=Carriers.GetCdaCarriersInUse();
+					//Remove all carriers that do not support ROT request transactions or that do not match the format version.
+					listCarriers.RemoveAll(x => !x.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForOutstandingTrans_04)
+						|| x.CDAnetVersion!=formatVersion);
+					if(listCarriers.IsNullOrEmpty()) {
+						throw new ApplicationException("No carriers found that have sent a claim before, "
+							+"are flagged as 'Is CDAnet Carrier', and support requests for outstanding transactions.\r\n\r\n"
+							+"Send a claim before requesting outstanding transactions or manually pick a specific carrier.");
+					}
 				}
 			}
 			List<Etrans> listEtrans=new List<Etrans>();
@@ -1199,7 +1216,8 @@ namespace OpenDentBusiness.Eclaims {
 					etransAck.InsSubNum=etransOriginal.InsSubNum;
 					etransAck.ClaimNum=etransOriginal.ClaimNum;
 					CCDField fieldA05=fieldInputter.GetFieldById("A05");//CarrierID, exists in all formats but 24-Email, and 16-Payment Reconciliation Response
-					if(fieldA05!=null) {
+					//In production, A05 should never be 999999. However, in testing, CanadaFakeClearinghouse will parrot back the request carrier ID, which can be 999999.
+					if(fieldA05!=null && fieldA05.valuestr!="999999") {
 						Carrier carrierA05=Carriers.GetAllByElectId(fieldA05.valuestr).FirstOrDefault(x => x.IsCDA && !x.IsHidden);//Get Carrier from ElectID
 						etransAck.CarrierNum=carrierA05.CarrierNum;
 					}
@@ -1319,7 +1337,7 @@ namespace OpenDentBusiness.Eclaims {
 					if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2)) {
 						listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"04",null,null,printForm,printCCD));
 					}
-					else if(clearinghouseHq.CommBridge==EclaimsCommBridge.Claimstream) {
+					else if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.None)) {//Claimstream or CanadaFakeClearinghouse
 						//Alberta Blue Cross (ABC) only accepts requests with a carrier specified (since there is only 1 carrier in their network).
 						listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"04",null,netTelusA,printForm,printCCD));
 						listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"04",null,netTelusB,printForm,printCCD));
@@ -1335,7 +1353,7 @@ namespace OpenDentBusiness.Eclaims {
 				if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2)) {
 					listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"02",null,null,printForm,printCCD));
 				}
-				else if(clearinghouseHq.CommBridge==EclaimsCommBridge.Claimstream) {
+				else if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.None)) {//Claimstream or CanadaFakeClearinghouse
 					//Alberta Blue Cross (ABC) uses version 04.  Therefore, no need to ask for version 02 reports.
 					listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"02",null,netTelusA,printForm,printCCD));
 					listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"02",null,netTelusB,printForm,printCCD));

@@ -1826,7 +1826,7 @@ namespace OpenDentBusiness {
 		///<summary>DEPRECATED DateTime.  Next date that the advertising programming properties will automatically check.</summary>		
 		ProgramAdditionalFeatures,
 		///<summary>Hidden preference, no UI to edit this list, but it is present in all databases.  Comma delimited list of ProgramNames for programlinks that are disabled in Web
-		///mode for various reasons.  We can manually edit this list </summary>
+		///mode for various reasons.  This can also contain string names for other disabled bridges, for example NewCrop.  We can manually edit this list.</summary>
 		ProgramLinksDisabledForWeb,
 		///<summary>Deprecated. Use updatehistory table instead.  Stored the DateTime of when the ProgramVersion preference last changed.</summary>		
 		ProgramVersionLastUpdated,

@@ -1338,6 +1338,9 @@ namespace OpenDental{
 				_listFormImageFloats[i].IsImageFloatSelected=false;
 			}
 			controlImageDock.IsImageFloatSelected=true;
+			if(controlImageDock.ControlImageDisplay_==null) {//nothing displayed
+				return;
+			}
 			ControlImageDisplay controlImageDisplay=controlImageDock.ControlImageDisplay_;
 			controlImageDisplay.EnableToolBarButtons();
 			EnumImageNodeType imageNodeType=controlImageDisplay.GetSelectedType();
@@ -2260,7 +2263,7 @@ namespace OpenDental{
 					MessageBox.Show(err);
 					return;
 				}
-				if(ODBuild.IsThinfinity() && Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
+				if(ODBuild.IsThinfinity() && Programs.GetListDisabledForWeb().Contains(program.ProgName)) {
 					MsgBox.Show("ProgramLinks","Bridge is not available while viewing through the web.");
 					return;//bridge is not available for web users at this time. 
 				}

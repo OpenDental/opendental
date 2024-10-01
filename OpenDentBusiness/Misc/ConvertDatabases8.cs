@@ -1491,6 +1491,12 @@ namespace OpenDentBusiness {
 			}//End B55522
 		}//End of 24_1_60()
 
+		private static void To24_1_76() {
+			string command="UPDATE preference SET ValueString=CONCAT(ValueString,',NewCrop') WHERE PrefName='ProgramLinksDisabledForWeb'";
+			Db.NonQ(command);
+			//This query does not need to be added to 24.2 because all cloud users were on 24.1 or earlier on the date that this was released.
+		}//End of 24_1_76()
+
 		private static void To24_2_1() {
 			string command;
 			DataTable table;

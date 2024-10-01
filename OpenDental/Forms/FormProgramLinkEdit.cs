@@ -76,7 +76,7 @@ namespace OpenDental{
 			if(!ODEnvironment.IsCloudServer) {
 				return true;
 			}
-			if(Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(ProgramCur.ProgName)) {
+			if(Programs.GetListDisabledForWeb().Contains(ProgramCur.ProgName)) {
 				return false;//these programs are not currently allowed for web users
 			}
 			return true;//it was not one of the programs listed

@@ -388,7 +388,7 @@ namespace OpenDentBusiness {
 			///<summary>Builds the receipt string for a web service transaction.
 			///This method assumes ccExpYear is a 4 digit integer.</summary>
 			public void BuildReceiptString(string ccNum,int ccExpMonth,int ccExpYear,string nameOnCard,long clinicNum,bool wasSwiped=false,
-				bool isACH=false) 
+				bool isACH=false,bool isVoidingRefund=false) 
 			{
 				string result="";
 				int xleft=0;
@@ -418,7 +418,7 @@ namespace OpenDentBusiness {
 				result+="Auth Code".PadRight(xright-xleft,'.')+this.AuthCode+Environment.NewLine;
 				result+="Result".PadRight(xright-xleft,'.')+this.Status+Environment.NewLine;
 				result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
-				if(this.TransType.In(PaySimple.TransType.RETURN,PaySimple.TransType.VOID)) {
+				if(this.TransType.In(PaySimple.TransType.RETURN,PaySimple.TransType.VOID) && !isVoidingRefund) {
 					result+="Total Amt".PadRight(xright-xleft,'.')+(this.Amount*-1)+Environment.NewLine;
 				}
 				else {

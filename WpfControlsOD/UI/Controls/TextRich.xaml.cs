@@ -992,6 +992,27 @@ How to use the TextRich control:
 					return;
 				}
 			}
+			//Shift+F3 changes selected text from UPPERCASE>lowercase>Title Case
+			if(Keyboard.Modifiers==ModifierKeys.Shift && e.Key==Key.F3) {
+				TextSelection textSelection=richTextBox.Selection;
+				string selectedText=textSelection.Text;
+				char[] delimiters=new char[]{' ','\n','\r','\t'};
+				string firstWord=selectedText.Split(delimiters,StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+				if(!string.IsNullOrEmpty(firstWord)) {
+					if(firstWord==firstWord.ToUpper()) {
+						selectedText=selectedText.ToLower();
+					} 
+					else if(firstWord==firstWord.ToLower()) {
+						selectedText=CultureInfo.CurrentCulture.TextInfo.ToTitleCase(selectedText.ToLower());;
+					} 
+					else {
+						selectedText=selectedText.ToUpper();
+					}
+					textSelection.Text=selectedText;
+					e.Handled=true;
+					return;
+				}
+			}
 		}
 
 		private void textBox_KeyUp(object sender,KeyEventArgs e) {

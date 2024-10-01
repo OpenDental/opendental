@@ -183,6 +183,12 @@ namespace OpenDentBusiness{
 					if(ProcedureCodes.IsValidCode(procCode)) { 
 						long codeNum = ProcedureCodes.GetCodeNum(procCode);
 						Fee fee=Fees.GetFee(codeNum,feeSched.FeeSchedNum,clinicNum,provNum,listFees);//gets best match
+						string feeOldStr="";
+						DateTime datePrevious=DateTime.MinValue;
+						if(fee!=null) {
+							feeOldStr="Old Fee: "+fee.Amount.ToString("c")+", ";
+							datePrevious=fee.SecDateTEdit;
+						}
 						if(fields[1]=="") {//an empty entry will delete an existing fee, but not insert a blank override
 							if(fee==null){//nothing to do
 								
@@ -191,6 +197,13 @@ namespace OpenDentBusiness{
 								//doesn't matter if the existing fee is an override or not.
 								Fees.Delete(fee);
 								listFeesImported.Remove(fee);
+								SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,"Procedure: "+fields[0]+", "
+									+feeOldStr
+									//+", Deleted Fee: "+fee.Amount.ToString("c")+", "
+									+"Fee Schedule: "+FeeScheds.GetDescription(feeSched.FeeSchedNum)+". "
+									+"Fee deleted using the Import Canada button in the Fee Tools window.",codeNum,
+									DateTime.MinValue);
+									SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,"Fee deleted",fee.FeeNum,datePrevious);
 							}
 						}
 						else {//value found in text file
@@ -208,6 +221,13 @@ namespace OpenDentBusiness{
 								fee.Amount=PIn.Double(fields[1],doUseEnUSFormat: true);
 								Fees.Update(fee);
 							}
+							SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,"Procedure: "+fields[0]+", "
+								+feeOldStr
+								+", New Fee: "+fee.Amount.ToString("c")+", "
+								+"Fee Schedule: "+FeeScheds.GetDescription(feeSched.FeeSchedNum)+". "
+								+"Fee changed using the Import Canada button in the Fee Tools window.",codeNum,
+								DateTime.MinValue);
+								SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,"Fee changed",fee.FeeNum,datePrevious);
 						}
 						numImported++;
 					}

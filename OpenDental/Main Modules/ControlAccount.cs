@@ -3891,7 +3891,7 @@ namespace OpenDental {
 				row.Cells.Add(table.Rows[i]["paid"].ToString());
 				row.Cells.Add(table.Rows[i]["princPaid"].ToString());
 				row.Cells.Add(table.Rows[i]["balance"].ToString());
-				if(table.Rows[i]["IsClosed"].ToString()=="1" && PrefC.GetInt(PrefName.PayPlansVersion)==2) {
+				if(table.Rows[i]["IsClosed"].ToString()=="1") {
 					cell=new GridCell(Lan.g(this,"Closed"));
 					row.ColorText=Color.Gray;
 				}
@@ -4364,10 +4364,8 @@ namespace OpenDental {
 			if(doShowCompletedPlans) {
 				return true;
 			}
-			//do not hide payment plans that still have a balance when not on v2
-			bool doShowClosedPlansWithBalance=PrefC.GetInt(PrefName.PayPlansVersion)!=(int)PayPlanVersions.AgeCreditsAndDebits;
-			return !isClosed
-				|| (doShowClosedPlansWithBalance && !CompareDouble.IsEqual(balance,0)); //Or the payment plan has a balance
+			//do not hide payment plans that still have a balance
+			return !isClosed || !CompareDouble.IsEqual(balance,0);
 		}
 
 		private string GetCellTextSuperFamName(Patient patientGuar) {

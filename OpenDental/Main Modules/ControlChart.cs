@@ -8409,11 +8409,11 @@ namespace OpenDental {
 			else {
 				provider=Providers.GetProv(Pd.Patient.PriProv);
 			}
+			bool isNewCropDisabledForWeb=ODEnvironment.IsCloudServer && Programs.GetListDisabledForWeb().Contains("NewCrop");
 			if(erxOption==ErxOption.DoseSpotWithNewCrop) {
 				//ODCloud does not support NewCrop eRx so just use DoseSpot if in web mode.
-				if(!ODBuild.IsThinfinity() && provider.IsErxEnabled==ErxEnabledStatus.EnabledWithLegacy) {
-					InputBox inputBoxPickErxOption=
-						new InputBox(Lan.g(this,"Which eRx option would you like to use?"),new List<string>() { "NewCrop","DoseSpot"});
+				if(!isNewCropDisabledForWeb && provider.IsErxEnabled==ErxEnabledStatus.EnabledWithLegacy) {
+					InputBox inputBoxPickErxOption=new InputBox(Lan.g(this,"Which eRx option would you like to use?"),new List<string>() { "NewCrop","DoseSpot"});
 					inputBoxPickErxOption.ShowDialog();
 					if(inputBoxPickErxOption.IsDialogCancel) {
 						return;
@@ -8455,7 +8455,7 @@ namespace OpenDental {
 				return;
 			}
 			if(erxOption==ErxOption.NewCrop) {
-				if(ODEnvironment.IsCloudServer) {
+				if(isNewCropDisabledForWeb) {
 					//ODCloud does not support NewCrop eRx.
 					MsgBox.Show(this,"NewCrop is not available while using Open Dental Cloud.");
 					return;

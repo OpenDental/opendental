@@ -375,7 +375,15 @@ namespace OpenDental {
 					//Grid gridForField=ListEFormFields[i].TagOD as Grid;
 					Border borderBox=ListEFormFields[i].TagOD as Border;
 					StackPanel stackPanel=borderBox.Child as StackPanel;
-					WrapPanel wrapPanel=stackPanel.Children[1] as WrapPanel;
+					WrapPanel wrapPanel=null;
+					if(ListEFormFields[i].LabelAlign==EnumEFormLabelAlign.TopLeft
+						|| ListEFormFields[i].LabelAlign==EnumEFormLabelAlign.LeftLeft)
+					{
+						wrapPanel=stackPanel.Children[1] as WrapPanel;
+					}
+					if(ListEFormFields[i].LabelAlign==EnumEFormLabelAlign.Right){
+						wrapPanel=stackPanel.Children[0] as WrapPanel;
+					}
 					UIElementCollection uIElementCollection=wrapPanel.Children;
 					List<string> listPickDb=ListEFormFields[i].PickListDb.Split(',').ToList();
 					List<string> listPickVis=ListEFormFields[i].PickListVis.Split(',').ToList();

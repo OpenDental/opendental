@@ -6811,8 +6811,14 @@ namespace OpenDental{
 		}
 
 		private void menuItemOrthoAuto_Click(object sender,EventArgs e) {
-			using FormOrthoAutoClaims formOrthoAutoClaims = new FormOrthoAutoClaims();
+			using FormOrthoAutoClaims formOrthoAutoClaims=new FormOrthoAutoClaims();
 			formOrthoAutoClaims.ShowDialog();
+			//If Ortho Auto Claims has closed and we're in the account module then refresh patient account rows
+			//Don't refresh if not in the account module, ModuleSelected is called when opening the account module
+			if(controlAccount.Visible) {
+				//ModuleSelected refreshes account row data and then calls LayoutPanelsAndRefreshMainGrids to fill rows
+				controlAccount.ModuleSelected(PatNumCur);
+			}
 		}
 
 		private void menuItemAiChatSessions_Click(object sender, EventArgs e) {
