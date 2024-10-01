@@ -721,11 +721,11 @@ namespace OpenDentBusiness {
 				}
 			}
 
-			public static string BuildReceiptString(XWebResponse response,bool doShowSignatureLine) {
+			public static string BuildReceiptString(XWebResponse response,bool doShowSignatureLine,bool isVoidingRefund=false) {
 
 				if(Enum.TryParse<EdgeExpressTransType>(response.TransactionType,out EdgeExpressTransType transType)) {
 					return BuildReceiptString(transType,response.TransactionID,response.MaskedAcctNum,
-						response.ApprovalCode,response.PayNote,(decimal)response.Amount,doShowSignatureLine,response.ClinicNum);
+						response.ApprovalCode,response.PayNote,(decimal)response.Amount,doShowSignatureLine,response.ClinicNum,isVoidingRefund:isVoidingRefund);
 				}
 				else {
 					return "Error creating receipt string.";
@@ -733,7 +733,7 @@ namespace OpenDentBusiness {
 			}
 
 			public static string BuildReceiptString(EdgeExpressTransType transType,string transactionID,string cardNumber,
-				string approvalCode,string statusDescription,decimal amount,bool doShowSignatureLine,long clinicNum)
+				string approvalCode,string statusDescription,decimal amount,bool doShowSignatureLine,long clinicNum,bool isVoidingRefund=false)
 			{
 				string result="";
 				cardNumber=cardNumber??"";
@@ -762,7 +762,7 @@ namespace OpenDentBusiness {
 				result+="Approval Code".PadRight(xright-xleft,'.')+approvalCode+Environment.NewLine;
 				result+="Result".PadRight(xright-xleft,'.')+statusDescription+Environment.NewLine;
 				result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
-				if(transType.In(EdgeExpressTransType.CreditReturn,EdgeExpressTransType.CreditVoid)) {
+				if(transType.In(EdgeExpressTransType.CreditReturn,EdgeExpressTransType.CreditVoid) && !isVoidingRefund) {
 					result+="Total Amt".PadRight(xright-xleft,'.')+(amount*-1)+Environment.NewLine;
 				}
 				else {

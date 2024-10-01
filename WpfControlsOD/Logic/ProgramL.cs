@@ -36,7 +36,7 @@ namespace WpfControls {
 				return;
 			}
 			if(ODEnvironment.IsCloudServer) {
-				if(Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
+				if(Programs.GetListDisabledForWeb().Contains(program.ProgName)) {
 					MsgBox.Show("ProgramLinks","Bridge is not available while using Open Dental Cloud.");
 					return;//bridge is not available for web users at this time. 
 				}

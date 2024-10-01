@@ -2625,7 +2625,8 @@ namespace OpenDental {
 				textAmount.Text="-"+approvedAmt.ToString("F");
 			}
 			else if(edgeExpressTransType==EdgeExpressTransType.CreditVoid) {
-				HandleVoidPayment(payNote,approvedAmt,receipt,CreditCardSource.EdgeExpressRCM);
+				bool isVoidingRefund=PIn.Double(textAmount.Text)>0;
+				HandleVoidPayment(payNote,approvedAmt,receipt,CreditCardSource.EdgeExpressRCM,isVoidingRefund:isVoidingRefund);
 				return payNote;
 			}
 			_wasCreditCardSuccessful=rcmResponse.IsSuccess;
@@ -2728,7 +2729,8 @@ namespace OpenDental {
 					break;
 				case EdgeExpressTransType.CreditVoid:
 					xWebResponse=EdgeExpress.CNP.VoidTransaction(_patient.PatNum,transactionId,amt,false);
-					payNote=xWebResponse.GetFormattedNote(false);
+					bool isVoidingRefund=PIn.Double(textAmount.Text)>0;
+					payNote=xWebResponse.GetFormattedNote(isVoidingRefund);
 					if(xWebResponse.XWebResponseCode==XWebResponseCodes.Approval) {// only continue if we got a approval code back from Edge Express
 						//This matches what we do for PaySimple. We return early for transactions from the FormClainPayEdit.cs window to prevent an error in HandleVoidPayment.
 						if(prepaidAmount!=0) {
@@ -2736,7 +2738,7 @@ namespace OpenDental {
 						}
 						_payment.IsCcCompleted=true;
 						textNote.Text+=payNote;
-						HandleVoidPayment(xWebResponse.GetFormattedNote(false,true),xWebResponse.Amount,EdgeExpress.CNP.BuildReceiptString(xWebResponse,false),CreditCardSource.EdgeExpressCNP);
+						HandleVoidPayment(xWebResponse.GetFormattedNote(isVoidingRefund,true),xWebResponse.Amount,EdgeExpress.CNP.BuildReceiptString(xWebResponse,false,isVoidingRefund:isVoidingRefund),CreditCardSource.EdgeExpressCNP,isVoidingRefund:isVoidingRefund);
 					}
 					//Not an approval response and also not an insurance payment.
 					else if(prepaidAmount==0) {
@@ -3935,7 +3937,13 @@ namespace OpenDental {
 				if(formPaySimple.ApiResponseOut.TransType==PaySimple.TransType.VOID) {//Close FormPayment window now so the user will not have the option to hit Cancel
 					if(IsNew) {
 						if(!_wasCreditCardSuccessful) {
-							textAmount.Text="-"+formPaySimple.ApiResponseOut.Amount.ToString("F");
+							bool isVoidingRefund=PIn.Double(textAmount.Text)>0;
+							if(!isVoidingRefund) {
+								textAmount.Text="-"+formPaySimple.ApiResponseOut.Amount.ToString("F");
+							}
+							else {
+								textAmount.Text=formPaySimple.ApiResponseOut.Amount.ToString("F");
+							}
 							textNote.Text+=((textNote.Text=="") ? "" : Environment.NewLine)+resultNote;
 						}
 						_payment.Receipt=formPaySimple.ApiResponseOut.TransactionReceipt;

@@ -407,7 +407,7 @@ namespace OpenDental{
 
 		private void checkEnabled_CheckedChanged(object sender,EventArgs e) {
 			if(ODEnvironment.IsCloudServer) {
-				bool isDisabledForWeb=Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(_program.ProgName);
+				bool isDisabledForWeb=Programs.GetListDisabledForWeb().Contains(_program.ProgName);
 				if(checkEnabled.Checked && isDisabledForWeb) {
 					checkEnabled.Checked=false;
 					if(!_isLoading){

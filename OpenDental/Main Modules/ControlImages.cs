@@ -1814,7 +1814,7 @@ namespace OpenDental
 					MessageBox.Show(err);
 					return;
 				}
-				if(ODBuild.IsThinfinity() && Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
+				if(ODBuild.IsThinfinity() && Programs.GetListDisabledForWeb().Contains(program.ProgName)) {
 					MsgBox.Show("ProgramLinks","Bridge is not available while viewing through the web.");
 					return;//bridge is not available for web users at this time. 
 				}

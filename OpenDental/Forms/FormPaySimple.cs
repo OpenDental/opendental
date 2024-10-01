@@ -320,7 +320,9 @@ namespace OpenDental {
 			}
 			if(_transType.In(PaySimple.TransType.SALE,PaySimple.TransType.RETURN,PaySimple.TransType.VOID)) {//Only print a receipt if transaction is an approved SALE, RETURN, or VOID			
 				//The isSwiped boolean could be incorrectly set if the user swipes a card and then changes the data that was entered to a different card.
-				apiResponseRetVal.BuildReceiptString(cardNumber,expMonth,expYear,textNameOnCard.Text,_clinicNum,_magstripCardParser!=null);
+				bool isVoidingRefund=PIn.Double(textAmount.Text)>0 && _transType==PaySimple.TransType.VOID;
+				apiResponseRetVal.BuildReceiptString(cardNumber,expMonth,expYear,textNameOnCard.Text,_clinicNum,_magstripCardParser!=null,
+					isVoidingRefund:isVoidingRefund);
 				if(checkPrintReceipt.Checked) {
 					PrintReceipt(apiResponseRetVal.TransactionReceipt);
 				}
