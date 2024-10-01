@@ -321,7 +321,17 @@ namespace OpenDentBusiness {
 				case DefCat.AccountQuickCharge:
 					break;//Users can delete AcctProcQuickCharge entries.  Nothing has an FKey to a AcctProcQuickCharge Def so no need to check anything.
 				case DefCat.AutoNoteCats:
-					AutoNotes.RemoveFromCategory(def.DefNum);//set any autonotes assinged to this category to 0 (unassigned), user already warned about this
+					AutoNotes.RemoveFromCategory(def.DefNum);//set any autonotes assigned to this category to 0 (unassigned), user already warned about this
+					List<Def> listDefsAutoNote=GetDefsForCategory(DefCat.AutoNoteCats);
+					List<Def> listDefsChilden=listDefsAutoNote.FindAll(x => x.ItemValue==def.DefNum.ToString());
+					for(int i=0;i<listDefsChilden.Count;i++) {
+						//Set item value to empty string to remove previous linkage to parent category.
+						listDefsChilden[i].ItemValue="";
+						Update(listDefsChilden[i]);
+						string logText=Lans.g("Defintions","Definition edited:")+" "+listDefsChilden[i].ItemName+" "
+						+Lans.g("Defintions","with category:")+" "+listDefsChilden[i].Category.GetDescription();
+						SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+					}
 					listCommands.Add("SELECT COUNT(*) FROM autonote WHERE Category="+POut.Long(def.DefNum));//just in case update failed or concurrency issue
 					break;
 				case DefCat.WebSchedNewPatApptTypes:

@@ -4014,7 +4014,8 @@ namespace OpenDental{
 					}
 					MarkAllReceived();
 				}
-				if(!IsFromBatchWindow && PrefC.GetBool(PrefName.ClaimFinalizeWarning) && _dataTablePayments.Rows.Count==0) {
+				if(!IsFromBatchWindow && PrefC.GetBool(PrefName.ClaimFinalizeWarning) && _claim.ClaimType!="PreAuth" 
+					&& _dataTablePayments.Rows.Count==0) {
 					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"The received claim has not been finalized. Are you sure you want to continue?")) {
 						return;
 					}
