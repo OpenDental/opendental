@@ -1,0 +1,81 @@
+<local:FrmODBase x:Class="OpenDental.FrmReferralEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="1261" Height="698" 
+             Text="Edit Referral" MinMaxBoxes="False" >
+    <Grid Background="#FFFCFDFE">
+        <ui:ComboBox x:Name="comboSpecialty" Width="201" Height="21" Margin="149,505,0,0" />
+        <ui:CheckBox x:Name="checkHiddenComms" Width="115" Height="18" Margin="1079,223,0,0" Text="Show Hidden  " CheckAlign="MiddleRight" Click="checkHiddenComms_Click" />
+        <ui:Button x:Name="butAddComm" Margin="493,217,0,0" Text="Add Comm" Icon="CommLog" Click="butAddComm_Click" Height="24" Width="100" />
+        <ui:Grid x:Name="gridComm" Margin="493,245,0,0" Title="Communications Log - Referral Details" TranslationName="TableCommLog" Width="701" Height="357" />
+        <ui:ComboClinic x:Name="comboClinicPicker" Width="200" Height="21" Margin="112,581,0,0" IncludeUnassigned="True" IsMultiSelect="True" />
+        <ui:Label x:Name="labelDisplayNote" Width="137" Height="31" Margin="469,170,0,0" Text="Display Notes (shows in Family module)" HAlign="Right" />
+        <ui:TextRich x:Name="textDisplayNote" Width="273" Height="47" Margin="606,170,0,0" QuickPasteType="Referral" TabIndexOD="23" />
+        <ui:TextBox x:Name="textBusinessName" Width="297" Height="20" Margin="149,311,0,0" TabIndexOD="14" />
+        <ui:Label x:Name="labelBusinessName" Width="104" Height="18" Margin="44,313,0,0" Text="Business Name" HAlign="Right" />
+        <ui:CheckBox x:Name="checkIsPreferred" Width="150" Height="18" Margin="12,467,0,0" Text="Preferred Referral" CheckAlign="MiddleRight" />
+        <ui:CheckBox x:Name="checkEmailTrustDirect" Width="156" Height="18" Margin="6,334,0,0" Text="E-mail Trust for Direct" CheckAlign="MiddleRight" />
+        <ui:CheckBox x:Name="checkIsDoctor" Width="86" Height="18" Margin="76,485,0,0" Text="Is Doctor" CheckAlign="MiddleRight" />
+        <ui:Button x:Name="butDelete" Width="80" VerticalAlignment="Bottom" Height="24" Margin="16,0,0,17" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+        <ui:ComboBox x:Name="comboSlip" Width="275" Height="21" Margin="149,539,0,0" />
+        <ui:Label x:Name="label21" Width="147" Height="44" Margin="3,530,0,0" Text="Referral Slip (custom referral slips may be added in Sheets)" HAlign="Right" />
+        <ui:Label x:Name="label20" Width="11" Height="1" Margin="177,248,0,0" Text=")" HAlign="Right" />
+        <ui:Label x:Name="label19" Width="117" Height="18" Margin="31,444,0,0" Text="National Provider ID" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textNationalProvID" Width="100" Height="20" Margin="149,444,0,0" TabIndexOD="16" />
+        <ui:GroupBox x:Name="groupBox2" Width="383" Height="109" Margin="590,8,0,0" Text="Used By Patients" >
+            <ui:Label x:Name="label18" Width="323" Height="18" Margin="15,57,0,0" Text="Patients referred FROM this referral" VAlign="Bottom" />
+            <ui:TextBox x:Name="textPatientsNumFrom" Width="35" Height="20" Margin="17,78,0,0" ReadOnly="True" TabIndexOD="3" />
+            <ui:ComboBox x:Name="comboPatientsFrom" Width="299" Height="21" Margin="61,78,0,0" />
+            <ui:Label x:Name="label6" Width="323" Height="18" Margin="15,14,0,0" Text="Patients referred TO this referral" VAlign="Bottom" />
+            <ui:TextBox x:Name="textPatientsNumTo" Width="35" Height="20" Margin="17,35,0,0" ReadOnly="True" TabIndexOD="1" />
+            <ui:ComboBox x:Name="comboPatientsTo" Width="299" Height="21" Margin="61,35,0,0" />
+        </ui:GroupBox>
+        <ui:TextRich x:Name="textNotes" Width="588" Height="47" Margin="606,121,0,0" QuickPasteType="Referral" TabIndexOD="22" />
+        <ui:CheckBox x:Name="checkHidden" Width="115" Height="18" Margin="47,24,0,0" Text="Hidden  " CheckAlign="MiddleRight" />
+        <ui:CheckBox x:Name="checkNotPerson" Width="115" Height="18" Margin="167,24,0,0" Text="Not Person" CheckAlign="MiddleRight" />
+        <ui:Label x:Name="labelPatient" Width="612" Height="18" Margin="63,8,0,0" Text="This referral is a patient.  Some information can only be changed from the patient's edit form." />
+        <ui:TextBox x:Name="textEmail" Width="297" Height="20" Margin="149,289,0,0" TabIndexOD="13" />
+        <ui:TextBox x:Name="textOtherPhone" Width="161" Margin="149,267,0,0" TabIndexOD="12" Height="20" />
+        <ui:TextBox x:Name="textZip" Width="161" Height="20" Margin="149,223,0,0" TabIndexOD="8" />
+        <ui:TextBox x:Name="textCity" Width="190" Height="20" Margin="149,179,0,0" TabIndexOD="6" />
+        <ui:TextBox x:Name="textAddress2" Width="297" Height="20" Margin="149,157,0,0" TabIndexOD="5" />
+        <ui:TextBox x:Name="textAddress" Width="297" Height="20" Margin="149,135,0,0" TabIndexOD="4" />
+        <ui:TextBox x:Name="textTitle" Width="70" Height="20" Margin="149,113,0,0" TabIndexOD="3" />
+        <ui:TextBox x:Name="textPhone3" Width="39" Height="20" Margin="230,245,0,0" TabIndexOD="11" />
+        <ui:TextBox x:Name="textPhone2" Width="28" Height="20" Margin="190,245,0,0" TabIndexOD="10" />
+        <ui:TextBox x:Name="textPhone1" Width="28" Height="20" Margin="149,245,0,0" TabIndexOD="9" />
+        <ui:TextBox x:Name="textST" Width="118" Height="20" Margin="149,201,0,0" TabIndexOD="7" />
+        <ui:TextBox x:Name="textMName" Width="169" Height="20" Margin="149,91,0,0" TabIndexOD="2" />
+        <ui:TextBox x:Name="textFName" Width="297" Height="20" Margin="149,69,0,0" TabIndexOD="1" />
+        <ui:TextBox x:Name="textLName" Width="297" Height="20" Margin="149,47,0,0" TabIndexOD="0" />
+        <ui:Label x:Name="label17" Width="101" Height="18" Margin="503,121,0,0" Text="Notes" HAlign="Right" />
+        <ui:Label x:Name="label22" Width="104" Height="18" Margin="44,291,0,0" Text="E-mail" HAlign="Right" />
+        <ui:Label x:Name="label16" Width="104" Height="18" Margin="44,269,0,0" Text="Other Phone" HAlign="Right" />
+        <ui:Label x:Name="labelZip" Width="104" Height="18" Margin="44,225,0,0" Text="Zip" HAlign="Right" />
+        <ui:Label x:Name="label7" Width="104" Height="18" Margin="44,181,0,0" Text="City" HAlign="Right" />
+        <ui:Label x:Name="label8" Width="104" Height="18" Margin="44,159,0,0" Text="Address2" HAlign="Right" />
+        <ui:Label x:Name="label9" Width="104" Height="18" Margin="44,137,0,0" Text="Address" HAlign="Right" />
+        <ui:Label x:Name="label5" Width="89" Height="18" Margin="60,115,0,0" Text="Title (DDS)" HAlign="Right" />
+        <ui:Label x:Name="label13" Width="6" Height="16" Margin="220,247,0,0" Text="-" HAlign="Center" />
+        <ui:Label x:Name="label11" Width="6" Height="16" Margin="178,247,0,0" Text=")" HAlign="Center" />
+        <ui:Label x:Name="label12" Width="11" Height="16" Margin="140,247,0,0" Text="(" HAlign="Right" />
+        <ui:Label x:Name="label14" Width="95" Height="18" Margin="44,247,0,0" Text="Phone" HAlign="Right" />
+        <ui:Label x:Name="label10" Width="99" Height="18" Margin="51,508,0,0" Text="Specialty" HAlign="Right" />
+        <ui:GroupBox x:Name="groupSSN" Width="141" Height="86" Margin="141,354,0,0" Text="SSN or TIN (no dashes)" >
+            <ui:RadioButton x:Name="radioTIN" Width="104" Height="20" Margin="9,39,0,0" Text="TIN" CheckAlign="MiddleLeft" Click="radioTIN_Click" />
+            <ui:RadioButton x:Name="radioSSN" Width="104" Height="20" Margin="9,17,0,0" Text="SSN" CheckAlign="MiddleLeft" Checked="True" Click="radioSSN_Click" />
+            <ui:TextBox x:Name="textSSN" Width="100" Height="20" Margin="8,61,0,0" TabIndexOD="2" />
+        </ui:GroupBox>
+        <ui:Label x:Name="labelST" Width="104" Height="18" Margin="44,203,0,0" Text="ST" HAlign="Right" />
+        <ui:Label x:Name="label3" Width="104" Height="18" Margin="44,93,0,0" Text="Middle Name" HAlign="Right" />
+        <ui:Label x:Name="label2" Width="104" Height="18" Margin="44,71,0,0" Text="First Name" HAlign="Right" />
+        <ui:Label x:Name="label1" Width="104" Height="18" Margin="44,49,0,0" Text="Last Name" HAlign="Right" />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,30,17" Text="_Save" Click="butSave_Click" />
+		<ui:Label x:Name="label19_Copy" Width="225" Height="18" Margin="165,467,0,0" Text="just for filtering in the list" VAlign="Center" />
+	</Grid>
+</local:FrmODBase>

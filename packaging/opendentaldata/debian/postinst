@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+#set -x
+
+. /usr/share/debconf/confmodule
+. /usr/share/dbconfig-common/dpkg/postinst.mysql 
+dbc_generate_include=php:/etc/opendentaldata/debian-db.php
+dbc_go opendentaldata $@
+
+#DEBHELPER#

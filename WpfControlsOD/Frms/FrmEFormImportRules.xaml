@@ -1,0 +1,20 @@
+<local:FrmODBase x:Class="OpenDental.FrmEFormImportRules"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="630" Height="520" 
+             Text="Form Import Rules" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+		<ui:CheckBox x:Name="checkAddressVerifyWithUSPS" Height="20" Margin="24,0,0,420" Width="551" Text="Verify addresses with USPS and automtically fix" VerticalAlignment="Bottom"/>
+		<ui:Label Width="335" Height="35" Margin="20,20,0,0" Text="It is recommended to set the following fields as required:&#10;Name, Address, Birthdate" />
+		<ui:CheckBox x:Name="checkAddressVerifyWithUSPS_Copy" Height="20" Margin="24,0,0,443" Width="536" Text="Prevent patient from changing Name or Birthdate on subsequent forms" VerticalAlignment="Bottom"/>
+		<ui:CheckBox x:Name="checkAddressVerifyWithUSPS_Copy1" Height="20" Margin="24,0,0,185" Width="551" Text="Always import insurance automatically" VerticalAlignment="Bottom"/>
+		<ui:Label Width="405" Height="91" Margin="25,179,0,0" Text="Insurance:&#10;Any insurance fields should be conditionally visible. That way, you can set certain fields required, but only if they indicate that they have insurance. It is recommended to set the following insurance fields as required:&#10;CarrierName, GroupNum, insRelat, SubscriberNameF (conditional on insRelat)" />
+	</Grid>
+</local:FrmODBase>

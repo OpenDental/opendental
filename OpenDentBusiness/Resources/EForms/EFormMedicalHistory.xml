@@ -1,0 +1,935 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EFormDef xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <IsNew>false</IsNew>
+  <EFormDefNum>0</EFormDefNum>
+  <FormType>MedicalHistory</FormType>
+  <Description>Medical History</Description>
+  <DateTCreated>2024-06-04T12:53:03</DateTCreated>
+  <MaxWidth>450</MaxWidth>
+  <IsInternalHidden>false</IsInternalHidden>
+  <ListEFormFieldDefs>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3697</EFormFieldDefNum>
+      <EFormDefNum>0</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;
+   &lt;Paragraph&gt;MEDICAL HISTORY&lt;/Paragraph&gt;
+&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>0</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3698</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink>LName</DbLink>
+      <ValueLabel>Last Name</ValueLabel>
+      <ItemOrder>1</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>150</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3699</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink>FName</DbLink>
+      <ValueLabel>First Name</ValueLabel>
+      <ItemOrder>2</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>true</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>150</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3700</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>DateField</FieldType>
+      <DbLink>Birthdate</DbLink>
+      <ValueLabel>Birthdate</ValueLabel>
+      <ItemOrder>3</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>true</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>100</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3701</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Name of Medical Doctor</ValueLabel>
+      <ItemOrder>4</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>250</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3702</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>City/State</ValueLabel>
+      <ItemOrder>5</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>true</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>150</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3703</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink>ICEName</DbLink>
+      <ValueLabel>Emergency Contact</ValueLabel>
+      <ItemOrder>6</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>150</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3704</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink>ICEPhone</DbLink>
+      <ValueLabel>Phone</ValueLabel>
+      <ItemOrder>7</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>true</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>125</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3705</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Relationship</ValueLabel>
+      <ItemOrder>8</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>true</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>125</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3706</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>PageBreak</FieldType>
+      <DbLink />
+      <ValueLabel />
+      <ItemOrder>9</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3707</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;
+   &lt;Paragraph&gt;Medications&lt;/Paragraph&gt;
+&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>10</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3708</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>MedicationList</FieldType>
+      <DbLink />
+      <ValueLabel>{"Title":"Medication List","HeaderCol1":"Medication","HeaderCol2":"Strength/Freq","WidthCol1":0,"WidthCol2":0,"IsCol2Visible":true,"PrefillCol1":true,"PrefillCol2":true,"ImportCol1":true,"ImportCol2Overwrite":false,"ImportCol2OverwriteDate":false,"ImportCol2Append":false,"ImportCol2AppendDate":false}</ValueLabel>
+      <ItemOrder>11</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3709</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>PageBreak</FieldType>
+      <DbLink />
+      <ValueLabel />
+      <ItemOrder>12</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3710</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;
+   &lt;Paragraph&gt;Are you allergic to any of the following?&lt;/Paragraph&gt;
+&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>13</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3711</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Anesthetic</DbLink>
+      <ValueLabel>Anesthetic</ValueLabel>
+      <ItemOrder>14</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3712</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Aspirin</DbLink>
+      <ValueLabel>Aspirin</ValueLabel>
+      <ItemOrder>15</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3713</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Codiene</DbLink>
+      <ValueLabel>Codeine</ValueLabel>
+      <ItemOrder>16</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3714</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Ibuprofen</DbLink>
+      <ValueLabel>Ibuprofen</ValueLabel>
+      <ItemOrder>17</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3715</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Iodine</DbLink>
+      <ValueLabel>Idodine</ValueLabel>
+      <ItemOrder>18</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3716</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Latex</DbLink>
+      <ValueLabel>Latex</ValueLabel>
+      <ItemOrder>19</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3717</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Penicillin</DbLink>
+      <ValueLabel>Penicillin</ValueLabel>
+      <ItemOrder>20</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3718</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergy:Sulfa</DbLink>
+      <ValueLabel>Sulfa</ValueLabel>
+      <ItemOrder>21</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3719</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>allergiesNone</DbLink>
+      <ValueLabel>None of the above</ValueLabel>
+      <ItemOrder>22</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>true</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3720</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink>allergiesOther</DbLink>
+      <ValueLabel>Other allergies not listed above</ValueLabel>
+      <ItemOrder>23</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3721</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>PageBreak</FieldType>
+      <DbLink />
+      <ValueLabel />
+      <ItemOrder>24</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3722</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;
+   &lt;Paragraph&gt;Do you have any of the following medical conditions?&lt;/Paragraph&gt;
+&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>25</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3723</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Asthma</DbLink>
+      <ValueLabel>Asthma</ValueLabel>
+      <ItemOrder>26</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3724</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Bleeding Problems</DbLink>
+      <ValueLabel>Bleeding Problems</ValueLabel>
+      <ItemOrder>27</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3725</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Cancer</DbLink>
+      <ValueLabel>Cancer</ValueLabel>
+      <ItemOrder>28</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3726</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Diabetes</DbLink>
+      <ValueLabel>Diabetes</ValueLabel>
+      <ItemOrder>29</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3727</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Heart Murmer</DbLink>
+      <ValueLabel>Heart Murmer</ValueLabel>
+      <ItemOrder>30</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3728</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:High Blood Pressure</DbLink>
+      <ValueLabel>High Blood Pressure</ValueLabel>
+      <ItemOrder>31</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3729</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Joint Replacement</DbLink>
+      <ValueLabel>Joint Replacement</ValueLabel>
+      <ItemOrder>32</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3730</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Kidney Disease</DbLink>
+      <ValueLabel>Kidney Disease</ValueLabel>
+      <ItemOrder>33</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3731</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Liver Disease</DbLink>
+      <ValueLabel>Liver Disease</ValueLabel>
+      <ItemOrder>34</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3732</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Pregnant</DbLink>
+      <ValueLabel>Pregnancy</ValueLabel>
+      <ItemOrder>35</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3733</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Pychiatic Treatment</DbLink>
+      <ValueLabel>Psychiatric Treatment</ValueLabel>
+      <ItemOrder>36</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3734</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Rheumatic Fever</DbLink>
+      <ValueLabel>Rheumatic Fever</ValueLabel>
+      <ItemOrder>37</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3735</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Sinus Trouble</DbLink>
+      <ValueLabel>Sinus Trouble</ValueLabel>
+      <ItemOrder>38</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3736</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Stroke</DbLink>
+      <ValueLabel>Stroke</ValueLabel>
+      <ItemOrder>39</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3737</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problem:Ulcers</DbLink>
+      <ValueLabel>Ulcers</ValueLabel>
+      <ItemOrder>40</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3738</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>CheckBox</FieldType>
+      <DbLink>problemsNone</DbLink>
+      <ValueLabel>None of the above</ValueLabel>
+      <ItemOrder>41</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>true</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3739</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink>problemsOther</DbLink>
+      <ValueLabel>Other conditions not listed above</ValueLabel>
+      <ItemOrder>42</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3740</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>PageBreak</FieldType>
+      <DbLink />
+      <ValueLabel />
+      <ItemOrder>43</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3741</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Tobacco use? If so, what kind and how much?</ValueLabel>
+      <ItemOrder>44</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3742</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Unusual reaction to dental injections?</ValueLabel>
+      <ItemOrder>45</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3743</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Reason for today's visit</ValueLabel>
+      <ItemOrder>46</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>300</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3744</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Are you in pain?</ValueLabel>
+      <ItemOrder>47</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>true</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>100</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3745</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>PageBreak</FieldType>
+      <DbLink />
+      <ValueLabel />
+      <ItemOrder>48</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3746</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>Label</FieldType>
+      <DbLink />
+      <ValueLabel>&lt;FlowDocument&gt;
+   &lt;Paragraph&gt;New Patients&lt;/Paragraph&gt;
+&lt;/FlowDocument&gt;</ValueLabel>
+      <ItemOrder>49</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3747</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Do you have a Panoramic x-ray or Full Mouth x-rays that are less than 5 years old?</ValueLabel>
+      <ItemOrder>50</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3748</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Do you have a BiteWing x-rays that are less than 1 year old?</ValueLabel>
+      <ItemOrder>51</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3749</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Name of former Dentist</ValueLabel>
+      <ItemOrder>52</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3750</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>City/State</ValueLabel>
+      <ItemOrder>53</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>200</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3751</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>TextField</FieldType>
+      <DbLink />
+      <ValueLabel>Date of last cleaning and exam</ValueLabel>
+      <ItemOrder>54</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>true</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>200</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3752</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>PageBreak</FieldType>
+      <DbLink />
+      <ValueLabel />
+      <ItemOrder>55</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+    <EFormFieldDef>
+      <IsNew>false</IsNew>
+      <EFormFieldDefNum>3753</EFormFieldDefNum>
+      <EFormDefNum>37</EFormDefNum>
+      <FieldType>SigBox</FieldType>
+      <DbLink />
+      <ValueLabel>Signature</ValueLabel>
+      <ItemOrder>56</ItemOrder>
+      <PickListVis />
+      <PickListDb />
+      <IsHorizStacking>false</IsHorizStacking>
+      <IsTextWrap>false</IsTextWrap>
+      <Width>0</Width>
+      <FontScale>100</FontScale>
+      <IsRequired>false</IsRequired>
+    </EFormFieldDef>
+  </ListEFormFieldDefs>
+  <IsInternal>false</IsInternal>
+</EFormDef>

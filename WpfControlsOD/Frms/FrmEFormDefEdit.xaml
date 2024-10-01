@@ -1,0 +1,45 @@
+<local:FrmODBase x:Class="OpenDental.FrmEFormDefEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="740" Height="719" 
+             Text="EForm Def Edit">
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butDelete" Height="24" Margin="10,0,0,8" Text="Delete" Icon="DeleteX" Click="butDelete_Click" Width="84" VerticalAlignment="Bottom" />
+		<ui:GroupBox x:Name="groupSetTitle" Width="101" Height="276" Margin="96,69,0,0" TabIndexOD="2" Text="Add Field">
+			<ui:Button x:Name="butTextField" Margin="7,24,0,0" Text="Text Box" Click="butTextField_Click" Height="24" Width="87" />
+			<ui:Button x:Name="butLabel" Margin="0,51,0,0" Text="Label" Click="butLabel_Click" Height="24" Width="87" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butDateField" Margin="0,77,0,0" Text="Date Field" Click="butDateField_Click" Height="24" Width="87" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butCheckBox" Margin="7,114,0,0" Text="Check Box" Click="butCheckBox_Click" Height="24" Width="87"  />
+			<ui:Button x:Name="butRadioButtons" Margin="0,141,0,0" Text="Radio Buttons" Click="butRadioButtons_Click" Height="24" Width="87" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butSigBox" Margin="7,180,0,0" Text="Signature Box" Click="butSigBox_Click" Height="24" Width="87"  />
+			<ui:Button x:Name="butPageBreak" Margin="0,245,0,0" Text="Page Break" Click="butPageBreak_Click" Height="24" Width="87" HorizontalAlignment="Center"  />
+			<ui:Button x:Name="butMedicationList" Margin="0,207,0,0" Text="Medication List" Height="24" Width="87"  HorizontalAlignment="Center" Click="butMedicationList_Click"  />
+		</ui:GroupBox>
+		<ui:GroupBox x:Name="groupConditional" Height="100" Width="101" Margin="96,457,0,0">
+			<ui:Label Width="98" Height="34" Margin="0,1,0,0" Text="Set conditional parent for" VAlign="Center" HorizontalAlignment="Center" />
+			<ui:Button x:Name="butSetCondition" Text="Multiple Fields" Click="butSetCondition_Click" Height="24" Width="87" HorizontalAlignment="Center" Margin="0,40,0,0"/>
+			<ui:Button x:Name="butSetPageCondition" Margin="0,67,0,0" Text="Entire Page" Click="butSetPageCondition_Click" Height="24" Width="87" HorizontalAlignment="Center"/>
+		</ui:GroupBox>
+
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,8" Text="_Save" Click="butSave_Click" />
+		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="260,32,0,38" HorizontalAlignment="Left" Width="450"/>
+		<ui:TextBox x:Name="textDescription" Height="20" Width="131" Margin="95,5,0,0"/>
+		<ui:Label x:Name="labelTitle" Height="18" Margin="257,9,0,0" VAlign="Bottom" Text="This is an internal eForm. Once saved, it will become a custom eForm." Width="450"/>
+		<ui:ComboBox x:Name="comboType" Width="131" Height="21" Margin="95,31,0,0"/>
+		<ui:Label x:Name="labelModFormTitle" Height="18" Margin="6,7,0,0" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HAlign="Right" />
+		<ui:Label x:Name="labelModFormTitle_Copy" Height="18" Margin="6,32,0,0" Text="Type" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HAlign="Right" />
+		<ui:Button x:Name="butCopy" Margin="103,388,0,0" Text="Copy Ctrl-C" Height="24" Width="87" Click="butCopy_Click"  />
+		<ui:Button x:Name="butPaste" Margin="103,415,0,0" Text="Paste Ctrl-V" Height="24" Width="87" Click="butPaste_Click" />
+		<ui:Button x:Name="butCut" Margin="103,361,0,0" Text="Cut Ctrl-X" Height="24" Width="87" Click="butCut_Click"   />
+		<ui:ComboBox x:Name="comboLanguage" Width="131" Height="21" Margin="95,575,0,0"/>
+		<ui:Label x:Name="labelLanguage" Height="18" Margin="6,576,0,0" Text="Language" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HAlign="Right" />
+		<ui:TextVInt x:Name="textVIntMaxWidth" Height="20" Width="57" Margin="95,603,0,0" MinVal="50" MaxVal="1000"/>
+		<ui:Label Height="18" Margin="5,605,0,0" Text="Max Width" Width="90" VAlign="Center" HorizontalContentAlignment="Left" HAlign="Right" />
+		<ui:Label Height="33" Margin="45,626,0,0" Text="Change the width of this window to see how the fields flow" Width="190" VAlign="Center" HorizontalContentAlignment="Left" />
+	</Grid>
+</local:FrmODBase>

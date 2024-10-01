@@ -1,0 +1,17 @@
+<local:FrmODBase x:Class="OpenDental.FrmCommItemUserPrefs"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="488" Height="196" 
+             Text="Communication Item User Prefs" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:CheckBox x:Name="checkCommlogPersistUpdateDateTimeWithNewPatient" Width="414" Height="17" Margin="48,121,0,0" Text="Update the Date / Time text box with NOW when the patient changes." CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkCommlogPersistClearEndDate" Width="414" Height="17" Margin="48,87,0,0" Text="Clear the End text box after creating a commlog." CheckAlign="MiddleLeft" />
+		<ui:CheckBox x:Name="checkCommlogPersistClearNote" Width="414" Height="17" Margin="48,53,0,0" Text="Clear the Note text box after creating a commlog." CheckAlign="MiddleLeft" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

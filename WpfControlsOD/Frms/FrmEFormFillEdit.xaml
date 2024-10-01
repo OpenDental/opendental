@@ -1,0 +1,22 @@
+<local:FrmODBase x:Class="OpenDental.FrmEFormFillEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="575" Height="719" 
+             Text="Fill eForm" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="8,8,0,92" HorizontalAlignment="Left" Width="450"/>
+		<ui:Button x:Name="butPrint" Width="75" VerticalAlignment="Bottom" Height="24" Margin="285,0,0,10" Text="Print" Click="butPrint_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,10" Text="Save" Click="butSave_Click"   />
+		<ui:Button x:Name="butDelete" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,62" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:TextBox x:Name="textDateTime" Height="20" Width="131" Margin="8,0,0,50" VerticalAlignment="Bottom"/>
+		<ui:Label Height="18" Margin="5,0,0,72" Text="Date time" Width="88" VAlign="Center" HorizontalContentAlignment="Left" VerticalAlignment="Bottom" />
+		<ui:TextBox x:Name="textDescription" Height="20" Width="131" Margin="8,0,0,9" VerticalAlignment="Bottom"/>
+		<ui:Label Height="18" Margin="5,0,0,31" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" VerticalAlignment="Bottom" />
+		<ui:Button x:Name="butUnlock" Width="75" VerticalAlignment="Bottom" Height="24" Margin="285,0,0,37" Text="Unlock" Click="butUnlock_Click" />
+	</Grid>
+</local:FrmODBase>

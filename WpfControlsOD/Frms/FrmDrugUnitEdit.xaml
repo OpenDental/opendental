@@ -1,0 +1,19 @@
+<local:FrmODBase x:Class="OpenDental.FrmDrugUnitEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="366" Height="149" 
+             Text="Drug Unit Edit" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:TextBox x:Name="textUnitText" Width="228" Height="20" Margin="113,53,0,0" />
+		<ui:Label x:Name="label1" Width="88" Height="20" Margin="23,52,0,0" Text="Unit Text" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textUnitIdentifier" Width="77" Height="20" Margin="113,27,0,0" />
+		<ui:Label x:Name="labelCVXCode" Width="88" Height="20" Margin="23,26,0,0" Text="Unit Identifier" HAlign="Right" VAlign="Center" />
+		<ui:Button x:Name="butDelete" Width="79" VerticalAlignment="Bottom" Height="24" Margin="26,0,0,27" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,25,27" Text="_Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

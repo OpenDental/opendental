@@ -1,0 +1,52 @@
+﻿<local:FrmODBase
+	x:Class="OpenDental.FrmAddressCompare"
+	xmlns:local="clr-namespace:OpenDental"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+	xmlns:UI="clr-namespace:WpfControls.UI"
+	mc:Ignorable="d" 
+	Text="Address Compare"
+	Height="265" Width="602">
+	<Grid Background="White">
+		<UI:Label x:Name="labelUserAddress" Height="18" Margin="3,66,0,0" Width="83" 
+		Text="Address" IsWrap="True" HAlign="Right"/>
+		<UI:Label x:Name="labelUserEntered" Height="18" Margin="91,39,0,0" Width="184" Text="User Entered Address"/>
+		<UI:Label x:Name="labelUSPSReccomended" Height="18" Margin="351,39,0,0" Width="249" Text="Address Reccomended By USPS"/>
+		<UI:Label x:Name="labelHeading" Height="18" Margin="0,3,0,0" Width="597" Text="The United States Postal Service has recommended the following changes to the address you provided." HAlign="Center" HorizontalAlignment="Center"/>
+		<UI:Button x:Name="butYes" Width="74" VerticalAlignment="Bottom" Height="24" Margin="394,0,0,16" Text="Yes" Click="butYes_Click" TabIndex="1" />
+		<UI:Button x:Name="butNo" Width="76" VerticalAlignment="Bottom" Height="24" Margin="125,0,0,16" Text="No" Click="butNo_Click" TabIndex="2" />
+		<UI:Label x:Name="labelQuestion" Height="18" Margin="22,198,0,0" Width="562" Text="Would you like to accept the changes recommended by the United States Postal Service?" HAlign="Center"/>
+		<UI:Label x:Name="labelUserCity" Height="18" Margin="3,110,0,0" Width="83" 
+	  Text="City" IsWrap="True" HAlign="Right"/>
+		<UI:Label x:Name="labelUserState" Height="18" Margin="3,131,0,0" Width="83" 
+	  Text="State" IsWrap="True" HAlign="Right"/>
+		<UI:Label x:Name="labelUserZIP" Height="18" Margin="3,151,0,0" Width="83" 
+	  Text="ZIP-Code" IsWrap="True" HAlign="Right"/>
+		<UI:Label x:Name="labelDeliverabilityStatus" Height="18" Margin="54,175,0,0" Width="500" 
+	  Text="This is where warnings from USPS will show." IsWrap="True" Foreground="Firebrick"/>
+		<UI:TextBox x:Name="textAddressUser" Width="156" Height="20" Margin="91,66,0,0" Text="" ReadOnly="True" />
+		<UI:TextBox x:Name="textCityUser" Width="156" Height="20" Margin="91,108,0,0" Text="" ReadOnly="True" />
+		<UI:TextBox x:Name="textStateUser" Width="156" Height="20" Margin="91,129,0,0" Text="" ReadOnly="True" />
+		<UI:TextBox x:Name="textZIPUser" Width="156" Height="20" Margin="91,150,0,0" Text="" ReadOnly="True" />
+		<UI:Label x:Name="labelUSPSAddress" Height="18" Margin="263,66,0,0" Width="83" 
+	  Text="Address" IsWrap="True" HAlign="Right"/>
+		<UI:Label x:Name="labelUSPSCity" Height="18" Margin="263,110,0,0" Width="83" 
+	  Text="City" IsWrap="True" HAlign="Right"/>
+		<UI:Label x:Name="labelUSPSState" Height="18" Margin="263,131,0,0" Width="83" 
+	  Text="State" IsWrap="True" HAlign="Right"/>
+		<UI:Label x:Name="labelUSPSZIP" Height="18" Margin="263,151,0,0" Width="83" 
+	  Text="ZIP-Code" IsWrap="True" HAlign="Right"/>
+		<UI:TextBox x:Name="textAddressUSPS" Width="156" Height="20" Margin="351,66,0,0" Text="" ReadOnly="True" />
+		<UI:TextBox x:Name="textCityUSPS" Width="156" Height="20" Margin="351,108,0,0" Text="" ReadOnly="True" />
+		<UI:TextBox x:Name="textStateUSPS" Width="156" Height="20" Margin="351,129,0,0" Text="" ReadOnly="True" />
+		<UI:TextBox x:Name="textZIPUSPS" Width="156" Height="20" Margin="351,150,0,0" Text="" ReadOnly="True" />
+		<UI:Label x:Name="labelUserAddress2" Height="18" Margin="3,87,0,0" Width="83" 
+	  Text="Address2" IsWrap="True" HAlign="Right"/>
+		<UI:TextBox x:Name="textAddress2User" Width="156" Height="20" Margin="91,87,0,0" Text="" ReadOnly="True" />
+		<UI:Label x:Name="labelUSPSAddress2" Height="18" Margin="263,87,0,0" Width="83" 
+	  Text="Address2" IsWrap="True" HAlign="Right"/>
+		<UI:TextBox x:Name="textAddress2USPS" Width="156" Height="20" Margin="351,87,0,0" Text="" ReadOnly="True" />
+	</Grid>
+</local:FrmODBase>

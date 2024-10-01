@@ -1,0 +1,115 @@
+# config/common - common options for live-helper(7)
+
+# $LH_APT: set package manager
+# (Default: aptitude)
+LH_APT="aptitude"
+
+# $LH_APT_FTP_PROXY: set apt/aptitude ftp proxy
+# (Default: autodetected or empty)
+LH_APT_FTP_PROXY=""
+
+# $LH_APT_HTTP_PROXY: set apt/aptitude http proxy
+# (Default: autodetected or empty)
+LH_APT_HTTP_PROXY=""
+
+# $LH_APT_PDIFFS: set apt/aptitude pdiff indices
+# (Default: enabled)
+LH_APT_PDIFFS="enabled"
+
+# $LH_APT_PIPELINE: set apt/aptitude pipeline depth
+# (Default: )
+LH_APT_PIPELINE=""
+
+# $LH_APT_RECOMMENDS: set apt/aptitude recommends
+# (Default: enabled)
+LH_APT_RECOMMENDS="enabled"
+
+# $LH_APT_SECURE: set apt/aptitude security
+# (Default: enabled)
+LH_APT_SECURE="enabled"
+
+# $LH_BOOTSTRAP: set bootstrap program
+# (Default: cdebootstrap)
+LH_BOOTSTRAP="cdebootstrap"
+
+# $LH_CACHE: control cache
+# (Default: enabled)
+LH_CACHE="enabled"
+
+# $LH_CACHE_INDICES: control if downloaded package indices should be cached
+# (Default: disabled)
+LH_CACHE_INDICES="disabled"
+
+# $LH_CACHE_PACKAGES: control if downloaded packages files should be cached
+# (Default: enabled)
+LH_CACHE_PACKAGES="enabled"
+
+# $LH_CACHE_STAGES: control if completed stages should be cached
+# (Default: bootstrap)
+LH_CACHE_STAGES="bootstrap"
+
+# $LH_DEBCONF_FRONTEND: set debconf(1) frontend to use
+# (Default: noninteractive)
+LH_DEBCONF_FRONTEND="noninteractive"
+
+# $LH_DEBCONF_NOWARNINGS: set debconf(1) warnings
+# (Default: yes)
+LH_DEBCONF_NOWARNINGS="yes"
+
+# $LH_DEBCONF_PRIORITY: set debconf(1) priority to use
+# (Default: critical)
+LH_DEBCONF_PRIORITY="critical"
+
+# $LH_GENISOIMAGE: set genisoimage program
+# (Default: genisoimage)
+LH_GENISOIMAGE="genisoimage"
+
+# $LH_INITRAMFS: set initramfs hook
+# (Default: auto)
+LH_INITRAMFS="auto"
+
+# $LH_LOSETUP: set losetup program
+# (Default: autodetected)
+LH_LOSETUP="losetup"
+
+# $LH_MODE: set distribution mode
+# (Default: debian)
+LH_MODE="debian"
+
+# $LH_ROOT_COMMAND: use sudo or equivalent
+# (Default: empty)
+#LH_ROOT_COMMAND="sudo"
+
+# $LH_TASKSEL: set tasksel program
+# (Default: aptitude)
+LH_TASKSEL="aptitude"
+
+# $LH_INCLUDES: set includes
+# (Default: /usr/share/live-helper/includes)
+LH_INCLUDES="/usr/share/live-helper/includes"
+
+# $LH_TEMPLATES: set templates
+# (Default: /usr/share/live-helper/templates)
+LH_TEMPLATES="/usr/share/live-helper/templates"
+
+# Live-helper options
+
+# $LH_BREAKPOINTS: enable breakpoints
+# (Default: disabled)
+#LH_BREAKPOINTS="disabled"
+
+# $LH_DEBUG: enable debug
+# (Default: disabled)
+#LH_DEBUG="disabled"
+
+# $LH_FORCE: enable force
+# (Default: disabled)
+#LH_FORCE="disabled"
+
+# $LH_QUIET: enable quiet
+# (Default: disabled)
+#LH_QUIET="disabled"
+
+# $LH_VERBOSE: enable verbose
+# (Default: disabled)
+#LH_VERBOSE="disabled"

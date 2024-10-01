@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="WpfControls.UI.Menu"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		xmlns:system="clr-namespace:System;assembly=mscorlib"
+		mc:Ignorable="d" 
+		d:DesignWidth="100" d:DesignHeight="24" >
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:Menu.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:Menu.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<UserControl.Resources>
+		<local:DesignerVisibilityConverter x:Key="designerVisibilityConverter" />
+	</UserControl.Resources>
+	<Grid>
+		<Menu Name="menu" Background="White" BorderBrush="DarkGray" BorderThickness="1"/>
+		<TextBlock Margin="7,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource designerVisibilityConverter}}">
+			Menu
+		</TextBlock>
+	</Grid>
+</UserControl>

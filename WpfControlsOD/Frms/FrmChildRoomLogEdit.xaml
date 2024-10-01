@@ -1,0 +1,37 @@
+<local:FrmODBase x:Class="OpenDental.FrmChildRoomLogEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="462" Height="367" 
+             Text="Edit Classroom Log" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" Margin="0,0,0,0" >
+		<ui:Label x:Name="labelDateDisplayed" Width="131" Height="18" Margin="38,52,0,0" Text="Date Time Displayed" HAlign="Right" />
+		<ui:Label x:Name="labelDateEntered" Width="131" Height="18" Margin="38,28,0,0" Text="Date Time Entered" HAlign="Right"/>
+		<ui:TextBox x:Name="textDateTDisplayed" Width="132" Height="20" Margin="169,51,0,0" TabIndexOD="1" />
+		<ui:TextBox x:Name="textDateTEntered" Width="132" Height="20" Margin="169,27,0,0" TabIndexOD="0" ReadOnly="True" ColorBack="#FFF0F0F0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+		<ui:Label x:Name="labelChildRoom" Width="131" Height="18" Margin="38,77,0,0" Text="Going to Classroom" HAlign="Right" />
+		<ui:Button x:Name="butDelete" VerticalAlignment="Bottom" Height="24" Margin="10,0,0,10" Text="_Delete" Icon="DeleteX" Click="butDelete_Click" Width="75" />
+		<ui:ComboBox x:Name="comboChildRoom" Margin="169,76,0,0" Height="20" Width="115" RenderTransformOrigin="0.448,0.55"/>
+		<ui:GroupBox Margin="0,110,0,0" Height="89" Width="304" Text="Child or Teacher Change" HorizontalAlignment="Center">
+			<ui:Label x:Name="labelChild" Width="59" Height="18" Margin="31,24,0,0" Text="Child" HAlign="Right" />
+			<ui:TextBox x:Name="textChild" Width="98" Height="20" Margin="90,23,0,0" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" />
+			<ui:Label x:Name="labelEmployee" Width="77" Height="18" Margin="13,49,0,0" Text="Teacher" HAlign="Right" />
+			<ui:TextBox x:Name="textEmployee" Width="98" Height="20" TabIndexOD="2" ReadOnly="True" ColorBack="#FFF0F0F0" Margin="90,48,0,0" />
+			<ui:Button x:Name="butChildSelect" Margin="192,21,0,0" Text="..." Width="25" Height="24" Click="butChildSelect_Click" />
+			<ui:Button x:Name="butEmployeeSelect" Margin="192,46,0,0" Text="..." Width="25" Height="24" Click="butEmployeeSelect_Click" />
+			<ui:Button x:Name="butEmployeeClear" Margin="222,46,0,0" Text="Clear" Width="36" Height="24" RenderTransformOrigin="0.693,0.556" Click="butEmployeeClear_Click" />
+			<ui:Button x:Name="butChildClear" Margin="222,21,0,0" Text="Clear" Width="36" Height="24" RenderTransformOrigin="0.693,0.556" Click="butChildClear_Click" />
+		</ui:GroupBox>
+		<ui:GroupBox Margin="0,230,0,0" Height="77" Width="306" Text="Ratio Change" HorizontalAlignment="Center">
+			<ui:Label x:Name="labelRatio" Width="85" Height="18" Margin="5,24,0,0" Text="Ratio Change" HAlign="Right" VAlign="Center" />
+			<ui:TextBox x:Name="textRatio" Width="40" Height="20" Margin="90,23,0,0" TabIndexOD="1" />
+			<ui:CheckBox x:Name="checkMixedRatio" Margin="6,48,0,0" Height="20" Width="96" CheckAlign="MiddleRight" Text="Mixed Ratio"/>
+		</ui:GroupBox>
+		<ui:Label x:Name="labelChildRoom_Copy" Width="48" Height="18" Margin="79,206,0,0" Text="or" />
+	</Grid>
+</local:FrmODBase>

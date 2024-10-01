@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfProcedureCode xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ProcedureCode>
+    <ProcCode>N4101</ProcCode>
+    <Descript>Post Op</Descript>
+    <AbbrDesc>PostOp</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4102</ProcCode>
+    <Descript>Denture Adjust</Descript>
+    <AbbrDesc>DentAdj</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4103</ProcCode>
+    <Descript>Bite Record</Descript>
+    <AbbrDesc>BiteRec</AbbrDesc>
+    <ProcTime>/XXX/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4104</ProcCode>
+    <Descript>Adjust Partial</Descript>
+    <AbbrDesc>AdjPart</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4106</ProcCode>
+    <Descript>Cast P&amp;C Seat</Descript>
+    <AbbrDesc>CstPCSeat</AbbrDesc>
+    <ProcTime>/XX/</ProcTime>
+    <TreatArea>Tooth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4108</ProcCode>
+    <Descript>Veneer Seat</Descript>
+    <AbbrDesc>VenSeat</AbbrDesc>
+    <ProcTime>/XXX/</ProcTime>
+    <TreatArea>Tooth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4109</ProcCode>
+    <Descript>Alginates</Descript>
+    <AbbrDesc>Alg</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4111</ProcCode>
+    <Descript>Inlay Seat</Descript>
+    <AbbrDesc>InlaSeat</AbbrDesc>
+    <ProcTime>/XXX/</ProcTime>
+    <TreatArea>Tooth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4112</ProcCode>
+    <Descript>Onlay Seat</Descript>
+    <AbbrDesc>OnlaSeat</AbbrDesc>
+    <ProcTime>/XXX/</ProcTime>
+    <TreatArea>Surf</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4113</ProcCode>
+    <Descript>Fit Bands</Descript>
+    <AbbrDesc>FitBands</AbbrDesc>
+    <ProcTime>/XX//</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4115</ProcCode>
+    <Descript>Soft reline</Descript>
+    <AbbrDesc>SoftLine</AbbrDesc>
+    <ProcTime>/X//</ProcTime>
+    <TreatArea>Arch</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4116</ProcCode>
+    <Descript>NEXT APPOINTMENT</Descript>
+    <AbbrDesc>Next</AbbrDesc>
+    <ProcTime>/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4117</ProcCode>
+    <Descript>Note</Descript>
+    <AbbrDesc>Note</AbbrDesc>
+    <ProcTime>/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>false</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4118</ProcCode>
+    <Descript>PFM Seat</Descript>
+    <AbbrDesc>PFMSeat</AbbrDesc>
+    <ProcTime>//XX/</ProcTime>
+    <TreatArea>Tooth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4119</ProcCode>
+    <Descript>All Cer Crn Seat</Descript>
+    <AbbrDesc>CrCrnSeat</AbbrDesc>
+    <ProcTime>/XXX/</ProcTime>
+    <TreatArea>Tooth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4120</ProcCode>
+    <Descript>Denture Deliver</Descript>
+    <AbbrDesc>DentDeliv</AbbrDesc>
+    <ProcTime>/XX/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4121</ProcCode>
+    <Descript>RPD Deliver</Descript>
+    <AbbrDesc>RPDDeliv</AbbrDesc>
+    <ProcTime>/XX/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4122</ProcCode>
+    <Descript>Repair Deliver</Descript>
+    <AbbrDesc>ReprDeliv</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4123</ProcCode>
+    <Descript>Whitening Deliver</Descript>
+    <AbbrDesc>WhitDeliv</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4124</ProcCode>
+    <Descript>Biteguard Deliver</Descript>
+    <AbbrDesc>BitguaDeli</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4125</ProcCode>
+    <Descript>Flipper Deliver</Descript>
+    <AbbrDesc>FlipDeliv</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Tooth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4126</ProcCode>
+    <Descript>Retainer Deliver</Descript>
+    <AbbrDesc>RetaDeliv</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Arch</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4127</ProcCode>
+    <Descript>Bridge Seat</Descript>
+    <AbbrDesc>BridgeSeat</AbbrDesc>
+    <ProcTime>/XXXXXXXX/</ProcTime>
+    <TreatArea>ToothRange</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4130</ProcCode>
+    <Descript>Wax Try-in</Descript>
+    <AbbrDesc>WaxTryin</AbbrDesc>
+    <ProcTime>/XX/</ProcTime>
+    <TreatArea>Arch</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>false</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4131</ProcCode>
+    <Descript>CustomTray</Descript>
+    <AbbrDesc>CustomTray</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>false</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4132</ProcCode>
+    <Descript>Invisalign deliver</Descript>
+    <AbbrDesc>Invisadeliver</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Mouth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>None</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+  <ProcedureCode>
+    <ProcCode>N4136</ProcCode>
+    <Descript>Full Gold Crown Seat</Descript>
+    <AbbrDesc>FGCSeat</AbbrDesc>
+    <ProcTime>/X/</ProcTime>
+    <TreatArea>Tooth</TreatArea>
+    <SetRecall>false</SetRecall>
+    <NoBillIns>true</NoBillIns>
+    <IsProsth>false</IsProsth>
+    <IsHygiene>false</IsHygiene>
+    <PaintType>CrownDark</PaintType>
+    <ProcCatDescript>No Fee</ProcCatDescript>
+  </ProcedureCode>
+</ArrayOfProcedureCode>

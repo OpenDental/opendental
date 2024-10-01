@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="dxci.dea" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="DeaPartnerService" targetNamespace="dxci.dea" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://prelive2.dentalxchange.com:443/dea/DeaPartnerService?xsd=1" namespace="dxci.dea" />
+    </xsd:schema>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://prelive2.dentalxchange.com:443/dea/DeaPartnerService?xsd=2" namespace="dxci.common" />
+    </xsd:schema>
+  </types>
+  <message name="addImage">
+    <part name="parameters" element="tns:addImage" />
+  </message>
+  <message name="addImageResponse">
+    <part name="parameters" element="tns:addImageResponse" />
+  </message>
+  <message name="submitAttachment">
+    <part name="parameters" element="tns:submitAttachment" />
+  </message>
+  <message name="submitAttachmentResponse">
+    <part name="parameters" element="tns:submitAttachmentResponse" />
+  </message>
+  <message name="openAttachment">
+    <part name="parameters" element="tns:openAttachment" />
+  </message>
+  <message name="openAttachmentResponse">
+    <part name="parameters" element="tns:openAttachmentResponse" />
+  </message>
+  <message name="addNarrative">
+    <part name="parameters" element="tns:addNarrative" />
+  </message>
+  <message name="addNarrativeResponse">
+    <part name="parameters" element="tns:addNarrativeResponse" />
+  </message>
+  <message name="deleteImage">
+    <part name="parameters" element="tns:deleteImage" />
+  </message>
+  <message name="deleteImageResponse">
+    <part name="parameters" element="tns:deleteImageResponse" />
+  </message>
+  <message name="deleteAllImages">
+    <part name="parameters" element="tns:deleteAllImages" />
+  </message>
+  <message name="deleteAllImagesResponse">
+    <part name="parameters" element="tns:deleteAllImagesResponse" />
+  </message>
+  <message name="sendCompleteAttachment">
+    <part name="parameters" element="tns:sendCompleteAttachment" />
+  </message>
+  <message name="sendCompleteAttachmentResponse">
+    <part name="parameters" element="tns:sendCompleteAttachmentResponse" />
+  </message>
+  <portType name="Dea">
+    <operation name="addImage">
+      <input wsam:Action="dxci.dea/Dea/addImageRequest" message="tns:addImage" />
+      <output wsam:Action="dxci.dea/Dea/addImageResponse" message="tns:addImageResponse" />
+    </operation>
+    <operation name="submitAttachment">
+      <input wsam:Action="dxci.dea/Dea/submitAttachmentRequest" message="tns:submitAttachment" />
+      <output wsam:Action="dxci.dea/Dea/submitAttachmentResponse" message="tns:submitAttachmentResponse" />
+    </operation>
+    <operation name="openAttachment">
+      <input wsam:Action="dxci.dea/Dea/openAttachmentRequest" message="tns:openAttachment" />
+      <output wsam:Action="dxci.dea/Dea/openAttachmentResponse" message="tns:openAttachmentResponse" />
+    </operation>
+    <operation name="addNarrative">
+      <input wsam:Action="dxci.dea/Dea/addNarrativeRequest" message="tns:addNarrative" />
+      <output wsam:Action="dxci.dea/Dea/addNarrativeResponse" message="tns:addNarrativeResponse" />
+    </operation>
+    <operation name="deleteImage">
+      <input wsam:Action="dxci.dea/Dea/deleteImageRequest" message="tns:deleteImage" />
+      <output wsam:Action="dxci.dea/Dea/deleteImageResponse" message="tns:deleteImageResponse" />
+    </operation>
+    <operation name="deleteAllImages">
+      <input wsam:Action="dxci.dea/Dea/deleteAllImagesRequest" message="tns:deleteAllImages" />
+      <output wsam:Action="dxci.dea/Dea/deleteAllImagesResponse" message="tns:deleteAllImagesResponse" />
+    </operation>
+    <operation name="sendCompleteAttachment">
+      <input wsam:Action="dxci.dea/Dea/sendCompleteAttachmentRequest" message="tns:sendCompleteAttachment" />
+      <output wsam:Action="dxci.dea/Dea/sendCompleteAttachmentResponse" message="tns:sendCompleteAttachmentResponse" />
+    </operation>
+  </portType>
+  <binding name="DeaPortBinding" type="tns:Dea">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="addImage">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="submitAttachment">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="openAttachment">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="addNarrative">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="deleteImage">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="deleteAllImages">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="sendCompleteAttachment">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="DeaPartnerService">
+    <port name="DeaPort" binding="tns:DeaPortBinding">
+      <soap:address location="https://prelive2.dentalxchange.com:443/dea/DeaPartnerService" />
+    </port>
+  </service>
+</definitions>

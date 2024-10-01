@@ -1,0 +1,33 @@
+<local:FrmODBase x:Class="OpenDental.FrmDocumentSizeMount"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="426" Height="246" 
+             Text="Item Size and Rotation on Mount" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="but100" Width="63" VerticalAlignment="Bottom" Height="24" Margin="25,0,0,12" Text="100% Pix" Click="but100_Click" />
+		<ui:Label x:Name="label3" Width="232" Height="18" Margin="191,155,0,0" Text="(relative to original image)" />
+		<ui:TextBox x:Name="textZoomOrig" Width="43" Height="20" Margin="142,151,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+		<ui:Label x:Name="label9" Width="105" Height="18" Margin="36,152,0,0" Text="Zoom Orig" HAlign="Right" VAlign="Center" />
+		<ui:Button x:Name="butExpandFill" Width="74" VerticalAlignment="Bottom" Height="24" Margin="163,0,0,12" Text="Expand Fill" Click="butExpandFill_Click" />
+		<ui:Label x:Name="label10" Width="113" Height="18" Margin="242,19,0,0" Text="(pixels)" />
+		<ui:Label x:Name="label8" Width="124" Height="18" Margin="242,45,0,0" Text="(pixels)" />
+		<ui:TextBox x:Name="textMountSize" Width="94" Height="20" Margin="142,42,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+		<ui:Label x:Name="label7" Width="105" Height="18" Margin="36,43,0,0" Text="Mount Item Size" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textRawSize" Width="94" Height="20" Margin="142,16,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
+		<ui:Label x:Name="label6" Width="105" Height="18" Margin="36,17,0,0" Text="Raw Image Size" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label5" Width="232" Height="18" Margin="191,129,0,0" Text="(relative to Fit)" />
+		<ui:TextBox x:Name="textZoomFit" Width="43" Height="20" Margin="142,125,0,0" />
+		<ui:Button x:Name="butFit" Width="63" VerticalAlignment="Bottom" Height="24" Margin="94,0,0,12" Text="Fit" Click="butFit_Click" />
+		<ui:Label x:Name="labelCrop" Width="82" Height="18" Margin="59,126,0,0" Text="Zoom Fit" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textDegreesRotated" Width="43" Height="20" Margin="142,97,0,0" />
+		<ui:Label x:Name="label4" Width="106" Height="16" Margin="33,98,0,0" Text="Degrees Rotated" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="label1" Width="252" Height="18" Margin="161,74,0,0" Text="(to flip vertically, combine this with a 180 rotation)" />
+		<ui:CheckBox x:Name="checkIsFlipped" Width="152" Height="18" Margin="3,73,0,0" Text="Is Flipped Horizontally" CheckAlign="MiddleRight" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,37 @@
+<local:FrmODBase x:Class="OpenDental.FrmEFormImportRuleEdit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="720" Height="680" 
+             Text="Form Import Rule Edit" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+		<ui:GroupBox x:Name="groupSSN" Width="590" Height="146" Margin="57,25,0,0" Text="Field Name" >
+			<ui:RadioButton x:Name="radioNameDb" Width="186" Height="20" Margin="9,37,0,0" Text="Specific Database Field" CheckAlign="MiddleLeft" />
+			<ui:RadioButton x:Name="radioNameGlobal" Width="496" Height="20" Margin="9,17,0,0" Text="Global, applies to all fields unless an override rule is added for an individual field" CheckAlign="MiddleLeft" Checked="True"  />
+			<ui:ComboBox x:Name="comboNameDb" Width="247" Height="21" Margin="28,59,0,0" />
+			<ui:RadioButton x:Name="radioNameNotDb" Width="494" Height="32" Margin="9,83,0,0" Text="Non-database field reportable name or label; these can't import, but you can still choose whether to mark for review" CheckAlign="TopLeft" />
+			<ui:TextBox x:Name="textNameNotDb" Height="20" RenderTransformOrigin="0.371,0.78" Width="247" Margin="27,116,0,0"/>
+		</ui:GroupBox>
+		<ui:GroupBox x:Name="groupSSN_Copy" Width="590" Height="227" Margin="57,188,0,0" Text="Situation" >
+			<ui:RadioButton x:Name="radioSitDeleted" Width="186" Height="20" Margin="9,59,0,0" Text="Deleted value" CheckAlign="MiddleLeft"  />
+			<ui:RadioButton x:Name="radioSitNew" Width="496" Height="20" Margin="9,19,0,0" Text="Original blank and entered new value" CheckAlign="MiddleLeft" Checked="True"  />
+			<ui:RadioButton x:Name="radioSitChanged" Width="561" Height="20" Margin="9,39,0,0" Text="Changed value" CheckAlign="MiddleLeft"  />
+			<ui:RadioButton x:Name="radioSitInvalid" Width="556" Height="20" Margin="9,79,0,0" Text="Invalid value, whether new or changed. Only applies to the following fields: " CheckAlign="MiddleLeft" />
+			<ui:Label x:Name="labelWidthComment" Height="111" Margin="43,101,0,0" Text="Address fields: Only when USPS address verification is turned on.&#10;State: Regardless of validation here, this field enforces 2 letter known states or provinces in UI.&#10;(StateNoValidation: This is used in foreign countries and cannot be validated.)&#10;SSN: 9 digits. Hypens are always automatically stripped out.&#10;Birthdates are already enforced during entry to be dates. This validates age between 0 and 110.&#10;Email: Presence of @ and presence of domain.&#10;Phone numbers: Starts with 10 digits, regardless of other punctuation or suffix.&#10;" Width="537" />
+		</ui:GroupBox>
+		<ui:GroupBox x:Name="groupSSN_Copy1" Width="590" Height="175" Margin="57,436,0,0" Text="Action" >
+			<ui:RadioButton x:Name="radioActionIgnore" Width="186" Height="20" Margin="9,62,0,0" Text="Ignore, leave original" CheckAlign="MiddleLeft"  />
+			<ui:RadioButton x:Name="radioActionOverwrite" Width="496" Height="20" Margin="9,22,0,0" Text="Overwrite existing or blank" CheckAlign="MiddleLeft" Checked="True"  />
+			<ui:RadioButton x:Name="radioActionReview" Width="561" Height="20" Margin="9,42,0,0" Text="Mark for review by human (who will likely need to ask patient)" CheckAlign="MiddleLeft" />
+			<ui:RadioButton x:Name="radioActionFix" Width="556" Height="20" Margin="9,83,0,0" Text="Fix if possible. Only applies to the following fields: " CheckAlign="MiddleLeft"  />
+			<ui:Label x:Name="labelWidthComment1" Height="65" Margin="43,105,0,0" Text="Address fields: Only when USPS address verification is turned on.&#xA;Phone numbers: Reformat to (###)###-####.  Only certain matches will be reformatted.  No numbers will be lost, and no trailing comments will be affected.&#xA;FName, MiddleI, LName: Capitalize first letter." Width="537" />
+		</ui:GroupBox>
+		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="20,0,0,10" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+	</Grid>
+</local:FrmODBase>

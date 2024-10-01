@@ -1,0 +1,15 @@
+<local:FrmODBase x:Class="OpenDental.FrmLogoffWarning"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="424" Height="115" 
+             Text="Logoff Warning" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="label1" Width="400" Height="23" Margin="12,34,0,0" Text="Open Dental will log off from this workstation in 10 seconds due to inactivity." />
+		<ui:Button x:Name="butCancel" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,29,18" Text="_Cancel" Click="butCancel_Click" />
+	</Grid>
+</local:FrmODBase>

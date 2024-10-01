@@ -1,0 +1,2 @@
+﻿The purpose of this "Shared" folder is to put files here that can be shared with other projects as linker files. For example, the files in 
+"Shared\ODCloudClient" will be included as file links within the OpenDentalCloudClient project.

@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="WpfControls.UI.ComboClinic"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:OpenDental"
+		xmlns:ui="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		d:DesignWidth="170" d:DesignHeight="21">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="ui:ComboClinic.HorizontalAlignment" Value="Left"/>
+			<Setter Property="ui:ComboClinic.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<Grid x:Name="grid" x:FieldModifier="internal">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="37"/>
+			<!--Label. Width of "Clinics" is 36.6. Width in ComboBoxClinicPicker is 37.-->
+			<ColumnDefinition Width="*"/>
+			<!--Combobox-->
+		</Grid.ColumnDefinitions>
+		<TextBlock x:Name="textBlock" x:FieldModifier="internal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,3,0">Clinic</TextBlock>
+		<ui:ComboBox x:Name="comboBox" x:FieldModifier="internal" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+	</Grid>
+</UserControl>

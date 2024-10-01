@@ -1,0 +1,138 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace OpenDentBusiness{
+	///<summary>Represents a single document in the imaging module.</summary>
+	[Serializable]
+	[CrudTable(AuditPerms=CrudAuditPerm.ImageDelete|CrudAuditPerm.ImageEdit,IsLargeTable=true)]
+	public class Document:TableBase {
+		///<summary>Primary key.</summary>
+		[CrudColumn(IsPriKey=true)]
+		public long DocNum;
+		/// <summary>Description of the document.</summary>
+		public string Description;
+		/// <summary>Date/time created.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
+		public DateTime DateCreated;
+		///<summary>FK to definition.DefNum. Categories for documents.</summary>
+		public long DocCategory;
+		/// <summary>FK to patient.PatNum.  The document will be located in the patient folder of this patient.</summary>
+		public long PatNum;
+		/// <summary>The name of the file. Does not include any directory info.</summary>
+		public string FileName;
+		/// <summary>Enum:ImageType Document, Radiograph, Photo, File, Attachment.</summary>
+		public ImageType ImgType;
+		/// <summary>True if flipped horizontally. A vertical flip would be stored as a horizontal flip plus a 180 rotation.</summary>
+		public bool IsFlipped;
+		/// <summary>Any positive or negative, including decimals.</summary>
+		public float DegreesRotated;
+		/// <summary>An optional list of tooth numbers. In Db, rigorously formatted as American numbers, and separated by commas.  For display, uses hyphens for sequences.  Very likely supports international tooth numbers, but not tested for that.</summary>
+		public string ToothNumbers;
+		/// <summary>MediumText, so max length=16M for API upload base64.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
+		public string Note;
+		/// <summary>True if the signature is in Topaz format rather than OD format.</summary>
+		public bool SigIsTopaz;
+		/// <summary>The encrypted and bound signature in base64 format.  The signature is bound to the byte sequence of the original image.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
+		public string Signature;
+		/// <summary>Crop rectangle X. May be negative. First, image is rotated as needed around center. Then, clipped to this crop rectangle.  X-Y is center of the crop rectangle relative to center of the image, and where positive is to the upper right of the center of the image.</summary>
+		public int CropX;
+		/// <summary>Crop rectangle Y. May be negative. First, image is rotated as needed around center. Then, clipped to this crop rectangle. X-Y is center of the crop rectangle relative to center of the image, and where positive is to the upper right of the center of the image.</summary>
+		public int CropY;
+		/// <summary>Crop rectangle Width in original image pixel scale.  May be zero if no cropping.  May be greater than original image width.</summary>
+		public int CropW;
+		/// <summary>Crop rectangle Height in original image pixel scale.  May be zero if no cropping.  May be greater than original image height.</summary>
+		public int CropH;
+		/// <summary>The lower value of the "windowing" (contrast/brightness) for radiographs.  Default is 0.  Max is 255.</summary>
+		public int WindowingMin;
+		/// <summary>The upper value of the "windowing" (contrast/brightness) for radiographs.  Default is 0(no windowing).  Max is 255. For 12 bit images with a max of 4096, the same max of 255 is used here, but it's just scaled proportionally (x16).</summary>
+		public int WindowingMax;
+		/// <summary>FK to mountitem.MountItemNum. If set, then this image will only show on a mount, not in the main tree. If set to 0, then no mount item is associated with this document.</summary>
+		public long MountItemNum;
+		/// <summary>Date/time last altered.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.TimeStamp)]
+		public DateTime DateTStamp;
+		///<summary>The raw file data encoded as base64.  Only used if there is no AtoZ folder.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
+		public string RawBase64;
+		///<summary>Thumbnail encoded as base64.  Only present if not using AtoZ folder. 100x100 pixels, jpg, takes around 5.5k.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
+		public string Thumbnail;
+		///<summary>The primary key associated to a document hosted on an external source.</summary>
+		public string ExternalGUID;
+		///<summary>Enum:ExternalSourceType None, Dropbox, XVWeb. The source for the corresponding ExternalGUID.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.EnumAsString)]
+		public ExternalSourceType ExternalSource;
+		///<summary>FK to provider.ProvNum. Optional. Used for radiographs.</summary>
+		public long ProvNum;
+		///<summary>Set to true as part of conversion to 21.4. Set back to false once the crop is converted to the new scheme. It would take too long to do this conversion in the normal script because it involves loading each image to obtain width and height. So this is a lazy conversion.</summary>
+		public bool IsCropOld;
+		/// <summary>Stores a JSON serialized OcrInsScanResponse object. The type of this object is defined by the OcrCaptureType.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
+		public string OcrResponseData;
+		/// <summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack. Only used when patient scans their insurance card from eClipboard.</summary>
+		public EnumOcrCaptureType ImageCaptureType;
+		///<summary>Set true by default for radiographs and tooth charts. When set to true, it will print additional heading text including patient name, DOB, and today's date.</summary>
+		public bool PrintHeading;
+
+		///<summary>Returns a copy/clone of this Document.</summary>
+		public Document Copy() {
+			return (Document)this.MemberwiseClone();
+		}
+	}
+
+	///<summary>The type of image for images module.</summary>
+	public enum ImageType{
+		///<summary>0- Includes scanned documents and screenshots.</summary>
+		Document,
+		///<summary>1</summary>
+		Radiograph,
+		///<summary>2</summary>
+		Photo,
+		///<summary>3- For instance a Word document or a spreadsheet. Not an image.</summary>
+		File,
+		///<summary>4- Used for Claim Attachments. Preserves original resolution.</summary>
+		Attachment
+	}
+	
+	///<summary>Supported sources that help identify what the corresponding ExternalGUID column should be used for.</summary>
+	public enum ExternalSourceType {
+		///<summary>This is a document that is not stored in an external source.  All documents stored by Open Dental will be this type.</summary>
+		None,
+		///<summary>This document can be found in a corresponding Dropbox account.</summary>
+		Dropbox,
+		///<summary>This document is saved from a download from XVWeb program link.</summary>
+		XVWeb,
+	}
+	
+}
+
+//Old scheme was (working backward, of course):
+//1.Start at UL of image
+//2.Apply clip using image coordinates
+//3.Translate through a series of steps to the center of the crop area
+//4.Rotate
+//5.Translate to the center of screen or mount item
+//This won't work going forward because all the images would be crooked.
+//Final cropped version needs to have vertical and horizontal edges, especially for mounts.
+//New crop scheme:
+//1.Start at UL of image
+//2.Translate from UL of image to center of image
+//3.Rotate
+//4.Scale
+//5.Translate from center of image to center of crop area
+//6.Apply clip
+//7.Translate to center of screen or mount item.
+//So this requires a conversion of existing crop scheme to new crop scheme.
+//Used a test database of version 21.3, with all possible combinations, and then converted and it looks the same.
+
+//2021-12-05-Todo
+//FormImageFloat.DocumentAcquiredForMount, make sure the bitmap is disposed
+
+//Possible new features:
+//tree right click copy/paste
+//Default scale for images
+
+

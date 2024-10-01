@@ -1,0 +1,38 @@
+<local:FrmODBase x:Class="OpenDental.FrmDocInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="852" Height="387" 
+             Text="Item Info" MinMaxBoxes="False" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:ComboBox x:Name="comboProv" Width="173" Height="21" Margin="245,122,0,0" />
+		<ui:Label x:Name="label1" Width="95" Height="16" Margin="149,126,0,0" Text="Provider" HAlign="Right" />
+		<ui:Label x:Name="labelMountItem" Width="271" Height="34" Margin="242,301,0,0" Text="This information is only for one individual mount item.  The mount has a separate information window." />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+		<ui:TextBox x:Name="textTime" Width="104" Height="20" Margin="245,99,0,0" />
+		<ui:Label x:Name="label4" Width="95" Height="16" Margin="149,102,0,0" Text="Time" HAlign="Right" />
+		<ui:Button x:Name="butAudit" Width="92" VerticalAlignment="Bottom" Height="24" Margin="245,0,0,12" Text="Audit Trail" Click="butAudit_Click" />
+		<ui:Button x:Name="butOpen" HorizontalAlignment="Right" Width="75" Height="24" Margin="0,55,21,0" Text="Open Folder" Click="butOpen_Click" />
+		<ui:TextBox x:Name="textToothNumbers" Width="134" Height="20" Margin="245,241,0,0" TabIndexOD="15" />
+		<ui:Label x:Name="labelToothNums" Width="100" Height="18" Margin="144,243,0,0" Text="Tooth Numbers" HAlign="Right" />
+		<ui:TextBox x:Name="textSize" Width="134" Height="20" Margin="245,53,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" TabIndexOD="13" />
+		<ui:Label x:Name="label6" Width="100" Height="18" Margin="144,56,0,0" Text="File Size" HAlign="Right" />
+		<ui:Label x:Name="labelType" Width="100" Height="18" Margin="144,171,0,0" Text="Type" HAlign="Right" />
+		<ui:ListBox x:Name="listType" Width="104" Height="69" Margin="245,169,0,0" />
+		<ui:TextVDate x:Name="textDate" Width="104" Height="20" Margin="245,76,0,0" TabIndexOD="1" />
+		<ui:TextBox x:Name="textDescript" Width="299" Height="20" Margin="245,146,0,0" MaxLength="255" TabIndexOD="0" />
+		<ui:TextBox x:Name="textFileName" HorizontalAlignment="Stretch" Height="20" Margin="245,30,21,0" ColorBack="#FFF0F0F0" ReadOnly="True" TabIndexOD="9" />
+		<ui:Label x:Name="label3" Width="100" Height="18" Margin="144,79,0,0" Text="Date" HAlign="Right" />
+		<ui:Label x:Name="label2" Width="127" Height="18" Margin="117,145,0,0" Text="Description" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelCategory" Width="100" Height="18" Margin="12,14,0,0" Text="Category" />
+		<ui:ListBox x:Name="listCategory" Width="104" VerticalAlignment="Stretch" Margin="12,30,0,15" />
+		<ui:Label x:Name="labelFileName" Width="100" Height="18" Margin="144,33,0,0" Text="File Name" HAlign="Right" />
+		<ui:CheckBox x:Name="checkPrintHeading" Width="114" Height="19" Margin="144,266,0,0" Text="Print Heading" CheckAlign="MiddleRight" />
+		<ui:Label x:Name="labelMountItem_Copy" Width="393" Height="18" Margin="260,267,0,0" Text="(radiographs and tooth charts will have this set by default)" />
+		<ui:Label x:Name="labelDocNum" Width="125" Height="18" Margin="680,7,0,0" Text="DocNum:" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,17 @@
+<local:FrmODBase x:Class="OpenDental.FrmEFormFieldChildren"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="635" Height="560" 
+             Text="EForm Field Children" MinMaxBoxes="False">
+	<Grid Background="#FFFCFDFE" >
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="OK" Click="butSave_Click" />
+		<ui:Label Height="20" Margin="25,10,0,0" Text="The fields below will show..." Width="270" HAlign="Left" />
+		<ui:ListBox x:Name="listBoxFieldLabels" Margin="25,29,0,10" VerticalAlignment="Stretch" Width="270"/>
+		<ui:Label Height="95" Margin="330,70,0,0" Text="This form is not currently used. Might revive it some day to allow faster picking of conditional children, but there are other more important things to work on right now." Width="270" HAlign="Left" ColorText="Red" />
+	</Grid>
+</local:FrmODBase>

@@ -1,0 +1,14 @@
+<local:FrmODBase x:Class="OpenDental.FrmPopupAudit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="624" Height="297" 
+             Text="Popup Audit" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Grid x:Name="gridPopupAudit" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="14,15,17,27" SelectionMode="MultiExtended" Title="Audit Trail" TranslationName="TableAudit" />
+	</Grid>
+</local:FrmODBase>

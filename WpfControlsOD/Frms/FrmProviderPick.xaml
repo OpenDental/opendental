@@ -1,0 +1,29 @@
+<local:FrmODBase x:Class="OpenDental.FrmProviderPick"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="558" Height="670" 
+             Text="Providers" MinMaxBoxes="False" >
+    <Grid Background="#FFFCFDFE" >
+        <ui:TextRich x:Name="textFilter" Width="158" Height="20" Margin="88,5,0,0" AllowsCarriageReturns="False" QuickPasteType="ProviderSearchFilter" TabIndexOD="0" />
+        <ui:Label x:Name="label3" Width="71" Height="18" Margin="16,6,0,0" Text="Search" HAlign="Right" VAlign="Center" />
+        <ui:CheckBox x:Name="checkShowAll" Width="88" Height="21" Margin="253,7,0,0" Text="Show All" CheckAlign="MiddleRight" Click="checkShowAll_Click" />
+        <ui:Button x:Name="butSelectNone" HorizontalAlignment="Right" Width="75" Margin="0,0,22,68" Text="None" Click="butSelectNone_Click" Height="24" VerticalAlignment="Bottom" />
+        <ui:GroupBox x:Name="groupDentalSchools" HorizontalAlignment="Right" Width="200" Height="110" Margin="0,32,8,0" TabIndexOD="3" Text="Dental School Filters" >
+            <ui:Label x:Name="labelClass" Width="68" Height="18" Margin="6,82,0,0" Text="Class" HAlign="Right" VAlign="Center" />
+            <ui:ComboBox x:Name="comboClass" Width="118" Height="21" Margin="76,82,0,0" />
+            <ui:TextBox x:Name="textLName" Width="118" Height="20" Margin="76,40,0,0" TabIndexOD="1" />
+            <ui:Label x:Name="label2" Width="68" Height="18" Margin="6,40,0,0" Text="LName" HAlign="Right" VAlign="Center" />
+            <ui:TextBox x:Name="textFName" Width="118" Height="20" Margin="76,61,0,0" TabIndexOD="2" />
+            <ui:Label x:Name="label1" Width="68" Height="18" Margin="6,61,0,0" Text="FName" HAlign="Right" VAlign="Center" />
+            <ui:TextBox x:Name="textProvNum" Width="118" Height="20" Margin="76,19,0,0" TabIndexOD="0" />
+            <ui:Label x:Name="labelProvNum" Width="68" Height="18" Margin="6,19,0,0" Text="ProvNum" HAlign="Right" VAlign="Center" />
+        </ui:GroupBox>
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,22,16" Text="_Save" Click="butSave_Click" />
+        <ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="16,30,217,16" Title="Providers" TranslationName="TableProviders" />
+    </Grid>
+</local:FrmODBase>
