@@ -62,6 +62,10 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
+			if(textDescription.Text=="") {
+				MsgBox.Show(this,"Description cannot be blank");
+				return;
+			}
 			QuickPasteCatCur.Description=textDescription.Text;
 			QuickPasteCatCur.DefaultForTypes="";
 			QuickPasteCatCur.DefaultForTypes=string.Join(",",listType.GetListSelected<int>());

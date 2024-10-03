@@ -1917,6 +1917,11 @@ Here is the desired behavior:
 					frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
 					if(frmDocInfo.IsDialogCancel) {
 						DeleteDocument(isVerbose:false,doSecurityCheck:false,document);
+						//Refresh tree after cancelling paste
+						EventFillTree?.Invoke(this,false);
+						ClearObjects();
+						SelectTreeNode2(null);
+						panelMain.Invalidate();
 						return;
 					}
 					else {
@@ -4657,6 +4662,11 @@ Here is the desired behavior:
 				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
 				if(frmDocInfo.IsDialogCancel) {
 					DeleteDocument(isVerbose:false,doSecurityCheck:false,document);
+					//Refresh tree after cancelling import
+					EventFillTree?.Invoke(this,false);
+					ClearObjects();
+					SelectTreeNode2(null);
+					panelMain.Invalidate();
 				}
 				else {
 					if(document.ImgType==ImageType.Photo) {

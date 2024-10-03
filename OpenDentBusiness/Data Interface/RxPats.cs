@@ -127,6 +127,20 @@ namespace OpenDentBusiness{
 			return listRxPats[0];
 		}
 
+		///<summary>Gets a list of rxpats optionally filtered for the API. Returns an empty list if not found.</summary>
+		public static List<RxPat> GetRxPatsForApi(int limit,int offset,long patNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<RxPat>>(MethodBase.GetCurrentMethod(),limit,offset,patNum);
+			}
+			string command="SELECT * FROM rxpat WHERE DateTStamp >= "+POut.DateT(DateTime.MinValue)+" ";
+			if(patNum>0) {
+				command+="AND PatNum="+POut.Long(patNum)+" ";
+			}
+			command+="ORDER BY RxNum "//Ensure order for limit and offset.
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.RxPatCrud.SelectMany(command);
+		}
+
 		///<summary>Zeros securitylog FKey column for rows that are using the matching rxNum as FKey and are related to RxPat.
 		///Permtypes are generated from the AuditPerms property of the CrudTableAttribute within the RxPat table type.</summary>
 		public static void ClearFkey(long rxNum) {

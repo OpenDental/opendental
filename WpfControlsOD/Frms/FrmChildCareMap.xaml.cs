@@ -26,6 +26,8 @@ namespace OpenDental {
 		private ContextMenu _contextMenu;
 		///<summary>Right click option for the absent children grid to send a child to their primary room.</summary>
 		private ContextMenu _contextMenuAbsent;
+		///<summary>Right click option for the unassigned teachers to clock in from this window.</summary>
+		private ContextMenu _contextMenuUnassigned;
 		///<summary>Gets filled when a grid is right clicked on for the context menu options.</summary>
 		private long _childRoomNumClicked;
 		private Grid _gridChildRoomClick;
@@ -42,6 +44,8 @@ namespace OpenDental {
 			_contextMenu=new ContextMenu(this);
 			_contextMenu.Opened+=ContextMenu_Opened;
 			_contextMenu.Add(new MenuItem("Remove",menuItemUnassign_Click));
+			_contextMenu.Add(new MenuItem("Clock out",menuItemClockOut_Click));
+			_contextMenu.Add(new MenuItem("Break",menuItemBreak_Click));
 			gridChildRoom1.ContextMenu=_contextMenu;
 			gridChildRoom1.CellDoubleClick+=GridChildRoom_CellDoubleClick;
 			gridChildRoom2.ContextMenu=_contextMenu;
@@ -61,6 +65,9 @@ namespace OpenDental {
 			_contextMenuAbsent=new ContextMenu(this);
 			_contextMenuAbsent.Opened+=ContextMenuAbsent_Opened;
 			gridChildrenAbsent.ContextMenu=_contextMenuAbsent;
+			_contextMenuUnassigned=new ContextMenu(this);
+			_contextMenuUnassigned.Add(new MenuItem("Clock In",menuItemClockIn_Click));
+			gridTeachersUnassigned.ContextMenu=_contextMenuUnassigned;
 		}
 
 		private void FrmChildren_Load(object sender, EventArgs e) {
@@ -442,6 +449,104 @@ namespace OpenDental {
 			gridTeachersUnassigned.SetSelected(idx);
 		}
 
+		private void menuItemClockOut_Click(object sender,EventArgs e) {
+			ClockOut(TimeClockStatus.Home);
+		}
+
+		private void menuItemBreak_Click(object sender,EventArgs e) {
+			ClockOut(TimeClockStatus.Break);
+		}
+
+		private void ClockOut(TimeClockStatus timeClockStatus) {
+			int idxSelected=_gridChildRoomClick.GetSelectedIndex();
+			if(idxSelected==-1) {
+				MsgBox.Show("Select a row first.");
+				return;
+			}
+			ChildRoomLog childRoomLogSelected=(ChildRoomLog)_gridChildRoomClick.ListGridRows[idxSelected].Tag;
+			if(childRoomLogSelected.EmployeeNum==0) {
+				MsgBox.Show("Only a teacher can be clocked out or on break.");
+				return;
+			}
+			Employee employee=Employees.GetEmpFromDB(childRoomLogSelected.EmployeeNum);
+			if(employee.ClockStatus==timeClockStatus.GetDescription()) {
+				MsgBox.Show("This teacher is already clocked out or on break.");
+				return;
+			}
+			//Begin clock out
+			OpenDental.UI.ProgressWin progressWin=new OpenDental.UI.ProgressWin();
+			progressWin.ShowCancelButton=false;
+			progressWin.ActionMain=() => {
+				ClockEvents.ClockOut(employee.EmployeeNum,timeClockStatus);
+				Thread.Sleep(200);//Wait briefly so that if they quickly clock out again, the timestamps will be far enough apart.
+			};
+			progressWin.StartingMessage="Processing clock event...";
+			try {
+				progressWin.ShowDialog();
+			}
+			catch(Exception ex) {
+				MsgBox.Show(ex.Message);
+				return;
+			}
+			Employee employeeOld=employee.Copy();
+			employee.ClockStatus=timeClockStatus.GetDescription();;
+			Employees.UpdateChanged(employee,employeeOld,doInvalidate:true);
+			Employees.RefreshCache();//So fill grid can see updated status
+			//Create a log to show the employee going to the unassigned grid
+			ChildRoomLog childRoomLog=new ChildRoomLog();
+			childRoomLog.DateTEntered=DateTime.Now;
+			childRoomLog.DateTDisplayed=DateTime.Now;
+			childRoomLog.EmployeeNum=employee.EmployeeNum;
+			childRoomLog.ChildRoomNum=0;
+			ChildRoomLogs.Insert(childRoomLog);
+			//Refresh
+			FillGridSpecified(_gridChildRoomClick);
+			FillGridTeachersUnassigned();
+			Signalods.SetInvalid(InvalidType.Children);
+			//Reselect teacher after they have been moved
+			int idx=gridTeachersUnassigned.ListGridRows.FindIndex(x => ((Employee)x.Tag).EmployeeNum==childRoomLog.EmployeeNum);
+			if(idx==-1) {
+				return;//In case employee was not found
+			}
+			gridTeachersUnassigned.SetSelected(idx);
+		}
+
+		private void menuItemClockIn_Click(object sender,EventArgs e) {
+			//Find employee
+			int idxSelected=gridTeachersUnassigned.GetSelectedIndex();
+			if(idxSelected==-1) {
+				MsgBox.Show("Select a row first.");
+				return;
+			}
+			long employeeNum=((Employee)gridTeachersUnassigned.ListGridRows[idxSelected].Tag).EmployeeNum;
+			Employee employee=Employees.GetEmpFromDB(employeeNum);
+			if(employee.ClockStatus=="Working") {
+				MsgBox.Show("This teacher is already clocked in.");
+				return;
+			}
+			//Begin clock in
+			OpenDental.UI.ProgressWin progressWin=new OpenDental.UI.ProgressWin();
+			progressWin.ShowCancelButton=false;
+			progressWin.ActionMain=() => {
+				ClockEvents.ClockIn(employee.EmployeeNum,isAtHome:false);
+				Thread.Sleep(1000);//Wait one second so that if they quickly clock out again, the timestamps will be far enough apart.
+			};
+			progressWin.StartingMessage="Processing clock event...";
+			try {
+				progressWin.ShowDialog();
+			}
+			catch(Exception ex) {
+				MsgBox.Show(ex.Message);
+				return;
+			}
+			Employee employeeOld=employee.Copy();
+			employee.ClockStatus="Working";
+			Employees.UpdateChanged(employee,employeeOld,doInvalidate:true);
+			Employees.RefreshCache();//So fill grid can see updated status
+			FillGridTeachersUnassigned();
+			Signalods.SetInvalid(InvalidType.Children);
+		}
+
 		private void GridChildRoom_CellDoubleClick(object sender,GridClickEventArgs e) {
 			Grid grid=(Grid)sender;
 			int idxSelected=grid.GetSelectedIndex();
@@ -585,6 +690,29 @@ namespace OpenDental {
 				return;//If for some reason the EmployeeNum was not found
 			}
 			grid.SetSelected(idx);
+			//Clock in employee
+			if(employee.ClockStatus=="Working") {
+				return;//Already clocked in
+			}
+			OpenDental.UI.ProgressWin progressWin=new OpenDental.UI.ProgressWin();
+			progressWin.ShowCancelButton=false;
+			progressWin.ActionMain=() => {
+				ClockEvents.ClockIn(employee.EmployeeNum,isAtHome:false);
+				Thread.Sleep(1000);//Wait one second so that if they quickly clock out again, the timestamps will be far enough apart.
+			};
+			progressWin.StartingMessage="Processing clock event...";
+			try {
+				progressWin.ShowDialog();
+			}
+			catch(Exception ex) {
+				MsgBox.Show(ex.Message);
+				return;
+			}
+			Employee employeeOld=employee.Copy();
+			employee.ClockStatus="Working";
+			Employees.UpdateChanged(employee,employeeOld,doInvalidate:true);
+			Employees.RefreshCache();
+			Signalods.SetInvalid(InvalidType.Children);
 		}
 
 		private void butPrint_Grid_Click(object sender,EventArgs e) {
@@ -721,6 +849,7 @@ namespace OpenDental {
 			butAddTeacher_Grid8.Visible=false;
 			butPrint_Grid8.Visible=false;
 			//Disable context menus
+			gridTeachersUnassigned.ContextMenuShows=false;
 			gridChildrenAbsent.ContextMenuShows=false;
 			gridChildRoom1.ContextMenuShows=false;
 			gridChildRoom2.ContextMenuShows=false;

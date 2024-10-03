@@ -101,6 +101,9 @@ namespace OpenDental {
 				if(ODBuild.IsThinfinity()) {
 					ThinfinityUtils.HandleFile(tempFile);
 				}
+				else if(ODCloudClient.IsAppStream) {
+					CloudClientL.ExportForCloud(tempFile,doPromptForName:false);
+				}
 				else {
 					Process.Start(tempFile);
 				}

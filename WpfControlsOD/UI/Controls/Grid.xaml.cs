@@ -1970,6 +1970,7 @@ using WpfControls.UI;
 					}
 				}
 			}*/
+			canvasMain.UpdateLayout();//For updated height measurements
 			if(_hScrollVisible) {
 				//We can't be resetting the scrollH without a reason.
 				//scrollH.Value=0;
