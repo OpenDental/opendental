@@ -154,7 +154,7 @@ namespace OpenDental {
 			//No RemotingRole check; No calls to DB.
 			List<string> listTableNames=new List<string>();
 			try {
-				MiscData.GetTablesDisabledIndexes();
+				listTableNames=MiscData.GetTablesDisabledIndexes();
 			}
 			catch(Exception e) {
 				e.DoNothing();//Do not warn the user since it could be anybody.

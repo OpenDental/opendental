@@ -16,7 +16,7 @@ namespace OpenDental {
 		public SheetTypeEnum SheetType;
 		///<summary>When set before opening the form, this list will be used to display to the user instead of querying for sheets of the same sheet type.</summary>
 		public List<SheetDef> ListSheetDefs;
-		///<summary>Only if OK.</summary>
+		///<summary>Lets you set selected indices prior to opening the form. On closing, it Dialog=OK, then this will be the list of sheetDefs that the user selected.</summary>
 		public List<SheetDef> ListSheetDefsSelected;
 		//private bool showingInternalSheetDefs;
 		//private bool showingInternalMed;

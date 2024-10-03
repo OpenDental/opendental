@@ -29,12 +29,13 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.comboImageCaptureType = new OpenDental.UI.ComboBox();
 			this.textFrequency = new OpenDental.ValidNum();
+			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(304, 165);
+			this.butOK.Location = new System.Drawing.Point(304, 192);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -75,9 +76,23 @@ namespace OpenDental{
 			this.textFrequency.Size = new System.Drawing.Size(71, 20);
 			this.textFrequency.TabIndex = 9;
 			// 
+			// butDelete
+			// 
+			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
+			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butDelete.Location = new System.Drawing.Point(12, 192);
+			this.butDelete.Name = "butDelete";
+			this.butDelete.Size = new System.Drawing.Size(81, 24);
+			this.butDelete.TabIndex = 81;
+			this.butDelete.TabStop = false;
+			this.butDelete.Text = "Delete";
+			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
+			// 
 			// FormEClipboardImageCaptureDefEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(391, 201);
+			this.ClientSize = new System.Drawing.Size(391, 228);
+			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.textFrequency);
 			this.Controls.Add(this.comboImageCaptureType);
 			this.Controls.Add(this.label2);
@@ -99,5 +114,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label2;
 		private UI.ComboBox comboImageCaptureType;
 		private ValidNum textFrequency;
+		private UI.Button butDelete;
 	}
 }

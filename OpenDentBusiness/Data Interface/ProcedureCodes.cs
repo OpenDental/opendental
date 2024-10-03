@@ -1059,7 +1059,7 @@ namespace OpenDentBusiness{
 					continue;
 				}
 				if(!Enum.TryParse(arrayProcCodeTreatArea[1],out TreatmentArea treatmentArea) 
-					|| listProcedureCodes[i].TreatArea==treatmentArea)
+					|| procedureCode.TreatArea==treatmentArea)
 				{
 					continue;
 				}

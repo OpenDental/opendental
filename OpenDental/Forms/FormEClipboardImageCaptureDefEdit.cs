@@ -11,6 +11,8 @@ namespace OpenDental {
 		private EClipboardImageCaptureDef _imageCaptureDef;
 		/// <summary> List of all imageCaptureDefs </summary>
 		private List<EClipboardImageCaptureDef> _listEClipboardImageCaptureDef;
+		/// <summary></summary>
+		public bool IsDeleted=false;
 
 		public FormEClipboardImageCaptureDefEdit(EClipboardImageCaptureDef eClipboardImageCaptureDef, List<EClipboardImageCaptureDef> listEClipboardImageCaptureDefs) {
 			InitializeComponent();
@@ -51,6 +53,11 @@ namespace OpenDental {
 			_imageCaptureDef.FrequencyDays=freq;
 			DialogResult=DialogResult.OK;
 			//No need to update yet. That happens way later on FormEServicesEClipboard.
+		}
+
+		private void butDelete_Click(object sender,EventArgs e) {
+			IsDeleted=true;
+			DialogResult=DialogResult.OK;
 		}
 
 	}

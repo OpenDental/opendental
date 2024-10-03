@@ -170,7 +170,7 @@ namespace OpenDentBusiness {
 			Meth.NoCheckMiddleTierRole();
 			long mobileDataByteNum=-1;
 			List<string> listTags=new List<string> { treatPlan.Heading,hasPracticeSig.ToString(),treatPlan.DateTP.Ticks.ToString() };
-			MobileDataBytes.InsertPDF(pdfDocument,treatPlan.PatNum,null,eActionType.TreatmentPlan,listTags);
+			mobileDataByteNum=MobileDataBytes.InsertPDF(pdfDocument,treatPlan.PatNum,null,eActionType.TreatmentPlan,listTags);
 			//update the treatment plan MobileAppDeviceNum so we now it is on an device
 			TreatPlans.UpdateMobileAppDeviceNum(treatPlan,mobileAppDeviceNum);
 			Signalods.SetInvalid(InvalidType.TPModule,KeyType.PatNum,treatPlan.PatNum);

@@ -37,6 +37,9 @@ namespace OpenDentBusiness {
 				if(!_isMiddleTierInitialized) {
 					//If this fails, the exception will throw and be serialized and sent to the client.
 					ODInitialize.Initialize();
+					//Correct the System.Runtime.CompilerServices.Unsafe assembly reference for the new MySqlConnector library.
+					string pathCompilerServicesUnsafe=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"bin","System.Runtime.CompilerServices.Unsafe.dll");
+					ODInitialize.FixPackageAssembly("System.Runtime.CompilerServices.Unsafe",pathCompilerServicesUnsafe);
 					//Because Security._curUserT is a thread static field, we need to make sure that any new threads that are spawned have that field set.
 					ODThread.AddInitializeHandler<Userod>(() => Security.CurUser.Copy(),user => Security.CurUser=user);
 					//Same thing for PasswordTyped.

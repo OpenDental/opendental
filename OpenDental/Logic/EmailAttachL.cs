@@ -16,37 +16,45 @@ namespace OpenDental {
 		///will be an empty list.</summary>
 		public static List<EmailAttach> PickAttachments(Patient patient) {
 			List<EmailAttach> listEmailAttaches=new List<EmailAttach>();
-			OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=true;
-			bool isLocalFileSelected=false;
 			List<string> listFileNames;
-			if(patient != null && PrefC.AtoZfolderUsed != DataStorageType.InDatabase) {
-				string patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
-				if(CloudStorage.IsCloudStorage) {
-					using FormFilePicker formFilePicker=new FormFilePicker(patFolder);
-					if(formFilePicker.ShowDialog() != DialogResult.OK) {
-						return listEmailAttaches;
-					}
-					isLocalFileSelected=formFilePicker.WasLocalFileSelected;
-					listFileNames=formFilePicker.ListSelectedFiles;
+			bool isLocalFileSelected=false;
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+				listFileNames=new List<string>(){ODCloudClient.ImportFileForCloud()};
+				if(listFileNames[0].IsNullOrEmpty()) {
+					return listEmailAttaches;
 				}
-				else {
-					openFileDialog.InitialDirectory=patFolder;
+			}
+			else {
+				OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=true;
+				if(patient != null && PrefC.AtoZfolderUsed != DataStorageType.InDatabase) {
+					string patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
+					if(CloudStorage.IsCloudStorage) {
+						using FormFilePicker formFilePicker=new FormFilePicker(patFolder);
+						if(formFilePicker.ShowDialog() != DialogResult.OK) {
+							return listEmailAttaches;
+						}
+						isLocalFileSelected=formFilePicker.WasLocalFileSelected;
+						listFileNames=formFilePicker.ListSelectedFiles;
+					}
+					else {
+						openFileDialog.InitialDirectory=patFolder;
+						if(openFileDialog.ShowDialog() != DialogResult.OK) {
+							return listEmailAttaches;
+						}
+						isLocalFileSelected=true;
+						listFileNames=openFileDialog.FileNames.ToList();
+					}
+				}
+				else {//No patient selected or images in database
+					//Use the OS default directory for this type of file viewer.
+					openFileDialog.InitialDirectory="";
 					if(openFileDialog.ShowDialog() != DialogResult.OK) {
 						return listEmailAttaches;
 					}
 					isLocalFileSelected=true;
 					listFileNames=openFileDialog.FileNames.ToList();
 				}
-			}
-			else {//No patient selected or images in database
-				//Use the OS default directory for this type of file viewer.
-				openFileDialog.InitialDirectory="";
-				if(openFileDialog.ShowDialog() != DialogResult.OK) {
-					return listEmailAttaches;
-				}
-				isLocalFileSelected=true;
-				listFileNames=openFileDialog.FileNames.ToList();
 			}
 			for(int i=0;i<listFileNames.Count;i++){
 				if(!CloudStorage.IsCloudStorage){

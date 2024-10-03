@@ -172,5 +172,18 @@ namespace OpenDentBusiness{
 				+") ORDER BY StoreName";
 			return Crud.PharmacyCrud.SelectMany(command);
 		}
+
+		///<summary>Gets all Pharmacies from database. Returns empty list if not found.</summary>
+		public static List<Pharmacy> GetPharmaciesForApi(int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Pharmacy>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM pharmacy ";
+			command+="ORDER BY PharmacyNum "//same fixed order each time
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.PharmacyCrud.SelectMany(command);
+		}
+
+
 	}
 }
