@@ -13,20 +13,21 @@ namespace CentralManager {
 		private static string GetArgsFromConnection(CentralConnection centralConnection,bool useDynamicMode) {
 			string args="";
 			if(centralConnection.DatabaseName!="") {
-				args+="ServerName=\""+centralConnection.ServerName+"\" "
-					+"DatabaseName=\""+centralConnection.DatabaseName+"\" "
-					+"MySqlUser=\""+centralConnection.MySqlUser+"\" ";
+				args+="ServerName="+Scrub(centralConnection.ServerName)+" ";
+				args+="DatabaseName="+Scrub(centralConnection.DatabaseName)+" ";
+				args+="MySqlUser="+Scrub(centralConnection.MySqlUser)+" ";
 				if(centralConnection.MySqlPassword!="") {
-					args+="MySqlPassword=\""+CentralConnections.Decrypt(centralConnection.MySqlPassword,FormCentralManager.EncryptionKey)+"\" ";
+					string mysqlPwd=CentralConnections.Decrypt(centralConnection.MySqlPassword,FormCentralManager.EncryptionKey);
+					args+="MySqlPassword="+Scrub(mysqlPwd)+" ";
 				}
 			}
 			else if(centralConnection.ServiceURI!="") {
-				args+="WebServiceUri=\""+centralConnection.ServiceURI+"\" ";
+				args+="WebServiceUri="+Scrub(centralConnection.ServiceURI)+" ";
 				if(centralConnection.WebServiceIsEcw) {
 					args+="WebServiceIsEcw=True ";
 				}
 			}
-			args+="DynamicMode=\""+(useDynamicMode.ToString())+"\" ";
+			args+="DynamicMode="+Scrub(useDynamicMode.ToString())+" ";
 			return args;
 		}
 
@@ -34,14 +35,14 @@ namespace CentralManager {
 		public static void LaunchOpenDental(CentralConnection centralConnection,bool useDynamicMode,bool isAutoLogin,bool isDomainLogin,long patNum,ref WindowInfo windowInfo) {
 			string args=GetArgsFromConnection(centralConnection,useDynamicMode);
 			if(isAutoLogin) {
-				args+="UserName=\""+Security.CurUser.UserName+"\" ";
-				args+="OdPassword=\""+Security.PasswordTyped+"\" ";
+				args+="UserName="+Scrub(Security.CurUser.UserName)+" ";
+				args+="OdPassword="+Scrub(Security.PasswordTyped)+" ";
 			}
 			if(isDomainLogin) {
-				args+="DomainUser=\""+Security.CurUser.DomainUser+"\" ";
+				args+="DomainUser="+Scrub(Security.CurUser.DomainUser)+" ";
 			}
 			if(patNum!=0){
-				args+="PatNum="+patNum.ToString();
+				args+="PatNum="+Scrub(patNum.ToString(),encapsulate:false)+" ";
 			}
 			try {
 				Process process=Process.Start("OpenDental.exe",args);
@@ -96,6 +97,28 @@ namespace CentralManager {
 				return false;
 			}
 			return true;
+		}
+
+		///<summary>Correctly formats command line arguments that end with backslashes and need to be surrounded with double quotes. Use encapsulate to surround argValue with double quotes.</summary>
+		//Per MSDN, "If a double quotation mark follows two or an even number of backslashes, each proceeding backslash pair is replaced with one backslash and the double quotation mark is removed.
+		//If a double quotation mark follows an odd number of backslashes, including just one, each preceding pair is replaced with one backslash and the remaining backslash is removed; however, in this case the double quotation mark is not removed."
+		//https://learn.microsoft.com/en-us/dotnet/api/system.environment.getcommandlineargs?view=netframework-4.8#System_Environment_GetCommandLineArgs
+		private static string Scrub(string argValue,bool encapsulate=true) {
+			if(!encapsulate) {
+				return argValue;//If the argValue does not need to be encapsulated, no scrubbing is required.
+			}
+			if(!argValue.EndsWith("\\")) {
+				return "\""+argValue+"\"";
+			}
+			string scrubbedStr=argValue;
+			//Get the number of trailing backslashes and add that many more to the end of the string.
+			int backslashCount=0;
+			for(int i=argValue.Length-1;i>=0 && argValue[i]=='\\';i--) {
+				backslashCount++;
+			}
+			scrubbedStr=argValue+new string('\\',backslashCount);
+			scrubbedStr="\""+scrubbedStr+"\"";
+			return scrubbedStr;
 		}
 	}
 }
