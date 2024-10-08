@@ -6,13 +6,23 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="467" Height="175" 
+             Width="460" Height="265" 
              Text="Module Form Def Edit" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
-		<ui:TextBox x:Name="textDescription" Height="20" RenderTransformOrigin="0.371,0.78" Width="285" Margin="122,26,0,0"/>
-		<ui:Label x:Name="labelModFormTitle" Height="18" Margin="21,10,0,0" Text="NOT USED" Width="88" VAlign="Center" HAlign="Right" />
-		<ui:ListBox x:Name="listBoxType" Height="51" Margin="122,52,0,0" Width="224"/>
+		<ui:TextBox x:Name="textDescription" Height="20" RenderTransformOrigin="0.371,0.78" Width="223" Margin="122,26,0,0"/>
+		<ui:ListBox x:Name="listBoxType" Height="51" Margin="122,52,0,0" Width="188"/>
 		<ui:Label x:Name="labelModFormTitle_Copy" Height="18" Margin="34,51,0,0" Text="Type" Width="88" VAlign="Center" HAlign="Right" />
+		<ui:Label x:Name="labelModFormTitle" Height="18" Margin="33,28,0,0" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HAlign="Right" />
+		<ui:TextVInt x:Name="textVIntMaxWidth" Height="20" Width="54" Margin="122,127,0,0" MinVal="50" MaxVal="1000"/>
+		<ui:CheckBox x:Name="checkShowLabelsBold" Height="20" Margin="32,105,0,0" Width="103" Text="Labels Bold" CheckAlign="MiddleRight"/>
+		<ui:Label Height="18" Margin="32,129,0,0" Text="Max Width" Width="90" VAlign="Center" HorizontalContentAlignment="Left" HAlign="Right" />
+		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="122,151,0,0" />
+		<ui:Label Width="98" Height="18" Margin="23,151,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textSpaceToRight" Width="54" Height="20" Margin="122,175,0,0" />
+		<ui:Label Width="98" Height="18" Margin="23,176,0,0" Text="Space to Right" HAlign="Right" VAlign="Center" />
+		<ui:Label x:Name="labelSpaceBelowDefault" Height="18" Margin="179,153,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
+		<ui:Label x:Name="labelSpaceToRightDefault" Height="18" Margin="178,176,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
+		<ui:Label x:Name="labelSpaceBelowDefault_Copy1" Height="18" Margin="179,129,0,0" Text="96 per inch" VAlign="Center" Width="265" />
 	</Grid>
 </local:FrmODBase>

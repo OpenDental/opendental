@@ -146,18 +146,18 @@ namespace OpenDentBusiness{
 		//	return listEFormFieldDefs;
 		//}
 
-		///<summary>True for CheckBox, DateField, Label, TextField</summary>
+		///<summary>True for CheckBox, DateField, Label, RadioButtons, TextField</summary>
 		public static bool IsHorizStackableType(EnumEFormFieldType enumEFormFieldType){
 			if(enumEFormFieldType.In(
 				EnumEFormFieldType.CheckBox, 
 				EnumEFormFieldType.DateField, 
 				EnumEFormFieldType.Label, 
-				EnumEFormFieldType.TextField))
+				EnumEFormFieldType.TextField,
+				EnumEFormFieldType.RadioButtons))
 			{
 				return true;//those types are allowed to stack
 			}
 			if(enumEFormFieldType.In(
-				EnumEFormFieldType.RadioButtons, 
 				EnumEFormFieldType.SigBox, 
 				EnumEFormFieldType.PageBreak, 
 				EnumEFormFieldType.MedicationList))

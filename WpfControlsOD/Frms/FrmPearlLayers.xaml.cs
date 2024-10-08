@@ -29,6 +29,14 @@ namespace OpenDental {
 			Load+=FrmPearlLayers_Load;
 		}
 
+		///<summary>Refreshes UI to reflect the state of ListEnumCategoryODsShown and ShowPearlLayers. Used to synchronize with docked window checkboxes.</summary>
+		public void RefreshUI() {
+			radioShow.Checked=ShowPearlLayers;
+			radioHide.Checked=!ShowPearlLayers;
+			DisableGroupsIfHidingPearl();
+			SetAllCheckBoxCheckeds();
+		}
+
 		#region Event Handlers
 		private void FrmPearlLayers_Load(object sender, EventArgs e) {
 			Lang.F(this);
@@ -39,17 +47,19 @@ namespace OpenDental {
 			SetAllToothPartLegendColors();
 			radioShow.Checked=ShowPearlLayers;
 			radioHide.Checked=!ShowPearlLayers;
-			SetShowPearlLayers(ShowPearlLayers);
+			DisableGroupsIfHidingPearl();
 			_formFrame.Location=Location;
 		}
 
 		private void radioShow_Click(object sender,EventArgs e) {
-			SetShowPearlLayers(true);
+			ShowPearlLayers=true;
+			DisableGroupsIfHidingPearl();
 			EventRefreshControlImages?.Invoke(sender,e);
 		}
 
 		private void radioHide_Click(object sender,EventArgs e) {
-			SetShowPearlLayers(false);
+			ShowPearlLayers=false;
+			DisableGroupsIfHidingPearl();
 			EventRefreshControlImages?.Invoke(sender,e);
 		}
 		#endregion Event Handlers
@@ -163,8 +173,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Sets ShowPearlLayers and IsEnabled for each of the checkbox groups.</summary>
-		private void SetShowPearlLayers(bool showLayers) {
-			ShowPearlLayers=showLayers;
+		private void DisableGroupsIfHidingPearl() {
 			//Disable layer filter checkboxes when hiding all annotations.
 			groupNonPathology.IsEnabled=ShowPearlLayers;
 			groupPathology.IsEnabled=ShowPearlLayers;

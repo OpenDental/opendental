@@ -32,6 +32,13 @@ namespace OpenDentBusiness {
 		public EnumEFormStatus Status;
 		///<summary>Revision ID. Used to determine in conjunction with PrefillStatus for eClipboardSheetDef to determine whether to show a patient a new form or have them update their last filled out form. Must match up with EFormDef RevID to show a previously filled out form.</summary>
 		public int RevID;
+		///<summary>If true, then this form will show labels at 95% and slightly bold. This looks good, but some users might not want it for certain forms, so it's an option. This applies to text, date, radiobuttons, and sigBox. It does not apply to types label, checkbox, or medicationList.</summary>
+		public bool ShowLabelsBold;
+		///<summary>The amount of space below each field. Overrides the global default and can be overridden by field.SpaceBelow. -1 indicates to use default. That way, 0 means 0 space.</summary>
+		public int SpaceBelowEachField;
+		///<summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
+		public int SpaceToRightEachField;
+
 
 		///<Summary>Used sparingly prior to db insertion, when we have no other choice.</Summary>
 		[CrudColumn(IsNotDbColumn=true)]

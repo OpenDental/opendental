@@ -28,7 +28,7 @@ namespace OpenDental {
 		///<summary>When user clicks on text, we calculate the idx within the string where they clicked.  It's class level so that we can draw it during debugging.</summary>
 		private int _idxSelectedChar=-1;
 		private bool _isMouseDown;
-		///<summary>True if the user is auto-saving a patient form.</summary>
+		///<summary>True if the user is auto-saving a sheet as a document in the Imaging module. This is set in Def edit with a "U" on that Image Category and SheetDef.AutoCheckSave...</summary>
 		private bool _isAutoSave;
 		///<summary>A list of points for a pen drawing currently being drawn.  Once the mouse is raised, this list gets cleared.</summary>
 		private List<Point> _listPoints;
@@ -48,6 +48,8 @@ namespace OpenDental {
 		private int _tabCurrent=0;
 		///<summary>The current sheetField the user is hovering over. Used to add a hovering highlight. This can only be a combobox or checkbox.</summary>
 		private SheetField _sheetFieldHover;
+		///<summary>Used for _IsAutoSave to check if the sheet changed. If so, then also save the document when checkSaveToImages is checked.</summary>
+		public bool _hasSheetChanged=false;
 		#endregion Fields - private
 
 		#region Fields - public
@@ -209,8 +211,9 @@ namespace OpenDental {
 			if(HasEmailBeenSent && SheetCur.SheetType==SheetTypeEnum.Statement && SaveStatementToDocDelegate!=null) {
 				SaveStatementToDocDelegate(StatementCur,SheetCur,DataSet_,pdfFile);
 			}
-			if(_isAutoSave && checkSaveToImages.Checked) {
+			if(_isAutoSave && checkSaveToImages.Checked && _hasSheetChanged) {
 				SaveAsDocument('U',"PatientForm");
+				_hasSheetChanged=false;
 			}
 		}
 
@@ -273,7 +276,7 @@ namespace OpenDental {
 			if(SheetCur.SheetType==SheetTypeEnum.LabSlip) {
 				SaveAsDocument('B',"LabSlipArchive");
 			}
-			if(_isAutoSave && checkSaveToImages.Checked) {
+			if(_isAutoSave && checkSaveToImages.Checked && _hasSheetChanged) {
 				SaveAsDocument('U',"PatientForm");
 			}
 			DialogResult=DialogResult.OK;
@@ -319,7 +322,7 @@ namespace OpenDental {
 			if(SheetCur.SheetType==SheetTypeEnum.LabSlip) {
 				SaveAsDocument('B',"LabSlipArchive");
 			}
-			if(_isAutoSave && checkSaveToImages.Checked) {
+			if(_isAutoSave && checkSaveToImages.Checked && _hasSheetChanged) {
 				SaveAsDocument('U',"PatientForm");
 			}
 			if(DoExportCSV) {
@@ -444,7 +447,7 @@ namespace OpenDental {
 			if(SheetCur.SheetType==SheetTypeEnum.LabSlip) {
 				SaveAsDocument('B',"LabSlipArchive");
 			}
-			if(_isAutoSave && checkSaveToImages.Checked) {
+			if(_isAutoSave && checkSaveToImages.Checked && _hasSheetChanged) {
 				SaveAsDocument('U',"PatientForm");
 			}
 			DialogResult=DialogResult.OK;
@@ -584,6 +587,8 @@ namespace OpenDental {
 			_isAutoSave=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true).Any(x => x.ItemValue.Contains("U"));
 			if(_isAutoSave && !IsInTerminal) {//only visible if the Autosave Form usage has been set and is not in kiosk mode
 				//This will get set depending on the SheetDef for the current Sheet
+				//Jordan the schema is wrong here. We should never refer back to the template SheetDef
+				//but we're going to leave it because too hard to fix right now.
 				SheetDef sheetDefForSheetCur=SheetDefs.GetFirstOrDefault(x=>x.SheetDefNum==SheetCur.SheetDefNum);
 				checkSaveToImages.Checked=sheetDefForSheetCur?.AutoCheckSaveImage??false;
 				checkSaveToImages.Visible=true;
@@ -2049,7 +2054,7 @@ namespace OpenDental {
 				//Prog grids and tooth charts are complex to generate, and we have no mechanism to store them with a sheet.
 				//So when those are present, we always just generate a pdf, and the user will have no way to get back to the sheet.
 				//Sync fields before sigBoxes
-				SheetFields.Sync(SheetCur.SheetFields.FindAll(x => !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)),SheetCur.SheetNum,isSigBoxOnly:false);
+				_hasSheetChanged=SheetFields.Sync(SheetCur.SheetFields.FindAll(x => !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)),SheetCur.SheetNum,isSigBoxOnly:false);
 			}
 			List<SheetField> listSheetFieldsSigBoxes=new List<SheetField>();
 			//SigBoxes must come after ALL other types in order for the keyData to be in the right order.
@@ -2120,7 +2125,7 @@ namespace OpenDental {
 				SheetCur.DocNum=doc.DocNum;
 				Sheets.Update(SheetCur);
 				//now sync SigBoxes
-				SheetFields.Sync(listSheetFieldsSigBoxes,SheetCur.SheetNum,isSigBoxOnly:true);
+				_hasSheetChanged|=SheetFields.Sync(listSheetFieldsSigBoxes,SheetCur.SheetNum,isSigBoxOnly:true);
 				//SheetFields.GetFieldsAndParameters(SheetCur);
 				//Each (SheetField)control (had in old versions) a tag pointing at a SheetCur.SheetField, and GetFieldsAndParameters() causes us to overwrite SheetCur.SheetFields.
 				//This leaves the tag pointing at nothing, so we need to call LayoutFields() to re-link the controls and data.
@@ -2451,6 +2456,9 @@ namespace OpenDental {
 				listDefsImageCat.Clear();
 				listDefsImageCat.Add(Defs.GetDef(DefCat.ImageCats,sheetDef.AutoCheckSaveImageDocCategory));
 			}
+			//Jordan 2024-10-07-We have a loop below which can save to multiple image categories.
+			//This is wrong. It clearly says in FormDefEditImages that U should be "only one".
+			//But maybe someone is already using multiple for some reason, so we won't fix it.
 			for(int i=0;i<listDefsImageCat.Count;i++) {//usually only one, but do allow them to be saved once per image category.
 				OpenDentBusiness.Document documentSave=new Document();
 				documentSave.DocNum=Documents.Insert(documentSave);
@@ -2530,7 +2538,7 @@ namespace OpenDental {
 			if(!VerifyRequiredFields() || !OkToSaveBecauseNoOtherEdits() || !TryToSaveData()){
 				return;
 			}
-			if(_isAutoSave && checkSaveToImages.Checked) {
+			if(_isAutoSave && checkSaveToImages.Checked && _hasSheetChanged) {
 				SaveAsDocument('U',"PatientForm");
 			}
 			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString());

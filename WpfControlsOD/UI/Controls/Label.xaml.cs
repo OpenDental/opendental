@@ -102,6 +102,14 @@ How to use the Label control:
 			}
 		}
 
+		[Browsable(false)]
+		public InlineCollection Inlines {
+			get{
+				return textBlock.Inlines;
+			}
+			//no setter
+		}
+
 		///<summary></summary>
 		[Category("OD")]
 		[Description("")]

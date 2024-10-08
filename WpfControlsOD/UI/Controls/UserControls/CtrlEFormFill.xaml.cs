@@ -196,6 +196,12 @@ namespace OpenDental {
 		public int PagesPrinted;
 		///<summary>Set this whenever comboBox changes. It's the current language being used.  Will be empty string if languages are not set up in pref LanguagesUsedByPatients or if the default language is being used in the parent FrmEFormDefs.</summary>
 		public string LanguageShowing="";
+		///<summary>Passed in from parent. Based on EFormDef or EForm ShowLabelsBold.</summary>
+		public bool ShowLabelsBold;
+		///<summary>Passed in from parent. Based on EFormDef or EForm SpaceBelowEachField.</summary>
+		public double SpaceBelowEachField;
+		///<summary>Passed in from parent. Based on EFormDef or EForm SpaceToRightEachField.</summary>
+		public double SpaceToRightEachField;
 		#endregion Fields - public
 
 		#region Fields - private
@@ -226,10 +232,6 @@ namespace OpenDental {
 		private List<int> _listSelectedIndicesWhenSelectionStart=new List<int>();
 		private double _marginTopOfPage=10;
 		private double _marginLeftOfPage=5;
-		///<summary>This also creates the margin for the right of the page. Right now, that's no problem since they are all the same. I think any page margin in the future would be in addition to this, not instead of it.</summary>
-		private double _marginRightOfField=10;
-		///<summary>This is stored in a db pref and set on load. This also creates the margin at the bottom of the page. In the future, we could do something different at the bottom of the page, either replacing or supplementing this.</summary>
-		private double _marginBelowFields;
 		///<summary>This is the margin to the right of each radiobutton within a group.</summary>
 		private double _marginRightOfRadioButton=10;
 		private int _mouseDownIndex;
@@ -251,6 +253,8 @@ namespace OpenDental {
 		private int _printedStackPanelChildren;
 		///<summary>This is class level because when multiple random numbers are quickly generated, they are based on the system clock and will be identical unless Random is reused.</summary>
 		private Random _random=new Random();
+		///<summary>If the form.ShowLabelsBold is true, then labels on fields are bold and slightly smaller. This variable specifies how much smaller. 95%.</summary>
+		private double _scaleFontLabel=0.95;
 		///<summary>This is the sum of the thickness of the left and right of the border box. It's 1+1=2</summary>
 		private int _thicknessLRBorders=2;
 		#endregion Fields - private
@@ -398,7 +402,6 @@ namespace OpenDental {
 					}
 				}
 				if(ListEFormFields[i].FieldType==EnumEFormFieldType.TextField){
-
 					Border borderBox=ListEFormFields[i].TagOD as Border;
 					StackPanel stackPanel=borderBox.Child as StackPanel;
 					WpfControls.UI.TextBox textBox=stackPanel.Children[1] as WpfControls.UI.TextBox;
@@ -555,7 +558,11 @@ namespace OpenDental {
 				{
 					Border borderTopOfPage=CreateBorderForDrop();
 					borderTopOfPage.Height=_marginTopOfPage;
-					borderTopOfPage.Margin=new Thickness(left:_marginLeftOfPage,0,right:_marginRightOfField,0);
+					double spaceRight=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+					if(SpaceToRightEachField!=-1){
+						spaceRight=SpaceToRightEachField;
+					}
+					borderTopOfPage.Margin=new Thickness(left:_marginLeftOfPage,0,right:spaceRight,0);
 					DragLocation dragLocationTopOfPage=new DragLocation();
 					dragLocationTopOfPage.Idx=i;
 					dragLocationTopOfPage.IsHorizStacking=false;
@@ -604,7 +611,14 @@ namespace OpenDental {
 				columnDefinition.Width=new GridLength(1,GridUnitType.Auto);//main content
 				gridForField.ColumnDefinitions.Add(columnDefinition);
 				columnDefinition=new ColumnDefinition();
-				columnDefinition.Width=new GridLength(_marginRightOfField);
+				double spaceRightOfField=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+				if(SpaceToRightEachField!=-1){
+					spaceRightOfField=SpaceToRightEachField;
+				}
+				if(ListEFormFields[i].SpaceToRight!=-1){
+					spaceRightOfField=ListEFormFields[i].SpaceToRight;
+				}
+				columnDefinition.Width=new GridLength(spaceRightOfField);
 				gridForField.ColumnDefinitions.Add(columnDefinition);
 				Border borderOverlayFieldHover=new Border();
 				gridForField.Children.Add(borderOverlayFieldHover);
@@ -614,7 +628,6 @@ namespace OpenDental {
 				}
 				//end of GridForField-----------------------------------------------------------------------------------------------------------------------
 				Border borderBox=new Border();
-				
 				if(ListEFormFields[i].Border==EnumEFormBorder.None){
 					borderBox.BorderThickness=new Thickness(left:1,0,0,0);//only left border thickness remains
 					borderBox.BorderBrush=Brushes.White;
@@ -668,7 +681,7 @@ namespace OpenDental {
 				//Always add a margin to the right of each field
 				//Yes, this even works for the last row because we want a border to right of the last row.
 				Border borderRightOfField=CreateBorderForDrop();
-				borderRightOfField.Width=_marginRightOfField;
+				borderRightOfField.Width=spaceRightOfField;
 				borderRightOfField.HorizontalAlignment=HorizontalAlignment.Right;
 				DragLocation dragLocationRightOfField=new DragLocation();
 				dragLocationRightOfField.Idx=i+1;
@@ -748,16 +761,20 @@ namespace OpenDental {
 						//it's really above its corresponding wrap panel.
 						//But no point in refactoring to make that more obvious.
 						Border borderTopOfWrap=CreateBorderForDrop();
-						double spaceBelow;
-						if(ListEFormFields[i].SpaceBelow==-1){
-							spaceBelow=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+						double spaceBelow=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+						if(SpaceBelowEachField!=-1){
+							spaceBelow=SpaceBelowEachField;
 						}
-						else{
+						if(ListEFormFields[i].SpaceBelow!=-1){
 							spaceBelow=ListEFormFields[i].SpaceBelow;
 						}
 						borderTopOfWrap.Height=spaceBelow;
 						borderTopOfWrap.VerticalAlignment=VerticalAlignment.Bottom;
-						borderTopOfWrap.Margin=new Thickness(left:_marginLeftOfPage,0,right:_marginRightOfField,0);
+						double spaceRight=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+						if(SpaceToRightEachField!=-1){
+							spaceRight=SpaceToRightEachField;
+						}
+						borderTopOfWrap.Margin=new Thickness(left:_marginLeftOfPage,0,right:spaceRight,0);
 						DragLocation dragLocationTopOfWrap=new DragLocation();
 						dragLocationTopOfWrap.Idx=i+1;
 						//This is the primary for the field below only if that field is not the first of a horiz stack group
@@ -779,6 +796,8 @@ namespace OpenDental {
 					_pageCount++;
 				}
 			}
+			this.UpdateLayout();
+			AdjustAllLabelHeights();
 			scrollViewer.ScrollToVerticalOffset(verticalOffset);
 			SetVisibilities(_pageShowing,forceRefresh:true);
 			if(idxSelected!=-1){
@@ -1529,9 +1548,9 @@ namespace OpenDental {
 		}*/
 
 		private void CtrlEFormFill_Loaded(object sender,RoutedEventArgs e) {
-			if(!DesignerProperties.GetIsInDesignMode(this)){
-				_marginBelowFields=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
-			}
+			//if(!DesignerProperties.GetIsInDesignMode(this)){
+			//	_marginBelowFields=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+			//}
 			if(!IsSetupMode){
 				return;
 			}
@@ -1662,12 +1681,14 @@ namespace OpenDental {
 		#region Methods - private
 		private void AddCheckBox(Border borderBox,EFormField eFormField){
 			CheckBox checkBox=new CheckBox();
+			checkBox.VerticalAlignment=VerticalAlignment.Bottom;
 			borderBox.Child=checkBox;
-			checkBox.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth);
+			checkBox.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth,SpaceToRightEachField);
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
 			//WPF label is always to the right of the checkbox. We would use our UI.Checkbox if we want to give users a choice.
 			checkBox.VerticalContentAlignment=VerticalAlignment.Center;
+			checkBox.Margin=new Thickness(0,top:2,0,0);
 			checkBox.FontSize=FontSize*eFormField.FontScale/100;
 			checkBox.IsChecked=eFormField.ValueString=="X";
 			Label label=new Label();
@@ -1725,38 +1746,27 @@ namespace OpenDental {
 		private void AddDateField(Border borderBox,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
 			borderBox.Child=stackPanel2;
-			stackPanel2.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth);
-			StackPanel stackPanelLabel=new StackPanel();
-			stackPanelLabel.Orientation=Orientation.Horizontal;
-			stackPanelLabel.Margin=new Thickness(0,0,0,bottom:4);
-			Label label = new Label();
-			label.FontSize=FontSize*eFormField.FontScale/100;
-			label.Padding=new Thickness(0);//default is 5
-			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
-			stackPanelLabel.Children.Add(label);
+			stackPanel2.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth,SpaceToRightEachField);
+			WpfControls.UI.Label label = new WpfControls.UI.Label();
+			label.Inlines.Clear();
+			label.HorizontalAlignment=HorizontalAlignment.Stretch;
+			label.VerticalAlignment=VerticalAlignment.Stretch;
+			label.VAlign=VerticalAlignment.Bottom;
+			label.Margin=new Thickness(0,0,0,bottom:1);
+			Run runMainPlain=new Run(LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel));
+			if(ShowLabelsBold){
+				label.FontSize=FontSize*eFormField.FontScale*_scaleFontLabel/100;
+				runMainPlain.FontWeight=FontWeights.Medium;
+			}
+			else{
+				label.FontSize=FontSize*eFormField.FontScale/100;
+			}
+			label.Inlines.Add(runMainPlain);
 			if(eFormField.IsRequired) {
-				Label labelRequired=new Label();
-				labelRequired.FontSize=FontSize*eFormField.FontScale/100;
-				labelRequired.Padding=new Thickness(0);
-				labelRequired.Content=" *";
-				labelRequired.Foreground=Brushes.Red;
-				labelRequired.FontWeight=FontWeights.Bold;
-				stackPanelLabel.Children.Add(labelRequired);
-			}
-			bool isConditionalParent=false;
-			if(IsSetupMode
-				&& eFormField.ValueLabel!=""
-				&& ListEFormFields.Exists(x=>x.ConditionalParent==eFormField.ValueLabel))
-			{
-				isConditionalParent=true;
-			}
-			if(isConditionalParent) {
-				Label labelCondParent=new Label();
-				stackPanelLabel.Children.Add(labelCondParent);
-				labelCondParent.FontSize=FontSize*eFormField.FontScale/100;
-				labelCondParent.Padding=new Thickness(5,0,0,0);//default is 5
-				labelCondParent.Content="(CND)";
-				labelCondParent.Foreground=Brushes.Red;
+				Run runStar=new Run(" *");
+				runStar.FontWeight=FontWeights.Bold;
+				runStar.Foreground=Brushes.Red;
+				label.Inlines.Add(runStar);
 			}
 			bool isConditionalChild=false;
 			if(IsSetupMode
@@ -1766,14 +1776,12 @@ namespace OpenDental {
 				isConditionalChild=true;
 			}
 			if(isConditionalChild){
-				Label labelCondChild=new Label();
-				stackPanelLabel.Children.Add(labelCondChild);
-				labelCondChild.FontSize=FontSize*eFormField.FontScale/100;
-				labelCondChild.Padding=new Thickness(5,0,0,0);//default is 5
-				labelCondChild.Content="(cnd)";
-				labelCondChild.Foreground=Brushes.Red;
+				//yes, we let them include both parent and child in case a field is both.
+				Run runCondit=new Run(" (cnd)");
+				runCondit.Foreground=Brushes.Red;
+				label.Inlines.Add(runCondit);
 			}
-			stackPanel2.Children.Add(stackPanelLabel);
+			stackPanel2.Children.Add(label);
 			WpfControls.UI.TextVDate textVDate=new WpfControls.UI.TextVDate();
 			textVDate.HorizontalAlignment=HorizontalAlignment.Stretch;
 			textVDate.Height=20;
@@ -1803,7 +1811,7 @@ namespace OpenDental {
 			//The other reason it's a textbox is because that's how wpf shows flow documents.
 			textRich.richTextBox.BorderThickness=new Thickness(0);
 			borderBox.Child=textRich;
-			textRich.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth);
+			textRich.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth,SpaceToRightEachField);
 			//textBlock.FontSize=FontSize*eFormField.FontScale/100;//no, this is never set for labels
 			//textBlock.Padding=new Thickness(0);//default is 5
 			string xmlString=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
@@ -1846,7 +1854,11 @@ namespace OpenDental {
 			//For Delete, the row objects get deleted, then following rows get moved up, and finally, grid loses row at end.
 			StackPanel stackPanelVert=new StackPanel();
 			borderBox.Child=stackPanelVert;
-			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			double spaceRight=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+			if(SpaceToRightEachField!=-1){
+				spaceRight=SpaceToRightEachField;
+			}
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-spaceRight;
 			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
@@ -2062,7 +2074,11 @@ namespace OpenDental {
 			gridForPageBreak.Children.Add(border);//0
 			Label label = new Label();
 			gridForPageBreak.Children.Add(label);//1
-			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			double spaceRight=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+			if(SpaceToRightEachField!=-1){
+				spaceRight=SpaceToRightEachField;
+			}
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-spaceRight;
 			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
@@ -2070,7 +2086,7 @@ namespace OpenDental {
 			label.Width=widthAvail;
 			//this control is unique and will not have borders to left, right, or bottom for drag/drop.
 			//so we set some margins here
-			gridForPageBreak.Margin=new Thickness(0,0,right:_marginRightOfField,bottom:_marginBelowFields);
+			gridForPageBreak.Margin=new Thickness(0,0,right:spaceRight,bottom:10);
 			label.Padding=new Thickness(4,0,0,3);
 			label.Content="(page break)";
 			label.VerticalAlignment=VerticalAlignment.Center;
@@ -2107,19 +2123,17 @@ namespace OpenDental {
 				stackPanelRadio.Orientation=Orientation.Horizontal;
 			}
 			borderBox.Child=stackPanelRadio;
-			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
-			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
-			if(widthAvail<0) {
-				widthAvail=0;
-			}
-			stackPanelRadio.Width=widthAvail;
-			//RadioButton groups are always full width.
-			//So this is not a good example of the normal math to use for width.
-			//See further down for how setting width affects label size.
+			stackPanelRadio.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth,SpaceToRightEachField);
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
 			Label label = new Label();
-			label.FontSize=FontSize*eFormField.FontScale/100;
+			if(ShowLabelsBold){
+				label.FontSize=FontSize*eFormField.FontScale*_scaleFontLabel/100;
+				label.FontWeight=FontWeights.Medium;//this is a very slightly bold: 500 vs 400 for Normal
+			}
+			else{
+				label.FontSize=FontSize*eFormField.FontScale/100;
+			}
 			label.Padding=new Thickness(0,0,0,bottom:0);//default is 5
 			strTranslations=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,strLabels);//translate again in case language translations needed to sync.
 			List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
@@ -2128,7 +2142,7 @@ namespace OpenDental {
 				stackPanelLabel.Margin=new Thickness(0,0,right:10,0);
 			}
 			else if(eFormField.LabelAlign==EnumEFormLabelAlign.TopLeft){
-				stackPanelLabel.Margin=new Thickness(0,0,0,bottom:5);
+				stackPanelLabel.Margin=new Thickness(0,0,0,bottom:2);
 			}
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
@@ -2194,8 +2208,8 @@ namespace OpenDental {
 					font.IsBold=false;
 					wLabel+=g.MeasureString("(cnd)",font,includePadding:false).Width+5;
 				}
-				if(eFormField.Width>0){
-					wLabel=eFormField.Width;
+				if(eFormField.WidthLabel>0){
+					wLabel=eFormField.WidthLabel;
 					
 				}
 				stackPanelLabel.Width=wLabel;//here just for debugging. Move up.
@@ -2253,7 +2267,11 @@ namespace OpenDental {
 		private void AddSigBox(Border borderBox,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
 			borderBox.Child=stackPanel2;
-			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-_marginRightOfField;
+			double spaceRight=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+			if(SpaceToRightEachField!=-1){
+				spaceRight=SpaceToRightEachField;
+			}
+			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-spaceRight;
 			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
 			if(widthAvail<0) {
 				widthAvail=0;
@@ -2270,8 +2288,14 @@ namespace OpenDental {
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
 			Label label = new Label();
-			label.FontSize=FontSize*eFormField.FontScale/100;
-			label.Padding=new Thickness(0,0,0,bottom:5);//default is 5
+			if(ShowLabelsBold){
+				label.FontSize=FontSize*eFormField.FontScale*_scaleFontLabel/100;
+				label.FontWeight=FontWeights.Medium;//this is a very slightly bold: 500 vs 400 for Normal
+			}
+			else{
+				label.FontSize=FontSize*eFormField.FontScale/100;
+			}
+			label.Padding=new Thickness(0,0,0,bottom:2);//default is 5
 			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
@@ -2329,23 +2353,36 @@ namespace OpenDental {
 		private void AddTextBox(Border borderBox,EFormField eFormField){
 			StackPanel stackPanel2=new StackPanel();
 			borderBox.Child=stackPanel2;
-			stackPanel2.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth);
-			StackPanel stackPanelLabel=new StackPanel();
-			stackPanelLabel.Orientation=Orientation.Horizontal;
-			stackPanelLabel.Margin=new Thickness(0,0,0,bottom:4);
-			Label label = new Label();
-			label.FontSize=FontSize*eFormField.FontScale/100;
-			label.Padding=new Thickness(0);//default is 5
-			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
-			stackPanelLabel.Children.Add(label);
+			stackPanel2.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth,SpaceToRightEachField);
+			//New feature: we want some labels to be able to wrap when they hit our specified width.
+			//One complication is that the height would then be different than adjacent textboxes in the stack, so the boxes wouldn't line up.
+			//We will solve this one level higher by making all labels the same height to match tallest.
+			//The other problem is that we put a red star on the end of some labels.
+			//This was previously handled by a h stackpanel.
+			//The cleanest look will be to make the star red within some rich text.
+			//We enhanced our OD label to allow that.
+			//Other languages like flutter will have their own solutions.
+			//The red star does not have to look identical in other languages, as long as it's present.
+			WpfControls.UI.Label label = new WpfControls.UI.Label();
+			label.Inlines.Clear();
+			label.HorizontalAlignment=HorizontalAlignment.Stretch;//these two lines are because we are using OD label
+			label.VerticalAlignment=VerticalAlignment.Stretch;
+			label.VAlign=VerticalAlignment.Bottom;//so that wrapping labels are aligned properly
+			label.Margin=new Thickness(0,0,0,bottom:1);
+			Run runMainPlain=new Run(LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel));
+			if(ShowLabelsBold){
+				label.FontSize=FontSize*eFormField.FontScale*_scaleFontLabel/100;
+				runMainPlain.FontWeight=FontWeights.Medium;//this is a very slightly bold: 500 vs 400 for Normal
+			}
+			else{
+				label.FontSize=FontSize*eFormField.FontScale/100;
+			}
+			label.Inlines.Add(runMainPlain);
 			if(eFormField.IsRequired) {
-				Label labelRequired=new Label();
-				labelRequired.FontSize=FontSize*eFormField.FontScale/100;
-				labelRequired.Padding=new Thickness(0);
-				labelRequired.Content=" *";
-				labelRequired.FontWeight=FontWeights.Bold;
-				labelRequired.Foreground=Brushes.Red;
-				stackPanelLabel.Children.Add(labelRequired);
+				Run runStar=new Run(" *");
+				runStar.FontWeight=FontWeights.Bold;
+				runStar.Foreground=Brushes.Red;
+				label.Inlines.Add(runStar);
 			}
 			bool isConditionalChild=false;
 			if(IsSetupMode
@@ -2356,14 +2393,11 @@ namespace OpenDental {
 			}
 			if(isConditionalChild){
 				//yes, we let them include both parent and child in case a field is both.
-				Label labelCondChild = new Label();
-				stackPanelLabel.Children.Add(labelCondChild);
-				labelCondChild.FontSize=FontSize*eFormField.FontScale/100;
-				labelCondChild.Padding=new Thickness(5,0,0,0);//default is 5
-				labelCondChild.Content="(cnd)";
-				labelCondChild.Foreground=Brushes.Red;
+				Run runCondit=new Run(" (cnd)");
+				runCondit.Foreground=Brushes.Red;
+				label.Inlines.Add(runCondit);
 			}
-			stackPanel2.Children.Add(stackPanelLabel);
+			stackPanel2.Children.Add(label);
 			WpfControls.UI.TextBox textBox=new WpfControls.UI.TextBox();
 			textBox.HorizontalAlignment=HorizontalAlignment.Stretch;
 			if(eFormField.IsTextWrap){
@@ -2381,6 +2415,40 @@ namespace OpenDental {
 			textBox.FontSize=FontSize*eFormField.FontScale/100;
 			textBox.TextChanged+=(sender,e)=>ClearSignatures();
 			stackPanel2.Children.Add(textBox);
+		}
+
+		///<summary>Because textbox or date labels might wrap, we make all the other labels in the same h stack group the same height as the tallest label.</summary>
+		private void AdjustAllLabelHeights(){
+			for(int i=0;i<stackPanel.Children.Count;i++){
+				Grid gridWrap=stackPanel.Children[i] as Grid;
+				if(gridWrap is null){
+					continue;
+				}
+				WrapPanel wrapPanel=gridWrap.Children[1] as WrapPanel;
+				Grid gridForField=wrapPanel.Children[0] as Grid;//we only care about the first one
+				Border borderBox=gridForField.Children[1] as Border;
+				EFormField eFormField=ListEFormFields.Find(x=>x.TagOD==borderBox);
+				List<EFormField> listEFormFieldsInStack=EFormFields.GetSiblingsInStack(eFormField,ListEFormFields,eFormField.IsHorizStacking,includeSelf:true);
+				listEFormFieldsInStack=listEFormFieldsInStack.FindAll(x=>x.FieldType.In(EnumEFormFieldType.TextField,EnumEFormFieldType.DateField));
+				if(listEFormFieldsInStack.Count<2){
+					continue;
+				}
+				double heightTallestLabel=0;
+				for(int f=0;f<listEFormFieldsInStack.Count;f++){
+					Border borderBox2=listEFormFieldsInStack[f].TagOD as Border;
+					StackPanel stackPanel2=borderBox2.Child as StackPanel;
+					WpfControls.UI.Label label=stackPanel2.Children[0] as WpfControls.UI.Label;
+					if(label.ActualHeight>heightTallestLabel){
+						heightTallestLabel=label.ActualHeight;
+					}
+				}
+				for(int f=0;f<listEFormFieldsInStack.Count;f++){
+					Border borderBox2=listEFormFieldsInStack[f].TagOD as Border;
+					StackPanel stackPanel2=borderBox2.Child as StackPanel;
+					WpfControls.UI.Label label=stackPanel2.Children[0] as WpfControls.UI.Label;
+					label.Height=heightTallestLabel;
+				}
+			}
 		}
 
 		///<summary>Gets called whenever the patient changes a field. Clears existing signatures unless they just signed it in this session.</summary>

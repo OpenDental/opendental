@@ -16,6 +16,7 @@ namespace OpenDentBusiness {
 		///We have since removed the CrudColumn attribute and disabled the on-update feature in mysql.
 		///We kept the default CURRENT_TIMESTAMP value so that new rows auto insert with the same value in this column as before.
 		///You will not see DateT in the CRUD for this table.</summary>
+		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateT;
 		///<summary>The chat message content.</summary>
 		public string MessageText;

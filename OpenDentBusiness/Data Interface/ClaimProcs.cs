@@ -1929,7 +1929,14 @@ namespace OpenDentBusiness{
 					carrierAllowed=InsPlans.GetAllowed(ProcedureCodes.GetProcCode(codeNum).ProcCode,insPlan.FeeSched,insPlan.AllowedFeeSched,
 					codeSubstNone,insPlan.PlanType,toothNum,procedure.ProvNum,procedure.ClinicNum,insPlan.PlanNum,listSubstitutionLinks,lookupFees);//lookupFees can be null
 				}
-				if(carrierAllowed != -1) {
+				if(carrierAllowed==-1) {//Fee not found in feesched
+					if(PrefC.GetBool(PrefName.InsOutOfNetworkBlankLikeZero)) {
+						allowed=0;
+						claimProc.BaseEst=0;
+						claimProc.InsEstTotal=0;
+					}
+				}
+				else {
 					carrierAllowed=carrierAllowed*procedure.Quantity;
 					if(carrierAllowed > procFee) {
 						allowed=procFee;

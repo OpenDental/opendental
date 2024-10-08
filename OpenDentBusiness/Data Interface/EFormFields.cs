@@ -68,6 +68,8 @@ namespace OpenDentBusiness{
 			eFormField.Border=eFormFieldDef.Border;
 			eFormField.IsWidthPercentage=eFormFieldDef.IsWidthPercentage;
 			eFormField.MinWidth=eFormFieldDef.MinWidth;
+			eFormField.WidthLabel=eFormFieldDef.WidthLabel;
+			eFormField.SpaceToRight=eFormFieldDef.SpaceToRight;
 			//not a db field, but critical:
 			eFormField.EFormFieldDefNum=eFormFieldDef.EFormFieldDefNum;
 			return eFormField;
@@ -96,6 +98,8 @@ namespace OpenDentBusiness{
 			eFormFieldDef.Border=eFormField.Border;
 			eFormFieldDef.IsWidthPercentage=eFormField.IsWidthPercentage;
 			eFormFieldDef.MinWidth=eFormField.MinWidth;
+			eFormFieldDef.WidthLabel=eFormField.WidthLabel;
+			eFormFieldDef.SpaceToRight=eFormField.SpaceToRight;
 			eFormFieldDef.EFormFieldDefNum=eFormField.EFormFieldDefNum;//this is the special non-db field
 			return eFormFieldDef;
 		}
@@ -187,7 +191,7 @@ namespace OpenDentBusiness{
 			return "";
 		}
 
-		///<summary>If isLastInHorizStack then this field can have "space below" set. It could be last in h-stack, or it could be all by itself. IdxNew can't be -1, but it could be list.Count, indicating that the field will be placed after all the others.</summary>
+		///<summary>If isLastInHorizStack then this field can have "space below" set. It could be last in h-stack, or it could be all by itself.</summary>
 		public static bool IsLastInHorizStack(EFormField eFormField,List<EFormField> listEFormFields){
 			Meth.NoCheckMiddleTierRole();
 			int idx=listEFormFields.IndexOf(eFormField);
@@ -292,15 +296,22 @@ namespace OpenDentBusiness{
 			}
 		}
 
-		///<summary></summary>
-		public static double CalcFieldWidth(EFormField eFormField,List<EFormField> listEFormFields,double widthAvail){
+		///<summary>spaceToRightEachField refers to the EForm or EFormDef default.</summary>
+		public static double CalcFieldWidth(EFormField eFormField,List<EFormField> listEFormFields,double widthAvail,double spaceToRightEachField){
 			double marginLeftOfPage=5;
-			double marginRightOfField=10;
+			//double marginRightOfField=10;
 			int paddingLeft=4;//The amount of padding on the left side of each field within its border box.
 			int paddingRight=4;//The amount of padding on the right side of each field within its border box.
 			int thicknessLRBorders=2;//This is the sum of the thickness of the left and right of the border box. It's 1+1=2
 			if(!eFormField.IsWidthPercentage){//fixed width
-				widthAvail-=marginLeftOfPage+marginRightOfField;
+				double spaceRightOfField=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+				if(spaceToRightEachField!=-1){
+					spaceRightOfField=spaceToRightEachField;
+				}
+				if(eFormField.SpaceToRight!=-1){
+					spaceRightOfField=eFormField.SpaceToRight;
+				}
+				widthAvail-=marginLeftOfPage+spaceRightOfField;
 				widthAvail-=thicknessLRBorders+paddingLeft+paddingRight;
 				if(widthAvail<0) {
 					widthAvail=0;
@@ -349,7 +360,14 @@ namespace OpenDentBusiness{
 			}
 			//set MinWidthPlusMargin for each field
 			for(int i=0;i<listWs.Count;i++){
-				listWs[i].MinWidthPlusMargin=listWs[i].EFormField_.MinWidth+marginRightOfField;
+				double spaceRightOfField=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+				if(spaceToRightEachField!=-1){
+					spaceRightOfField=spaceToRightEachField;
+				}
+				if(listWs[i].EFormField_.SpaceToRight!=-1){
+					spaceRightOfField=listWs[i].EFormField_.SpaceToRight;
+				}
+				listWs[i].MinWidthPlusMargin=listWs[i].EFormField_.MinWidth+spaceRightOfField;
 				if(listEFormFieldsInStack[i].Border==EnumEFormBorder.None) {
 					listWs[i].MinWidthPlusMargin+=paddingLeft;
 					listWs[i].MinWidthPlusMargin+=1;//left border box thickness
@@ -504,7 +522,14 @@ namespace OpenDentBusiness{
 			double retVal=wOurs.WidthPlusMargin;
 			//this is the only one we care about even though we just calculated the entire h-stack.
 			//Now, we need to strip off the white space to get our actual field width.
-			retVal-=marginRightOfField;
+			double spaceRightOfField2=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+			if(spaceToRightEachField!=-1){
+				spaceRightOfField2=spaceToRightEachField;
+			}
+			if(wOurs.EFormField_.SpaceToRight!=-1){
+				spaceRightOfField2=wOurs.EFormField_.SpaceToRight;
+			}
+			retVal-=spaceRightOfField2;
 			if(eFormField.Border==EnumEFormBorder.None) {
 				retVal-=paddingLeft;
 				retVal-=1;//left border box thickness

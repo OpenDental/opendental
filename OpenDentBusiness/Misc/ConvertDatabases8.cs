@@ -2043,7 +2043,10 @@ namespace OpenDentBusiness {
 			for(int i=0;i<table.Rows.Count;i++) {
 				groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 				command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-					+"VALUES("+POut.Long(groupNum)+",256)";
+			//Start B57168
+			//		+"VALUES("+POut.Long(groupNum)+",256)";//daycare permission only used at HQ
+					+"VALUES("+POut.Long(groupNum)+",257)";//Perio Chart Copy
+			//End B57168
 				Db.NonQ(command);
 			}
 			//End F54862
@@ -2112,5 +2115,53 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//End I54172
 		}//End of 24_3_1() method
+
+		private static void To24_3_3() {
+			string command;
+			//Start S53050
+			command="ALTER TABLE eform ADD ShowLabelsBold tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformdef ADD ShowLabelsBold tinyint NOT NULL";
+			Db.NonQ(command);
+			//End S53050
+			//Start I56704
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('InsOutOfNetworkBlankLikeZero','0')";
+			Db.NonQ(command);
+			//End I56704
+			//Start S53050
+			command="UPDATE preference SET ValueString='20' WHERE PrefName='EformsSpaceBelowEachField'";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfield ADD WidthLabel int NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD WidthLabel int NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfield ADD SpaceToRight int NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformfielddef ADD SpaceToRight int NOT NULL";
+			Db.NonQ(command);
+			command="UPDATE eformfield SET SpaceToRight = -1";
+			Db.NonQ(command);
+			command="UPDATE eformfielddef SET SpaceToRight = -1";
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('EformsSpaceToRightEachField','10')";
+			Db.NonQ(command);
+			command="ALTER TABLE eform ADD SpaceBelowEachField int NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformdef ADD SpaceBelowEachField int NOT NULL";
+			Db.NonQ(command);
+			command="UPDATE eform SET SpaceBelowEachField = -1";
+			Db.NonQ(command);
+			command="UPDATE eformdef SET SpaceBelowEachField = -1";
+			Db.NonQ(command);
+			command="ALTER TABLE eform ADD SpaceToRightEachField int NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformdef ADD SpaceToRightEachField int NOT NULL";
+			Db.NonQ(command);
+			command="UPDATE eform SET SpaceToRightEachField = -1";
+			Db.NonQ(command);
+			command="UPDATE eformdef SET SpaceToRightEachField = -1";
+			Db.NonQ(command);
+			//End S53050
+		}//End of 24_3_3() method
 	}
 }

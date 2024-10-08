@@ -65,18 +65,14 @@ Examples:
 		Since we use a global font size, leave ImageDraw.FontSize as 0.
 */
 		public Patient Patient_;
-		//<summary>Only used for drawing the points, 1:1 with ListBitmaps. We need this for the resizing logic to determine where points should go in case the image is cropped.</summary>
-		//public List<Document> ListDocuments;
-		///<summary>For a single document, this will be a list of one. For a mount, this will contain all the individual bitmaps in the mount.</summary>
-		public List<Bitmap> ListBitmaps;
+		///<summary>Contains the bitmap to be sent to Pearl.</summary>
+		public Bitmap Bitmap_;
 		///<summary>For a single document. In this case, the MountNum will be zero.</summary>
-		public long DocNum;
-		///<summary>Only used for a mount. 1:1 with ListBitmaps. We need this to determine the offset for each bitmap in the mount. Since we will get back drawings for an individual bitmap, we need to shift them all. We store drawings for a mount all relative to the mount origin, kind of like a big giant bitmap.</summary>
-		public List<MountItem> ListMountItems;
-		///<summary>For a mount. In this case, the DocNum will be zero.</summary>
-		public long MountNum;
-		///<summary>List of requests used in polling. 1:1 with ListBitmaps and ListMountItems.</summary>
-		private List<PearlRequest> _listPearlRequests;
+		public Document Document_;
+		///<summary>Only used for a mount. We need this to determine the offset for each bitmap in the mount. Since we will get back drawings for an individual bitmap, we need to shift them all. We store drawings for a mount all relative to the mount origin, kind of like a big giant bitmap.</summary>
+		public MountItem MountItem_;
+		///<summary>PearlRequest used in polling.</summary>
+		private PearlRequest _pearlRequest;
 		///<summary>Used to trigger a UI refresh when the thread is complete.</summary>
 		public static event EventHandler EventRefreshDisplay;
 
@@ -95,8 +91,8 @@ Examples:
 		public const string PEARL_BUTTON_SEND_LABEL="Send to Pearl";
 		public const string PEARL_BUTTON_LAYERS_LABEL="Show Layers";
 
-		///<summary>Must be called before SendOnThread. Image can be given as a bitmap or a file path. Set docNum for single document, or mountNum and mountItem for a single mount image. Returns null if filePath couldn't be converted to bitmap or image was already sent to Pearl.</summary>
-		public static Pearl SetupPearlForSendingSingle(Patient patient,Bitmap bitmap=null,string filePath="",long docNum=0,long mountNum=0,MountItem mountItem=null) {
+		///<summary>Must be called before SendOnThread. Image can be given as a bitmap or a file path. Set mountItem if image is part of a mount. Returns null if filePath couldn't be converted to bitmap or image was already sent to Pearl.</summary>
+		public static Pearl SetupPearlForSendingSingle(Patient patient,Document document,Bitmap bitmap=null,string filePath="",MountItem mountItem=null) {
 			if(bitmap==null) {
 				try {
 					bitmap=new Bitmap(filePath);
@@ -105,46 +101,25 @@ Examples:
 					return null;//File couldn't be converted to bitmap
 				}
 			}
-			List<Bitmap> listBitmaps=new List<Bitmap>() { bitmap };
-			List<MountItem> listMountItems=new List<MountItem>() { mountItem };
-			return SetupPearlForSendingMultiple(patient,listBitmaps,docNum,mountNum,listMountItems);
-		}
-
-		///<summary>Must be called before SendOnThread. Set docNum for single document, or mountNum and listMountItems for mount with multiple images. Returns null if single document has already been sent to Pearl.</summary>
-		public static Pearl SetupPearlForSendingMultiple(Patient patient,List<Bitmap> listBitmaps,long docNum=0,long mountNum=0,List<MountItem> listMountItems=null) {
-			if(listBitmaps.Count!=listMountItems.Count) {
-				return null;
-			}
 			Pearl pearl=new Pearl();
 			pearl.Patient_=patient;
-			pearl.ListBitmaps=new List<Bitmap>();
-			for(int i=0;i<listBitmaps.Count;i++) {
-				if(listBitmaps[i]==null) {
-					continue;
-				}
-				pearl.ListBitmaps.Add((Bitmap)listBitmaps[i].Clone());
+			if(mountItem!=null) {
+				pearl.Bitmap_=ImageHelper.ApplyDocumentSettingsToImage(document,bitmap,ImageSettingFlags.ALL);//Creates copy of bitmap
 			}
-			if(docNum==0){
-				pearl.DocNum=0;
-				pearl.ListMountItems=listMountItems;
-				pearl.MountNum=mountNum;
+			else {
+				pearl.Bitmap_=(Bitmap)bitmap.Clone();//Creates copy of bitmap
 			}
-			else{//one doc
-				pearl.DocNum=docNum;
-				pearl.MountNum=0;
-				//Look for existing request for this document and skip sending if one is found.
-				PearlRequest pearlRequest=PearlRequests.GetOneByDocNum(pearl.DocNum);
-				if(pearlRequest!=null && pearlRequest.RequestStatus!=EnumPearlStatus.TimedOut) {
-					return null;
-				}
+			pearl.MountItem_=mountItem;
+			pearl.Document_=document;
+			PearlRequest pearlRequest=PearlRequests.GetOneByDocNum(pearl.Document_.DocNum);
+			if(pearlRequest!=null && pearlRequest.RequestStatus!=EnumPearlStatus.TimedOut) {
+				return null;
 			}
 			return pearl;
 		}
 
 		public void Dispose() {
-			for(int i=0;i<ListBitmaps.Count;i++) {
-				ListBitmaps[i]?.Dispose();
-			}
+			Bitmap_?.Dispose();
 		}
 
 		///<summary>Returns whether an image category should automatically upload an image to Pearl. Returns false if the Pearl program property containing the image category names is not found.</summary>
@@ -175,71 +150,56 @@ Examples:
 
 		///<summary>This is the worker thread.</summary>
 		public void SendOnThreadWorker(ODThread oDThread){
-			_listPearlRequests=new List<PearlRequest>();
-			if(DocNum==0 && MountNum==0){
-				throw new Exception("Either DocNum or MountNum must be specified.");
+			_pearlRequest=null;
+			if(Document_ is null){
+				throw new Exception("Document must be specified.");
 			}
-			//immediately send all images for a mount, or one image for a single document
-			for(int i = 0;i<ListBitmaps.Count;i++) {
-				//ListBitmaps and _listPearlRequests must have exactly the same number of items since we will sync them by list index later in PollMount().
-				//The best way to enforce this is to have every loop iteration through ListBitmaps add an instance to _listPearlRequests with try/finally.
-				PearlRequest pearlRequest=null;
-				try {
-					if(ListBitmaps[i] is null) {
-						continue;
+			//immediately send one image for a single document
+			PearlRequest pearlRequest=null;
+			try {
+				if(Bitmap_ is null) {
+					return;
+				}
+				//Look for existing request for this document and skip uploading the image if one is found.
+				pearlRequest=PearlRequests.GetOneByDocNum(Document_.DocNum);
+				if(pearlRequest!=null) {
+					return;
+				}
+				//Send image to Pearl
+				string requestId=null;
+				if(ODBuild.IsDebug()&&!ODBuild.IsUnitTest) {
+					oDThread.Wait(2000);//simulated wait for getting URL and uploading image
+					requestId=SimulateSendOneImageToPearl(Document_.DocNum,Bitmap_);
+				}
+				else {
+					//Get AWS presigned URL, upload image to it, then send to Pearl
+					try {
+						requestId=PearlApiClient.Inst.SendOneImageToPearl(Document_.DocNum,Bitmap_,Patient_);
 					}
-					long docNum=DocNum;
-					if(DocNum==0) {//is mount:
-						docNum=Documents.GetDocumentForMountItem(ListMountItems[i].MountItemNum).DocNum;//can't be null
-					}
-					//Look for existing request for this document and skip uploading the image if one is found.
-					pearlRequest=PearlRequests.GetOneByDocNum(docNum);
-					if(pearlRequest!=null) {
-						continue;
-					}
-					//Send image to Pearl
-					string requestId=null;
-					if(ODBuild.IsDebug()&&!ODBuild.IsUnitTest) {
-						oDThread.Wait(2000);//simulated wait for getting URL and uploading image
-						requestId=SimulateSendOneImageToPearl(docNum,ListBitmaps[i]);
-					}
-					else {
-						//Get AWS presigned URL, upload image to it, then send to Pearl
-						try {
-							requestId=PearlApiClient.Inst.SendOneImageToPearl(docNum,ListBitmaps[i],Patient_);
-						}
-						catch(Exception ex) {
-							ODEvent.Fire(ODEventType.ProgressBar,"There was an error uploading an image:\r\n"+ex.Message);
-							continue;
-						}
-					}
-					if(string.IsNullOrWhiteSpace(requestId)) {
-						ODEvent.Fire(ODEventType.ProgressBar,"An image failed to upload.");
-						continue;
-					}
-					pearlRequest=PearlRequests.GetOneByRequestId(requestId);
-					if(DocNum!=0) {
-						break;
+					catch(Exception ex) {
+						ODEvent.Fire(ODEventType.ProgressBar,"There was an error uploading an image:\r\n"+ex.Message);
+						return;
 					}
 				}
-				finally {
-					_listPearlRequests.Add(pearlRequest);
+				if(string.IsNullOrWhiteSpace(requestId)) {
+					ODEvent.Fire(ODEventType.ProgressBar,"An image failed to upload.");
+					return;
 				}
+				pearlRequest=PearlRequests.GetOneByRequestId(requestId);
 			}
-			if(_listPearlRequests.All(pearlRequest => pearlRequest is null || PearlRequests.IsRequestHandled(pearlRequest))) {
-				return;//Don't poll if no images were uploaded or all requests are already handled.
+			finally {
+				_pearlRequest=pearlRequest;
+			}
+			if(_pearlRequest is null || PearlRequests.IsRequestHandled(_pearlRequest)) {
+				return;//Don't poll if image was not uploaded or was already handled.
 			}
 			//Begin polling the API until all images have been processed, or this thread is canceled.
 			DateTime dtStart=DateTime.Now;
 			bool isComplete;
-			PearlRequests.UpdateStatusForRequests(_listPearlRequests,EnumPearlStatus.Polling);
+			List<PearlRequest> listPearlRequests=new List<PearlRequest> { _pearlRequest };
+			PearlRequests.UpdateStatusForRequests(listPearlRequests,EnumPearlStatus.Polling);
 			while(!oDThread.HasQuit) {
-				if(MountNum==0){//Poll single image
-					isComplete=PollSingleRequest(_listPearlRequests[0],ListBitmaps[0],DocNum,mountItem:null);
-				}
-				else {//Poll all mount items
-					isComplete=PollMount();
-				}
+				isComplete=PollRequest();
 				if(isComplete) {
 					return;
 				}
@@ -249,8 +209,9 @@ Examples:
 				}
 				int pollTimeoutSecs=600;//10 minutes
 				if((DateTime.Now-dtStart).TotalSeconds>=pollTimeoutSecs) {
-					List<PearlRequest> listPearlRequestsTimedOut=_listPearlRequests.FindAll(x => !PearlRequests.IsRequestHandled(x));
-					PearlRequests.UpdateStatusForRequests(listPearlRequestsTimedOut,EnumPearlStatus.TimedOut);
+					if(!PearlRequests.IsRequestHandled(_pearlRequest)) {
+						PearlRequests.UpdateStatusForRequests(listPearlRequests,EnumPearlStatus.TimedOut);
+					}
 					return;
 				}
 				oDThread.Wait(pollRateMs);
@@ -365,18 +326,18 @@ Examples:
 		#endregion Simulate methods
 
 		///<summary>Returns true when Pearl result is returned. Only called for a single image, not a full mount.</summary>
-		private bool PollSingleRequest(PearlRequest pearlRequest,Bitmap bitmap,long docNum,MountItem mountItem) {
+		private bool PollRequest() {
 			OpenDentBusiness.Pearl.Result result=null;
-			if(PearlRequests.IsRequestHandled(pearlRequest)) {
+			if(PearlRequests.IsRequestHandled(_pearlRequest)) {
 				return true;
 			}
 			if(ODBuild.IsDebug()&&!ODBuild.IsUnitTest) {
-				result=SimulateGetResultsForOneImage(pearlRequest.RequestId,bitmap);
+				result=SimulateGetResultsForOneImage(_pearlRequest.RequestId,Bitmap_);
 				Thread.Sleep(200);//simulated wait for getting API response
 			}
 			else {
 				try {
-					result=PearlApiClient.Inst.GetOneImageFromPearl(pearlRequest.RequestId);
+					result=PearlApiClient.Inst.GetOneImageFromPearl(_pearlRequest.RequestId);
 				}
 				catch (Exception ex) {
 					//API error, we didn't get a result so we will try again on next polling loop.
@@ -390,37 +351,19 @@ Examples:
 			}
 			if(result.is_deleted || result.is_rejected) {
 				//We got a result, and it is an error.
-				pearlRequest.RequestStatus=EnumPearlStatus.Error;
-				PearlRequests.Update(pearlRequest);
+				_pearlRequest.RequestStatus=EnumPearlStatus.Error;
+				PearlRequests.Update(_pearlRequest);
 				//Todo: Pearl error. Should we show a message? Log the error? Resend the image?
 				return true;
 			}
 			if(result.is_completed) {
 				//We got a result, and it is complete/ok.
-				pearlRequest.RequestStatus=EnumPearlStatus.Received;
-				PearlRequests.Update(pearlRequest);
-				ProcessResultsForOneImage(result,docNum,mountItem,bitmap);
+				_pearlRequest.RequestStatus=EnumPearlStatus.Received;
+				PearlRequests.Update(_pearlRequest);
+				ProcessResultsForOneImage(result,Document_.DocNum,MountItem_,Bitmap_);
 				return true;
 			}
 			//May still be processing and we don't have a valid result yet. Try again.
-			return false;
-		}
-
-		///<summary>Returns true when Pearl result is returned for all mount images, whether success or failure. Returns false if Pearl is still processing any mount images.</summary>
-		private bool PollMount() {
-			bool allRequestsHandled=true;
-			for(int i=0;i<ListMountItems.Count;i++){//Example 18 separate images
-				if(ListMountItems[i] is null || _listPearlRequests[i] is null || ListBitmaps[i] is null){
-					continue;
-				}
-				bool isRequestHandled=PollSingleRequest(_listPearlRequests[i],ListBitmaps[i],0,ListMountItems[i]);
-				if(!isRequestHandled) {
-					allRequestsHandled=false;
-				}
-			}
-			if(allRequestsHandled) {
-				return true;
-			}
 			return false;
 		}
 

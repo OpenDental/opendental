@@ -69,6 +69,8 @@ namespace OpenDentBusiness.Crud{
 				eFormFieldDef.Border           = (OpenDentBusiness.EnumEFormBorder)PIn.Int(row["Border"].ToString());
 				eFormFieldDef.IsWidthPercentage= PIn.Bool  (row["IsWidthPercentage"].ToString());
 				eFormFieldDef.MinWidth         = PIn.Int   (row["MinWidth"].ToString());
+				eFormFieldDef.WidthLabel       = PIn.Int   (row["WidthLabel"].ToString());
+				eFormFieldDef.SpaceToRight     = PIn.Int   (row["SpaceToRight"].ToString());
 				retVal.Add(eFormFieldDef);
 			}
 			return retVal;
@@ -102,6 +104,8 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("Border");
 			table.Columns.Add("IsWidthPercentage");
 			table.Columns.Add("MinWidth");
+			table.Columns.Add("WidthLabel");
+			table.Columns.Add("SpaceToRight");
 			foreach(EFormFieldDef eFormFieldDef in listEFormFieldDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eFormFieldDef.EFormFieldDefNum),
@@ -126,6 +130,8 @@ namespace OpenDentBusiness.Crud{
 					POut.Int   ((int)eFormFieldDef.Border),
 					POut.Bool  (eFormFieldDef.IsWidthPercentage),
 					POut.Int   (eFormFieldDef.MinWidth),
+					POut.Int   (eFormFieldDef.WidthLabel),
+					POut.Int   (eFormFieldDef.SpaceToRight),
 				});
 			}
 			return table;
@@ -145,7 +151,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EFormFieldDefNum,";
 			}
-			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue,LabelAlign,SpaceBelow,ReportableName,IsLocked,Border,IsWidthPercentage,MinWidth) VALUES(";
+			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue,LabelAlign,SpaceBelow,ReportableName,IsLocked,Border,IsWidthPercentage,MinWidth,WidthLabel,SpaceToRight) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eFormFieldDef.EFormFieldDefNum)+",";
 			}
@@ -170,7 +176,9 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Bool  (eFormFieldDef.IsLocked)+","
 				+    POut.Int   ((int)eFormFieldDef.Border)+","
 				+    POut.Bool  (eFormFieldDef.IsWidthPercentage)+","
-				+    POut.Int   (eFormFieldDef.MinWidth)+")";
+				+    POut.Int   (eFormFieldDef.MinWidth)+","
+				+    POut.Int   (eFormFieldDef.WidthLabel)+","
+				+    POut.Int   (eFormFieldDef.SpaceToRight)+")";
 			if(eFormFieldDef.ValueLabel==null) {
 				eFormFieldDef.ValueLabel="";
 			}
@@ -199,7 +207,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EFormFieldDefNum,";
 			}
-			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue,LabelAlign,SpaceBelow,ReportableName,IsLocked,Border,IsWidthPercentage,MinWidth) VALUES(";
+			command+="EFormDefNum,FieldType,DbLink,ValueLabel,ItemOrder,PickListVis,PickListDb,IsHorizStacking,IsTextWrap,Width,FontScale,IsRequired,ConditionalParent,ConditionalValue,LabelAlign,SpaceBelow,ReportableName,IsLocked,Border,IsWidthPercentage,MinWidth,WidthLabel,SpaceToRight) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eFormFieldDef.EFormFieldDefNum)+",";
 			}
@@ -224,7 +232,9 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Bool  (eFormFieldDef.IsLocked)+","
 				+    POut.Int   ((int)eFormFieldDef.Border)+","
 				+    POut.Bool  (eFormFieldDef.IsWidthPercentage)+","
-				+    POut.Int   (eFormFieldDef.MinWidth)+")";
+				+    POut.Int   (eFormFieldDef.MinWidth)+","
+				+    POut.Int   (eFormFieldDef.WidthLabel)+","
+				+    POut.Int   (eFormFieldDef.SpaceToRight)+")";
 			if(eFormFieldDef.ValueLabel==null) {
 				eFormFieldDef.ValueLabel="";
 			}
@@ -261,7 +271,9 @@ namespace OpenDentBusiness.Crud{
 				+"IsLocked         =  "+POut.Bool  (eFormFieldDef.IsLocked)+", "
 				+"Border           =  "+POut.Int   ((int)eFormFieldDef.Border)+", "
 				+"IsWidthPercentage=  "+POut.Bool  (eFormFieldDef.IsWidthPercentage)+", "
-				+"MinWidth         =  "+POut.Int   (eFormFieldDef.MinWidth)+" "
+				+"MinWidth         =  "+POut.Int   (eFormFieldDef.MinWidth)+", "
+				+"WidthLabel       =  "+POut.Int   (eFormFieldDef.WidthLabel)+", "
+				+"SpaceToRight     =  "+POut.Int   (eFormFieldDef.SpaceToRight)+" "
 				+"WHERE EFormFieldDefNum = "+POut.Long(eFormFieldDef.EFormFieldDefNum);
 			if(eFormFieldDef.ValueLabel==null) {
 				eFormFieldDef.ValueLabel="";
@@ -357,6 +369,14 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="MinWidth = "+POut.Int(eFormFieldDef.MinWidth)+"";
 			}
+			if(eFormFieldDef.WidthLabel != oldEFormFieldDef.WidthLabel) {
+				if(command!="") { command+=",";}
+				command+="WidthLabel = "+POut.Int(eFormFieldDef.WidthLabel)+"";
+			}
+			if(eFormFieldDef.SpaceToRight != oldEFormFieldDef.SpaceToRight) {
+				if(command!="") { command+=",";}
+				command+="SpaceToRight = "+POut.Int(eFormFieldDef.SpaceToRight)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -434,6 +454,12 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eFormFieldDef.MinWidth != oldEFormFieldDef.MinWidth) {
+				return true;
+			}
+			if(eFormFieldDef.WidthLabel != oldEFormFieldDef.WidthLabel) {
+				return true;
+			}
+			if(eFormFieldDef.SpaceToRight != oldEFormFieldDef.SpaceToRight) {
 				return true;
 			}
 			return false;

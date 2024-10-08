@@ -17,12 +17,12 @@ namespace OpenDental {
 	public partial class FrmEFormTextBoxEdit : FrmODBase {
 		///<summary>This is the object being edited.</summary>
 		public EFormField EFormFieldCur;
+		///<summary></summary>
+		public EFormDef EFormDefCur;
 		///<summary>All the siblings</summary>
 		public List<EFormField> ListEFormFields;
 		///<summary>Set this before opening this window. It's the current language being used in the parent form. Format is the text that's showing in the comboBox. Will be empty string if languages are not set up in pref LanguagesUsedByPatients or if the default language is being used in the parent FrmEFormDefs.</summary>
 		public string LanguageShowing="";
-		///<summary>This is all sibings in a horizontal stack, not including the field passed in. If not in a h-stack, then this is an empty list. Even if the current field is not stacking, it can be part of a stack group if the next field is set as stacking. So this list gets recalculated each time the user checks or unchecks the stacking box. If this is a new field, then it is not yet in the list, but we do know where it will potientially go, based on IdxNew, and that's what we use to create this list.</summary>
-		private List<EFormField> _listEFormFieldsSiblings;
 		///<summary>We don't fire off a signal to update the language cache on other computers until we hit Save in the form window. So each edit window has this variable to keep track of whether there are any new translations. This bubbles up to the parent.</summary>
 		public bool IsChangedLanCache;
 
@@ -55,13 +55,8 @@ namespace OpenDental {
 			else {
 				comboDbLink.SelectedIndex=idxSelect;
 			}
-			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
-			bool isPreviousStackable=EFormFields.IsPreviousStackable(EFormFieldCur,ListEFormFields);
-			if(!isPreviousStackable){
-				labelStackable.Text="previous field is not stackable";
-				checkIsHorizStacking.IsEnabled=false;
-			}
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
+			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			textVIntWidth.Value=EFormFieldCur.Width;
 			if(EFormFieldCur.IsWidthPercentage){
 				labelWidth.Text="Width%";
@@ -72,18 +67,27 @@ namespace OpenDental {
 				labelMinWidth.Visible=false;
 				textVIntMinWidth.Visible=false;
 			}
-			_listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
+			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,EFormFieldCur.IsHorizStacking);
 			//this is just for loading. It will recalc each time CheckIsHorizStacking_Click is raised.
-			if(_listEFormFieldsSiblings.Count==0){
+			//This is all siblings in a horizontal stack, not including the field passed in. If not in a h-stack, then this is an empty list.
+			//Even if the current field is not stacking, it can be part of a stack group if the next field is set as stacking.
+			//So this list gets recalculated each time the user checks or unchecks the stacking box.
+			if(listEFormFieldsSiblings.Count==0){
 				labelWidthIsPercentageNote.Visible=false;
 			}
-			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
-			textVIntFontScale.Value=EFormFieldCur.FontScale;
-			checkIsTextWrap.Checked=EFormFieldCur.IsTextWrap;
+			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			bool isPreviousStackable=EFormFields.IsPreviousStackable(EFormFieldCur,ListEFormFields);
+			if(!isPreviousStackable){
+				labelStackable.Text="previous field is not stackable";
+				checkIsHorizStacking.IsEnabled=false;
+			}
 			bool isLastInHorizStack=EFormFields.IsLastInHorizStack(EFormFieldCur,ListEFormFields);
 			if(isLastInHorizStack){
 				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
-				labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+				if(EFormDefCur.SpaceBelowEachField!=-1){
+					spaceBelowDefault=EFormDefCur.SpaceBelowEachField;//yes this or pref could be zero, which means zero
+				}
+				labelSpaceBelowDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
 				if(EFormFieldCur.SpaceBelow==-1){
 					textSpaceBelow.Text="";
 				}
@@ -92,9 +96,22 @@ namespace OpenDental {
 				}
 			}
 			else{
-				labelSpaceDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
+				labelSpaceBelowDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
 				textSpaceBelow.IsEnabled=false;
 			}
+			int spaceToRightDefault=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+			if(EFormDefCur.SpaceToRightEachField!=-1){
+				spaceToRightDefault=EFormDefCur.SpaceToRightEachField;
+			}
+			labelSpaceToRightDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceToRightDefault.ToString();
+			if(EFormFieldCur.SpaceToRight==-1){
+				textSpaceToRight.Text="";
+			}
+			else{
+				textSpaceToRight.Text=EFormFieldCur.SpaceToRight.ToString();
+			}
+			checkIsTextWrap.Checked=EFormFieldCur.IsTextWrap;
+			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			textReportableName.Text=EFormFieldCur.ReportableName;
 			checkIsLocked.Checked=EFormFieldCur.IsLocked;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
@@ -109,8 +126,8 @@ namespace OpenDental {
 		}
 
 		private void CheckIsHorizStacking_Click(object sender,EventArgs e) {
-			_listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
-			if(_listEFormFieldsSiblings.Count>0){
+			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
+			if(listEFormFieldsSiblings.Count>0){
 				labelWidthIsPercentageNote.Visible=true;
 			}
 			else{
@@ -181,6 +198,10 @@ namespace OpenDental {
 			}
 			//If the parent is a radiobutton, they have to select a value.
 			EFormField eFormField=ListEFormFields.Find(x=>x.ValueLabel==textCondParent.Text);
+			if(!textCondParent.Text.IsNullOrEmpty() && eFormField is null){
+				MsgBox.Show("That parent field does not exist.");
+				return;
+			}
 			if(eFormField!=null && eFormField.FieldType==EnumEFormFieldType.RadioButtons) {
 				if(textCondValue.Text.IsNullOrEmpty()) {
 					MsgBox.Show("Please select a value for your parent field.");
@@ -201,6 +222,20 @@ namespace OpenDental {
 					return;
 				}
 			}
+			int spaceToRight=-1;
+			if(textSpaceToRight.Text!=""){
+				try{
+					spaceToRight=Convert.ToInt32(textSpaceToRight.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space to Right first.");
+					return;
+				}
+				if(spaceToRight<0 || spaceToRight>200){
+					MsgBox.Show(this,"Space to Right value is invalid.");
+					return;
+				}
+			}
 			//end of validation
 			if(LanguageShowing!=""){
 				IsChangedLanCache=LanguagePats.SaveTranslationEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,textLabelTranslated.Text);
@@ -215,14 +250,19 @@ namespace OpenDental {
 			else{
 				EFormFieldCur.DbLink=comboDbLink.GetSelected<string>();
 			}
-			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
+			if(checkBorder.Checked==true){
+				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
+			}
+			else{
+				EFormFieldCur.Border=EnumEFormBorder.None;
+			}
 			EFormFieldCur.Width=textVIntWidth.Value;
 			EFormFieldCur.IsWidthPercentage=checkIsWidthPercentage.Checked==true;
 			//change all siblings to match
-			_listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
-			for(int i=0;i<_listEFormFieldsSiblings.Count;i++){
-				_listEFormFieldsSiblings[i].IsWidthPercentage=EFormFieldCur.IsWidthPercentage;
+			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
+			for(int i=0;i<listEFormFieldsSiblings.Count;i++){
+				listEFormFieldsSiblings[i].IsWidthPercentage=EFormFieldCur.IsWidthPercentage;
 			}
 			if(textVIntMinWidth.Visible){
 				EFormFieldCur.MinWidth=textVIntMinWidth.Value;
@@ -230,15 +270,11 @@ namespace OpenDental {
 			else{
 				EFormFieldCur.MinWidth=0;
 			}
-			if(checkBorder.Checked==true){
-				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
-			}
-			else{
-				EFormFieldCur.Border=EnumEFormBorder.None;
-			}
-			EFormFieldCur.FontScale=textVIntFontScale.Value;
-			EFormFieldCur.IsTextWrap=checkIsTextWrap.Checked==true;
+			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.SpaceToRight=spaceToRight;
+			EFormFieldCur.IsTextWrap=checkIsTextWrap.Checked==true;
+			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.ReportableName=textReportableName.Text;
 			EFormFieldCur.IsLocked=checkIsLocked.Checked==true;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;

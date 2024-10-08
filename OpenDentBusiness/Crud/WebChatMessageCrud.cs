@@ -100,14 +100,14 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK) {
 				command+="WebChatMessageNum,";
 			}
-			command+="WebChatSessionNum,UserName,MessageText,MessageType,IpAddress,NeedsFollowUp) VALUES(";
+			command+="WebChatSessionNum,UserName,DateT,MessageText,MessageType,IpAddress,NeedsFollowUp) VALUES(";
 			if(useExistingPK) {
 				command+=POut.Long(webChatMessage.WebChatMessageNum)+",";
 			}
 			command+=
 				     POut.Long  (webChatMessage.WebChatSessionNum)+","
 				+"'"+POut.String(webChatMessage.UserName)+"',"
-				//DateT can only be set by MySQL
+				+    POut.DateT (webChatMessage.DateT)+","
 				+"'"+POut.String(webChatMessage.MessageText)+"',"
 				+    POut.Int   ((int)webChatMessage.MessageType)+","
 				+"'"+POut.String(webChatMessage.IpAddress)+"',"
@@ -132,14 +132,14 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK) {
 				command+="WebChatMessageNum,";
 			}
-			command+="WebChatSessionNum,UserName,MessageText,MessageType,IpAddress,NeedsFollowUp) VALUES(";
+			command+="WebChatSessionNum,UserName,DateT,MessageText,MessageType,IpAddress,NeedsFollowUp) VALUES(";
 			if(useExistingPK) {
 				command+=POut.Long(webChatMessage.WebChatMessageNum)+",";
 			}
 			command+=
 				     POut.Long  (webChatMessage.WebChatSessionNum)+","
 				+"'"+POut.String(webChatMessage.UserName)+"',"
-				//DateT can only be set by MySQL
+				+    POut.DateT (webChatMessage.DateT)+","
 				+"'"+POut.String(webChatMessage.MessageText)+"',"
 				+    POut.Int   ((int)webChatMessage.MessageType)+","
 				+"'"+POut.String(webChatMessage.IpAddress)+"',"
@@ -158,7 +158,7 @@ namespace OpenDentBusiness.Crud{
 			string command="UPDATE webchatmessage SET "
 				+"WebChatSessionNum=  "+POut.Long  (webChatMessage.WebChatSessionNum)+", "
 				+"UserName         = '"+POut.String(webChatMessage.UserName)+"', "
-				//DateT can only be set by MySQL
+				+"DateT            =  "+POut.DateT (webChatMessage.DateT)+", "
 				+"MessageText      = '"+POut.String(webChatMessage.MessageText)+"', "
 				+"MessageType      =  "+POut.Int   ((int)webChatMessage.MessageType)+", "
 				+"IpAddress        = '"+POut.String(webChatMessage.IpAddress)+"', "
@@ -178,7 +178,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="UserName = '"+POut.String(webChatMessage.UserName)+"'";
 			}
-			//DateT can only be set by MySQL
+			if(webChatMessage.DateT != oldWebChatMessage.DateT) {
+				if(command!="") { command+=",";}
+				command+="DateT = "+POut.DateT(webChatMessage.DateT)+"";
+			}
 			if(webChatMessage.MessageText != oldWebChatMessage.MessageText) {
 				if(command!="") { command+=",";}
 				command+="MessageText = '"+POut.String(webChatMessage.MessageText)+"'";
@@ -213,7 +216,9 @@ namespace OpenDentBusiness.Crud{
 			if(webChatMessage.UserName != oldWebChatMessage.UserName) {
 				return true;
 			}
-			//DateT can only be set by MySQL
+			if(webChatMessage.DateT != oldWebChatMessage.DateT) {
+				return true;
+			}
 			if(webChatMessage.MessageText != oldWebChatMessage.MessageText) {
 				return true;
 			}

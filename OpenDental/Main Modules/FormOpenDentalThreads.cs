@@ -98,6 +98,7 @@ namespace OpenDental {
 					Logger.LogActionIfOverTimeLimit("BeginRegKeyThread",LogPath.Threads,() => BeginRegKeyThread());
 					Logger.LogActionIfOverTimeLimit("BeginRegistrationKeyIsDisabledThread",LogPath.Threads,() => BeginRegistrationKeyIsDisabledThread());
 					Logger.LogActionIfOverTimeLimit("CheckAlerts",LogPath.Threads,() => CheckAlerts(doRunOnThread: true));
+					Logger.LogActionIfOverTimeLimit("BeginODCloudDcvExtensionThread",LogPath.Threads, () => BeginODCloudDcvExtensionThread());
 					Logger.LogActionIfOverTimeLimit("BeginODCloudMachineNameThread",LogPath.Threads,() => BeginODCloudMachineNameThread());
 					Logger.LogActionIfOverTimeLimit("BeginApiEventsThread",LogPath.Threads,() => BeginApiEventsThread());
 					Logger.LogToPath("Started threads",LogPath.Threads,LogPhase.Unspecified);
@@ -124,6 +125,7 @@ namespace OpenDental {
 						case FormODThreadNames.HqMetrics:
 						case FormODThreadNames.LogOff:
 						case FormODThreadNames.ODCloudMachineName:
+						case FormODThreadNames.ODCloudDcvExtension:
 						case FormODThreadNames.ODServiceMonitor:
 						case FormODThreadNames.Podium:
 						case FormODThreadNames.ReplicationMonitor:
@@ -731,6 +733,22 @@ namespace OpenDental {
 		}
 
 		#endregion ODCloudSetMachineName
+		#region ODCloudDcvExtension
+		///<summary>For PrefC.IsAppStream only. Begins a thread that will run to initiate dcv named piped link.</summary>
+		private void BeginODCloudDcvExtensionThread() {
+			if (!PrefC.IsAppStream || IsThreadAlreadyRunning(FormODThreadNames.ODCloudDcvExtension)) {
+				return;
+			}
+			ODThread threadDcvExtension=new ODThread(o => {
+				System.Threading.Tasks.Task task=System.Threading.Tasks.Task.Run(() => CodeBase.Utilities.ODCloudDcvExtension.Start());
+				task.Wait();
+			});
+			threadDcvExtension.AddExceptionHandler((e) => e.DoNothing());
+			threadDcvExtension.GroupName=FormODThreadNames.ODCloudDcvExtension.GetDescription();
+			threadDcvExtension.Name=FormODThreadNames.ODCloudDcvExtension.GetDescription();
+			threadDcvExtension.Start();
+		}
+		#endregion ODCloudDcvExtension
 		#region ODServiceMonitorThread
 
 		///<summary>Begins a thread that monitor's the Open Dental Service heartbeat and alerts the user if the service is not running.</summary>
@@ -1164,7 +1182,8 @@ namespace OpenDental {
 			Dashboard,
 			RegistrationKeyIsDisabled,
 			DataReaderNullMonitor,
-			ApiEvents
+			ApiEvents,
+			ODCloudDcvExtension
 		}
 	}
 }

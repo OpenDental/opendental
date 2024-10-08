@@ -47,10 +47,10 @@ namespace OpenDentBusiness {
 				query+="AND insplan.IsMedical=0 ";
 			}
 			if(showProcsBeforeIns==EnumShowProcsBeforeIns.None) {
-				query+="INNER JOIN claimproc ON claimproc.ProcNum=procedurelog.ProcNum ";
+				query+="INNER JOIN claimproc ON claimproc.ProcNum=procedurelog.ProcNum AND claimproc.PlanNum=insplan.PlanNum ";
 			}
 			else {
-				query+="LEFT JOIN claimproc ON claimproc.ProcNum=procedurelog.ProcNum ";
+				query+="LEFT JOIN claimproc ON claimproc.ProcNum=procedurelog.ProcNum AND claimproc.PlanNum=insplan.PlanNum ";
 			}
 			query+=@"
 				LEFT JOIN procmultivisit ON procmultivisit.ProcNum=procedurelog.ProcNum

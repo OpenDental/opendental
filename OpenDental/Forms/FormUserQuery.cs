@@ -378,7 +378,14 @@ namespace OpenDental {
 					saveFileDialog2.Dispose();
 				}
 			}
-			using StreamWriter streamWriter = new StreamWriter(filePath,false);
+			StreamWriter streamWriter=null;
+			try {
+				streamWriter=new StreamWriter(filePath,false);
+			}
+			catch {
+				MessageBox.Show(Lan.g(this,"File in use by another program.  Close and try again."));
+				return;
+			}
 			//new FileStream(,FileMode.Create,FileAccess.Write,FileShare.Read)))
 			String line="";
 			for(int i = 0;i<_gridResults.Columns.Count;i++) {
@@ -426,6 +433,7 @@ namespace OpenDental {
 				}
 			}
 			streamWriter.Close();
+			streamWriter.Dispose();
 			if(ODBuild.IsThinfinity()) {
 				ThinfinityUtils.ExportForDownload(filePath);
 			}

@@ -62,6 +62,9 @@ namespace OpenDentBusiness{
 			eForm.Description=eFormDef.Description;
 			eForm.MaxWidth=eFormDef.MaxWidth;
 			eForm.RevID=eFormDef.RevID;
+			eForm.ShowLabelsBold=eFormDef.ShowLabelsBold;
+			eForm.SpaceBelowEachField=eFormDef.SpaceBelowEachField;
+			eForm.SpaceToRightEachField=eFormDef.SpaceToRightEachField;
 			eForm.ListEFormFields=EFormFields.FromListDefs(eFormDef.ListEFormFieldDefs);
 			return eForm;
 		}

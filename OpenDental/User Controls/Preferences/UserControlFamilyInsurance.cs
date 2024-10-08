@@ -129,6 +129,7 @@ namespace OpenDental {
 			checkPPOpercentage.Checked=PrefC.GetBool(PrefName.InsDefaultPPOpercent);
 			checkCoPayFeeScheduleBlankLikeZero.Checked=PrefC.GetBool(PrefName.CoPay_FeeSchedule_BlankLikeZero);
 			checkFixedBenefitBlankLikeZero.Checked=PrefC.GetBool(PrefName.FixedBenefitBlankLikeZero);
+			checkOutOfNetworkBlankLikeZero.Checked=PrefC.GetBool(PrefName.InsOutOfNetworkBlankLikeZero);
 			checkInsDefaultShowUCRonClaims.Checked=PrefC.GetBool(PrefName.InsDefaultShowUCRonClaims);
 			checkInsDefaultAssignmentOfBenefits.Checked=PrefC.GetBool(PrefName.InsDefaultAssignBen);
 			checkInsPPOsecWriteoffs.Checked=PrefC.GetBool(PrefName.InsPPOsecWriteoffs);
@@ -169,6 +170,7 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.InsDefaultPPOpercent,checkPPOpercentage.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.CoPay_FeeSchedule_BlankLikeZero,checkCoPayFeeScheduleBlankLikeZero.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.FixedBenefitBlankLikeZero,checkFixedBenefitBlankLikeZero.Checked);
+			Changed|=Prefs.UpdateBool(PrefName.InsOutOfNetworkBlankLikeZero,checkOutOfNetworkBlankLikeZero.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsDefaultShowUCRonClaims,checkInsDefaultShowUCRonClaims.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsDefaultAssignBen,checkInsDefaultAssignmentOfBenefits.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsPPOsecWriteoffs,checkInsPPOsecWriteoffs.Checked);

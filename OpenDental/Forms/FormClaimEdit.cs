@@ -133,10 +133,11 @@ namespace OpenDental{
 				ClaimSendQueueItem claimSendQueueItem = Eclaims.GetMissingData(_clearinghouse,claimSendQueueItemArray.ElementAtOrDefault(0));
 				if(!claimSendQueueItem.MissingData.IsNullOrEmpty()){
 					MsgBox.Show("Cannot create claim due to missing data. The claim has the following errors: "+claimSendQueueItem.MissingData);
-					//Delete the pre-inserted claim and procedures attached to the claim.
-					ClaimProcs.DeleteMany(listClaimProcsForClaim);
+					//Delete the pre-inserted claim and "reset" the procedures on the claim back to normal
 					Claims.Delete(_claim);
-					DialogResult=DialogResult.OK;//Skip the FormClosing code.
+					DeleteClaimHelper();
+					DialogResult=DialogResult.Cancel;
+					_claim=null;//Skip the FormClosing code since we need DialogResult.Cancel.
 					this.Close();
 					return;
 				}

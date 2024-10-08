@@ -228,7 +228,7 @@ namespace OpenDentBusiness.OpenAi {
 		private WebChatMessage InsertWebChatSessionMsg(string msg,WebChatMessageType msgType) {
 			WebChatMessage webChatMessage=new WebChatMessage() {
 				WebChatSessionNum=ChatSession.WebChatSessionNum,
-				DateT=DateTime.Now,
+				DateT=MiscData.GetNowDateTime(),
 				IpAddress="",
 				MessageText=msg,
 				MessageType=msgType,

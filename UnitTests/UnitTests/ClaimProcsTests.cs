@@ -207,6 +207,47 @@ namespace UnitTests.ClaimProcs_Tests {
 		}
 		#endregion
 
+		///<summary>With the InsOutOfNetworkBlankLikeZero preference enabled, any procedure with a procedure code not listed in the fee schedule should result in an insurance estimate amount of 0.</summary>
+		[TestMethod]
+		public void ClaimProcs_ComputeBaseEst_InsOutOfNetworkBlankLikeZero_True() {
+			PrefT.UpdateBool(PrefName.InsOutOfNetworkBlankLikeZero,true);
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient patient=PatientT.CreatePatient(suffix);
+			//Create an out-of-network fee schedule
+			long feeSchedNumOutNetwork=FeeSchedT.CreateFeeSched(FeeScheduleType.OutNetwork,"feeSchedNumOutNetwork "+suffix);
+			string procStr="D2740";
+			ProcedureCode procedureCode=ProcedureCodeT.CreateProcCode(procStr);
+			//Add an insurance with the corresponding fee schedule
+			InsuranceInfo insuranceInfo=InsuranceT.AddInsurance(patient,suffix,"p",feeSchedNumOutNetwork);
+			Benefit benefit=BenefitT.CreateBenefit(insuranceInfo.PriInsPlan.PlanNum,insuranceInfo.PriPatPlan.PatPlanNum,insBenefitType:InsBenefitType.CoInsurance,percent:50);
+			insuranceInfo.AddBenefit(benefit);
+			//Add the corresponding procedure to the fee schedule
+			FeeT.CreateFee(feeSchedNumOutNetwork,procedureCode.CodeNum,600);
+			//Chart the same procedure in the fee schedule
+			Procedure procedure=ProcedureT.CreateProcedure(patient,procStr,ProcStat.TP,"",600);
+			//Create a claimproc and calculate the insurance estimate total
+			ClaimProc claimProc=ClaimProcT.CreateClaimProc(patient.PatNum,procedure.ProcNum,insuranceInfo.PriInsPlan.PlanNum,
+				insuranceInfo.PriInsSub.InsSubNum,DateTime.Today,-1,-1,-1,ClaimProcStatus.Estimate);
+			List<ClaimProcHist> listClaimProcHists=new List<ClaimProcHist>();
+			List<ClaimProcHist> listClaimProcHistsLoop=new List<ClaimProcHist>();
+			ClaimProcs.ComputeBaseEst(claimProc,procedure,insuranceInfo.PriInsPlan,insuranceInfo.PriPatPlan.PatPlanNum,insuranceInfo.ListBenefits,
+				listClaimProcHists,listClaimProcHistsLoop,insuranceInfo.ListPatPlans,0,0,patient.Age,0,insuranceInfo.ListInsPlans,
+				insuranceInfo.ListInsSubs,insuranceInfo.ListSubLinks,false,null,null);
+			//Insurance estimate total should be positive.
+			Assert.IsTrue(claimProc.InsEstTotal>0);
+			//Chart a second procedure on in the fee schedule
+			string procStrNotOnFeeSched="D0020";
+			Procedure procedureOut=ProcedureT.CreateProcedure(patient,procStrNotOnFeeSched,ProcStat.TP,"",600);
+			ClaimProc claimProcOut=ClaimProcT.CreateClaimProc(patient.PatNum,procedure.ProcNum,insuranceInfo.PriInsPlan.PlanNum,
+				insuranceInfo.PriInsSub.InsSubNum,DateTime.Today,-1,-1,-1,ClaimProcStatus.Estimate);
+			ClaimProcs.ComputeBaseEst(claimProcOut,procedureOut,insuranceInfo.PriInsPlan,insuranceInfo.PriPatPlan.PatPlanNum,
+				insuranceInfo.ListBenefits,listClaimProcHists,listClaimProcHistsLoop,insuranceInfo.ListPatPlans,0,0,patient.Age,0,
+				insuranceInfo.ListInsPlans,insuranceInfo.ListInsSubs,insuranceInfo.ListSubLinks,false,null,null);
+			//Insurance estimate total should be 0, since it is not in the fee schedule.
+			Assert.AreEqual(0,claimProcOut.InsEstTotal);
+			PrefT.UpdateBool(PrefName.InsOutOfNetworkBlankLikeZero,false);
+		}
+
 		///<summary>When a procedure has a category covered at 0%, it should be treated as an exclusion and not have a writeoff.</summary>
 		[TestMethod]
 		public void ClaimProcs_ComputeBaseEst_Exclusion_With0PercentCoverage() {

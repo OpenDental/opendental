@@ -44,7 +44,7 @@ namespace OpenDentBusiness{
 		public bool IsMultiPage;
 		///<summary>Indicates whether or not this sheet has been marked deleted.</summary>
 		public bool IsDeleted;
-		///<summary>FK to sheetdef.SheetDefNum. The SheetDef that was used to create this sheet. Will be 0 if an internal sheet or if the sheet was created before 17.2. Can be 0 for sheets that were created from web forms that were associated to web form sheet defs missing this value at HQ. The original purpose of this column was to use it in connection with RefID of the Sheet and SheetDef to automate the updating of forms such as office policies when they change significantly. It is now also used when making a copy of a sheet. Used alongside EClipboardSheetDef to determine whether patient has already filled out a form.</summary>
+		///<summary>FK to sheetdef.SheetDefNum. The SheetDef that was used to create this sheet. Will be 0 if an internal sheet or if the sheet was created before 17.2. Can be 0 for sheets that were created from web forms that were associated to web form sheet defs missing this value at HQ. The original purpose of this column was to use it in connection with RefID of the Sheet and SheetDef to automate the updating of forms such as office policies when they change significantly. It is now also used when making a copy of a sheet. Also used alongside EClipboardSheetDef to determine whether patient has already filled out a form. </summary>
 		public long SheetDefNum;
 		/// <summary>FK to document.DocNum.  Referral letters are stored as PDF in the A to Z folder.</summary>
 		public long DocNum;

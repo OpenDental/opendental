@@ -92,6 +92,12 @@ They are allowed to change both the English and foreign translations in that gri
 		public int MaxWidth;
 		///<summary>Revision ID. Gets updated any time an eForm field is added or deleted from an eFormDef (this includes any time a translation is changed). Used to determine in conjunction with PrefillStatus for eClipboardSheetDef to determine whether to show a patient a new form or have them update their last filled out form. Must match up with EForm RevID to show a previously filled out form.</summary>
 		public int RevID;
+		///<summary>If true, then this form will show labels at 95% and slightly bold. This looks good, but some users might not want it for certain forms, so it's an option. This applies to text, date, radiobuttons, and sigBox. It does not apply to types label, checkbox, or medicationList.</summary>
+		public bool ShowLabelsBold;
+			///<summary>The amount of space below each field. Overrides the global default and can be overridden by field.SpaceBelow. -1 indicates to use default. That way, 0 means 0 space.</summary>
+		public int SpaceBelowEachField;
+		///<summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
+		public int SpaceToRightEachField;
 
 		///<Summary>This is needed for serialization/deserialization of internal EForms. We also leave this list attached to internal EForms for a while for convenience.</Summary>
 		[CrudColumn(IsNotDbColumn=true)]

@@ -90,6 +90,7 @@ namespace OpenDental {
 			//only visible when IsCustomPicker
 			EFormDefSelected=new EFormDef();
 			EFormDefSelected.ListEFormFieldDefs=new List<EFormFieldDef>();
+			EFormDefSelected.ShowLabelsBold=true;
 			EFormDefSelected.FormType=EnumEFormType.PatientForm;
 			EFormDefSelected.Description="Form";
 			EFormDefSelected.MaxWidth=450;

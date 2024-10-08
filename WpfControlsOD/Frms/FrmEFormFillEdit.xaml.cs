@@ -40,6 +40,9 @@ namespace OpenDental {
 		private void FrmEFormFillEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			ctrlEFormFill.ListEFormFields=EFormCur.ListEFormFields;//two references to same list of objects
+			ctrlEFormFill.ShowLabelsBold=EFormCur.ShowLabelsBold;
+			ctrlEFormFill.SpaceBelowEachField=EFormCur.SpaceBelowEachField;
+			ctrlEFormFill.SpaceToRightEachField=EFormCur.SpaceToRightEachField;
 			ctrlEFormFill.RefreshLayout();
 			_maskedSSNOld=EFormCur.ListEFormFields.Find(x=>x.DbLink=="SSN")?.ValueString;//null is ok
 			textDescription.Text=EFormCur.Description;

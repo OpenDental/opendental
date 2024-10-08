@@ -17,6 +17,8 @@ namespace OpenDental {
 	public partial class FrmEFormRadioButtonsEdit : FrmODBase {
 		///<summary>This is the object being edited.</summary>
 		public EFormField EFormFieldCur;
+		///<summary></summary>
+		public EFormDef EFormDefCur;
 		///<summary>Siblings</summary>
 		public List<EFormField> ListEFormFields;
 		///<summary>Set this before opening this window. It's the current language being used in the parent form. Format is the text that's showing in the comboBox. Will be empty string if languages are not set up in pref LanguagesUsedByPatients or if the default language is being used in the parent FrmEFormDefs.</summary>
@@ -33,10 +35,11 @@ namespace OpenDental {
 			Load+=FrmEFormsRadioButtonsEdit_Load;
 			PreviewKeyDown+=FrmEFormRadioButtonsEdit_PreviewKeyDown;
 			comboDbLink.SelectionTrulyChanged+=ComboDbLink_SelectionTrulyChanged;
-			checkLabelLeft.Click+=CheckLabelLeft_Click;
-			checkLabelRight.Click+=CheckLabelRight_Click;
+			radioLabelTop.Click+=(sender,e)=>SetVisibilities();
 			gridMain.CellTextChanged+=GridMain_CellTextChanged;
 			gridMain.CellSelectionCommitted+=GridMain_CellSelectionCommitted;
+			checkIsWidthPercentage.Click+=CheckIsWidthPercentage_Click;
+			checkIsHorizStacking.Click+=CheckIsHorizStacking_Click;
 		}
 
 		private void FrmEFormsRadioButtonsEdit_Load(object sender, EventArgs e) {
@@ -56,10 +59,6 @@ namespace OpenDental {
 				}
 			}
 			textLabel.Text=EFormFieldCur.ValueLabel;
-			checkLabelLeft.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.LeftLeft;
-			checkLabelRight.Checked=EFormFieldCur.LabelAlign==EnumEFormLabelAlign.Right;
-			textVIntWidth.Value=EFormFieldCur.Width;
-			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			List<string> listAvailRadio=EFormFieldsAvailable.GetList_RadioButtons();
 			comboDbLink.Items.AddList(listAvailRadio);
 			if(EFormFieldCur.DbLink==""){//None
@@ -76,17 +75,73 @@ namespace OpenDental {
 			else{
 				comboDbLink.SelectedItem=EFormFieldCur.DbLink;
 			}
-			SetVisibilities();
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
-			textVIntFontScale.Value=EFormFieldCur.FontScale;
-			int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
-			labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
-			if(EFormFieldCur.SpaceBelow==-1){
-				textSpaceBelow.Text="";
+			if(EFormFieldCur.LabelAlign==EnumEFormLabelAlign.TopLeft){
+				radioLabelTop.Checked=true;
+			}
+			if(EFormFieldCur.LabelAlign==EnumEFormLabelAlign.LeftLeft){
+				radioLabelLeft.Checked=true;
+			}
+			if(EFormFieldCur.LabelAlign==EnumEFormLabelAlign.Right){
+				radioLabelRight.Checked=true;
+			}
+			SetVisibilities();
+			textVIntWidthLabel.Value=EFormFieldCur.WidthLabel;
+			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
+			textVIntWidth.Value=EFormFieldCur.Width;
+			if(EFormFieldCur.IsWidthPercentage){
+				labelWidth.Text="Width%";
+				checkIsWidthPercentage.Checked=true;
+				textVIntMinWidth.Value=EFormFieldCur.MinWidth;
 			}
 			else{
-				textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+				labelMinWidth.Visible=false;
+				textVIntMinWidth.Visible=false;
 			}
+			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
+			//this is just for loading. It will recalc each time CheckIsHorizStacking_Click is raised.
+			//This is all siblings in a horizontal stack, not including the field passed in. If not in a h-stack, then this is an empty list.
+			//Even if the current field is not stacking, it can be part of a stack group if the next field is set as stacking.
+			//So this list gets recalculated each time the user checks or unchecks the stacking box.
+			if(listEFormFieldsSiblings.Count==0){
+				labelWidthIsPercentageNote.Visible=false;
+			}
+			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			bool isPreviousStackable=EFormFields.IsPreviousStackable(EFormFieldCur,ListEFormFields);
+			if(!isPreviousStackable){
+				labelStackable.Text="previous field is not stackable";
+				checkIsHorizStacking.IsEnabled=false;
+			}
+			bool isLastInHorizStack=EFormFields.IsLastInHorizStack(EFormFieldCur,ListEFormFields);
+			if(isLastInHorizStack){
+				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
+				if(EFormDefCur.SpaceBelowEachField!=-1){
+					spaceBelowDefault=EFormDefCur.SpaceBelowEachField;//yes this or pref could be zero, which means zero
+				}
+				labelSpaceBelowDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+				if(EFormFieldCur.SpaceBelow==-1){
+					textSpaceBelow.Text="";
+				}
+				else{
+					textSpaceBelow.Text=EFormFieldCur.SpaceBelow.ToString();
+				}
+			}
+			else{
+				labelSpaceBelowDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
+				textSpaceBelow.IsEnabled=false;
+			}
+			int spaceToRightDefault=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+			if(EFormDefCur.SpaceToRightEachField!=-1){
+				spaceToRightDefault=EFormDefCur.SpaceToRightEachField;
+			}
+			labelSpaceToRightDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceToRightDefault.ToString();
+			if(EFormFieldCur.SpaceToRight==-1){
+				textSpaceToRight.Text="";
+			}
+			else{
+				textSpaceToRight.Text=EFormFieldCur.SpaceToRight.ToString();
+			}
+			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			textReportableName.Text=EFormFieldCur.ReportableName;
 			//only set list from obj one time upon opening.
 			_listVisDbLangs=new List<VisDbLang>();
@@ -126,19 +181,18 @@ namespace OpenDental {
 			public string Lang;
 		}
 
-		///<summary>This sets visibilities for various situations.</summary>
+		///<summary>This sets visibilities for label position and allergies/problems.</summary>
 		private void SetVisibilities(){
-			if(checkLabelLeft.Checked==true){
-				labelWidth.Visible=true;
-				textVIntWidth.Visible=true;
-				labelWidthComment.Visible=true;
+			if(radioLabelLeft.Checked==true){
+				labelWidthLabel.Visible=true;
+				textVIntWidthLabel.Visible=true;
 			}
 			else{
-				labelWidth.Visible=false;
-				textVIntWidth.Visible=false;
-				labelWidthComment.Visible=false;
-				textVIntWidth.Value=0;;
+				labelWidthLabel.Visible=false;
+				textVIntWidthLabel.Visible=false;
+				textVIntWidthLabel.Value=0;;
 			}
+			//Then allergies problems
 			if((string)comboDbLink.SelectedItem=="allergy:"){
 				labelAllergProb.Visible=true;
 				textMedAllerProb.Visible=true;
@@ -216,20 +270,6 @@ namespace OpenDental {
 			gridMain.EndUpdate();
 		}
 
-		private void CheckLabelLeft_Click(object sender,EventArgs e) {
-			if(checkLabelLeft.Checked==true){
-				checkLabelRight.Checked=false;
-			}
-			SetVisibilities();
-		}
-
-		private void CheckLabelRight_Click(object sender,EventArgs e) {
-			if(checkLabelRight.Checked==true){
-				checkLabelLeft.Checked=false;
-			}
-			SetVisibilities();
-		}
-
 		private void comboDbLink_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(_listVisDbLangs.Count>0){
 				if(!MsgBox.Show(MsgBoxButtons.OKCancel,"Pick list will be reset for this Db Link. Continue?")){
@@ -280,6 +320,29 @@ namespace OpenDental {
 				textLabel.Text=(string)comboDbLink.SelectedItem;
 			}
 			SetVisibilities();
+		}
+
+		private void CheckIsHorizStacking_Click(object sender,EventArgs e) {
+			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
+			if(listEFormFieldsSiblings.Count>0){
+				labelWidthIsPercentageNote.Visible=true;
+			}
+			else{
+				labelWidthIsPercentageNote.Visible=false;
+			}
+		}
+
+		private void CheckIsWidthPercentage_Click(object sender,EventArgs e) {
+			if(checkIsWidthPercentage.Checked==true){
+				labelWidth.Text="Width%";
+				labelMinWidth.Visible=true;
+				textVIntMinWidth.Visible=true;
+			}
+			else{
+				labelWidth.Text="Width";
+				labelMinWidth.Visible=false;
+				textVIntMinWidth.Visible=false;
+			}
 		}
 
 		private void butChange_Click(object sender,EventArgs e) {
@@ -550,6 +613,20 @@ Any or all items are allowed to have no label by leaving that value in the first
 					return;
 				}
 			}
+			int spaceToRight=-1;
+			if(textSpaceToRight.Text!=""){
+				try{
+					spaceToRight=Convert.ToInt32(textSpaceToRight.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space to Right first.");
+					return;
+				}
+				if(spaceToRight<0 || spaceToRight>200){
+					MsgBox.Show(this,"Space to Right value is invalid.");
+					return;
+				}
+			}
 			//end of validation
 			string strTranslations=textLabelTranslated.Text+",";
 			for(int i=0;i<_listVisDbLangs.Count;i++){
@@ -563,24 +640,6 @@ Any or all items are allowed to have no label by leaving that value in the first
 				LanguagePats.RefreshCache();
 			}
 			EFormFieldCur.ValueLabel=textLabel.Text;
-			if(checkLabelLeft.Checked==true){
-				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.LeftLeft;
-				EFormFieldCur.Width=textVIntWidth.Value;
-			}
-			else if(checkLabelRight.Checked==true){
-				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.Right;
-				EFormFieldCur.Width=0;
-			}
-			else{
-				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.TopLeft;
-				EFormFieldCur.Width=0;
-			}
-			if(checkBorder.Checked==true){
-				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
-			}
-			else{
-				EFormFieldCur.Border=EnumEFormBorder.None;
-			}
 			if(comboDbLink.SelectedIndex==0){//None
 				EFormFieldCur.DbLink="";
 			}
@@ -594,8 +653,41 @@ Any or all items are allowed to have no label by leaving that value in the first
 				EFormFieldCur.DbLink=(string)comboDbLink.SelectedItem;
 			}
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true;
-			EFormFieldCur.FontScale=textVIntFontScale.Value;
+			if(radioLabelTop.Checked==true){
+				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.TopLeft;
+				EFormFieldCur.WidthLabel=0;
+			}
+			if(radioLabelLeft.Checked==true){
+				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.LeftLeft;
+				EFormFieldCur.WidthLabel=textVIntWidthLabel.Value;
+			}
+			if(radioLabelRight.Checked==true){
+				EFormFieldCur.LabelAlign=EnumEFormLabelAlign.Right;
+				EFormFieldCur.WidthLabel=0;
+			}
+			if(checkBorder.Checked==true){
+				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
+			}
+			else{
+				EFormFieldCur.Border=EnumEFormBorder.None;
+			}
+			EFormFieldCur.Width=textVIntWidth.Value;
+			EFormFieldCur.IsWidthPercentage=checkIsWidthPercentage.Checked==true;
+			//change all siblings to match
+			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
+			for(int i=0;i<listEFormFieldsSiblings.Count;i++){
+				listEFormFieldsSiblings[i].IsWidthPercentage=EFormFieldCur.IsWidthPercentage;
+			}
+			if(textVIntMinWidth.Visible){
+				EFormFieldCur.MinWidth=textVIntMinWidth.Value;
+			}
+			else{
+				EFormFieldCur.MinWidth=0;
+			}
+			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.SpaceToRight=spaceToRight;
+			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.ReportableName=textReportableName.Text;
 			EFormFieldCur.PickListVis="";
 			EFormFieldCur.PickListDb="";

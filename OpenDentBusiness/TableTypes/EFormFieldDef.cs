@@ -34,11 +34,11 @@ namespace OpenDentBusiness {
 		public string PickListVis;
 		///<summary>Comma delimited list of strings, used for radioButtons, future comboBoxes, etc. This is the list of items as they would be stored in the database. See PickListVis above for examples of how to use. The value chosen from this list is what will be stored in the ValueString field. Never show this value to the patient.</summary>
 		public string PickListDb;
-		///<summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone. We don't allow this option for RadioButtons because they already stack horizontally, and that would be confusing. The following types are not allowed to stack: RadioButtons, SigBox, PageBreak, MedicationList.</summary>
+		///<summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone. We don't allow this option for RadioButtons because they already stack horizontally, and that would be confusing. The following types are not allowed to stack: SigBox, PageBreak, MedicationList.</summary>
 		public bool IsHorizStacking;
 		///<summary>Only applies when this is a TextField. Default is false, which creates a single row textbox that scrolls horizontally if text is too long. Set to true to cause text to wrap instead. This will cause the box to grow to fit the text.</summary>
 		public bool IsTextWrap;
-		///<summary>This stores either pixel width or percentage width, depending on IsWidthPercentage. In either case, if this is blank/0, then width will be 100% of what's available. The discussion here is for fixed widths. See IsWidthPercentage for discussion of percentage widths. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". Android phones define DIPs differently; they use 1/160" per DIP. But if you are using a language like Flutter, they are handling that conversion for you in the background. Regardless, we will be ignoring DIPs and scaling based solely on font size. The reason for this is to make fonts and boxes all look proportionally the same on both OD proper and in eClipboard. So assuming you use 14 flutter logical pixels for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*14. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is only available on the field types that are h-stackable. Width is available on RadioButtons, but it only refers to the width of the label which is left aligned in order to allow stacking of radioButtons like in allergies and problems.</summary>
+		///<summary>This stores either pixel width or percentage width, depending on IsWidthPercentage. In either case, if this is blank/0, then width will be 100% of what's available. The discussion here is for fixed widths. See IsWidthPercentage for discussion of percentage widths. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". Android phones define DIPs differently; they use 1/160" per DIP. But if you are using a language like Flutter, they are handling that conversion for you in the background. Regardless, we will be ignoring DIPs and scaling based solely on font size. The reason for this is to make fonts and boxes all look proportionally the same on both OD proper and in eClipboard. So assuming you use 14 flutter logical pixels for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*14. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is only available on the field types that are h-stackable.</summary>
 		public int Width;
 		///<summary>Applies to both the label on the field and the field itself. Never 0. Does not apply to Label types, though, since those are only handled by editing the rich text. Always has a valid value between 50 and 300. Default is 100, indicating normal size. WPF defines a DIP as 1/96". Open Dental uses 11.5 DIPs for nearly all fonts on desktop version. Old Microsoft font sizes were based on 1/72", so 11.5 converts to old 8.6. Android defines a DIP as 1/160". Typical recommended font size on Android seems to be about 16, which translates to 9.6 MS DIPs or 7.2 old Windows font. In other words, recommended phone fonts are physically slightly smaller than desktop fonts. EForms uses font sizes based on 100% being a standard normal size. 100% equates to 11.5 on desktop, probably about 16 on Android phones, and whatever our engineers come up with for tablets. By doing it this way, we do not have to explain anything complicated to users, and they also have very good control over font sizes.</summary>
 		public int FontScale;
@@ -50,7 +50,7 @@ namespace OpenDentBusiness {
 		public string ConditionalValue;
 		///<summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft, 2-Right. Only used in RadioButtons for now.</summary>
 		public EnumEFormLabelAlign LabelAlign;
-		///<summary>The amount of space below each field. Overrides the global default. -1 will indicate to use that default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
+		///<summary>The amount of space below each field. Overrides the form and global default. -1 indicates to use default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
 		public int SpaceBelow;
 		///<summary>Allows reporting on fields that don't have DbLink.</summary>
 		public string ReportableName;
@@ -62,6 +62,11 @@ namespace OpenDentBusiness {
 		public bool IsWidthPercentage;
 		///<summary>Only used with IsWidthPercentage.  If left blank/0, then no minimum width. A number might be present here but will be ignored if IsWidthPercentage is false.</summary>
 		public int MinWidth;
+		///<summary>If the label is to the left of the field, this is the width of that label. Only used for RadioButtons right now because that's the only type that allows labels to the left. In RadioButtons, this is helpful to allow a stack of radioButtons to line up. Default is 0 to indicate automatic.</summary>
+		public int WidthLabel;
+		///<summary>The amount of space to the right of each field. Overrides the form and global defaults. -1 indicates to use default. That way, 0 means 0 space. Not used for SigBox or MedicationList which use form level instead.</summary>
+		public int SpaceToRight;
+
 
 		public EFormFieldDef(){
 			//We frequently create these from scratch instead of from db.
@@ -74,6 +79,7 @@ namespace OpenDentBusiness {
 			ConditionalValue="";
 			SpaceBelow=-1;
 			ReportableName="";
+			SpaceToRight=-1;
 		}
 
 		public EFormFieldDef Copy() {

@@ -950,9 +950,12 @@ namespace OpenDentBusiness {
 		EConnectorSmsNotificationFrequency,
 		///<summary>A JSON string of disparate pieces of information regarding the eConnector.</summary>
 		EConnectorStatistics,
-		///<summary>This is the global default space below all eForm fields. It can be overridden for each field using EFormField.SpacingBelow. Initial value is 10. Can be between 0 and 100.</summary>
+		///<summary>This is the global default space below each eForm field. It can be overridden for each form using EForm.SpaceBelowEachField and for each field using EFormField.SpaceBelow. Initial value is 20. Can be between 0 and 100.</summary>
 		[PrefName(ValueType=PrefValueType.INT)]
 		EformsSpaceBelowEachField,
+		///<summary>This is the global default space to the right of each eForm field. It can be overridden for each form using EForm.SpaceToRightEachField and for each field using EFormField.SpaceToRight. Initial value is 10. Can be between 0 and 100.</summary>
+		[PrefName(ValueType=PrefValueType.INT)]
+		EformsSpaceToRightEachField,
 		EHREmailFromAddress,
 		EHREmailPassword,
 		EHREmailPOPserver,
@@ -1344,6 +1347,9 @@ namespace OpenDentBusiness {
 		///Defaults to InsBenProphyCodes codes.</summary>
 		[Description("Prophy Ins Hist Codes")]
 		InsHistProphyCodes,
+		///<summary>False by default. When true, blank entries in out-of-network fee schedules are treated as zero, resulting in a zero insurance estimate. The default false behavior would cause a blank entry to use the procedure fee for the estimate. Users could go through and enter zeros for those procedure fee schedules, but that's a lot of work.</summary>
+		[PrefName(ValueType=PrefValueType.BOOL)]
+		InsOutOfNetworkBlankLikeZero,
 		///<summary>Prevents users from creating initial primary insurance payments where the sum of the payment and write-off exceed the adjusted procedure fee.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		InsPayNoInitialPrimaryMoreThanProc,

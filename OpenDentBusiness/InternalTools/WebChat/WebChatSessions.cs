@@ -101,6 +101,7 @@ namespace OpenDentBusiness {
 			Meth.NoCheckMiddleTierRole();
 			WebChatMessage welcomeMessage=new WebChatMessage();
 			welcomeMessage.WebChatSessionNum=webChatSessionNum;
+			welcomeMessage.DateT=MiscData.GetNowDateTime();
 			welcomeMessage.UserName=WebChatPrefs.GetString(WebChatPrefName.SystemName);
 			welcomeMessage.MessageText=WebChatPrefs.GetString(WebChatPrefName.SystemWelcomeMessage);
 			welcomeMessage.MessageType=WebChatMessageType.System;
@@ -120,6 +121,7 @@ namespace OpenDentBusiness {
 				//This way the end session message is guaranteed to be last, since the timestamp on it is after the session technically ended.
 				WebChatMessage endSessionMessage=new WebChatMessage();
 				endSessionMessage.WebChatSessionNum=webChatSessionNum;
+				endSessionMessage.DateT=MiscData.GetNowDateTime();
 				endSessionMessage.UserName=WebChatPrefs.GetString(WebChatPrefName.SystemName);
 				endSessionMessage.MessageText=WebChatPrefs.GetString(WebChatPrefName.SystemSessionEndMessage);
 				endSessionMessage.MessageType=WebChatMessageType.EndSession;
@@ -143,6 +145,7 @@ namespace OpenDentBusiness {
 				//This way the end session message is guaranteed to be last, since the timestamp on it is after the session technically ended.
 				WebChatMessage endSessionMessage=new WebChatMessage();
 				endSessionMessage.WebChatSessionNum=webChatSessionNum;
+				endSessionMessage.DateT=MiscData.GetNowDateTime();
 				endSessionMessage.UserName=customerName;
 				endSessionMessage.MessageText=WebChatPrefs.GetString(WebChatPrefName.SystemSessionEndMessage);
 				endSessionMessage.MessageType=WebChatMessageType.EndSession;
@@ -158,6 +161,7 @@ namespace OpenDentBusiness {
 			WebChatMessage customerMessage=new WebChatMessage();
 			customerMessage.IpAddress=clientIpAddress;
 			customerMessage.WebChatSessionNum=webChatSessionNum;
+			customerMessage.DateT=MiscData.GetNowDateTime();
 			if(String.IsNullOrEmpty(userName)) {
 				customerMessage.UserName="Customer";
 			}
@@ -178,6 +182,7 @@ namespace OpenDentBusiness {
 			}
 			WebChatMessage techMessage=new WebChatMessage();
 			techMessage.WebChatSessionNum=webChatSession.WebChatSessionNum;
+			techMessage.DateT=MiscData.GetNowDateTime();
 			techMessage.UserName=Security.CurUser.UserName;
 			techMessage.MessageText=messageText;
 			techMessage.MessageType=WebChatMessageType.Technician;

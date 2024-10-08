@@ -1983,8 +1983,8 @@ namespace OpenDentBusiness {
 					//This is our last line of defense to block the user from sending an incomplete claim.
 					strb.Append(procCode.AbbrDesc+" is In Process");
 				}
-				//If the claimproc doesn't have a fee billed and isn't a supplemental procedure.
-				if(claimProcs[i].FeeBilled==0 && claimProcs[i].Status != ClaimProcStatus.Supplemental){
+				//If the claimproc doesn't have a fee billed and isn't a supplemental procedure, and isn't a Ins Overpaid or Ins Underpaid procedure.
+				if(claimProcs[i].FeeBilled==0 && claimProcs[i].Status != ClaimProcStatus.Supplemental && !claimProcs[i].IsOverpay){
 					hasZeroFeeBilled=true;
 				}
 				if(procCode.TreatArea==TreatmentArea.Arch && proc.Surf=="") {

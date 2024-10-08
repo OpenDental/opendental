@@ -150,9 +150,10 @@ namespace OpenDental {
 			}
 			if(benefitType==InsBenefitType.WaitingPeriod 
 					&& covCatNum==0
-					&& codeNum==0)
+					&& codeNum==0
+					&& codeGroupNum==0)
 			{
-				MsgBox.Show(this,"Waiting period must have a category or a procedure code.");
+				MsgBox.Show(this,"Waiting period must have a codegroup, category, or procedure code.");
 				return;
 			}
 			long patPlanNum;

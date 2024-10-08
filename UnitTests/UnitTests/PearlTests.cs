@@ -44,9 +44,8 @@ namespace UnitTests {
 				Document document=new Document();
 				long docNum=Documents.Insert(document,pat);
 				OpenDentBusiness.Bridges.Pearl pearl=new OpenDentBusiness.Bridges.Pearl();
-				pearl.ListBitmaps=ListTools.FromSingle(new Bitmap(40,40));
-				pearl.DocNum=docNum;
-				pearl.MountNum=0;
+				pearl.Bitmap_=new Bitmap(40,40);
+				pearl.Document_=document;
 				pearl.Patient_=pat;
 				bool threwException=false;
 				ODThread oDThread=new ODThread(pearl.SendOnThreadWorker);
@@ -79,9 +78,8 @@ namespace UnitTests {
 				Document document=new Document();
 				long docNum=Documents.Insert(document,pat);
 				OpenDentBusiness.Bridges.Pearl pearl=new OpenDentBusiness.Bridges.Pearl();
-				pearl.ListBitmaps=ListTools.FromSingle(new Bitmap(40,40));
-				pearl.DocNum=docNum;
-				pearl.MountNum=0;
+				pearl.Bitmap_=new Bitmap(40,40);
+				pearl.Document_=document;
 				pearl.Patient_=pat;
 				bool threwException=false;
 				ODThread oDThread=new ODThread(pearl.SendOnThreadWorker);
@@ -110,59 +108,60 @@ namespace UnitTests {
 
 		}
 
+		//Deprecated. No longer sending multiple images on a single thread.
 		///<summary>Sends multi images and asserts various result paths.</summary>
-		[TestMethod]
-		public void Pearl_SendMultiImagesToPearl() {
-			void assert(bool doSucceed) {
-				Patient pat=PatientT.CreatePatient(fName: "Jerry");
-				//Set up document / mountItem #1
-				MountItem mountItem=new MountItem { MountNum=1 };
-				mountItem.MountItemNum=MountItems.Insert(mountItem);
-				Document document1=new Document();
-				document1.MountItemNum=mountItem.MountItemNum;
-				document1.DocNum=Documents.Insert(document1,pat);
-				//Set up document / mountItem #2
-				MountItem mountItem2=new MountItem() { MountNum=1 };
-				mountItem2.MountItemNum=MountItems.Insert(mountItem2);
-				Document document2=new Document();
-				document2.MountItemNum=mountItem2.MountItemNum;
-				document2.DocNum=Documents.Insert(document2,pat);
-				//Create successful PearlRequest for document #2
-				if(!doSucceed) { //When we simulate api failure, mock in doc2 result. This will cause us to use API (and fail) doc1, but skip api for doc2 (success).
-					PearlRequests.Insert(new PearlRequest() { DocNum=document2.DocNum,RequestStatus=EnumPearlStatus.Received });
-				}
-				//Throw an exception in UploadToAwsPresignedUrl() if simulating failure.
-				((PearlApiClientMock)PearlApiClient.Inst).SucceedUploadToAwsPresignedURL=doSucceed;
-				List<Bitmap> listBitmaps=new List<Bitmap>();
-				listBitmaps.Add(new Bitmap(40,40));
-				listBitmaps.Add(new Bitmap(40,40));
-				OpenDentBusiness.Bridges.Pearl pearl=new OpenDentBusiness.Bridges.Pearl();
-				pearl.ListBitmaps=listBitmaps;
-				pearl.DocNum=0;
-				pearl.MountNum=1;
-				pearl.ListMountItems=new List<MountItem> { mountItem,mountItem2 };
-				pearl.Patient_=pat;
-				bool threwException=false;
-				ODThread oDThread=new ODThread(pearl.SendOnThreadWorker);
-				oDThread.AddExceptionHandler((e) => threwException=true);
-				oDThread.Start();
-				if(!oDThread.Join(timeoutMS: 1_000)) {
-					Assert.Fail("Pearl.SendOnThread failed to complete in time");
-				}
-				//Document 1 should only be created if api failed. Document 2 will always exist since we mocked it in above.
-				PearlRequest pearlRequest1=PearlRequests.GetOneByDocNum(document1.DocNum);
-				PearlRequest pearlRequest2=PearlRequests.GetOneByDocNum(document2.DocNum);
-				//Request 1 will be not null if we succeed, null if we fail.
-				Assert.IsTrue(doSucceed ? pearlRequest1!=null : pearlRequest1==null);
-				//Request 2 will always exist since we mocked it in above.
-				Assert.IsNotNull(pearlRequest2);
-				//Status was mocked in above, it should match fresh instance from db.
-				Assert.IsTrue(pearlRequest2.RequestStatus==EnumPearlStatus.Received);
-				//Pearl should handle all exceptions, no matter if a good or bad pearlRequest. No exceptions should bubble up to thread.
-				Assert.IsFalse(threwException);
-			}
-			assert(true);
-			assert(false);
-		}
+		//[TestMethod]
+		//public void Pearl_SendMultiImagesToPearl() {
+		//	void assert(bool doSucceed) {
+		//		Patient pat=PatientT.CreatePatient(fName: "Jerry");
+		//		//Set up document / mountItem #1
+		//		MountItem mountItem=new MountItem { MountNum=1 };
+		//		mountItem.MountItemNum=MountItems.Insert(mountItem);
+		//		Document document1=new Document();
+		//		document1.MountItemNum=mountItem.MountItemNum;
+		//		document1.DocNum=Documents.Insert(document1,pat);
+		//		//Set up document / mountItem #2
+		//		MountItem mountItem2=new MountItem() { MountNum=1 };
+		//		mountItem2.MountItemNum=MountItems.Insert(mountItem2);
+		//		Document document2=new Document();
+		//		document2.MountItemNum=mountItem2.MountItemNum;
+		//		document2.DocNum=Documents.Insert(document2,pat);
+		//		//Create successful PearlRequest for document #2
+		//		if(!doSucceed) { //When we simulate api failure, mock in doc2 result. This will cause us to use API (and fail) doc1, but skip api for doc2 (success).
+		//			PearlRequests.Insert(new PearlRequest() { DocNum=document2.DocNum,RequestStatus=EnumPearlStatus.Received });
+		//		}
+		//		//Throw an exception in UploadToAwsPresignedUrl() if simulating failure.
+		//		((PearlApiClientMock)PearlApiClient.Inst).SucceedUploadToAwsPresignedURL=doSucceed;
+		//		List<Bitmap> listBitmaps=new List<Bitmap>();
+		//		listBitmaps.Add(new Bitmap(40,40));
+		//		listBitmaps.Add(new Bitmap(40,40));
+		//		OpenDentBusiness.Bridges.Pearl pearl=new OpenDentBusiness.Bridges.Pearl();
+		//		pearl.ListBitmaps=listBitmaps;
+		//		pearl.DocNum=0;
+		//		pearl.MountNum=1;
+		//		pearl.ListMountItems=new List<MountItem> { mountItem,mountItem2 };
+		//		pearl.Patient_=pat;
+		//		bool threwException=false;
+		//		ODThread oDThread=new ODThread(pearl.SendOnThreadWorker);
+		//		oDThread.AddExceptionHandler((e) => threwException=true);
+		//		oDThread.Start();
+		//		if(!oDThread.Join(timeoutMS: 1_000)) {
+		//			Assert.Fail("Pearl.SendOnThread failed to complete in time");
+		//		}
+		//		//Document 1 should only be created if api failed. Document 2 will always exist since we mocked it in above.
+		//		PearlRequest pearlRequest1=PearlRequests.GetOneByDocNum(document1.DocNum);
+		//		PearlRequest pearlRequest2=PearlRequests.GetOneByDocNum(document2.DocNum);
+		//		//Request 1 will be not null if we succeed, null if we fail.
+		//		Assert.IsTrue(doSucceed ? pearlRequest1!=null : pearlRequest1==null);
+		//		//Request 2 will always exist since we mocked it in above.
+		//		Assert.IsNotNull(pearlRequest2);
+		//		//Status was mocked in above, it should match fresh instance from db.
+		//		Assert.IsTrue(pearlRequest2.RequestStatus==EnumPearlStatus.Received);
+		//		//Pearl should handle all exceptions, no matter if a good or bad pearlRequest. No exceptions should bubble up to thread.
+		//		Assert.IsFalse(threwException);
+		//	}
+		//	assert(true);
+		//	assert(false);
+		//}
 	}
 }

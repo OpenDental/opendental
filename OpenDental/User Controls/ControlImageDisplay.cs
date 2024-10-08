@@ -1935,7 +1935,7 @@ Here is the desired behavior:
 						MessageBox.Show(Lan.g(this,"Unable to paste bitmap: ")+ex.Message);
 					}
 					if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(doc.DocCategory)) {
-						OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,bitmapPaste,mountNum:_listMountItems[_idxSelectedInMount].MountNum,mountItem:_listMountItems[_idxSelectedInMount]);
+						OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,doc,bitmapPaste,mountItem:_listMountItems[_idxSelectedInMount]);
 						pearl?.SendOnThread();//Mount showing, importing single image
 					}
 					Cursor=Cursors.Default;
@@ -1976,7 +1976,7 @@ Here is the desired behavior:
 							continue;
 						}
 						if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(doc.DocCategory)) {
-							OpenDentBusiness.Bridges.Pearl pearl = OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,filePath: stringArrayfileNames[i],mountNum:listAvail[i].MountNum,mountItem:listAvail[i]);
+							OpenDentBusiness.Bridges.Pearl pearl = OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,doc,filePath:stringArrayfileNames[i],mountItem:listAvail[i]);
 							pearl?.SendOnThread();//Mount showing, importing multiple images
 						}
 					}//for					
@@ -2014,7 +2014,7 @@ Here is the desired behavior:
 					SetDocumentShowing(0,document.Copy());
 				}
 				if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,bitmapPaste,docNum:document.DocNum);
+					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,document,bitmapPaste);
 					pearl?.SendOnThread();//Not mount, importing single image
 				}
 			}
@@ -2043,7 +2043,7 @@ Here is the desired behavior:
 						//only show dialog if pasting in a single file. 
 						//For multiple files, repeated dialogs is annoying. They can always edit after the fact.
 						if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-							OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,filePath:stringArrayfileNames[i],docNum:document.DocNum);
+							OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,document,filePath:stringArrayfileNames[i]);
 							pearl?.SendOnThread();//Not mount, importing single image as part of multiple (will repeat on loop)
 						}
 						nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
@@ -2557,7 +2557,7 @@ Here is the desired behavior:
 				document.ToothNumbers=listMountItemsAvail[i].ToothNumbers;
 				Documents.Update(document,documentOld);
 				if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,filePath:stringArrayFiles[i],mountNum:listMountItemsAvail[i].MountNum,mountItem:listMountItemsAvail[i]);
+					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,document,filePath:stringArrayFiles[i],mountItem:listMountItemsAvail[i]);
 					pearl?.SendOnThread();
 				}
 			}//for
@@ -4901,7 +4901,7 @@ Here is the desired behavior:
 				document.ToothNumbers=listMountItemsAvail[i].ToothNumbers;
 				Documents.Update(document,documentOld);
 				if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,filePath:stringArrayFileNames[i],mountNum:listMountItemsAvail[i].MountNum,mountItem:listMountItemsAvail[i]);
+					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,document,filePath:stringArrayFileNames[i],mountItem:listMountItemsAvail[i]);
 					pearl?.SendOnThread();
 				}
 				//this is all far too complicated:
@@ -4993,7 +4993,7 @@ Here is the desired behavior:
 						ODEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
 					}
 					if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-						OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,filePath:stringArrayFileNames[i],docNum:document.DocNum);
+						OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(PatientCur,document,filePath:stringArrayFileNames[i]);
 						pearl?.SendOnThread();
 					}
 					nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);

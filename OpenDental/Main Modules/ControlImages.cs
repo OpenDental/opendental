@@ -1172,7 +1172,7 @@ namespace OpenDental{
 			for(int i=0;i<e.ListFileNames.Count;i++){
 				document=ImageStore.Import(e.ListFileNames[i],e.DefNumNew,_patient);//Makes log
 				if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,filePath:e.ListFileNames[i],docNum:document.DocNum);
+					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,document,filePath:e.ListFileNames[i]);
 					pearl?.SendOnThread();
 				}
 			}
@@ -1581,7 +1581,7 @@ namespace OpenDental{
 			if(!IsMountShowing()){//single
 				try {
 					if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-						OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,filePath:e.FullPath,docNum:document.DocNum);
+						OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,document,filePath:e.FullPath);
 						pearl?.SendOnThread();
 					}
 					File.Delete(e.FullPath);
@@ -1630,7 +1630,7 @@ namespace OpenDental{
 			}
 			controlImageDisplay.DocumentAcquiredForMount(document,bitmap,mountItem,GetMountShowing().FlipOnAcquire);
 			if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-				OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,bitmap,mountNum:mountItem.MountNum,mountItem:mountItem);
+				OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,document,bitmap,mountItem:mountItem);
 				pearl?.SendOnThread();
 			}
 			bitmap?.Dispose();
@@ -1879,6 +1879,12 @@ namespace OpenDental{
 						checkPearlToothParts.Checked=false;
 						break;
 					}
+				}
+				//Docked checkboxes could have changed what is showing, so update FrmPearlLayers to match.
+				if(_frmPearlLayers!=null) {
+					_frmPearlLayers.ListEnumCategoryODsShown=_listPearlCategoriesShown;
+					_frmPearlLayers.ShowPearlLayers=_showDrawingsPearl;
+					_frmPearlLayers.RefreshUI();
 				}
 				LayoutControls();
 			}
@@ -2419,41 +2425,37 @@ namespace OpenDental{
 				MsgBox.Show("ProgramLinks","Image not selected.");
 				return;
 			}
-			WpfControls.UI.MenuItem menuItem=(WpfControls.UI.MenuItem)frameworkElementSender;
-			if(menuItem.Text==OpenDentBusiness.Bridges.Pearl.PEARL_BUTTON_LAYERS_LABEL) {
-				butPearlLayers_Click(this,new EventArgs());//Opens FrmPearlLayers
+			List<Bitmap> listBitmaps=controlImageDisplay.GetListBitmaps();
+			if(listBitmaps.IsNullOrEmpty()) {
+				return;
 			}
-			else if(menuItem.Text==OpenDentBusiness.Bridges.Pearl.PEARL_BUTTON_SEND_LABEL) {
-				List<Bitmap> listBitmaps=controlImageDisplay.GetListBitmaps();
-				if(listBitmaps.IsNullOrEmpty()) {
-					return;
-				}
-				if(IsMountShowing()){
-					List<MountItem> listMountItems=controlImageDisplay.GetListMountItems();
-					for(int i=0;i<listBitmaps.Count;i++) {
-						if(listBitmaps[i]==null) {
-							continue;
-						}
-						OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,listBitmaps[i],mountNum:listMountItems[i].MountNum,mountItem:listMountItems[i]);
-						pearl?.SendOnThread();
+			Document document=null;
+			if(IsMountShowing()){
+				List<MountItem> listMountItems=controlImageDisplay.GetListMountItems();
+				for(int i=0;i<listBitmaps.Count;i++) {
+					document=controlImageDisplay.GetDocumentShowing(i);
+					if(listBitmaps[i]==null || document==null) {
+						continue;
 					}
-				}
-				else{//one doc
-					long docNum=GetDocumentShowing(0).DocNum;
-					//Look for existing request for this document and skip if one is found.
-					PearlRequest pearlRequest=PearlRequests.GetOneByDocNum(docNum);
-					if(pearlRequest!=null && pearlRequest.RequestStatus!=EnumPearlStatus.TimedOut) {
-						MsgBox.Show("This image was already sent to Pearl.");
-						return;
-					}
-					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,listBitmaps[0],docNum:docNum);
+					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,document,listBitmaps[i],mountItem:listMountItems[i]);
 					pearl?.SendOnThread();
 				}
-				if(_listPearlCategoriesShown.IsNullOrEmpty()) {//if no Pearl annotations are set to show right now
-					//turn them all on so that user can see result
-					_listPearlCategoriesShown=Enum.GetValues(typeof(OpenDentBusiness.Pearl.EnumCategoryOD))
-						.Cast<OpenDentBusiness.Pearl.EnumCategoryOD>().ToList();
+			}
+			else{//one doc
+				document=GetDocumentShowing(0);
+				//Look for existing request for this document and skip if one is found.
+				PearlRequest pearlRequest=PearlRequests.GetOneByDocNum(document.DocNum);
+				if(pearlRequest!=null && pearlRequest.RequestStatus!=EnumPearlStatus.TimedOut) {
+					MsgBox.Show("This image was already sent to Pearl.");
+					return;
 				}
+				OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,document,listBitmaps[0]);
+				pearl?.SendOnThread();
+			}
+			if(_listPearlCategoriesShown.IsNullOrEmpty()) {//if no Pearl annotations are set to show right now
+				//turn them all on so that user can see result
+				_listPearlCategoriesShown=Enum.GetValues(typeof(OpenDentBusiness.Pearl.EnumCategoryOD))
+					.Cast<OpenDentBusiness.Pearl.EnumCategoryOD>().ToList();
 			}
 		}
 
@@ -3792,7 +3794,7 @@ namespace OpenDental{
 				FillImageSelector(false);//Reload and keep new document selected.
 				SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,bitmap,docNum:document.DocNum);
+					OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,document,bitmap);
 					pearl?.SendOnThread();
 				}
 				bitmap?.Dispose();
@@ -3835,7 +3837,7 @@ namespace OpenDental{
 			}
 			controlImageDisplay.DocumentAcquiredForMount(document,bitmap,mountItem,GetMountShowing().FlipOnAcquire);
 			if(OpenDentBusiness.Bridges.Pearl.DoAutoUploadForImageCategory(document.DocCategory)) {
-				OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,bitmap,mountNum:mountItem.MountNum,mountItem:mountItem);
+				OpenDentBusiness.Bridges.Pearl pearl=OpenDentBusiness.Bridges.Pearl.SetupPearlForSendingSingle(_patient,document,bitmap,mountItem:mountItem);
 				pearl?.SendOnThread();
 			}
 			bitmap?.Dispose();

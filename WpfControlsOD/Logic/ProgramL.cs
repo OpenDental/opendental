@@ -625,26 +625,7 @@ namespace WpfControls {
 					toolBarButton.ContextMenuDropDown=contextMenu;
 				}
 				else if(program.ProgName==ProgramName.Pearl.ToString()) {
-					//eventHandlerClick is applied to the Send to Pearl menu item, not the toolbar button itself, so replace it here with a popup.
-					toolBarButton.Click-=eventHandlerClick;//because it was added about 40 lines up
-					toolBarButton.Click+=(sender,e) => {
-						MsgBox.Show("Use dropdown menu.");
-					};
-					ContextMenu contextMenu=new ContextMenu();
-					//Send to Pearl menu item
-					MenuItem menuItemSend=new MenuItem();
-					menuItemSend.Text=Lans.g("Pearl",OpenDentBusiness.Bridges.Pearl.PEARL_BUTTON_SEND_LABEL);
-					menuItemSend.Tag=program;
-					menuItemSend.Click+=new System.Windows.RoutedEventHandler(eventHandlerClick);//ControlImages.ToolBarProgram_Click
-					contextMenu.Add(menuItemSend);
-					//Show Layers menu item
-					MenuItem menuItemLayers=new MenuItem();
-					menuItemLayers.Text=Lans.g("Pearl",OpenDentBusiness.Bridges.Pearl.PEARL_BUTTON_LAYERS_LABEL);
-					menuItemLayers.Tag=program;
-					menuItemLayers.Click+=new System.Windows.RoutedEventHandler(eventHandlerClick);//ControlImages.ToolBarProgram_Click
-					contextMenu.Add(menuItemLayers);
-					toolBarButton.ToolBarButtonStyle=ToolBarButtonStyle.DropDownButton;
-					toolBarButton.ContextMenuDropDown=contextMenu;
+					toolBarButton.SetToolTipText("Send currently displayed image(s) to Pearl");
 				}
 				if(toolBarsAvail!=EnumToolBar.MainToolbar) {
 					toolBar.AddSeparator();

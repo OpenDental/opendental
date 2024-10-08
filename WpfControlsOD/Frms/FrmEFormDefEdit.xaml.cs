@@ -38,22 +38,12 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			PreviewKeyDown+=FrmEFormDefEdit_PreviewKeyDown;
 			SizeChanged+=FrmEFormDefEdit_SizeChanged;
 			FormClosed+=FrmEFormDefEdit_FormClosed;
-			//gridMain.CellDoubleClick+=gridMain_CellDoubleClick;
 			ctrlEFormFill.IsSetupMode=true;
 			ctrlEFormFill.EventDoubleClickField+=CtrlEFormFill_EventDoubleClickField;
-			textVIntMaxWidth.TextChanged+=TextVIntMaxWidth_TextChanged;
-			_dispatcherTimer=new DispatcherTimer();
-			_dispatcherTimer.Interval=TimeSpan.FromMilliseconds(500);
-			_dispatcherTimer.Tick+=_dispatcherTimer_Tick;
 		}
 		#endregion Constructor
 
 		#region Methods - private Event Handlers
-		private void _dispatcherTimer_Tick(object sender,EventArgs e) {
-			SetCtrlWidth();
-			_dispatcherTimer.Stop();
-		}
-
 		///<summary></summary>
 		private void ComboLanguage_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(comboLanguage.SelectedIndex==0){
@@ -70,6 +60,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.TextField){
 				FrmEFormTextBoxEdit frmEFormTextBoxEdit=new FrmEFormTextBoxEdit();
 				frmEFormTextBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormTextBoxEdit.EFormDefCur=EFormDefCur;
 				frmEFormTextBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 				if(comboLanguage.SelectedIndex>0){
 					frmEFormTextBoxEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
@@ -177,6 +168,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				//see comments in FieldType==EnumEFormFieldType.TextField
 				FrmEFormRadioButtonsEdit frmEFormRadioButtonsEdit=new FrmEFormRadioButtonsEdit();
 				frmEFormRadioButtonsEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormRadioButtonsEdit.EFormDefCur=EFormDefCur;
 				frmEFormRadioButtonsEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 				if(comboLanguage.SelectedIndex>0){
 					frmEFormRadioButtonsEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
@@ -258,10 +250,11 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		private void FrmEFormDefEdit_Load(object sender, EventArgs e) {
 			Lang.F(this);
 			ctrlEFormFill.ListEFormFields=EFormFields.FromListDefs(EFormDefCur.ListEFormFieldDefs);
+			ctrlEFormFill.ShowLabelsBold=EFormDefCur.ShowLabelsBold;
+			ctrlEFormFill.SpaceBelowEachField=EFormDefCur.SpaceBelowEachField;
+			ctrlEFormFill.SpaceToRightEachField=EFormDefCur.SpaceToRightEachField;
 			ctrlEFormFill.RefreshLayout();
 			textDescription.Text=EFormDefCur.Description;
-			comboType.Items.AddEnums<EnumEFormType>();
-			comboType.SetSelectedEnum(EFormDefCur.FormType);
 			contextMenu=new ContextMenu(this);
 			WpfControls.EFormL.FillComboLanguage(comboLanguage);
 			labelLanguage.Visibility=comboLanguage.Visibility;//hide them both if no patient languages set up
@@ -272,7 +265,6 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				labelTitle.Text="This is a custom eForm, not internal.";
 			}
 			_isLoaded=true;
-			textVIntMaxWidth.Value=EFormDefCur.MaxWidth;//this triggers SetCtrlWidth
 			ctrlEFormFill.ListEFormFieldDefNumsToDelete=new List<long>();
 		}
 
@@ -292,18 +284,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		}
 
 		private void FrmEFormDefEdit_SizeChanged(object sender,SizeChangedEventArgs e) {
-			//if(!_isLoaded){
-			//	return;
-			//}
-			//ctrlEFormFill.RefreshLayout();
 			SetCtrlWidth();
-		}
-
-		private void TextVIntMaxWidth_TextChanged(object sender,EventArgs e) {
-			if(_dispatcherTimer.IsEnabled){
-				_dispatcherTimer.Stop();
-			}
-			_dispatcherTimer.Start();
 		}
 		#endregion Methods - private Event Handlers
 
@@ -322,6 +303,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FieldType=EnumEFormFieldType.TextField;
 			eFormField.Border=EnumEFormBorder.ThreeD;
 			frmEFormTextBoxEdit.EFormFieldCur=eFormField;
+			frmEFormTextBoxEdit.EFormDefCur=EFormDefCur;
 			frmEFormTextBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 			int idxNew=ctrlEFormFill.GetSelectedIndex();
 			if(idxNew==-1){
@@ -453,6 +435,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			eFormField.FieldType=EnumEFormFieldType.RadioButtons;
 			eFormField.Border=EnumEFormBorder.ThreeD;
 			frmEFormRadioButtonsEdit.EFormFieldCur=eFormField;
+			frmEFormRadioButtonsEdit.EFormDefCur=EFormDefCur;
 			frmEFormRadioButtonsEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 			int idxNew=ctrlEFormFill.GetSelectedIndex();
 			if(idxNew==-1){
@@ -568,19 +551,6 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				}
 			}
 			//End of validation
-			EFormDefCur.Description=textDescription.Text;
-			EFormDefCur.FormType=comboType.GetSelected<EnumEFormType>();
-			int maxWidth=450;
-			if(textVIntMaxWidth.IsValid()){//instead of telling user about this, we will just ignore errors
-				maxWidth=textVIntMaxWidth.Value;
-				if(maxWidth<50){
-					maxWidth=50;
-				}
-				if(maxWidth>1000){
-					maxWidth=1000;
-				}
-			}
-			EFormDefCur.MaxWidth=maxWidth;
 			//All database changes actually happen in the parent form.
 			//Even all the fields that were marked for deletion in ListEFormFieldDefNumsToDelete
 			//We must convert all the EFormFields back into their corresponding EFormFieldDefs, properly attached to the EFormDef
@@ -663,6 +633,20 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			System.Threading.Thread.Sleep(200);//so that the wait cursor will flash to give feedback
 			Cursor=Cursors.Arrow;
 			ctrlEFormFill.Cursor=Cursors.Arrow;
+		}
+
+		private void butEditProperties_Click(object sender,EventArgs e) {
+			FrmEFormDef frmEFormDef=new FrmEFormDef();
+			frmEFormDef.EFormDefCur=EFormDefCur;
+			frmEFormDef.ShowDialog();
+			if(frmEFormDef.IsDialogCancel){
+				return;
+			}
+			textDescription.Text=EFormDefCur.Description;
+			ctrlEFormFill.ShowLabelsBold=EFormDefCur.ShowLabelsBold;
+			ctrlEFormFill.SpaceBelowEachField=EFormDefCur.SpaceBelowEachField;
+			ctrlEFormFill.SpaceToRightEachField=EFormDefCur.SpaceToRightEachField;
+			SetCtrlWidth();//this also does a RefreshLayout
 		}
 
 		private void butPaste_Click(object sender,EventArgs e) {
@@ -753,50 +737,6 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			}
 			ctrlEFormFill.RefreshLayout();
 		}
-
-		/*
-		///<summary></summary>
-		private void butUp_Click(object sender,EventArgs e) {
-			List<int> listSelectedIndices=ctrlEFormFill.GetSelectedIndices();
-			if(listSelectedIndices.Count==0) {
-				MsgBox.Show(this,"Please select a row first.");
-				return;
-			}
-			if(listSelectedIndices.Contains(0)) {
-				return;
-			}
-			for(int i=0;i<listSelectedIndices.Count;i++) { 
-				EFormField eFormFieldAbove=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]-1];
-				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]-1]=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]];
-				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]]=eFormFieldAbove;
-			}
-			ctrlEFormFill.RefreshLayout();
-			for(int i=0;i<listSelectedIndices.Count;i++) { 
-				ctrlEFormFill.SetSelected(listSelectedIndices[i]-1);
-			}
-		}
-
-		///<summary></summary>
-		private void butDown_Click(object sender,EventArgs e) {
-			List<int> listSelectedIndices=ctrlEFormFill.GetSelectedIndices();
-			listSelectedIndices.Reverse();//Reverse the list so that we start with the lowest GridRow.
-			if(listSelectedIndices.Count==0) {
-				MsgBox.Show(this,"Please select a row first.");
-				return;
-			}
-			if(listSelectedIndices.Contains(ctrlEFormFill.ListEFormFields.Count-1)) {
-				return;
-			}
-			for(int i=0;i<listSelectedIndices.Count;i++) {
-				EFormField eFormFieldBelow=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]+1];
-				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]+1]=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]];
-				ctrlEFormFill.ListEFormFields[listSelectedIndices[i]]=eFormFieldBelow;
-			}
-			ctrlEFormFill.RefreshLayout();
-			for(int i=0;i<listSelectedIndices.Count;i++) { 
-				ctrlEFormFill.SetSelected(listSelectedIndices[i]+1);
-			}
-		}*/
 		#endregion Methods - private Event Handlers, other buttons
 
 		#region Methods - public
@@ -844,22 +784,12 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 
 		private void SetCtrlWidth(){
 			//Notice that there is no code at all which changes the width of this form.
-			//This section runs when user changes max width in textbox or resizes window manually.
-			//It's purpose it to make the control as wide as possible within the limits of the window.
+			//This section runs when user changes max width in properties or resizes window manually.
+			//Its purpose it to make the control as wide as possible within the limits of the window.
 			if(!_isLoaded){
 				return;
 			}
-			int maxVal=450;
-			//this is the same logic for how we save their value to the db.
-			if(textVIntMaxWidth.IsValid()){
-				maxVal=textVIntMaxWidth.Value;
-				if(maxVal<50){
-					maxVal=50;
-				}
-				if(maxVal>1000) {
-					maxVal=1000;
-				}
-			}
+			int maxVal=EFormDefCur.MaxWidth;
 			maxVal+=17+2;//scrollbar plus border width
 			int avail=(int)ActualWidth-(int)ctrlEFormFill.Margin.Left-30;//30 is our chosen right margin
 			if(maxVal>avail){
