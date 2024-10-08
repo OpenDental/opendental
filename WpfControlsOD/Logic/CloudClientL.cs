@@ -50,7 +50,7 @@ namespace OpenDental {
 				}
 				if(promptSelections==PromptSelections.Launch) {
 					try {
-						string response=SendToBrowserSynchronously("",BrowserAction.RelaunchODCloudClientViaBrowser,timeoutSecs:6);
+						string response=SendToBrowserSynchronously("",BrowserAction.RelaunchODCloudClientViaBrowser,timeoutSecs:15);
 					}
 					catch(Exception) {
 						MsgBox.Show("ODCloudClient","ODCloudClient did not respond, please ensure that the ODCloudClient is installed.");
@@ -62,18 +62,30 @@ namespace OpenDental {
 					}
 				}
 				//close duplicate cloud client processes
-				TerminateDuplicateCloudClientProcesses();
+				//TerminateDuplicateCloudClientProcesses();
 				return true;
 			}
 			else if(IsAppStream) {
-				string response=null;
 				try {
-					response=CheckIsRunning();
+					//Verify OD has a connection to the extension
+					if (!CodeBase.Utilities.ODCloudDcvExtension.Instance.IsConnected()){
+						throw new ODException();
+					}
+					DateTime lastRequest=CodeBase.Utilities.ODCloudDcvExtension.Instance.GetLastRequest();
+					if((DateTime.Now-lastRequest)>TimeSpan.FromMinutes(30)) {
+						string response=CheckIsRunning();
+						if (response.IsNullOrEmpty()) {
+							throw new Exception();
+						}
+					}
+				}
+				catch(ODException ex) {
+					ex.DoNothing();
+					MsgBox.Show("ODCloudClient","Unable to access the dcv client for communicating with the OpenDentalCloudClient.");
+					return false;
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-				}
-				if(string.IsNullOrEmpty(response)) {
 					MsgBox.Show("ODCloudClient","The ODCloudClient did not respond, please ensure it is installed and running or some features of Open Dental will not be available.");
 					return false;
 				}

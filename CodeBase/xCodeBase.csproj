@@ -191,8 +191,10 @@
     <Compile Include="Utilities\DrCephArgs.cs" />
     <Compile Include="Utilities\Environment_.cs" />
     <Compile Include="Utilities\JavaScriptUtil.cs" />
+    <Compile Include="Utilities\ResponseListHandler.cs" />
     <Compile Include="Utilities\ODClipboard.cs" />
     <Compile Include="Utilities\ODCloudClient.cs" />
+    <Compile Include="Utilities\ODCloudDcvExtension.cs" />
     <Compile Include="Utilities\PayConnectResponse.cs" />
     <Compile Include="Utilities\SoundHelper.cs" />
     <Compile Include="Utilities\SymbolExtensions.cs" />
