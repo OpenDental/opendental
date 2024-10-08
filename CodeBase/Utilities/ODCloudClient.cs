@@ -8,6 +8,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CodeBase.Controls;
 using Newtonsoft.Json;
@@ -541,32 +542,17 @@ namespace CodeBase {
 			string retval="";
 			_hasReceivedResponse=false;
 			ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(data);
-			string fileName=@"data_"+args.FileIdentifier+".txt";
-      string watcherPath=ODFileUtils.CombinePaths(FileWatcherDirectory,@"response");
-			_responseFilePath=ODFileUtils.CombinePaths(watcherPath,fileName);
-			string tempRequestFilePath=ODFileUtils.CombinePaths(GetTempFolderPath(),"request_"+fileName);
-			try {
-				if(!Directory.Exists(watcherPath)) {
-					Directory.CreateDirectory(watcherPath);
-				}
-        File.WriteAllText(tempRequestFilePath,data);
-				File.Move(tempRequestFilePath,ODFileUtils.CombinePaths(FileWatcherDirectory,fileName));
-			}
-			catch(Exception ex) {
-				ex.DoNothing();
-				throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
-			}
+			//Send a request to the extension which will then send our request to the ODCC
+			Task.Run(async () => await Utilities.ODCloudDcvExtension.Instance.SendRequest(data));
 			DateTime start=DateTime.Now;
-			string tempResponseFilePath=ODFileUtils.CombinePaths(GetTempFolderPath(),"response_"+fileName);
 			void waitForResponse() {
 				while(!_hasReceivedResponse && (DateTime.Now-start).TotalSeconds<timeoutSecs) {
 					try {
-						if(!File.Exists(_responseFilePath)) {
-							Thread.Sleep(100);
-							continue;
+						//if available return the request result
+						_response=Utilities.ODCloudDcvExtension.Instance.GetResponse(args.FileIdentifier);
+						if (_response==null) {
+							throw new ODException();
 						}
-						File.Move(_responseFilePath,tempResponseFilePath);//move file to local temp folder before reading it in
-						_response=File.ReadAllText(tempResponseFilePath);
 						_hasReceivedResponse=true;
 					}
 					catch(Exception ex) {
@@ -583,24 +569,6 @@ namespace CodeBase {
 			else {
 				waitForResponse();
       }
-      try {
-				File.Delete(_responseFilePath);
-      }
-      catch(Exception ex) {
-				ex.DoNothing();
-      }
-      try {
-				File.Delete(tempResponseFilePath);
-      }
-      catch (Exception ex) {
-				ex.DoNothing();
-      }
-      try {
-				File.Delete(tempRequestFilePath);
-      }
-      catch(Exception ex) {
-				ex.DoNothing();
-			}
       if(!_hasReceivedResponse) {
 				throw new ODException("Unable to communicate with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
 			}
@@ -809,24 +777,8 @@ namespace CodeBase {
 				SendDataToBrowser(request,(int)BrowserAction.SendToODCloudClient);
 			}
 			else if(IsAppStream) {
-        ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(request);
-        string fileName=@"data_"+args.FileIdentifier+".txt";
-				string tempRequestFilePath=ODFileUtils.CombinePaths(GetTempFolderPath(),"request_"+fileName);
-				try {
-					File.WriteAllText(tempRequestFilePath,request);
-					File.Move(tempRequestFilePath,ODFileUtils.CombinePaths(FileWatcherDirectory,fileName));
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-					throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
-				}
-				try {
-					File.Delete(tempRequestFilePath);
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-				}
-      }
+				Task.Run(async () => await Utilities.ODCloudDcvExtension.Instance.SendRequest(request));
+			}
 		}
 
 		public static string GetMicrosoftAccessToken(string textUsername,string textRefreshToken) {

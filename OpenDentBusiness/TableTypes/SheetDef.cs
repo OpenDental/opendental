@@ -47,6 +47,9 @@ namespace OpenDentBusiness{
 		public int RevID;
 		///<summary>Indicates whether sheets created with this sheet def load with the "Save to Images" box checked</summary>
 		public bool AutoCheckSaveImage;
+		//Jordan Both of these AutoCheckSave fields were done wrong. 
+		//They both should have been also added to Sheet and that's what should be referred to, not these.
+		//But we will not fix.
 		///<summary>FK to definition.DefNum. Used to override the category that is selected when auto saving the sheet to the imaging module.  This allows users to choose the category that a sheet is saved to on a per sheet basis.</summary>
 		public long AutoCheckSaveImageDocCategory;
 

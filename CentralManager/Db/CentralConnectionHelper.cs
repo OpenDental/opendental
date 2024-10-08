@@ -17,8 +17,9 @@ namespace CentralManager {
 				args+="DatabaseName="+Scrub(centralConnection.DatabaseName)+" ";
 				args+="MySqlUser="+Scrub(centralConnection.MySqlUser)+" ";
 				if(centralConnection.MySqlPassword!="") {
-					string mysqlPwd=CentralConnections.Decrypt(centralConnection.MySqlPassword,FormCentralManager.EncryptionKey);
-					args+="MySqlPassword="+Scrub(mysqlPwd)+" ";
+					string mySqlPass=CentralConnections.Decrypt(centralConnection.MySqlPassword,FormCentralManager.EncryptionKey);
+					CDT.Class1.Encrypt(mySqlPass,out string mySqlPassObfuscated);
+					args+="MySqlPassObfuscated="+Scrub(mySqlPassObfuscated)+" ";
 				}
 			}
 			else if(centralConnection.ServiceURI!="") {
@@ -36,7 +37,8 @@ namespace CentralManager {
 			string args=GetArgsFromConnection(centralConnection,useDynamicMode);
 			if(isAutoLogin) {
 				args+="UserName="+Scrub(Security.CurUser.UserName)+" ";
-				args+="OdPassword="+Scrub(Security.PasswordTyped)+" ";
+				CDT.Class1.Encrypt(Security.PasswordTyped,out string odPassObfuscated);
+				args+="OdPassObfuscated="+Scrub(odPassObfuscated)+" ";
 			}
 			if(isDomainLogin) {
 				args+="DomainUser="+Scrub(Security.CurUser.DomainUser)+" ";

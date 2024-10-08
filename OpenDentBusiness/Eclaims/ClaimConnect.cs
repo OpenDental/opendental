@@ -1206,10 +1206,10 @@ namespace OpenDentBusiness.Eclaims {
 			_listProceduresForPat=Procedures.Refresh(claim.PatNum);
 			_listClaimProcsForPat=ClaimProcs.Refresh(claim.PatNum);
 			_listClaimProcsForClaim=ClaimProcs.GetForSendClaim(_listClaimProcsForPat,claim.ClaimNum);
-			_listInsSubs=InsSubs.GetListForSubscriber(claim.PatNum);
+			_listPatPlans=PatPlans.Refresh(claim.PatNum);
+			_listInsSubs=InsSubs.GetMany(_listPatPlans.Select(x => x.InsSubNum).ToList());
 			_clearinghouseForClaim=ClaimConnect.GetClearingHouseForClaim(claim);
 			_insPlanForClaim=InsPlans.GetPlan(claim.PlanNum,new List<InsPlan>());
-			_listPatPlans=PatPlans.Refresh(claim.PatNum);
 			_carrierForClaim=Carriers.GetCarrier(_insPlanForClaim.CarrierNum);
 			List<byte> listDiagnosesVersions=new List<byte>();
 			_listDiagnoses=Procedures.GetUniqueDiagnosticCodes(Procedures.GetProcsFromClaimProcs(XConnect._listClaimProcsForClaim),false,listDiagnosesVersions);
@@ -1607,14 +1607,14 @@ namespace OpenDentBusiness.Eclaims {
 			xconnectClaim.patient=XConnectPatient.FromPatient(patient,claim.InsSubNum,patPlan,EnumXConnectPatientMemberType.PATIENT,claim.PatRelat);
 			xconnectClaim.subscriber=XConnectPatient.FromPatient(patient,claim.InsSubNum,patPlan,EnumXConnectPatientMemberType.SUBSCRIBER,claim.PatRelat);
 			List<XConnectPatient> listXConnectPatientsAdditionalSubs=new List<XConnectPatient>();
-			List<long> listPatNums=new List<long>() { patient.PatNum };
+					List<long> listPatNums=new List<long>() { patient.PatNum };
 			List<InsSub> listInsSubsAdditional=InsSubs.GetListInsSubs(listPatNums);
 			List<InsPlan> listInsPlans=InsPlans.GetPlans(listInsSubsAdditional.Select(x => x.PlanNum).ToList());
 			listInsPlans.RemoveAll(x => x.CarrierNum==XConnect._insPlanForClaim.CarrierNum);
 			if(listInsPlans.Count>0) {
 				for(int i=0;i<listInsPlans.Count;i++) {
 					string carrierAdditional=Carriers.GetName(listInsPlans[i].CarrierNum);
-					InsSub insSubSuscriber=listInsSubsAdditional.FirstOrDefault(x => x.Subscriber==patient.PatNum);
+					InsSub insSubSuscriber=XConnect._listInsSubs.FirstOrDefault(x => x.Subscriber==patient.PatNum);
 					PatPlan patPlanAdditional=XConnect._listPatPlans.FirstOrDefault(x => x.InsSubNum==insSubSuscriber.InsSubNum);
 					XConnectPatient xConnectPatient=XConnectPatient.FromPatient(patient,insSubSuscriber.InsSubNum,patPlanAdditional,EnumXConnectPatientMemberType.ADDITIONAL_SUBSCRIBER,claim.PatRelat);
 					if(xConnectPatient.sequenceCode=="") {

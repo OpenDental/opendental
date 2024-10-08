@@ -397,11 +397,19 @@ namespace OpenDental{
 			string odPassHash=CommandLineArgs_.PassHash??"";
 			bool isSilentUpdate=(CommandLineArgs_.IsSilentUpdate??"").Contains("true");
 			string odPassword=CommandLineArgs_.OdPassword??"";
+			string odPassObfuscated=CommandLineArgs_.OdPassObfuscated??"";
+			if(odPassword=="" && odPassObfuscated!="") {
+				CDT.Class1.Decrypt(odPassObfuscated,out odPassword);
+			}
 			string serverName=CommandLineArgs_.ServerName??"";
 			string databaseName=CommandLineArgs_.DatabaseName??"";
 			string mySqlUser=CommandLineArgs_.MySqlUser??"";
 			string mySqlPassword=CommandLineArgs_.MySqlPassword??"";
 			string mySqlPassHash=CommandLineArgs_.MySqlPassHash??"";
+			string mySqlPassObfuscated=CommandLineArgs_.MySqlPassObfuscated??"";
+			if(mySqlPassword=="" && mySqlPassObfuscated!="") {
+				CDT.Class1.Decrypt(mySqlPassObfuscated,out mySqlPassword);
+			}
 			bool useDynamicMode=(CommandLineArgs_.UseDynamicMode??"").Contains("true");
 			string domainUser=CommandLineArgs_.DomainUser??"";
 			string webServiceUri=CommandLineArgs_.WebServiceUri??"";
@@ -8432,8 +8440,10 @@ namespace OpenDental{
 		public string Module;
 		public string MySqlUser;
 		public string MySqlPassHash;
+		public string MySqlPassObfuscated;
 		public string MySqlPassword;
 		public string OdPassword;
+		public string OdPassObfuscated;
 		public string PassHash;
 		public string PatNum;
 		public string ServerName;
@@ -8478,8 +8488,10 @@ namespace OpenDental{
 			}
 			MySqlUser=GetArgFromCommandLineArgs("MySqlUser=",arrayCommandLineArgs);
 			MySqlPassHash=GetArgFromCommandLineArgs("MySqlPassHash=",arrayCommandLineArgs);
+			MySqlPassObfuscated=GetArgFromCommandLineArgs("MySqlPassObfuscated=",arrayCommandLineArgs);
 			MySqlPassword=GetArgFromCommandLineArgs("MySqlPassword=",arrayCommandLineArgs);
 			OdPassword=GetArgFromCommandLineArgs("OdPassword=",arrayCommandLineArgs);
+			OdPassObfuscated=GetArgFromCommandLineArgs("OdPassObfuscated=",arrayCommandLineArgs);
 			PassHash=GetArgFromCommandLineArgs("PassHash=",arrayCommandLineArgs);
 			PatNum=GetArgFromCommandLineArgs("PatNum=",arrayCommandLineArgs);
 			ServerName=GetArgFromCommandLineArgs("ServerName=",arrayCommandLineArgs);
@@ -8561,8 +8573,14 @@ namespace OpenDental{
 			if(MySqlPassword!=null) {
 				arguments+="MySqlPassword=\""+MySqlPassword+"\" ";
 			}
+			if(MySqlPassObfuscated!=null) {
+				arguments+="MySqlPassObfuscated=\""+MySqlPassObfuscated+"\" ";
+			}
 			if(OdPassword!=null) {
 				arguments+="OdPassword=\""+OdPassword+"\" ";
+			}
+			if(OdPassObfuscated!=null) {
+				arguments+="OdPassObfuscated=\""+OdPassObfuscated+"\" ";
 			}
 			if(PassHash!=null) {
 				arguments+="PassHash=\""+PassHash+"\" ";

@@ -192,10 +192,9 @@ namespace OpenDentBusiness{
 		///So sync must be called first without SigBoxes, then the keyData for the signature(s) can be retrieved, then the SigBoxes can be synced.
 		///This function uses a DB comparison rather than a stale list because we are not worried about concurrency of a single sheet and enhancing the
 		///functions that call this would take a lot of restructuring.</summary>
-		public static void Sync(List<SheetField> listSheetFieldsNew,long sheetNum,bool isSigBoxOnly) {
+		public static bool Sync(List<SheetField> listSheetFieldsNew,long sheetNum,bool isSigBoxOnly) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listSheetFieldsNew,sheetNum,isSigBoxOnly);
-				return;
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listSheetFieldsNew,sheetNum,isSigBoxOnly);
 			}
 			List<SheetField> listSheetFieldsDB=SheetFields.GetListForSheet(sheetNum);
 			if(!isSigBoxOnly) {
@@ -203,13 +202,12 @@ namespace OpenDentBusiness{
 					&& !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
 				List<SheetField> listSheetFieldsNoSigDB=listSheetFieldsDB.FindAll(x => x.FieldType!=SheetFieldType.Parameter 
 					&& !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
-				Crud.SheetFieldCrud.Sync(listSheetFieldsNoSigNew,listSheetFieldsNoSigDB);
-				return;
+				return Crud.SheetFieldCrud.Sync(listSheetFieldsNoSigNew,listSheetFieldsNoSigDB);
 			}
 			//SigBoxes must come after ALL other types in order for the keyData to be in the right order.
 			List<SheetField> listSheetFieldsSigOnlyNew=listSheetFieldsNew.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
 			List<SheetField> listSheetFieldsSigOnlyDB=listSheetFieldsDB.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
-			Crud.SheetFieldCrud.Sync(listSheetFieldsSigOnlyNew,listSheetFieldsSigOnlyDB);
+			return Crud.SheetFieldCrud.Sync(listSheetFieldsSigOnlyNew,listSheetFieldsSigOnlyDB);
 		}
 
 		public static string GetComboSelectedOption(SheetField sheetField){
