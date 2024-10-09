@@ -473,11 +473,6 @@ namespace OpenDental {
 			if(bitmap==null) {
 				return;
 			}
-			if(isSnip) {
-				//Close all other dialogs but this one first
-				FormOpenDental formOpenDental=Application.OpenForms.OfType<FormOpenDental>().ToList()[0];
-				formOpenDental.CloseOpenForms(isForceClose:true,isSnip:true);
-			}
 			//In case this window was minimized
 			WindowState=FormWindowState.Normal;
 			BringToFront();

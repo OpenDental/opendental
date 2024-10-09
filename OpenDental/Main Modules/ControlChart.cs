@@ -7992,6 +7992,8 @@ namespace OpenDental {
 				int countRefillRequests=0;
 				int countErrors=0;
 				int countPendingPrescriptions=0;
+				//Returns 2 if DoseSpotV2 is being used.
+				ProgramProperty programPropertyDoseSpotApiVersion=OpenDentBusiness.ProgramProperties.GetPropForProgByDesc(Programs.GetProgramNum(ProgramName.eRx),DoseSpotREST.PropertyDescs.DoseSpotApiVersion);
 				try {
 					doseSpotUserID=DoseSpot.GetUserID(Security.CurUser,clinicNum);
 					DoseSpot.GetClinicIdAndKey(clinicNum,doseSpotUserID,null,null,out doseSpotClinicID,out doseSpotClinicKey);
@@ -8019,16 +8021,25 @@ namespace OpenDental {
 					if(Pd.PatientNote.Consent.HasFlag(PatConsentFlags.ShareMedicationHistoryErx)) {
 						DoseSpot.SetMedicationHistConsent(Pd.Patient,clinicNum);
 					}
-					//We should push any changes made locally to DS first.
-					DoseSpot.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
-					if(DoseSpot.SyncPrescriptionsFromDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum,actionRxAdd)) {
-						ModuleSelectedDoseSpot();
+					if(programPropertyDoseSpotApiVersion.PropertyValue=="2") {
+						DoseSpotV2.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
+						if(DoseSpotV2.SyncPrescriptionsFromDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum,actionRxAdd)) {
+							ModuleSelectedDoseSpot();
+						}
+					}
+					else {
+						//We should push any changes made locally to DS first.
+						DoseSpot.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
+						if(DoseSpot.SyncPrescriptionsFromDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum,actionRxAdd)) {
+							ModuleSelectedDoseSpot();
+						}
 					}
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
 					SetErxButtonNotification(countRefillRequests,countErrors,countPendingPrescriptions,true);
 				}
+				DoseSpotRESTV2.MigrateDoseSpotIfNeeded();
 			});
 			threadRefreshDoseSpotNotifications.Start();
 		}
@@ -8397,6 +8408,8 @@ namespace OpenDental {
 			}
 			Program programErx=Programs.GetCur(ProgramName.eRx);
 			ProgramProperty programPropertyErxOption=ProgramProperties.GetPropForProgByDesc(programErx.ProgramNum,Erx.PropertyDescs.ErxOption);
+			//Returns 2 if DoseSpotV2 is being used.
+			ProgramProperty programPropertyDoseSpotApiVersion=OpenDentBusiness.ProgramProperties.GetPropForProgByDesc(Programs.GetProgramNum(ProgramName.eRx),DoseSpotREST.PropertyDescs.DoseSpotApiVersion);
 			ErxOption erxOption=PIn.Enum<ErxOption>(programPropertyErxOption.PropertyValue);
 			string doseSpotClinicID="";
 			string doseSpotClinicKey="";
@@ -8570,9 +8583,16 @@ namespace OpenDental {
 				if(!isShowRefillsAndErrors) {
 					string token;
 					try {
-						token=DoseSpotREST.GetToken(doseSpotUserID,doseSpotClinicID,doseSpotClinicKey);
-						//BuildDoseSpotPostDataBytes will validate patient information and throw exceptions.
-						DoseSpot.ValidatePatientData(Pd.Patient);
+						if(programPropertyDoseSpotApiVersion.PropertyValue=="2") {
+							token=DoseSpotRESTV2.GetToken(doseSpotUserID,doseSpotClinicID,doseSpotClinicKey);
+							//BuildDoseSpotPostDataBytes will validate patient information and throw exceptions.
+							DoseSpotV2.ValidatePatientData(Pd.Patient);
+						}
+						else {
+							token=DoseSpotREST.GetToken(doseSpotUserID,doseSpotClinicID,doseSpotClinicKey);
+							//BuildDoseSpotPostDataBytes will validate patient information and throw exceptions.
+							DoseSpot.ValidatePatientData(Pd.Patient);
+						}
 					}
 					catch(Exception ex) {
 						FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
@@ -8581,12 +8601,23 @@ namespace OpenDental {
 					}
 					OIDExternal oIdExternal=DoseSpot.GetDoseSpotPatID(Pd.PatNum);
 					try {
-						if(oIdExternal==null) {
-							DoseSpot.CreateOIDForPatient(PIn.Int(DoseSpotREST.AddPatient(token,Pd.Patient)),Pd.PatNum);
-						} 
-						else {
-							DoseSpotREST.EditPatient(token,Pd.Patient,oIdExternal.IDExternal);
+						if(programPropertyDoseSpotApiVersion.PropertyValue=="2") {
+							if(oIdExternal==null) {
+								DoseSpot.CreateOIDForPatient(PIn.Int(DoseSpotRESTV2.AddPatient(token,Pd.Patient)),Pd.PatNum);
+							} 
+							else {
+								DoseSpotRESTV2.EditPatient(token,Pd.Patient,oIdExternal.IDExternal);
+							}
 						}
+						else {
+							if(oIdExternal==null) {
+								DoseSpot.CreateOIDForPatient(PIn.Int(DoseSpotREST.AddPatient(token,Pd.Patient)),Pd.PatNum);
+							} 
+							else {
+								DoseSpotREST.EditPatient(token,Pd.Patient,oIdExternal.IDExternal);
+							}
+						}
+						
 					}
 					catch(Exception ex) {
 						FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
@@ -8722,8 +8753,13 @@ namespace OpenDental {
 					}
 				}
 				try {
-					//Try to add any self reported medications to DoseSpot before the user gets views their list.
-					DoseSpot.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
+					if(programPropertyDoseSpotApiVersion.PropertyValue=="2") {
+						DoseSpotV2.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
+					}
+					else {
+						//Try to add any self reported medications to DoseSpot before the user gets views their list.
+						DoseSpot.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
+					}
 				}
 				catch(Exception ex) {
 					FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);

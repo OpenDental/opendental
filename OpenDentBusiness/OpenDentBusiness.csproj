@@ -855,6 +855,7 @@
     <Compile Include="WebBridges\APIRequest.cs" />
     <Compile Include="WebBridges\AvaTax.cs" />
     <Compile Include="WebBridges\EdgeExpress.cs" />
+    <Compile Include="WebBridges\Erx\DoseSpotV2.cs" />
     <Compile Include="WebBridges\Google\Google.cs" />
     <Compile Include="WebBridges\Google\GoogleApiConnector.cs" />
     <Compile Include="WebBridges\HqProgram.cs" />
