@@ -1693,7 +1693,7 @@ namespace OpenDentBusiness {
 				}
 			DoseSpot.GetClinicIdAndKey(clinicNum,doseSpotAdminId,null,null,out doseSpotClinicID,out doseSpotClinicKey);
 			//If DoseSpot version is V1 and the migration request has been made, check if the migration was complete
-			if(programPropertyDoseSpotApiVersion.PropertyValue!="2" && programPropertyDoseSpotMigrationRequest.PropertyValue=="1") {
+			if(programPropertyDoseSpotApiVersion.PropertyValue!="2") {
 			//Make a random V2 API call to see if it fails(not migrated) or succeeds(migrated).
 				try {
 					string doseSpotUserID=DoseSpot.GetUserID(Security.CurUser,clinicNum);
