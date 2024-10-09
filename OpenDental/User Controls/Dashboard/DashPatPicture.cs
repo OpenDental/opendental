@@ -60,7 +60,19 @@ namespace OpenDental {
 				return;
 			}
 			try{
-				_docPatPicture=Documents.GetByNum(PIn.Long(sheetField.FieldValue),true);
+				if(sheetField.FieldValue.StartsWith("MountNum:")) {
+					long mountNum=PIn.Long(sheetField.FieldValue.Substring(9));
+					Mount mount=Mounts.GetByNum(mountNum);
+					List<MountItem> listMountItems=MountItems.GetItemsForMount(mountNum);
+					List<Document> listDocuments=Documents.GetDocumentsForMountItems(listMountItems)
+						.Where(x => x!=null)
+						.OrderByDescending(x => x.DateCreated)
+						.ToList();
+					_docPatPicture=listDocuments.FirstOrDefault();
+				}
+				else {
+					_docPatPicture=Documents.GetByNum(PIn.Long(sheetField.FieldValue),true);
+				}
 				if(_docPatPicture is null) {
 					Clear();
 					return;

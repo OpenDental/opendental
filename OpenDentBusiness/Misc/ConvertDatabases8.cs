@@ -1491,5 +1491,22 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 			//This query does not need to be added to 24.2 because all cloud users were on 24.1 or earlier on the date that this was released.
 		}//End of 24_1_76()
+
+		private static void To24_1_80() {
+			//Start 46289
+			string command="SELECT ProgramNum FROM program WHERE ProgName='eRx'";
+			long programNum=Db.GetLong(command);
+			command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiVersion'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue) VALUES("+POut.Long(programNum)+",'DoseSpotApiVersion','1')";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO programproperty (ProgramNum,PropertyDesc,PropertyValue) VALUES("+POut.Long(programNum)+",'DoseSpotApiMigrationRequested','0')";
+				Db.NonQ(command);
+			}
+			//End 46298
+		}//End of 24_1_80
 	}
 }

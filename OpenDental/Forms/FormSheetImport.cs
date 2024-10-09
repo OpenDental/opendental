@@ -606,6 +606,47 @@ namespace OpenDental {
 					row.ObjType=typeof(Referral);
 					_listSheetImportRows.Add(row);
 				}
+				//StudentStatus---------------------------------------------
+				fieldVal=GetRadioValue("StudentStatus");
+				if(fieldVal!=null) {
+					row=new SheetImportRow();
+					row.FieldName="StudentStatus";
+					if(_patient.StudentStatus=="N") {
+						row.OldValDisplay="Nonstudent";
+					}
+					else if(_patient.StudentStatus=="P") {
+						row.OldValDisplay="Part-time";
+					}
+					else if(_patient.StudentStatus=="F") {
+						row.OldValDisplay="Full-time";
+					}
+					row.OldValObj=_patient.StudentStatus;
+					if(fieldVal=="") {
+						row.NewValDisplay="";
+						row.NewValObj=null;
+					}
+					//fieldVals for StudentStatus are the full word for regular sheets.
+					//Regular sheet example: "Fulltime".
+					else if(fieldVal=="Nonstudent" || fieldVal=="N") {
+						row.NewValDisplay="Nonstudent";
+						row.NewValObj="N";
+					}
+					else if(fieldVal=="Parttime" || fieldVal=="P") {
+						row.NewValDisplay="Part-time";
+						row.NewValObj="P";
+					}
+					else if (fieldVal=="Fulltime" || fieldVal=="F") {
+						row.NewValDisplay="Full-time";
+						row.NewValObj="F";
+					}
+					row.ImpValDisplay=row.NewValDisplay;
+					row.ImpValObj=row.NewValObj;
+					row.ObjType=typeof(string);
+					if(row.NewValObj!=null && (string)row.NewValObj!=_patient.StudentStatus) {
+						row.DoImport=true;
+					}
+					_listSheetImportRows.Add(row);
+				}
 				//ICE Name---------------------------------------------
 				fieldVal=GetInputValue("ICEName");
 				if(fieldVal!=null) {
@@ -2547,6 +2588,9 @@ namespace OpenDental {
 							refAttach.RefDate=DateTime.Today;
 							refAttach.ReferralNum=((Referral)_listSheetImportRows[i].ImpValObj).ReferralNum;
 							listRefAttaches.Add(refAttach);
+							break;
+						case "StudentStatus":
+							_patient.StudentStatus=(string)_listSheetImportRows[i].ImpValObj;
 							break;
 						#endregion
 						#region Address and Home Phone
