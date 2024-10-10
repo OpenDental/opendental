@@ -1964,7 +1964,7 @@ namespace OpenDentBusiness {
 			//End I53372
 		}//End of 24_2_28
 
-		public static void To24_2_37() {
+		private static void To24_2_39() {
 			//Start 46289
 			string command="SELECT ProgramNum FROM program WHERE ProgName='eRx'";
 			long programNum=Db.GetLong(command);
@@ -1979,6 +1979,6 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 			//End 46298
-		}//End of 24_2_37
+		}//End of 24_2_39
 	}
 }
