@@ -9,8 +9,8 @@
              Width="205" Height="112" 
              Text="" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
-		<ui:Button x:Name="butYes" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,95,10" Text="Yes" Click="butYes_Click" />
-		<ui:Button x:Name="butNo" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="No" Click="butNo_Click" />
+		<ui:Button x:Name="butYes" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,95,10" Text="_Yes" Click="butYes_Click" />
+		<ui:Button x:Name="butNo" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_No" Click="butNo_Click" />
 		<ui:Label Height="18" Margin="26,36,0,0" Text="Change provider?" Width="123" VAlign="Center" />
 	</Grid>
 </local:FrmODBase>

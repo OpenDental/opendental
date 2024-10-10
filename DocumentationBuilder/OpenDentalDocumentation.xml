@@ -5014,6 +5014,15 @@
     <column order="9" name="RevID" type="int(11)">
       <summary>Revision ID. Used to determine in conjunction with PrefillStatus for eClipboardSheetDef to determine whether to show a patient a new form or have them update their last filled out form. Must match up with EFormDef RevID to show a previously filled out form.</summary>
     </column>
+    <column order="10" name="ShowLabelsBold" type="tinyint(4)">
+      <summary>If true, then this form will show labels at 95% and slightly bold. This looks good, but some users might not want it for certain forms, so it's an option. This applies to text, date, radiobuttons, and sigBox. It does not apply to types label, checkbox, or medicationList.</summary>
+    </column>
+    <column order="11" name="SpaceBelowEachField" type="int(11)">
+      <summary>The amount of space below each field. Overrides the global default and can be overridden by field.SpaceBelow. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
+    <column order="12" name="SpaceToRightEachField" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
   </table>
   <table name="eformdef">
     <summary>EForms are a way for patients to fill out forms. This is similar to sheets, but optimized for dynamic layout instead of fixed layout. The office sets up templates, EFormDefs, which get copied to EForms. Since this is a template EForm, it does not link to a patient. It can be freely changed without affecting any EForms. We also supply internal EFormDefs, which are hard coded as XML rather than being in any office database.</summary>
@@ -5043,6 +5052,15 @@
     </column>
     <column order="6" name="RevID" type="int(11)">
       <summary>Revision ID. Gets updated any time an eForm field is added or deleted from an eFormDef (this includes any time a translation is changed). Used to determine in conjunction with PrefillStatus for eClipboardSheetDef to determine whether to show a patient a new form or have them update their last filled out form. Must match up with EForm RevID to show a previously filled out form.</summary>
+    </column>
+    <column order="7" name="ShowLabelsBold" type="tinyint(4)">
+      <summary>If true, then this form will show labels at 95% and slightly bold. This looks good, but some users might not want it for certain forms, so it's an option. This applies to text, date, radiobuttons, and sigBox. It does not apply to types label, checkbox, or medicationList.</summary>
+    </column>
+    <column order="8" name="SpaceBelowEachField" type="int(11)">
+      <summary>The amount of space below each field. Overrides the global default and can be overridden by field.SpaceBelow. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
+    <column order="9" name="SpaceToRightEachField" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
     </column>
   </table>
   <table name="eformfield">
@@ -5084,13 +5102,13 @@
       <summary>Comma delimited list of strings, used for radioButtons, future comboBoxes, etc. This is the list of items as they would be stored in the database. See PickListVis above for examples of how to use. The value chosen from this list is what will be stored in the ValueString field. Never show this value to the patient.</summary>
     </column>
     <column order="10" name="IsHorizStacking" type="tinyint(4)">
-      <summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone. The following types are not allowed to stack: RadioButtons, SigBox, PageBreak, MedicationList.</summary>
+      <summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone. The following types are not allowed to stack: SigBox, PageBreak, MedicationList.</summary>
     </column>
     <column order="11" name="IsTextWrap" type="tinyint(4)">
       <summary>Only applies when this is a TextField. Default is false, which creates a single row textbox that scrolls horizontally if text is too long. Set to true to cause text to wrap instead. This will cause the box to grow to fit the text.</summary>
     </column>
     <column order="12" name="Width" type="int(11)">
-      <summary>This stores either pixel width or percentage width, depending on IsWidthPercentage. In either case, if this is blank/0, then width will be 100% of what's available. The discussion here is for fixed widths. See IsWidthPercentage for discussion of percentage widths. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". Android phones define DIPs differently; they use 1/160" per DIP. But if you are using a language like Flutter, they are handling that conversion for you in the background. Regardless, we will be ignoring DIPs and scaling based solely on font size. The reason for this is to make fonts and boxes all look proportionally the same on both OD proper and in eClipboard. So assuming you use 14 flutter logical pixels for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*14. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is only available on the field types that are h-stackable. Width is available on RadioButtons, but it only refers to the width of the label which is left aligned in order to allow stacking of radioButtons like in allergies and problems.</summary>
+      <summary>This stores either pixel width or percentage width, depending on IsWidthPercentage. In either case, if this is blank/0, then width will be 100% of what's available. The discussion here is for fixed widths. See IsWidthPercentage for discussion of percentage widths. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". Android phones define DIPs differently; they use 1/160" per DIP. But if you are using a language like Flutter, they are handling that conversion for you in the background. Regardless, we will be ignoring DIPs and scaling based solely on font size. The reason for this is to make fonts and boxes all look proportionally the same on both OD proper and in eClipboard. So assuming you use 14 flutter logical pixels for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*14. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is only available on the field types that are h-stackable.</summary>
     </column>
     <column order="13" name="FontScale" type="int(11)">
       <summary>Applies to both the label on the field and the field itself. Never 0. Does not apply to Label types, though, since those are only handled by editing the rich text. Always has a valid value between 50 and 300. Default is 100, indicating normal size. WPF defines a DIP as 1/96". Open Dental uses 11.5 DIPs for nearly all fonts on desktop version. Old Microsoft font sizes were based on 1/72", so 11.5 converts to old 8.6. Android defines a DIP as 1/160". Typical recommended font size on Android seems to be about 16, which translates to 9.6 MS DIPs or 7.2 old Windows font. In other words, recommended phone fonts are physically slightly smaller than desktop fonts. EForms uses font sizes based on 100% being a standard normal size. 100% equates to 11.5 on desktop, probably about 16 on Android phones, and whatever our engineers come up with for tablets. By doing it this way, we do not have to explain anything complicated to users, and they also have very good control over font sizes.</summary>
@@ -5108,13 +5126,13 @@
       <summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft, 2-Right. Only used in RadioButtons for now.</summary>
       <Enumeration name="EnumEFormLabelAlign">
         <summary>Describes where the label is in relation to the rest of the field.</summary>
-        <EnumValue name="TopLeft">0-Default</EnumValue>
+        <EnumValue name="TopLeft">0-Default. Above the radiobuttons, aligned left.</EnumValue>
         <EnumValue name="LeftLeft">1-Left of the remainder of the field, and left aligned within that space.</EnumValue>
         <EnumValue name="Right">2-Right of the remainder of the field, and left aligned within that space.</EnumValue>
       </Enumeration>
     </column>
     <column order="18" name="SpaceBelow" type="int(11)">
-      <summary>The amount of space below each field. Overrides the global default. -1 will indicate to use that default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
+      <summary>The amount of space below each field. Overrides the form and global defaults. -1 indicates to use default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
     </column>
     <column order="19" name="ReportableName" type="varchar(255)">
       <summary>Allows reporting on fields that don't have DbLink.</summary>
@@ -5135,6 +5153,12 @@
     </column>
     <column order="23" name="MinWidth" type="int(11)">
       <summary>Only used with IsWidthPercentage.  If left blank/0, then no minimum width. A number might be present here but will be ignored if IsWidthPercentage is false.</summary>
+    </column>
+    <column order="24" name="WidthLabel" type="int(11)">
+      <summary>If the label is to the left of the field, this is the width of that label. Only used for RadioButtons right now because that's the only type that allows labels to the left. In RadioButtons, this is helpful to allow a stack of radioButtons to line up. Default is 0 to indicate automatic.</summary>
+    </column>
+    <column order="25" name="SpaceToRight" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the form and global defaults. -1 indicates to use default. That way, 0 means 0 space. Not used for SigBox or MedicationList which use form level instead.</summary>
     </column>
   </table>
   <table name="eformfielddef">
@@ -5177,13 +5201,13 @@
       <summary>Comma delimited list of strings, used for radioButtons, future comboBoxes, etc. This is the list of items as they would be stored in the database. See PickListVis above for examples of how to use. The value chosen from this list is what will be stored in the ValueString field. Never show this value to the patient.</summary>
     </column>
     <column order="8" name="IsHorizStacking" type="tinyint(4)">
-      <summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone. We don't allow this option for RadioButtons because they already stack horizontally, and that would be confusing. The following types are not allowed to stack: RadioButtons, SigBox, PageBreak, MedicationList.</summary>
+      <summary>Typically false. Set to true to cause this field to get stacked horizontally compared to its previous sibling. Example might be to set State and Zip fields to true. This request will be ignored if screen is too small, like on a phone. We don't allow this option for RadioButtons because they already stack horizontally, and that would be confusing. The following types are not allowed to stack: SigBox, PageBreak, MedicationList.</summary>
     </column>
     <column order="9" name="IsTextWrap" type="tinyint(4)">
       <summary>Only applies when this is a TextField. Default is false, which creates a single row textbox that scrolls horizontally if text is too long. Set to true to cause text to wrap instead. This will cause the box to grow to fit the text.</summary>
     </column>
     <column order="10" name="Width" type="int(11)">
-      <summary>This stores either pixel width or percentage width, depending on IsWidthPercentage. In either case, if this is blank/0, then width will be 100% of what's available. The discussion here is for fixed widths. See IsWidthPercentage for discussion of percentage widths. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". Android phones define DIPs differently; they use 1/160" per DIP. But if you are using a language like Flutter, they are handling that conversion for you in the background. Regardless, we will be ignoring DIPs and scaling based solely on font size. The reason for this is to make fonts and boxes all look proportionally the same on both OD proper and in eClipboard. So assuming you use 14 flutter logical pixels for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*14. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is only available on the field types that are h-stackable. Width is available on RadioButtons, but it only refers to the width of the label which is left aligned in order to allow stacking of radioButtons like in allergies and problems.</summary>
+      <summary>This stores either pixel width or percentage width, depending on IsWidthPercentage. In either case, if this is blank/0, then width will be 100% of what's available. The discussion here is for fixed widths. See IsWidthPercentage for discussion of percentage widths. If fields are stacked horizontally, then they will wrap when they hit screen width. So horizontally stacked fields may end up vertically stacked on a small screen. But if a single field is still set to be wider than the current screen, it will shrink to fit the screen. This width uses WPF DIPs which are 1/96". Android phones define DIPs differently; they use 1/160" per DIP. But if you are using a language like Flutter, they are handling that conversion for you in the background. Regardless, we will be ignoring DIPs and scaling based solely on font size. The reason for this is to make fonts and boxes all look proportionally the same on both OD proper and in eClipboard. So assuming you use 14 flutter logical pixels for 100% font vs 11.5 in WPF, the conversion would look like this: Width/11.5*14. Notice that we are only converting based on font size. This makes our converted width a near perfect fit for the same text as the original. Width is only available on the field types that are h-stackable.</summary>
     </column>
     <column order="11" name="FontScale" type="int(11)">
       <summary>Applies to both the label on the field and the field itself. Never 0. Does not apply to Label types, though, since those are only handled by editing the rich text. Always has a valid value between 50 and 300. Default is 100, indicating normal size. WPF defines a DIP as 1/96". Open Dental uses 11.5 DIPs for nearly all fonts on desktop version. Old Microsoft font sizes were based on 1/72", so 11.5 converts to old 8.6. Android defines a DIP as 1/160". Typical recommended font size on Android seems to be about 16, which translates to 9.6 MS DIPs or 7.2 old Windows font. In other words, recommended phone fonts are physically slightly smaller than desktop fonts. EForms uses font sizes based on 100% being a standard normal size. 100% equates to 11.5 on desktop, probably about 16 on Android phones, and whatever our engineers come up with for tablets. By doing it this way, we do not have to explain anything complicated to users, and they also have very good control over font sizes.</summary>
@@ -5201,13 +5225,13 @@
       <summary>Enum:EnumEFormLabelAlign 0-TopLeft, 1-LeftLeft, 2-Right. Only used in RadioButtons for now.</summary>
       <Enumeration name="EnumEFormLabelAlign">
         <summary>Describes where the label is in relation to the rest of the field.</summary>
-        <EnumValue name="TopLeft">0-Default</EnumValue>
+        <EnumValue name="TopLeft">0-Default. Above the radiobuttons, aligned left.</EnumValue>
         <EnumValue name="LeftLeft">1-Left of the remainder of the field, and left aligned within that space.</EnumValue>
         <EnumValue name="Right">2-Right of the remainder of the field, and left aligned within that space.</EnumValue>
       </Enumeration>
     </column>
     <column order="16" name="SpaceBelow" type="int(11)">
-      <summary>The amount of space below each field. Overrides the global default. -1 will indicate to use that default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
+      <summary>The amount of space below each field. Overrides the form and global default. -1 indicates to use default. That way, 0 means 0 space. If multiple fields are stacked horizontally, then only the right-most field can have this field set.</summary>
     </column>
     <column order="17" name="ReportableName" type="varchar(255)">
       <summary>Allows reporting on fields that don't have DbLink.</summary>
@@ -5228,6 +5252,12 @@
     </column>
     <column order="21" name="MinWidth" type="int(11)">
       <summary>Only used with IsWidthPercentage.  If left blank/0, then no minimum width. A number might be present here but will be ignored if IsWidthPercentage is false.</summary>
+    </column>
+    <column order="22" name="WidthLabel" type="int(11)">
+      <summary>If the label is to the left of the field, this is the width of that label. Only used for RadioButtons right now because that's the only type that allows labels to the left. In RadioButtons, this is helpful to allow a stack of radioButtons to line up. Default is 0 to indicate automatic.</summary>
+    </column>
+    <column order="23" name="SpaceToRight" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the form and global defaults. -1 indicates to use default. That way, 0 means 0 space. Not used for SigBox or MedicationList which use form level instead.</summary>
     </column>
   </table>
   <table name="eformimportrule">
@@ -8327,7 +8357,7 @@
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
-        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
+        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare. Only userd at HQ.</EnumValue>
         <EnumValue name="PerioEditCopy">257 - Allow users to copy perio charts in the Perio Chart window.</EnumValue>
       </Enumeration>
     </column>
@@ -15808,7 +15838,7 @@
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
-        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
+        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare. Only userd at HQ.</EnumValue>
         <EnumValue name="PerioEditCopy">257 - Allow users to copy perio charts in the Perio Chart window.</EnumValue>
       </Enumeration>
     </column>
@@ -16006,7 +16036,7 @@
       <summary>Indicates whether or not this sheet has been marked deleted.</summary>
     </column>
     <column order="15" name="SheetDefNum" type="bigint(20)" fk="sheetdef">
-      <summary>FK to sheetdef.SheetDefNum. The SheetDef that was used to create this sheet. Will be 0 if an internal sheet or if the sheet was created before 17.2. Can be 0 for sheets that were created from web forms that were associated to web form sheet defs missing this value at HQ. The original purpose of this column was to use it in connection with RefID of the Sheet and SheetDef to automate the updating of forms such as office policies when they change significantly. It is now also used when making a copy of a sheet. Used alongside EClipboardSheetDef to determine whether patient has already filled out a form.</summary>
+      <summary>FK to sheetdef.SheetDefNum. The SheetDef that was used to create this sheet. Will be 0 if an internal sheet or if the sheet was created before 17.2. Can be 0 for sheets that were created from web forms that were associated to web form sheet defs missing this value at HQ. The original purpose of this column was to use it in connection with RefID of the Sheet and SheetDef to automate the updating of forms such as office policies when they change significantly. It is now also used when making a copy of a sheet. Also used alongside EClipboardSheetDef to determine whether patient has already filled out a form. </summary>
     </column>
     <column order="16" name="DocNum" type="bigint(20)" fk="document">
       <summary>FK to document.DocNum.  Referral letters are stored as PDF in the A to Z folder.</summary>

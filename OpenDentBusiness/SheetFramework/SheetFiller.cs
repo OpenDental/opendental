@@ -163,7 +163,7 @@ namespace OpenDentBusiness {
 			StaticTextFieldDependency staticTextFieldDependency=StaticTextData.GetStaticTextDependencies(listEnumStaticTextFields);
 			SheetParameter sheetParameterAptNum=GetParamByName(sheet,"AptNum");
 			long aptNum=0;
-			if(sheetParameterAptNum!=null && sheetParameterAptNum.ParamValue!=null && staticTextData!=null && !staticTextData.ListAppts.IsNullOrEmpty()) {
+			if(sheetParameterAptNum!=null && sheetParameterAptNum.ParamValue!=null) {
 				aptNum=PIn.Long(sheetParameterAptNum.ParamValue.ToString(),hasExceptions:false);
 			}
 			List<StaticTextReplacement> listStaticTextReplacements=GetStaticTextReplacements(listEnumStaticTextFields,patient,family,staticTextData,staticTextFieldDependency,aptNum,sheet.SheetType);

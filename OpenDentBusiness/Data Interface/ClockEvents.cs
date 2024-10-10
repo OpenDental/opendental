@@ -628,13 +628,13 @@ namespace OpenDentBusiness {
 				string note="";
 				DataRow dataRow=table.NewRow();
 				dataRow.ItemArray.Initialize();//changes all nulls to blanks and zeros.
-				//PayrollID-------------------------------------------------------------------------------------------------------------------------------------
+				//PayrollID----------------------------------------------------------------------------------------------------------------------------------
 				dataRow["PayrollID"]=listEmployees[i].PayrollID;
-				//EmployeeNum and Name----------------------------------------------------------------------------------------------------------------------------------
+				//EmployeeNum and Name-----------------------------------------------------------------------------------------------------------------------
 				dataRow["EmployeeNum"]=listEmployees[i].EmployeeNum;
 				dataRow["firstName"]=listEmployees[i].FName;
 				dataRow["lastName"]=listEmployees[i].LName;
-				//Begin calculations------------------------------------------------------------------------------------------------------------------------------------
+				//Begin calculations-------------------------------------------------------------------------------------------------------------------------
 				//each list below will contain one entry per week.
 				List<TimeSpan> listTimeSpansRegularHoursWeekly=new List<TimeSpan>();//Total non-overtime hours.  Used for calculation, not displayed or part of dataTable.
 				List<TimeSpan> listTimeSpansOTHoursWeekly=new List<TimeSpan>();//Total overtime hours.  Used for calculation, not displayed or part of dataTable.
@@ -656,10 +656,10 @@ namespace OpenDentBusiness {
 					table.Rows.Add(dataRow);
 					continue;//display employee errors in note field for employee. All columns will be blank for just this employee.
 				}
-				//sum values for each week----------------------------------------------------------------------------------------------------
+				//Sum values for each week-----------------------------------------------------------------------------------------------
 				List<DateTime> listDateTimesWeekStart=WeekStartHelper(dateTimeStart,dateTimeStop);
 				for(int j=0;j<listDateTimesWeekStart.Count;j++) {
-					listTimeSpansRegularHoursWeekly.Add(TimeSpan.Zero);			
+					listTimeSpansRegularHoursWeekly.Add(TimeSpan.Zero);
 					listTimeSpansOTHoursWeekly.Add(TimeSpan.Zero);
 					listTimeSpansRate2HoursWeekly.Add(TimeSpan.Zero);
 					listTimeSpansRate3HoursWeekly.Add(TimeSpan.Zero);
@@ -725,54 +725,64 @@ namespace OpenDentBusiness {
 					listTimeSpansRegularHoursWeekly[week]+=listTimeAdjustsEmp[j].RegHours;
 					listTimeSpansOTHoursWeekly[week]+=listTimeAdjustsEmp[j].OTimeHours;
 				}
-				//Overtime should have already been calculated by CalcWeekly(); No calculations needed, just sum values.------------------------------------------------------
-				double totalHoursWorked=0;
-				double totalRegularHoursWorked=0;
-				double totalOTHoursWorked=0;
-				double totalRate2HoursWorked=0;
-				double totalRate3HoursWorked=0;
-				//sum weekly totals.
-				for(int j=0;j<listDateTimesWeekStart.Count;j++){
-					totalHoursWorked+=listTimeSpansRegularHoursWeekly[j].TotalHours;
-					totalHoursWorked+=listTimeSpansOTHoursWeekly[j].TotalHours;
-					totalRegularHoursWorked+=listTimeSpansRegularHoursWeekly[j].TotalHours;
-					totalOTHoursWorked+=listTimeSpansOTHoursWeekly[j].TotalHours;
-					totalRate2HoursWorked+=listTimeSpansRate2HoursWeekly[j].TotalHours;
-					totalRate3HoursWorked+=listTimeSpansRate3HoursWeekly[j].TotalHours;
+				//Overtime rates should be calculated weekly instead of summed values----------------------------------------------------
+				double totalHours=0;
+				double totalRate1Hours=0;
+				double totalRate1OTHours=0;
+				double totalRate2Hours=0;
+				double totalRate2OTHours=0;
+				double totalRate3Hours=0;
+				double totalRate3OTHours=0;
+				//Loop through each week and process overtime rates based on the hours worked during each week.
+				for(int j=0;j<listDateTimesWeekStart.Count;j++) {
+					double regularHoursWeekly=listTimeSpansRegularHoursWeekly[j].TotalHours;
+					double overTimeHoursWeekly=listTimeSpansOTHoursWeekly[j].TotalHours;
+					double totalHoursWeekly=regularHoursWeekly + overTimeHoursWeekly;
+					double rate2HoursWeekly=listTimeSpansRate2HoursWeekly[j].TotalHours;
+					double rate3HoursWeekly=listTimeSpansRate3HoursWeekly[j].TotalHours;
+					//Calculate the ratio of hours worked this week at each rate.
+					double rate1Ratio=0;
+					double rate2Ratio=0;
+					double rate3Ratio=0;
+					//Overtime hours for each rate is based on the ratio of hours of each rate against the total OT hours worked.
+					//Example for 40 hour week + 10 OT hours = 50 total hours
+					//
+					//					Hours Worked	HoursWorked/TotalHours		BaseHoursAtRate			OTHoursAtRate
+					//	Rate1				30						30 / 50	= 0.60				0.60 * 40 = 24			0.60 * 10 =  6
+					//	Rate2				 5						 5 / 50 = 0.10				0.10 * 40 =  4			0.10 * 10 =  1
+					//	Rate3				15						15 / 50 = 0.30				0.30 * 40 = 12			0.30 * 10 =  3
+					//																											Total = 40			    Total = 10
+					if(totalHoursWeekly!=0) {
+						rate2Ratio=rate2HoursWeekly/totalHoursWeekly;
+						rate3Ratio=rate3HoursWeekly/totalHoursWeekly;
+						rate1Ratio=1-rate2Ratio-rate3Ratio;//"self correcting math" guaranteed to total correctly.
+					}
+					//Regular time at Rate1, Rate2, and Rate3
+					double rate1Hours=rate1Ratio*regularHoursWeekly;
+					double rate2Hours=rate2Ratio*regularHoursWeekly;
+					double rate3Hours=regularHoursWeekly-rate1Hours-rate2Hours; //"self correcting math" guaranteed to total correctly.
+					//OT hours
+					double rate1OTHours=rate1Ratio*overTimeHoursWeekly;
+					double rate2OTHours=rate2Ratio*overTimeHoursWeekly;
+					double rate3OTHours=totalHoursWeekly-rate1Hours-rate2Hours-rate3Hours-rate1OTHours-rate2OTHours;//"self correcting math" guaranteed to total correctly.
+					//Add the weekly calculated hours to the totals for the pay period.
+					totalHours+=totalHoursWeekly;
+					totalRate1Hours+=rate1Hours;
+					totalRate1OTHours+=rate1OTHours;
+					totalRate2Hours+=rate2Hours;
+					totalRate2OTHours+=rate2OTHours;
+					totalRate3Hours+=rate3Hours;
+					totalRate3OTHours+=rate3OTHours;
 				}
-				double rate1ratio=0;
-				double rate2ratio=0;
-				double rate3ratio=0;
-				//Overtime hours for each rate is based on the ratio of hours of each rate against the total OT hours worked.
-				//Example for 40 hour week + 10 OT hours = 50 total hours
-				//
-				//					Hours Worked	HoursWorked/TotalHours		BaseHoursAtRate			OTHoursAtRate
-				//	Rate1				30						30 / 50	= 0.60				0.60 * 40 = 24			0.60 * 10 =  6
-				//	Rate2				 5						 5 / 50 = 0.10				0.10 * 40 =  4			0.10 * 10 =  1
-				//	Rate3				15						15 / 50 = 0.30				0.30 * 40 = 12			0.30 * 10 =  3
-				//																											Total = 40			    Total = 10
-				if(totalHoursWorked!=0) {
-					rate2ratio=totalRate2HoursWorked/totalHoursWorked;
-					rate3ratio=totalRate3HoursWorked/totalHoursWorked;
-					rate1ratio=1-rate2ratio-rate3ratio;//"self correcting math" guaranteed to total correctly.
-				}
-				dataRow["totalHours"]=TimeSpan.FromHours(totalHoursWorked).ToString();
-				//Regular time at Rate1, Rate2, and Rate3
-				double r1Hours=rate1ratio*totalRegularHoursWorked;
-				double r2Hours=rate2ratio*totalRegularHoursWorked;
-				double r3Hours=totalRegularHoursWorked-r1Hours-r2Hours; //"self correcting math" guaranteed to total correctly.
-				//OT hours
-				double r1OTHours=rate1ratio*totalOTHoursWorked;
-				double r2OTHours=rate2ratio*totalOTHoursWorked;
-				double r3OTHours=totalHoursWorked-r1Hours-r2Hours-r3Hours-r1OTHours-r2OTHours;//"self correcting math" guaranteed to total correctly.
 				double unpaidProtectedLeaveHours=listTimeAdjustsEmp.Where(x => x.IsUnpaidProtectedLeave).Sum(x => x.RegHours.TotalHours);
 				double ptoHours=listTimeAdjustsEmp.Where(x=>x.PtoDefNum!=0).Sum(x=>x.PtoHours.TotalHours);
-				dataRow["rate1Hours"]  =TimeSpan.FromHours(r1Hours).ToString();
-				dataRow["rate2Hours"]  =TimeSpan.FromHours(r2Hours).ToString();
-				dataRow["rate3Hours"]  =TimeSpan.FromHours(r3Hours).ToString();
-				dataRow["rate1OTHours"]=TimeSpan.FromHours(r1OTHours).ToString();
-				dataRow["rate2OTHours"]=TimeSpan.FromHours(r2OTHours).ToString();
-				dataRow["rate3OTHours"]=TimeSpan.FromHours(r3OTHours).ToString();
+				dataRow["totalHours"]  =TimeSpan.FromHours(totalHours).ToString();
+				dataRow["rate1Hours"]  =TimeSpan.FromHours(totalRate1Hours).ToString();
+				dataRow["rate1OTHours"]=TimeSpan.FromHours(totalRate1OTHours).ToString();
+				dataRow["rate2Hours"]  =TimeSpan.FromHours(totalRate2Hours).ToString();
+				dataRow["rate2OTHours"]=TimeSpan.FromHours(totalRate2OTHours).ToString();
+				dataRow["rate3Hours"]  =TimeSpan.FromHours(totalRate3Hours).ToString();
+				dataRow["rate3OTHours"]=TimeSpan.FromHours(totalRate3OTHours).ToString();
 				dataRow["PTOHours"]    =TimeSpan.FromHours(ptoHours).ToString();
 				dataRow["protectedLeaveHours"]=TimeSpan.FromHours(unpaidProtectedLeaveHours).ToString();
 				string payPeriodNote=listTimeAdjustsPayPeriodNote.Find(x => x.EmployeeNum==listEmployees[i].EmployeeNum)?.Note;

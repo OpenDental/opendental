@@ -2,6 +2,20 @@
 <wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/">
+      <s:element name="GenerateFHIRAPIKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GenerateFHIRAPIKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GenerateFHIRAPIKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="AssignFHIRAPIKey">
         <s:complexType>
           <s:sequence>
@@ -583,6 +597,20 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="WebSchedAsapSendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildUrlRedirect">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="BuildUrlRedirectResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BuildUrlRedirectResult" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -1317,23 +1345,15 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GenerateFHIRAPIKey">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GenerateFHIRAPIKeyResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GenerateFHIRAPIKeyResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="string" nillable="true" type="s:string" />
     </s:schema>
   </wsdl:types>
+  <wsdl:message name="GenerateFHIRAPIKeySoapIn">
+    <wsdl:part name="parameters" element="tns:GenerateFHIRAPIKey" />
+  </wsdl:message>
+  <wsdl:message name="GenerateFHIRAPIKeySoapOut">
+    <wsdl:part name="parameters" element="tns:GenerateFHIRAPIKeyResponse" />
+  </wsdl:message>
   <wsdl:message name="AssignFHIRAPIKeySoapIn">
     <wsdl:part name="parameters" element="tns:AssignFHIRAPIKey" />
   </wsdl:message>
@@ -1585,6 +1605,12 @@
   </wsdl:message>
   <wsdl:message name="WebSchedAsapSendSoapOut">
     <wsdl:part name="parameters" element="tns:WebSchedAsapSendResponse" />
+  </wsdl:message>
+  <wsdl:message name="BuildUrlRedirectSoapIn">
+    <wsdl:part name="parameters" element="tns:BuildUrlRedirect" />
+  </wsdl:message>
+  <wsdl:message name="BuildUrlRedirectSoapOut">
+    <wsdl:part name="parameters" element="tns:BuildUrlRedirectResponse" />
   </wsdl:message>
   <wsdl:message name="BuildWebSchedUrlSoapIn">
     <wsdl:part name="parameters" element="tns:BuildWebSchedUrl" />
@@ -1898,11 +1924,11 @@
   <wsdl:message name="CheckFHIRAPIKeySoapOut">
     <wsdl:part name="parameters" element="tns:CheckFHIRAPIKeyResponse" />
   </wsdl:message>
-  <wsdl:message name="GenerateFHIRAPIKeySoapIn">
-    <wsdl:part name="parameters" element="tns:GenerateFHIRAPIKey" />
+  <wsdl:message name="GenerateFHIRAPIKeyHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
-  <wsdl:message name="GenerateFHIRAPIKeySoapOut">
-    <wsdl:part name="parameters" element="tns:GenerateFHIRAPIKeyResponse" />
+  <wsdl:message name="GenerateFHIRAPIKeyHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:message name="AssignFHIRAPIKeyHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
@@ -2154,6 +2180,12 @@
     <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
   <wsdl:message name="WebSchedAsapSendHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildUrlRedirectHttpPostIn">
+    <wsdl:part name="shortGuid" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="BuildUrlRedirectHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:message name="BuildWebSchedUrlHttpPostIn">
@@ -2473,13 +2505,11 @@
   <wsdl:message name="CheckFHIRAPIKeyHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
-  <wsdl:message name="GenerateFHIRAPIKeyHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
-  </wsdl:message>
-  <wsdl:message name="GenerateFHIRAPIKeyHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
-  </wsdl:message>
   <wsdl:portType name="WebServiceMainHQSoap">
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <wsdl:input message="tns:GenerateFHIRAPIKeySoapIn" />
+      <wsdl:output message="tns:GenerateFHIRAPIKeySoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="AssignFHIRAPIKey">
       <wsdl:input message="tns:AssignFHIRAPIKeySoapIn" />
       <wsdl:output message="tns:AssignFHIRAPIKeySoapOut" />
@@ -2647,6 +2677,10 @@
     <wsdl:operation name="WebSchedAsapSend">
       <wsdl:input message="tns:WebSchedAsapSendSoapIn" />
       <wsdl:output message="tns:WebSchedAsapSendSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildUrlRedirect">
+      <wsdl:input message="tns:BuildUrlRedirectSoapIn" />
+      <wsdl:output message="tns:BuildUrlRedirectSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="BuildWebSchedUrl">
       <wsdl:input message="tns:BuildWebSchedUrlSoapIn" />
@@ -2856,12 +2890,12 @@
       <wsdl:input message="tns:CheckFHIRAPIKeySoapIn" />
       <wsdl:output message="tns:CheckFHIRAPIKeySoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="GenerateFHIRAPIKey">
-      <wsdl:input message="tns:GenerateFHIRAPIKeySoapIn" />
-      <wsdl:output message="tns:GenerateFHIRAPIKeySoapOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="WebServiceMainHQHttpPost">
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <wsdl:input message="tns:GenerateFHIRAPIKeyHttpPostIn" />
+      <wsdl:output message="tns:GenerateFHIRAPIKeyHttpPostOut" />
+    </wsdl:operation>
     <wsdl:operation name="AssignFHIRAPIKey">
       <wsdl:input message="tns:AssignFHIRAPIKeyHttpPostIn" />
       <wsdl:output message="tns:AssignFHIRAPIKeyHttpPostOut" />
@@ -3029,6 +3063,10 @@
     <wsdl:operation name="WebSchedAsapSend">
       <wsdl:input message="tns:WebSchedAsapSendHttpPostIn" />
       <wsdl:output message="tns:WebSchedAsapSendHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildUrlRedirect">
+      <wsdl:input message="tns:BuildUrlRedirectHttpPostIn" />
+      <wsdl:output message="tns:BuildUrlRedirectHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="BuildWebSchedUrl">
       <wsdl:input message="tns:BuildWebSchedUrlHttpPostIn" />
@@ -3238,13 +3276,18 @@
       <wsdl:input message="tns:CheckFHIRAPIKeyHttpPostIn" />
       <wsdl:output message="tns:CheckFHIRAPIKeyHttpPostOut" />
     </wsdl:operation>
-    <wsdl:operation name="GenerateFHIRAPIKey">
-      <wsdl:input message="tns:GenerateFHIRAPIKeyHttpPostIn" />
-      <wsdl:output message="tns:GenerateFHIRAPIKeyHttpPostOut" />
-    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="WebServiceMainHQSoap" type="tns:WebServiceMainHQSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="AssignFHIRAPIKey">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/AssignFHIRAPIKey" style="document" />
       <wsdl:input>
@@ -3616,6 +3659,15 @@
     </wsdl:operation>
     <wsdl:operation name="WebSchedAsapSend">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/WebSchedAsapSend" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildUrlRedirect">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildUrlRedirect" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -4091,18 +4143,18 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GenerateFHIRAPIKey">
-      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQSoap12" type="tns:WebServiceMainHQSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="AssignFHIRAPIKey">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/AssignFHIRAPIKey" style="document" />
       <wsdl:input>
@@ -4474,6 +4526,15 @@
     </wsdl:operation>
     <wsdl:operation name="WebSchedAsapSend">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/WebSchedAsapSend" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildUrlRedirect">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildUrlRedirect" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -4949,18 +5010,18 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GenerateFHIRAPIKey">
-      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQHttpPost" type="tns:WebServiceMainHQHttpPost">
     <http:binding verb="POST" />
+    <wsdl:operation name="GenerateFHIRAPIKey">
+      <http:operation location="/GenerateFHIRAPIKey" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="AssignFHIRAPIKey">
       <http:operation location="/AssignFHIRAPIKey" />
       <wsdl:input>
@@ -5332,6 +5393,15 @@
     </wsdl:operation>
     <wsdl:operation name="WebSchedAsapSend">
       <http:operation location="/WebSchedAsapSend" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildUrlRedirect">
+      <http:operation location="/BuildUrlRedirect" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>
@@ -5800,15 +5870,6 @@
     </wsdl:operation>
     <wsdl:operation name="CheckFHIRAPIKey">
       <http:operation location="/CheckFHIRAPIKey" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GenerateFHIRAPIKey">
-      <http:operation location="/GenerateFHIRAPIKey" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>

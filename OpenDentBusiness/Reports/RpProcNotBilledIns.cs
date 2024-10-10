@@ -40,7 +40,7 @@ namespace OpenDentBusiness {
 				INNER JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum ";
 			if(showProcsBeforeIns==EnumShowProcsBeforeIns.Effectve) {
 				query+=@"AND procedurelog.ProcDate >= inssub.DateEffective
-					AND procedurelog.ProcDate < CASE WHEN YEAR(inssub.DateTerm) > 1880 THEN inssub.DateTerm ELSE ADDDATE(CURDATE(),INTERVAL 1 YEAR) END ";
+					AND procedurelog.ProcDate <= CASE WHEN YEAR(inssub.DateTerm) > 1880 THEN inssub.DateTerm ELSE ADDDATE(CURDATE(),INTERVAL 1 YEAR) END ";
 			}
 			query+="INNER JOIN insplan ON insplan.PlanNum=inssub.PlanNum ";
 			if(!includeMedProcs) {

@@ -391,9 +391,6 @@ WPF
 		///<summary>Boilerplate example at the top of this file. includePadding is true by default to mimic WinForms. But if you truly want to just measure the text with no whitespace, like in WPF display, set it to false.</summary>
 		public Size MeasureString(string text,Font font=null,double widthMax=double.PositiveInfinity,bool includePadding=true){
 			TextBlock textBlock=new TextBlock();
-			if(widthMax<double.PositiveInfinity){
-				textBlock.Width=widthMax;
-			}
 			//note: we could add an optional parameter to exclude padding to tightly measure the actual text
 			//This padding was an attempt to duplicate the old WinForms code.
 			if(includePadding){
@@ -415,6 +412,10 @@ WPF
 			_canvas.Children.Add(textBlock);
 			textBlock.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));
 			//textBlock.Arrange(new Rect(textBlock.DesiredSize));
+			if(textBlock.DesiredSize.Width>widthMax) {//Text is wrapping
+				textBlock.Width=widthMax;
+				textBlock.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));
+			}
 			Size size= textBlock.DesiredSize;
 			_canvas.Children.Remove(textBlock);
 			return size;

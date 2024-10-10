@@ -1629,6 +1629,30 @@ namespace OpenDentBusiness {
 			return resObj.Id;
 		}
 
+		///<summary>POST initiates the drug db migration for the specified client and clinics. </summary>
+		public static void PostInitiateDrugDbMigration(string authToken,List<string> listClinicIDs,string clientId) {
+			//DoseSpot docs specifically request an Array of clinicIDs.
+			int[] arrayIds=new int[listClinicIDs.Count];
+			try {
+				arrayIds=listClinicIDs.ConvertAll(int.Parse).ToArray();
+			}
+			catch {
+				throw new ODException(Lans.g("DoseSpot","Error migrating clinics to V2, one or more clinic IDs are not valid numbers. Please contact support."));
+			}
+			string body=JsonConvert.SerializeObject(
+				new {
+					ClinicIDs=arrayIds
+				});
+			var resObj=Request(ApiRoute.PostInitiateDrugDbMigration,HttpMethod.Post,"Bearer "+authToken,body,new {
+				Id="",
+				Result=new { ResultCode="",ResultDescription=""}
+			},"application/json",clientId
+			);
+			if(resObj.Result.ResultCode.ToUpper().Contains("ERROR")) {
+				throw new ODException(Lans.g("DoseSpot","Error requesting database migration: ")+resObj.Result.ResultDescription);
+			}
+		}
+
 		#endregion
 		#region PUT
 
@@ -1673,16 +1697,20 @@ namespace OpenDentBusiness {
 				webClient.Encoding=UnicodeEncoding.UTF8;
 				//Post with Authorization headers and a body comprised of a JSON serialized anonymous type.
 				try {
+					string url="";
 					string response="";
 					//Only GET and POST are supported currently.
 					if(httpMethod==HttpMethod.Get) {
-						response=webClient.DownloadString(GetApiUrl(apiRoute,listRouteIDs));
+						url=GetApiUrl(apiRoute,listRouteIDs);
+						response=webClient.DownloadString(url);
 					}
 					else if(httpMethod==HttpMethod.Post) {
-						response=webClient.UploadString(GetApiUrl(apiRoute,listRouteIDs),HttpMethod.Post.Method,body);
+						url=GetApiUrl(apiRoute,listRouteIDs);
+						response=webClient.UploadString(url,HttpMethod.Post.Method,body);
 					}
 					else if(httpMethod==HttpMethod.Put) {
-						response=webClient.UploadString(GetApiUrl(apiRoute,listRouteIDs),HttpMethod.Put.Method,body);
+						url=GetApiUrl(apiRoute,listRouteIDs);
+						response=webClient.UploadString(url,HttpMethod.Put.Method,body);
 					}
 					else {
 						throw new Exception("Unsupported HttpMethod type: "+httpMethod.Method);
@@ -1776,6 +1804,10 @@ namespace OpenDentBusiness {
 					//routeId[0]=PatientId
 					apiUrl+=$"/api/patients/{arrayRouteIDs[0]}/selfReportedMedications/freetext";
 					break;
+				case ApiRoute.PostInitiateDrugDbMigration:
+					//routeId[0]=ClientId
+					apiUrl+=$"/api/client/{arrayRouteIDs[0]}/initiateDrugDbMigration";
+					break;
 				default:
 					break;
 			}
@@ -1796,6 +1828,7 @@ namespace OpenDentBusiness {
 			PutSelfReportedMedications,
 			PostClinicGroup,
 			PostSelfReportedMedications,
+			PostInitiateDrugDbMigration,
 		}
 
 		///<summary>Medication statuses used by DoseSpot.  Unknown(0) and Inactive(2) are depricated.  This enum intentionally starts at 0 according to DoseSpot.</summary>
@@ -1892,6 +1925,10 @@ namespace OpenDentBusiness {
 			return doseSpotSelfReported;
 		}
 
+		public class PropertyDescs {
+			public static string DoseSpotApiVersion="DoseSpotApiVersion";
+			public static string DoseSpotApiMigrationRequested="DoseSpotApiMigrationRequested";
+		}
 	}
 
 	///<summary>This is a class to reflect the response object from DoseSpot's RESTful JSON objects.  
@@ -1918,7 +1955,7 @@ namespace OpenDentBusiness {
 		public DoseSpotREST.PrescriptionStatus Status;
 		public bool? Formulary;
 		public int? EligibilityId;
-		public int? Type;
+		public string Type;
 		public string NonDoseSpotPrescriptionId;
 		public int? PatientMedicationId;
 		public DoseSpotREST.MedicationStatus MedicationStatus;

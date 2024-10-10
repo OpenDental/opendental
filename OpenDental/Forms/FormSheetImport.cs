@@ -659,6 +659,47 @@ namespace OpenDental {
 					importRow.TypeObj=typeof(Referral);
 					_listImportRows.Add(importRow);
 				}
+				//StudentStatus---------------------------------------------
+				fieldVal=GetRadioValue("StudentStatus");
+				if(fieldVal!=null) {
+					importRow=new ImportRow();
+					importRow.FieldName="StudentStatus";
+					if(_patient.StudentStatus=="N") {
+						importRow.OldValDisplay="Nonstudent";
+					}
+					else if(_patient.StudentStatus=="P") {
+						importRow.OldValDisplay="Part-time";
+					}
+					else if(_patient.StudentStatus=="F") {
+						importRow.OldValDisplay="Full-time";
+					}
+					importRow.OldValObj=_patient.StudentStatus;
+					if(fieldVal=="") {
+						importRow.NewValDisplay="";
+						importRow.NewValObj=null;
+					}
+					//fieldVals for StudentStatus are the full word for regular sheets and the db field for eForms, so check for both formats of fieldVal.
+					//Regular sheet example: "Fulltime".  eForm example: "F"
+					else if(fieldVal=="Nonstudent" || fieldVal=="N") {
+						importRow.NewValDisplay="Nonstudent";
+						importRow.NewValObj="N";
+					}
+					else if(fieldVal=="Parttime" || fieldVal=="P") {
+						importRow.NewValDisplay="Part-time";
+						importRow.NewValObj="P";
+					}
+					else if (fieldVal=="Fulltime" || fieldVal=="F") {
+						importRow.NewValDisplay="Full-time";
+						importRow.NewValObj="F";
+					}
+					importRow.ImpValDisplay=importRow.NewValDisplay;
+					importRow.ImpValObj=importRow.NewValObj;
+					importRow.TypeObj=typeof(string);
+					if(importRow.NewValObj!=null && (string)importRow.NewValObj!=_patient.StudentStatus) {
+						importRow.DoImport=true;
+					}
+					_listImportRows.Add(importRow);
+				}
 				//ICE Name---------------------------------------------
 				fieldVal=GetInputValue("ICEName");
 				if(fieldVal!=null) {
@@ -2276,7 +2317,7 @@ namespace OpenDental {
 			return result;
 		}
 
-		///<summary>If no radiobox with that name exists, returns null.  If no box is checked, it returns empty string.</summary>
+		///<summary>If no radiobox with that name exists, returns null.  If no box is checked, it returns empty string.  For regular sheets this will return either the corresponding enum value or the full word displayed on the form for the selected choice (if no corresponding enum), and EForms will return the DB field.  e.g. for StudentStatus a regular sheet might return "Fulltime" and an EForm would return "F".</summary>
 		private string GetRadioValue(string fieldName) {
 			if(SheetCur!=null){
 				List<SheetField> listSheetFields=SheetCur?.SheetFields?.FindAll(x => x.FieldType==SheetFieldType.CheckBox && x.FieldName==fieldName);
@@ -3126,6 +3167,9 @@ namespace OpenDental {
 							refAttach.RefDate=DateTime.Today;
 							refAttach.ReferralNum=((Referral)_listImportRows[i].ImpValObj).ReferralNum;
 							listRefAttaches.Add(refAttach);
+							break;
+						case "StudentStatus":
+							_patient.StudentStatus=(string)_listImportRows[i].ImpValObj;
 							break;
 						#endregion
 						#region Address and Home Phone

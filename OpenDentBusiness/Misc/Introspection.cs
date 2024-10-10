@@ -208,6 +208,8 @@ namespace OpenDentBusiness {
 			DentalXChangeDciURL,
 			///<summary></summary>
 			PayConnect2DLLKey,
+			///<summary></summary>
+			DoseSpotV2DecryptedSubscriptionKey,
 		}
 	}
 }

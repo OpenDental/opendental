@@ -69,6 +69,7 @@ namespace OpenDentBusiness {
 		string ThankYouSend(string officeData);
 		string NewPatThankYouSend(string officeData);
 		string RetrieveWebFormURL(string officeData);
+		string BuildUrlRedirect(string officeData);
 		string RegisterCalendarEvent(string officeData);
 		string SetSmsPatientPhoneOptIn(string officeData);
 		string BuildApptThankYouIcs(string shortGuid);

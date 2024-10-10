@@ -158,6 +158,8 @@ namespace OpenDentBusiness {
 		ODTSurplus,
 		///<summary>48 - OCR Scans</summary>
 		OCR,
+		///<summary>49 - Used by ShortGuidLookup to redirect from an OD-generated Short URL to a long URL provided by customer.</summary>
+		UrlRedirect,
 	}
 	
 	///<summary>Used to determine that status of the entire service.  Order of enum is important, from lowest to highest importance.</summary>

@@ -34,8 +34,8 @@ Do not use SetDesktopBounds to move a Form.
 It will erroneously use the upper left of the working area as 0,0.
 If a taskbar is docked left, this will shift your Form to the right by that amount on both screens.
 At least on Windows 10.
-Intead, use Form.Bounds=...
-Form.Location probably also works.
+Instead, use Form.Bounds=...
+or Form.Location.
 */
 	public class Dpi{
 		public enum DPI_AWARENESS_CONTEXT{

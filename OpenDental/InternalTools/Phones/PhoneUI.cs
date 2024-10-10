@@ -62,6 +62,7 @@ namespace OpenDental {
 				PhoneNumber phoneNumber=new PhoneNumber();
 				phoneNumber.PatNum=FormOpenDental.PatNumCur;
 				phoneNumber.PhoneNumberVal=phone.CustomerNumber;
+				phoneNumber.PhoneNumberDigits=PhoneNumbers.RemoveNonDigitsAndTrimStart(phoneNumber.PhoneNumberVal);
 				PhoneNumbers.Insert(phoneNumber);
 			}
 			//tell the phone server to refresh this row with the patient name and patnum

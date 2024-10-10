@@ -135,7 +135,7 @@ How to:
 			6. Sometimes, you will also do some math in the Load to further alter your variables used.
 			Example: _formFrame.Location=new System.Drawing.Point(PointLLStart.X,PointLLStart.Y-_formFrame.Height+ScaleFormValue(10));
 			Example: _formFrame.Width=ScaleFormValue(556);
-		Also, see Dpi.cs for notes about how to set a Window or Form position.
+		Also, see Dpi.cs for notes about how to set a Window or Form position and using Bounds and DesktopBounds.
 -Maximum Window Size
 		FrmZoom specifies max window size as 1246x735, but that's for the entire form, including borders.
 		In WPF, we design without borders, so the max size is 1212x719

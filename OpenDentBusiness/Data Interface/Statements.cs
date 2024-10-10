@@ -1096,7 +1096,7 @@ namespace OpenDentBusiness {
 			statement.Mode_=statementMode;
 			statement.HidePayment=false;
 			statement.SinglePatient=isSinglePatient;
-			statement.Intermingled=PrefC.GetBool(PrefName.IntermingleFamilyDefault);
+			statement.Intermingled=PrefC.GetBool(PrefName.BillingDefaultsIntermingle);
 			statement.StatementType=StmtType.NotSet;
 			statement.DateRangeTo=DateTime.Today;//This is needed for payment plan accuracy.//new DateTime(2200,1,1);
 			if(dateEnd!=DateTime.MinValue) {

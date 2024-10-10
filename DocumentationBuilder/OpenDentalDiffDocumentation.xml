@@ -36,11 +36,47 @@
     <column order="9" name="RevID" type="int(11)">
       <summary>Revision ID. Used to determine in conjunction with PrefillStatus for eClipboardSheetDef to determine whether to show a patient a new form or have them update their last filled out form. Must match up with EFormDef RevID to show a previously filled out form.</summary>
     </column>
+    <column order="10" name="ShowLabelsBold" type="tinyint(4)">
+      <summary>If true, then this form will show labels at 95% and slightly bold. This looks good, but some users might not want it for certain forms, so it's an option. This applies to text, date, radiobuttons, and sigBox. It does not apply to types label, checkbox, or medicationList.</summary>
+    </column>
+    <column order="11" name="SpaceBelowEachField" type="int(11)">
+      <summary>The amount of space below each field. Overrides the global default and can be overridden by field.SpaceBelow. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
+    <column order="12" name="SpaceToRightEachField" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
   </table>
   <table name="eformdef">
     <summary></summary>
     <column order="6" name="RevID" type="int(11)">
       <summary>Revision ID. Gets updated any time an eForm field is added or deleted from an eFormDef (this includes any time a translation is changed). Used to determine in conjunction with PrefillStatus for eClipboardSheetDef to determine whether to show a patient a new form or have them update their last filled out form. Must match up with EForm RevID to show a previously filled out form.</summary>
+    </column>
+    <column order="7" name="ShowLabelsBold" type="tinyint(4)">
+      <summary>If true, then this form will show labels at 95% and slightly bold. This looks good, but some users might not want it for certain forms, so it's an option. This applies to text, date, radiobuttons, and sigBox. It does not apply to types label, checkbox, or medicationList.</summary>
+    </column>
+    <column order="8" name="SpaceBelowEachField" type="int(11)">
+      <summary>The amount of space below each field. Overrides the global default and can be overridden by field.SpaceBelow. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
+    <column order="9" name="SpaceToRightEachField" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
+  </table>
+  <table name="eformfield">
+    <summary></summary>
+    <column order="24" name="WidthLabel" type="int(11)">
+      <summary>If the label is to the left of the field, this is the width of that label. Only used for RadioButtons right now because that's the only type that allows labels to the left. In RadioButtons, this is helpful to allow a stack of radioButtons to line up. Default is 0 to indicate automatic.</summary>
+    </column>
+    <column order="25" name="SpaceToRight" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the form and global defaults. -1 indicates to use default. That way, 0 means 0 space. Not used for SigBox or MedicationList which use form level instead.</summary>
+    </column>
+  </table>
+  <table name="eformfielddef">
+    <summary></summary>
+    <column order="22" name="WidthLabel" type="int(11)">
+      <summary>If the label is to the left of the field, this is the width of that label. Only used for RadioButtons right now because that's the only type that allows labels to the left. In RadioButtons, this is helpful to allow a stack of radioButtons to line up. Default is 0 to indicate automatic.</summary>
+    </column>
+    <column order="23" name="SpaceToRight" type="int(11)">
+      <summary>The amount of space to the right of each field. Overrides the form and global defaults. -1 indicates to use default. That way, 0 means 0 space. Not used for SigBox or MedicationList which use form level instead.</summary>
     </column>
   </table>
   <table name="eformimportrule">
@@ -456,7 +492,7 @@
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
-        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
+        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare. Only userd at HQ.</EnumValue>
         <EnumValue name="PerioEditCopy">257 - Allow users to copy perio charts in the Perio Chart window.</EnumValue>
       </Enumeration>
     </column>
@@ -750,7 +786,7 @@
         <EnumValue name="AllergyMerge">253 - Allow users to merge allergies.</EnumValue>
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
-        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
+        <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare. Only userd at HQ.</EnumValue>
         <EnumValue name="PerioEditCopy">257 - Allow users to copy perio charts in the Perio Chart window.</EnumValue>
       </Enumeration>
     </column>
