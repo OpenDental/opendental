@@ -197,7 +197,9 @@ namespace OpenDental.UI {
 				return;
 			}
 			if(_listUnmountedObjects[SelectedIndex].Document!=null){
-				Documents.Delete(_listUnmountedObjects[SelectedIndex].Document);
+				long patnum=_listUnmountedObjects[SelectedIndex].Document.PatNum;
+				string patFolder=ImageStore.GetPatientFolder(Patients.GetPat(patnum),ImageStore.GetPreferredAtoZpath());
+				ImageStore.DeleteDocuments(new List<Document>{_listUnmountedObjects[SelectedIndex].Document},patFolder);
 			}
 			MountItems.Delete(_listUnmountedObjects[SelectedIndex].MountItem);
 			//_listUnmountedObjects.RemoveAt(SelectedIndex);

@@ -284,9 +284,6 @@ DrawSvg:
 
 		public Size MeasureString(string text,Font font=null,double width=double.PositiveInfinity){
 			TextBlock textBlock=new TextBlock();
-			if(width<double.PositiveInfinity){
-				textBlock.Width=width;
-			}
 			textBlock.Padding=new Thickness(left:2,0,right:2,bottom:2);
 			if(font is null){
 				font=new Font();
@@ -301,6 +298,10 @@ DrawSvg:
 			_canvas.Children.Add(textBlock);
 			textBlock.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));
 			//textBlock.Arrange(new Rect(textBlock.DesiredSize));
+			if(textBlock.DesiredSize.Width>width) {//Text is wrapping
+				textBlock.Width=width;
+				textBlock.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));
+			}
 			Size size= textBlock.DesiredSize;
 			_canvas.Children.Remove(textBlock);
 			return size;
