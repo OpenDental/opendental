@@ -14,7 +14,7 @@
   <table name="eclipboardsheetdef">
     <summary></summary>
     <column order="10" name="EFormDefNum" type="bigint(20)" fk="eformdef">
-      <summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet.</summary>
+      <summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet. Only for custom eForms.</summary>
     </column>
   </table>
   <table name="eform">
@@ -27,7 +27,7 @@
       <Enumeration name="EnumEFormStatus">
         <summary></summary>
         <EnumValue name="None">0 - </EnumValue>
-        <EnumValue name="ReadyForPatientFill">1 - </EnumValue>
+        <EnumValue name="ReadyForPatientFill">1 - Forms with this status will show in eClipboard.</EnumValue>
         <EnumValue name="Filled">2 - .</EnumValue>
         <EnumValue name="Imported">3 - .</EnumValue>
         <EnumValue name="UnmatchedToPatient">4 - Import was attempted, but could not match a known patient in the database.</EnumValue>
@@ -153,6 +153,17 @@
         <EnumValue name="Sinus">19 - Sinus (Tooth Part). Not included in legend.</EnumValue>
         <EnumValue name="NasalCavity">20 - NasalCavity (Tooth Part). Not included in legend.</EnumValue>
         <EnumValue name="CariesIncipient">21 - Caries -Incipient.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
+  <table name="mobilenotification">
+    <summary></summary>
+    <column order="1" name="NotificationType" type="tinyint(4)">
+      <summary>Enum:MobileNotificationType The type of notification. Example: TP. This will determine what actions the mobile app will perform upon retrieving this notification.</summary>
+      <Enumeration name="MobileNotificationType">
+        <summary>The different types of mobile notifications. Preserve order. CI = Checkin portion of app (eClipboard). ODM = ODMobile</summary>
+        <EnumValue name="CI_AddEForm">Tells the device that is currently filling out forms to add an eForm to the list. For this type, the list of primary keys will have two items: the PatNum and the EFormNum in that order.</EnumValue>
+        <EnumValue name="CI_RemoveEForm">Tells the device that is currently filling out forms to remove an eForm from the list. For this type, the list of primary keys will have two items: the PatNum and the EFormNum in that order.</EnumValue>
       </Enumeration>
     </column>
   </table>

@@ -4882,7 +4882,7 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="DefNum" type="bigint(20)" fk="def">
-      <summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures) usage in the 'Image Categories' defcat.</summary>
+      <summary>FK to def.DefNum. Should match a DefNum that is in the in 'EClipboard Images' defcat or has (or had) the 'P' (Patient Pictures) usage in the 'Image Categories' defcat. This can be zero if there was no Patient Picture def set.</summary>
     </column>
     <column order="2" name="IsSelfPortrait" type="tinyint(4)">
       <summary>True if the rule pertains to the patient self portrait. False if the rule is for an 'Eclipboard images' defcat definition.</summary>
@@ -4938,7 +4938,7 @@
       <summary>For both Sheets and eForms. Holds the previous revision number that marks what def revision number we expect to have a submission for from the patient. This value can be incremented when changes are made to a linked sheet or eForm def, but it is not always updated. This should hold the last revision number that was updated for this eClipboardSheetDef. If a patient has a form filled out that has a revision ID that matches this or is greater (this field will be 0 by default, or they filled out a more up to date form manually in the office and not through eClipboard), then this form will be filtered out if set to PrefillStatuses.Once when we determine which forms load for the patient in eClipboard. If this value is higher than the RevID of the last form the patient filled out, we consider this eClipboardSheetDef to be updated and the patient will need to fill out the form again when set to PrefillStatuses.Once.</summary>
     </column>
     <column order="10" name="EFormDefNum" type="bigint(20)" fk="eformdef">
-      <summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet.</summary>
+      <summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet. Only for custom eForms.</summary>
     </column>
   </table>
   <table name="eduresource">
@@ -4986,7 +4986,7 @@
       <summary>FKey to patient.PatNum.</summary>
     </column>
     <column order="3" name="DateTimeShown" type="datetime">
-      <summary>The date and time that show in the UI. It will be editable at some point.</summary>
+      <summary>The date and time that show in the UI.</summary>
     </column>
     <column order="4" name="Description" type="varchar(255)">
       <summary>The title of the EForm. Copied from EFormDef.Description.</summary>
@@ -5005,7 +5005,7 @@
       <Enumeration name="EnumEFormStatus">
         <summary></summary>
         <EnumValue name="None">0 - </EnumValue>
-        <EnumValue name="ReadyForPatientFill">1 - </EnumValue>
+        <EnumValue name="ReadyForPatientFill">1 - Forms with this status will show in eClipboard.</EnumValue>
         <EnumValue name="Filled">2 - .</EnumValue>
         <EnumValue name="Imported">3 - .</EnumValue>
         <EnumValue name="UnmatchedToPatient">4 - Import was attempted, but could not match a known patient in the database.</EnumValue>
@@ -10668,6 +10668,8 @@
         <EnumValue name="ODT_ExamSheet"></EnumValue>
         <EnumValue name="ODT_PrintError"></EnumValue>
         <EnumValue name="ODM_NewTextMessage">Occurs when a new text message is received. This is a workaround due to android push notifications no longer being supported for xamarin.</EnumValue>
+        <EnumValue name="CI_AddEForm">Tells the device that is currently filling out forms to add an eForm to the list. For this type, the list of primary keys will have two items: the PatNum and the EFormNum in that order.</EnumValue>
+        <EnumValue name="CI_RemoveEForm">Tells the device that is currently filling out forms to remove an eForm from the list. For this type, the list of primary keys will have two items: the PatNum and the EFormNum in that order.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="DeviceId" type="varchar(255)">
@@ -11779,8 +11781,7 @@
       <summary>We do not use this, but some users do, so here it is. 0=none. Otherwise, 1-7 for day.</summary>
     </column>
     <column order="60" name="Language" type="varchar(100)">
-      <summary>The primary language of the patient.  Typically eng (English), fra (French), spa (Spanish), or similar.  
-            If it's a custom language, then it might look like Tahitian.</summary>
+      <summary>The primary language of the patient.  Typically eng (English), fra (French), spa (Spanish), or similar.  If it's a custom language, then it might look like Tahitian. If none, then empty string.</summary>
     </column>
     <column order="61" name="AdmitDate" type="date">
       <summary>Used in hospitals.  It can be before the first visit date.  It typically gets set automatically by the hospital system.</summary>

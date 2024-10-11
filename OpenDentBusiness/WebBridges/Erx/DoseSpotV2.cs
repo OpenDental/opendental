@@ -1741,13 +1741,13 @@ namespace OpenDentBusiness {
 						List<string> listClinicIds=listClinicErxs.Select(x => x.ClinicId).ToList();
 					try{
 						DoseSpotREST.PostInitiateDrugDbMigration(token,listClinicIds,clientId);
-						//success
-						programPropertyDoseSpotMigrationRequest.PropertyValue="1";
-						ProgramProperties.Update(programPropertyDoseSpotMigrationRequest);
 					}
 					catch(Exception ex) {
 						ex.DoNothing();
 					}
+					//set programPropertyDoseSpotMigrationRequest to reflect that the migration request was sent.
+					programPropertyDoseSpotMigrationRequest.PropertyValue="1";
+					ProgramProperties.Update(programPropertyDoseSpotMigrationRequest);
 				}
 			}
 		}
