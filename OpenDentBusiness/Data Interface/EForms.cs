@@ -43,12 +43,15 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static void Delete(long eFormNum) {
+		public static void Delete(long eFormNum,long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),eFormNum);
 				return;
 			}
+//todo: mark deleted instead, just like sheets
 			Crud.EFormCrud.Delete(eFormNum);
+			//This triggers removal from eClipboard.
+			MobileNotifications.CI_RemoveEForm(patNum,eFormNum);
 		}
 
 		/// <summary>The eFormDef passed in must have ListEFormFieldDefs already filled. The resulting EForm will also have its fields already attached. Neither the form nor the fields get inserted into the db here.</summary>
@@ -217,6 +220,13 @@ namespace OpenDentBusiness{
 				stringBuilder.Append(listEFormFields[i].ValueString);
 			}
 			return stringBuilder.ToString();
+		}
+
+		///<summary>Language will be empty string if the patient does not have a language set.</summary>
+		public static void TranslateFields(EForm eForm,string language){
+			for(int i=0;i<eForm.ListEFormFields.Count;i++){
+
+			}
 		}
 	}
 

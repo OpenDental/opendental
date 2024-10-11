@@ -940,11 +940,11 @@
     <Compile Include="Forms\FormContinuityOfCareDocument.Designer.cs">
       <DependentUpon>FormContinuityOfCareDocument.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormEClipboardImageCaptureDefs.cs">
+    <Compile Include="Forms\FormEClipboardImagePicker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormEClipboardImageCaptureDefs.Designer.cs">
-      <DependentUpon>FormEClipboardImageCaptureDefs.cs</DependentUpon>
+    <Compile Include="Forms\FormEClipboardImagePicker.Designer.cs">
+      <DependentUpon>FormEClipboardImagePicker.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormWebSchedCarrierRuleCopyToClinics.cs">
       <SubType>Form</SubType>
@@ -7232,8 +7232,8 @@
     <EmbeddedResource Include="Forms\FormContinuityOfCareDocument.resx">
       <DependentUpon>FormContinuityOfCareDocument.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormEClipboardImageCaptureDefs.resx">
-      <DependentUpon>FormEClipboardImageCaptureDefs.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormEClipboardImagePicker.resx">
+      <DependentUpon>FormEClipboardImagePicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebSchedCarrierRuleCopyToClinics.resx">
       <DependentUpon>FormWebSchedCarrierRuleCopyToClinics.cs</DependentUpon>

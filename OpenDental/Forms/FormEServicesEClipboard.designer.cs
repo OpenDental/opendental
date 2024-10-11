@@ -157,7 +157,7 @@ namespace OpenDental{
 			this.groupEClipboardRules.Controls.Add(this.checkEClipboardPopupKiosk);
 			this.groupEClipboardRules.Location = new System.Drawing.Point(11, 53);
 			this.groupEClipboardRules.Name = "groupEClipboardRules";
-			this.groupEClipboardRules.Size = new System.Drawing.Size(1169, 207);
+			this.groupEClipboardRules.Size = new System.Drawing.Size(1123, 207);
 			this.groupEClipboardRules.TabIndex = 265;
 			this.groupEClipboardRules.Text = "Behavior Rules";
 			// 
@@ -347,22 +347,23 @@ namespace OpenDental{
 			this.butEFormAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butEFormAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butEFormAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butEFormAdd.Location = new System.Drawing.Point(657, 619);
+			this.butEFormAdd.Location = new System.Drawing.Point(598, 619);
 			this.butEFormAdd.Name = "butEFormAdd";
 			this.butEFormAdd.RightToLeft = System.Windows.Forms.RightToLeft.No;
 			this.butEFormAdd.Size = new System.Drawing.Size(92, 24);
 			this.butEFormAdd.TabIndex = 511;
 			this.butEFormAdd.Text = "Add eForm";
 			this.butEFormAdd.UseVisualStyleBackColor = true;
+			this.butEFormAdd.Click += new System.EventHandler(this.butEFormAdd_Click);
 			// 
 			// butSheetAdd
 			// 
 			this.butSheetAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butSheetAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butSheetAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSheetAdd.Location = new System.Drawing.Point(552, 619);
+			this.butSheetAdd.Location = new System.Drawing.Point(496, 619);
 			this.butSheetAdd.Name = "butSheetAdd";
-			this.butSheetAdd.Size = new System.Drawing.Size(93, 24);
+			this.butSheetAdd.Size = new System.Drawing.Size(92, 24);
 			this.butSheetAdd.TabIndex = 510;
 			this.butSheetAdd.Text = "Add Sheet";
 			this.butSheetAdd.UseVisualStyleBackColor = true;
@@ -371,24 +372,26 @@ namespace OpenDental{
 			// butEClipboardUp
 			// 
 			this.butEClipboardUp.AdjustImageLocation = new System.Drawing.Point(0, 1);
-			this.butEClipboardUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butEClipboardUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butEClipboardUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butEClipboardUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butEClipboardUp.Location = new System.Drawing.Point(1140, 555);
+			this.butEClipboardUp.Location = new System.Drawing.Point(700, 619);
 			this.butEClipboardUp.Name = "butEClipboardUp";
-			this.butEClipboardUp.Size = new System.Drawing.Size(33, 26);
+			this.butEClipboardUp.Size = new System.Drawing.Size(69, 24);
 			this.butEClipboardUp.TabIndex = 508;
+			this.butEClipboardUp.Text = "Up";
 			this.butEClipboardUp.Click += new System.EventHandler(this.ButEClipboardUp_Click);
 			// 
 			// butEClipboardDown
 			// 
-			this.butEClipboardDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butEClipboardDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butEClipboardDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butEClipboardDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butEClipboardDown.Location = new System.Drawing.Point(1140, 587);
+			this.butEClipboardDown.Location = new System.Drawing.Point(779, 619);
 			this.butEClipboardDown.Name = "butEClipboardDown";
-			this.butEClipboardDown.Size = new System.Drawing.Size(33, 26);
+			this.butEClipboardDown.Size = new System.Drawing.Size(69, 24);
 			this.butEClipboardDown.TabIndex = 509;
+			this.butEClipboardDown.Text = "Down";
 			this.butEClipboardDown.Click += new System.EventHandler(this.ButEClipboardDown_Click);
 			// 
 			// gridForms
@@ -398,9 +401,9 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridForms.HasAutoWrappedHeaders = true;
 			this.gridForms.HasMultilineHeaders = true;
-			this.gridForms.Location = new System.Drawing.Point(552, 266);
+			this.gridForms.Location = new System.Drawing.Point(496, 266);
 			this.gridForms.Name = "gridForms";
-			this.gridForms.Size = new System.Drawing.Size(582, 347);
+			this.gridForms.Size = new System.Drawing.Size(638, 347);
 			this.gridForms.TabIndex = 507;
 			this.gridForms.Title = "Forms";
 			this.gridForms.TranslationName = "TableAvailableRows";

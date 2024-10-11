@@ -16,7 +16,7 @@ namespace OpenDentBusiness {
 		public EnumEFormType FormType;
 		///<summary>FKey to patient.PatNum.</summary>
 		public long PatNum;
-		///<summary>The date and time that show in the UI. It will be editable at some point.</summary>
+		///<summary>The date and time that show in the UI.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateTimeShown;
 		///<summary>The title of the EForm. Copied from EFormDef.Description.</summary>
@@ -61,7 +61,7 @@ namespace OpenDentBusiness {
 	public enum EnumEFormStatus{
 		///<summary>0 - </summary>
 		None,
-		///<summary>1 - </summary>
+		///<summary>1 - Forms with this status will show in eClipboard.</summary>
 		ReadyForPatientFill,
 		///<summary>2 - .</summary>
 		Filled,

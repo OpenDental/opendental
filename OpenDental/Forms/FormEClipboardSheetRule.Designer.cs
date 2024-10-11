@@ -47,7 +47,7 @@ namespace OpenDental {
 			// 
 			// labelBehavior
 			// 
-			this.labelBehavior.Location = new System.Drawing.Point(12, 36);
+			this.labelBehavior.Location = new System.Drawing.Point(79, 36);
 			this.labelBehavior.Name = "labelBehavior";
 			this.labelBehavior.Size = new System.Drawing.Size(120, 20);
 			this.labelBehavior.TabIndex = 0;
@@ -56,7 +56,7 @@ namespace OpenDental {
 			// 
 			// labelMinAge
 			// 
-			this.labelMinAge.Location = new System.Drawing.Point(12, 145);
+			this.labelMinAge.Location = new System.Drawing.Point(79, 145);
 			this.labelMinAge.Name = "labelMinAge";
 			this.labelMinAge.Size = new System.Drawing.Size(120, 20);
 			this.labelMinAge.TabIndex = 1;
@@ -65,7 +65,7 @@ namespace OpenDental {
 			// 
 			// labelMaxAge
 			// 
-			this.labelMaxAge.Location = new System.Drawing.Point(12, 196);
+			this.labelMaxAge.Location = new System.Drawing.Point(79, 196);
 			this.labelMaxAge.Name = "labelMaxAge";
 			this.labelMaxAge.Size = new System.Drawing.Size(120, 20);
 			this.labelMaxAge.TabIndex = 2;
@@ -74,7 +74,7 @@ namespace OpenDental {
 			// 
 			// labelFrequency
 			// 
-			this.labelFrequency.Location = new System.Drawing.Point(12, 92);
+			this.labelFrequency.Location = new System.Drawing.Point(79, 92);
 			this.labelFrequency.Name = "labelFrequency";
 			this.labelFrequency.Size = new System.Drawing.Size(120, 20);
 			this.labelFrequency.TabIndex = 3;
@@ -83,7 +83,7 @@ namespace OpenDental {
 			// 
 			// comboBehavior
 			// 
-			this.comboBehavior.Location = new System.Drawing.Point(138, 36);
+			this.comboBehavior.Location = new System.Drawing.Point(205, 36);
 			this.comboBehavior.Name = "comboBehavior";
 			this.comboBehavior.Size = new System.Drawing.Size(144, 21);
 			this.comboBehavior.TabIndex = 4;
@@ -92,7 +92,8 @@ namespace OpenDental {
 			// 
 			// checkMinAge
 			// 
-			this.checkMinAge.Location = new System.Drawing.Point(138, 119);
+			this.checkMinAge.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkMinAge.Location = new System.Drawing.Point(4, 119);
 			this.checkMinAge.Name = "checkMinAge";
 			this.checkMinAge.Size = new System.Drawing.Size(215, 20);
 			this.checkMinAge.TabIndex = 5;
@@ -101,7 +102,8 @@ namespace OpenDental {
 			// 
 			// checkMaxAge
 			// 
-			this.checkMaxAge.Location = new System.Drawing.Point(138, 171);
+			this.checkMaxAge.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkMaxAge.Location = new System.Drawing.Point(4, 171);
 			this.checkMaxAge.Name = "checkMaxAge";
 			this.checkMaxAge.Size = new System.Drawing.Size(215, 20);
 			this.checkMaxAge.TabIndex = 6;
@@ -110,21 +112,21 @@ namespace OpenDental {
 			// 
 			// textMinAge
 			// 
-			this.textMinAge.Location = new System.Drawing.Point(138, 145);
+			this.textMinAge.Location = new System.Drawing.Point(205, 145);
 			this.textMinAge.Name = "textMinAge";
 			this.textMinAge.Size = new System.Drawing.Size(35, 20);
 			this.textMinAge.TabIndex = 7;
 			// 
 			// textMaxAge
 			// 
-			this.textMaxAge.Location = new System.Drawing.Point(138, 197);
+			this.textMaxAge.Location = new System.Drawing.Point(205, 197);
 			this.textMaxAge.Name = "textMaxAge";
 			this.textMaxAge.Size = new System.Drawing.Size(35, 20);
 			this.textMaxAge.TabIndex = 8;
 			// 
 			// labelFreqNote
 			// 
-			this.labelFreqNote.Location = new System.Drawing.Point(12, 62);
+			this.labelFreqNote.Location = new System.Drawing.Point(79, 62);
 			this.labelFreqNote.Name = "labelFreqNote";
 			this.labelFreqNote.Size = new System.Drawing.Size(341, 30);
 			this.labelFreqNote.TabIndex = 9;
@@ -133,7 +135,7 @@ namespace OpenDental {
 			// 
 			// textFrequency
 			// 
-			this.textFrequency.Location = new System.Drawing.Point(138, 93);
+			this.textFrequency.Location = new System.Drawing.Point(205, 93);
 			this.textFrequency.Name = "textFrequency";
 			this.textFrequency.Size = new System.Drawing.Size(35, 20);
 			this.textFrequency.TabIndex = 10;
@@ -141,17 +143,16 @@ namespace OpenDental {
 			// 
 			// labelSheet
 			// 
-			this.labelSheet.Location = new System.Drawing.Point(32, 9);
+			this.labelSheet.Location = new System.Drawing.Point(99, 9);
 			this.labelSheet.Name = "labelSheet";
 			this.labelSheet.Size = new System.Drawing.Size(100, 20);
 			this.labelSheet.TabIndex = 11;
-			this.labelSheet.Text = "Sheet";
+			this.labelSheet.Text = "Form";
 			this.labelSheet.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textSheet
 			// 
-			this.textSheet.Enabled = false;
-			this.textSheet.Location = new System.Drawing.Point(138, 10);
+			this.textSheet.Location = new System.Drawing.Point(205, 10);
 			this.textSheet.Name = "textSheet";
 			this.textSheet.ReadOnly = true;
 			this.textSheet.Size = new System.Drawing.Size(144, 20);
@@ -160,7 +161,7 @@ namespace OpenDental {
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(319, 345);
+			this.butSave.Location = new System.Drawing.Point(468, 366);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 13;
@@ -170,17 +171,18 @@ namespace OpenDental {
 			// 
 			// butSelectSheetsToIgnore
 			// 
-			this.butSelectSheetsToIgnore.Location = new System.Drawing.Point(325, 221);
+			this.butSelectSheetsToIgnore.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butSelectSheetsToIgnore.Location = new System.Drawing.Point(389, 223);
 			this.butSelectSheetsToIgnore.Name = "butSelectSheetsToIgnore";
-			this.butSelectSheetsToIgnore.Size = new System.Drawing.Size(28, 24);
+			this.butSelectSheetsToIgnore.Size = new System.Drawing.Size(60, 24);
 			this.butSelectSheetsToIgnore.TabIndex = 20;
-			this.butSelectSheetsToIgnore.Text = "...";
+			this.butSelectSheetsToIgnore.Text = "Edit";
 			this.butSelectSheetsToIgnore.UseVisualStyleBackColor = true;
 			this.butSelectSheetsToIgnore.Click += new System.EventHandler(this.butSelectSheetsToIgnore_Click);
 			// 
 			// labelSheetsToIgnore
 			// 
-			this.labelSheetsToIgnore.Location = new System.Drawing.Point(12, 223);
+			this.labelSheetsToIgnore.Location = new System.Drawing.Point(79, 223);
 			this.labelSheetsToIgnore.Name = "labelSheetsToIgnore";
 			this.labelSheetsToIgnore.Size = new System.Drawing.Size(120, 20);
 			this.labelSheetsToIgnore.TabIndex = 19;
@@ -189,19 +191,19 @@ namespace OpenDental {
 			// 
 			// listSheetsToIgnore
 			// 
-			this.listSheetsToIgnore.Location = new System.Drawing.Point(139, 223);
+			this.listSheetsToIgnore.Location = new System.Drawing.Point(206, 223);
 			this.listSheetsToIgnore.Name = "listSheetsToIgnore";
 			this.listSheetsToIgnore.SelectionMode = OpenDental.UI.SelectionMode.None;
 			this.listSheetsToIgnore.Size = new System.Drawing.Size(177, 95);
 			this.listSheetsToIgnore.TabIndex = 21;
-			this.listSheetsToIgnore.Text = "listBoxOD1";
+			this.listSheetsToIgnore.Text = "listSheetsToIgnore";
 			// 
 			// butDelete
 			// 
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 345);
+			this.butDelete.Location = new System.Drawing.Point(12, 366);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(81, 24);
 			this.butDelete.TabIndex = 80;
@@ -211,7 +213,7 @@ namespace OpenDental {
 			// 
 			// FormEClipboardSheetRule
 			// 
-			this.ClientSize = new System.Drawing.Size(406, 381);
+			this.ClientSize = new System.Drawing.Size(555, 402);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.listSheetsToIgnore);
 			this.Controls.Add(this.butSelectSheetsToIgnore);

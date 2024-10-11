@@ -147,6 +147,7 @@ namespace OpenDental {
 		}
 
 		private void gridForms_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+			//ToDo: modify FormEClipboardSheetRule to work with both Sheets & EForms
 			FormEClipboardSheetRule formEClipboardSheetRule=new FormEClipboardSheetRule((EClipboardSheetDef)gridForms.ListGridRows[e.Row].Tag,gridForms.ListGridRows.Select(x=>(EClipboardSheetDef)x.Tag).ToList());
 			formEClipboardSheetRule.ShowDialog();
 			if(formEClipboardSheetRule.IsDeleted) {
@@ -157,17 +158,19 @@ namespace OpenDental {
 		}
 
 		private void butImageAdd_Click(object sender,EventArgs e){
-			FormEClipboardImageCaptureDefs formEClipboardImageCaptureDefs=new FormEClipboardImageCaptureDefs(GetClinicNumEClipboardTab());
-			//This creates a copy of the list, and a shallow copy of the objects in the list. This is needed to avoid bugs where changes made to 'ListEClipboardImageCaptureDefs'
-			//inside of formEClipboardImageCaptureDefs are still kept even if the user clicks cancel in that form.
-			formEClipboardImageCaptureDefs.ListEClipboardImageCaptureDefs=_listEClipboardImageCaptureDefs.Select(x => x.Copy()).ToList();
-			formEClipboardImageCaptureDefs.ShowDialog();
-			if(formEClipboardImageCaptureDefs.DialogResult==DialogResult.OK) {
-				//On OK click, update the list of eclipboard image capture defs to reflect any changes the user made to which images user are allowed to take and their frequencies
-				_listEClipboardImageCaptureDefs=formEClipboardImageCaptureDefs.ListEClipboardImageCaptureDefs.Select(x => x.Copy()).ToList();
-				//Update the UI to reflect the new changes
-				FillGridImages();
+			FormEClipboardImagePicker formEClipboardImagePicker=new FormEClipboardImagePicker(GetClinicNumEClipboardTab());
+			formEClipboardImagePicker.ListEClipboardImageCaptureDefs=_listEClipboardImageCaptureDefs;//no longer need to send in copies, child form can't make edits to eClipboardImageCaptureDefs already in this list.
+			formEClipboardImagePicker.ShowDialog();
+			if(formEClipboardImagePicker.DialogResult!=DialogResult.OK) {
+				return;
 			}
+			//On OK click, update _listEClipboardImageCaptureDefs to reflect any newly added eClipboardImageCaptureDefs
+			for(int i=0;i<formEClipboardImagePicker.ListEClipboardImageCaptureDefsSelected.Count;i++){
+				EClipboardImageCaptureDef eClipboardImageCaptureDef=formEClipboardImagePicker.ListEClipboardImageCaptureDefsSelected[i];
+				_listEClipboardImageCaptureDefs.Add(eClipboardImageCaptureDef);
+			}
+			//Update the UI to reflect the new changes
+			FillGridImages();
 		}
 
 		private void butSheetAdd_Click(object sender,EventArgs e) {
@@ -200,11 +203,51 @@ namespace OpenDental {
 					eClipboardSheetDef.ResubmitInterval=TimeSpan.FromDays(30);
 					eClipboardSheetDef.MinAge=-1;
 					eClipboardSheetDef.MaxAge=-1;
+					eClipboardSheetDef.ItemOrder=gridForms.ListGridRows.Count;
 					_listEClipboardSheetDefs.Add(eClipboardSheetDef);
 				}
 				FillGridForms();
 				SetEClipboardSheetOrder();
 			}
+		}
+		
+		private void butEFormAdd_Click(object sender,EventArgs e) {
+			FrmEFormPicker frmEFormPicker=new FrmEFormPicker();
+			frmEFormPicker.ShowDialog();
+			if(!frmEFormPicker.IsDialogOK){
+				return;
+			}
+			EFormDef eFormDef=frmEFormPicker.EFormDefSelected;
+			#region InternalEFormAdded
+			if(eFormDef.EFormDefNum==0 && eFormDef.IsInternal){
+				string description=eFormDef.Description;
+				//When a user adds an internal eFormDef, we must add the copy of the form along with all the fields to the db
+				eFormDef.DateTCreated=DateTime.Now;
+				EFormDefs.Insert(eFormDef);
+				for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++){
+					eFormDef.ListEFormFieldDefs[i].EFormDefNum=eFormDef.EFormDefNum;
+					EFormFieldDefs.Insert(eFormDef.ListEFormFieldDefs[i]);
+				}
+				//mark the internal form as hidden.
+				EFormDef eFormDef2=new EFormDef();
+				eFormDef2.IsInternalHidden=true;
+				eFormDef2.Description=description;
+				EFormDefs.Insert(eFormDef2);
+				EFormDefs.RefreshCache();
+				EFormFieldDefs.RefreshCache();
+			}
+			#endregion InternalEFormAdded
+			//attach the added eForm to a new eClipboardSheetDef
+			EClipboardSheetDef eClipboardSheetDef=new EClipboardSheetDef();
+			eClipboardSheetDef.EFormDefNum=eFormDef.EFormDefNum;
+			eClipboardSheetDef.ClinicNum=GetClinicNumEClipboardTab();
+			eClipboardSheetDef.ResubmitInterval=TimeSpan.FromDays(30);
+			eClipboardSheetDef.MinAge=-1;
+			eClipboardSheetDef.MaxAge=-1;
+			eClipboardSheetDef.ItemOrder=gridForms.ListGridRows.Count;
+			_listEClipboardSheetDefs.Add(eClipboardSheetDef);
+			FillGridForms();
+			SetEClipboardSheetOrder();
 		}
 
 		private void butBrandingProfile_Click(object sender,EventArgs e) {
@@ -407,20 +450,20 @@ namespace OpenDental {
 			gridImages.ListGridRows.Clear();
 			gridImages.Columns.Clear();
 			gridImages.BeginUpdate();
-			GridColumn col=new GridColumn("Name",120);
+			GridColumn col=new GridColumn("Definition",120);
 			gridImages.Columns.Add(col);
-			col=new GridColumn("Patient Instructions",180);
+			col=new GridColumn("Item Value",180);
 			gridImages.Columns.Add(col);
+			if(eClipboardImageCaptureDefSelfPortrait!=null){//First add self portait if not null
+				GridRow row=new GridRow();
+				row.Cells.Add("Self Portrait");//Col: Definition
+				row.Cells.Add("Allows patient to submit a self-portrait upon checkin");//Col: Item Value
+				row.Cells.Add(eClipboardImageCaptureDefSelfPortrait.FrequencyDays.ToString());//Col: Frequency
+				gridImages.ListGridRows.Add(row);
+				row.Tag=eClipboardImageCaptureDefSelfPortrait;
+			}
 			for(int i=0;i<listEClipboardImageCaptureDefs.Count;i++){
 				GridRow row=new GridRow();
-				if(i==0 && eClipboardImageCaptureDefSelfPortrait!=null){//First add self portait if not null
-					row.Cells.Add("Self Portrait");//Col: Definition
-					row.Cells.Add("Allows patient to submit a self-portrait upon checkin");//Col: Item Value
-					row.Cells.Add(eClipboardImageCaptureDefSelfPortrait.FrequencyDays.ToString());//Col: Frequency
-					gridImages.ListGridRows.Add(row);
-					row.Tag=eClipboardImageCaptureDefSelfPortrait;
-					row=new GridRow();
-				}
 				row.Cells.Add(Defs.GetDef(DefCat.EClipboardImageCapture,listEClipboardImageCaptureDefs[i].DefNum).ItemName);//Col: Definition
 				row.Cells.Add(Defs.GetDef(DefCat.EClipboardImageCapture,listEClipboardImageCaptureDefs[i].DefNum).ItemValue);//Col: Item Value
 				row.Cells.Add(listEClipboardImageCaptureDefs[i].FrequencyDays.ToString());//Col: Frequency
@@ -444,7 +487,9 @@ namespace OpenDental {
 			gridForms.ListGridRows.Clear();
 			gridForms.Columns.Clear();
 			gridForms.BeginUpdate();
-			GridColumn col=new GridColumn("Form Name",180);
+			GridColumn col=new GridColumn("",50);//Can either be "Sheet" or "eForm". Does not correspond to 'SheetType' column in SheetDef or 'FormType' column in eFormDef. May need to rename this column to reduce ambiguity.
+			gridForms.Columns.Add(col);
+			col=new GridColumn("Form Name",180);
 			gridForms.Columns.Add(col);
 			col=new GridColumn("Behavior",180);
 			gridForms.Columns.Add(col);
@@ -455,9 +500,19 @@ namespace OpenDental {
 			string addOn="";
 			List<EClipboardSheetDef> listEClipboardSheetDefsOrdered=listEClipboardSheetDefs.OrderBy(x => x.ItemOrder).ToList();
 			string gridCellValue;
-			for(int i=0;i<listEClipboardSheetDefsOrdered.Count;i++) {
+			for(int i=0;i<listEClipboardSheetDefsOrdered.Count;i++){
 				GridRow row=new GridRow();
-				row.Cells.Add(SheetDefs.GetDescription(listEClipboardSheetDefsOrdered[i].SheetDefNum));
+				if(listEClipboardSheetDefsOrdered[i].SheetDefNum!=0){
+					row.Cells.Add("Sheet");
+					row.Cells.Add(SheetDefs.GetDescription(listEClipboardSheetDefsOrdered[i].SheetDefNum));
+				}
+				else if(listEClipboardSheetDefsOrdered[i].EFormDefNum!=0){
+					row.Cells.Add("eForm");
+					row.Cells.Add(EFormDefs.GetFirstOrDefault(x=>x.EFormDefNum==listEClipboardSheetDefsOrdered[i].EFormDefNum)?.Description);
+				}
+				else{
+					continue;
+				}
 				GridCell gridCell=new GridCell(Lan.g("enumPrefillCondition",listEClipboardSheetDefsOrdered[i].PrefillStatus.ToString()));
 				row.Cells.Add(gridCell);
 				gridCellValue="Not Set";

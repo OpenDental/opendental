@@ -87,13 +87,15 @@ namespace OpenDental {
 		}
 
 		private void butBlank_Click(object sender,EventArgs e) {
-			//only visible when IsCustomPicker
+			//only visible when not IsInternalPicker
 			EFormDefSelected=new EFormDef();
 			EFormDefSelected.ListEFormFieldDefs=new List<EFormFieldDef>();
 			EFormDefSelected.ShowLabelsBold=true;
 			EFormDefSelected.FormType=EnumEFormType.PatientForm;
 			EFormDefSelected.Description="Form";
 			EFormDefSelected.MaxWidth=450;
+			EFormDefSelected.SpaceBelowEachField=-1;
+			EFormDefSelected.SpaceToRightEachField=-1;
 			IsDialogOK=true;
 		}
 

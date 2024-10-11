@@ -93,7 +93,7 @@ namespace OpenDentBusiness {
 			InsertMobileNotification(MobileNotificationType.CI_CheckinPatient,mobileAppDeviceNum,EnumAppTarget.eClipboard,listTags:listTags);
 		}
 
-		///<summary>Add a sheet the the device check-in checklist.</summary>
+		///<summary>Add a sheet to the device check-in checklist.</summary>
 		public static void CI_AddSheet(long patNum,long sheetNum) {
 			Meth.NoCheckMiddleTierRole();
 			Patient patient=Patients.GetPat(patNum);
@@ -115,6 +115,27 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		///<summary>Add an eForm to the device check-in checklist.</summary>
+		public static void CI_AddEForm(long patNum,long eFormNum) {
+			Meth.NoCheckMiddleTierRole();
+			Patient patient=Patients.GetPat(patNum);
+			if(patient==null) {
+				return;
+			}
+			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll(patNum);
+			if(listMobileAppDevices.IsNullOrEmpty()) {
+				return;
+			}
+			EForm eForm=EForms.GetEForm(eFormNum);
+			if(eForm==null) {
+				return;
+			}
+			for(int i=0;i<listMobileAppDevices.Count;i++) {
+				List<long> listPrimaryKeys=new List<long> { patNum,eFormNum };
+				InsertMobileNotification(MobileNotificationType.CI_AddEForm,listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys:listPrimaryKeys);
+			}
+		}
+
 		///<summary>Remove a sheet from a device check-in checklist.</summary>
 		public static void CI_RemoveSheet(long patNum,long sheetNum) {
 			Meth.NoCheckMiddleTierRole();
@@ -131,6 +152,24 @@ namespace OpenDentBusiness {
 			for(int i=0;i<listMobileAppDevices.Count;i++) {
 				List<long> listPrimaryKeys=new List<long> { patient.PatNum,sheetNum };
 				InsertMobileNotification(MobileNotificationType.CI_RemoveSheet,listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys:listPrimaryKeys);
+			}
+		}
+
+		///<summary>Remove an eForm from a device check-in checklist because it was deleted.</summary>
+		public static void CI_RemoveEForm(long patNum,long eFormNum) {
+			Meth.NoCheckMiddleTierRole();
+			Patient patient=Patients.GetPat(patNum);
+			//Intentionally not getting the actual eForm from the db here. It may have already been deleted, now time to get it off the device.
+			if(patient==null) {
+				return;
+			}
+			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll(patNum);
+			if(listMobileAppDevices.IsNullOrEmpty()) {
+				return;
+			}
+			for(int i=0;i<listMobileAppDevices.Count;i++) {
+				List<long> listPrimaryKeys=new List<long> { patient.PatNum,eFormNum };
+				InsertMobileNotification(MobileNotificationType.CI_RemoveEForm,listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,listPrimaryKeys:listPrimaryKeys);
 			}
 		}
 

@@ -6,17 +6,20 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="575" Height="719" 
+             Width="605" Height="719" 
              Text="Fill eForm" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
-		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="8,8,0,92" HorizontalAlignment="Left" Width="450"/>
-		<ui:Button x:Name="butPrint" Width="75" VerticalAlignment="Bottom" Height="24" Margin="285,0,0,10" Text="Print" Click="butPrint_Click" />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,10" Text="Save" Click="butSave_Click"   />
-		<ui:Button x:Name="butDelete" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,16,62" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
-		<ui:TextBox x:Name="textDateTime" Height="20" Width="131" Margin="8,0,0,50" VerticalAlignment="Bottom"/>
-		<ui:Label Height="18" Margin="5,0,0,72" Text="Date time" Width="88" VAlign="Center" HorizontalContentAlignment="Left" VerticalAlignment="Bottom" />
-		<ui:TextBox x:Name="textDescription" Height="20" Width="131" Margin="8,0,0,9" VerticalAlignment="Bottom"/>
-		<ui:Label Height="18" Margin="5,0,0,31" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" VerticalAlignment="Bottom" />
-		<ui:Button x:Name="butUnlock" Width="75" VerticalAlignment="Bottom" Height="24" Margin="285,0,0,37" Text="Unlock" Click="butUnlock_Click" />
+		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="8,8,0,44" HorizontalAlignment="Left" Width="450"/>
+		<ui:Button x:Name="butDelete" Width="75" VerticalAlignment="Bottom" Height="24" Margin="10,0,0,10" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
+		<ui:TextBox x:Name="textDateTime" Height="20" Width="131" Margin="0,29,6,0" HorizontalAlignment="Right"/>
+		<ui:Label Height="18" Margin="0,9,52,0" Text="Date time" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HorizontalAlignment="Right" />
+		<ui:TextBox x:Name="textDescription" Height="20" Width="131" Margin="0,70,6,0" HorizontalAlignment="Right"/>
+		<ui:Label Height="18" Margin="0,50,52,0" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HorizontalAlignment="Right" />
+		<ui:Button x:Name="butUnlock" Width="80" VerticalAlignment="Bottom" Height="24" Margin="0,0,30,254" Text="Unlock Sig" Click="butUnlock_Click" HorizontalAlignment="Right" />
+		<ui:Button x:Name="butPrint" Width="80" Height="24" Margin="0,0,30,114" Text="Print" Click="butPrint_Click" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+		<ui:Button x:Name="butSave" Width="75" Height="24" Margin="0,0,10,10" Text="Save" Click="butSave_Click" RenderTransformOrigin="0.413,-0.625" HorizontalAlignment="Right" VerticalAlignment="Bottom"   />
+		<ui:Button x:Name="butEClipboard" Width="80" Height="24" Margin="0,0,30,80" Text="To eClipboard" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="butEClipboard_Click" />
+		<ui:Button x:Name="butChangePat" Width="80" VerticalAlignment="Bottom" Height="24" Margin="0,0,30,219" Text="Change Pat" HorizontalAlignment="Right" Click="butChangePat_Click" />
+
 	</Grid>
 </local:FrmODBase>

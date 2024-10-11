@@ -7363,6 +7363,7 @@
         <EnumValue name="AuthApi">46 - Auth Api.</EnumValue>
         <EnumValue name="ODTSurplus">47 - ODTouch Mobile application surcharge for additional devices that exceed the ODTouchDeviceLimitDefault pref.</EnumValue>
         <EnumValue name="OCR">48 - OCR Scans</EnumValue>
+        <EnumValue name="UrlRedirect">49 - Used by ShortGuidLookup to redirect from an OD-generated Short URL to a long URL provided by customer.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="ShortGuid" type="varchar(255)">

@@ -94,6 +94,10 @@ namespace OpenDentBusiness {
 		ODT_PrintError,
 		///<summary>Occurs when a new text message is received. This is a workaround due to android push notifications no longer being supported for xamarin.</summary>
 		ODM_NewTextMessage,
+		///<summary>Tells the device that is currently filling out forms to add an eForm to the list. For this type, the list of primary keys will have two items: the PatNum and the EFormNum in that order.</summary>
+		CI_AddEForm,
+		///<summary>Tells the device that is currently filling out forms to remove an eForm from the list. For this type, the list of primary keys will have two items: the PatNum and the EFormNum in that order.</summary>
+		CI_RemoveEForm
 	}
 
 	///<summary>The mobile apps that support mobile notifications. Must stay synched 1:1 with the ODXamBusiness.ApplicationTarget enum.</summary>

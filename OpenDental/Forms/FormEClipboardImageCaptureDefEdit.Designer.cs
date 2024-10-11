@@ -24,52 +24,58 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEClipboardImageCaptureDefEdit));
-			this.butOK = new OpenDental.UI.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.comboImageCaptureType = new OpenDental.UI.ComboBox();
+			this.butSave = new OpenDental.UI.Button();
+			this.labelFrequencyHelp = new System.Windows.Forms.Label();
+			this.labelOCRCaptureType = new System.Windows.Forms.Label();
+			this.comboOcrCaptureType = new OpenDental.UI.ComboBox();
 			this.textFrequency = new OpenDental.ValidNum();
 			this.butDelete = new OpenDental.UI.Button();
+			this.labelImageCaptureDef = new System.Windows.Forms.Label();
+			this.labelFrequency = new System.Windows.Forms.Label();
+			this.textImage = new System.Windows.Forms.TextBox();
+			this.textValue = new System.Windows.Forms.TextBox();
+			this.labelValue = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butOK
+			// butSave
 			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(304, 192);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 3;
-			this.butOK.Text = "&OK";
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butSave.Location = new System.Drawing.Point(331, 301);
+			this.butSave.Name = "butSave";
+			this.butSave.Size = new System.Drawing.Size(75, 24);
+			this.butSave.TabIndex = 3;
+			this.butSave.Text = "&Save";
+			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
-			// label1
+			// labelFrequencyHelp
 			// 
-			this.label1.Location = new System.Drawing.Point(27, 26);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(316, 29);
-			this.label1.TabIndex = 5;
-			this.label1.Text = "How often should the patient be prompted to resubmit this image (In days, where 0" +
+			this.labelFrequencyHelp.Location = new System.Drawing.Point(12, 132);
+			this.labelFrequencyHelp.Name = "labelFrequencyHelp";
+			this.labelFrequencyHelp.Size = new System.Drawing.Size(366, 29);
+			this.labelFrequencyHelp.TabIndex = 5;
+			this.labelFrequencyHelp.Text = "How often should the patient be prompted to resubmit this image (In days, where 0" +
     " or blank indicates at each checkin)?";
 			// 
-			// label2
+			// labelOCRCaptureType
 			// 
-			this.label2.Location = new System.Drawing.Point(27, 92);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(213, 18);
-			this.label2.TabIndex = 7;
-			this.label2.Text = "Image Capture Type";
+			this.labelOCRCaptureType.Location = new System.Drawing.Point(8, 204);
+			this.labelOCRCaptureType.Name = "labelOCRCaptureType";
+			this.labelOCRCaptureType.Size = new System.Drawing.Size(115, 20);
+			this.labelOCRCaptureType.TabIndex = 7;
+			this.labelOCRCaptureType.Text = "OCR Capture Type";
+			this.labelOCRCaptureType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// comboImageCaptureType
+			// comboOcrCaptureType
 			// 
-			this.comboImageCaptureType.Location = new System.Drawing.Point(27, 113);
-			this.comboImageCaptureType.Name = "comboImageCaptureType";
-			this.comboImageCaptureType.Size = new System.Drawing.Size(259, 21);
-			this.comboImageCaptureType.TabIndex = 8;
-			this.comboImageCaptureType.Text = "comboBox1";
+			this.comboOcrCaptureType.Location = new System.Drawing.Point(130, 203);
+			this.comboOcrCaptureType.Name = "comboOcrCaptureType";
+			this.comboOcrCaptureType.Size = new System.Drawing.Size(180, 21);
+			this.comboOcrCaptureType.TabIndex = 8;
+			this.comboOcrCaptureType.Text = "comboOcrCaptureType";
 			// 
 			// textFrequency
 			// 
-			this.textFrequency.Location = new System.Drawing.Point(27, 58);
+			this.textFrequency.Location = new System.Drawing.Point(130, 163);
 			this.textFrequency.MaxVal = 32767;
 			this.textFrequency.Name = "textFrequency";
 			this.textFrequency.ShowZero = false;
@@ -81,7 +87,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 192);
+			this.butDelete.Location = new System.Drawing.Point(12, 301);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(81, 24);
 			this.butDelete.TabIndex = 81;
@@ -89,15 +95,65 @@ namespace OpenDental{
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
+			// labelImageCaptureDef
+			// 
+			this.labelImageCaptureDef.Location = new System.Drawing.Point(12, 12);
+			this.labelImageCaptureDef.Name = "labelImageCaptureDef";
+			this.labelImageCaptureDef.Size = new System.Drawing.Size(111, 20);
+			this.labelImageCaptureDef.TabIndex = 82;
+			this.labelImageCaptureDef.Text = "Image Def";
+			this.labelImageCaptureDef.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// labelFrequency
+			// 
+			this.labelFrequency.Location = new System.Drawing.Point(12, 162);
+			this.labelFrequency.Name = "labelFrequency";
+			this.labelFrequency.Size = new System.Drawing.Size(111, 20);
+			this.labelFrequency.TabIndex = 84;
+			this.labelFrequency.Text = "Frequency (Days)";
+			this.labelFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textImage
+			// 
+			this.textImage.Location = new System.Drawing.Point(130, 12);
+			this.textImage.Name = "textImage";
+			this.textImage.ReadOnly = true;
+			this.textImage.Size = new System.Drawing.Size(178, 20);
+			this.textImage.TabIndex = 86;
+			// 
+			// textValue
+			// 
+			this.textValue.Location = new System.Drawing.Point(130, 51);
+			this.textValue.MaxLength = 256;
+			this.textValue.Multiline = true;
+			this.textValue.Name = "textValue";
+			this.textValue.ReadOnly = true;
+			this.textValue.Size = new System.Drawing.Size(178, 64);
+			this.textValue.TabIndex = 89;
+			// 
+			// labelValue
+			// 
+			this.labelValue.Location = new System.Drawing.Point(13, 51);
+			this.labelValue.Name = "labelValue";
+			this.labelValue.Size = new System.Drawing.Size(111, 20);
+			this.labelValue.TabIndex = 91;
+			this.labelValue.Text = "Value";
+			this.labelValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// FormEClipboardImageCaptureDefEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(391, 228);
+			this.ClientSize = new System.Drawing.Size(418, 337);
+			this.Controls.Add(this.labelValue);
+			this.Controls.Add(this.textValue);
+			this.Controls.Add(this.textImage);
+			this.Controls.Add(this.labelFrequency);
+			this.Controls.Add(this.labelImageCaptureDef);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.textFrequency);
-			this.Controls.Add(this.comboImageCaptureType);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.comboOcrCaptureType);
+			this.Controls.Add(this.labelOCRCaptureType);
+			this.Controls.Add(this.labelFrequencyHelp);
+			this.Controls.Add(this.butSave);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEClipboardImageCaptureDefEdit";
 			this.Text = "eClipboard Image Capture Def Edit";
@@ -109,11 +165,16 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butOK;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private UI.ComboBox comboImageCaptureType;
+		private OpenDental.UI.Button butSave;
+		private System.Windows.Forms.Label labelFrequencyHelp;
+		private System.Windows.Forms.Label labelOCRCaptureType;
+		private UI.ComboBox comboOcrCaptureType;
 		private ValidNum textFrequency;
 		private UI.Button butDelete;
+		private System.Windows.Forms.Label labelImageCaptureDef;
+		private System.Windows.Forms.Label labelFrequency;
+		private System.Windows.Forms.TextBox textImage;
+		private System.Windows.Forms.TextBox textValue;
+		private System.Windows.Forms.Label labelValue;
 	}
 }

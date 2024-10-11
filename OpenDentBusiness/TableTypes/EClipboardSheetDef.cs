@@ -31,7 +31,7 @@ namespace OpenDentBusiness{
 		public string IgnoreSheetDefNums;
 		///<summary>For both Sheets and eForms. Holds the previous revision number that marks what def revision number we expect to have a submission for from the patient. This value can be incremented when changes are made to a linked sheet or eForm def, but it is not always updated. This should hold the last revision number that was updated for this eClipboardSheetDef. If a patient has a form filled out that has a revision ID that matches this or is greater (this field will be 0 by default, or they filled out a more up to date form manually in the office and not through eClipboard), then this form will be filtered out if set to PrefillStatuses.Once when we determine which forms load for the patient in eClipboard. If this value is higher than the RevID of the last form the patient filled out, we consider this eClipboardSheetDef to be updated and the patient will need to fill out the form again when set to PrefillStatuses.Once.</summary>
 		public long PrefillStatusOverride;
-		///<summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet.</summary>
+		///<summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet. Only for custom eForms.</summary>
 		public long EFormDefNum;
 
 		///<summary>Used only for serialization purposes</summary>

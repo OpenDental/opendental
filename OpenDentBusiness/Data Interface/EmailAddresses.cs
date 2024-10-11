@@ -216,7 +216,13 @@ namespace OpenDentBusiness{
 				return null;
 			}
 			strEmailAddress=strEmailAddress.Trim().ToLower();
-			MailAddress mailAddress=new MailAddress(strEmailAddress);
+			MailAddress mailAddress;
+			try {
+				mailAddress=new MailAddress(strEmailAddress);//Try needed in case of malformed email address. MailAddress ctor will throw UE
+			}
+			catch {
+				return null;
+			}
 			//We only want to look at the actual email address, and exclude any aliases.
 			if(!HasValidChars(mailAddress.Address)) {
 				return null;

@@ -148,8 +148,7 @@ namespace OpenDentBusiness{
 		public TimeSpan SchedAfterTime;
 		/// <summary>We do not use this, but some users do, so here it is. 0=none. Otherwise, 1-7 for day.</summary>
 		public byte SchedDayOfWeek;
-		/// <summary>The primary language of the patient.  Typically eng (English), fra (French), spa (Spanish), or similar.  
-		/// If it's a custom language, then it might look like Tahitian.</summary>
+		/// <summary>The primary language of the patient.  Typically eng (English), fra (French), spa (Spanish), or similar.  If it's a custom language, then it might look like Tahitian. If none, then empty string.</summary>
 		public string Language;
 		/// <summary>Used in hospitals.  It can be before the first visit date.  It typically gets set automatically by the hospital system.</summary>
 		public DateTime AdmitDate;

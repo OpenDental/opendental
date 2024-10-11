@@ -479,40 +479,18 @@ namespace OpenDental {
 					PagesPrinted++;
 					return true;//There will be another page. On the next page, yPos will be higher up, so it will fit
 				}
-				//Look for page break
-				for(int k=0;k<gridWrap.Children.Count;k++){
-					WrapPanel wrapPanel=gridWrap.Children[k] as WrapPanel;
-					if(wrapPanel is null){
-						continue;//alternative is borderLeftOfWrap
-					}
-					Grid gridForField=(Grid)wrapPanel.Children[0];
-					//a page break has no children in its gridForField except for the borderOverlayFieldHover and borderRightOfField
-					if(gridForField.Children.Count==2){
-						g.DrawLine(Colors.SlateGray,_marginLeftOfPage,yPos,800,yPos);
-					}
-				}
-				if(frameworkElement.ActualHeight==0){
+				WrapPanel wrapPanel=gridWrap.Children[1] as WrapPanel;
+				Grid gridForFieldFirst=(Grid)wrapPanel.Children[0];
+				Border borderBox=gridForFieldFirst.Children[1] as Border;
+				EFormField eFormField=ListEFormFields.Find(x=>x.TagOD==borderBox);
+				if(eFormField.FieldType==EnumEFormFieldType.PageBreak){
+					g.DrawLine(Colors.SlateGray,_marginLeftOfPage,yPos,800,yPos);
 					//a pageBreak will also be 0 height
 					_printedStackPanelChildren=i;
 					continue;
 				}
-				//Look for sigBox
-				bool isSigBox=false;
-				for(int k=0;k<gridWrap.Children.Count;k++){
-					WrapPanel wrapPanel=gridWrap.Children[k] as WrapPanel;
-					if(wrapPanel is null){
-						continue;//alternative is borderLeftOfWrap
-					}
-					Grid gridForField=(Grid)wrapPanel.Children[0];
-					//many wrapPanels will have more than one child gridForField, but for sigs, we only care about first.
-					EFormField eFormField=ListEFormFields.Find(x=>x.TagOD==gridForField);
-					if(eFormField is null){
-						continue;
-					}
-					if(eFormField.FieldType!=EnumEFormFieldType.SigBox){
-						continue;
-					}
-					StackPanel stackPanel2=(StackPanel)gridForField.Children[1];//child 0 is borderOverlayFieldHover
+				if(eFormField.FieldType==EnumEFormFieldType.SigBox){
+					StackPanel stackPanel2=(StackPanel)borderBox.Child;
 					StackPanel stackPanelLabel=(StackPanel)stackPanel2.Children[0];
 					g.DrawFrameworkElement(stackPanelLabel,_marginLeftOfPage,yPos);
 					yPos+=stackPanelLabel.ActualHeight;
@@ -521,9 +499,6 @@ namespace OpenDental {
 					g.DrawImage(bitmapImage,_marginLeftOfPage,yPos);
 					yPos+=frameworkElement.ActualHeight;
 					_printedStackPanelChildren=i;
-					isSigBox=true;
-				}
-				if(isSigBox){
 					continue;
 				}
 				g.DrawFrameworkElement(frameworkElement,0,yPos);

@@ -15,6 +15,7 @@ namespace OpenDental {
 		public long PatNum;
 		///<summary>Indicates the most recently selected Document.DocNum</summary>
 		public long DocNum;
+		private Patient _patient;
 
 		public FormPatientForms() {
 			InitializeComponent();
@@ -27,8 +28,8 @@ namespace OpenDental {
 			if(!ODBuild.IsDebug() && !PrefC.IsODHQ) {//if release and not HQ
 				butAddEForm.Visible=false;
 			}
-			Patient patient=Patients.GetLim(PatNum);
-			Text=Lan.g(this,"Patient Forms for")+" "+patient.GetNameFL();
+			_patient=Patients.GetPat(PatNum);
+			Text=Lan.g(this,"Patient Forms for")+" "+_patient.GetNameFL();
 			LayoutMenu();
 			FillGrid();
 		}
@@ -250,6 +251,7 @@ namespace OpenDental {
 			EForm eForm=EForms.CreateEFormFromEFormDef(eFormDef,PatNum);
 			eForm.DateTimeShown=DateTime.Now;
 			EFormFiller.FillFields(eForm);
+			EForms.TranslateFields(eForm,_patient.Language);
 			FrmEFormFillEdit frmEFormFillEdit=new FrmEFormFillEdit();
 			frmEFormFillEdit.EFormCur=eForm;
 			frmEFormFillEdit.ShowDialog();

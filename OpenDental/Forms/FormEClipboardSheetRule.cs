@@ -29,9 +29,20 @@ namespace OpenDental {
 
 		private void FormEClipboardSheetRule_Load(object sender,EventArgs e) {
 			//Get the name of the sheet
-			List<long> listSheetDefNumsIgnored=EClipboardSheetDefs.GetListIgnoreSheetDefNums(_eClipboardSheetDef);
-			_listSheetDefs=SheetDefs.GetWhere(x => listSheetDefNumsIgnored.Contains(x.SheetDefNum));
-			textSheet.Text=SheetDefs.GetDescription(_eClipboardSheetDef.SheetDefNum);
+			if(_eClipboardSheetDef.SheetDefNum!=0){
+				List<long> listSheetDefNumsIgnored=EClipboardSheetDefs.GetListIgnoreSheetDefNums(_eClipboardSheetDef);
+				_listSheetDefs=SheetDefs.GetWhere(x=>listSheetDefNumsIgnored.Contains(x.SheetDefNum));
+				textSheet.Text=SheetDefs.GetDescription(_eClipboardSheetDef.SheetDefNum);
+			}
+			else{//EForm
+				listSheetsToIgnore.Visible=false;
+				butSelectSheetsToIgnore.Visible=false;
+				labelSheetsToIgnore.Visible=false;
+				EFormDef eFormDef=EFormDefs.GetFirstOrDefault(x=>x.EFormDefNum==_eClipboardSheetDef.EFormDefNum);
+				if(eFormDef!=null){
+					textSheet.Text=eFormDef.Description;
+				}
+			}
 			comboBehavior.Items.AddEnums<PrefillStatuses>();
 			comboBehavior.SetSelectedEnum(_eClipboardSheetDef.PrefillStatus);
 			textFrequency.Text=_eClipboardSheetDef.ResubmitInterval.TotalDays.ToString();
@@ -49,6 +60,9 @@ namespace OpenDental {
 				textMaxAge.Enabled=true;
 				textMaxAge.Text=_eClipboardSheetDef.MaxAge.ToString();
 			}
+			if(_eClipboardSheetDef.EFormDefNum!=0){//if this eClipboardSheetDef is an eForm, skip setting up listSheetsToIgnore.
+				return;
+			}
 			listSheetsToIgnore.Visible=_eClipboardSheetDef.PrefillStatus==PrefillStatuses.Once;
 			listSheetsToIgnore.Items.Clear();
 			listSheetsToIgnore.Items.AddStrings(_listSheetDefs.Select(x => x.Description).ToList());
@@ -58,6 +72,9 @@ namespace OpenDental {
 
 		///<summary>Only displays when the behavior Once is selected. When a patient fills out the selected sheet, they won't be prompted to fill out any Sheets to Ignore, even if these are in the Sheets in Use list.</summary>
 		private void butSelectSheetsToIgnore_Click(object sender,EventArgs e) {
+			if(_eClipboardSheetDef.EFormDefNum!=0){
+				return;
+			}
 			FrmSheetPicker frmSheetPicker=new FrmSheetPicker();
 			frmSheetPicker.AllowMultiSelect=true;
 			SheetDef sheetDef=SheetDefs.GetFirstOrDefault(x=>x.SheetDefNum==_eClipboardSheetDef.SheetDefNum);
@@ -74,6 +91,7 @@ namespace OpenDental {
 			frmSheetPicker.SheetType=sheetDef.SheetType;
 			frmSheetPicker.HideKioskButton=true;
 			frmSheetPicker.AllowMultiSelect=true;
+			frmSheetPicker.RequireSelection=false;
 			frmSheetPicker.ShowDialog();
 			if(!frmSheetPicker.IsDialogOK) {
 				return;
@@ -98,9 +116,11 @@ namespace OpenDental {
 		}
 
 		private void comboBehavior_SelectionChangeCommitted(object sender,EventArgs e) {
-			butSelectSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
-			listSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
-			labelSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
+			if(_eClipboardSheetDef.SheetDefNum!=0){//Sheets only, SheetsToIgnore doesn't apply to eForms.
+				butSelectSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
+				listSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
+				labelSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
+			}
 			if(comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once) {
 				textFrequency.Text="0";
 			}
@@ -148,7 +168,9 @@ namespace OpenDental {
 			if(_eClipboardSheetDef.PrefillStatus==PrefillStatuses.Once) {
 				days=0;
 			}
-			_eClipboardSheetDef.IgnoreSheetDefNums=string.Join(",",_listSheetDefs.Select(x => POut.Long(x.SheetDefNum)));
+			if(_eClipboardSheetDef.SheetDefNum!=0){
+				_eClipboardSheetDef.IgnoreSheetDefNums=string.Join(",",_listSheetDefs.Select(x => POut.Long(x.SheetDefNum)));
+			}
 			_eClipboardSheetDef.MinAge=minAge;
 			_eClipboardSheetDef.MaxAge=maxAge;
 			_eClipboardSheetDef.ResubmitInterval=TimeSpan.FromDays(days);

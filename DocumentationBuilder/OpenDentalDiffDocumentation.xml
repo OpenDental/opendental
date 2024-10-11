@@ -108,6 +108,16 @@
       </Enumeration>
     </column>
   </table>
+  <table name="eserviceshortguid">
+    <summary></summary>
+    <column order="1" name="EServiceCode" type="varchar(255)">
+      <summary>Enum:eServiceCode EService that this short GUID applies to.</summary>
+      <Enumeration name="eServiceCode">
+        <summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+        <EnumValue name="UrlRedirect">49 - Used by ShortGuidLookup to redirect from an OD-generated Short URL to a long URL provided by customer.</EnumValue>
+      </Enumeration>
+    </column>
+  </table>
   <table name="grouppermission">
     <summary></summary>
     <column order="4" name="PermType" type="smallint(6)">

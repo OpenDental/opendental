@@ -70,32 +70,6 @@ namespace OpenDental {
 			SetCtrlWidth();
 		}
 
-		private void SetCtrlWidth(){
-			//This only sets control width, not width of form.
-			//We let it grow as much as possible, limited by max width and by space available.
-			if(!_isLoaded){
-				return;
-			}
-			int maxWidth=EFormCur.MaxWidth;//no validation of range needed here
-			maxWidth+=17+2;//scrollbar plus border width
-			int avail=(int)ActualWidth-(int)ctrlEFormFill.Margin.Left-117;//117 is our chosen right margin
-			if(maxWidth>avail){
-				maxWidth=avail;
-			}
-			if(maxWidth<50){
-				maxWidth=50;
-				//if window gets extremely narrow, this control might spill out to the right
-			}
-			ctrlEFormFill.Width=maxWidth;
-			ctrlEFormFill.UpdateLayout();
-			ctrlEFormFill.FillFieldsFromControls();
-			ctrlEFormFill.RefreshLayout();
-			//The one thing this doesn't do perfectly is
-			//if already signed in this session, then size changed, then change text,
-			//signature disappears when it shouldn't. 
-			//I can live with that. User can just sign again. Why would they be resizing that much anyway?
-		}
-
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete entire form?")){
 				return;
@@ -105,7 +79,7 @@ namespace OpenDental {
 				return;
 			}
 			EFormFields.DeleteForForm(EFormCur.EFormNum);
-			EForms.Delete(EFormCur.EFormNum);
+			EForms.Delete(EFormCur.EFormNum,EFormCur.PatNum);
 			IsDialogOK=true;
 		}
 
@@ -118,14 +92,9 @@ namespace OpenDental {
 		//	IsDialogOK=true;
 		//}
 
-		private void butSave_Click(object sender,EventArgs e) {
-			if(!ValidateAndSave()){
-				return;
-			}
-			IsDialogOK=true;
-		}
-
 		private void butPrint_Click(object sender,EventArgs e) {
+			//Unlike sheets, we have no need to save first because we are just printing whatever is on the screen at the moment.
+			ctrlEFormFill.FillFieldsFromControls();//so that RefreshLayout will work
 			Printout printout=new Printout();
 			printout.FuncPrintPage=ctrlEFormFill.Pd_PrintPage;
 			printout.thicknessMarginInches=new Thickness(0.5);
@@ -138,6 +107,29 @@ namespace OpenDental {
 			//this button will not be needed in the eClipboard
 			ctrlEFormFill.IsReadOnly=false;
 			butUnlock.Visible=false;
+		}
+
+		private void butChangePat_Click(object sender,EventArgs e) {
+
+		}
+
+		private void butEClipboard_Click(object sender,EventArgs e) {
+			EFormCur.Status=EnumEFormStatus.ReadyForPatientFill;
+			if(!TryToSaveData()){
+				return;
+			}
+			//Create mobile notification to update eClipboard device with new eForm.
+			MobileNotifications.CI_AddEForm(EFormCur.PatNum,EFormCur.EFormNum);
+//todo:EFormEdit perm
+			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
+			IsDialogOK=true;
+		}
+
+		private void butSave_Click(object sender,EventArgs e) {
+			if(!ValidateAndSave()){
+				return;
+			}
+			IsDialogOK=true;
 		}
 
 		private void FrmEFormFillEdit_FormClosing(object sender,CancelEventArgs e) {
@@ -171,6 +163,32 @@ namespace OpenDental {
 			}
 		}
 
+		private void SetCtrlWidth(){
+			//This only sets control width, not width of form.
+			//We let it grow as much as possible, limited by max width and by space available.
+			if(!_isLoaded){
+				return;
+			}
+			int maxWidth=EFormCur.MaxWidth;//no validation of range needed here
+			maxWidth+=17+2;//scrollbar plus border width
+			int avail=(int)ActualWidth-(int)ctrlEFormFill.Margin.Left-147;//147 is our chosen right margin
+			if(maxWidth>avail){
+				maxWidth=avail;
+			}
+			if(maxWidth<50){
+				maxWidth=50;
+				//if window gets extremely narrow, this control might spill out to the right
+			}
+			ctrlEFormFill.Width=maxWidth;
+			ctrlEFormFill.UpdateLayout();
+			ctrlEFormFill.FillFieldsFromControls();
+			ctrlEFormFill.RefreshLayout();
+			//The one thing this doesn't do perfectly is
+			//if already signed in this session, then size changed, then change text,
+			//signature disappears when it shouldn't. 
+			//I can live with that. User can just sign again. Why would they be resizing that much anyway?
+		}
+
 		///<summary>If an error won't allow, then it shows a MsgBox and then returns false.</summary>
 		private bool TryToSaveData() {
 			DateTime dateTimeShown=DateTime.MinValue;
@@ -187,11 +205,12 @@ namespace OpenDental {
 			if(EFormCur.IsNew){
 				EFormCur.DateTimeShown=DateTime.Now;
 				EForms.Insert(EFormCur);
+				EFormCur.IsNew=false;
 			}
 			else{
 				EForms.Update(EFormCur);
 			}
-			//Delete all of the fieldDefs that are on the form from the database and re-insert them.
+			//Delete all of the fields that are on the form from the database and re-insert them.
 			EFormFields.DeleteForForm(EFormCur.EFormNum);
 			for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
 				EFormCur.ListEFormFields[i].EFormNum=EFormCur.EFormNum;
@@ -215,6 +234,9 @@ namespace OpenDental {
 			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,"EForm: "+EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
 			return true;
 		}
+
 		#endregion Methods - private
+
+		
 	}
 }

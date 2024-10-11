@@ -133,6 +133,14 @@ namespace OpenDentBusiness{
 			return PIn.Int(Db.GetCount(command))>0;
 		}
 
+		public static bool IsEFormDefInUse(long eFormDefNum) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),eFormDefNum);
+			}
+			string command="SELECT COUNT(*) FROM eclipboardsheetdef WHERE EFormDefNum="+POut.Long(eFormDefNum);
+			return PIn.Int(Db.GetCount(command))>0;
+		}
+
 		public static List<EClipboardSheetDef> GetAllForSheetDefForOnceRule(long sheetDefNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
 				return Meth.GetObject<List<EClipboardSheetDef>>(MethodBase.GetCurrentMethod(),sheetDefNum);

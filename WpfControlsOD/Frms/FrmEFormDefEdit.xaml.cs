@@ -40,12 +40,14 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			FormClosed+=FrmEFormDefEdit_FormClosed;
 			ctrlEFormFill.IsSetupMode=true;
 			ctrlEFormFill.EventDoubleClickField+=CtrlEFormFill_EventDoubleClickField;
+			comboLanguage.SelectionChangeCommitted+=ComboLanguage_SelectionChangeCommitted;
 		}
 		#endregion Constructor
 
 		#region Methods - private Event Handlers
 		///<summary></summary>
 		private void ComboLanguage_SelectionChangeCommitted(object sender,EventArgs e) {
+			//only visible in setup
 			if(comboLanguage.SelectedIndex==0){
 				ctrlEFormFill.LanguageShowing="";
 			}
@@ -258,7 +260,6 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			contextMenu=new ContextMenu(this);
 			WpfControls.EFormL.FillComboLanguage(comboLanguage);
 			labelLanguage.Visibility=comboLanguage.Visibility;//hide them both if no patient languages set up
-			comboLanguage.SelectionChangeCommitted+=ComboLanguage_SelectionChangeCommitted;
 			//gridMain.ContextMenu=contextMenu;
 			//contextMenu.Add(new MenuItem("Delete",menuDelete_Click));
 			if(!EFormDefCur.IsInternal) {
@@ -527,6 +528,10 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		///<summary></summary>
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete entire form?")){
+				return;
+			}
+			if(EFormDefCur.EFormDefNum>0 && EClipboardSheetDefs.IsEFormDefInUse(EFormDefCur.EFormDefNum)){
+				MsgBox.Show(this,"EForm is in use by eClipboard. Not allowed to delete.");
 				return;
 			}
 			//The form deletion actually happens in the parent.

@@ -368,9 +368,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 				row.Tag=listJobs[i];
 				grid.ListGridRows.Add(row);
 			}
-			grid.Title=jobPhase.ToString()+" ("+listJobs.Count+")";
+			grid.Title=jobPhase.ToString()+" ("+grid.ListGridRows.Count+")";
 			if(grid==gridPendingReview) {
-				grid.Title="Pending Review" +" ("+listJobs.Count+")";
+				grid.Title="Pending Review" +" ("+grid.ListGridRows.Count+")";
 			}
 			grid.EndUpdate();
 		}

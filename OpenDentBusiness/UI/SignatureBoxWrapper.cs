@@ -58,7 +58,7 @@ Historical changes:
 	Each time we have a bug or a variation on the original strategy, we must forever be able to handle that unique situation without breaking others.
 	This leads to many "if" statements. We end up trying a chain of decryptions until we get one that works.
 	At some point in the future, we may decide to re-encrypt all of the signatures with one single known good strategy.
-	But because Topaz is still a black box, we can't every really completely fix the complexity.
+	But because Topaz is still a black box, we can't ever really completely fix the complexity.
 
 Guideline for usage:
 
