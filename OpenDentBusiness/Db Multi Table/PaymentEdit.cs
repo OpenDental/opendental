@@ -1336,6 +1336,8 @@ namespace OpenDentBusiness {
 			if(hasInsOverpay) {
 				listInsProcEntries.Clear();//Don't do anything about insurance overpayments and leave the full overpayment value within AmountEnd.
 			}
+			//Find adjustments linked to a procedure that are not associated with a payment plan and have a non-zero amount.
+			List<AccountEntry> listAccountEntriesImplicitAdj=listExplicitAccountCharges.FindAll(x => x.GetType()==typeof(Adjustment) && x.ProcNum!=0 && x.PayPlanNum==0 && x.AmountEnd!=0);
 			foreach(AccountEntry accountEntryInsProc in listInsProcEntries) {
 				decimal amountAfterIns=AccountEntry.GetExplicitlyLinkedProcAmt(accountEntryInsProc);
 				if(amountAfterIns>=0) {
@@ -1367,6 +1369,14 @@ namespace OpenDentBusiness {
 				//Spell out the real problem; the following amount of income will be ignored.
 				decimal sumIgnoredInsuranceOverpayment=(amountOverpaid - amountTransferable);
 				accountEntryInsProc.WarningMsg.AppendLine($"  ^Ignored insurance overpayment: {sumIgnoredInsuranceOverpayment:C}");
+				//Sum up any mismatched adjustments that don't offset the procedure fee.
+				decimal sumImplicitAdjustmentEntries=listAccountEntriesImplicitAdj
+					.FindAll(x => x.ProcNum==accountEntryInsProc.ProcNum)
+					.Sum(x => x.AmountEnd);
+				if(sumImplicitAdjustmentEntries!=0) {
+					accountEntryInsProc.WarningMsg.AppendLine($"  ^Attached Adjustment Total: {sumImplicitAdjustmentEntries:C}");
+					accountEntryInsProc.WarningMsg.AppendLine($"    (Not offsetting the procedure value due to a mismatch in Patient, Provider, or Clinic)");
+				}
 				//Only allow the procedure to be as negative as the amount of associated patient payments.
 				//The ITM will be given the opportunity to transfer this amount to other production.
 				accountEntryInsProc.AmountEnd=(amountTransferable * -1);

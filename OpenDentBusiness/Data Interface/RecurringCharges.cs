@@ -1073,8 +1073,9 @@ namespace OpenDentBusiness {
 				amount=(double)payConnectResponse.Amount;
 			}
 			string receipt=PayConnect.BuildReceiptString(transType.SALE,payConnectResponse.RefNumber,patCur.GetNameFLnoPref(),
-			payConnectResponse.CardNumber,null,payConnectResponse.AuthCode,payConnectResponse.Description,null,
-			payConnectResponse.Amount,false,clinicNumCur,cardHolder:payConnectResponse.CardHolder);
+				payConnectResponse.CardNumber,null,payConnectResponse.AuthCode,payConnectResponse.Description,null,
+				payConnectResponse.Amount,false,clinicNumCur,surchargeAmount:payConnectResponse.AmountSurcharged,
+				cardHolder:payConnectResponse.CardHolder);
 			//AmountSurcharged will be 0 for clinics that don't have surcharging turned on.
 			CreatePayment(patCur,chargeData,strBuilderResultText.ToString(),amount,receipt,CreditCardSource.PayConnect,merchantFee:(double)payConnectResponse.AmountSurcharged);
 			strBuilderResultFile.AppendLine(strBuilderResultText.ToString());

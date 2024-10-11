@@ -160,7 +160,9 @@ Jordan is the only one allowed to edit this file.
 				return;
 			}
 			if(_listUnmountedObjects[_selectedIndex].Document_!=null){
-				Documents.Delete(_listUnmountedObjects[_selectedIndex].Document_);
+				long patnum=_listUnmountedObjects[_selectedIndex].Document_.PatNum;
+				string patFolder=ImageStore.GetPatientFolder(Patients.GetPat(patnum),ImageStore.GetPreferredAtoZpath());
+				ImageStore.DeleteDocuments(new List<Document>{ _listUnmountedObjects[_selectedIndex].Document_ },patFolder);
 			}
 			MountItems.Delete(_listUnmountedObjects[_selectedIndex].MountItem_);
 			EventRefreshParent?.Invoke(this,new EventArgs());
