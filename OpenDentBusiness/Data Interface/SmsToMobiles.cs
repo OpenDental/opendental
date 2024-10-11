@@ -15,6 +15,7 @@ using OpenDental;
 using System.Windows;
 using System.Threading.Tasks;
 using Word;
+using OpenDentBusiness.ODSMS;
 
 
 namespace OpenDentBusiness
@@ -317,8 +318,8 @@ namespace OpenDentBusiness
                 var message_id = res.Substring(4).Trim(); // Assuming the message_id is at the end of the response
 
                 // Poll the status until the message is processed or a maximum number of retries is reached
-                const int maxRetries = 30;
-                const int delayBetweenRetries = 15000; // 15 seconds
+                const int maxRetries = 60;
+                const int delayBetweenRetries = 15000; // 15 seconds.  Note 60 retries * 15 seconds = 15 minutes
 
                 for (int attempt = 0; attempt < maxRetries; attempt++)
                 {
@@ -328,7 +329,9 @@ namespace OpenDentBusiness
                     responseUpdate.EnsureSuccessStatusCode();
 
                     var resUpdate = await responseUpdate.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Result from SMS send attempt: {resUpdate}");
+                    ODSMSLogger.Instance.Log($"Result from SMS send attempt: {resUpdate}",
+                                             EventLogEntryType.Information,
+                                             logToEventLog: false);
 
                     if (resUpdate.Contains("STATUS:200 Success")) // Success string (not HTTP codes because not HTTP error)
                     {
@@ -336,22 +339,25 @@ namespace OpenDentBusiness
                     }
                     else if (resUpdate.Contains("ERROR:")) // Check for errors
                     {
-                        EventLog.WriteEntry("ODSMS", $"Error updating SMS status for {mobilePhoneNumber}: {resUpdate}", EventLogEntryType.Error, 103, 1, new byte[10]);
+                        ODSMSLogger.Instance.Log($"Error updating SMS status for {mobilePhoneNumber}: {resUpdate}",
+                                                 EventLogEntryType.Error);
                         return false; // SMS send failed
                     }
                     else
                     {
-                        Console.WriteLine($"Attempt {attempt + 1}/{maxRetries}: Message status is still pending.");
+                        ODSMSLogger.Instance.Log($"Attempt {attempt + 1}/{maxRetries}: Message status is still pending.",
+                                                 EventLogEntryType.Information,
+                                                 logToEventLog: false);
                     }
                 }
 
                 // If the status is still not confirmed after maxRetries
-                EventLog.WriteEntry("ODSMS", $"SMS send status for {mobilePhoneNumber} could not be confirmed after {maxRetries} attempts.", EventLogEntryType.Warning, 104, 1, new byte[10]);
+                ODSMSLogger.Instance.Log($"SMS send status for {mobilePhoneNumber} could not be confirmed after {maxRetries} attempts.");
                 return false; // SMS send failed
             }
             catch (Exception ex)
             {
-                EventLog.WriteEntry("ODSMS", $"Error sending SMS to {mobilePhoneNumber}: {ex.Message}", EventLogEntryType.Error, 101, 1, new byte[10]);
+                ODSMSLogger.Instance.Log($"Error sending SMS to {mobilePhoneNumber}: {ex.Message}", EventLogEntryType.Error);
                 MessageBox.Show("text to: +" + mobilePhoneNumber + " failed");
                 return false; // SMS send failed
             }
@@ -377,8 +383,9 @@ namespace OpenDentBusiness
 
             string auth = OpenDentBusiness.ODSMS.ODSMS.AUTH;
             string send = "http/send-message?message-type=sms.automatic&" + auth + "&to=" + msg.MobilePhoneNumber + "&message=" + HttpUtility.UrlEncode(msg.MsgText);
-            EventLog.WriteEntry("ODSMS", send, EventLogEntryType.Information, 101, 1, new byte[10]);
-            Console.WriteLine(send);
+            ODSMSLogger.Instance.Log(send,
+                                     EventLogEntryType.Information,
+                                     logToEventLog: true); 
 
             // Call SmsGo and update the SmsStatus based on the result
             bool isSuccess = await SmsGo(send, msg.MobilePhoneNumber, "http/request-status-update?" + auth + "&message-id=");
@@ -391,11 +398,13 @@ namespace OpenDentBusiness
         ///All Integrated Texting should use this method, CallFire texting does not use this method.</summary>
         public static List<SmsToMobile> SendSms(List<SmsToMobile> listMessages)
 		{
-			Console.WriteLine("sending sms!");
-			EventLog.WriteEntry("ODSMS", "Sending SMS", EventLogEntryType.Information, 101, 1, new byte[10]);
-			
-			//No need to check MiddleTierRole; no call to db.
-			if (Plugins.HookMethod(null, "SmsToMobiles.SendSms_start", listMessages))
+            ODSMSLogger.Instance.Log("Sending SMS",
+                                     EventLogEntryType.Information,
+                                     logToConsole: true,
+                                     logToEventLog: true);
+
+            //No need to check MiddleTierRole; no call to db.
+            if (Plugins.HookMethod(null, "SmsToMobiles.SendSms_start", listMessages))
 			{
 				return new List<SmsToMobile>();
 			}

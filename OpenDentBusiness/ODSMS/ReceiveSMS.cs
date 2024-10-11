@@ -3,7 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Xml;
-using System.Threading.Tasks;
+using SystemTask = System.Threading.Tasks.Task;
 using System.Threading;
 using System.Text.RegularExpressions;
 using OpenDentBusiness;
@@ -12,6 +12,7 @@ using OpenDentBusiness.Mobile;
 using Google.Apis.Gmail.v1.Data;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace OpenDentBusiness.ODSMS
 {
@@ -19,13 +20,13 @@ namespace OpenDentBusiness.ODSMS
     {
         private static readonly SemaphoreSlim fetchAndProcessSemaphore = new SemaphoreSlim(1, 1);
 
-        public static async System.Threading.Tasks.Task ReceiveSMSForever()
+        public static async SystemTask ReceiveSMSForever()
         {
             await ODSMS.WaitForDatabaseAndUserInitialization();
 
             while (true)
             {
-                await System.Threading.Tasks.Task.Delay(60 * 1000); // Check SMS once a minute
+                await SystemTask.Delay(60 * 1000); // Check SMS once a minute
                 ODSMSLogger.Instance.Log("Checking for new SMS now", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
 
                 try
@@ -86,7 +87,7 @@ namespace OpenDentBusiness.ODSMS
             System.Windows.MessageBox.Show("SMS is restored. Birthday texts and reminders will be sent now.");
         }
 
-        public static async System.Threading.Tasks.Task FetchAndProcessSmsMessages(string removeStr = "")
+        public static async SystemTask FetchAndProcessSmsMessages(string removeStr = "")
         {
             await fetchAndProcessSemaphore.WaitAsync();
             try
@@ -95,7 +96,7 @@ namespace OpenDentBusiness.ODSMS
                 string checkSMSstring = "http/request-received-messages?&order=newest&" + ODSMS.AUTH;
 
                 var request = checkSMSstring + "&limit=" + getAllCount.ToString() + removeStr;
-                ODSMSLogger.Instance.Log($"Raw Diafaan API call: {request}", EventLogEntryType.Information);
+                ODSMSLogger.Instance.Log($"Raw Diafaan API call: {request}", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
 
                 var response = await ODSMS.sharedClient.GetAsync(request);
                 var text = await response.Content.ReadAsStringAsync();
@@ -111,7 +112,7 @@ namespace OpenDentBusiness.ODSMS
                     return;
                 }
 
-                ODSMSLogger.Instance.Log($"About to loop through {smsCount} SMS messages", EventLogEntryType.Information);
+                ODSMSLogger.Instance.Log($"About to loop through {smsCount} SMS messages", EventLogEntryType.Information, logToEventLog: false);
 
                 foreach (XmlElement child in list.ChildNodes)
                 {
@@ -129,19 +130,20 @@ namespace OpenDentBusiness.ODSMS
             }
         }
 
-        private static async System.Threading.Tasks.Task ProcessSmsMessage(string msgFrom, string msgText, string msgTime, string msgGUID)
+        private static async SystemTask ProcessSmsMessage(string msgFrom, string msgText, string msgTime, string msgGUID)
         {
-            string logMessage = $"SMS from {msgFrom} at time {msgTime} with body {msgText} - GUID: {msgGUID}";
-            ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Information);
 
             string guidFilePath = Path.Combine(ODSMS.sms_folder_path, msgGUID);
 
             if (File.Exists(guidFilePath))
             {
-                ODSMSLogger.Instance.Log("Must've already processed this SMS", EventLogEntryType.Information);
+                ODSMSLogger.Instance.Log("Must've already processed this SMS", EventLogEntryType.Information, logToEventLog: false);
             }
             else
             {
+                string logMessage = $"SMS from {msgFrom} at time {msgTime} with body {msgText} - GUID: {msgGUID}";
+                ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Information);
+
                 try
                 {
                     await ProcessOneReceivedSMS(msgText, msgTime, msgFrom, msgGUID);
@@ -154,7 +156,134 @@ namespace OpenDentBusiness.ODSMS
             }
         }
 
-        private static async System.Threading.Tasks.Task ProcessOneReceivedSMS(string msgText, string msgTime, string msgFrom, string msgGUID)
+        private static bool IsAppointmentAlreadyConfirmed(Appointment appointment)
+        {
+            return appointment.Confirmed != ODSMS._defNumTexted &&
+                    appointment.Confirmed != ODSMS._defNumOneWeekSent &&
+                    appointment.Confirmed != ODSMS._defNumTwoWeekSent;
+        }
+
+        private static bool UpdateAppointmentStatus(Appointment originalAppt, long confirmationStatus)
+        {
+            Appointment updatedAppt = originalAppt.Copy();
+            updatedAppt.Confirmed = confirmationStatus;
+
+            bool updateSucceeded = AppointmentCrud.Update(updatedAppt, originalAppt);
+            if (updateSucceeded)
+            {
+                Console.WriteLine("Appointment status updated successfully.");
+                return true;
+            }
+            else
+            {
+                ODSMSLogger.Instance.Log("Failure updating appointment status!", EventLogEntryType.Error);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines the appropriate confirmation status for an appointment.
+        /// </summary>
+        /// <param name="daysUntilAppointment">The number of days remaining until the appointment.</param>
+        /// <returns>
+        /// The confirmation status to set based on the number of days:
+        /// - Two-week reminder has been confirmed.
+        /// - One-week reminder has been confirmed.
+        /// - The appointment has been confirmed.
+        /// Returns 0 if the days until the appointment are outside expected ranges.
+        /// </returns>
+        private static long GetConfirmationStatus(int daysUntilAppointment)
+        {
+            if (daysUntilAppointment >= 14 && daysUntilAppointment < 22)
+            {
+                return ODSMS._defNumTwoWeekConfirmed;
+            }
+            else if (daysUntilAppointment >= 7)
+            {
+                return ODSMS._defNumOneWeekConfirmed;
+            }
+            else if (daysUntilAppointment >= 0 && daysUntilAppointment <= 4)
+            {
+                return ODSMS._defNumConfirmed;
+            }
+            else
+            {
+                string logMessage = $"Received YES to an appointment that is {daysUntilAppointment} days away. This is unexpected.";
+                ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
+                return 0;
+            }
+        }
+        public static bool HandleAutomatedConfirmationInternal(List<Patient> patientList)
+        {
+            string patNums = String.Join(",", patientList.Select(p => p.PatNum.ToString()).ToArray());
+            string latestSMS = "SELECT * from CommLog where PatNum IN (" + patNums + ") AND Note REGEXP 'Text message sent.*(reply|respond).*YES' AND CommDateTime >= DATE_SUB(NOW(), INTERVAL 21 DAY) ORDER BY CommDateTime DESC LIMIT 1";
+            Commlog latestComm = OpenDentBusiness.Crud.CommlogCrud.SelectOne(latestSMS);
+
+            if (latestComm != null)
+            {
+                long PatNum = latestComm.PatNum;
+                Patient p = patientList.FirstOrDefault(p => p.PatNum == latestComm.PatNum);
+                if (p == null)
+                {
+                    ODSMSLogger.Instance.Log("No matching patient found.", EventLogEntryType.Information, logToEventLog: false);
+                    return false;
+                }
+
+                DateTime? appointmentTime = AppointmentHelper.ExtractAppointmentDate(latestComm.Note);
+
+                if (appointmentTime.HasValue)
+                {
+                    TimeSpan timeUntilAppointment = appointmentTime.Value - latestComm.CommDateTime;
+                    int daysUntilAppointment = (int)Math.Ceiling(timeUntilAppointment.TotalDays);
+
+                    long confirmationStatus = GetConfirmationStatus(daysUntilAppointment);
+                    if (confirmationStatus == 0)
+                    {
+                        ODSMSLogger.Instance.Log("Confirmation status is 0. Ignoring.", EventLogEntryType.Warning);
+                        return false;
+                    }
+
+                    string appointmentQuery = $"SELECT * FROM Appointment WHERE PatNum = {PatNum} AND AptDateTime = '{appointmentTime.Value.ToString("yyyy-MM-dd HH:mm:ss")}'";
+                    Appointment originalAppt = AppointmentCrud.SelectOne(appointmentQuery);
+
+                    if (originalAppt != null)
+                    {
+                        if (IsAppointmentAlreadyConfirmed(originalAppt))
+                        {
+                            ODSMSLogger.Instance.Log("OOPS! Patient just replied yes to an appointment that is already confirmed. Ignoring", EventLogEntryType.Warning);
+                            return false;
+                        }
+                        else
+                        {
+                            bool updateSuccess = UpdateAppointmentStatus(originalAppt, confirmationStatus);
+                            if (!updateSuccess)
+                            {
+                                ODSMSLogger.Instance.Log("Failed to update appointment status.", EventLogEntryType.Warning);
+                            }
+                            return updateSuccess;
+                        }
+                    }
+                    else
+                    {
+                        string logMessage = $"No matching appointment found for patient {PatNum} at {appointmentTime.Value}.";
+                        ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
+                    }
+                }
+                else
+                {
+                    ODSMSLogger.Instance.Log($"Error parsing date from communication log note. {latestComm.Note ?? "Note is null"}", EventLogEntryType.Error);
+                }
+            }
+            else
+            {
+                string logMessage = $"'Yes' received, but no matching appointment found for any of the patients {patNums}.";
+                ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
+            }
+
+            return false;
+        }
+
+        private static async SystemTask ProcessOneReceivedSMS(string msgText, string msgTime, string msgFrom, string msgGUID)
         {
             ODSMSLogger.Instance.Log("SMS inner loop - downloaded a single SMS", EventLogEntryType.Information, logToEventLog: false);
             string guidFilePath = Path.Combine(ODSMS.sms_folder_path, msgGUID);
@@ -232,11 +361,11 @@ namespace OpenDentBusiness.ODSMS
             return sms;
         }
 
-        private static async System.Threading.Tasks.Task HandleAutomatedConfirmation(List<Patient> patients, SmsFromMobile sms)
+        private static async SystemTask HandleAutomatedConfirmation(List<Patient> patients, SmsFromMobile sms)
         {
             ODSMSLogger.Instance.Log("About to handle automated SMS", EventLogEntryType.Information, logToEventLog: false);
 
-            bool wasHandled = SendSMS.HandleAutomatedConfirmation(patients);
+            bool wasHandled = ReceiveSMS.HandleAutomatedConfirmationInternal(patients);
             if (wasHandled)
             {
                 sms.SmsStatus = SmsFromStatus.ReceivedRead;
@@ -249,9 +378,10 @@ namespace OpenDentBusiness.ODSMS
             }
         }
 
-        private static async System.Threading.Tasks.Task SendConfirmationFailureMessage(Patient patient, string mobileNumber)
+        private static async SystemTask SendConfirmationFailureMessage(Patient patient, string mobileNumber)
         {
-            string matchSMSmessage = "Thank you for your reply but we've had trouble matching it to an appointment. Could you please give us a call?";
+            string matchSMSmessage = "Thank you for your response.\nWe couldn't find any appointments that need confirmation.\n" +
+                                     "If this doesn’t seem right, please give us a call.";
             SmsToMobile matchSMS = new SmsToMobile
             {
                 PatNum = patient.PatNum,

@@ -4,9 +4,12 @@ using System.IO;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Xml;
-using System.Threading.Tasks;
+using SystemTask = System.Threading.Tasks.Task;
 using OpenDentBusiness;
 using DataConnectionBase;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OpenDentBusiness.ODSMS
 {
@@ -31,6 +34,17 @@ namespace OpenDentBusiness.ODSMS
 
         public static string sms_folder_path = @"L:\msg_guids\";
 
+        private static List<Def> _listDefsApptConfirmed;
+        public static long _defNumTwoWeekConfirmed;
+        public static long _defNumOneWeekConfirmed;
+        public static long _defNumConfirmed;
+        public static long _defNumNotCalled;
+        public static long _defNumUnconfirmed;
+        public static long _defNumTwoWeekSent;
+        public static long _defNumOneWeekSent;
+        public static long _defNumTexted;
+        public static long _defNumWebSched;
+
         static ODSMS()
         {
             string MachineName = Environment.MachineName;
@@ -41,10 +55,83 @@ namespace OpenDentBusiness.ODSMS
             ValidateConfigPath(configPath);
             LoadConfiguration(configPath, MachineName);
 
-            sharedClient = new HttpClient();
-            sharedClient.BaseAddress = new Uri(URL);
+            sharedClient = new HttpClient
+            {
+                BaseAddress = new Uri(URL)
+            };
 
             LogConfigurationStatus(MachineName);
+        }
+
+        public static bool SanityCheckConstants()
+        {
+            var defNumList = new List<long>
+            {
+                _defNumTexted,
+                _defNumTwoWeekSent,
+                _defNumOneWeekSent,
+                _defNumTwoWeekConfirmed,
+                _defNumOneWeekConfirmed,
+                _defNumConfirmed,
+                _defNumNotCalled,
+                _defNumUnconfirmed,
+                _defNumWebSched
+            };
+
+            // Create a HashSet from the list
+            var defNumSet = new HashSet<long>(defNumList);
+
+            // Compare the size of the list to the size of the HashSet
+            bool allUnique = defNumList.Count == defNumSet.Count;
+            if (allUnique)
+            {
+                return true;
+            }
+            else
+            {
+                ODSMSLogger.Instance.Log("Database constants like _defNumOneWeekConfirmed have an issue", EventLogEntryType.Error);
+                System.Windows.MessageBox.Show("Attempt to send SMS without the database!?.");
+                return false;
+            }
+        }
+        private static long GetAndCheckDefNum(string itemName, List<OpenDentBusiness.Def> listDefs)
+        {
+            var def = listDefs
+                .FirstOrDefault(d => string.Equals(d.ItemName, itemName, StringComparison.OrdinalIgnoreCase));
+
+            long defNum = def?.DefNum ?? 0;
+
+            if (defNum == 0)
+            {
+                string s = $"The '{itemName}' appointment status was not found.";
+                ODSMSLogger.Instance.Log(s, EventLogEntryType.Error);
+                System.Windows.MessageBox.Show(s);
+                throw new Exception(s);
+            }
+
+            return defNum;
+        }
+
+
+        public static async SystemTask InitializeSMS()
+        {
+            while (!DataConnection.HasDatabaseConnection)
+            {
+                Console.WriteLine("Waiting for database connection...");
+                await SystemTask.Delay(5000);
+            }
+
+            _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
+            _defNumTexted = GetAndCheckDefNum("texted", _listDefsApptConfirmed);
+            _defNumTwoWeekSent = GetAndCheckDefNum("2 week sent", _listDefsApptConfirmed);
+            _defNumOneWeekSent = GetAndCheckDefNum("1 week sent", _listDefsApptConfirmed);
+            _defNumTwoWeekConfirmed = GetAndCheckDefNum("2 week confirmed", _listDefsApptConfirmed);
+            _defNumOneWeekConfirmed = GetAndCheckDefNum("1 week confirmed", _listDefsApptConfirmed);
+            _defNumConfirmed = GetAndCheckDefNum("Appointment Confirmed", _listDefsApptConfirmed);
+            _defNumNotCalled = GetAndCheckDefNum("not called", _listDefsApptConfirmed);
+            _defNumUnconfirmed = GetAndCheckDefNum("unconfirmed", _listDefsApptConfirmed);
+            _defNumWebSched = GetAndCheckDefNum("Created from Web Sched", _listDefsApptConfirmed);
+            SanityCheckConstants();
         }
 
         private static void InitializeEventLog()
@@ -137,7 +224,7 @@ namespace OpenDentBusiness.ODSMS
             EventLog.WriteEntry("ODSMS", "Successfully loaded odsms.txt config file", EventLogEntryType.Information, 101, 1, new byte[10]);
         }
 
-        public static async Task<bool> CheckSMSConnection()
+        public static async System.Threading.Tasks.Task<bool> CheckSMSConnection()
         {
             try
             {
@@ -180,22 +267,22 @@ namespace OpenDentBusiness.ODSMS
             return false;
         }
 
-        public static async System.Threading.Tasks.Task WaitForDatabaseAndUserInitialization()
+        public static async SystemTask WaitForDatabaseAndUserInitialization()
         {
             while (!DataConnection.HasDatabaseConnection)
             {
                 ODSMSLogger.Instance.Log("Waiting for database connection...", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
-                await System.Threading.Tasks.Task.Delay(5000);
+                await SystemTask.Delay(5000);
             }
 
             while (Security.CurUser == null || Security.CurUser.UserNum == 0)
             {
                 ODSMSLogger.Instance.Log("Waiting for user information to be initialized...", EventLogEntryType.Information, logToEventLog: false, logToFile: false);
-                await System.Threading.Tasks.Task.Delay(5000);
+                await SystemTask.Delay(5000);
             }
         }
 
-        public static string renderReminder(string reminderTemplate, Patient p, Appointment a)
+        public static string RenderReminder(string reminderTemplate, Patient p, Appointment a)
         {
             string s = reminderTemplate
                 .Replace("[NamePreferredOrFirst]", p.GetNameFirstOrPreferred())

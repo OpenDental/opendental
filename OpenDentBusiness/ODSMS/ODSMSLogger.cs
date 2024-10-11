@@ -42,7 +42,7 @@ namespace OpenDentBusiness.ODSMS
                 }
 
                 // Open file with shared access, just in case there's two
-                FileStream logFileStream = new FileStream(_currentLogFile, FileMode.Append, FileAccess.Write, FileShare.Write);
+                FileStream logFileStream = new FileStream(_currentLogFile, FileMode.Append, FileAccess.Write, FileShare.Read);
                 _writer = new StreamWriter(logFileStream);
             }
             catch (Exception ex)

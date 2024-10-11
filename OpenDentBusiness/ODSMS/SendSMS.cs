@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using DataConnectionBase;
-using OpenDentBusiness;
 using OpenDentBusiness.Crud;
-using OpenDentBusiness.Mobile;
+using SystemTask = System.Threading.Tasks.Task;
 
 namespace OpenDentBusiness.ODSMS
 {
@@ -20,58 +20,19 @@ namespace OpenDentBusiness.ODSMS
 
     public static class SendSMS
     {
-        private static List<Def> _listDefsApptConfirmed;
-        private static long _defNumTwoWeekConfirmed;
-        private static long _defNumOneWeekConfirmed;
-        private static long _defNumConfirmed;
-        private static long _defNumNotCalled;
-        private static long _defNumUnconfirmed;
-        private static long _defNumTwoWeekSent;
-        private static long _defNumOneWeekSent;
-        private static long _defNumTexted;
-        private static long _defNumWebSched;
 
-        public static async System.Threading.Tasks.Task InitializeSendSMS()
+
+        private static int GetMinutesUntilQuarterPast(DateTime now)
         {
-            while (!DataConnection.HasDatabaseConnection)
+            int minutesToNextQuarter = (15 - now.Minute % 15) % 60;
+            if (minutesToNextQuarter == 0)
             {
-                Console.WriteLine("Waiting for database connection...");
-                await System.Threading.Tasks.Task.Delay(5000);
+                minutesToNextQuarter = 60;
             }
 
-            _listDefsApptConfirmed = Defs.GetDefsForCategory(DefCat.ApptConfirmed, isShort: true);
-            _defNumTexted = GetAndCheckDefNum("texted", _listDefsApptConfirmed);
-            _defNumTwoWeekSent = GetAndCheckDefNum("2 week sent", _listDefsApptConfirmed);
-            _defNumOneWeekSent = GetAndCheckDefNum("1 week sent", _listDefsApptConfirmed);
-            _defNumTwoWeekConfirmed = GetAndCheckDefNum("2 week confirmed", _listDefsApptConfirmed);
-            _defNumOneWeekConfirmed = GetAndCheckDefNum("1 week confirmed", _listDefsApptConfirmed);
-            _defNumConfirmed = GetAndCheckDefNum("Appointment Confirmed", _listDefsApptConfirmed);
-            _defNumNotCalled = GetAndCheckDefNum("not called", _listDefsApptConfirmed);
-            _defNumUnconfirmed = GetAndCheckDefNum("unconfirmed", _listDefsApptConfirmed);
-            _defNumWebSched = GetAndCheckDefNum("Created from Web Sched", _listDefsApptConfirmed);
+            return Math.Max(1, minutesToNextQuarter);
         }
 
-        private static long GetConfirmationStatus(int daysUntilAppointment)
-        {
-            if (daysUntilAppointment >= 14 && daysUntilAppointment < 22)
-            {
-                return _defNumTwoWeekConfirmed;
-            }
-            else if (daysUntilAppointment >= 7)
-            {
-                return _defNumOneWeekConfirmed;
-            }
-            else if (daysUntilAppointment >= 0 && daysUntilAppointment <= 4)
-            {
-                return _defNumConfirmed;
-            }
-            else
-            {
-                string logMessage = $"Received YES to an appointment that is {daysUntilAppointment} days away. This is unexpected.";
-                ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
-                return 0;
-            }
-        }
 
         private static List<Patient> GetPatientsWithBirthdayToday()
         {
@@ -98,49 +59,24 @@ namespace OpenDentBusiness.ODSMS
 
         private static string GetReminderMessageTemplate(ReminderFilterType filterType)
         {
-            switch (filterType)
+            return filterType switch
             {
-                case ReminderFilterType.OneDay:
-                    return PrefC.GetString(PrefName.ConfirmTextMessage);
-                case ReminderFilterType.OneWeek:
-                    return PrefC.GetString(PrefName.ConfirmPostcardMessage);
-                case ReminderFilterType.TwoWeeks:
-                    return PrefC.GetString(PrefName.ConfirmPostcardFamMessage);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value.");
-            }
+                ReminderFilterType.OneDay => PrefC.GetString(PrefName.ConfirmTextMessage),
+                ReminderFilterType.OneWeek => PrefC.GetString(PrefName.ConfirmPostcardMessage),
+                ReminderFilterType.TwoWeeks => PrefC.GetString(PrefName.ConfirmPostcardFamMessage),
+                _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value."),
+            };
         }
 
-        private static bool IsAppointmentAlreadyConfirmed(Appointment appointment)
-        {
-            return appointment.Confirmed != _defNumTexted &&
-                    appointment.Confirmed != _defNumOneWeekSent &&
-                    appointment.Confirmed != _defNumTwoWeekSent;
-        }
 
-        private static bool UpdateAppointmentStatus(Appointment originalAppt, long confirmationStatus)
-        {
-            Appointment updatedAppt = originalAppt.Copy();
-            updatedAppt.Confirmed = confirmationStatus;
 
-            bool updateSucceeded = AppointmentCrud.Update(updatedAppt, originalAppt);
-            if (updateSucceeded)
-            {
-                Console.WriteLine("Appointment status updated successfully.");
-                return true;
-            }
-            else
-            {
-                ODSMSLogger.Instance.Log("Failure updating appointment status!", EventLogEntryType.Error);
-                return false;
-            }
-        }
-
-        public static async System.Threading.Tasks.Task PerformDailySMSTasks()
+        public static async SystemTask PerformRegularSendSMSTasks()
         {
             bool smsIsWorking = await ODSMS.CheckSMSConnection();
             bool remindersSent = false;
             bool birthdaySent = false;
+
+            ODSMSLogger.Instance.Log("Performing regular SMS sending", EventLogEntryType.Information);
 
             if (smsIsWorking)
             {
@@ -183,6 +119,8 @@ namespace OpenDentBusiness.ODSMS
             var currentTime = DateTime.Now;
             var birthdaySent = false;
 
+            ODSMS.SanityCheckConstants();
+
             if (currentTime.Hour < 7)
             {
                 return birthdaySent;
@@ -220,7 +158,7 @@ namespace OpenDentBusiness.ODSMS
                     PatNum = patient.PatNum,
                     SmsPhoneNumber = ODSMS.PRACTICE_PHONE_NUMBER,
                     MobilePhoneNumber = patient.WirelessPhone,
-                    MsgText = ODSMS.renderReminder(birthdayMessageTemplate, patient, null),
+                    MsgText = ODSMS.RenderReminder(birthdayMessageTemplate, patient, null),
                     MsgType = SmsMessageSource.GeneralMessage,
                     SmsStatus = SmsDeliveryStatus.Pending,
                     MsgParts = 1,
@@ -235,7 +173,7 @@ namespace OpenDentBusiness.ODSMS
                     PatNum = pat_appt.Patient.PatNum,
                     SmsPhoneNumber = ODSMS.PRACTICE_PHONE_NUMBER,
                     MobilePhoneNumber = pat_appt.Patient.WirelessPhone,
-                    MsgText = ODSMS.renderReminder(reminderMessageTemplate, pat_appt.Patient, pat_appt.Appointment),
+                    MsgText = ODSMS.RenderReminder(reminderMessageTemplate, pat_appt.Patient, pat_appt.Appointment),
                     MsgType = SmsMessageSource.Reminder,
                     SmsStatus = SmsDeliveryStatus.Pending,
                     MsgParts = 1,
@@ -296,23 +234,21 @@ namespace OpenDentBusiness.ODSMS
 
         private static int GetUpdatedConfirmationStatus(ReminderFilterType filterType)
         {
-            switch (filterType)
+            return filterType switch
             {
-                case ReminderFilterType.OneDay:
-                    return (int)_defNumTexted;
-                case ReminderFilterType.OneWeek:
-                    return (int)_defNumOneWeekSent;
-                case ReminderFilterType.TwoWeeks:
-                    return (int)_defNumTwoWeekSent;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value.");
-            }
+                ReminderFilterType.OneDay => (int)ODSMS._defNumTexted,
+                ReminderFilterType.OneWeek => (int)ODSMS._defNumOneWeekSent,
+                ReminderFilterType.TwoWeeks => (int)ODSMS._defNumTwoWeekSent,
+                _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value."),
+            };
         }
 
         private static bool SendReminderTexts()
         {
             var currentTime = DateTime.Now;
             var patientsTexted = false;
+
+            ODSMS.SanityCheckConstants();
 
             if (currentTime.Hour < 7)
             {
@@ -337,120 +273,27 @@ namespace OpenDentBusiness.ODSMS
             return patientsTexted;
         }
 
-
-
-        public static bool HandleAutomatedConfirmation(List<Patient> patientList)
-        {
-            string patNums = String.Join(",", patientList.Select(p => p.PatNum.ToString()).ToArray());
-            string latestSMS = "SELECT * from CommLog where PatNum IN (" + patNums + ") AND Note REGEXP 'Text message sent.*(reply|respond).*YES' AND CommDateTime >= DATE_SUB(NOW(), INTERVAL 21 DAY) ORDER BY CommDateTime DESC LIMIT 1";
-            Commlog latestComm = OpenDentBusiness.Crud.CommlogCrud.SelectOne(latestSMS);
-
-            if (latestComm != null)
-            {
-                long PatNum = latestComm.PatNum;
-                Patient p = patientList.FirstOrDefault(p => p.PatNum == latestComm.PatNum);
-                if (p == null)
-                {
-                    ODSMSLogger.Instance.Log("No matching patient found.", EventLogEntryType.Information, logToEventLog: false);
-                    return false;
-                }
-
-                DateTime? appointmentTime = AppointmentHelper.ExtractAppointmentDate(latestComm.Note);
-
-                if (appointmentTime.HasValue)
-                {
-                    TimeSpan timeUntilAppointment = appointmentTime.Value - latestComm.CommDateTime;
-                    int daysUntilAppointment = (int)Math.Ceiling(timeUntilAppointment.TotalDays);
-
-                    long confirmationStatus = GetConfirmationStatus(daysUntilAppointment);
-                    if (confirmationStatus == 0)
-                    {
-                        return false;
-                    }
-
-                    string appointmentQuery = $"SELECT * FROM Appointment WHERE PatNum = {PatNum} AND AptDateTime = '{appointmentTime.Value.ToString("yyyy-MM-dd HH:mm:ss")}'";
-                    Appointment originalAppt = OpenDentBusiness.Crud.AppointmentCrud.SelectOne(appointmentQuery);
-
-                    if (originalAppt != null)
-                    {
-                        if (IsAppointmentAlreadyConfirmed(originalAppt))
-                        {
-                            ODSMSLogger.Instance.Log("OOPS! Patient just replied yes to an appointment that is already confirmed. Ignoring", EventLogEntryType.Warning);
-                            return false;
-                        }
-                        else
-                        {
-                            return UpdateAppointmentStatus(originalAppt, confirmationStatus);
-                        }
-                    }
-                    else
-                    {
-                        string logMessage = $"No matching appointment found for patient {PatNum} at {appointmentTime.Value}.";
-                        ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
-                    }
-                }
-                else
-                {
-                    ODSMSLogger.Instance.Log($"Error parsing date from communication log note. {latestComm.Note ?? "Note is null"}", EventLogEntryType.Error);
-                }
-            }
-            else
-            {
-                string logMessage = $"'Yes' received, but no matching appointment found for any of the patients {patNums}.";
-                ODSMSLogger.Instance.Log(logMessage, EventLogEntryType.Warning);
-            }
-
-            return false;
-        }
-
-        private static long GetAndCheckDefNum(string itemName, List<OpenDentBusiness.Def> listDefs)
-        {
-            var def = listDefs
-                .FirstOrDefault(d => string.Equals(d.ItemName, itemName, StringComparison.OrdinalIgnoreCase));
-
-            long defNum = def?.DefNum ?? 0;
-
-            if (defNum == 0)
-            {
-                string s = $"The '{itemName}' appointment status was not found.";
-                ODSMSLogger.Instance.Log(s, EventLogEntryType.Error);
-                System.Windows.MessageBox.Show(s);
-                throw new Exception(s);
-            }
-
-            return defNum;
-        }
-
         private static List<PatientAppointment> GetPatientsWithAppointmentsTwoWeeks(ReminderFilterType filterType)
         {
             int textMessageValue = (int)OpenDentBusiness.ContactMethod.TextMessage;
+            int wirelessPhoneValue = (int)OpenDentBusiness.ContactMethod.WirelessPh;
             int noPreferenceValue = (int)OpenDentBusiness.ContactMethod.None;
-
-            string aptDateTimeRange;
             DateTime now = DateTime.Now;
-
-            switch (filterType)
+            string aptDateTimeRange = filterType switch
             {
-                case ReminderFilterType.OneDay:
-                    aptDateTimeRange = now.DayOfWeek == DayOfWeek.Friday
-                        ? "DATE(a.AptDateTime) IN (DATE(DATE_ADD(NOW(), INTERVAL 1 DAY)), DATE(DATE_ADD(NOW(), INTERVAL 3 DAY)))"
-                        : "DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 DAY))";
-                    break;
-                case ReminderFilterType.OneWeek:
-                    aptDateTimeRange = "DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 WEEK))";
-                    break;
-                case ReminderFilterType.TwoWeeks:
-                    aptDateTimeRange = "DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 2 WEEK))";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value.");
-            }
-
+                ReminderFilterType.OneDay when now.DayOfWeek == DayOfWeek.Friday =>
+                    "DATE(a.AptDateTime) IN (DATE(DATE_ADD(NOW(), INTERVAL 1 DAY)), DATE(DATE_ADD(NOW(), INTERVAL 3 DAY)))",
+                ReminderFilterType.OneDay =>
+                    "DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 DAY))",
+                ReminderFilterType.OneWeek => "DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 1 WEEK))",
+                ReminderFilterType.TwoWeeks => "DATE(a.AptDateTime) = DATE(DATE_ADD(NOW(), INTERVAL 2 WEEK))",
+                _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value."),
+            };
             string select = "SELECT p.*, a.* ";
             string from = "FROM patient AS p JOIN Appointment as a using (PatNum) ";
             string where_true = "WHERE TRUE ";
             string where_allow_sms = "AND p.TxtMsgOk < 2 ";
-            string where_confirm_not_sms = $"AND p.PreferConfirmMethod IN ({noPreferenceValue}, {textMessageValue}) ";
+            string where_confirm_not_sms = $"AND p.PreferConfirmMethod IN ({noPreferenceValue}, {wirelessPhoneValue}, {textMessageValue}) ";
             string where_no_intermediate_appointments = "AND NOT EXISTS (SELECT 1 FROM Appointment a2 WHERE a2.AptDateTime > NOW() AND a2.AptDateTime < a.AptDateTime AND a2.PatNum = a.PatNum) ";
             string where_mobile_phone = "AND LENGTH(COALESCE(p.WirelessPhone,'')) > 7 ";
             string where_appointment_date = $"AND {aptDateTimeRange} ";
@@ -458,24 +301,38 @@ namespace OpenDentBusiness.ODSMS
             string where_scheduled = $"AND a.AptStatus = {(int)OpenDentBusiness.ApptStatus.Scheduled} ";
 
             string command = select + from + where_true + where_appointment_date + where_appointment_confirmed + where_mobile_phone + where_allow_sms + where_confirm_not_sms + where_no_intermediate_appointments + where_scheduled;
+            ODSMSLogger.Instance.Log(command, EventLogEntryType.Information, logToEventLog: false);
             Console.WriteLine(command);
             List<PatientAppointment> listPatAppts = OpenDentBusiness.Crud.PatientApptCrud.SelectMany(command);
             return listPatAppts;
         }
 
+        public static async SystemTask SendSMSForever()
+        {
+            while (true)
+            {
+                DateTime now = DateTime.Now;
+
+                if (now.Minute >= 14 && now.Minute <= 16 && now.Hour >= 8 && now.Hour <= 17)
+                {
+                    await PerformRegularSendSMSTasks();
+                }
+
+                int minutesUntilNextQuarterPast = GetMinutesUntilQuarterPast(now);
+                await SystemTask.Delay(TimeSpan.FromMinutes(minutesUntilNextQuarterPast));
+            }
+        }
+
+
         private static string GetAppointmentConfirmedWhereClause(ReminderFilterType filterType)
         {
-            switch (filterType)
+            return filterType switch
             {
-                case ReminderFilterType.OneDay:
-                    return $"AND a.Confirmed IN ({_defNumWebSched},{_defNumNotCalled}, {_defNumUnconfirmed}, {_defNumOneWeekConfirmed}, {_defNumTwoWeekConfirmed}, {_defNumOneWeekSent}, {_defNumTwoWeekSent}) ";
-                case ReminderFilterType.OneWeek:
-                    return $"AND a.Confirmed IN ({_defNumWebSched},{_defNumNotCalled}, {_defNumUnconfirmed}, {_defNumTwoWeekConfirmed}, {_defNumTwoWeekSent}) ";
-                case ReminderFilterType.TwoWeeks:
-                    return $"AND a.Confirmed IN ({_defNumWebSched},{_defNumNotCalled}, {_defNumUnconfirmed}) ";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value.");
-            }
+                ReminderFilterType.OneDay => $"AND a.Confirmed IN ({ODSMS._defNumWebSched},{ODSMS._defNumNotCalled}, {ODSMS._defNumUnconfirmed}, {ODSMS._defNumOneWeekConfirmed}, {ODSMS._defNumTwoWeekConfirmed}, {ODSMS._defNumOneWeekSent}, {ODSMS._defNumTwoWeekSent}) ",
+                ReminderFilterType.OneWeek => $"AND a.Confirmed IN ({ODSMS._defNumWebSched},{ODSMS._defNumNotCalled}, {ODSMS._defNumUnconfirmed}, {ODSMS._defNumTwoWeekConfirmed}, {ODSMS._defNumTwoWeekSent}) ",
+                ReminderFilterType.TwoWeeks => $"AND a.Confirmed IN ({ODSMS._defNumWebSched},{ODSMS._defNumNotCalled}, {ODSMS._defNumUnconfirmed}) ",
+                _ => throw new ArgumentOutOfRangeException(nameof(filterType), filterType, "Invalid ReminderFilterType value."),
+            };
         }
     }
 };

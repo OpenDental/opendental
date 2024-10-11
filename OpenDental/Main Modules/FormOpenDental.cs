@@ -2962,22 +2962,38 @@ namespace OpenDental{
 				return;//This button does not exist in eCW tight integration mode.
 			}
 			try {
+
 				if(!_toolBarButtonText.Enabled) {
 					return;//This button is disabled when neither of the Text Messaging bridges have been enabled.
 				}
 				List<SmsFromMobiles.SmsNotification> listSmsNotifications=null;
 				if(signalodSmsCount==null) {
-					//If we are here because the user changed clinics, then get the absolute most recent sms notification signal.
-					//Otherwise, use DateTime since last signal refresh.
-					DateTime timeSignalStart=doUseSignalInterval ? Signalods.SignalLastRefreshed : DateTime.MinValue;
+                    bool doUpdate = false;
+
+                    //If we are here because the user changed clinics, then get the absolute most recent sms notification signal.
+                    //Otherwise, use DateTime since last signal refresh.
+                    DateTime timeSignalStart =doUseSignalInterval ? Signalods.SignalLastRefreshed : DateTime.MinValue;
 					//Get the most recent SmsTextMsgReceivedUnreadCount. Should only be one, but just in case, order desc.
 					signalodSmsCount=Signalods.RefreshTimed(timeSignalStart,new List<InvalidType>() { InvalidType.SmsTextMsgReceivedUnreadCount })
 						.OrderByDescending(x => x.SigDateTime)
 						.FirstOrDefault();
-					if(signalodSmsCount==null && timeSignalStart==DateTime.MinValue) {
-						//No SmsTextMsgReceivedUnreadCount signal in db.  This means the eConnector has not updated the sms notification signal in quite some 
-						//time.  Do the eConnector's job; 
-						listSmsNotifications=Signalods.UpsertSmsNotification();
+
+                    if (signalodSmsCount == null && timeSignalStart == DateTime.MinValue)
+                    {
+                        // No SmsTextMsgReceivedUnreadCount signal in db, the eConnector has not updated the signal.
+                        doUpdate = true;
+                    }
+                    else if (signalodSmsCount != null && signalodSmsCount.SigDateTime < DateTime.Now.AddMinutes(-15))
+                    {
+                        // The last signal is more than a day old, perform an update.
+                        doUpdate = true;
+                    }
+
+                    if (doUpdate)
+                    {
+                        //No SmsTextMsgReceivedUnreadCount signal in db.  This means the eConnector has not updated the sms notification signal in quite some 
+                        //time.  Do the eConnector's job; 
+                        listSmsNotifications = Signalods.UpsertSmsNotification();
 					}
 				}
 				if(signalodSmsCount!=null) {//Either the signal was passed in, or we found it when we queried.

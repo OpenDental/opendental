@@ -175,38 +175,25 @@ namespace OpenDental
 
 			if (OpenDentBusiness.ODSMS.ODSMS.USE_ODSMS)  // Check The module is enabled
 			{
-				OpenDentBusiness.ODSMS.ODSMS.WaitForDatabaseAndUserInitialization();
+                _ = OpenDentBusiness.ODSMS.ODSMS.WaitForDatabaseAndUserInitialization(); // We have to hard wait here as we can't do any steps until this is finished, including in other threads
+                _ = OpenDentBusiness.ODSMS.ODSMS.InitializeSMS(); // We probably have to hard wait here as well.  Not sure.  It sets defaults
 
-				if (!OpenDentBusiness.ODSMS.ODSMS.DEBUG_NUMBER.IsNullOrEmpty()) // Debug number is set.  We're running in debug mode
+                if (!OpenDentBusiness.ODSMS.ODSMS.DEBUG_NUMBER.IsNullOrEmpty()) // Debug number is set.  We're running in debug mode
 				{
 					MsgBox.Show("DEBUG MODE!!");
-					OpenDentBusiness.ODSMS.SendSMS.InitializeSendSMS();
 
                     System.Threading.Tasks.Task.Run(() => OpenDentBusiness.ODSMS.ReceiveSMS.ReceiveSMSForever());
-					System.Threading.Tasks.Task.Run(async () =>
-					{
-						while (true)
-						{
-							await OpenDentBusiness.ODSMS.SendSMS.PerformDailySMSTasks();
-							await System.Threading.Tasks.Task.Delay(TimeSpan.FromHours(1));
-						}
-					});
+					System.Threading.Tasks.Task.Run(() => OpenDentBusiness.ODSMS.SendSMS.SendSMSForever());
+
 				}
 				else if (OpenDentBusiness.ODSMS.ODSMS.RUN_SCHEDULED_TASKS) // True if this is the computer that actually does the work
 				{
 					MsgBox.Show("This computer will send/receive SMS");
 					System.Threading.Tasks.Task.Run(() => OpenDentBusiness.ODSMS.ReceiveSMS.ReceiveSMSForever());
-					System.Threading.Tasks.Task.Run(async () =>
-					{
-						while (true)
-						{
-							await OpenDentBusiness.ODSMS.SendSMS.PerformDailySMSTasks();
-							await System.Threading.Tasks.Task.Delay(TimeSpan.FromHours(1));
-						}
-					});
-				}
+                    System.Threading.Tasks.Task.Run(() => OpenDentBusiness.ODSMS.SendSMS.SendSMSForever());
+                }
 
-				ODInitialize.FixPackageAssembly("Newtonsoft.Json", ODFileUtils.CombinePaths(AppDomain.CurrentDomain.BaseDirectory, "Newtonsoft.Json.dll"));
+                ODInitialize.FixPackageAssembly("Newtonsoft.Json", ODFileUtils.CombinePaths(AppDomain.CurrentDomain.BaseDirectory, "Newtonsoft.Json.dll"));
 				if (commandLineArgs.Any(x => x.ToLower() == "issilentupdate=true"))
 				{
 					formOpenDental.FormOpenDentalShown();//Form never shows. It returns out after not too long.

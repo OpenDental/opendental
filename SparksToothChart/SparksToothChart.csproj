@@ -233,7 +233,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ToothChartOpenGL.cs" />
+    <Compile Include="ToothChartOpenGL.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ToothChartOpenGL.Designer.cs">
       <DependentUpon>ToothChartOpenGL.cs</DependentUpon>
     </Compile>
