@@ -2451,7 +2451,7 @@ namespace OpenDental {
 				rawBase64=Convert.ToBase64String(System.IO.File.ReadAllBytes(tempFile));//Todo test this
 			}
 			//Check for an explicit image category to potentially override the autosave category.
-			SheetDef sheetDef=SheetDefs.GetSheetDef(SheetCur.SheetDefNum, hasExceptions:false);
+			SheetDef sheetDef=SheetDefs.GetSheetDef(SheetCur.SheetDefNum, hasExceptions:false);//this is wrong
 			if(charUsage=='U' && sheetDef!=null && sheetDef.AutoCheckSaveImageDocCategory!=0) {
 				listDefsImageCat.Clear();
 				listDefsImageCat.Add(Defs.GetDef(DefCat.ImageCats,sheetDef.AutoCheckSaveImageDocCategory));

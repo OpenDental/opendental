@@ -15,11 +15,13 @@
 		<ui:Label Height="18" Margin="0,9,52,0" Text="Date time" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HorizontalAlignment="Right" />
 		<ui:TextBox x:Name="textDescription" Height="20" Width="131" Margin="0,70,6,0" HorizontalAlignment="Right"/>
 		<ui:Label Height="18" Margin="0,50,52,0" Text="Description" Width="88" VAlign="Center" HorizontalContentAlignment="Left" HorizontalAlignment="Right" />
-		<ui:Button x:Name="butUnlock" Width="80" VerticalAlignment="Bottom" Height="24" Margin="0,0,30,254" Text="Unlock Sig" Click="butUnlock_Click" HorizontalAlignment="Right" />
-		<ui:Button x:Name="butPrint" Width="80" Height="24" Margin="0,0,30,114" Text="Print" Click="butPrint_Click" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+		<ui:Button x:Name="butUnlockSig" Width="80" Height="24" Margin="0,336,30,0" Text="Unlock Sig" Click="butUnlockSig_Click" HorizontalAlignment="Right" />
+		<ui:Button x:Name="butPrint" Width="80" Height="24" Margin="0,581,30,0" Text="Print" Click="butPrint_Click" HorizontalAlignment="Right" />
 		<ui:Button x:Name="butSave" Width="75" Height="24" Margin="0,0,10,10" Text="Save" Click="butSave_Click" RenderTransformOrigin="0.413,-0.625" HorizontalAlignment="Right" VerticalAlignment="Bottom"   />
-		<ui:Button x:Name="butEClipboard" Width="80" Height="24" Margin="0,0,30,80" Text="To eClipboard" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="butEClipboard_Click" />
-		<ui:Button x:Name="butChangePat" Width="80" VerticalAlignment="Bottom" Height="24" Margin="0,0,30,219" Text="Change Pat" HorizontalAlignment="Right" Click="butChangePat_Click" />
+		<ui:Button x:Name="butEClipboard" Width="80" Height="24" Margin="0,615,30,0" Text="To eClipboard" HorizontalAlignment="Right" Click="butEClipboard_Click" />
+		<ui:Button x:Name="butChangePat" Width="80" Height="24" Margin="0,371,30,0" Text="Change Pat" HorizontalAlignment="Right" Click="butChangePat_Click" />
+		<ui:ComboBox x:Name="comboImageCat" Width="131" Height="21" Margin="0,500,6,0" HorizontalAlignment="Right" />
+		<ui:Label Width="120" Height="18" Margin="466,480,0,0" Text="Save to Image Cat" VAlign="Center" />
 
 	</Grid>
 </local:FrmODBase>

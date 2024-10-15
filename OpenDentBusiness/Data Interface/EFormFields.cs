@@ -543,6 +543,29 @@ namespace OpenDentBusiness{
 			}
 			return retVal;
 		}
+
+		public static bool IsAnyChanged(List<EFormField> listEFormFieldsNew,List<EFormField> listEFormFieldsOld){
+			//This doesn't need to test whether any have been added or removed because fields on existing eForms can't be added or removed.
+			//This also doesn't need to worry about order because fields onexisting eForms can't be reordered.
+			if(listEFormFieldsNew.Count!=listEFormFieldsOld.Count){
+				//this should never happen
+				return true;
+			}
+			bool isChanged=false;
+			for(int i=0;i<listEFormFieldsNew.Count;i++){
+				isChanged|=Crud.EFormFieldCrud.UpdateComparison(listEFormFieldsNew[i],listEFormFieldsOld[i]);
+			}
+			return isChanged;
+		}
+
+		///<summary></summary>
+		public static List<EFormField> GetDeepCopy(List<EFormField> listEFormFields){
+			List<EFormField> listEFormFieldsRet=new List<EFormField>();
+			for(int i=0;i<listEFormFields.Count;i++){
+				listEFormFieldsRet.Add(listEFormFields[i].Copy());
+			}
+			return listEFormFieldsRet;
+		}
 		
 		/*
 		Only pull out the methods below as you need them.  Otherwise, leave them commented out.

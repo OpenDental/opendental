@@ -138,17 +138,20 @@ namespace OpenDental {
 			if(eClipboardImageCaptureDefSelected==null) {
 				return;
 			}
-			using FormEClipboardImageCaptureDefEdit formeClipboardImageCaptureDefEdit=new FormEClipboardImageCaptureDefEdit(eClipboardImageCaptureDefSelected, _listEClipboardImageCaptureDefs.Select(x => x.Copy()).ToList());
-			formeClipboardImageCaptureDefEdit.ShowDialog();
-			if(formeClipboardImageCaptureDefEdit.IsDeleted){
+			using FormEClipboardImageCaptureDefEdit formEClipboardImageCaptureDefEdit=new FormEClipboardImageCaptureDefEdit();
+			formEClipboardImageCaptureDefEdit.EClipboardImageCaptureDefCur=eClipboardImageCaptureDefSelected;
+			formEClipboardImageCaptureDefEdit.ListEClipboardImageCaptureDefs=_listEClipboardImageCaptureDefs.Select(x => x.Copy()).ToList();
+			formEClipboardImageCaptureDefEdit.ShowDialog();
+			if(formEClipboardImageCaptureDefEdit.IsDeleted){
 				_listEClipboardImageCaptureDefs.Remove(eClipboardImageCaptureDefSelected);
 			}
 			FillGridImages();
 		}
 
 		private void gridForms_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			//ToDo: modify FormEClipboardSheetRule to work with both Sheets & EForms
-			FormEClipboardSheetRule formEClipboardSheetRule=new FormEClipboardSheetRule((EClipboardSheetDef)gridForms.ListGridRows[e.Row].Tag,gridForms.ListGridRows.Select(x=>(EClipboardSheetDef)x.Tag).ToList());
+			using FormEClipboardSheetRule formEClipboardSheetRule=new FormEClipboardSheetRule();
+			formEClipboardSheetRule.EClipboardSheetDefCur=(EClipboardSheetDef)gridForms.ListGridRows[e.Row].Tag;
+			formEClipboardSheetRule.ListEClipboardSheetDefs=gridForms.ListGridRows.Select(x=>(EClipboardSheetDef)x.Tag).ToList();
 			formEClipboardSheetRule.ShowDialog();
 			if(formEClipboardSheetRule.IsDeleted) {
 				EClipboardSheetDef eClipboardSheetDef=(EClipboardSheetDef)gridForms.ListGridRows[e.Row].Tag;
@@ -158,7 +161,12 @@ namespace OpenDental {
 		}
 
 		private void butImageAdd_Click(object sender,EventArgs e){
-			FormEClipboardImagePicker formEClipboardImagePicker=new FormEClipboardImagePicker(GetClinicNumEClipboardTab());
+			long clinicNum=GetClinicNumEClipboardTab();
+			if(checkEClipboardUseDefaults.Checked) {
+				clinicNum=0;
+			}
+			using FormEClipboardImagePicker formEClipboardImagePicker=new FormEClipboardImagePicker();
+			formEClipboardImagePicker.ClinicNum=clinicNum;
 			formEClipboardImagePicker.ListEClipboardImageCaptureDefs=_listEClipboardImageCaptureDefs;//no longer need to send in copies, child form can't make edits to eClipboardImageCaptureDefs already in this list.
 			formEClipboardImagePicker.ShowDialog();
 			if(formEClipboardImagePicker.DialogResult!=DialogResult.OK) {
@@ -174,6 +182,10 @@ namespace OpenDental {
 		}
 
 		private void butSheetAdd_Click(object sender,EventArgs e) {
+			long clinicNum=GetClinicNumEClipboardTab();
+			if(checkEClipboardUseDefaults.Checked) {
+				clinicNum=0;
+			}
 			FrmSheetPicker frmSheetPicker=new FrmSheetPicker();
 			List<SheetDef> listSheetDefs=new List<SheetDef>();
 			listSheetDefs.AddRange(SheetDefs.GetCustomForType(SheetTypeEnum.PatientForm));
@@ -199,7 +211,7 @@ namespace OpenDental {
 				for(int i=0;i<listSheetDefsSelected.Count;i++){
 					EClipboardSheetDef eClipboardSheetDef=new EClipboardSheetDef();
 					eClipboardSheetDef.SheetDefNum=listSheetDefsSelected[i].SheetDefNum;
-					eClipboardSheetDef.ClinicNum=GetClinicNumEClipboardTab();
+					eClipboardSheetDef.ClinicNum=clinicNum;
 					eClipboardSheetDef.ResubmitInterval=TimeSpan.FromDays(30);
 					eClipboardSheetDef.MinAge=-1;
 					eClipboardSheetDef.MaxAge=-1;
@@ -212,6 +224,10 @@ namespace OpenDental {
 		}
 		
 		private void butEFormAdd_Click(object sender,EventArgs e) {
+			long clinicNum=GetClinicNumEClipboardTab();
+			if(checkEClipboardUseDefaults.Checked) {
+				clinicNum=0;
+			}
 			FrmEFormPicker frmEFormPicker=new FrmEFormPicker();
 			frmEFormPicker.ShowDialog();
 			if(!frmEFormPicker.IsDialogOK){
@@ -240,7 +256,7 @@ namespace OpenDental {
 			//attach the added eForm to a new eClipboardSheetDef
 			EClipboardSheetDef eClipboardSheetDef=new EClipboardSheetDef();
 			eClipboardSheetDef.EFormDefNum=eFormDef.EFormDefNum;
-			eClipboardSheetDef.ClinicNum=GetClinicNumEClipboardTab();
+			eClipboardSheetDef.ClinicNum=clinicNum;
 			eClipboardSheetDef.ResubmitInterval=TimeSpan.FromDays(30);
 			eClipboardSheetDef.MinAge=-1;
 			eClipboardSheetDef.MaxAge=-1;
@@ -560,6 +576,10 @@ namespace OpenDental {
 			textByodSmsTemplate.Enabled=checkEnableByodSms.Checked;
 			groupEClipboardRules.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults;
 			gridForms.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults && enableSheets;
+			gridImages.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults;
+			butEFormAdd.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults && enableSheets;
+			butSheetAdd.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults && enableSheets;
+			butImageAdd.Enabled=isClinicSignedUp && _canEditEClipboard && !doUseDefaults;
 			labelEClipboardNotSignedUp.Visible=!isClinicSignedUp;
 			//Enabled when allowed and either use defaults is unchecked or we are at default clinic.
 			if((isClinicSignedUp && _canEditEClipboard) && (!checkEClipboardUseDefaults.Checked || GetClinicNumEClipboardTab()==0)) {

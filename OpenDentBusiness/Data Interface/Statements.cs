@@ -1091,6 +1091,9 @@ namespace OpenDentBusiness {
 		public static Statement GenerateStatement(Patient patient,DateTime dateStart,DateTime dateEnd,StatementMode statementMode,bool isSinglePatient=false) {
 			Statement statement=new Statement();
 			statement.PatNum=patient.Guarantor;
+			if(isSinglePatient) {
+				statement.PatNum=patient.PatNum;
+			}
 			statement.DateSent=DateTime.Today;
 			statement.IsSent=true;
 			statement.Mode_=statementMode;

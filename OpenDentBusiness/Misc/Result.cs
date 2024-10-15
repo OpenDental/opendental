@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace OpenDentBusiness {
-	///<summary>Use this instead of try/catch or outs when you need to return a boolean result along with one or more message strings.  The strings all start out initialized to empty so that you don't have to test for null.</summary>
+	///<summary>Use this instead of try/catch or outs when you need to return a boolean result along with one or more error message strings.  The strings all start out initialized to empty so that you don't have to test for null.</summary>
 	public class Result {
 		public bool IsSuccess;
 		public string Msg="";

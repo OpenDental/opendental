@@ -7,33 +7,31 @@ using static OpenDentBusiness.SheetFieldsAvailable;
 
 namespace OpenDental {
 	public partial class FormEClipboardImageCaptureDefEdit : FormODBase {
-		/// <summary> The imageCaptureDef we are currently editing </summary>
-		private EClipboardImageCaptureDef _eClipboardImageCaptureDef;
-		/// <summary> List of all imageCaptureDefs </summary>
-		private List<EClipboardImageCaptureDef> _listEClipboardImageCaptureDefs;
-		/// <summary></summary>
+		///<summary>The eClipboardImageCaptureDef we are currently editing </summary>
+		public EClipboardImageCaptureDef EClipboardImageCaptureDefCur;
+		///<summary>List of all eClipboardImageCaptureDefs. Only needed to check if the selected EnumOCRCaptureType in listOCRCaptureType is already in use by a different eClipboardImageCaptureDef.</summary>
+		public List<EClipboardImageCaptureDef> ListEClipboardImageCaptureDefs;
+		///<summary>Gets set to true if an eClipboardImageCaptureDef has been marked for deletion. Deletion occurs in parent form.</summary>
 		public bool IsDeleted=false;
 
-		public FormEClipboardImageCaptureDefEdit(EClipboardImageCaptureDef eClipboardImageCaptureDef, List<EClipboardImageCaptureDef> listEClipboardImageCaptureDefs) {
+		public FormEClipboardImageCaptureDefEdit(){
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_eClipboardImageCaptureDef=eClipboardImageCaptureDef;
-			_listEClipboardImageCaptureDefs=listEClipboardImageCaptureDefs;
 		}
 
 		private void FormEClipboardImageCaptureDefEdit_Load(object sender,EventArgs e) {
-			comboOcrCaptureType.Items.AddEnums<EnumOcrCaptureType>();
-			comboOcrCaptureType.SetSelectedEnum(_eClipboardImageCaptureDef.OcrCaptureType);
-			textFrequency.Text=_eClipboardImageCaptureDef.FrequencyDays.ToString();
-			if(_eClipboardImageCaptureDef.IsSelfPortrait){
+			textFrequency.Text=EClipboardImageCaptureDefCur.FrequencyDays.ToString();
+			if(EClipboardImageCaptureDefCur.IsSelfPortrait){
 				textImage.Text="Self Portrait";
 				textValue.Text="Allows patient to submit a self-portrait upon checkin";
 			}
 			else{
-				textImage.Text=Defs.GetName(DefCat.EClipboardImageCapture,_eClipboardImageCaptureDef.DefNum);
-				textValue.Text=Defs.GetValue(DefCat.EClipboardImageCapture,_eClipboardImageCaptureDef.DefNum);
+				textImage.Text=Defs.GetName(DefCat.EClipboardImageCapture,EClipboardImageCaptureDefCur.DefNum);
+				textValue.Text=Defs.GetValue(DefCat.EClipboardImageCapture,EClipboardImageCaptureDefCur.DefNum);
 			}
+			listOCRCaptureType.Items.AddEnums<EnumOcrCaptureType>();
+			listOCRCaptureType.SetSelectedEnum(EClipboardImageCaptureDefCur.OcrCaptureType);
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
@@ -43,22 +41,21 @@ namespace OpenDental {
 				return;
 			}
 			int freq=textFrequency.Value;
-			//combo box isnt a duplicate ins scanner type for this clinic.
-			//If not a misc image, do this check.
-			EnumOcrCaptureType enumOcrCaptureTypeSelected=comboOcrCaptureType.GetSelected<EnumOcrCaptureType>();
-			if(enumOcrCaptureTypeSelected!=EnumOcrCaptureType.Miscellaneous) {
-				List<EClipboardImageCaptureDef> listEClipboardImageCaptureDefsForClinic=_listEClipboardImageCaptureDefs.FindAll(x=>
-					x.ClinicNum==_eClipboardImageCaptureDef.ClinicNum 
+			//make sure selected enum from listOCRCaptureType isn't already in use by a different eClipboardImageCaptureDef for this clinic.
+			EnumOcrCaptureType enumOcrCaptureTypeSelected=listOCRCaptureType.GetSelected<EnumOcrCaptureType>();
+			if(enumOcrCaptureTypeSelected!=EnumOcrCaptureType.Miscellaneous){//If not a misc image, do this check.
+				List<EClipboardImageCaptureDef> listEClipboardImageCaptureDefsForClinic=ListEClipboardImageCaptureDefs.FindAll(x=>
+					x.ClinicNum==EClipboardImageCaptureDefCur.ClinicNum 
 					&& x.OcrCaptureType==enumOcrCaptureTypeSelected
-					&& x.DefNum!=_eClipboardImageCaptureDef.DefNum);
-				if(listEClipboardImageCaptureDefsForClinic.Count>0) {
+					&& x.DefNum!=EClipboardImageCaptureDefCur.DefNum);
+				if(listEClipboardImageCaptureDefsForClinic.Count>0){
 					//there is already an image capture def for this scanner type at this clinic.
 					MsgBox.Show(Lan.g(this, "There is already an eClipboard Image with the Image Capture Type")+" "+enumOcrCaptureTypeSelected.GetDescription()+" "+Lan.g(this,"at this clinic."));
 					return;
 				}
 			}
-			_eClipboardImageCaptureDef.OcrCaptureType=enumOcrCaptureTypeSelected;
-			_eClipboardImageCaptureDef.FrequencyDays=freq;
+			EClipboardImageCaptureDefCur.OcrCaptureType=enumOcrCaptureTypeSelected;
+			EClipboardImageCaptureDefCur.FrequencyDays=freq;
 			DialogResult=DialogResult.OK;
 			//No need to update yet. That happens way later on FormEServicesEClipboard.
 		}

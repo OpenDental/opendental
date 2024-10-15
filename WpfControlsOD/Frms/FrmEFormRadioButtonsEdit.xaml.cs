@@ -701,7 +701,7 @@ Any or all items are allowed to have no label by leaving that value in the first
 			}
 			EFormFieldCur.ConditionalParent=textCondParent.Text;
 			EFormFieldCur.ConditionalValue=EFormL.ConvertCondVisToDb(ListEFormFields,textCondParent.Text,textCondValue.Text);
-			LanguagePats.SyncRadioButtonTranslations(EFormFieldCur);//Ensures translations are in sync with PickListVis.
+			IsChangedLanCache|=LanguagePats.SyncRadioButtonTranslations(EFormFieldCur);//Ensures translations are in sync with PickListVis.
 			//not saved to db here. That happens when clicking Save in parent window.
 			IsDialogOK=true;
 		}

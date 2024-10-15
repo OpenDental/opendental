@@ -24,5 +24,7 @@
 		<ui:Label x:Name="labelSpaceBelowDefault" Height="18" Margin="179,153,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
 		<ui:Label x:Name="labelSpaceToRightDefault" Height="18" Margin="178,176,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
 		<ui:Label x:Name="labelSpaceBelowDefault_Copy1" Height="18" Margin="179,129,0,0" Text="96 per inch" VAlign="Center" Width="265" />
+		<ui:ComboBox x:Name="comboImageCat" Width="131" Height="21" Margin="0,199,207,0" HorizontalAlignment="Right" />
+		<ui:Label Width="120" Height="18" Margin="1,200,0,0" Text="Save to Image Cat" VAlign="Center" HAlign="Right" />
 	</Grid>
 </local:FrmODBase>

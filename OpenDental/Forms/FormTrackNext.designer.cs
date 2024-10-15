@@ -51,6 +51,7 @@ namespace OpenDental {
 			this.label6 = new System.Windows.Forms.Label();
 			this.codeRangeFilter = new OpenDental.UI.ODCodeRangeFilter();
 			this.menuMain = new OpenDental.UI.MenuOD();
+			this.butAllDates = new OpenDental.UI.Button();
 			this.menuRightClick.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -180,7 +181,9 @@ namespace OpenDental {
 			// 
 			// dateRangePicker
 			// 
+			this.dateRangePicker.BackColor = System.Drawing.Color.Transparent;
 			this.dateRangePicker.EnableWeekButtons = false;
+			this.dateRangePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.dateRangePicker.Location = new System.Drawing.Point(20, 79);
 			this.dateRangePicker.MaximumSize = new System.Drawing.Size(0, 185);
 			this.dateRangePicker.MinimumSize = new System.Drawing.Size(453, 22);
@@ -199,6 +202,7 @@ namespace OpenDental {
 			// 
 			// codeRangeFilter
 			// 
+			this.codeRangeFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.codeRangeFilter.Location = new System.Drawing.Point(573, 55);
 			this.codeRangeFilter.Name = "codeRangeFilter";
 			this.codeRangeFilter.Size = new System.Drawing.Size(133, 37);
@@ -212,9 +216,20 @@ namespace OpenDental {
 			this.menuMain.Size = new System.Drawing.Size(855, 24);
 			this.menuMain.TabIndex = 50;
 			// 
+			// butAllDates
+			// 
+			this.butAllDates.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butAllDates.Location = new System.Drawing.Point(210, 79);
+			this.butAllDates.Name = "butAllDates";
+			this.butAllDates.Size = new System.Drawing.Size(71, 24);
+			this.butAllDates.TabIndex = 51;
+			this.butAllDates.Text = "All Dates";
+			this.butAllDates.Click += new System.EventHandler(this.butAllDates_Click);
+			// 
 			// FormTrackNext
 			// 
 			this.ClientSize = new System.Drawing.Size(855, 664);
+			this.Controls.Add(this.butAllDates);
 			this.Controls.Add(this.codeRangeFilter);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.dateRangePicker);
@@ -259,5 +274,6 @@ namespace OpenDental {
 		private UI.ODCodeRangeFilter codeRangeFilter;
 		private UI.MenuOD menuMain;
 		private ContextMenuStrip menuRightClick;
+		private UI.Button butAllDates;
 	}
 }

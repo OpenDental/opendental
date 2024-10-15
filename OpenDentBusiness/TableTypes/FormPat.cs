@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OpenDentBusiness{
 
-	///<summary>One form or questionnaire filled out by a patient.  Each patient can have multiple forms.</summary>
+	///<summary>This is an old table that isn't really used anymore. We used to have a "questionnaire" that could be filled out by a patient, and this is it.  Each patient can have multiple questionnaires.</summary>
 	[Serializable]
 	public class FormPat:TableBase {
 		///<summary>Primary key.</summary>

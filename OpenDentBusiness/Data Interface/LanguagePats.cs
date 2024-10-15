@@ -220,9 +220,12 @@ namespace OpenDentBusiness{
 		#endregion Methods - Modify
 
 		///<summary>Pulls from cache.</summary>
-		public static string TranslateEFormField(long eFormFieldDefNum,string langDisplay,string defaultText){
+		public static string TranslateEFormField(long eFormFieldDefNum,string langDisplay,string defaultText,string langIso3=""){
 			Meth.NoCheckMiddleTierRole();
-			string threeLetterISO=GetLang3LetterFromDisplay(langDisplay);
+			string threeLetterISO=langIso3;
+			if(langDisplay!=""){
+				threeLetterISO=GetLang3LetterFromDisplay(langDisplay);
+			}
 			if(threeLetterISO.IsNullOrEmpty()){
 				return defaultText;
 			}
@@ -307,14 +310,15 @@ namespace OpenDentBusiness{
 			return null;//language wasn't found within LanguagesUsedByPatients pref.
 		}
 
-		///<summary>Syncs the number of elements from the PickListVis to corresponding translations for RadioButtons.</summary>
-		public static void SyncRadioButtonTranslations(EFormField eFormField){
+		///<summary>Syncs the number of elements from the PickListVis to corresponding translations for RadioButtons. Returns isChangedLanCache.</summary>
+		public static bool SyncRadioButtonTranslations(EFormField eFormField){
 			Meth.NoCheckMiddleTierRole();
 			if(eFormField.FieldType!=EnumEFormFieldType.RadioButtons){
-				return;
+				return false;
 			}
 			List<string> listDisplayLanguages=GetLanguagesForCombo();//get all languages set up in pref.
 			List<string> listVisOrig=eFormField.PickListVis.Split(',').ToList();
+			bool isChangedLanCache=false;
 			for(int i=0;i<listDisplayLanguages.Count;i++){//iterate through each language.
 				string strTranslations=TranslateEFormField(eFormField.EFormFieldDefNum,listDisplayLanguages[i],"");//empty string will indicate no translation exists yet.
 				if(strTranslations==""){//nothing to change for a language that hasn't been translated yet.
@@ -337,11 +341,12 @@ namespace OpenDentBusiness{
 						strTranslationsNew+=listLangOrig[k];
 					}
 				}
-				bool isChangedLanCache=SaveTranslationEFormField(eFormField.EFormFieldDefNum,listDisplayLanguages[i],strTranslationsNew);
-				if(isChangedLanCache){
-					RefreshCache();
-				}
+				isChangedLanCache|=SaveTranslationEFormField(eFormField.EFormFieldDefNum,listDisplayLanguages[i],strTranslationsNew);
 			}
+			if(isChangedLanCache){
+				RefreshCache();
+			}
+			return isChangedLanCache;
 		}
 
 	}

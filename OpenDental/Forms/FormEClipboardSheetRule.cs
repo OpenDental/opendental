@@ -12,79 +12,72 @@ using System.Windows.Forms;
 
 namespace OpenDental {
 	public partial class FormEClipboardSheetRule:FormODBase {
-		EClipboardSheetDef _eClipboardSheetDef;
-		/// <summary></summary>
-		public bool IsDeleted=false;
-		public List<EClipboardSheetDef> ListEClipboardSheetDefs;
-		///<summary></summary>
+		///<summary>List of the selected SheetDefs to ignore. Sheets only.</summary>
 		private List<SheetDef> _listSheetDefs;
+		///<summary>The eClipboardSheetDef we are currently editing. Must be set before opening this form.</summary>
+		public EClipboardSheetDef EClipboardSheetDefCur;
+		///<summary>List of the currently in use EClipboardSheetDefs from the parent form. Used for listSheetsToIgnore, not needed for eForms.</summary>
+		public List<EClipboardSheetDef> ListEClipboardSheetDefs;
+		///<summary>Gets set to true if an eClipboardSheetDef has been marked for deletion. Deletion occurs in parent form.</summary>
+		public bool IsDeleted=false;
 
-		public FormEClipboardSheetRule(EClipboardSheetDef eClipboardSheetDef,List<EClipboardSheetDef> listEClipboardSheetDefs) {
+		public FormEClipboardSheetRule() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_eClipboardSheetDef=eClipboardSheetDef;
-			ListEClipboardSheetDefs=listEClipboardSheetDefs;
 		}
 
 		private void FormEClipboardSheetRule_Load(object sender,EventArgs e) {
 			//Get the name of the sheet
-			if(_eClipboardSheetDef.SheetDefNum!=0){
-				List<long> listSheetDefNumsIgnored=EClipboardSheetDefs.GetListIgnoreSheetDefNums(_eClipboardSheetDef);
+			if(EClipboardSheetDefCur.SheetDefNum!=0){
+				List<long> listSheetDefNumsIgnored=EClipboardSheetDefs.GetListIgnoreSheetDefNums(EClipboardSheetDefCur);
 				_listSheetDefs=SheetDefs.GetWhere(x=>listSheetDefNumsIgnored.Contains(x.SheetDefNum));
-				textSheet.Text=SheetDefs.GetDescription(_eClipboardSheetDef.SheetDefNum);
+				textSheet.Text=SheetDefs.GetDescription(EClipboardSheetDefCur.SheetDefNum);
 			}
 			else{//EForm
 				listSheetsToIgnore.Visible=false;
 				butSelectSheetsToIgnore.Visible=false;
 				labelSheetsToIgnore.Visible=false;
-				EFormDef eFormDef=EFormDefs.GetFirstOrDefault(x=>x.EFormDefNum==_eClipboardSheetDef.EFormDefNum);
+				EFormDef eFormDef=EFormDefs.GetFirstOrDefault(x=>x.EFormDefNum==EClipboardSheetDefCur.EFormDefNum);
 				if(eFormDef!=null){
 					textSheet.Text=eFormDef.Description;
 				}
 			}
-			comboBehavior.Items.AddEnums<PrefillStatuses>();
-			comboBehavior.SetSelectedEnum(_eClipboardSheetDef.PrefillStatus);
-			textFrequency.Text=_eClipboardSheetDef.ResubmitInterval.TotalDays.ToString();
-			checkMinAge.Checked=false;
-			textMinAge.Enabled=false;
-			if(_eClipboardSheetDef.MinAge>0) {
-				checkMinAge.Checked=true;
-				textMinAge.Enabled=true;
-				textMinAge.Text=_eClipboardSheetDef.MinAge.ToString();
+			radioBehaviorNew.Checked=EClipboardSheetDefCur.PrefillStatus==PrefillStatuses.New;
+			radioBehaviorPreFill.Checked=EClipboardSheetDefCur.PrefillStatus==PrefillStatuses.PreFill;
+			radioBehaviorOnce.Checked=EClipboardSheetDefCur.PrefillStatus==PrefillStatuses.Once;
+			textFrequency.Text=EClipboardSheetDefCur.ResubmitInterval.TotalDays.ToString();
+			if(EClipboardSheetDefCur.MinAge>0) {
+				textMinAge.Text=EClipboardSheetDefCur.MinAge.ToString();
 			}
-			checkMaxAge.Checked=false;
-			textMaxAge.Enabled=false;
-			if(_eClipboardSheetDef.MaxAge>0) {
-				checkMaxAge.Checked=true;
-				textMaxAge.Enabled=true;
-				textMaxAge.Text=_eClipboardSheetDef.MaxAge.ToString();
+			if(EClipboardSheetDefCur.MaxAge>0) {
+				textMaxAge.Text=EClipboardSheetDefCur.MaxAge.ToString();
 			}
-			if(_eClipboardSheetDef.EFormDefNum!=0){//if this eClipboardSheetDef is an eForm, skip setting up listSheetsToIgnore.
+			if(EClipboardSheetDefCur.EFormDefNum!=0){//if this eClipboardSheetDef is an eForm, skip setting up listSheetsToIgnore.
 				return;
 			}
-			listSheetsToIgnore.Visible=_eClipboardSheetDef.PrefillStatus==PrefillStatuses.Once;
+			listSheetsToIgnore.Visible=EClipboardSheetDefCur.PrefillStatus==PrefillStatuses.Once;
 			listSheetsToIgnore.Items.Clear();
 			listSheetsToIgnore.Items.AddStrings(_listSheetDefs.Select(x => x.Description).ToList());
-			butSelectSheetsToIgnore.Visible=_eClipboardSheetDef.PrefillStatus==PrefillStatuses.Once;
-			labelSheetsToIgnore.Visible=_eClipboardSheetDef.PrefillStatus==PrefillStatuses.Once;
+			butSelectSheetsToIgnore.Visible=EClipboardSheetDefCur.PrefillStatus==PrefillStatuses.Once;
+			labelSheetsToIgnore.Visible=EClipboardSheetDefCur.PrefillStatus==PrefillStatuses.Once;
 		}
 
 		///<summary>Only displays when the behavior Once is selected. When a patient fills out the selected sheet, they won't be prompted to fill out any Sheets to Ignore, even if these are in the Sheets in Use list.</summary>
 		private void butSelectSheetsToIgnore_Click(object sender,EventArgs e) {
-			if(_eClipboardSheetDef.EFormDefNum!=0){
+			if(EClipboardSheetDefCur.SheetDefNum==0){
 				return;
 			}
 			FrmSheetPicker frmSheetPicker=new FrmSheetPicker();
 			frmSheetPicker.AllowMultiSelect=true;
-			SheetDef sheetDef=SheetDefs.GetFirstOrDefault(x=>x.SheetDefNum==_eClipboardSheetDef.SheetDefNum);
+			SheetDef sheetDef=SheetDefs.GetFirstOrDefault(x=>x.SheetDefNum==EClipboardSheetDefCur.SheetDefNum);
 			//Add any sheet defs that are ignoring this sheet def. We don't want to allow chaining ignores.
 			frmSheetPicker.ListSheetDefNumsExclude=ListEClipboardSheetDefs
-				.Where(x => x.IgnoreSheetDefNums!=null && x.IgnoreSheetDefNums.Contains(POut.Long(_eClipboardSheetDef.SheetDefNum)))
+				.Where(x => x.IgnoreSheetDefNums!=null && x.IgnoreSheetDefNums.Contains(POut.Long(EClipboardSheetDefCur.SheetDefNum)))
 				.Select(x => x.SheetDefNum)
 				.ToList();
 			//Add this sheet def too, the rule shouldn't be able to ignore itself.
-			frmSheetPicker.ListSheetDefNumsExclude.Add(_eClipboardSheetDef.SheetDefNum);
+			frmSheetPicker.ListSheetDefNumsExclude.Add(EClipboardSheetDefCur.SheetDefNum);
 			//Sets the list of sheets the sheet picker window will display.
 			frmSheetPicker.ListSheetDefs=SheetDefs.GetCustomForType(sheetDef.SheetType);
 			frmSheetPicker.ListSheetDefsSelected=frmSheetPicker.ListSheetDefs.Where(x => _listSheetDefs.Select(y => y.SheetDefNum).Contains(x.SheetDefNum)).ToList();
@@ -101,34 +94,28 @@ namespace OpenDental {
 			listSheetsToIgnore.Items.AddStrings(_listSheetDefs.Select(x => x.Description).ToList());
 		}
 
-		private void checkMinAge_CheckedChanged(object sender,EventArgs e) {
-			textMinAge.Enabled=checkMinAge.Checked;
-			if(!checkMinAge.Checked) {
-				textMinAge.Text="";
+		private void radioBehaviorOnce_CheckedChanged(object sender,EventArgs e) {
+			if(EClipboardSheetDefCur.SheetDefNum!=0){//Sheets only, SheetsToIgnore doesn't apply to eForms.
+				butSelectSheetsToIgnore.Visible=radioBehaviorOnce.Checked;
+				listSheetsToIgnore.Visible=radioBehaviorOnce.Checked;
+				labelSheetsToIgnore.Visible=radioBehaviorOnce.Checked;
 			}
-		}
-
-		private void checkMaxAge_CheckedChanged(object sender,EventArgs e) {
-			textMaxAge.Enabled=checkMaxAge.Checked;
-			if(!checkMaxAge.Checked) {
-				textMaxAge.Text="";
-			}
-		}
-
-		private void comboBehavior_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(_eClipboardSheetDef.SheetDefNum!=0){//Sheets only, SheetsToIgnore doesn't apply to eForms.
-				butSelectSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
-				listSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
-				labelSheetsToIgnore.Visible=comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once;
-			}
-			if(comboBehavior.GetSelected<PrefillStatuses>()==PrefillStatuses.Once) {
+			if(radioBehaviorOnce.Checked) {
 				textFrequency.Text="0";
+			}
+			else{
+				textFrequency.Text="30";//Remove 0 from frequency. Leaving the 0 will cause some UI bugs if the user switched from 'Once' to a different behavior and saves.
+				if(EClipboardSheetDefCur.ResubmitInterval.TotalDays.ToString()!="0"){//This is fluff. If user clicks 'Once' and then clicks back to 'PreFill', it will set the frequency back to what it was from the last save.
+					textFrequency.Text=EClipboardSheetDefCur.ResubmitInterval.TotalDays.ToString();//Change frequency to previous setting if it wasn't 0.
+				}
 			}
 		}
 
 		private void textFrequency_TextChanged(object sender,EventArgs e) {
 			if(textFrequency.Text=="0") {
-				comboBehavior.SetSelectedEnum(PrefillStatuses.Once);
+				radioBehaviorNew.Checked=false;
+				radioBehaviorPreFill.Checked=false;
+				radioBehaviorOnce.Checked=true;
 			}
 		}
 
@@ -142,38 +129,50 @@ namespace OpenDental {
 				MsgBox.Show(this,"Frequency (days) must be greater than -1.");
 				return;
 			}
+			bool isMinAgeBlank=textMinAge.Text.IsNullOrEmpty();
 			int minAge=-1;
-			if(checkMinAge.Checked && !int.TryParse(textMinAge.Text,out minAge)) {
+			if(!isMinAgeBlank && !int.TryParse(textMinAge.Text,out minAge)) {
 				MsgBox.Show(this,"The minimum age must be a valid whole number.");
 				return;
 			}
-			if(checkMinAge.Checked && minAge<1) {
+			if(!isMinAgeBlank && minAge<1) {
 				MsgBox.Show(this,"The minimum age must be greater than 0.");
 				return;
 			}
+			bool isMaxAgeBlank=textMaxAge.Text.IsNullOrEmpty();
 			int maxAge=-1;
-			if(checkMaxAge.Checked && !int.TryParse(textMaxAge.Text,out maxAge)) {
+			if(!isMaxAgeBlank && !int.TryParse(textMaxAge.Text,out maxAge)) {
 				MsgBox.Show(this,"The maximum age must be a valid whole number.");
 				return;
 			}
-			if(checkMaxAge.Checked && maxAge<1) {
+			if(!isMaxAgeBlank && maxAge<1) {
 				MsgBox.Show(this,"The maximum age must be greater than 0.");
 				return;
 			}
-			if(checkMaxAge.Checked && checkMinAge.Checked && maxAge<minAge) {
+			if(!isMaxAgeBlank && !isMinAgeBlank && maxAge<minAge) {
 				MsgBox.Show(this,"The maximum age must be greater than the minimum age.");
 				return;
 			}
-			_eClipboardSheetDef.PrefillStatus=comboBehavior.GetSelected<PrefillStatuses>();
-			if(_eClipboardSheetDef.PrefillStatus==PrefillStatuses.Once) {
+			PrefillStatuses prefillStatuses=new PrefillStatuses();
+			if(radioBehaviorNew.Checked){
+				prefillStatuses=PrefillStatuses.New;
+			}
+			else if(radioBehaviorPreFill.Checked){
+				prefillStatuses=PrefillStatuses.PreFill;
+			}
+			else if(radioBehaviorOnce.Checked){
+				prefillStatuses=PrefillStatuses.Once;
+			}
+			EClipboardSheetDefCur.PrefillStatus=prefillStatuses;
+			if(EClipboardSheetDefCur.PrefillStatus==PrefillStatuses.Once) {
 				days=0;
 			}
-			if(_eClipboardSheetDef.SheetDefNum!=0){
-				_eClipboardSheetDef.IgnoreSheetDefNums=string.Join(",",_listSheetDefs.Select(x => POut.Long(x.SheetDefNum)));
+			if(EClipboardSheetDefCur.SheetDefNum!=0){
+				EClipboardSheetDefCur.IgnoreSheetDefNums=string.Join(",",_listSheetDefs.Select(x => POut.Long(x.SheetDefNum)));
 			}
-			_eClipboardSheetDef.MinAge=minAge;
-			_eClipboardSheetDef.MaxAge=maxAge;
-			_eClipboardSheetDef.ResubmitInterval=TimeSpan.FromDays(days);
+			EClipboardSheetDefCur.MinAge=minAge;
+			EClipboardSheetDefCur.MaxAge=maxAge;
+			EClipboardSheetDefCur.ResubmitInterval=TimeSpan.FromDays(days);
 			//EClipboardSheetDefs.Update(_eSheet);
 			DialogResult=DialogResult.OK;
 		}

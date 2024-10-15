@@ -38,7 +38,8 @@ namespace OpenDentBusiness {
 		public int SpaceBelowEachField;
 		///<summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
 		public int SpaceToRightEachField;
-
+		///<summary>FK to definition.DefNum. This gets set when an EForm is created from an EFormDef. 0 for none or else it's set to an image category. User can change it.</summary>
+		public long SaveImageCategory;
 
 		///<Summary>Used sparingly prior to db insertion, when we have no other choice.</Summary>
 		[CrudColumn(IsNotDbColumn=true)]
@@ -59,15 +60,15 @@ namespace OpenDentBusiness {
 	}
 
 	public enum EnumEFormStatus{
-		///<summary>0 - </summary>
+		///<summary>0 - If a form is added manually in OD proper and then filled out by the patient, it will remain this status unless it gets imported.</summary>
 		None,
-		///<summary>1 - Forms with this status will show in eClipboard.</summary>
-		ReadyForPatientFill,
-		///<summary>2 - .</summary>
+		///<summary>1 - Forms with this status will show in eClipboard. Unlike sheets, there is no way to set order.</summary>
+		ShowInEClipboard,
+		///<summary>2 - This status gets set from eClipboard after filling.</summary>
 		Filled,
 		///<summary>3 - .</summary>
 		Imported,
-		///<summary>4 - Import was attempted, but could not match a known patient in the database.</summary>
+		///<summary>4 - Import was attempted, but could not match a known patient in the database. Once it's matched to a patient, it gets converted to Imported status.</summary>
 		UnmatchedToPatient
 	}
 

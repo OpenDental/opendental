@@ -2820,6 +2820,12 @@ namespace OpenDentBusiness{
 			//this query overall as compared to left joining the appointment table onto itself,
 			//because the in-memory temporary table has many fewer rows than the appointment table
 			//on average.
+			if(dateStart.Year < 1880) {
+				dateStart=DateTime.MinValue;
+			}
+			if(dateEnd.Year < 1880) {
+				dateEnd=DateTime.MaxValue;
+			}
 			string command="SELECT a.* FROM appointment a "
 				+"INNER JOIN patient p ON p.PatNum=a.PatNum "
 			  +"LEFT JOIN appointment tregular ON a.AptNum=tregular.NextAptNum ";

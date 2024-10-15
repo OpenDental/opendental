@@ -98,6 +98,8 @@ They are allowed to change both the English and foreign translations in that gri
 		public int SpaceBelowEachField;
 		///<summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
 		public int SpaceToRightEachField;
+		///<summary>FK to definition.DefNum. There is a global setting to save forms to the image category which has ItemVal set to "U". This global setting is only used to set this field for new forms. If this is 0, it will not save to images. Any other number is an override to a different category from global. Copied to EForm child.</summary>
+		public long SaveImageCategory;
 
 		///<Summary>This is needed for serialization/deserialization of internal EForms. We also leave this list attached to internal EForms for a while for convenience.</Summary>
 		[CrudColumn(IsNotDbColumn=true)]

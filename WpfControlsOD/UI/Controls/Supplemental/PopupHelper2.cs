@@ -184,6 +184,10 @@ namespace WpfControls.UI {
 				if(!url.ToLower().StartsWith("http")) {
 					url=@"http://"+url;
 				}
+				if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+					ODCloudClient.LaunchFileWithODCloudClient(url);
+					return;
+				}
 				Process.Start(url);
 			}
 			catch {

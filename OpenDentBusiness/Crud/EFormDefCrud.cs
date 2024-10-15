@@ -57,6 +57,7 @@ namespace OpenDentBusiness.Crud{
 				eFormDef.ShowLabelsBold       = PIn.Bool  (row["ShowLabelsBold"].ToString());
 				eFormDef.SpaceBelowEachField  = PIn.Int   (row["SpaceBelowEachField"].ToString());
 				eFormDef.SpaceToRightEachField= PIn.Int   (row["SpaceToRightEachField"].ToString());
+				eFormDef.SaveImageCategory    = PIn.Long  (row["SaveImageCategory"].ToString());
 				retVal.Add(eFormDef);
 			}
 			return retVal;
@@ -78,6 +79,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ShowLabelsBold");
 			table.Columns.Add("SpaceBelowEachField");
 			table.Columns.Add("SpaceToRightEachField");
+			table.Columns.Add("SaveImageCategory");
 			foreach(EFormDef eFormDef in listEFormDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eFormDef.EFormDefNum),
@@ -90,6 +92,7 @@ namespace OpenDentBusiness.Crud{
 					POut.Bool  (eFormDef.ShowLabelsBold),
 					POut.Int   (eFormDef.SpaceBelowEachField),
 					POut.Int   (eFormDef.SpaceToRightEachField),
+					POut.Long  (eFormDef.SaveImageCategory),
 				});
 			}
 			return table;
@@ -109,7 +112,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EFormDefNum,";
 			}
-			command+="FormType,Description,DateTCreated,IsInternalHidden,MaxWidth,RevID,ShowLabelsBold,SpaceBelowEachField,SpaceToRightEachField) VALUES(";
+			command+="FormType,Description,DateTCreated,IsInternalHidden,MaxWidth,RevID,ShowLabelsBold,SpaceBelowEachField,SpaceToRightEachField,SaveImageCategory) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eFormDef.EFormDefNum)+",";
 			}
@@ -122,7 +125,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (eFormDef.RevID)+","
 				+    POut.Bool  (eFormDef.ShowLabelsBold)+","
 				+    POut.Int   (eFormDef.SpaceBelowEachField)+","
-				+    POut.Int   (eFormDef.SpaceToRightEachField)+")";
+				+    POut.Int   (eFormDef.SpaceToRightEachField)+","
+				+    POut.Long  (eFormDef.SaveImageCategory)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -147,7 +151,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EFormDefNum,";
 			}
-			command+="FormType,Description,DateTCreated,IsInternalHidden,MaxWidth,RevID,ShowLabelsBold,SpaceBelowEachField,SpaceToRightEachField) VALUES(";
+			command+="FormType,Description,DateTCreated,IsInternalHidden,MaxWidth,RevID,ShowLabelsBold,SpaceBelowEachField,SpaceToRightEachField,SaveImageCategory) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eFormDef.EFormDefNum)+",";
 			}
@@ -160,7 +164,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (eFormDef.RevID)+","
 				+    POut.Bool  (eFormDef.ShowLabelsBold)+","
 				+    POut.Int   (eFormDef.SpaceBelowEachField)+","
-				+    POut.Int   (eFormDef.SpaceToRightEachField)+")";
+				+    POut.Int   (eFormDef.SpaceToRightEachField)+","
+				+    POut.Long  (eFormDef.SaveImageCategory)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -181,7 +186,8 @@ namespace OpenDentBusiness.Crud{
 				+"RevID                =  "+POut.Int   (eFormDef.RevID)+", "
 				+"ShowLabelsBold       =  "+POut.Bool  (eFormDef.ShowLabelsBold)+", "
 				+"SpaceBelowEachField  =  "+POut.Int   (eFormDef.SpaceBelowEachField)+", "
-				+"SpaceToRightEachField=  "+POut.Int   (eFormDef.SpaceToRightEachField)+" "
+				+"SpaceToRightEachField=  "+POut.Int   (eFormDef.SpaceToRightEachField)+", "
+				+"SaveImageCategory    =  "+POut.Long  (eFormDef.SaveImageCategory)+" "
 				+"WHERE EFormDefNum = "+POut.Long(eFormDef.EFormDefNum);
 			Db.NonQ(command);
 		}
@@ -225,6 +231,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="SpaceToRightEachField = "+POut.Int(eFormDef.SpaceToRightEachField)+"";
 			}
+			if(eFormDef.SaveImageCategory != oldEFormDef.SaveImageCategory) {
+				if(command!="") { command+=",";}
+				command+="SaveImageCategory = "+POut.Long(eFormDef.SaveImageCategory)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -262,6 +272,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eFormDef.SpaceToRightEachField != oldEFormDef.SpaceToRightEachField) {
+				return true;
+			}
+			if(eFormDef.SaveImageCategory != oldEFormDef.SaveImageCategory) {
 				return true;
 			}
 			return false;

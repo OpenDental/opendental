@@ -129,7 +129,8 @@ namespace OpenDental {
 				if(frmEFormFillEdit.IsDialogCancel){
 					return;
 				}
-				//must have saved to db.
+				//Must have saved to db.
+				//This might have included "deleting" the eForm, which we don't need to test for here.
 				FillGrid();
 				return;
 			}
@@ -248,7 +249,7 @@ namespace OpenDental {
 			}
 			EFormDef eFormDef=frmEFormPicker.EFormDefSelected;
 			//fields already attached
-			EForm eForm=EForms.CreateEFormFromEFormDef(eFormDef,PatNum);
+			EForm eForm=EForms.CreateEFormFromEFormDef(eFormDef,PatNum);//sets IsNew=true
 			eForm.DateTimeShown=DateTime.Now;
 			EFormFiller.FillFields(eForm);
 			EForms.TranslateFields(eForm,_patient.Language);
@@ -256,6 +257,7 @@ namespace OpenDental {
 			frmEFormFillEdit.EFormCur=eForm;
 			frmEFormFillEdit.ShowDialog();
 			if(frmEFormFillEdit.IsDialogCancel){
+				//This could include "deleting" the new eForm, which would then never have made it to the db at all.
 				return;
 			}
 			//must have saved to db.

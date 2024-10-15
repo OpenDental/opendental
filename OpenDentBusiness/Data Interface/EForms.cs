@@ -68,11 +68,12 @@ namespace OpenDentBusiness{
 			eForm.ShowLabelsBold=eFormDef.ShowLabelsBold;
 			eForm.SpaceBelowEachField=eFormDef.SpaceBelowEachField;
 			eForm.SpaceToRightEachField=eFormDef.SpaceToRightEachField;
+			eForm.SaveImageCategory=eFormDef.SaveImageCategory;
 			eForm.ListEFormFields=EFormFields.FromListDefs(eFormDef.ListEFormFieldDefs);
 			return eForm;
 		}
 
-		///<summary>Validates all of the fields that have a DbLink from the passed-in eForm. The eForm must contain a list of eFormFields. The maskedSSNOld is used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.  Returns an object that stores the error message and the page number that the problem field is located on. Use the page number to go directly to the problem field. If the return object has an empty error message, everything passed validation.</summary>
+		///<summary>Enforced required fields and also validates a few other fields like phone numbers and state format. The eForm must contain a list of eFormFields. The maskedSSNOld is used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.  Returns an object that stores the error message and the page number that the problem field is located on. Use the page number to go directly to the problem field. If the return object has an empty error message, everything passed validation.</summary>
 		public static EFormValidation Validate(EForm eForm,string maskedSSNOld) {
 			EFormValidation eFormValidation=new EFormValidation();
 			List<EFormField> listEFormFields=eForm.ListEFormFields;
@@ -223,9 +224,29 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Language will be empty string if the patient does not have a language set.</summary>
-		public static void TranslateFields(EForm eForm,string language){
+		public static void TranslateFields(EForm eForm,string langIso3){
+			Meth.NoCheckMiddleTierRole();
 			for(int i=0;i<eForm.ListEFormFields.Count;i++){
-
+				if(eForm.ListEFormFields[i].FieldType==EnumEFormFieldType.RadioButtons){
+					//Language translations are stored as comma delimited string like this: "label,button1,button2"
+					//Our setup window, FrmEFormDefEdit, rigorously ensures that the number of items in the translation exactly matches label+buttons.
+					//List<string> listEnglishs=
+					int numRadioBtns=eForm.ListEFormFields[i].PickListVis.Split(',').ToList().Count();
+					string strLabels=eForm.ListEFormFields[i].ValueLabel+","+eForm.ListEFormFields[i].PickListVis;
+					string strTranslations=LanguagePats.TranslateEFormField(eForm.ListEFormFields[i].EFormFieldDefNum,langDisplay:"",strLabels,langIso3:langIso3);
+					List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
+					//int numTranslations=strTranslations.Split(',').ToList().Count()-1;
+					if(listTranslations.Count-1!=numRadioBtns){//subtract 1 because of the label at idx 0.
+						continue;//should never happen
+					}
+					eForm.ListEFormFields[i].ValueLabel=listTranslations[0];
+					listTranslations.RemoveAt(0);
+					eForm.ListEFormFields[i].PickListVis=string.Join(",",listTranslations);
+					continue;
+				}
+				//checkbox,date,label,sigbox,textbox:
+				eForm.ListEFormFields[i].ValueLabel=LanguagePats.TranslateEFormField(eForm.ListEFormFields[i].EFormFieldDefNum,langDisplay:"",eForm.ListEFormFields[i].ValueLabel,langIso3:langIso3);
+				//still todo: medlist
 			}
 		}
 	}

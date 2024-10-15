@@ -94,7 +94,7 @@ namespace OpenDentBusiness.AutoComm {
 				return "";
 			}
 			StringBuilder sb=new StringBuilder();
-			sb.Append(msgToPayUrl);
+			sb.Append(msgTextIn);
 			StringTools.RegReplace(sb,GetPatternFromTag(MSG_TO_PAY_TAG),msgToPayUrl);
 			StringTools.RegReplace(sb,GetPatternFromTag(STATEMENT_URL_TAG),statementMediumUrl);
 			StringTools.RegReplace(sb,GetPatternFromTag(STATEMENT_SHORT_TAG),statementShortUrl);

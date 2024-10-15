@@ -265,7 +265,12 @@ namespace OpenDental {
 		private void butAuthenticate_Click(object sender,EventArgs e) {
 			try {
 				string authorizationUrl=QuickBooksOnline.GetQuickBooksOnlineAuthorizationUrl();
-				Process.Start(authorizationUrl);
+				if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+					ODCloudClient.LaunchFileWithODCloudClient(authorizationUrl);
+				}
+				else {
+					Process.Start(authorizationUrl);
+				}
 				using FormQuickBooksOnlineAuthorization formQuickBooksOnlineAuth=new FormQuickBooksOnlineAuthorization();
 				formQuickBooksOnlineAuth.ShowDialog();
 				if(formQuickBooksOnlineAuth.DialogResult!=DialogResult.OK) {

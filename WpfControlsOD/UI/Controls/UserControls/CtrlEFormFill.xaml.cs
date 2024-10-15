@@ -316,7 +316,7 @@ namespace OpenDental {
 		#endregion Properties
 
 		#region Methods - public
-		///<summary>If a single field is passed in, only that field will be filled. If null, all fields will be filled. We generally call this (and SetVisibilities) for a single field every time a user clicks a checkbox or radiobutton. This is so we can have immediate results for conditional logic. But we don't call it for textboxes, for example, but it's hard to know when to do so.</summary>
+		///<summary>If a single field is passed in, only that field will be filled. If null, all fields will be filled. We generally call this (and SetVisibilities) for a single field every time a user clicks a checkbox or radiobutton. This is so we can have immediate results for conditional logic. But we don't call it for textboxes, for example, because it's hard to know when to do so.</summary>
 		public void FillFieldsFromControls(EFormField eFormField=null){			
 			for(int i=0;i<ListEFormFields.Count;i++){
 				if(eFormField!=null && ListEFormFields[i]!=eFormField){
@@ -1669,7 +1669,12 @@ namespace OpenDental {
 			Label label=new Label();
 			label.FontSize=FontSize*eFormField.FontScale/100;
 			label.Padding=new Thickness(0);//default is 5
-			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
+			if(IsSetupMode){
+				label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
+			}
+			else{
+				label.Content=eFormField.ValueLabel;
+			}
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
 				Label labelRequired=new Label();
@@ -1728,7 +1733,13 @@ namespace OpenDental {
 			label.VerticalAlignment=VerticalAlignment.Stretch;
 			label.VAlign=VerticalAlignment.Bottom;
 			label.Margin=new Thickness(0,0,0,bottom:1);
-			Run runMainPlain=new Run(LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel));
+			Run runMainPlain;
+			if(IsSetupMode){
+				runMainPlain=new Run(LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel));
+			}
+			else{
+				runMainPlain=new Run(eFormField.ValueLabel);
+			}
 			if(ShowLabelsBold){
 				label.FontSize=FontSize*eFormField.FontScale*_scaleFontLabel/100;
 				runMainPlain.FontWeight=FontWeights.Medium;
@@ -1789,7 +1800,13 @@ namespace OpenDental {
 			textRich.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth,SpaceToRightEachField);
 			//textBlock.FontSize=FontSize*eFormField.FontScale/100;//no, this is never set for labels
 			//textBlock.Padding=new Thickness(0);//default is 5
-			string xmlString=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
+			string xmlString;
+			if(IsSetupMode){
+				xmlString=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
+			}
+			else{
+				xmlString=eFormField.ValueLabel;
+			}
 			FlowDocument flowDocument=EFormFields.DeserializeFlowDocument(xmlString);
 			bool isConditionalChild=false;
 			if(IsSetupMode
@@ -2081,10 +2098,18 @@ namespace OpenDental {
 		private void AddRadioButtons(Border borderBox,EFormField eFormField){
 			int numRadioBtns=eFormField.PickListVis.Split(',').ToList().Count();
 			string strLabels=eFormField.ValueLabel+","+eFormField.PickListVis;
-			string strTranslations=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,strLabels);
-			int numTranslations=strTranslations.Split(',').ToList().Count()-1;//subtract 1 from translations for the value label at idx 0.
+			string strTranslations;
+			if(IsSetupMode){
+				strTranslations=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,strLabels);
+			}
+			else{
+				strTranslations=strLabels;
+			}
+			int numTranslations=strTranslations.Split(',').ToList().Count()-1;//subtract 1 because of the label at idx 0.
 			if(numTranslations!=numRadioBtns){
+				//ignore return bool. It will be caught again later
 				LanguagePats.SyncRadioButtonTranslations(eFormField);//Ensures translations are in sync with PickListVis. Only syncs here if translations don't match up with radio buttons.
+				strTranslations=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,strLabels);//translate again in case language translations needed to sync.
 			}
 			StackPanel stackPanelRadio=new StackPanel();
 			//stackPanelRadio is our main stackPanel
@@ -2110,7 +2135,6 @@ namespace OpenDental {
 				label.FontSize=FontSize*eFormField.FontScale/100;
 			}
 			label.Padding=new Thickness(0,0,0,bottom:0);//default is 5
-			strTranslations=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,strLabels);//translate again in case language translations needed to sync.
 			List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
 			label.Content=listTranslations[0];
 			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
@@ -2271,7 +2295,12 @@ namespace OpenDental {
 				label.FontSize=FontSize*eFormField.FontScale/100;
 			}
 			label.Padding=new Thickness(0,0,0,bottom:2);//default is 5
-			label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
+			if(IsSetupMode){
+				label.Content=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel);
+			}
+			else{
+				label.Content=eFormField.ValueLabel;
+			}
 			stackPanelLabel.Children.Add(label);
 			if(eFormField.IsRequired) {
 				Label labelRequired=new Label();
@@ -2344,7 +2373,13 @@ namespace OpenDental {
 			label.VerticalAlignment=VerticalAlignment.Stretch;
 			label.VAlign=VerticalAlignment.Bottom;//so that wrapping labels are aligned properly
 			label.Margin=new Thickness(0,0,0,bottom:1);
-			Run runMainPlain=new Run(LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel));
+			Run runMainPlain;
+			if(IsSetupMode){
+				runMainPlain=new Run(LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,eFormField.ValueLabel));
+			}
+			else{
+				runMainPlain=new Run(eFormField.ValueLabel);
+			}
 			if(ShowLabelsBold){
 				label.FontSize=FontSize*eFormField.FontScale*_scaleFontLabel/100;
 				runMainPlain.FontWeight=FontWeights.Medium;//this is a very slightly bold: 500 vs 400 for Normal

@@ -71,6 +71,18 @@ namespace OpenDental {
 			if(!PerformValidation()) {
 				return;
 			}
+			CommOptOut commOptOut=CommOptOuts.GetForPat(_patient.PatNum);
+			bool isOptedOutEmail=false;
+			bool isOptedOutText=false;
+			if(commOptOut!=null) {
+				isOptedOutEmail=checkEmail.Checked && commOptOut.IsOptedOut(CommOptOutMode.Email,CommOptOutType.MsgToPay);
+				isOptedOutText=checkText.Checked && commOptOut.IsOptedOut(CommOptOutMode.Text,CommOptOutType.MsgToPay);
+			}
+			if(isOptedOutEmail || isOptedOutText) {
+				if(!MsgBox.Show(MsgBoxButtons.YesNo,"Patient has opted out of receiving automated messages. Send anyway?")) {
+					return;
+				}
+			}
 			//Single Patient or Family
 			//Create a regular Statement here.
 			Statement statement=GetRegularStatement();

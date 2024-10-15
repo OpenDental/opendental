@@ -9,22 +9,20 @@ using OpenDentBusiness;
 
 namespace OpenDental {
 	public partial class FormEClipboardImagePicker:FormODBase {
-		///<summay>Currently selected clinic for which we are editing the eclipboard image capture defs.</summay>
-		private long _clinicNum;
-		///<summary>List of all definitions in 'EClipboardImageCapture' defcat. </summary>
+		///<summary>List of all definitions in 'EClipboardImageCapture' defcat.</summary>
 		private List<Def> _listDefsAllEClipboardImages;
-		///<summary>The corresponding EClipboardImageCaptureDef objects for the list of EClipboard Images patients are allowed to take. Must be
-		///set before opening this form.</summary>
+		///<summary>The list of EClipboardImageCaptureDefs that are already selected in the parent form, so we don't want to show the here. Must be set before opening this form.</summary>
 		public List<EClipboardImageCaptureDef> ListEClipboardImageCaptureDefs;
 		///<summary>After clicking OK, this is the list of selected EClipboardImageCaptureDef.</summary>
 		public List<EClipboardImageCaptureDef> ListEClipboardImageCaptureDefsSelected;
+		///<summary>Currently selected clinic for which we are editing the eclipboard image capture defs. Must be set before opening this form.</summary>
+		public long ClinicNum;
 		
 
-		public FormEClipboardImagePicker(long clinicNum) {
+		public FormEClipboardImagePicker() {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_clinicNum=clinicNum;
 		}
 
 		private void FormEClipboardImagePicker_Load(object sender,EventArgs e) { 
@@ -46,17 +44,18 @@ namespace OpenDental {
 			defSelfPortrait.ItemName="Self Portrait";
 			defSelfPortrait.ItemValue="Allows patient to submit a self-portrait upon checkin";
 			//If the eClipboard image def has a corresponding EClipboardImageCaptureDef, users are allowed to submit that image, so we add these defs to the 'In Use' list.
-			List<Def> listDefsEClipboardImagesInUse=_listDefsAllEClipboardImages.FindAll(x => ListEClipboardImageCaptureDefs.Any(y => y.ClinicNum==_clinicNum && y.DefNum==x.DefNum));
+			List<Def> listDefsEClipboardImagesInUse=_listDefsAllEClipboardImages.FindAll(x => ListEClipboardImageCaptureDefs.Any(y => y.ClinicNum==ClinicNum && y.DefNum==x.DefNum));
 			//If the eClipboard image def does not have a corresponding EClipboardImageCaptureDef, users are not allowed to submit that image, so we add these defs to
 			//the 'available' list as long the def is not marked as 'hidden'.
 			List<Def> listDefsAvailableEClipboardImages=_listDefsAllEClipboardImages.FindAll(x => !listDefsEClipboardImagesInUse.Any(y => y.DefNum==x.DefNum) && !x.IsHidden);
-			bool isSelfPortraitAllowed=ListEClipboardImageCaptureDefs.Any(x => x.IsSelfPortrait && x.ClinicNum==_clinicNum);
-			//If the self portrait has a correspoding EClipboardImageCaptureDef, then we add it the 'In Use' list, since users are able to submit self portraits.
-			if(isSelfPortraitAllowed) { 
-				listDefsEClipboardImagesInUse.Add(defSelfPortrait);
-			}
-			else { //Otherwise we add it to the available list since patients are not currently allowed to submit self-portraits. 
-				listDefsAvailableEClipboardImages.Add(defSelfPortrait);
+			bool isSelfPortraitInUse=ListEClipboardImageCaptureDefs.Any(x => x.IsSelfPortrait && x.ClinicNum==ClinicNum);
+			List<Def> listDefsImageCat=Defs.GetDefsForCategory(OpenDentBusiness.DefCat.ImageCats,true);//Get the defs for the ImageCats DefCat.
+			long defNumPatientPictures=listDefsImageCat.Find(x => x.ItemValue.Contains("P"))?.DefNum??0;//Zero here indicates no Image Category for Patient Picture usage.
+			if(defNumPatientPictures>0){//No Image Category marked for PatientPictures, self portrait won't be displayed as an option to the user.
+				labelImageCategoryWarning.Visible=false;
+				if(!isSelfPortraitInUse){//If self portrait is not currently in use.
+					listDefsAvailableEClipboardImages.Add(defSelfPortrait);
+				}
 			}
 			gridImages.BeginUpdate();
 			gridImages.Columns.Clear();
@@ -90,14 +89,14 @@ namespace OpenDental {
 					//If DefNum is 0, then this def is the dummy def we created for the self-portrait. So we need to mark this EClipboardImageCaptureDef as being the self-portrait.
 					isSelfPortrait=true;
 					//We will also set the defnum to the image category that has the patient pictures usage, if any.
-					List<Def> listDefsImageCat=OpenDentBusiness.Defs.GetDefsForCategory(OpenDentBusiness.DefCat.ImageCats,true);//Get the defs from the ImageCats DefCat
-					listDefsSelected[i].DefNum=listDefsImageCat.FirstOrDefault(x => x.ItemValue.Contains("P"))?.DefNum??0;//If there's an image category for patient pictues, use that, otherwise use 0.
+					List<Def> listDefsImageCat=Defs.GetDefsForCategory(OpenDentBusiness.DefCat.ImageCats,true);//Get the defs for the ImageCats DefCat
+					listDefsSelected[i].DefNum=listDefsImageCat.Find(x => x.ItemValue.Contains("P")).DefNum;//Use the DefNum of the image category for patient pictures. Won't be null here.
 				}
 				EClipboardImageCaptureDef eClipboardImageCaptureDef=new EClipboardImageCaptureDef();
 				eClipboardImageCaptureDef.DefNum=listDefsSelected[i].DefNum;
 				eClipboardImageCaptureDef.IsSelfPortrait=isSelfPortrait;
 				eClipboardImageCaptureDef.FrequencyDays=0;
-				eClipboardImageCaptureDef.ClinicNum=_clinicNum;
+				eClipboardImageCaptureDef.ClinicNum=ClinicNum;
 				ListEClipboardImageCaptureDefsSelected.Add(eClipboardImageCaptureDef);
 			}
 			DialogResult=DialogResult.OK;
@@ -113,14 +112,14 @@ namespace OpenDental {
 				//If DefNum is 0, then this def is the dummy def we created for the self-portrait. So we need to mark this EClipboardImageCaptureDef as being the self-portrait.
 				isSelfPortrait=true;
 				//We will also set the defnum to the image category that has the patient pictures usage, if any.
-				List<Def> listDefsImageCat=OpenDentBusiness.Defs.GetDefsForCategory(OpenDentBusiness.DefCat.ImageCats,true);//Get the defs for the ImageCats DefCat.
-				listDefsSelected[0].DefNum=listDefsImageCat.Find(x => x.ItemValue.Contains("P"))?.DefNum??0;//If there's an image category for patient pictures, use that, otherwise use 0.
+				List<Def> listDefsImageCat=Defs.GetDefsForCategory(OpenDentBusiness.DefCat.ImageCats,true);//Get the defs for the ImageCats DefCat.
+				listDefsSelected[0].DefNum=listDefsImageCat.Find(x => x.ItemValue.Contains("P")).DefNum;//Use the DefNum of the image category for patient pictures. Won't be null here.
 			}
 			EClipboardImageCaptureDef eClipboardImageCaptureDef=new EClipboardImageCaptureDef();
 			eClipboardImageCaptureDef.DefNum=listDefsSelected[0].DefNum;
 			eClipboardImageCaptureDef.IsSelfPortrait=isSelfPortrait;
 			eClipboardImageCaptureDef.FrequencyDays=0;
-			eClipboardImageCaptureDef.ClinicNum=_clinicNum;
+			eClipboardImageCaptureDef.ClinicNum=ClinicNum;
 			ListEClipboardImageCaptureDefsSelected.Add(eClipboardImageCaptureDef);
 			DialogResult=DialogResult.OK;
 		}

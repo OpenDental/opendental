@@ -2522,6 +2522,21 @@ namespace OpenDental {
 					Sheet sheet=Sheets.GetSheet(rowPk);
 					SheetUtilL.ShowSheet(sheet,Pd.Patient,FormSheetFillEdit_FormClosing);
 					break;
+				case ProgNotesRowType.EForm:
+					EForm eForm=EForms.GetEForm(rowPk);
+					if(eForm==null) {
+						MsgBox.Show("EForms","Error opening eForm.");
+						return;
+					}
+					FrmEFormFillEdit frmEFormFillEdit=new FrmEFormFillEdit();
+					frmEFormFillEdit.EFormCur=eForm;
+					frmEFormFillEdit.ShowDialog();
+					if(frmEFormFillEdit.IsDialogCancel){
+						//User truly cancelled. If they deleted, then dialog would have been ok.
+						return;
+					}
+					//It will refresh below
+					break;
 				case ProgNotesRowType.FormPat:
 					FormPat formPat=FormPats.GetOne(rowPk);
 					using(FormFormPatEdit formFormPatEdit=new FormFormPatEdit()) {
@@ -7583,27 +7598,6 @@ namespace OpenDental {
 					case "Quadrant":
 						row.Cells.Add(dataRow["quadrant"].ToString());
 						break;
-					case "Schedule By":
-						row.Cells.Add(dataRow["orionDateScheduleBy"].ToString());
-						break;
-					case "Stop Clock":
-						row.Cells.Add(dataRow["orionDateStopClock"].ToString());
-						break;
-					case "DPC":
-						row.Cells.Add(dataRow["orionDPC"].ToString());
-						break;
-					case "Effective Comm":
-						row.Cells.Add(dataRow["orionIsEffectiveComm"].ToString());
-						break;
-					case "On Call":
-						row.Cells.Add(dataRow["orionIsOnCall"].ToString());
-						break;
-					case "Stat 2":
-						row.Cells.Add(dataRow["orionStatus2"].ToString());
-						break;
-					case "DPCpost":
-						row.Cells.Add(dataRow["orionDPCpost"].ToString());
-						break;
 					case "Length":
 						row.Cells.Add(dataRow["length"].ToString());
 						break;
@@ -7852,22 +7846,6 @@ namespace OpenDental {
 				AutomationL.Trigger(EnumAutomationTrigger.RxCreate,new List<string>(),Pd.PatNum,0,listRxPatsNew);
 			}
 			return true;
-		}
-
-		private bool OrionProcStatDesired(string status2) {
-			//We ought to include procs with no status2 in case one slips through the cracks and for testing.
-			if(status2==OrionStatus.None.ToString()) {
-				return true;
-			}
-			//Convert the graphical status "os" into a single string status "status2".
-			//Not needed because we never translate orion fields to other languages.
-			/*
-			string status2="";
-			if(os==Lans.g("enumStatus2",OrionStatus.TP.ToString())) {
-				status2=OrionStatus.TP.ToString();
-			}
-			 * etc*/
-			return false;
 		}
 
 		private void PlannedApptPromptHelper() {
@@ -8218,11 +8196,6 @@ namespace OpenDental {
 			bool isLocked=(dataRow["isLocked"].ToString()=="X");
 			if(!ProcStatDesired((ProcStat)PIn.Long(dataRow["ProcStatus"].ToString()),isLocked)) {
 				return false;
-			}
-			if(Programs.IsEnabled(ProgramName.Orion)) {
-				if(!OrionProcStatDesired((dataRow["orionStatus2"].ToString()))) {
-					return false;
-				}
 			}
 			// Put check for showing hygine in here
 			// Put check for showing films in here
@@ -9361,12 +9334,12 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>This reduces the number of places where Programs.UsingEcwTight() is called.  This helps with organization.  All calls from ContrChart must pass through here.  They also must have been checked to not involve the Orion bridge or layout logic.</summary>
+		///<summary>This reduces the number of places where Programs.UsingEcwTight() is called.  This helps with organization.  All calls from ContrChart must pass through here.</summary>
 		private bool UsingEcwTight() {
 			return Programs.UsingEcwTightMode();
 		}
 
-		///<summary>This reduces the number of places where Programs.UsingEcwTightOrFull() is called.  This helps with organization.  All calls from ContrChart must pass through here.  They also must have been checked to not involve the Orion bridge or layout logic.</summary>
+		///<summary>This reduces the number of places where Programs.UsingEcwTightOrFull() is called.  This helps with organization.  All calls from ContrChart must pass through here./summary>
 		private bool UsingEcwTightOrFull() {
 			return Programs.UsingEcwTightOrFullMode();
 		}
@@ -10982,27 +10955,6 @@ namespace OpenDental {
 							break;
 						case DisplayFields.InternalNames.ChartView.Quadrant:
 							CheckForSearchMatch("quadrant",table.Rows[i],ref listSearchInputs);
-							break;
-						case DisplayFields.InternalNames.ChartView.ScheduleBy:
-							CheckForSearchMatch("orionDateScheduleBy",table.Rows[i],ref listSearchInputs);
-							break;
-						case DisplayFields.InternalNames.ChartView.StopClock:
-							CheckForSearchMatch("orionDateStopClock",table.Rows[i],ref listSearchInputs);
-							break;
-						case DisplayFields.InternalNames.ChartView.DPC:
-							CheckForSearchMatch("orionDPC",table.Rows[i],ref listSearchInputs);
-							break;
-						case DisplayFields.InternalNames.ChartView.EffectiveComm:
-							CheckForSearchMatch("orionIsEffectiveComm",table.Rows[i],ref listSearchInputs);
-							break;
-						case DisplayFields.InternalNames.ChartView.OnCall:
-							CheckForSearchMatch("orionIsOnCall",table.Rows[i],ref listSearchInputs);
-							break;
-						case DisplayFields.InternalNames.ChartView.Stat2:
-							CheckForSearchMatch("orionStatus2",table.Rows[i],ref listSearchInputs);
-							break;
-						case DisplayFields.InternalNames.ChartView.DPCpost:
-							CheckForSearchMatch("orionDPCpost",table.Rows[i],ref listSearchInputs);
 							break;
 						case DisplayFields.InternalNames.ChartView.Length:
 							CheckForSearchMatch("length",table.Rows[i],ref listSearchInputs);

@@ -311,8 +311,14 @@ namespace OpenDental{
 				return;
 			}
 			if(!Programs.IsEnabled(ProgramName.Transworld)) {
+				string url="https://opendental.com/resources/redirects/redirecttransworldsystems.html";
 				try {
-					Process.Start("https://opendental.com/resources/redirects/redirecttransworldsystems.html");
+					if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+						ODCloudClient.LaunchFileWithODCloudClient(url);
+					}
+					else {
+						Process.Start(url);
+					}
 				}
 				catch(Exception ex) {
 					ex.DoNothing();

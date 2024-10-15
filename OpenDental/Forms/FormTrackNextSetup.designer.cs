@@ -26,17 +26,19 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTrackNextSetup));
 			this.butSave = new OpenDental.UI.Button();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
-			this.textDaysFuture = new OpenDental.ValidNum();
-			this.textDaysPast = new OpenDental.ValidNum();
+			this.textDaysFuture = new System.Windows.Forms.TextBox();
+			this.textDaysPast = new System.Windows.Forms.TextBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(262, 91);
+			this.butSave.Location = new System.Drawing.Point(289, 110);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
@@ -45,59 +47,71 @@ namespace OpenDental{
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Controls.Add(this.label2);
+			this.groupBox3.Controls.Add(this.label1);
 			this.groupBox3.Controls.Add(this.textDaysFuture);
 			this.groupBox3.Controls.Add(this.textDaysPast);
 			this.groupBox3.Controls.Add(this.label14);
 			this.groupBox3.Controls.Add(this.label15);
 			this.groupBox3.Location = new System.Drawing.Point(29, 12);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(286, 67);
+			this.groupBox3.Size = new System.Drawing.Size(290, 71);
 			this.groupBox3.TabIndex = 55;
-			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Default Dates";
 			// 
 			// textDaysFuture
 			// 
-			this.textDaysFuture.Location = new System.Drawing.Point(192, 38);
-			this.textDaysFuture.MaxVal = 10000;
-			this.textDaysFuture.MinVal = 0;
+			this.textDaysFuture.Location = new System.Drawing.Point(89, 39);
 			this.textDaysFuture.Name = "textDaysFuture";
 			this.textDaysFuture.Size = new System.Drawing.Size(53, 20);
-			this.textDaysFuture.TabIndex = 66;
-			this.textDaysFuture.ShowZero = false;
+			this.textDaysFuture.TabIndex = 57;
 			// 
 			// textDaysPast
 			// 
-			this.textDaysPast.Location = new System.Drawing.Point(192, 16);
-			this.textDaysPast.MaxVal = 10000;
-			this.textDaysPast.MinVal = 0;
+			this.textDaysPast.Location = new System.Drawing.Point(89, 17);
 			this.textDaysPast.Name = "textDaysPast";
 			this.textDaysPast.Size = new System.Drawing.Size(53, 20);
-			this.textDaysPast.TabIndex = 65;
-			this.textDaysPast.ShowZero = false;
+			this.textDaysPast.TabIndex = 56;
 			// 
 			// label14
 			// 
-			this.label14.Location = new System.Drawing.Point(6, 16);
+			this.label14.Location = new System.Drawing.Point(6, 18);
 			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(184, 20);
+			this.label14.Size = new System.Drawing.Size(80, 20);
 			this.label14.TabIndex = 50;
-			this.label14.Text = "Days Past (e.g. 365, blank, etc)";
+			this.label14.Text = "Days Past";
 			this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(9, 37);
+			this.label15.Location = new System.Drawing.Point(3, 39);
 			this.label15.Name = "label15";
-			this.label15.Size = new System.Drawing.Size(181, 20);
+			this.label15.Size = new System.Drawing.Size(83, 20);
 			this.label15.TabIndex = 52;
-			this.label15.Text = "Days Future (e.g. 7)";
+			this.label15.Text = "Days Future";
 			this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(147, 17);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(140, 20);
+			this.label1.TabIndex = 58;
+			this.label1.Text = "Examples:  365, 0, blank";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(147, 39);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(140, 20);
+			this.label2.TabIndex = 59;
+			this.label2.Text = "Examples:  365, 0, blank";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FormTrackNextSetup
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(349, 127);
+			this.ClientSize = new System.Drawing.Size(376, 146);
 			this.Controls.Add(this.butSave);
 			this.Controls.Add(this.groupBox3);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -114,9 +128,11 @@ namespace OpenDental{
 
 		private OpenDental.UI.Button butSave;
 		private OpenDental.UI.GroupBox groupBox3;
-		private ValidNum textDaysFuture;
-		private ValidNum textDaysPast;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.TextBox textDaysPast;
+		private System.Windows.Forms.TextBox textDaysFuture;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
 	}
 }

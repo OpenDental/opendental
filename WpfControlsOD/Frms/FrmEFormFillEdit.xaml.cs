@@ -24,6 +24,12 @@ namespace OpenDental {
 		private bool _isLoaded;
 		///<summary>Used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.</summary>
 		private string _maskedSSNOld;
+		///<summary>When this form opens or after any save to db, this list gets reset as a copy of the fields. This allows us to compare to see if anything changed before saving.</summary>
+		private List<EFormField> _listEFormFieldsOld;
+		//these three fields are the result for TryToSaveData().
+		private bool _wasError;
+		private bool _wasUnchanged;
+		private bool _wasSaved;
 		#endregion Fields
 
 		#region Constructor
@@ -38,6 +44,7 @@ namespace OpenDental {
 
 		#region Methods - event handlers
 		private void FrmEFormFillEdit_Load(object sender, EventArgs e) {
+			_listEFormFieldsOld=EFormFields.GetDeepCopy(EFormCur.ListEFormFields);
 			Lang.F(this);
 			ctrlEFormFill.ListEFormFields=EFormCur.ListEFormFields;//two references to same list of objects
 			ctrlEFormFill.ShowLabelsBold=EFormCur.ShowLabelsBold;
@@ -47,6 +54,10 @@ namespace OpenDental {
 			_maskedSSNOld=EFormCur.ListEFormFields.Find(x=>x.DbLink=="SSN")?.ValueString;//null is ok
 			textDescription.Text=EFormCur.Description;
 			textDateTime.Text=EFormCur.DateTimeShown.ToShortDateString()+" "+EFormCur.DateTimeShown.ToShortTimeString();
+			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true);
+			comboImageCat.Items.AddDefNone();
+			comboImageCat.Items.AddDefs(listDefs);
+			comboImageCat.SetSelectedDefNum(EFormCur.SaveImageCategory);
 			bool isSigned=false;
 			for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
 				if(EFormCur.ListEFormFields[i].FieldType.In(EnumEFormFieldType.SigBox)
@@ -60,7 +71,7 @@ namespace OpenDental {
 				ctrlEFormFill.IsReadOnly=true;
 			}
 			else{
-				butUnlock.Visible=false;
+				butUnlockSig.Visible=false;
 			}
 			_isLoaded=true;
 			SetCtrlWidth();
@@ -80,6 +91,7 @@ namespace OpenDental {
 			}
 			EFormFields.DeleteForForm(EFormCur.EFormNum);
 			EForms.Delete(EFormCur.EFormNum,EFormCur.PatNum);
+			//There is no need to send any signal to calling form that user deleted.
 			IsDialogOK=true;
 		}
 
@@ -103,30 +115,38 @@ namespace OpenDental {
 			ctrlEFormFill.RefreshLayout();//todo: have this run while the preview window is still open?
 		}
 
-		private void butUnlock_Click(object sender,EventArgs e) {
-			//this button will not be needed in the eClipboard
+		private void butUnlockSig_Click(object sender,EventArgs e) {
 			ctrlEFormFill.IsReadOnly=false;
-			butUnlock.Visible=false;
+			butUnlockSig.Visible=false;
 		}
 
 		private void butChangePat_Click(object sender,EventArgs e) {
-
+			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
+			frmPatientSelect.ShowDialog();
+			if(frmPatientSelect.IsDialogCancel) {
+				return;
+			}
+//todo: EnumPermType.EformEdit
+			//SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved to PatNum")+" "+frmPatientSelect.PatNumSelected);
+			//SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,frmPatientSelect.PatNumSelected,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved from PatNum")+" "+SheetCur.PatNum);
+			EFormCur.PatNum=frmPatientSelect.PatNumSelected;
 		}
 
 		private void butEClipboard_Click(object sender,EventArgs e) {
-			EFormCur.Status=EnumEFormStatus.ReadyForPatientFill;
-			if(!TryToSaveData()){
+			EFormCur.Status=EnumEFormStatus.ShowInEClipboard;
+			TryToSaveData();
+			if(_wasError){
 				return;
 			}
-			//Create mobile notification to update eClipboard device with new eForm.
-			MobileNotifications.CI_AddEForm(EFormCur.PatNum,EFormCur.EFormNum);
-//todo:EFormEdit perm
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
+			MobileNotifications.CI_AddEForm(EFormCur.PatNum,EFormCur.EFormNum);//tells eClipboard to pull the eForm
+//todo EnumPermType.EformEdit
+			//SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
 			IsDialogOK=true;
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
-			if(!ValidateAndSave()){
+			TryToSaveData();
+			if(_wasError){
 				return;
 			}
 			IsDialogOK=true;
@@ -189,52 +209,80 @@ namespace OpenDental {
 			//I can live with that. User can just sign again. Why would they be resizing that much anyway?
 		}
 
-		///<summary>If an error won't allow, then it shows a MsgBox and then returns false.</summary>
-		private bool TryToSaveData() {
+		///<summary>3 variables track the result.</summary>
+		private void TryToSaveData() {
+			_wasError=false;
+			_wasUnchanged=false;
+			_wasSaved=false;
+			ctrlEFormFill.FillFieldsFromControls();
+			EFormValidation eFormValidation = EForms.Validate(EFormCur,_maskedSSNOld);//this line enforces required fields.
+			if(eFormValidation.ErrorMsg!="") {
+				ctrlEFormFill.SetVisibilities(eFormValidation.PageNum);
+				MsgBox.Show(eFormValidation.ErrorMsg);
+				_wasError=true;
+				return;
+			}
 			DateTime dateTimeShown=DateTime.MinValue;
 			try {
 				dateTimeShown=DateTime.Parse(textDateTime.Text);
 			}
 			catch(Exception) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
-				return false;
+				_wasError=true;
+				return;
 			}
-			EFormCur.Description=textDescription.Text;
-			EFormCur.DateTimeShown=dateTimeShown;
-			EFormCur.DateTEdited=DateTime.Now;//Will get overwritten on insert, but used for update.  Fill even if user did not make changes.
+			long saveImageCategory=comboImageCat.GetSelectedDefNum();
+			//End of validation.
+			//Test to see if any changes were made.
+			bool isChanged=false;
 			if(EFormCur.IsNew){
-				EFormCur.DateTimeShown=DateTime.Now;
+				isChanged=true;
+			}
+			if(EFormCur.Description!=textDescription.Text
+				|| EFormCur.DateTimeShown!=dateTimeShown
+				|| EFormCur.SaveImageCategory!=saveImageCategory)
+			{
+				isChanged=true;
+			}
+			isChanged|=EFormFields.IsAnyChanged(EFormCur.ListEFormFields,_listEFormFieldsOld);
+			if(!isChanged){
+				_wasUnchanged=true;
+				return;
+			}
+			_listEFormFieldsOld=EFormFields.GetDeepCopy(EFormCur.ListEFormFields);
+			//from here down we will actually save
+			_wasSaved=true;
+			EFormCur.Description=textDescription.Text;
+			EFormCur.SaveImageCategory=saveImageCategory;
+			if(EFormCur.IsNew){
+				EFormCur.DateTimeShown=DateTime.Now;//instead of what user might have typed in
+				//DateTEdited gets set automatically for insert
 				EForms.Insert(EFormCur);
-				EFormCur.IsNew=false;
+				EFormCur.IsNew=false;//because we frequently stay in this form
+				for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
+					EFormCur.ListEFormFields[i].EFormNum=EFormCur.EFormNum;
+					EFormCur.ListEFormFields[i].ItemOrder=i;
+					EFormFields.Insert(EFormCur.ListEFormFields[i]);
+				}
 			}
 			else{
+				EFormCur.DateTimeShown=dateTimeShown;
+				EFormCur.DateTEdited=DateTime.Now;
 				EForms.Update(EFormCur);
 			}
-			//Delete all of the fields that are on the form from the database and re-insert them.
+			//Synching here will be very easy compared to other places because user can't delete, add, or reorder. It's all just simple edits.
+			//Could do this in a number of different ways.
+			//Decided in this case that the simplest approach is to just
+			//delete all of the fields that are on the form from the database and re-insert them.
 			EFormFields.DeleteForForm(EFormCur.EFormNum);
 			for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
 				EFormCur.ListEFormFields[i].EFormNum=EFormCur.EFormNum;
 				EFormCur.ListEFormFields[i].ItemOrder=i;
 				EFormFields.Insert(EFormCur.ListEFormFields[i]);//ignores any existing PK when inserting
 			}
-			return true;
+//todo EnumPermType.EformEdit
+			//SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,"EForm: "+EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
 		}
-
-		private bool ValidateAndSave() {
-			ctrlEFormFill.FillFieldsFromControls();
-			EFormValidation eFormValidation = EForms.Validate(EFormCur,_maskedSSNOld);
-			if(eFormValidation.ErrorMsg!="") {
-				ctrlEFormFill.SetVisibilities(eFormValidation.PageNum);
-				MsgBox.Show(eFormValidation.ErrorMsg);
-				return false;
-			}
-			if(!TryToSaveData()) {
-				return false;
-			}
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,"EForm: "+EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
-			return true;
-		}
-
 		#endregion Methods - private
 
 		

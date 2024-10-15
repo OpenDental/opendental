@@ -74,9 +74,19 @@ namespace OpenDental{
 
 		private void InitDateRange() {
 			int dayCount=PrefC.GetInt(PrefName.PlannedApptDaysPast);
-			dateRangePicker.SetDateTimeFrom(DateTime.Today.AddDays(-dayCount));
+			if(dayCount==-1) {
+				dateRangePicker.SetDateTimeFrom(DateTime.MinValue);
+			}
+			else {
+				dateRangePicker.SetDateTimeFrom(DateTime.Today.AddDays(-dayCount));
+			}
 			dayCount=PrefC.GetInt(PrefName.PlannedApptDaysFuture);
-			dateRangePicker.SetDateTimeTo(DateTime.Today.AddDays(dayCount));
+			if(dayCount==-1) {
+				dateRangePicker.SetDateTimeTo(DateTime.MinValue);
+			}
+			else {
+				dateRangePicker.SetDateTimeTo(DateTime.Today.AddDays(dayCount));
+			}
 		}
 
 		private void setupToolStripMenuItem_Click(object sender,EventArgs e) {
@@ -247,6 +257,11 @@ namespace OpenDental{
 		private void butRefresh_Click(object sender,EventArgs e) {
 			RefreshAptList();
 			FillGrid();
+		}
+
+		private void butAllDates_Click(object sender,EventArgs e) {
+			dateRangePicker.SetDateTimeFrom(DateTime.MinValue);
+			dateRangePicker.SetDateTimeTo(DateTime.MinValue);
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {

@@ -240,7 +240,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			for(int i=0;i<EFormDefCur.ListEFormFieldDefs.Count;i++){
 				if(EFormDefCur.ListEFormFieldDefs[i].FieldType==EnumEFormFieldType.RadioButtons){
 					EFormField eFormField=EFormFields.FromDef(EFormDefCur.ListEFormFieldDefs[i]);
-					LanguagePats.SyncRadioButtonTranslations(eFormField);//Ensures translations match up with PickListVis for RadioButtons, whether users save or cancel out of the window.
+					_isChangedLanCache|=LanguagePats.SyncRadioButtonTranslations(eFormField);//Ensures translations match up with PickListVis for RadioButtons, whether users save or cancel out of the window.
 				}
 			}
 			if(_isChangedLanCache){

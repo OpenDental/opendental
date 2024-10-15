@@ -55,13 +55,6 @@ namespace OpenDentBusiness {
 			table.Columns.Add("length");
 			table.Columns.Add("LabCaseNum");
 			table.Columns.Add("note");
-			table.Columns.Add("orionDateScheduleBy");
-			table.Columns.Add("orionDateStopClock");
-			table.Columns.Add("orionDPC");
-			table.Columns.Add("orionDPCpost");
-			table.Columns.Add("orionIsEffectiveComm");
-			table.Columns.Add("orionIsOnCall");
-			table.Columns.Add("orionStatus2");
 			table.Columns.Add("PatNum");//only used for Commlog and Task
 			table.Columns.Add("Priority");//for sorting
 			table.Columns.Add("priority");
@@ -110,16 +103,15 @@ namespace OpenDentBusiness {
 			{
 				#region Procedures
 				command="SELECT provider.Abbr,procedurecode.AbbrDesc,appointment.AptDateTime,procedurelog.BaseUnits,procedurelog.ClinicNum,"
-				+"procedurelog.CodeNum,procedurelog.DateEntryC,orionproc.DateScheduleBy,orionproc.DateStopClock,procedurelog.DateTP,"
-				+"procedurecode.Descript,orionproc.DPC,orionproc.DPCpost,Dx,HideGraphics,"
+				+"procedurelog.CodeNum,procedurelog.DateEntryC,procedurelog.DateTP,"
+				+"procedurecode.Descript,Dx,HideGraphics,"
 				+"(SELECT MAX(HL7ProcAttachNum)	FROM hl7procattach WHERE hl7procattach.ProcNum=procedurelog.ProcNum) HL7ProcAttachNum,"
-				+"orionproc.IsEffectiveComm,IsLocked,"
-				+"orionproc.IsOnCall,LaymanTerm,procedurelog.Priority,procedurecode.ProcCode,ProcDate,ProcFee,procedurelog.ProcNum,ProcNumLab,procedurelog.ProcTime,"
-				+"procedurelog.ProcTimeEnd,procedurelog.Prognosis,provider.ProvNum,ProcStatus,orionproc.Status2,Surf,ToothNum,ToothRange,UnitQty "
+				+"IsLocked,"
+				+"LaymanTerm,procedurelog.Priority,procedurecode.ProcCode,ProcDate,ProcFee,procedurelog.ProcNum,ProcNumLab,procedurelog.ProcTime,"
+				+"procedurelog.ProcTimeEnd,procedurelog.Prognosis,provider.ProvNum,ProcStatus,Surf,ToothNum,ToothRange,UnitQty "
 				+"FROM procedurelog "
 				+"LEFT JOIN procedurecode ON procedurecode.CodeNum=procedurelog.CodeNum "
 				+"LEFT JOIN provider ON provider.ProvNum=procedurelog.ProvNum "
-				+"LEFT JOIN orionproc ON procedurelog.ProcNum=orionproc.ProcNum "
 				+"LEFT JOIN appointment ON appointment.AptNum=procedurelog.AptNum "
 				+"AND (appointment.AptStatus="+POut.Long((int)ApptStatus.Scheduled)
 				+" OR appointment.AptStatus="+POut.Long((int)ApptStatus.Broken)
@@ -231,47 +223,6 @@ namespace OpenDentBusiness {
 					if(componentsToLoad.ShowProcNotes) {
 						#region note-----------------------------------------------------------------------------------------------------------
 						row["note"]="";
-						dateT=PIn.DateT(rowProc["DateScheduleBy"].ToString());
-						if(dateT.Year<1880) {
-							row["orionDateScheduleBy"]="";
-						}
-						else {
-							row["orionDateScheduleBy"]=dateT.ToString(Lans.GetShortDateTimeFormat());
-						}
-						dateT=PIn.DateT(rowProc["DateStopClock"].ToString());
-						if(dateT.Year<1880) {
-							row["orionDateStopClock"]="";
-						}
-						else {
-							row["orionDateStopClock"]=dateT.ToString(Lans.GetShortDateTimeFormat());
-						}
-						if(((OrionDPC)PIn.Int(rowProc["DPC"].ToString())).ToString()=="NotSpecified") {
-							row["orionDPC"]="";
-						}
-						else {
-							row["orionDPC"]=((OrionDPC)PIn.Int(rowProc["DPC"].ToString())).ToString();
-						}
-						if(((OrionDPC)PIn.Int(rowProc["DPCpost"].ToString())).ToString()=="NotSpecified") {
-							row["orionDPCpost"]="";
-						}
-						else {
-							row["orionDPCpost"]=((OrionDPC)PIn.Int(rowProc["DPCpost"].ToString())).ToString();
-						}
-						row["orionIsEffectiveComm"]="";
-						if(rowProc["IsEffectiveComm"].ToString()=="1") {
-							row["orionIsEffectiveComm"]="Y";
-						}
-						else if(rowProc["IsEffectiveComm"].ToString()=="0") {
-							row["orionIsEffectiveComm"]="";
-						}
-						row["orionIsOnCall"]="";
-						if(rowProc["IsOnCall"].ToString()=="1") {
-							row["orionIsOnCall"]="Y";
-						}
-						else if(rowProc["IsOnCall"].ToString()=="0") {
-							row["orionIsOnCall"]="";
-						}
-						row["orionStatus2"]=((OrionStatus)PIn.Int(rowProc["Status2"].ToString())).ToString();
 						if(tableRawNotesForProc!=null && tableRawNotesForProc.Count>0) {
 							if(isAuditMode) {//we will include all notes for each proc.  We will concat and make readable.
 								foreach(DataRow rowCur in tableRawNotesForProc) {
@@ -482,13 +433,6 @@ namespace OpenDentBusiness {
 						row["length"]=(endTime-startTime).ToStringHmm();
 					}
 					row["note"]=rawComm.Rows[i]["Note"].ToString();
-					row["orionDateScheduleBy"]="";
-					row["orionDateStopClock"]="";
-					row["orionDPC"]="";
-					row["orionDPCpost"]="";
-					row["orionIsEffectiveComm"]="";
-					row["orionIsOnCall"]="";
-					row["orionStatus2"]="";
 					row["PatNum"]=rawComm.Rows[i]["PatNum"].ToString();
 					row["Priority"]="";
 					row["priority"]="";
@@ -579,13 +523,6 @@ namespace OpenDentBusiness {
 									row["length"]=(endTime-startTime).ToStringHmm();
 							}
 							row["note"]=WebChatNotes.FormatForDisplay(listWebChatNotesAll.FindAll(x=>x.WebChatSessionNum==session.WebChatSessionNum));
-							row["orionDateScheduleBy"]="";
-							row["orionDateStopClock"]="";
-							row["orionDPC"]="";
-							row["orionDPCpost"]="";
-							row["orionIsEffectiveComm"]="";
-							row["orionIsOnCall"]="";
-							row["orionStatus2"]="";
 							row["PatNum"]=session.PatNum.ToString();
 							row["Priority"]="";
 							row["priority"]="";
@@ -664,13 +601,6 @@ namespace OpenDentBusiness {
 					row["LabCaseNum"] = 0;
 					row["length"]="";
 					row["note"] = "";
-					row["orionDateScheduleBy"]="";
-					row["orionDateStopClock"]="";
-					row["orionDPC"]="";
-					row["orionDPCpost"]="";
-					row["orionIsEffectiveComm"]="";
-					row["orionIsOnCall"]="";
-					row["orionStatus2"]="";
 					row["PatNum"] = "";
 					row["Priority"] = "";
 					row["priority"]="";
@@ -749,13 +679,6 @@ namespace OpenDentBusiness {
 					row["LabCaseNum"]=0;
 					row["length"]="";
 					row["note"]=rawRx.Rows[i]["Notes"].ToString();
-					row["orionDateScheduleBy"]="";
-					row["orionDateStopClock"]="";
-					row["orionDPC"]="";
-					row["orionDPCpost"]="";
-					row["orionIsEffectiveComm"]="";
-					row["orionIsOnCall"]="";
-					row["orionStatus2"]="";
 					row["PatNum"]="";
 					row["Priority"]="";
 					row["priority"]="";
@@ -853,13 +776,6 @@ namespace OpenDentBusiness {
 					row["LabCaseNum"]=rawLab.Rows[i]["LabCaseNum"].ToString();
 					row["length"]="";
 					row["note"]=rawLab.Rows[i]["Instructions"].ToString();
-					row["orionDateScheduleBy"]="";
-					row["orionDateStopClock"]="";
-					row["orionDPC"]="";
-					row["orionDPCpost"]="";
-					row["orionIsEffectiveComm"]="";
-					row["orionIsOnCall"]="";
-					row["orionStatus2"]="";
 					row["PatNum"]="";
 					row["Priority"]="";
 					row["priority"]="";
@@ -1002,13 +918,6 @@ namespace OpenDentBusiness {
 						}
 					}
 					row["note"]=txt;
-					row["orionDateScheduleBy"]="";
-					row["orionDateStopClock"]="";
-					row["orionDPC"]="";
-					row["orionDPCpost"]="";
-					row["orionIsEffectiveComm"]="";
-					row["orionIsOnCall"]="";
-					row["orionStatus2"]="";
 					row["PatNum"]=rawTaskRow["PatNum"].ToString();
 					row["Priority"]="";
 					row["priority"]="";
@@ -1146,13 +1055,6 @@ namespace OpenDentBusiness {
 					row["length"]=new TimeSpan(0,rawApt.Rows[i]["Pattern"].ToString().Length*5,0).ToStringHmm();
 				}
 				row["note"]=rawApt.Rows[i]["Note"].ToString();
-				row["orionDateScheduleBy"]="";
-				row["orionDateStopClock"]="";
-				row["orionDPC"]="";
-				row["orionDPCpost"]="";
-				row["orionIsEffectiveComm"]="";
-				row["orionIsOnCall"]="";
-				row["orionStatus2"]="";
 				row["PatNum"]="";
 				row["Priority"]="";
 				row["priority"]="";
@@ -1234,13 +1136,6 @@ namespace OpenDentBusiness {
 					row["LabCaseNum"]=0;
 					row["length"]="";
 					row["note"]=rawEmail.Rows[i]["BodyText"].ToString();
-					row["orionDateScheduleBy"]="";
-					row["orionDateStopClock"]="";
-					row["orionDPC"]="";
-					row["orionDPCpost"]="";
-					row["orionIsEffectiveComm"]="";
-					row["orionIsOnCall"]="";
-					row["orionStatus2"]="";
 					row["PatNum"]="";
 					row["Priority"]="";
 					row["priority"]="";
@@ -1284,7 +1179,7 @@ namespace OpenDentBusiness {
 				#endregion email
 			}
 			if(componentsToLoad.ShowSheetsEForms) {
-				#region sheets and eForms
+				#region sheets
 				command="SELECT PatNum,Description,sheet.SheetNum,sheet.DocNum,sheet.IsDeleted,DateTimeSheet,SheetType,"
 					+"AVG(CASE WHEN FieldValue!='' THEN 1 ELSE 0 END) AS SigPresent "
 					+"FROM sheet "
@@ -1300,7 +1195,7 @@ namespace OpenDentBusiness {
 					listPatientClonesAll=Patients.GetLimForPats(listPatientClonePatNums);
 				}
 				command+=") AND SheetType!="+POut.Long((int)SheetTypeEnum.Rx)+" "//rx are only accesssible from within Rx edit window.
-				+"AND SheetType!="+POut.Long((int)SheetTypeEnum.LabSlip)+" ";//labslips are only accesssible from within the labslip edit window.
+					+"AND SheetType!="+POut.Long((int)SheetTypeEnum.LabSlip)+" ";//labslips are only accesssible from within the labslip edit window.
 				if(!isAuditMode) {
 					command+="AND IsDeleted=0 ";//Don't show deleted sheets unless it's audit mode.
 				}
@@ -1352,13 +1247,6 @@ namespace OpenDentBusiness {
 					row["LabCaseNum"]=0;
 					row["length"]="";
 					row["note"]="";
-					row["orionDateScheduleBy"]="";
-					row["orionDateStopClock"]="";
-					row["orionDPC"]="";
-					row["orionDPCpost"]="";
-					row["orionIsEffectiveComm"]="";
-					row["orionIsOnCall"]="";
-					row["orionStatus2"]="";
 					row["PatNum"]="";
 					row["Priority"]="";
 					row["priority"]="";
@@ -1406,7 +1294,115 @@ namespace OpenDentBusiness {
 					row["EmailMessageHtmlType"]="0";
 					rows.Add(row);
 				}
-				#endregion sheets and eForms
+				#endregion sheets
+				#region eForms
+				command="SELECT eform.PatNum,Description,eform.EFormNum,DateTimeShown,"
+					+"AVG(CASE WHEN ValueString!='' THEN 1 ELSE 0 END) AS SigPresent "
+					+"FROM eform "
+					+"LEFT JOIN eformfield ON eform.EFormNum=eformfield.EFormNum "
+					+"AND eformfield.FieldType="+POut.Long((int)EnumEFormFieldType.SigBox)+" "
+					+"WHERE (eform.PatNum="+POut.Long(patNum);
+				//List<Patient> listPatientClonesAll=new List<Patient>();
+				if(PrefC.GetBool(PrefName.ShowFeaturePatientClone)) {
+					List<long> listPatientClonePatNums=Patients.GetClonePatNumsAll(patNum);
+					//Always include every single sheet for ANY clone or master of said clones.
+					command+=" OR eform.PatNum IN("+string.Join(",",listPatientClonePatNums)+")";
+					//Now go get the patient object for each clone which might be used below.
+					listPatientClonesAll=Patients.GetLimForPats(listPatientClonePatNums);
+				}
+				command+=") ";
+				command+="GROUP BY eform.EFormNum,eform.PatNum,Description,DateTimeShown "//why would we group?
+					+"ORDER BY DateTimeShown";
+				DataTable rawEForm=dcon.GetTable(command);
+				for(int i=0;i<rawEForm.Rows.Count;i++) {
+					row=table.NewRow();
+					row["AbbrDesc"]="";
+					row["aptDateTime"]=DateTime.MinValue;
+					row["AptNum"]=0;
+					row["clinic"]="";
+					row["ClinicNum"]=0;
+					row["CodeNum"]="";
+					row["colorBackG"]=Color.White.ToArgb();
+					row["colorText"]=Color.Black.ToArgb();//Defs.Long[(int)DefCat.ProgNoteColors][6].ItemColor.ToArgb().ToString();//needs to change
+					row["CommlogNum"]=0;
+					row["CommSource"]="";
+					row["commType"]="";
+					dateT=PIn.DateT(rawEForm.Rows[i]["DateTimeShown"].ToString());
+					if(dateT.Year<1880) {
+						row["dateEntryC"]="";
+						row["dateTP"]="";
+					}
+					else {
+						row["dateEntryC"]=dateT.ToString(Lans.GetShortDateTimeFormat());
+						row["dateTP"]=dateT.ToString(Lans.GetShortDateTimeFormat());
+					}
+					//Add patient name if using clone feature and the eForm belongs to the clone.
+					if(PrefC.GetBool(PrefName.ShowFeaturePatientClone) && rawEForm.Rows[i]["PatNum"].ToString()!=patNum.ToString()) {
+						Patient patientClone=listPatientClonesAll.FirstOrDefault(x => x.PatNum==PIn.Long(rawEForm.Rows[i]["PatNum"].ToString()));
+						if(patientClone!=null && !string.IsNullOrWhiteSpace(patientClone.FName)) {
+							row["description"]="("+patientClone.FName+") ";
+						}
+					}
+					row["description"]+=rawEForm.Rows[i]["Description"].ToString();
+					row["DocNum"]=0;
+					row["dx"]="";
+					row["Dx"]="";
+					row["EFormNum"]=rawEForm.Rows[i]["EFormNum"].ToString();
+					row["EmailMessageNum"]=0;
+					row["FormPatNum"]=0;
+					row["HideGraphics"]="";
+					row["isLocked"]="";
+					row["LabCaseNum"]=0;
+					row["length"]="";
+					row["note"]="";
+					row["PatNum"]="";
+					row["Priority"]="";
+					row["priority"]="";
+					row["ProcCode"]="";
+					if(dateT.Year<1880) {
+						row["procDate"]="";
+					}
+					else {
+						row["procDate"]=dateT.ToString(Lans.GetShortDateTimeFormat());
+					}
+					row["ProcDate"]=dateT;
+					row["procTime"]="";
+					if(dateT.TimeOfDay!=TimeSpan.Zero) {
+						row["procTime"]=dateT.ToString("h:mm")+dateT.ToString("%t").ToLower();
+					}
+					row["procTimeEnd"]="";
+					row["procFee"]="";
+					row["ProcNum"]=0;
+					row["ProcNumLab"]="";
+					row["procStatus"]="";
+					row["ProcStatus"]="";
+					row["prov"]="";
+					row["ProvNum"]="";
+					row["quadrant"]="";
+					row["RxNum"]=0;
+					row["SheetNum"]=0;
+					row["signature"]="";
+					if(PIn.Double(rawEForm.Rows[i]["SigPresent"].ToString())==1) {
+						row["signature"]=Lans.g("ChartModule","Signed");
+					}
+					else if(PIn.Double(rawEForm.Rows[i]["SigPresent"].ToString())==0) {
+						row["signature"]="";
+					}
+					else {
+						row["signature"]=Lans.g("ChartModule","Partial");
+					}
+					row["Surf"]="";
+					row["TaskNum"]=0;
+					row["toothNum"]="";
+					row["ToothNum"]="";
+					row["ToothRange"]="";
+					row["user"]="";
+					row["WebChatSessionNum"]=0;
+					row["EmailMessageHideIn"]="0";
+					row["EmailMessageHtmlType"]="0";
+					rows.Add(row);
+				}
+				#endregion eForms
 			}
 			#region Sorting
 			if(componentsToLoad.UseMobileOrder) {
@@ -2426,6 +2422,9 @@ namespace OpenDentBusiness {
 		///<summary>10 - FormPatNum is not 0.</summary>
 		[ProgNotesRow("FormPatNum")]
 		FormPat,
+		///<summary>11 - EForm.</summary>
+		[ProgNotesRow("EFormNum")]
+		EForm,
 	}
 
 	/// <summary>

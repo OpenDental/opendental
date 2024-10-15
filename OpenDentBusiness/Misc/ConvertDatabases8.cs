@@ -2215,5 +2215,15 @@ namespace OpenDentBusiness {
 			}
 			//End 46298
 		}
+
+		private static void To24_3_7() {
+			//Start S53050
+			string command="ALTER TABLE eform ADD SaveImageCategory bigint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eformdef ADD SaveImageCategory bigint NOT NULL";
+			Db.NonQ(command);
+			//End S53050
+		}
+
 	}
 }

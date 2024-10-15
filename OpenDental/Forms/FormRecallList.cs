@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using CodeBase;
 using OpenDental.UI;
@@ -809,7 +810,24 @@ namespace OpenDental {
 				return;
 			}
 			#endregion Recall List Validation
-			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Send Web Sched emails and/or texts to all of the selected patients?")) {
+			List<long> listPatNums=gridRecalls.SelectedGridRows.Select(x => ((PatRowTag)x.Tag).PatNum).ToList();
+			List<CommOptOut> listCommOptOuts=CommOptOuts.GetForPats(listPatNums);
+			List<CommOptOut> listCommOptOutsWebSched=listCommOptOuts.FindAll(x => x.IsOptedOut(CommOptOutMode.Text,CommOptOutType.WebSchedRecall)
+				|| x.IsOptedOut(CommOptOutMode.Email,CommOptOutType.WebSchedRecall));
+			string messageText=Lans.g(this,"Send Web Sched emails and/or texts to all of the selected patients?");
+			if(!listCommOptOutsWebSched.IsNullOrEmpty()) {
+				List<Patient> listPatientLim=Patients.GetLimForPats(listCommOptOutsWebSched.Select(x => x.PatNum).ToList());
+				StringBuilder stringBuilder=new StringBuilder();
+				stringBuilder.AppendLine(Lans.g(this,"The following patients have opted out of receiving automated emails and/or texts:"));
+				for(int i=0;i<listPatientLim.Count;i++) {
+					stringBuilder.AppendLine(listPatientLim[i].LName+", "+listPatientLim[i].FName);
+				}
+				stringBuilder.AppendLine(messageText);
+				messageText=stringBuilder.ToString();
+			}
+			using MsgBoxCopyPaste msgBoxCopyPasteMessage=new MsgBoxCopyPaste(messageText);
+			msgBoxCopyPasteMessage.ShowDialog();
+			if(msgBoxCopyPasteMessage.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			Cursor.Current=Cursors.WaitCursor;

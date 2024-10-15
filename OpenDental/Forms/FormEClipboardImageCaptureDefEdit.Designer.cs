@@ -27,7 +27,6 @@ namespace OpenDental{
 			this.butSave = new OpenDental.UI.Button();
 			this.labelFrequencyHelp = new System.Windows.Forms.Label();
 			this.labelOCRCaptureType = new System.Windows.Forms.Label();
-			this.comboOcrCaptureType = new OpenDental.UI.ComboBox();
 			this.textFrequency = new OpenDental.ValidNum();
 			this.butDelete = new OpenDental.UI.Button();
 			this.labelImageCaptureDef = new System.Windows.Forms.Label();
@@ -35,12 +34,13 @@ namespace OpenDental{
 			this.textImage = new System.Windows.Forms.TextBox();
 			this.textValue = new System.Windows.Forms.TextBox();
 			this.labelValue = new System.Windows.Forms.Label();
+			this.listOCRCaptureType = new OpenDental.UI.ListBox();
 			this.SuspendLayout();
 			// 
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(331, 301);
+			this.butSave.Location = new System.Drawing.Point(334, 360);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
@@ -58,20 +58,12 @@ namespace OpenDental{
 			// 
 			// labelOCRCaptureType
 			// 
-			this.labelOCRCaptureType.Location = new System.Drawing.Point(8, 204);
+			this.labelOCRCaptureType.Location = new System.Drawing.Point(9, 202);
 			this.labelOCRCaptureType.Name = "labelOCRCaptureType";
 			this.labelOCRCaptureType.Size = new System.Drawing.Size(115, 20);
 			this.labelOCRCaptureType.TabIndex = 7;
 			this.labelOCRCaptureType.Text = "OCR Capture Type";
 			this.labelOCRCaptureType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboOcrCaptureType
-			// 
-			this.comboOcrCaptureType.Location = new System.Drawing.Point(130, 203);
-			this.comboOcrCaptureType.Name = "comboOcrCaptureType";
-			this.comboOcrCaptureType.Size = new System.Drawing.Size(180, 21);
-			this.comboOcrCaptureType.TabIndex = 8;
-			this.comboOcrCaptureType.Text = "comboOcrCaptureType";
 			// 
 			// textFrequency
 			// 
@@ -87,7 +79,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 301);
+			this.butDelete.Location = new System.Drawing.Point(12, 360);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(81, 24);
 			this.butDelete.TabIndex = 81;
@@ -140,9 +132,18 @@ namespace OpenDental{
 			this.labelValue.Text = "Value";
 			this.labelValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// listOCRCaptureType
+			// 
+			this.listOCRCaptureType.Location = new System.Drawing.Point(128, 204);
+			this.listOCRCaptureType.Name = "listOCRCaptureType";
+			this.listOCRCaptureType.Size = new System.Drawing.Size(180, 95);
+			this.listOCRCaptureType.TabIndex = 92;
+			this.listOCRCaptureType.Text = "listOCRCaptureType";
+			// 
 			// FormEClipboardImageCaptureDefEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(418, 337);
+			this.ClientSize = new System.Drawing.Size(421, 396);
+			this.Controls.Add(this.listOCRCaptureType);
 			this.Controls.Add(this.labelValue);
 			this.Controls.Add(this.textValue);
 			this.Controls.Add(this.textImage);
@@ -150,7 +151,6 @@ namespace OpenDental{
 			this.Controls.Add(this.labelImageCaptureDef);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.textFrequency);
-			this.Controls.Add(this.comboOcrCaptureType);
 			this.Controls.Add(this.labelOCRCaptureType);
 			this.Controls.Add(this.labelFrequencyHelp);
 			this.Controls.Add(this.butSave);
@@ -168,7 +168,6 @@ namespace OpenDental{
 		private OpenDental.UI.Button butSave;
 		private System.Windows.Forms.Label labelFrequencyHelp;
 		private System.Windows.Forms.Label labelOCRCaptureType;
-		private UI.ComboBox comboOcrCaptureType;
 		private ValidNum textFrequency;
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label labelImageCaptureDef;
@@ -176,5 +175,6 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textImage;
 		private System.Windows.Forms.TextBox textValue;
 		private System.Windows.Forms.Label labelValue;
+		private UI.ListBox listOCRCaptureType;
 	}
 }

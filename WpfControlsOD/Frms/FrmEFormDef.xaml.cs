@@ -44,6 +44,10 @@ namespace OpenDental {
 			else{
 				textSpaceToRight.Text=EFormDefCur.SpaceToRightEachField.ToString();
 			}
+			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true);
+			comboImageCat.Items.AddDefNone();
+			comboImageCat.Items.AddDefs(listDefs);
+			comboImageCat.SetSelectedDefNum(EFormDefCur.SaveImageCategory);
 		}
 
 		private void butSave_Click(object sender, EventArgs e) {
@@ -85,6 +89,7 @@ namespace OpenDental {
 			}
 			EFormDefCur.SpaceBelowEachField=spaceBelow;
 			EFormDefCur.SpaceToRightEachField=spaceToRight;
+			EFormDefCur.SaveImageCategory=comboImageCat.GetSelectedDefNum();
 			IsDialogOK=true;
 		}
 	}

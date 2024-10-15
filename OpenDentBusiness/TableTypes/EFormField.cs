@@ -88,7 +88,7 @@ namespace OpenDentBusiness {
 		///<summary>This tells you if the field is hidden based on conditional logic. False by default. Set to true if the field has a parent field set for decision purposes. Has nothing to do with hiding pages.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public bool IsHiddenCondit;
-		///<summary>This is only used when converting from fieldDefs to fields because we must preserve the PK.</summary>
+		///<summary>This is only used when converting from fieldDefs to fields because we must preserve the PK. The reason we need this PK is for language translation of each field, which is tied to the fieldDef. After than initial translation, this is no longer needed, so don't store in db.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public long EFormFieldDefNum;
 		///<summary>During setup, we need to keep track of this because we don't take action on it until the user clicks Save. Although if the user just added it, we will immediately delete so that if they click Cancel, we don't end up with orphans.</summary>
@@ -110,6 +110,11 @@ namespace OpenDentBusiness {
 
 		public EFormField Copy(){
 			return (EFormField)this.MemberwiseClone();
+		}
+
+		public override string ToString() {
+			string retVal=FieldType.ToString()+", "+ValueLabel;
+			return retVal;
 		}
 	}
 
