@@ -9,7 +9,7 @@
              Width="323" Height="138" 
              Text="Patient Field Pick Item" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
-		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="10,0,0,9" Text="Delete" Click="butDelete_Click" Icon="DeleteX" />
+		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="10,0,0,9" Text="_Delete" Click="butDelete_Click" Icon="DeleteX" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,9" Text="_Save" Click="butSave_Click" />
 		<ui:TextBox x:Name="textName" Margin="113,18,0,0" Width="187" TabIndexOD="1" MaxLength="255"/>
 		<ui:Label Margin="29,19,0,0" Text="Name" Width="84" HAlign="Right"/>

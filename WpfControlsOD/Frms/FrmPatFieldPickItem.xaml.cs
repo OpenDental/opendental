@@ -19,6 +19,7 @@ namespace OpenDental {
 		public FrmPatFieldPickItem() {
 			InitializeComponent();
 			Load+=FrmAccountEdit_Load;
+			PreviewKeyDown+=FrmPatFieldPickItem_PreviewKeyDown;
 		}
 
 		private void FrmAccountEdit_Load(object sender, EventArgs e) {
@@ -26,6 +27,15 @@ namespace OpenDental {
 			textAbbreviation.Text=PatFieldPickItemCur.Abbreviation;
 			textName.Text=PatFieldPickItemCur.Name;
 			checkHidden.Checked=PatFieldPickItemCur.IsHidden;
+		}
+
+		private void FrmPatFieldPickItem_PreviewKeyDown(object sender,System.Windows.Input.KeyEventArgs e) {
+			if(butSave.IsAltKey(Key.S,e)) {
+				butSave_Click(this,new EventArgs());
+			}
+			if(butDelete.IsAltKey(Key.D,e)) {
+				butDelete_Click(this,new EventArgs());
+			}
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {

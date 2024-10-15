@@ -179,7 +179,14 @@ namespace OpenDental {
 				StringSplitOptions.None
 			);
 			for(int i=0;i<stringArrayLines.Length;i++){
-				ODException.SwallowAnyException(() => { System.Diagnostics.Process.Start(stringArrayLines[i]); });
+				ODException.SwallowAnyException(() => { 
+					if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+						ODCloudClient.LaunchFileWithODCloudClient(stringArrayLines[i]);
+					}
+					else {
+						System.Diagnostics.Process.Start(stringArrayLines[i]);
+					}
+				});
 			}
 		}
 
