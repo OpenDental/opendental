@@ -26,11 +26,11 @@
       <summary>Enum:EnumEFormStatus 0-None, 1-ReadyForPatientFill, 2-Filled, 3-Imported. In the None status, the office might be filling in the tooth number on a consent form. In the ReadyForPatientFill status, it will show in eClipboard. Sheets uses ShowInTerminal for this purpose. Once the patient has filled it, the status is changed to Filled. Sheets uses IsWebForm for this purpose. A Filled eForm will then be imported automatically and the status changed to Imported. If the import process could not match to a known patient, then this status will be UnmatchedToPatient and the PatNum will remain 0 until user matches it.</summary>
       <Enumeration name="EnumEFormStatus">
         <summary></summary>
-        <EnumValue name="None">0 - </EnumValue>
-        <EnumValue name="ReadyForPatientFill">1 - Forms with this status will show in eClipboard.</EnumValue>
-        <EnumValue name="Filled">2 - .</EnumValue>
+        <EnumValue name="None">0 - If a form is added manually in OD proper and then filled out by the patient, it will remain this status unless it gets imported.</EnumValue>
+        <EnumValue name="ShowInEClipboard">1 - Forms with this status will show in eClipboard. Unlike sheets, there is no way to set order.</EnumValue>
+        <EnumValue name="Filled">2 - This status gets set from eClipboard after filling.</EnumValue>
         <EnumValue name="Imported">3 - .</EnumValue>
-        <EnumValue name="UnmatchedToPatient">4 - Import was attempted, but could not match a known patient in the database.</EnumValue>
+        <EnumValue name="UnmatchedToPatient">4 - Import was attempted, but could not match a known patient in the database. Once it's matched to a patient, it gets converted to Imported status.</EnumValue>
       </Enumeration>
     </column>
     <column order="9" name="RevID" type="int(11)">
@@ -44,6 +44,9 @@
     </column>
     <column order="12" name="SpaceToRightEachField" type="int(11)">
       <summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
+    <column order="13" name="SaveImageCategory" type="bigint(20)" fk="definition">
+      <summary>FK to definition.DefNum. This gets set when an EForm is created from an EFormDef. 0 for none or else it's set to an image category. User can change it.</summary>
     </column>
   </table>
   <table name="eformdef">
@@ -59,6 +62,9 @@
     </column>
     <column order="9" name="SpaceToRightEachField" type="int(11)">
       <summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
+    </column>
+    <column order="10" name="SaveImageCategory" type="bigint(20)" fk="definition">
+      <summary>FK to definition.DefNum. There is a global setting to save forms to the image category which has ItemVal set to "U". This global setting is only used to set this field for new forms. If this is 0, it will not save to images. Any other number is an override to a different category from global. Copied to EForm child.</summary>
     </column>
   </table>
   <table name="eformfield">

@@ -1131,7 +1131,8 @@ namespace OpenDental {
 			//PanelBorders.Invalidate(false);//this causes flicker for the entire form, especially listbox. Whether true or false.
 			//But putting PanelBorders.Invalidate() after SetDesktopBounds below does not cause flicker
 			#endregion Button Hover Effects
-			#region Taskbar
+			/*#region Taskbar
+			//This section has been replaced by the more general solution MouseWatcher.cs
 			if(WindowState==FormWindowState.Maximized && e.Y>=Height-16){
 				//Check if e.y is at 1080 pixels, or the bottom of the screen
 				//Jordan-I don't understand this math, but the comments are here for future use.
@@ -1151,7 +1152,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			#endregion Taskbar
+			#endregion Taskbar*/
 			if(Control.MouseButtons!=MouseButtons.Left){
 				return;
 			}

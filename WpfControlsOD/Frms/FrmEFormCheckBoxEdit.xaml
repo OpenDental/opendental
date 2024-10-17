@@ -6,55 +6,60 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="615" Height="610" 
+             Width="583" Height="639" 
              Text="Edit CheckBox" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butDelete" Width="84" VerticalAlignment="Bottom" Height="24" Margin="28,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,28,18" Text="_Save" Click="butSave_Click" />
-		<ui:ComboBox x:Name="comboDbLink" Width="213" Height="20" Margin="182,126,0,0" />
-		<ui:Label Width="98" Height="18" Margin="83,126,0,0" Text="Db Link" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="399,128,0,0" Text="Used to link to a database field" VAlign="Center" Width="211" />
-		<ui:Label Width="98" Height="18" Margin="83,98,0,0" Text="Label" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="399,98,0,0" Text="Displays to the right of the checkbox" VAlign="Center" Width="211" />
-		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="182,98,0,0" TabIndexOD="1"/>
-		<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="65,180,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
-		<ui:Label x:Name="labelStackable" Height="18" Margin="201,181,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
-		<ui:Label x:Name="labelAllergProb" Width="98" Height="18" Margin="83,154,0,0" Text="LabelAllergProb" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textMedAllerProb" Width="213" Height="20" Margin="182,154,0,0" TabIndexOD="1"/>
-		<ui:Button x:Name="butChange" Width="75" Height="24" Margin="402,153,0,0" Text="Change" Click="butChange_Click" />
-		<ui:Label Width="98" Height="18" Margin="83,328,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="240,328,0,0" Text="default is 100" VAlign="Center" Width="228" />
-		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="182,328,0,0" MaxVal="300" MinVal="50"/>
-		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="65,203,0,0" Width="130" Text="Required" CheckAlign="MiddleRight"/>
-		<ui:GroupBox Height="80" Margin="23,444,0,0" Width="470" Text="Conditional Logic. This field will show...">
+		<ui:Label Width="98" Height="18" Margin="52,101,0,0" Text="Label" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="368,101,0,0" Text="Displays to the right of the checkbox" VAlign="Center" Width="211" />
+		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="151,101,0,0" TabIndexOD="1"/>
+		<ui:ComboBox x:Name="comboDbLink" Width="213" Height="20" Margin="151,126,0,0" />
+		<ui:Label Width="98" Height="18" Margin="52,126,0,0" Text="Database Link" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="368,128,0,0" Text="Used to link to a database field" VAlign="Center" Width="211" />
+		<ui:Label x:Name="labelAllergProb" Width="98" Height="18" Margin="52,151,0,0" Text="LabelAllergProb" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textMedAllerProb" Width="213" Height="20" Margin="151,151,0,0" />
+		<ui:Button x:Name="butChange" Width="75" Height="24" Margin="371,149,0,0" Text="Change" Click="butChange_Click" />
+		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="34,174,0,0" Width="130" Text="Required" CheckAlign="MiddleRight"/>
+		<ui:GroupBox Height="184" Margin="31,196,0,0" Width="454" Text="Layout" TabIndexOD="2">
+			<ui:CheckBox x:Name="checkBorder" Height="20" Margin="4,17,0,0" Width="129" Text="Show Border Box" CheckAlign="MiddleRight"/>
+			<ui:Label x:Name="labelWidth" Width="60" Height="18" Margin="59,40,0,0" Text="Width" HAlign="Right" VAlign="Center" />
+			<ui:Label Height="18" Margin="178,40,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
+			<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="120,40,0,0" ShowZero="False" />
+			<ui:CheckBox x:Name="checkIsWidthPercentage" Height="20" Margin="4,62,0,0" Width="129" Text="Width Is Percentage" CheckAlign="MiddleRight"/>
+			<ui:Label x:Name="labelWidthIsPercentageNote" Height="18" Margin="138,63,0,0" Text="this applies to all fields in a horizontal stack" VAlign="Center" Width="266" />
+			<ui:Label x:Name="labelMinWidth" Width="100" Height="18" Margin="19,85,0,0" Text="Minimum Width" HAlign="Right" VAlign="Center" />
+			<ui:TextVInt x:Name="textVIntMinWidth" Width="54" Height="20" Margin="120,85,0,0" ShowZero="False" />
+			<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="3,107,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>
+			<ui:Label x:Name="labelStackable" Height="18" Margin="139,108,0,0" Text="compared to the previous field" VAlign="Center" Width="193" />
+			<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="120,131,0,0" />
+			<ui:Label Width="98" Height="18" Margin="21,132,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
+			<ui:Label x:Name="labelSpaceBelowDefault" Height="18" Margin="178,132,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="264" />
+			<ui:TextBox x:Name="textSpaceToRight" Width="54" Height="20" Margin="120,156,0,0" />
+			<ui:Label Width="98" Height="18" Margin="21,157,0,0" Text="Space to Right" HAlign="Right" VAlign="Center" />
+			<ui:Label x:Name="labelSpaceToRightDefault" Height="18" Margin="178,157,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
+		</ui:GroupBox>
+		<ui:Label Width="98" Height="18" Margin="52,387,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
+		<ui:Label Height="18" Margin="209,387,0,0" Text="default is 100" VAlign="Center" Width="228" />
+		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="151,387,0,0" MaxVal="300" MinVal="50" TabIndexOD="3"/>
+		<ui:Label Width="130" Height="18" Margin="20,412,0,0" Text="Reportable Name" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="151,412,0,0" TabIndexOD="4"/>
+		<ui:CheckBox x:Name="checkIsLocked" Height="20" Margin="34,434,0,0" Width="130" Text="Locked" CheckAlign="MiddleRight"/>
+		<ui:GroupBox Height="80" Margin="31,457,0,0" Width="454" Text="Conditional Logic. This field will show..." TabIndexOD="5">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
-			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
+			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0" />
 			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
-			<ui:TextBox x:Name="textCondValue" Height="20" Margin="159,50,0,0" Width="213"/>
+			<ui:TextBox x:Name="textCondValue" Height="20" Margin="159,50,0,0" Width="213" />
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click"/>
 		</ui:GroupBox>
-		<ui:Label Width="344" Height="18" Margin="18,533,0,0" Text="This field is the conditional parent for this many child fields" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textCountChildren" Height="20" Margin="365,533,0,0" ReadOnly="True" ColorBack="#FFF0F0F0" Width="30"/>
-		<ui:TextBox x:Name="textSpaceBelow" Width="54" Height="20" Margin="182,356,0,0"/>
-		<ui:Label Width="98" Height="18" Margin="83,356,0,0" Text="Space Below" HAlign="Right" VAlign="Center" />
-		<ui:Label x:Name="labelSpaceDefault" Height="18" Margin="240,356,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="264" />
-		<ui:Label Width="130" Height="18" Margin="51,384,0,0" Text="Reportable Name" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="182,384,0,0"/>
-		<ui:CheckBox x:Name="checkIsLocked" Height="20" Margin="65,410,0,0" Width="130" Text="Locked" CheckAlign="MiddleRight"/>
-		<ui:Label x:Name="labelWidth" Width="98" Height="18" Margin="83,229,0,0" Text="Width" HAlign="Right" VAlign="Center" />
-		<ui:Label Height="18" Margin="240,228,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
-		<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="182,228,0,0" ShowZero="False"/>
-		<ui:CheckBox x:Name="checkIsWidthPercentage" Height="20" Margin="36,253,0,0" Width="159" Text="Width Is Percentage" CheckAlign="MiddleRight"/>
-		<ui:Label x:Name="labelWidthIsPercentageNote" Height="18" Margin="200,254,0,0" Text="this applies to all fields in a horizontal stack" VAlign="Center" Width="266" />
-		<ui:Label x:Name="labelMinWidth" Width="120" Height="18" Margin="61,278,0,0" Text="Minimum Width" HAlign="Right" VAlign="Center" />
-		<ui:TextVInt x:Name="textVIntMinWidth" Width="54" Height="20" Margin="182,278,0,0" ShowZero="False"/>
-		<ui:CheckBox x:Name="checkBorder" Height="20" Margin="36,303,0,0" Width="159" Text="Show Border Box" CheckAlign="MiddleRight"/>
-		<ui:GroupBox x:Name="groupLanguage" Height="72" Margin="68,20,0,0" Width="470" Text="Language Translation">
-			<ui:Label Width="76" Height="18" Margin="37,47,0,0" Text="Label" HAlign="Right" VAlign="Center" />
-			<ui:TextBox x:Name="textLabelTranslated" Width="213" Height="20" Margin="114,45,0,0"/>
-			<ui:TextBox x:Name="textLanguage" Width="163" Height="20" Margin="114,20,0,0" ReadOnly="True" ColorBack="#FFF0F0F0" />
-			<ui:Label x:Name="labelLanguage" Width="98" Height="18" Margin="15,20,0,0" Text="Language" HAlign="Right" VAlign="Center" />
+		<ui:Label Width="344" Height="18" Margin="26,546,0,0" Text="This field is the conditional parent for this many child fields" HAlign="Right" VAlign="Center" />
+		<ui:TextBox x:Name="textCountChildren" Height="20" Margin="373,546,0,0" ReadOnly="True" ColorBack="#FFF0F0F0" Width="30"/>
+		<ui:GroupBox x:Name="groupLanguage" Height="72" Margin="31,23,0,0" Width="454" Text="Language Translation">
+			<ui:Label Width="76" Height="18" Margin="43,47,0,0" Text="Label" HAlign="Right" VAlign="Center" />
+			<ui:TextBox x:Name="textLabelTranslated" Width="213" Height="20" Margin="120,45,0,0" />
+			<ui:TextBox x:Name="textLanguage" Width="163" Height="20" Margin="120,20,0,0" ReadOnly="True" ColorBack="#FFF0F0F0" />
+			<ui:Label x:Name="labelLanguage" Width="98" Height="18" Margin="21,20,0,0" Text="Language" HAlign="Right" VAlign="Center" />
 		</ui:GroupBox>
 	</Grid>
 </local:FrmODBase>

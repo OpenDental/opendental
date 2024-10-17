@@ -35,8 +35,8 @@ namespace OpenDental {
 			//Purposefully not checking EServicesSetup perm here as we do want to allow users to interact with this form.
 			//EServicesSetup perm is already checked in SetUIEClipboardEnabled() for disabling some controls.
 			//Needs to be called before FillGrid to determine which controls can be enabled and disabled.
-			_listMobileAppDevicesOld=MobileAppDevices.GetForUser(Security.CurUser);
-			_listMobileAppDevicesAll=MobileAppDevices.GetForUser(Security.CurUser);
+			_listMobileAppDevicesOld=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.EclipboardLastAttempt.Year>=1880 || x.ODTouchLastAttempt.Year>=1880);//removes devices that have been only used to access ODMobile.
+			_listMobileAppDevicesAll=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.EclipboardLastAttempt.Year>=1880 || x.ODTouchLastAttempt.Year>=1880);//removes devices that have been only used to access ODMobile.
 			SetUIEClipboardEnabled();
 		}
 

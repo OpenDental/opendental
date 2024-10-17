@@ -13,7 +13,6 @@ namespace OpenDentBusiness
 { 
 	///<summary></summary>
 	public class X837_5010:X12object{
-
 		///<summary>Data element separator character. Almost always '*', the ASCII hexadecimal value of 2A. For Denti-Cal, ASCII hexadecimal value of 1D which is an unprintable character.</summary>
 		private static string s="*";
 		///<summary>Component element separator character. Almost always ':', the ASCII hexadecimal value of 3A. For Denti-Cal, ASCII hexadecimal value of 22 which is '"'.</summary>
@@ -2775,8 +2774,9 @@ namespace OpenDentBusiness
 
 		///<summary>Fills the missing data field on the queueItem that was passed in.  This contains all missing data on this claim.
 		///Claim will not be allowed to be sent electronically unless this string comes back empty.
-		///Also fills the warnings field on the queueItem that was passed in.  Warnings will not block sending.</summary>
-		public static void Validate(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem){//,out string warning) {
+		///Also fills the warnings field on the queueItem that was passed in.  Warnings will not block sending.
+		///Set skipUB04 true to skip validating fields within the UB04 group box in the Claim Edit window.</summary>
+		public static void Validate(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem,bool skipUB04=false){//,out string warning) {
 			StringBuilder strb=new StringBuilder();
 			string warning="";
 			if(clearinghouseClin==null) {
@@ -3153,7 +3153,7 @@ namespace OpenDentBusiness
 				Comma(strb);
 				strb.Append("Attachment type missing");
 			}
-			if(claim.MedType==EnumClaimMedType.Institutional) {
+			if(claim.MedType==EnumClaimMedType.Institutional && !skipUB04) {
 				if(claim.UniformBillType.Length!=3) {
 					Comma(strb);
 					strb.Append("BillType");

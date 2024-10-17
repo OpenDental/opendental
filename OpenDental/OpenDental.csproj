@@ -2564,6 +2564,7 @@
     </Compile>
     <Compile Include="Logic\AutoNoteL.cs" />
     <Compile Include="Logic\CareCreditL.cs" />
+    <Compile Include="UI\BordersDpi\MouseWatcher\MouseWatcher.cs" />
     <Compile Include="Logic\PayConnectL.cs" />
     <Compile Include="Logic\PayPlanL.cs" />
     <Compile Include="Logic\aaLogicUI.cs" />
@@ -2666,6 +2667,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\BordersDpi\LayoutManagerForms.cs" />
+    <Compile Include="UI\BordersDpi\MouseWatcher\WindowsHookApiTaskbarInterop.cs" />
     <Compile Include="UI\BufferedTreeView.cs">
       <SubType>Component</SubType>
     </Compile>

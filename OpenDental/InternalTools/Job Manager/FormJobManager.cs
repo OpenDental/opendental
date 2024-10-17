@@ -614,7 +614,6 @@ namespace OpenDental {
 
 		/// <summary>Actions in this list will be not filtered by checkShowUnassigned, i.e.: Actions in this list will always show (assuming the user has the appropriate permissions - For example ApproveJob always shows if user has approval permission.)</summary>
 		private List<JobAction> JobActionsAlwaysVisible(JobCategory category) {
-			//use Bug as default category to force default in switch statement.
 			switch(category) {
 				case JobCategory.Query:
 					return new List<JobAction> {
@@ -629,6 +628,8 @@ namespace OpenDental {
 						JobAction.WriteJob,
 						JobAction.WriteCode,
 						JobAction.ReviewCode,
+						JobAction.ApproveChanges,
+						JobAction.ApproveConcept,
 						JobAction.ApproveJob
 					};
 			}

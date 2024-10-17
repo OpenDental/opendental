@@ -66,13 +66,9 @@ namespace OpenDental {
 				comboDbLink.SelectedItem=EFormFieldCur.DbLink;
 			}
 			SetVisAllerProb();
-			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
-			bool isPreviousStackable=EFormFields.IsPreviousStackable(EFormFieldCur,ListEFormFields);
-			if(!isPreviousStackable){
-				labelStackable.Text="previous field is not stackable";
-				checkIsHorizStacking.IsEnabled=false;
-			}
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
+			//groupLayout start
+			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			textVIntWidth.Value=EFormFieldCur.Width;
 			if(EFormFieldCur.IsWidthPercentage){
 				labelWidth.Text="Width%";
@@ -88,12 +84,16 @@ namespace OpenDental {
 			if(_listEFormFieldsSiblings.Count==0){
 				labelWidthIsPercentageNote.Visible=false;
 			}
-			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
-			textVIntFontScale.Value=EFormFieldCur.FontScale;
+			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			bool isPreviousStackable=EFormFields.IsPreviousStackable(EFormFieldCur,ListEFormFields);
+			if(!isPreviousStackable){
+				labelStackable.Text="previous field is not stackable";
+				checkIsHorizStacking.IsEnabled=false;
+			}
 			bool isLastInHorizStack=EFormFields.IsLastInHorizStack(EFormFieldCur,ListEFormFields);
 			if(isLastInHorizStack){
 				int spaceBelowDefault=PrefC.GetInt(PrefName.EformsSpaceBelowEachField);
-				labelSpaceDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
+				labelSpaceBelowDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceBelowDefault.ToString();
 				if(EFormFieldCur.SpaceBelow==-1){
 					textSpaceBelow.Text="";
 				}
@@ -102,9 +102,22 @@ namespace OpenDental {
 				}
 			}
 			else{
-				labelSpaceDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
+				labelSpaceBelowDefault.Text=Lang.g(this,"only the right-most field in this row may be set");
 				textSpaceBelow.IsEnabled=false;
 			}
+			int spaceToRightDefault=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
+			if(EFormDefCur.SpaceToRightEachField!=-1){
+				spaceToRightDefault=EFormDefCur.SpaceToRightEachField;
+			}
+			labelSpaceToRightDefault.Text=Lang.g(this,"leave blank to use the default value of ")+spaceToRightDefault.ToString();
+			if(EFormFieldCur.SpaceToRight==-1){
+				textSpaceToRight.Text="";
+			}
+			else{
+				textSpaceToRight.Text=EFormFieldCur.SpaceToRight.ToString();
+			}
+			//groupLayout end
+			textVIntFontScale.Value=EFormFieldCur.FontScale;
 			textReportableName.Text=EFormFieldCur.ReportableName;
 			checkIsLocked.Checked=EFormFieldCur.IsLocked;
 			textCondParent.Text=EFormFieldCur.ConditionalParent;
@@ -354,6 +367,20 @@ namespace OpenDental {
 					return;
 				}
 			}
+			int spaceToRight=-1;
+			if(textSpaceToRight.Text!=""){
+				try{
+					spaceToRight=Convert.ToInt32(textSpaceToRight.Text);
+				}
+				catch{
+					MsgBox.Show(this,"Please fix error in Space to Right first.");
+					return;
+				}
+				if(spaceToRight<0 || spaceToRight>200){
+					MsgBox.Show(this,"Space to Right value is invalid.");
+					return;
+				}
+			}
 			//end of validation
 			if(LanguageShowing!=""){
 				IsChangedLanCache=LanguagePats.SaveTranslationEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,textLabelTranslated.Text);
@@ -374,8 +401,14 @@ namespace OpenDental {
 			else{
 				EFormFieldCur.DbLink=(string)comboDbLink.SelectedItem;
 			}
-			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.IsRequired=checkIsRequired.Checked==true && checkIsRequired.Visible;
+			//groupLayout start
+			if(checkBorder.Checked==true){
+				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
+			}
+			else{
+				EFormFieldCur.Border=EnumEFormBorder.None;
+			}
 			EFormFieldCur.Width=textVIntWidth.Value;
 			EFormFieldCur.IsWidthPercentage=checkIsWidthPercentage.Checked==true;
 			//change all siblings to match
@@ -389,14 +422,11 @@ namespace OpenDental {
 			else{
 				EFormFieldCur.MinWidth=0;
 			}
-			if(checkBorder.Checked==true){
-				EFormFieldCur.Border=EnumEFormBorder.ThreeD;
-			}
-			else{
-				EFormFieldCur.Border=EnumEFormBorder.None;
-			}
-			EFormFieldCur.FontScale=textVIntFontScale.Value;
+			EFormFieldCur.IsHorizStacking=checkIsHorizStacking.Checked==true;
 			EFormFieldCur.SpaceBelow=spaceBelow;
+			EFormFieldCur.SpaceToRight=spaceToRight;
+			//groupLayout end
+			EFormFieldCur.FontScale=textVIntFontScale.Value;
 			EFormFieldCur.ReportableName=textReportableName.Text;
 			EFormFieldCur.IsLocked=checkIsLocked.Checked==true;
 			EFormFieldCur.ConditionalParent=textCondParent.Text;

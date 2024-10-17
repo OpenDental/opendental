@@ -16,9 +16,9 @@
 		<ui:Label Height="18" Margin="368,128,0,0" Text="used to link to a database field" VAlign="Center" Width="193" />
 		<ui:Label Width="98" Height="18" Margin="52,101,0,0" Text="Label" HAlign="Right" VAlign="Center" />
 		<ui:Label Height="18" Margin="368,101,0,0" Text="this shows above the text box" VAlign="Center" Width="193" />
-		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="151,101,0,0"/>
+		<ui:TextBox x:Name="textLabel" Width="213" Height="20" Margin="151,101,0,0" TabIndexOD="1"/>
 		<ui:CheckBox x:Name="checkIsRequired" Height="20" Margin="50,148,0,0" Width="114" Text="Required" CheckAlign="MiddleRight"/>
-		<ui:GroupBox Height="80" Margin="31,453,0,0" Width="454" Text="Conditional Logic. This field will show...">
+		<ui:GroupBox Height="80" Margin="31,453,0,0" Width="454" Text="Conditional Logic. This field will show..." TabIndexOD="5">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
 			<ui:Label x:Name="labelCondValue" Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
@@ -26,7 +26,7 @@
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click" />
 		</ui:GroupBox>
-		<ui:GroupBox Height="204" Margin="31,170,0,0" Width="454" Text="Layout">
+		<ui:GroupBox Height="204" Margin="31,170,0,0" Width="454" Text="Layout" TabIndexOD="2">
 			<ui:Label x:Name="labelWidth" Width="60" Height="18" Margin="59,41,0,0" Text="Width" HAlign="Right" VAlign="Center" />
 			<ui:Label Height="18" Margin="178,41,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
 			<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="120,40,0,0" ShowZero="False"/>
@@ -47,7 +47,7 @@
 			<ui:Label x:Name="labelSpaceToRightDefault" Height="18" Margin="178,157,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
 		</ui:GroupBox>
 		<ui:Label Width="130" Height="18" Margin="20,406,0,0" Text="Reportable Name" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="151,406,0,0"/>
+		<ui:TextBox x:Name="textReportableName" Width="107" Height="20" Margin="151,406,0,0" TabIndexOD="4"/>
 		<ui:CheckBox x:Name="checkIsLocked" Height="20" Margin="34,427,0,0" Width="130" Text="Locked" CheckAlign="MiddleRight"/>
 		<ui:GroupBox x:Name="groupLanguage" Height="72" Margin="31,23,0,0" Width="454" Text="Language Translation">
 			<ui:Label Width="76" Height="18" Margin="43,47,0,0" Text="Label" HAlign="Right" VAlign="Center" />
@@ -57,7 +57,7 @@
 		</ui:GroupBox>
 		<ui:Label Width="98" Height="18" Margin="52,381,0,0" Text="Font Scale" HAlign="Right" VAlign="Center" />
 		<ui:Label Height="18" Margin="209,381,0,0" Text="default is 100" VAlign="Center" Width="228" />
-		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="151,381,0,0" MaxVal="300" MinVal="50"/>
+		<ui:TextVInt x:Name="textVIntFontScale" Width="54" Height="20" Margin="151,381,0,0" MaxVal="300" MinVal="50" TabIndexOD="3"/>
 		<ui:Label Height="18" Margin="170,428,0,0" Text="Example: on consent form to prevent patient changes" VAlign="Center" Width="320" />
 	</Grid>
 </local:FrmODBase>

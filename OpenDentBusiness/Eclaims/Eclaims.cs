@@ -236,11 +236,11 @@ namespace OpenDentBusiness.Eclaims
 			}
 		}
 
-		///<summary>Fills the missing data field on the queueItem that was passed in.  This contains all missing data on this claim.  Claim will not be allowed to be sent electronically unless this string comes back empty.</summary>
-		public static ClaimSendQueueItem GetMissingData(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem) {
+		///<summary>Fills the missing data field on the queueItem that was passed in.  This contains all missing data on this claim.  Claim will not be allowed to be sent electronically unless this string comes back empty.  Set skipUB04 true to skip validating fields within the UB04 group box in the Claim Edit window.</summary>
+		public static ClaimSendQueueItem GetMissingData(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem,bool skipUB04=false) {
 			//Middle Tier check is a necessary part of speed enhancements implemented in job E3915. 
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ClaimSendQueueItem>(MethodBase.GetCurrentMethod(),clearinghouseClin,queueItem);
+				return Meth.GetObject<ClaimSendQueueItem>(MethodBase.GetCurrentMethod(),clearinghouseClin,queueItem,skipUB04);
 			}
 			if(queueItem==null) {
 				return new ClaimSendQueueItem() { MissingData=Lans.g("Eclaims","Unable to fill claim data. Please recreate claim.") };
@@ -291,7 +291,7 @@ namespace OpenDentBusiness.Eclaims
 				}
 				else if(clearinghouseClin.Eformat==ElectronicClaimFormat.x837D_5010_dental
 					|| clearinghouseClin.Eformat==ElectronicClaimFormat.x837_5010_med_inst) {
-					X837_5010.Validate(clearinghouseClin,queueItem);//,out warnings);
+					X837_5010.Validate(clearinghouseClin,queueItem,skipUB04);//,out warnings);
 					//return;
 				}
 				else if(clearinghouseClin.Eformat==ElectronicClaimFormat.Renaissance) {

@@ -54,10 +54,23 @@ namespace OpenDental {
 			_maskedSSNOld=EFormCur.ListEFormFields.Find(x=>x.DbLink=="SSN")?.ValueString;//null is ok
 			textDescription.Text=EFormCur.Description;
 			textDateTime.Text=EFormCur.DateTimeShown.ToShortDateString()+" "+EFormCur.DateTimeShown.ToShortTimeString();
-			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true);
-			comboImageCat.Items.AddDefNone();
-			comboImageCat.Items.AddDefs(listDefs);
-			comboImageCat.SetSelectedDefNum(EFormCur.SaveImageCategory);
+			if(!EFormCur.ListEFormFields.Exists(x=>x.IsRequired)){
+				labelRequired.Visible=false;
+			}
+			if(EFormCur.SaveImageCategory==0){
+				groupSaveImages.Visible=false;
+			}
+			else{
+				List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true);
+				comboImageCat.Items.AddDefNone();
+				comboImageCat.Items.AddDefs(listDefs);
+				comboImageCat.SetSelectedDefNum(EFormCur.SaveImageCategory);
+			}
+
+
+
+
+			
 			bool isSigned=false;
 			for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
 				if(EFormCur.ListEFormFields[i].FieldType.In(EnumEFormFieldType.SigBox)
@@ -152,6 +165,18 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
+		private void butSaveImage_Click(object sender,EventArgs e) {
+			TryToSaveData();//includes whatever's in the combo
+			if(_wasError){
+				return;
+			}
+			if(EFormCur.SaveImageCategory==0){
+				MsgBox.Show(this,"Please pick a category first.");
+				return;
+			}
+			WpfControls.EFormL.SaveToImages(EFormCur);
+		}
+
 		private void FrmEFormFillEdit_FormClosing(object sender,CancelEventArgs e) {
 			for(int i=0;i<EFormCur.ListEFormFields.Count;i++){
 				if(EFormCur.ListEFormFields[i].FieldType!=EnumEFormFieldType.SigBox){
@@ -215,7 +240,8 @@ namespace OpenDental {
 			_wasUnchanged=false;
 			_wasSaved=false;
 			ctrlEFormFill.FillFieldsFromControls();
-			EFormValidation eFormValidation = EForms.Validate(EFormCur,_maskedSSNOld);//this line enforces required fields.
+			//Next line no longer enforces required fields. That should only be done in eClipboard, not OD proper.
+			EFormValidation eFormValidation = EForms.Validate(EFormCur,_maskedSSNOld);
 			if(eFormValidation.ErrorMsg!="") {
 				ctrlEFormFill.SetVisibilities(eFormValidation.PageNum);
 				MsgBox.Show(eFormValidation.ErrorMsg);
@@ -231,7 +257,10 @@ namespace OpenDental {
 				_wasError=true;
 				return;
 			}
-			long saveImageCategory=comboImageCat.GetSelectedDefNum();
+			long saveImageCategory=0;
+			if(groupSaveImages.Visible){
+				saveImageCategory=comboImageCat.GetSelectedDefNum();
+			}
 			//End of validation.
 			//Test to see if any changes were made.
 			bool isChanged=false;
@@ -283,6 +312,7 @@ namespace OpenDental {
 //todo EnumPermType.EformEdit
 			//SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,EFormCur.PatNum,"EForm: "+EFormCur.Description+" from "+EFormCur.DateTimeShown.ToShortDateString());
 		}
+
 		#endregion Methods - private
 
 		

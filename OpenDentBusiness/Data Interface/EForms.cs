@@ -73,7 +73,7 @@ namespace OpenDentBusiness{
 			return eForm;
 		}
 
-		///<summary>Enforced required fields and also validates a few other fields like phone numbers and state format. The eForm must contain a list of eFormFields. The maskedSSNOld is used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.  Returns an object that stores the error message and the page number that the problem field is located on. Use the page number to go directly to the problem field. If the return object has an empty error message, everything passed validation.</summary>
+		///<summary>Validates a few fields like phone numbers and state format. The eForm must contain a list of eFormFields. The maskedSSNOld is used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.  Returns an object that stores the error message and the page number that the problem field is located on. Use the page number to go directly to the problem field. If the return object has an empty error message, everything passed validation.</summary>
 		public static EFormValidation Validate(EForm eForm,string maskedSSNOld) {
 			EFormValidation eFormValidation=new EFormValidation();
 			List<EFormField> listEFormFields=eForm.ListEFormFields;
@@ -81,6 +81,7 @@ namespace OpenDentBusiness{
 			for(int i=0;i<listEFormFields.Count;i++) {
 				if(listEFormFields[i].FieldType==EnumEFormFieldType.PageBreak) {
 					pageNum++;
+					continue;
 				}
 				//Validating Allergies
 				if(listEFormFields[i].DbLink=="allergiesNone") {
@@ -145,7 +146,20 @@ namespace OpenDentBusiness{
 				}
 //todo
 //Validate email field always
-				//Check IsRequired Fields
+			}
+			return eFormValidation;//If we get to here, this object should still have default values and everything passed validation.
+		}
+
+		///<summary>This is not called from OD proper. Required fields are only enforced in eClipboard. Returns an object that stores the error message and the page number that the problem field is located on. Use the page number to go directly to the problem field. If the return object has an empty error message, everything passed validation.</summary>
+		public static EFormValidation ValidateRequired(EForm eForm){
+			EFormValidation eFormValidation=new EFormValidation();
+			List<EFormField> listEFormFields=eForm.ListEFormFields;
+			int pageNum=1;
+			for(int i=0;i<listEFormFields.Count;i++) {
+				if(listEFormFields[i].FieldType==EnumEFormFieldType.PageBreak) {
+					pageNum++;
+					continue;
+				}
 				if(listEFormFields[i].DbLink!="allergiesNone" && listEFormFields[i].DbLink!="problemsNone") {
 					//This is for all the other fields. This does work with radiobuttons, for example
 					if(listEFormFields[i].IsRequired 

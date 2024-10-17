@@ -1754,6 +1754,19 @@ namespace OpenDental {
 				runStar.Foreground=Brushes.Red;
 				label.Inlines.Add(runStar);
 			}
+			bool isConditionalParent=false;
+			if(IsSetupMode
+				&& eFormField.ValueLabel!=""
+				&& ListEFormFields.Exists(x=>x.ConditionalParent==eFormField.ValueLabel))
+			{
+				isConditionalParent=true;
+			}
+			if(isConditionalParent) {
+				//yes, we let them include both parent and child in case a field is both.
+				Run runCondit=new Run(" (CND)");
+				runCondit.Foreground=Brushes.Red;
+				label.Inlines.Add(runCondit);
+			}
 			bool isConditionalChild=false;
 			if(IsSetupMode
 				&& eFormField.ConditionalParent!=""

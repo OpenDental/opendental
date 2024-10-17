@@ -117,6 +117,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				//see comments in FieldType==EnumEFormFieldType.TextField
 				FrmEFormDateFieldEdit frmEFormDateFieldEdit=new FrmEFormDateFieldEdit();
 				frmEFormDateFieldEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormDateFieldEdit.EFormDefCur=EFormDefCur;
 				frmEFormDateFieldEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 				if(comboLanguage.SelectedIndex>0){
 					frmEFormDateFieldEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
@@ -141,6 +142,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			if(ctrlEFormFill.ListEFormFields[idx].FieldType==EnumEFormFieldType.CheckBox){
 				FrmEFormCheckBoxEdit frmEFormCheckBoxEdit=new FrmEFormCheckBoxEdit();
 				frmEFormCheckBoxEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormCheckBoxEdit.EFormDefCur=EFormDefCur;
 				frmEFormCheckBoxEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 				if(comboLanguage.SelectedIndex>0){
 					frmEFormCheckBoxEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();

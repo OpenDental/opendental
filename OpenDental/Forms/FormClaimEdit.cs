@@ -130,7 +130,7 @@ namespace OpenDental{
 			if(PrefC.GetBool(PrefName.ClaimEditRequireNoMissingData) && IsNew){//We only really care about new claims
 				ClaimSendQueueItem[] claimSendQueueItemArray=Claims.GetQueueList(_claim.ClaimNum,_claim.ClinicNum,_claim.CustomTracking);
 				//GetMissingData() guards around null, so if somehow we don't have a claim here we pass in null. ElementAtOrDefault will pass in null if there is no 0 index somehow.
-				ClaimSendQueueItem claimSendQueueItem = Eclaims.GetMissingData(_clearinghouse,claimSendQueueItemArray.ElementAtOrDefault(0));
+				ClaimSendQueueItem claimSendQueueItem = Eclaims.GetMissingData(_clearinghouse,claimSendQueueItemArray.ElementAtOrDefault(0),true);
 				if(!claimSendQueueItem.MissingData.IsNullOrEmpty()){
 					MsgBox.Show("Cannot create claim due to missing data. The claim has the following errors: "+claimSendQueueItem.MissingData);
 					//Delete the pre-inserted claim and "reset" the procedures on the claim back to normal

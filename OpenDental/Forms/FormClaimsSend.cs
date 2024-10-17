@@ -873,10 +873,23 @@ namespace OpenDental{
 					Claim claim=listClaims.FirstOrDefault(x => x.ClaimNum==listClaimSendQueueItems[i].ClaimNum);
 					XConnectWebResponse xConnectWebResponse=null;
 					try {
-						xConnectWebResponse=XConnect.ValidateClaim(claim);
+						xConnectWebResponse=XConnect.ValidateClaim(claim,doValidateForAttachment:true);
 						if(xConnectWebResponse.messages.Length!=0) {//Errors will go in the messages array of the object
 							listClaimSendQueueItemsToValidate[i].MissingData+=(listClaimSendQueueItemsToValidate[i].MissingData==""?"":", ")
 								+string.Join("\r\n",xConnectWebResponse.messages);
+						}
+						for(int j=0;j<xConnectWebResponse.response.claimItems.Count();j++) {
+							XConnectClaimItemResponse xConnectClaimItemResponse=xConnectWebResponse.response.claimItems[j];
+							if(!string.IsNullOrEmpty(xConnectClaimItemResponse.itemStatus.message)) {//This message contains the attachment requirements
+								if(!listClaimSendQueueItemsToValidate[i].Warnings.ToLower().Contains("attachment id missing") 
+									&& xConnectClaimItemResponse.itemStatus.message.ToLower().Contains("attachment"))
+								{
+									if(listClaimSendQueueItemsToValidate[i].Warnings!="") {
+										listClaimSendQueueItemsToValidate[i].Warnings+=", ";
+									}
+									listClaimSendQueueItemsToValidate[i].Warnings+="Attachment ID missing";
+								}
+							}
 						}
 					}
 					catch(Exception ex) {

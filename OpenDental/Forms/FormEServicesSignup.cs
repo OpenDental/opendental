@@ -35,9 +35,11 @@ namespace OpenDental {
 		}
 
 		private async void FormEServicesSignup_Load(object sender,EventArgs e) {
-			//Disable all controls if user does not have EServicesSetup permission.
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true)) {
-				DisableAllExcept();
+			//Disable all controls if user does not have EServicesSetup permission and is not opening via an HQ-only button.
+			if(!Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true)
+				&& _signupOut.SignupPortalPermissionInt!=(int)SignupPortalPermission.FromHQ)
+			{
+				DisableAllExcept(webViewMain);
 			}
 			if(ODBuild.IsThinfinity()) {
 				if(_signupOut==null){
