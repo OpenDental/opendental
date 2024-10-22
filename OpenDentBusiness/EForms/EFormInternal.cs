@@ -49,7 +49,6 @@ namespace OpenDentBusiness {
 					+"\n";
 				eFormDef.ListEFormFieldDefs[i].ValueLabel=Regex.Replace(eFormDef.ListEFormFieldDefs[i].ValueLabel,pattern,"\r\n");
 			}
-			eFormDef.IsInternal=true;
 			eFormDef.EFormDefNum=0;
 			return eFormDef;
 		}

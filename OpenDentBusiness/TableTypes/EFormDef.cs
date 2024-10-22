@@ -86,7 +86,7 @@ They are allowed to change both the English and foreign translations in that gri
 		///<summary>The date and time when the EFormDef was created. Not editable by the user in the UI.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime DateTCreated;
-		///<summary>This is set to true when a user "deletes" an internal form. That way, it won't show anymore. This is the only way to hide an internal form. It gets done automatically when a user "edits" an internal form so that only the custom form will show. The linkage to the internal form is done by matching the Description. So a row where this was set to true would have a description and nothing else. No EFormFieldDefs. Once the user hides an internal eForm in this manner, they can't ever get it back other than by using Add.</summary>
+		///<summary>Deprecated.</summary>
 		public bool IsInternalHidden;
 		///<summary>Required. Can be any value between 50 and 1000. On wide screens, this limits the width of the form. This is needed on pretty much anything other than a phone. Makes it look consistent across devices and prevents useless white space. Default 450.</summary>
 		public int MaxWidth;
@@ -104,9 +104,6 @@ They are allowed to change both the English and foreign translations in that gri
 		///<Summary>This is needed for serialization/deserialization of internal EForms. We also leave this list attached to internal EForms for a while for convenience.</Summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public List<EFormFieldDef> ListEFormFieldDefs;
-		///<summary>Not a db field.</summary>
-		[CrudColumn(IsNotDbColumn=true)]
-		public bool IsInternal;
 		///<summary>Not a db field.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public bool IsDeleted;

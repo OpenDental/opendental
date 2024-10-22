@@ -92,6 +92,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				//see comments in FieldType==EnumEFormFieldType.TextField
 				FrmEFormLabelEdit frmEFormLabelEdit=new FrmEFormLabelEdit();
 				frmEFormLabelEdit.EFormFieldCur=ctrlEFormFill.ListEFormFields[idx];
+				frmEFormLabelEdit.EFormDefCur=EFormDefCur;
 				frmEFormLabelEdit.ListEFormFields=ctrlEFormFill.ListEFormFields;
 				if(comboLanguage.SelectedIndex>0){
 					frmEFormLabelEdit.LanguageShowing=comboLanguage.SelectedItem.ToString();
@@ -264,9 +265,6 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 			labelLanguage.Visibility=comboLanguage.Visibility;//hide them both if no patient languages set up
 			//gridMain.ContextMenu=contextMenu;
 			//contextMenu.Add(new MenuItem("Delete",menuDelete_Click));
-			if(!EFormDefCur.IsInternal) {
-				labelTitle.Text="This is a custom eForm, not internal.";
-			}
 			_isLoaded=true;
 			ctrlEFormFill.ListEFormFieldDefNumsToDelete=new List<long>();
 		}

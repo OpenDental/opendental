@@ -837,14 +837,15 @@ using OpenDental.UI;
 			Invalidate();
 		}
 
-		///<summary>Exports the grid to a text or Excel file. The user will have the opportunity to choose the location of the export file.</summary>
+		///<summary>Exports the grid to a text or Excel file. The user will have the opportunity to choose the location of the export file unless in a Cloud Environment. In Cloud Environments, the file will be downloaded.</summary>
 		public void Export(string fileName) {
 			string selectedFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODBuild.IsThinfinity()) {
-				//file download dialog will come up later, after file is created.
-				//If extension is missing, add .txt extension. VirtualUI won't download if missing extension.
+			if(ODEnvironment.IsCloudInstance) {
+				//In Thinfinity, file download dialog will come up later, after file is created.
+				//In AppStream, file will be created in the user's Downloads folder.
+				//If extension is missing, add .xls extension. VirtualUI won't download if missing extension.
 				if(string.IsNullOrEmpty(Path.GetExtension(selectedFilePath))) {
-					selectedFilePath+=".txt";
+					selectedFilePath+=".xls";
 				}
 			}
 			else {
@@ -898,10 +899,13 @@ using OpenDental.UI;
 			}
 			if(ODBuild.IsThinfinity()) {
 				ThinfinityUtils.ExportForDownload(selectedFilePath);
+				return;
 			}
-			else {
-				MessageBox.Show(Lans.g(this,"File created successfully"));
+			if(ODCloudClient.IsAppStream) {
+				ODCloudClient.ExportForAppStream(selectedFilePath,Path.GetFileName(selectedFilePath));
+				return;
 			}
+			MessageBox.Show(Lans.g(this,"File created successfully"));
 		}
 
 		///<summary>Returns the text in the cell for the given row and column. Will throw if either index is invalid.</summary>

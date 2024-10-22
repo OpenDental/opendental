@@ -691,7 +691,7 @@ namespace OpenDental {
 			}
 			textTotalPrincipal.Text=_sumAttachedProduction.ToString("f");
 			FillProduction();
-			FillCharges();
+			FillCharges(isSilent:true);
 		}
 
 		private DynamicPayPlanTPOptions GetSelectedTreatmentPlannedOption() {
@@ -953,7 +953,7 @@ namespace OpenDental {
 			payPlanProductionEntry.LinkedCredit.AmountOverride=(double)payPlanProductionEntry.AmountOverride;
 			textTotalPrincipal.Text=_sumAttachedProduction.ToString("f");
 			FillProduction();
-			FillCharges();
+			FillCharges(isSilent:true);
 		}
 
 		///<summary>When the button to issue new charges is pressed.</summary>

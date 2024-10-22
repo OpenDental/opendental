@@ -2877,33 +2877,13 @@ namespace OpenDentBusiness {
 				FillCCAddressesForReply(emailMessageReply,emailMessageReceived,emailAddress);
 			}
 			string subject=ProcessInlineEncodedText(emailMessageReceived.Subject);
-			if(subject.Trim().Length >=3 && subject.Trim().Substring(0,3).ToString().ToLower()=="re:") { //already contains a "re:"
+			if(subject.Trim().Length>=3 && subject.Trim().Substring(0,3).ToString().ToLower()=="re:") { //already contains a "re:"
 				emailMessageReply.Subject=subject;
 			}
 			else { //doesn't contain a "re:"
-				emailMessageReply.Subject="RE: " + subject;
+				emailMessageReply.Subject="RE: "+subject;
 			}
-			string bodyTextString;
-			bodyTextString="\r\n\r\n\r\n" + "On " + emailMessageReceived.MsgDateTime.ToString() + " " + ProcessInlineEncodedText(emailMessageReceived.FromAddress) + " sent:\r\n>";
-			string receivedEmailBody;
-			List<List<Health.Direct.Common.Mime.MimeEntity>> listMimeEntitiesPart =
-				EmailMessages.GetMimePartsForMimeTypes(emailMessageReceived.RawEmailIn,emailAddress,"text/html","text/plain","image/");
-			List<Health.Direct.Common.Mime.MimeEntity> listHtmlParts=listMimeEntitiesPart[0];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
-			List<Health.Direct.Common.Mime.MimeEntity> listTextParts=listMimeEntitiesPart[1];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
-			if(listHtmlParts.Count>0) {//Html body found.
-				receivedEmailBody=HttpUtility.HtmlDecode(Regex.Replace(ProcessMimeTextPart(listHtmlParts[0]),@"<(.|\n)*?>","")); //remove most html tags.
-			}
-			else if(listTextParts.Count>0) {//No html body found, however one specific mime part is for viewing in text only.
-				receivedEmailBody=HttpUtility.HtmlDecode(ProcessMimeTextPart(listTextParts[0]));
-			}
-			else {//No html body found and no text body found.  Last resort.  Show all mime parts which are not attachments (ugly).
-				receivedEmailBody=emailMessageReceived.BodyText;//This version of the body text includes all non-attachment mime parts.
-			}
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r\n",".!(-&>"); //replace with a string that would very very seldom happen.
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\n",".!(-&>");
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r",".!(-&>");
-			bodyTextString+=receivedEmailBody.Trim().Replace(".!(-&>","\r\n>");
-			emailMessageReply.BodyText=bodyTextString;
+			emailMessageReply=SetForwardOrReplyBody(emailMessageReply,emailMessageReceived,emailAddress);
 			emailMessageReply.MsgType=EmailMessageSource.Reply;
 			return emailMessageReply;
 		}
@@ -2956,39 +2936,80 @@ namespace OpenDentBusiness {
 
 		public static EmailMessage CreateForward(EmailMessage emailMessageReceived,EmailAddress emailAddress) {
 			Meth.NoCheckMiddleTierRole();
-			EmailMessage forwardMessage=new EmailMessage();
-			forwardMessage.PatNum=emailMessageReceived.PatNum;
-			forwardMessage.FromAddress=emailAddress.EmailUsername;//We cannot use emailAddress.SenderAddress here in case the user wants to send a Direct message.
+			EmailMessage emailMessageForward=new EmailMessage();
+			emailMessageForward.PatNum=emailMessageReceived.PatNum;
+			emailMessageForward.FromAddress=emailAddress.EmailUsername;//We cannot use emailAddress.SenderAddress here in case the user wants to send a Direct message.
 			string subject=ProcessInlineEncodedText(emailMessageReceived.Subject);
 			if(subject.Trim().ToLower().StartsWith("fwd:")) { //already contains a "fwd:"
-				forwardMessage.Subject=subject;
+				emailMessageForward.Subject=subject;
 			}
 			else { //doesn't contain a "fwd:"
-				forwardMessage.Subject="FWD: "+subject;
+				emailMessageForward.Subject="FWD: "+subject;
 			}
-			string bodyTextString;
-			bodyTextString="\r\n\r\n\r\nOn "+emailMessageReceived.MsgDateTime.ToString()+" "+ProcessInlineEncodedText(emailMessageReceived.FromAddress)+" sent:\r\n>";
-			string receivedEmailBody;
+			emailMessageForward=SetForwardOrReplyBody(emailMessageForward,emailMessageReceived,emailAddress);
+			emailMessageForward.MsgType=EmailMessageSource.Forward;
+			return emailMessageForward;
+		}
+
+		///<summary>Sets the EmailMessage body for forward or reply emails from the emailMessageReceived. This method also handles the logic for setting it's attachments from emailMessageReceieved.</summary>
+		private static EmailMessage SetForwardOrReplyBody(EmailMessage emailMessage,EmailMessage emailMessageReceived,EmailAddress emailAddress) {
+			string bodyTextHeader="\r\n\r\n\r\nOn "+emailMessageReceived.MsgDateTime.ToString()+" "+ProcessInlineEncodedText(emailMessageReceived.FromAddress)+" sent:\r\n";
+			string bodyText;
 			List<List<Health.Direct.Common.Mime.MimeEntity>> listMimeEntitiesPart=
-				EmailMessages.GetMimePartsForMimeTypes(emailMessageReceived.RawEmailIn,emailAddress,"text/html","text/plain","image/");
+				EmailMessages.GetMimePartsForMimeTypes(emailMessageReceived.RawEmailIn,emailAddress,"text/html","text/plain","image/","application/octet-stream");
 			List<Health.Direct.Common.Mime.MimeEntity> listMimeEntitiesPartHtml=listMimeEntitiesPart[0];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
 			List<Health.Direct.Common.Mime.MimeEntity> listMimeEntitiesPartText=listMimeEntitiesPart[1];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
-			if(listMimeEntitiesPartHtml.Count>0) {//Html body found.
-				receivedEmailBody=HttpUtility.HtmlDecode(Regex.Replace(EmailMessages.ProcessMimeTextPart(listMimeEntitiesPartHtml[0]),@"<(.|\n)*?>","")); //remove most html tags.
+			List<Health.Direct.Common.Mime.MimeEntity> listMimeEntriesPartImages=new List<Health.Direct.Common.Mime.MimeEntity>();
+			listMimeEntriesPartImages.AddRange(listMimeEntitiesPart[2]);//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
+			listMimeEntriesPartImages.AddRange(listMimeEntitiesPart[3]);//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
+			if(listMimeEntriesPartImages.Count>0) {//Email has images that need to be displayed
+				bodyTextHeader=bodyTextHeader.Replace("<","&<");//& is our internal escape character for html used in MarkupEdit.TranslateToXhtml()
+				bodyTextHeader=bodyTextHeader.Replace(">","&>");//& is our internal escape character for html used in MarkupEdit.TranslateToXhtml()
+				if(listMimeEntitiesPartText.Count>0) {
+					bodyText=EmailMessages.ProcessMimeTextPart(listMimeEntitiesPartText[0]);
+				}
+				else {
+					bodyText=emailMessageReceived.BodyText;
+				}
+				bodyText=bodyTextHeader+bodyText;
+				for(int i=0;i<listMimeEntriesPartImages.Count;i++) {//Similar logic to EmailPreviewControl.ParseAndSaveAttachments()
+					string fileName=GetMimeImageFileName(listMimeEntriesPartImages[i]);
+					if(!ImageStore.HasImageExtension(fileName)) {//Check file format against known image format extensions.
+						continue;//Don't show any that are not a known image format
+					}
+					bodyText=bodyText.Replace($"[cid:{fileName}]",$"[[img:{fileName}]]");//Change inline image to image link.
+				}
+				string rawEmailText="";
+				try {
+					rawEmailText=MarkupEdit.TranslateToXhtml(bodyText,isPreviewOnly:false,isEmail:true);
+				}
+				catch(Exception e) {
+					e.DoNothing();
+				}
+				bodyText=rawEmailText;
+				emailMessage.AreImagesDownloaded=true;
+				emailMessage.Attachments=emailMessageReceived.Attachments;
+				emailMessage.RawEmailIn=bodyText;
+				emailMessage.HtmlType=EmailType.RawHtml;
 			}
-			else if(listMimeEntitiesPartText.Count>0) {//No html body found, however one specific mime part is for viewing in text only.
-				receivedEmailBody=HttpUtility.HtmlDecode(EmailMessages.ProcessMimeTextPart(listMimeEntitiesPartText[0]));
+			else { 
+				if(listMimeEntitiesPartHtml.Count>0) {//Html body found.
+					bodyText=HttpUtility.HtmlDecode(Regex.Replace(EmailMessages.ProcessMimeTextPart(listMimeEntitiesPartHtml[0]),@"<(.|\n)*?>","")); //remove most html tags.
+				}
+				else if(listMimeEntitiesPartText.Count>0) {//No html body found, however one specific mime part is for viewing in text only.
+					bodyText=HttpUtility.HtmlDecode(EmailMessages.ProcessMimeTextPart(listMimeEntitiesPartText[0]));
+				}
+				else {//No html body found and no text body found.  Last resort.  Show all mime parts which are not attachments (ugly).
+					bodyText=emailMessageReceived.BodyText;//This version of the body text includes all non-attachment mime parts.
+				}
+				bodyText=bodyText.Trim().Replace("\r\n",".!(-&>"); //replace with a string that would very very seldom happen.
+				bodyText=bodyText.Trim().Replace("\n",".!(-&>");
+				bodyText=bodyText.Trim().Replace("\r",".!(-&>");
+				bodyText=bodyText.Trim().Replace(".!(-&>","\r\n>");
+				bodyText=bodyTextHeader+">"+bodyText;
 			}
-			else {//No html body found and no text body found.  Last resort.  Show all mime parts which are not attachments (ugly).
-				receivedEmailBody=emailMessageReceived.BodyText;//This version of the body text includes all non-attachment mime parts.
-			}
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r\n",".!(-&>"); //replace with a string that would very very seldom happen.
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\n",".!(-&>");
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r",".!(-&>");
-			bodyTextString+=receivedEmailBody.Trim().Replace(".!(-&>","\r\n>");
-			forwardMessage.BodyText=bodyTextString;
-			forwardMessage.MsgType=EmailMessageSource.Forward;
-			return forwardMessage;
+			emailMessage.BodyText=bodyText;
+			return emailMessage;
 		}
 
 		///<summary>This method sets message.HtmlText by putting the BodyText into an HTML body.  Will only set HtmlText,AreImagesDownloaded,HtmlType if

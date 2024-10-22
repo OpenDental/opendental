@@ -128,9 +128,22 @@ namespace OpenDental {
 			comboEntry.Tag=wikiListColumnComponent.WikiListHeaderWidth.ColName;
 		}
 
+		private void gridMain_CellLeave(object sender,ODGridClickEventArgs e) {
+			//We display information to the user as if the columns of _tableWikiList are actually the rows.
+			//The first column in _tableWikiList is reserved for the title bar text for the window.
+			//Therefore, the rows in the grid that the user is interacting with represent the columns following said title bar column.
+			//The ODGridClickEventArgs passed in represent the cell that was just edited by the user. We need to update the table with that information.
+			//Figure out which column in the table needs to be synchronized (see GetWikiListGridRowComponents() for details).
+			string columnName=gridMain.ListGridRows[e.Row].Cells[0].Text;//Get the columnName for the gridMain row, so we can use it to identify the corresponding column in _tableWikiList.
+			//Normalize invisible newline characters from the grid cell. All content following the first newline would be lost without normalizing.
+			string gridCellValue=gridMain.ListGridRows[e.Row].Cells[1].Text.Replace("\r\n","\n").Replace("\n","\r\n");
+			//Synchronize the table with the grid.
+			_tableWikiList.Rows[0][columnName]=gridCellValue;
+		}
+
 		private void comboEntry_Leave(object sender,EventArgs e) {
 			comboEntry.Visible=false;
-			//Save any previous combo box values if present.
+			//Synchronize the table with the combobox selection.
 			if(comboEntry.Tag!=null && comboEntry.SelectedItem!=null) {
 				//We display this information to the user as if the columns of _tableWikiList are actually the rows.
 				string columnName=comboEntry.Tag.ToString();

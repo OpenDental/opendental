@@ -74,6 +74,7 @@ namespace OpenDental{
 			this.listType.Name = "listType";
 			this.listType.Size = new System.Drawing.Size(158, 95);
 			this.listType.TabIndex = 14;
+			this.listType.SelectedIndexChanged += new System.EventHandler(this.listType_SelectedIndexChanged);
 			// 
 			// label1
 			// 

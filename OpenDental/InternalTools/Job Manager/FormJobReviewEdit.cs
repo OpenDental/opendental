@@ -46,6 +46,10 @@ namespace OpenDental {
 			} 
 			textDescription.Text=_jobReviewCur.Description;
 			textReviewTime.Text=_jobReviewCur.TimeReview.TotalMinutes.ToString();
+			checkAsyncReview.Checked=_jobReviewCur.IsAsyncReview;
+			if(_jobReviewCur.ReviewerNum!=secUser.UserNum) {
+				checkAsyncReview.Enabled=false;
+			}
 		}
 
 		private void CheckPermissions() {
@@ -125,6 +129,7 @@ namespace OpenDental {
 			if(_jobReviewCur.IsNew) {
 				_jobReviewCur.DateTStamp=DateTime.Now;
 			}
+			_jobReviewCur.IsAsyncReview=checkAsyncReview.Checked;
 			DialogResult=DialogResult.OK;
 		}
 

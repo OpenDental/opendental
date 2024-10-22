@@ -650,8 +650,9 @@ namespace OpenDental{
 			//We are about to start signal processing high priority signals for the first time so set the initial refresh timestamp.
 			//Low priority signal processing doesn't start until a user logs in.
 			Signalods.DateTHighPrioritySignalLastRefreshed=MiscData.GetNowDateTime();
-			timerSignals.Interval=PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)*1000;
 			if(PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)>0){
+				///If interval is set to 0 it will throw an exception.
+				timerSignals.Interval=PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)*1000;
 				timerSignals.Start();
 			}
 			Logger.LogToPath("LogOnOpenDentalUser",LogPath.Startup,LogPhase.Start);

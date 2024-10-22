@@ -304,7 +304,8 @@ namespace OpenDental {
 				double hoursReviewee=listJobs
 					.Where(x => x.UserNumEngineer==userNum)	//jobs for this engineer
 					.SelectMany(y => y.ListJobReviews)			//that have review time
-					.Sum(y => y.TimeReview.TotalHours);			//sum review time for the reviewee
+					.Where(z => !z.IsAsyncReview)					//only reviews that are not async
+					.Sum(z => z.TimeReview.TotalHours);			//sum review time for the reviewee
 				double hoursTotal=hoursTimeLogs+hoursReviewer+hoursReviewee;
 				row.Cells.Add(hoursTotal.ToString("F2"));			//Column - Hours
 				gridEngineerHours.ListGridRows.Add(row);

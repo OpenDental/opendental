@@ -234,25 +234,6 @@ namespace OpenDental {
 				return;
 			}
 			EFormDef eFormDef=frmEFormPicker.EFormDefSelected;
-			#region InternalEFormAdded
-			if(eFormDef.EFormDefNum==0 && eFormDef.IsInternal){
-				string description=eFormDef.Description;
-				//When a user adds an internal eFormDef, we must add the copy of the form along with all the fields to the db
-				eFormDef.DateTCreated=DateTime.Now;
-				EFormDefs.Insert(eFormDef);
-				for(int i=0;i<eFormDef.ListEFormFieldDefs.Count;i++){
-					eFormDef.ListEFormFieldDefs[i].EFormDefNum=eFormDef.EFormDefNum;
-					EFormFieldDefs.Insert(eFormDef.ListEFormFieldDefs[i]);
-				}
-				//mark the internal form as hidden.
-				EFormDef eFormDef2=new EFormDef();
-				eFormDef2.IsInternalHidden=true;
-				eFormDef2.Description=description;
-				EFormDefs.Insert(eFormDef2);
-				EFormDefs.RefreshCache();
-				EFormFieldDefs.RefreshCache();
-			}
-			#endregion InternalEFormAdded
 			//attach the added eForm to a new eClipboardSheetDef
 			EClipboardSheetDef eClipboardSheetDef=new EClipboardSheetDef();
 			eClipboardSheetDef.EFormDefNum=eFormDef.EFormDefNum;

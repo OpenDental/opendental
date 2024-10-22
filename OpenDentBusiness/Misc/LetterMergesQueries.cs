@@ -122,8 +122,8 @@ namespace OpenDentBusiness {
 				+"LEFT JOIN carrier ON carrier.CarrierNum=insplan.CarrierNum "
 				+"LEFT JOIN patient patSubsc ON patSubsc.PatNum=inssub.Subscriber "
 				+"LEFT JOIN appointment ON appointment.PatNum=patient.PatNum "
-					+"AND AptStatus="+POut.Long((int)ApptStatus.Scheduled)+" "
-					+"AND AptDateTime > "+DbHelper.Now()+" "
+					+"AND appointment.AptStatus="+POut.Long((int)ApptStatus.Scheduled)+" "
+					+"AND appointment.AptDateTime > "+DbHelper.Now()+" "
 				+"LEFT JOIN patient patGuar ON patGuar.PatNum=patient.Guarantor "
 				+"WHERE patient.PatNum="+POut.Long(PatCur.PatNum)
 				+" GROUP BY patient.PatNum "

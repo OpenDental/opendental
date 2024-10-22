@@ -841,6 +841,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			gridReview.Columns.Add(new GridColumn("Reviewer",80));
 			gridReview.Columns.Add(new GridColumn("Status",90));
 			gridReview.Columns.Add(new GridColumn("Hours",80));
+			gridReview.Columns.Add(new GridColumn("IsAsync",50,HorizontalAlignment.Center));
 			gridReview.Columns.Add(new GridColumn("Description",200));
 			gridReview.ListGridRows.Clear();
 			GridRow row;
@@ -850,6 +851,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				row.Cells.Add(Userods.GetName(jobReview.ReviewerNum));
 				row.Cells.Add(Enum.GetName(typeof(JobReviewStatus),(int)jobReview.ReviewStatus));
 				row.Cells.Add(Math.Round(jobReview.Hours,2).ToString());
+				row.Cells.Add(jobReview.IsAsyncReview ? "X" : "");
 				row.Cells.Add(StringTools.Truncate(jobReview.Description,500,true));
 				row.Tag=jobReview;
 				gridReview.ListGridRows.Add(row);

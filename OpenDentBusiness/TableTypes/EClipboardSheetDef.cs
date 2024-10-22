@@ -15,12 +15,12 @@ namespace OpenDentBusiness{
 		public long SheetDefNum;
 		///<summary>FK to clinic.ClinicNum.  0 if no clinic or if default clinic.</summary>
 		public long ClinicNum;
-		///<summary>Indicates the acceptable amount of time that can pass since the last time the patient has filled this form out. Once this has elapsed, if the EClipboardCreateMissingFormsOnCheckIn pref is turned on, this form will automatically be added to the patient forms to fill out when the patient is checked in.</summary>
+		///<summary>If Frequency is EnumEClipFreq.TimeSpan, this will indicate the acceptable amount of time (measured in Years and Months) that can pass since the last time the patient has filled this form out. Once this has elapsed, if the EClipboardCreateMissingFormsOnCheckIn pref is turned on, this form will automatically be added to the patient forms to fill out when the patient is checked in.</summary>
 		[CrudColumn(SpecialType = CrudSpecialColType.TimeSpanLong),XmlIgnore]
 		public TimeSpan ResubmitInterval;
 		///<summary>The order in which the patient will be asked to fill out this form.</summary>
 		public int ItemOrder;
-		///<summary>Determines how forms will be show in eClipboard, fresh copy or last available filled out version.</summary>
+		///<summary>Determines how forms will be shown in eClipboard, fresh copy or last available filled out version.</summary>
 		public PrefillStatuses PrefillStatus;
 		///<summary>Indicates the minimum age of the patient to be given the form to fill out. If their age is below the minimum limit, they will not be given the form to fill out. A value of -1 means ignore any age requirements.</summary>
 		public int MinAge;
@@ -33,6 +33,9 @@ namespace OpenDentBusiness{
 		public long PrefillStatusOverride;
 		///<summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet. Only for custom eForms.</summary>
 		public long EFormDefNum;
+		///<summary>Enum:EnumEClipFreq 0=Once, 1=EachTime, 2=TimeSpan. The frequency that a form will be submitted by patients. ResubmitInterval can only be set if Frequency is TimeSpan.</summary>
+		public EnumEClipFreq Frequency;
+
 
 		///<summary>Used only for serialization purposes</summary>
 		[XmlElement("ResubmitInterval",typeof(long))]
@@ -50,6 +53,17 @@ namespace OpenDentBusiness{
 			return (EClipboardSheetDef)this.MemberwiseClone();
 		}
 	}
+
+	///<summary>Specifies the frequency that an EClipboardSheetDef or an EClipboardImageCaptureDef will be submitted by patients.</summary>
+	public enum EnumEClipFreq{
+		///<summary>0 - Each patient will submit this form or image capture exactly one time.</summary>
+		Once,
+		///<summary>1 - Each patient will submit this form or image capture at every visit.</summary>
+		EachTime,
+		///<summary>2 - Each patient will submit this form or image capture based on a specified time span measured in Years and Months.</summary>
+		TimeSpan
+	}
+
 }
 
 ///<summary></summary>
@@ -58,6 +72,6 @@ public enum PrefillStatuses {
 	New, 
 	///<summary>Prefill means we pull last filled out sheet where RevID for the sheet matches the current SheetDef RevID</summary>
 	PreFill,
-	///<summary>Once means we only show this sheet once, resubmit is 0</summary>
+	///<summary>Deprecated.</summary>
 	Once
 };

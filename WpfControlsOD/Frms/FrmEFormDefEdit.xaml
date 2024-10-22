@@ -27,9 +27,8 @@
 		</ui:GroupBox>
 
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,8" Text="_Save" Click="butSave_Click" />
-		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="155,32,0,38" HorizontalAlignment="Left" Width="458"/>
+		<local:CtrlEFormFill x:Name="ctrlEFormFill" Margin="155,5,0,38" HorizontalAlignment="Left" Width="458"/>
 		<ui:TextBox x:Name="textDescription" Height="20" Width="147" Margin="1,5,0,0" ReadOnly="True" ColorBack="#FFF0F0F0"/>
-		<ui:Label x:Name="labelTitle" Height="18" Margin="155,10,0,0" VAlign="Bottom" Text="This is an internal eForm. Once saved, it will become a custom eForm." Width="450"/>
 		<ui:Button x:Name="butCopy" Margin="18,392,0,0" Text="Copy Ctrl-C" Height="24" Width="87" Click="butCopy_Click"  />
 		<ui:Button x:Name="butPaste" Margin="18,419,0,0" Text="Paste Ctrl-V" Height="24" Width="87" Click="butPaste_Click" />
 		<ui:Button x:Name="butCut" Margin="18,365,0,0" Text="Cut Ctrl-X" Height="24" Width="87" Click="butCut_Click"   />

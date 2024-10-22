@@ -27,6 +27,10 @@ namespace OpenDental {
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
+			if(!textDaysPast.IsValid() || !textDaysFuture.IsValid()) {
+				MsgBox.Show(this,"Please fix data entry errors first.");
+				return;
+			}
 			bool isPrefsInvalid=false;
 			int unschedDaysPastValue=-1;
 			int unschedDaysFutureValue=-1;

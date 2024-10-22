@@ -76,6 +76,7 @@ namespace OpenDental{
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
 			this.gridMain.Size = new System.Drawing.Size(620, 623);
 			this.gridMain.TabIndex = 26;
+			this.gridMain.CellLeave += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellLeave);
 			this.gridMain.CellEnter += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellEnter);
 			// 
 			// FormWikiListItemEdit

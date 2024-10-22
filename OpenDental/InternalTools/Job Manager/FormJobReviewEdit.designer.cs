@@ -39,6 +39,7 @@ namespace OpenDental{
 			this.labelReviewTime = new System.Windows.Forms.Label();
 			this.textReviewTime = new OpenDental.ValidNum();
 			this.butAutoNote = new OpenDental.UI.Button();
+			this.checkAsyncReview = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -61,7 +62,7 @@ namespace OpenDental{
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(12, 198);
+			this.label9.Location = new System.Drawing.Point(12, 222);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(83, 20);
 			this.label9.TabIndex = 0;
@@ -104,7 +105,7 @@ namespace OpenDental{
 			this.textDescription.DetectLinksEnabled = false;
 			this.textDescription.DetectUrls = false;
 			this.textDescription.HasAutoNotes = true;
-			this.textDescription.Location = new System.Drawing.Point(12, 221);
+			this.textDescription.Location = new System.Drawing.Point(12, 245);
 			this.textDescription.Name = "textDescription";
 			this.textDescription.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.CommLog;
 			this.textDescription.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -117,7 +118,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 426);
+			this.butDelete.Location = new System.Drawing.Point(12, 450);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
 			this.butDelete.TabIndex = 17;
@@ -127,7 +128,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(245, 426);
+			this.butOK.Location = new System.Drawing.Point(245, 450);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 15;
@@ -137,7 +138,7 @@ namespace OpenDental{
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(326, 426);
+			this.butCancel.Location = new System.Drawing.Point(326, 450);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
 			this.butCancel.TabIndex = 16;
@@ -156,7 +157,7 @@ namespace OpenDental{
 			// butLogin
 			// 
 			this.butLogin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butLogin.Location = new System.Drawing.Point(326, 191);
+			this.butLogin.Location = new System.Drawing.Point(326, 215);
 			this.butLogin.Name = "butLogin";
 			this.butLogin.Size = new System.Drawing.Size(75, 24);
 			this.butLogin.TabIndex = 19;
@@ -184,16 +185,26 @@ namespace OpenDental{
 			// butAutoNote
 			// 
 			this.butAutoNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butAutoNote.Location = new System.Drawing.Point(245, 191);
+			this.butAutoNote.Location = new System.Drawing.Point(245, 215);
 			this.butAutoNote.Name = "butAutoNote";
 			this.butAutoNote.Size = new System.Drawing.Size(75, 24);
 			this.butAutoNote.TabIndex = 22;
 			this.butAutoNote.Text = "Auto Note";
 			this.butAutoNote.Click += new System.EventHandler(this.butAutoNote_Click);
 			// 
+			// checkAsyncReview
+			// 
+			this.checkAsyncReview.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkAsyncReview.Location = new System.Drawing.Point(34, 194);
+			this.checkAsyncReview.Name = "checkAsyncReview";
+			this.checkAsyncReview.Size = new System.Drawing.Size(120, 20);
+			this.checkAsyncReview.TabIndex = 23;
+			this.checkAsyncReview.Text = "Async Review";
+			// 
 			// FormJobReviewEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(413, 462);
+			this.ClientSize = new System.Drawing.Size(413, 486);
+			this.Controls.Add(this.checkAsyncReview);
 			this.Controls.Add(this.butAutoNote);
 			this.Controls.Add(this.textReviewTime);
 			this.Controls.Add(this.labelReviewTime);
@@ -235,5 +246,6 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelReviewTime;
 		private ValidNum textReviewTime;
 		private UI.Button butAutoNote;
+		private UI.CheckBox checkAsyncReview;
 	}
 }

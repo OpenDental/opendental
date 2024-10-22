@@ -8,6 +8,8 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using CodeBase;
+using Microsoft.Web.WebView2.Core;
+using Newtonsoft.Json;
 using OpenDental.Bridges;
 using OpenDentBusiness;
 using OpenDentBusiness.PayConnectService;
@@ -25,6 +27,8 @@ namespace OpenDental {
 		private decimal _amount;
 		private Program _program;
 		private PayConnectResponse _response;
+		private PayConnect2Response _payConnect2Response=new PayConnect2Response();
+		private bool iframeOpen=false;
 		public PayConnectService.transType TransType=PayConnectService.transType.SALE;//Backwards compatability with PayConnect v1
 		///<summary>Opening the PayConnect or PaySimple window from FormPayment, and then closing them, can set isCcDeclined to True.
 		///This is because FormPayment didn't know if a transaction was attempted or not, and was assuming it was.
@@ -95,6 +99,16 @@ namespace OpenDental {
 			}
 			if(radioWebService.Checked) {
 				comboTerminal.Enabled=false;
+				if(radioSale.Checked && _creditCard==null) {
+					SetUpIframe(GetAmountFieldAsCents());
+					label1.Visible=true;
+					butRefresh.Enabled=true;
+				}
+				else {
+					label1.Visible=false;
+					butRefresh.Enabled=false;
+					SetFormSizeToNormal();
+				}
 			}
 			else if(radioTerminal.Checked) {
 				comboTerminal.Enabled=true;
@@ -120,7 +134,6 @@ namespace OpenDental {
 		/// <summary>Returns true if we contacted and got a response from PayConnect.</summary>
 		private bool ProcessTransaction() {
 			WasPaymentAttempted=true;
-			PayConnect2Response payConnect2Response=new PayConnect2Response();
 			int amountInCents=GetAmountFieldAsCents();
 			string magData="";
 			if(radioTerminal.Checked) {
@@ -145,7 +158,7 @@ namespace OpenDental {
 							TransType=PayConnectService.transType.AUTH;
 					}
 					UI.ProgressWin progressOD=new UI.ProgressWin();
-					progressOD.ActionMain=()=> {payConnect2Response=PayConnect2.PostCreateTerminalTransaction(request,_clinicNum);};
+					progressOD.ActionMain=()=> {_payConnect2Response=PayConnect2.PostCreateTerminalTransaction(request,_clinicNum);};
 					progressOD.ShowCancelButton=false;//This is neccessary as cancelling on our side will not cancel the transaction on the terminal, which could lead to the payment being processed but not show in the patients account. This also matches what we do in FormPayConnect.cs.
 					progressOD.StartingMessage=Lan.g(this,"Processing payment on terminal");
 					progressOD.StopNotAllowedMessage=Lan.g(this,"Not allowed to stop. Please wait up to 2 minutes.");
@@ -190,8 +203,8 @@ namespace OpenDental {
 				//	}
 				//}
 				//We only have the last 4 digits of the card to work with now, no need for MagStripCardParser
-				if(payConnect2Response.TerminalTransactionResponse!=null) {
-					magData=payConnect2Response.TerminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+				if(_payConnect2Response.TerminalTransactionResponse!=null) {
+					magData=_payConnect2Response.TerminalTransactionResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
 				}
 			}
 			else if(radioWebService.Checked) {
@@ -201,10 +214,7 @@ namespace OpenDental {
 						return false;
 					}
 					if(_creditCard==null || _creditCard.PayConnectToken.IsNullOrEmpty()) {
-						using FormPayConnect2iFrame formPayConnect2IFrame=new FormPayConnect2iFrame(_clinicNum,amountInCents,_isAddingCard);
-						formPayConnect2IFrame.ShowDialog();
-						payConnect2Response=formPayConnect2IFrame.GetResponse();
-						GetStatusResponse getStatusResponse=payConnect2Response.GetStatusResponse;
+						GetStatusResponse getStatusResponse=_payConnect2Response.GetStatusResponse;
 						if(getStatusResponse==null) {
 							return false;
 						}
@@ -216,7 +226,7 @@ namespace OpenDental {
 					//We have a saved card with a token
 					else {
 						try {
-							payConnect2Response=PayConnect2.PostCreateTransactionByToken(_patient,_creditCard,amountInCents,_clinicNum);
+							_payConnect2Response=PayConnect2.PostCreateTransactionByToken(_patient,_creditCard,amountInCents,_clinicNum);
 						}
 						catch(Exception ex) {
 							ex.DoNothing();
@@ -236,7 +246,7 @@ namespace OpenDental {
 						return false;
 					}
 					try {
-						payConnect2Response=PayConnect2.PostCreateTransactionByToken(_patient,_creditCard,amountInCents,_clinicNum,PayConnect2.TransactionType.AuthorizeOnly);
+						_payConnect2Response=PayConnect2.PostCreateTransactionByToken(_patient,_creditCard,amountInCents,_clinicNum,PayConnect2.TransactionType.AuthorizeOnly);
 					}
 					catch(Exception ex) {
 							ex.DoNothing();
@@ -256,7 +266,7 @@ namespace OpenDental {
 					if(amountInCents>0) {
 						refundReferenceIDRequest.Amount=amountInCents;
 					}
-					payConnect2Response=PayConnect2.PostRefundWithReferenceID(refundReferenceIDRequest,_clinicNum);
+					_payConnect2Response=PayConnect2.PostRefundWithReferenceID(refundReferenceIDRequest,_clinicNum);
 					TransType=PayConnectService.transType.RETURN;
 				}
 				else if(radioVoid.Checked) {
@@ -266,11 +276,11 @@ namespace OpenDental {
 					}
 					VoidReferenceIDRequest voidReferenceIDRequest=new VoidReferenceIDRequest();
 					voidReferenceIDRequest.ReferenceId=textRefNumber.Text;
-					payConnect2Response=PayConnect2.PutVoidWithReferenceID(voidReferenceIDRequest,_clinicNum);
+					_payConnect2Response=PayConnect2.PutVoidWithReferenceID(voidReferenceIDRequest,_clinicNum);
 					TransType=PayConnectService.transType.VOID;
 				}	
 			}
-			_response=PayConnect2.ApiResponseToPayConnectResponse(payConnect2Response);
+			_response=PayConnect2.ApiResponseToPayConnectResponse(_payConnect2Response);
 			bool doShowSignatureLine=true;
 			if(TransType==transType.SALE || TransType==transType.AUTH || TransType==transType.RETURN) {
 				PayConnect2Response signatureResponse=SendSignature();
@@ -349,7 +359,121 @@ namespace OpenDental {
 		public PayConnectResponse GetPayConnectResponse() {
 			return _response;
 		}
+
+
+		///<summary>Originally from FormPayConnect2IFrame_Load().</summary>
+		public async void SetUpIframe(int amountInCents,bool update=false) {
+			if(iframeOpen) {
+				if(!update) {
+					Size=new Size(LayoutManager.Scale(959),516);
+					return;
+				}
+				if(update) {
+					webViewMain.Stop();
+					Size=new Size(LayoutManager.Scale(959), 516);
+				}
+			}
+			if(ODBuild.IsThinfinity()) {
+				//Unable to support PayConnect 2 on OD Cloud for the following reasons: OD Cloud uses Thinfinity, which does not allow for using WebView2 controls, meaning cloud would need to use the
+				//old WebBrowser control. This issue with this is we currently do not know of a way to retrieve the iFrame response from a WebBrowser control. Maybe when Payment Portal is finished
+				//we could try using a modified version of that to send the transaction data to the office's eConnector. We could also try making a "dummy" html page that contains the iFrame that is
+				//capable of storing the iFrame response and then parse the DOM afterthe user is finished.
+				MsgBox.Show(this,"Open Dental Cloud does not currently support PayConnect version 2.");
+				DialogResult=DialogResult.Cancel;
+				return;
+			}
+			string url = "";
+			Size=new Size(LayoutManager.Scale(959), 516);
+			try {
+				url=GetiFrameUrl(amountInCents);
+			}
+			catch(ODException ex) {
+				FriendlyException.Show("Error loading window.",ex);
+				return;
+			}
+			//Cloud requires using the old web browser control due to constraints from thinfinity.
+			if(ODBuild.IsThinfinity()) {
+				webViewMain.Visible=false;
+				webBrowserMain.Visible=true;
+				//webBrowserMain.Navigate();
+				//webBrowserMain.DocumentCompleted+= webBrowserMain_DocumentCompleted;
+				webBrowserMain.Navigate(url);
+				iframeOpen=true;
+			}
+			else {
+				webViewMain.Visible=true;
+				webBrowserMain.Visible=false;
+				try {
+					await webViewMain.Init();
+					webViewMain.CoreWebView2.WebMessageReceived+=GetTransactionResult;
+					await webViewMain.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync("window.addEventListener(\'message\', e => { window.chrome.webview.postMessage(e.data); })");
+				}
+				catch(Exception ex) {
+					FriendlyException.Show("Error initializing window.",ex);
+					return;
+				}
+				webViewMain.CoreWebView2.Navigate(url);
+				iframeOpen=true;
+			}
+		}
+
+		///<summary>Originally from FormPayConnect2IFrame_Load().</summary>
+		private string GetiFrameUrl(int amountInCents) {
+			EmbedSessionRequest embedSessionRequest=new EmbedSessionRequest();
+			embedSessionRequest.Swiper=true;
+			if(_isAddingCard) { 
+				embedSessionRequest.Type=PayConnect2.IframeType.Tokenizer;
+			}
+			else {
+				embedSessionRequest.Type=PayConnect2.IframeType.Payment;
+				if(amountInCents>0) {
+					//Amount is optional, setting it just prevents it from being changed in the PayConnect iFrame.
+					embedSessionRequest.Amount=amountInCents;
+				}
+			}
+			_payConnect2Response=PayConnect2.PostEmbedSession(embedSessionRequest,_clinicNum);
+			if(_payConnect2Response.ResponseType==PayConnect2.ResponseType.EmbedSession) {
+				return _payConnect2Response.EmbedSessionResponse.Url;
+			}
+			throw new ODException("Error occurred retrieving payment form URL from PayConnect.");
+		}
+
+		///<summary>Throws Exceptions. Originally from FormPayConnect2IFrame_Load().</summary>
+		private void GetTransactionResult(object sender,CoreWebView2WebMessageReceivedEventArgs args) {
+			iFrameResponse response=null;
+			try {
+				response=JsonConvert.DeserializeObject<iFrameResponse>(args.WebMessageAsJson);
+			}
+			catch(JsonException jEx) {
+				//failed to deserialize, we probably did not recieve a success response from the iFrame.
+				jEx.DoNothing();
+			}
+			catch (Exception ex) {
+				throw new ODException("Error retrieving response from PayConnect.",ex);
+			}
+			//Immediately call the GetStatus endpoint  for easier processing.
+			if(response!=null && response.IFrameStatus.ToLower()=="success") {
+				//When adding a card the transaction status and reference ID fields will return null from PayConnect, therefore we cannot run GetStatus.
+				if(_isAddingCard) {
+					//When attempting to add a new card, PayConnect sometimes sends back data fromatted like track 2 of a magstrip. Example: ;1234123412341234=0305101193010877?. If this is the case we need to parse out the card number.
+					if(response.Response.CardToken.StartsWith(";") && response.Response.CardToken.EndsWith("?")) {
+						MagstripCardParser magstripCardParser=new MagstripCardParser(response.Response.CardToken,EnumMagstripCardParseTrack.TrackTwo);
+						response.Response.CardToken=magstripCardParser.AccountNumber;
+					}
+					_payConnect2Response.iFrameResponse=response;
+					_payConnect2Response.ResponseType=ResponseType.IFrame;
+				}
+				else {
+					_payConnect2Response=GetTransactionStatus(_clinicNum,response.Response.ReferenceId);
+				}
+			}
+		}
 		
+		///<summary>Size of this form is the original size. If any size changes occur this should be changed as well.</summary>
+		private void SetFormSizeToNormal() {
+			Size=new Size(LayoutManager.Scale(430), 516);
+		}
+
 		private void radioTerminal_CheckedChanged(object sender,EventArgs e) {
 			if(radioTerminal.Checked) {
 				if(radioRefund.Checked || radioVoid.Checked) {
@@ -360,8 +484,8 @@ namespace OpenDental {
 				comboTerminal.Enabled=true;
 				radioVoid.Enabled=false;
 				radioRefund.Enabled=false;
-				
 			}
+			SetFormSizeToNormal();
 		}
 
 		private void radioWebService_CheckedChanged(object sender,EventArgs e) {
@@ -373,7 +497,24 @@ namespace OpenDental {
 			}
 		}
 
-		private void butOK_Click(object sender,EventArgs e) {
+		///<summary>Not able to save a card during a void or refund</summary>
+		private void transactionTypeCheckedChanged(object sender,EventArgs e) {
+			if(radioSale.Checked && radioWebService.Checked && _creditCard==null) {
+				label1.Visible=true;
+				butRefresh.Enabled=true;
+			}
+			else {
+				label1.Visible=false;
+				butRefresh.Enabled=false;
+			}
+			if(radioVoid.Checked || radioRefund.Checked) {
+				checkSaveToken.Visible=false;
+				return;
+			}
+			checkSaveToken.Visible=true;
+		}
+
+		private void butSave_Click(object sender,EventArgs e) {
 			if(!textAmount.IsValid()) {
 				MsgBox.Show(this,"Please enter a valid amount or clear the amount field.");
 				return;
@@ -395,14 +536,19 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		///<summary>Not able to save a card during a void or refund</summary>
-		private void transactionTypeCheckedChanged(object sender,EventArgs e) {
-			if(radioVoid.Checked || radioRefund.Checked) {
-				checkSaveToken.Visible=false;
+		private void radioSale_CheckedChanged(object sender,EventArgs e) {
+			if(radioSale.Checked && radioWebService.Checked && _creditCard==null) {
+				butRefresh.Enabled=true;
+				SetUpIframe(GetAmountFieldAsCents());
 				return;
 			}
-			checkSaveToken.Visible=true;
+			SetFormSizeToNormal();
 		}
 
+		private void butRefresh_Click(object sender,EventArgs e) {
+			if(radioSale.Checked && radioWebService.Checked && _creditCard==null) {
+				SetUpIframe(GetAmountFieldAsCents(),update:true);
+			}
+		}
 	}
 }

@@ -95,7 +95,7 @@ namespace OpenDentBusiness {
 			_medLab=medLab;
 			_isPrinting=true;
 			_yPosPrint=0;
-			PdfDocument document=new PdfDocument();
+			PdfDocument pdfDocument=new PdfDocument();
 			foreach(SheetField field in sheet.SheetFields) {//validate all signatures before modifying any of the text fields.
 				if(!field.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)) {
 					continue;
@@ -110,12 +110,12 @@ namespace OpenDentBusiness {
 			int pageCount=Sheets.CalculatePageCount(sheet,_printMargin);
 			for(int i=0;i<pageCount;i++) {
 				_pagesPrinted=i;
-				PdfPage page=document.AddPage();
-				_yPosPrint=CreatePdfPage(sheet,page,dataSet,pat: pat,patGuar: patGuar,_yPosPrint);
+				PdfPage pdfPage=pdfDocument.AddPage();
+				_yPosPrint=CreatePdfPage(sheet,pdfPage,dataSet,pat: pat,patGuar: patGuar,_yPosPrint);
 			}
 			_isPrinting=false;
 			GC.Collect();//We are done creating the pdf so we can forcefully clean up all the objects and controls that were used.
-			return document;
+			return pdfDocument;
 		}
 
 		/// <summary>Surround in try/catch block to handle exceptions.<br>Returns true if file was successfully saved.  Throws if exception occurs during the save attempt. If fullPathAndFilename is in the A to Z folder, pass in fullPathAndFilename as a temp file and then upload that file to the cloud.</br></summary>

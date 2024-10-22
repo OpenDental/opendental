@@ -323,10 +323,14 @@ namespace OpenDentBusiness.SheetFramework {
 			else {
 				double statementTotal=dataSet.Tables.OfType<DataTable>().Where(x => x.TableName.StartsWith("account"))
 					.SelectMany(x => x.Rows.OfType<DataRow>())
-					.Where(x => x["AdjNum"].ToString()!="0"//adjustments, may be charges or credits
+					.Where(x =>
+						x["AdjNum"].ToString()!="0"//adjustments, may be charges or credits
 						|| x["ProcNum"].ToString()!="0"//procs, will be charges with credits==0
 						|| x["PayNum"].ToString()!="0"//patient payments, will be credits with charges==0
-						|| x["ClaimPaymentNum"].ToString()!="0").ToList()//claimproc payments+writeoffs, will be credits with charges==0
+						|| x["ClaimPaymentNum"].ToString()!="0"//claimproc payments+writeoffs, will be credits with charges==0
+						|| x["PayPlanChargeNum"].ToString()!="0"//pay plans, will be debits with credits==0
+						)
+					.ToList()
 					.Sum(x => PIn.Double(x["chargesDouble"].ToString())-PIn.Double(x["creditsDouble"].ToString()));//add charges-credits
 				if(PrefC.GetBool(PrefName.BalancesDontSubtractIns)) {
 					text=statementTotal.ToString("c");

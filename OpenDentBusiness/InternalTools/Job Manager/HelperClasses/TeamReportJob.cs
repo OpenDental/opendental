@@ -95,7 +95,9 @@ namespace OpenDentBusiness.InternalTools.Job_Manager.HelperClasses {
 					}
 					//User is engineer on job and another user reviewed it.
 					else if(jobReview.ReviewerNum!=userNum) {
-						timeSpanTimeLogs+=jobReview.TimeReview;
+						if(!jobReview.IsAsyncReview) {
+							timeSpanTimeLogs+=jobReview.TimeReview;
+						}
 					}
 					else {//All other logs are for reviews by user.
 						timeSpanReviewLogs+=jobReview.TimeReview;

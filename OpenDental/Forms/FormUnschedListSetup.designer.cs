@@ -31,14 +31,13 @@ namespace OpenDental{
 			this.textDaysPast = new OpenDental.ValidNum();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(190, 144);
+			this.butSave.Location = new System.Drawing.Point(190, 143);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
@@ -56,28 +55,35 @@ namespace OpenDental{
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(253, 112);
 			this.groupBox3.TabIndex = 55;
-			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Default Dates";
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(9, 61);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(228, 39);
+			this.label1.TabIndex = 67;
+			this.label1.Text = "Leaving these fields blank will result in the date\r\n filter not being set when th" +
+    "e unscheduled list\r\n is first opened.";
 			// 
 			// textDaysFuture
 			// 
 			this.textDaysFuture.Location = new System.Drawing.Point(192, 38);
 			this.textDaysFuture.MaxVal = 10000;
-			this.textDaysFuture.MinVal = 0;
 			this.textDaysFuture.Name = "textDaysFuture";
+			this.textDaysFuture.ShowZero = false;
 			this.textDaysFuture.Size = new System.Drawing.Size(53, 20);
 			this.textDaysFuture.TabIndex = 66;
-			this.textDaysFuture.ShowZero = false;
 			// 
 			// textDaysPast
 			// 
 			this.textDaysPast.Location = new System.Drawing.Point(192, 16);
 			this.textDaysPast.MaxVal = 10000;
-			this.textDaysPast.MinVal = 0;
 			this.textDaysPast.Name = "textDaysPast";
+			this.textDaysPast.ShowZero = false;
 			this.textDaysPast.Size = new System.Drawing.Size(53, 20);
 			this.textDaysPast.TabIndex = 65;
-			this.textDaysPast.ShowZero = false;
 			// 
 			// label14
 			// 
@@ -97,19 +103,8 @@ namespace OpenDental{
 			this.label15.Text = "Days Future (e.g. 7)";
 			this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(9, 61);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(228, 39);
-			this.label1.TabIndex = 67;
-			this.label1.Text = "Leaving these fields blank will result in the date\r\n filter not being set when th" +
-    "e unscheduled list\r\n is first opened.";
-			// 
 			// FormUnschedListSetup
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(286, 180);
 			this.Controls.Add(this.butSave);
 			this.Controls.Add(this.groupBox3);

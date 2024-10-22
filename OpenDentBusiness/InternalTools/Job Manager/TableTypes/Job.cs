@@ -237,7 +237,7 @@ namespace OpenDentBusiness {
 		///<summary>The actual hours a job has taken so far.</summary>
 		public double HoursActual {
 			get {
-				return Math.Round(ListJobTimeLogs.Sum(x => x.TimeReview.TotalHours)+(2*ListJobReviews.Sum(x => x.TimeReview.TotalHours)),2);
+				return Math.Round(ListJobTimeLogs.Sum(x => x.TimeReview.TotalHours)+(ListJobReviews.Sum(x => x.TimeReview.TotalHours*(x.IsAsyncReview ? 1 : 2))),2);
 			}
 		}		
 		

@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using CodeBase;
 using OpenDentBusiness;
 
 namespace OpenDental {
@@ -71,6 +72,10 @@ namespace OpenDental {
 		}
 
 		private void butBrowse_Click(object sender,EventArgs e) {
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+				textCertFilePath.Text=ODCloudClient.ImportFileForCloud();
+				return;
+			}
 			if(openFileDialogCert.ShowDialog()==DialogResult.OK) {
 				textCertFilePath.Text=openFileDialogCert.FileName;
 			}

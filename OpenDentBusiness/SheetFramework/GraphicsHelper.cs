@@ -199,7 +199,6 @@ namespace OpenDentBusiness {
 				fontstyle=FontStyle.Bold;
 			}
 			Font font=new Font(xfont.Name,(float)xfont.Size,fontstyle);
-			xfont=ImageHelper.GetXFont(str, font);
 			SizeF sizeLayout=new SizeF(rectangleF.Width,font.Height);
 			StringFormat stringFormat=new StringFormat();
 			stringFormat.SetTabStops(0.0f, new float[] {50.0f});//helps with measurement further down.

@@ -24,7 +24,6 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPayConnect2));
-			this.butOK = new OpenDental.UI.Button();
 			this.sigBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
 			this.checkSaveToken = new OpenDental.UI.CheckBox();
 			this.labelRefNumber = new System.Windows.Forms.Label();
@@ -41,26 +40,22 @@ namespace OpenDental{
 			this.comboTerminal = new OpenDental.UI.ComboBox();
 			this.labelTerminal = new System.Windows.Forms.Label();
 			this.textAmount = new OpenDental.ValidDouble();
+			this.webBrowserMain = new System.Windows.Forms.WebBrowser();
+			this.webViewMain = new CodeBase.Controls.ODWebView2();
+			this.butSave = new OpenDental.UI.Button();
+			this.butRefresh = new OpenDental.UI.Button();
+			this.label1 = new System.Windows.Forms.Label();
 			this.groupTransType.SuspendLayout();
 			this.groupProcessMethod.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// butOK
-			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(333, 359);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 39;
-			this.butOK.Text = "&OK";
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// sigBoxWrapper
 			// 
 			this.sigBoxWrapper.BackColor = System.Drawing.SystemColors.ControlDark;
 			this.sigBoxWrapper.Location = new System.Drawing.Point(21, 266);
 			this.sigBoxWrapper.Name = "sigBoxWrapper";
-			this.sigBoxWrapper.Size = new System.Drawing.Size(369, 81);
+			this.sigBoxWrapper.Size = new System.Drawing.Size(376, 81);
 			this.sigBoxWrapper.TabIndex = 42;
 			this.sigBoxWrapper.TabStop = false;
 			this.sigBoxWrapper.UserSig = null;
@@ -112,6 +107,7 @@ namespace OpenDental{
 			this.radioSale.TabStop = true;
 			this.radioSale.Text = "Sale";
 			this.radioSale.UseVisualStyleBackColor = true;
+			this.radioSale.CheckedChanged += new System.EventHandler(this.radioSale_CheckedChanged);
 			// 
 			// radioRefund
 			// 
@@ -133,6 +129,7 @@ namespace OpenDental{
 			this.radioAuthorization.TabIndex = 0;
 			this.radioAuthorization.Text = "Auth";
 			this.radioAuthorization.UseVisualStyleBackColor = true;
+			this.radioAuthorization.CheckedChanged += new System.EventHandler(this.transactionTypeCheckedChanged);
 			// 
 			// radioVoid
 			// 
@@ -213,14 +210,67 @@ namespace OpenDental{
 			this.textAmount.Size = new System.Drawing.Size(118, 20);
 			this.textAmount.TabIndex = 37;
 			// 
+			// webBrowserMain
+			// 
+			this.webBrowserMain.Location = new System.Drawing.Point(420, 23);
+			this.webBrowserMain.MinimumSize = new System.Drawing.Size(20, 20);
+			this.webBrowserMain.Name = "webBrowserMain";
+			this.webBrowserMain.Size = new System.Drawing.Size(500, 400);
+			this.webBrowserMain.TabIndex = 46;
+			this.webBrowserMain.Visible = false;
+			// 
+			// webViewMain
+			// 
+			this.webViewMain.CreationProperties = null;
+			this.webViewMain.DefaultBackgroundColor = System.Drawing.Color.White;
+			this.webViewMain.Location = new System.Drawing.Point(420, 23);
+			this.webViewMain.Name = "webViewMain";
+			this.webViewMain.Size = new System.Drawing.Size(500, 400);
+			this.webViewMain.TabIndex = 47;
+			this.webViewMain.ZoomFactor = 1D;
+			// 
+			// butSave
+			// 
+			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butSave.Location = new System.Drawing.Point(846, 441);
+			this.butSave.Name = "butSave";
+			this.butSave.Size = new System.Drawing.Size(75, 24);
+			this.butSave.TabIndex = 48;
+			this.butSave.Text = "Save";
+			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			// 
+			// butRefresh
+			// 
+			this.butRefresh.Enabled = false;
+			this.butRefresh.Location = new System.Drawing.Point(420, 441);
+			this.butRefresh.Name = "butRefresh";
+			this.butRefresh.Size = new System.Drawing.Size(75, 24);
+			this.butRefresh.TabIndex = 49;
+			this.butRefresh.Text = "Refresh";
+			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(142, 436);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(275, 32);
+			this.label1.TabIndex = 50;
+			this.label1.Text = "If you need to change the Amount, you must then click Refresh to see your changes" +
+    " on the right";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// FormPayConnect2
 			// 
-			this.ClientSize = new System.Drawing.Size(420, 395);
+			this.ClientSize = new System.Drawing.Size(943, 477);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.webViewMain);
+			this.Controls.Add(this.webBrowserMain);
 			this.Controls.Add(this.textAmount);
 			this.Controls.Add(this.labelTerminal);
 			this.Controls.Add(this.comboTerminal);
 			this.Controls.Add(this.groupProcessMethod);
-			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.sigBoxWrapper);
 			this.Controls.Add(this.checkSaveToken);
 			this.Controls.Add(this.labelRefNumber);
@@ -235,13 +285,13 @@ namespace OpenDental{
 			this.groupTransType.PerformLayout();
 			this.groupProcessMethod.ResumeLayout(false);
 			this.groupProcessMethod.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 
 		#endregion
-		private UI.Button butOK;
 		private UI.SignatureBoxWrapper sigBoxWrapper;
 		private UI.CheckBox checkSaveToken;
 		private System.Windows.Forms.Label labelRefNumber;
@@ -258,5 +308,10 @@ namespace OpenDental{
 		private UI.ComboBox comboTerminal;
 		private System.Windows.Forms.Label labelTerminal;
 		private ValidDouble textAmount;
+		private System.Windows.Forms.WebBrowser webBrowserMain;
+		private CodeBase.Controls.ODWebView2 webViewMain;
+		private UI.Button butSave;
+		private UI.Button butRefresh;
+		private System.Windows.Forms.Label label1;
 	}
 }

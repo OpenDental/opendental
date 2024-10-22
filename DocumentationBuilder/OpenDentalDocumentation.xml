@@ -5004,7 +5004,7 @@
       <summary>Enum:EnumEFormStatus 0-None, 1-ReadyForPatientFill, 2-Filled, 3-Imported. In the None status, the office might be filling in the tooth number on a consent form. In the ReadyForPatientFill status, it will show in eClipboard. Sheets uses ShowInTerminal for this purpose. Once the patient has filled it, the status is changed to Filled. Sheets uses IsWebForm for this purpose. A Filled eForm will then be imported automatically and the status changed to Imported. If the import process could not match to a known patient, then this status will be UnmatchedToPatient and the PatNum will remain 0 until user matches it.</summary>
       <Enumeration name="EnumEFormStatus">
         <summary></summary>
-        <EnumValue name="None">0 - If a form is added manually in OD proper and then filled out by the patient, it will remain this status unless it gets imported.</EnumValue>
+        <EnumValue name="None">0 - If a form is added manually in OD proper and then filled out by the patient in OD proper, it will remain this status unless it gets imported.</EnumValue>
         <EnumValue name="ShowInEClipboard">1 - Forms with this status will show in eClipboard. Unlike sheets, there is no way to set order.</EnumValue>
         <EnumValue name="Filled">2 - This status gets set from eClipboard after filling.</EnumValue>
         <EnumValue name="Imported">3 - .</EnumValue>
@@ -5024,7 +5024,7 @@
       <summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
     </column>
     <column order="13" name="SaveImageCategory" type="bigint(20)" fk="definition">
-      <summary>FK to definition.DefNum. This gets set when an EForm is created from an EFormDef. 0 for none or else it's set to an image category. User can change it.</summary>
+      <summary>FK to definition.DefNum. This gets set when an EForm is created from an EFormDef. 0 for none or else it's set to an image category. User can change it. It only saves during the import process or if user saves manually.</summary>
     </column>
   </table>
   <table name="eformdef">
@@ -16257,7 +16257,7 @@
       <summary>Text Alignment for text fields.</summary>
     </column>
     <column order="19" name="ItemColor" type="int(11)">
-      <summary>Text color, line color, rectangle color. 0 means Empty.</summary>
+      <summary>Text color, line color, rectangle color. -16777216 is Black. 0 means Empty, which we attempt to treat as black if it happens.</summary>
     </column>
     <column order="20" name="DateTimeSig" type="datetime">
       <summary>DateTime that a sheet was signed.</summary>

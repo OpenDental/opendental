@@ -28,6 +28,8 @@ namespace OpenDentBusiness {
 		///<summary>The time spent on this review.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.TimeSpanLong)]
 		public TimeSpan TimeReview;
+		///<summary>Set true to make the time spent on this review for one engineer only, meaning it does not get doubled to account for two engineers.</summary>
+		public bool IsAsyncReview;
 
 		///<summary></summary>
 		public JobReview Copy() {

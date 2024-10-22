@@ -41,9 +41,6 @@ namespace OpenDental{
 			_listClearinghousesClinicsAll=Clearinghouses.GetAllNonHq();
 			_listClearinghousesClinics=new List<Clearinghouse>();
 			comboClinic.ClinicNumSelected=Clinics.ClinicNum;
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-				butEligibility.Visible=false;
-			}
 			FillGrid();
 			if(claimReportReceiveInterval==0) {
 				radioTime.Checked=true;
@@ -104,9 +101,7 @@ namespace OpenDental{
 					}
 					s+="Med";
 				}
-				if(PrefC.GetLong(PrefName.ClearinghouseDefaultEligibility)==_listClearinghousesHq[i].ClearinghouseNum 
-					&& !CultureInfo.CurrentCulture.Name.EndsWith("CA")) //Canadian. en-CA or fr-CA
-				{
+				if(PrefC.GetLong(PrefName.ClearinghouseDefaultEligibility)==_listClearinghousesHq[i].ClearinghouseNum) {
 					if(s!="") {
 						s+=",";
 					}
@@ -182,8 +177,7 @@ namespace OpenDental{
 				return;
 			}
 			bool isInvalid=false;
-			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA") 
-				&& PrefC.GetLong(PrefName.ClearinghouseDefaultEligibility)==0
+			if(PrefC.GetLong(PrefName.ClearinghouseDefaultEligibility)==0
 				&& Prefs.UpdateLong(PrefName.ClearinghouseDefaultEligibility,ch.ClearinghouseNum)) 
 			{
 				isInvalid=true;
@@ -208,8 +202,7 @@ namespace OpenDental{
 				return;
 			}
 			bool isInvalid=false;
-			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA") 
-				&& PrefC.GetLong(PrefName.ClearinghouseDefaultEligibility)==0
+			if(PrefC.GetLong(PrefName.ClearinghouseDefaultEligibility)==0
 				&& Prefs.UpdateLong(PrefName.ClearinghouseDefaultEligibility,clearinghouse.ClearinghouseNum)) 
 			{
 				isInvalid=true;

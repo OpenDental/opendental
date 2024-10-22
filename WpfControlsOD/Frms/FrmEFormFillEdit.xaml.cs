@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -14,6 +16,9 @@ using OpenDentBusiness;
 using WpfControls.UI;
 using CodeBase;
 using OpenDental.Drawing;
+using PdfSharp;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 
 namespace OpenDental {
 	/// <summary></summary>
@@ -174,7 +179,44 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please pick a category first.");
 				return;
 			}
-			WpfControls.EFormL.SaveToImages(EFormCur);
+			Cursor=Cursors.Wait;
+			ctrlEFormFill.FillFieldsFromControls();//so that RefreshLayout will work
+			Printout printout=new Printout();
+			printout.FuncPrintPage=ctrlEFormFill.Pd_PrintPage;
+			printout.thicknessMarginInches=new Thickness(0.5);
+			ctrlEFormFill.PagesPrinted=0;
+			WpfControls.PrinterL.CreateFixedDocument(printout);//the document is on the printout
+			ctrlEFormFill.RefreshLayout();
+			Patient patient=Patients.GetPat(EFormCur.PatNum);
+			string tempFilePath=PrefC.GetRandomTempFile(".pdf");
+			PdfDocument pdfDocument=new PdfDocument();
+			for(int i=0;i<printout.FixedDocument_.Pages.Count;i++){
+				PageContent pageContent=printout.FixedDocument_.Pages[i];
+				FixedPage fixedPage=pageContent.Child;
+				fixedPage.Measure(new Size(fixedPage.Width, fixedPage.Height));
+				fixedPage.Arrange(new Rect(new Size(fixedPage.Width, fixedPage.Height)));
+				fixedPage.UpdateLayout();
+				double dpi=200;
+				RenderTargetBitmap renderTarget = new RenderTargetBitmap(
+					(int)(fixedPage.ActualWidth*dpi/96),(int)(fixedPage.ActualHeight*dpi/96),dpi,dpi,PixelFormats.Pbgra32);
+				renderTarget.Render(fixedPage);
+				BitmapSource bitmapSource=renderTarget;
+				string tempImgFile=Path.GetTempFileName()+".png";
+				using(FileStream fileStream = new FileStream(tempImgFile,FileMode.Create)) {
+					PngBitmapEncoder pngBitmapEncoder = new PngBitmapEncoder();
+					pngBitmapEncoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+					pngBitmapEncoder.Save(fileStream);
+				}
+				PdfPage pdfPage =new PdfPage();
+				pdfDocument.AddPage(pdfPage);
+				using XGraphics xGraphics=XGraphics.FromPdfPage(pdfPage);
+				XImage xImage=XImage.FromFile(tempImgFile);
+				xGraphics.DrawImage(xImage,0,0,pdfPage.Width,pdfPage.Height);
+			}
+			pdfDocument.Save(tempFilePath);
+			Document document=ImageStore.Import(tempFilePath,EFormCur.SaveImageCategory,patient);
+			Cursor=Cursors.Arrow;
+			MsgBox.Show(this,"Done");
 		}
 
 		private void FrmEFormFillEdit_FormClosing(object sender,CancelEventArgs e) {

@@ -56,7 +56,7 @@ then change:
 		}
 */
 	public class PrinterL {
-		private static void CreateFixedDocument(Printout printout){
+		public static void CreateFixedDocument(Printout printout){
 			printout.FixedDocument_=new FixedDocument();
 			Thickness thicknessMarginInches=new Thickness(left:0.25,top:0.4,right:0.25,bottom:0.4);
 			if(printout.thicknessMarginInches!=new Thickness()){
@@ -231,10 +231,5 @@ then change:
 //todo:
 			//return SetPrinter(printout.PrintDoc.PrinterSettings,printout.Situation,printout.AuditPatNum,printout.AuditDescription);
 		}
-
-		
-
-
-		
 	}
 }

@@ -655,15 +655,28 @@ namespace OpenDentBusiness {
 
 		/// <summary>Returns an XFont with appropriate settings. Handles if str is unicode instead of ASCII.</summary>
 		public static XFont GetXFont(string str,Font font) {
+			string fontFamily=font.FontFamily.ToString();
 			XFont xfont;
+			XFontStyle xfontStyle=XFontStyle.Regular;
+			if(font.Style.HasFlag(FontStyle.Bold)) {
+				xfontStyle|=XFontStyle.Bold;
+			}
+			if(font.Style.HasFlag(FontStyle.Italic)) {
+				xfontStyle|=XFontStyle.Italic;
+			}
+			if(font.Style.HasFlag(FontStyle.Strikeout)) {
+				xfontStyle|=XFontStyle.Strikeout;
+			}
+			if(font.Style.HasFlag(FontStyle.Underline)) {
+				xfontStyle|=XFontStyle.Underline;
+			}
 			bool hasNonAscii=str.Any(x => x > 127);
 			if(hasNonAscii) {
 				XPdfFontOptions xpdfFontOptions=new XPdfFontOptions(PdfFontEncoding.Unicode,PdfFontEmbedding.Always);
-				xfont=new XFont(font,xpdfFontOptions);
+				xfont=new XFont(fontFamily,font.Size,xfontStyle,xpdfFontOptions);
 			}
 			else {
-				Enum.TryParse(((int)font.Style).ToString(),out XFontStyle xfontStyle);
-				xfont=new XFont(font.Name,font.Size,xfontStyle);
+				xfont=new XFont(fontFamily,font.Size,xfontStyle);
 			}
 			return xfont;
 		}

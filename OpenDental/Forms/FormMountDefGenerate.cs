@@ -23,6 +23,17 @@ namespace OpenDental {
 			//FMX width=1700x4 + 1300x3 = 10,700
 		}
 
+		private void listType_SelectedIndexChanged(object sender,EventArgs e) {
+			if(listType.SelectedIndex==6) {//Photo Grid
+				textColumns.MinVal=1;
+				textRows.MinVal=1;
+			}
+			else {
+				textColumns.MinVal=0;
+				textRows.MinVal=0;
+			}
+		}
+
 		private void butOK_Click(object sender,EventArgs e) {
 			if(!textWidth.IsValid() || !textHeight.IsValid()){
 				MsgBox.Show(this,"Please fix data entry errors first.");
