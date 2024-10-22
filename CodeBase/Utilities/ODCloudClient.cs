@@ -915,13 +915,26 @@ namespace CodeBase {
 			}
 		}
 
-		public static void ExportForAppStream(string filePath,string fileName) {
-			Byte[] bytes=File.ReadAllBytes(filePath);
-			string fileDataString=Convert.ToBase64String(bytes);
+		///<summary>Use CloudClientL.ExportForCloud helper instead of this method directly whenever possible. Calls the ExportFile method on the CloudClient. Creates the file in the user's downloads folder. Optionally can send a file name to be used instead of the name on the filePath. Can also optionally pass in a byteArray if available which will be used instead of the reading the path.</summary>
+		public static void ExportForAppStream(string filePath,string fileName="",Byte[] byteArray=null) {
+			if(byteArray.IsNullOrEmpty()) {
+				byteArray=File.ReadAllBytes(filePath);
+			}
+			string fileDataString=Convert.ToBase64String(byteArray);
 			ODCloudClientData oDCloudClientData=new ODCloudClientData();
 			oDCloudClientData.FileData=fileDataString;
+			if(fileName.IsNullOrEmpty()) {
+				fileName=Path.GetFileName(filePath);
+			}
 			oDCloudClientData.OtherData=fileName;
-			string response=SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.ExportFile);
+			string response="";
+			try {
+				response=SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.ExportFile);
+			}
+			catch (Exception ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
 			MessageBox.Show(response);
 		}
 

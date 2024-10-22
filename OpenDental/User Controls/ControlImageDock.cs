@@ -148,8 +148,9 @@ namespace OpenDental {
 			ControlImageDisplay_.EventGotODFocus-=ControlImageDisplay__EventGotODFocus;//safe to use even if that event handler is not attached.
 			ControlImageDisplay_.EventGotODFocus+=ControlImageDisplay__EventGotODFocus;
 			imageDockHeader.IsEmpty=false;
-			ControlImageDisplay_.Size=ClientRectangle.Size;
-			ControlImageDisplay_.Dock=DockStyle.Fill;
+			ControlImageDisplay_.Bounds=new Rectangle(0,elementHostImageDockHeader.Height,ClientSize.Width, ClientSize.Height-elementHostImageDockHeader.Height);
+			ControlImageDisplay_.Anchor=((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom);
 			LayoutManager.Add(ControlImageDisplay_,this);
 			LayoutManager.LayoutControlBoundsAndFonts(ControlImageDisplay_);
 		}

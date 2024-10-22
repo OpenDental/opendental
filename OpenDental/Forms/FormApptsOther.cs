@@ -654,7 +654,10 @@ namespace OpenDental {
 			if(!PrefC.HasClinicsEnabled) {
 				idxDate=2;
 			}
-			List<Procedure> listProcedures=Procedures.GetProcsMultApts(ListApptOthers.Select(x => x.AptNum).ToList());
+			List<Procedure> listProceduresForPlannedAppts=Procedures.GetProcsMultApts(ListApptOthers
+				.Where(x => x.AptStatus==ApptStatus.Planned)
+				.Select(x => x.AptNum)
+				.ToList());
 			for(int i=0;i<ListApptOthers.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(ListApptOthers[i].AptStatus.ToString());
@@ -691,7 +694,7 @@ namespace OpenDental {
 						row.ColorText=_listDefsProgNoteColors[16].ItemColor;
 						string strText=Lan.g("enumApptStatus","Planned")+" ";
 						int idxPlannedApt=_listPlannedApptsIncomplete.FindIndex(x => x.AptNum==ListApptOthers[i].AptNum);
-						List<Procedure> listProceduresPlannedAppt=Procedures.GetProcsOneApt(ListApptOthers[i].AptNum,listProcedures,true);
+						List<Procedure> listProceduresPlannedAppt=listProceduresForPlannedAppts.FindAll(x => x.PlannedAptNum==ListApptOthers[i].AptNum);
 						bool hasCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus==ProcStat.C);
 						bool hasNonCompletedProcedures=listProceduresPlannedAppt.Exists(x=>x.ProcStatus!=ProcStat.C);
 						if(IsShowCompletePlanned) {

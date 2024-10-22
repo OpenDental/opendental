@@ -124,6 +124,18 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			_penBreakLine.Width=2;
+			if(_claim==null) {//ex: for eligibility, when there is no claim to overwrite _carrier below.
+				if(_etrans.CarrierNum!=0) {
+					_carrier=Carriers.GetCarrier(_etrans.CarrierNum);
+				}
+				if(_etrans.PlanNum!=0) {
+					_insplan=InsPlans.GetPlan(_etrans.PlanNum,new List<InsPlan>());
+				}
+				if(_etrans.InsSubNum!=0) {
+					_insSub=InsSubs.GetSub(_etrans.InsSubNum,new List<InsSub>());
+					_patientSubscriber=Patients.GetPat(_insSub.Subscriber);
+				}
+			}
 			if(_etrans.PatNum!=0) { //Some transactions are not patient specific.
 				_patient=Patients.GetPat(_etrans.PatNum);
 				_listPatPlansForPat=PatPlans.Refresh(_etrans.PatNum);
@@ -1968,16 +1980,20 @@ namespace OpenDental {
 			_documentGenerator.HorizontalLine(g,_penBreakLine,_documentGenerator.bounds.Left,_documentGenerator.bounds.Right,0);
 			_x=_documentGenerator.StartElement();
 			//Payee not visible in predetermination
-			PrintProcedureListAck(g,_hasPredetermination?"":GetPayableToString(AssignmentOfBenefits()));
-			_x=_documentGenerator.StartElement();
-			_documentGenerator.HorizontalLine(g,_penBreakLine,_documentGenerator.bounds.Left,_documentGenerator.bounds.Right,0);
-			_x=_documentGenerator.StartElement();
+			if(_claim!=null) {//Claim is null for eligibility
+				PrintProcedureListAck(g,_hasPredetermination?"":GetPayableToString(AssignmentOfBenefits()));
+				_x=_documentGenerator.StartElement();
+				_documentGenerator.HorizontalLine(g,_penBreakLine,_documentGenerator.bounds.Left,_documentGenerator.bounds.Right,0);
+				_x=_documentGenerator.StartElement();
+			}
 			if(_responseStatus=="R") {
 				PrintErrorList(g);
 			}
 			else {
-				_documentGenerator.standardFont=new Font(_fontStandardSmall.FontFamily,10,FontStyle.Bold);
-				_documentGenerator.DrawString(g,centralDisclaimer,_x,0);
+				if(_claim!=null) {//Claim is null for eligibility
+					_documentGenerator.standardFont=new Font(_fontStandardSmall.FontFamily,10,FontStyle.Bold);
+					_documentGenerator.DrawString(g,centralDisclaimer,_x,0);
+				}
 				_documentGenerator.standardFont=new Font(_fontStandardSmall.FontFamily,8,FontStyle.Regular);
 				_x=_documentGenerator.StartElement();
 				_documentGenerator.HorizontalLine(g,_penBreakLine,_documentGenerator.bounds.Left,_documentGenerator.bounds.Right,0);
@@ -1989,12 +2005,14 @@ namespace OpenDental {
 				_x=_documentGenerator.StartElement();
 				PrintSecondaryPolicyBullet(g);
 				_x=_documentGenerator.StartElement();
-				PrintAccidentBullet(g);
-				_x=_documentGenerator.StartElement();
-				PrintInitialPlacementBullet(g);
-				_x=_documentGenerator.StartElement();
-				PrintToothExtractionBullet(g);
-				_x=_documentGenerator.StartElement();
+				if(_claim!=null) {//Claim is null for eligibility
+					PrintAccidentBullet(g);
+					_x=_documentGenerator.StartElement();
+					PrintInitialPlacementBullet(g);
+					_x=_documentGenerator.StartElement();
+					PrintToothExtractionBullet(g);
+					_x=_documentGenerator.StartElement();
+				}
 				_documentGenerator.HorizontalLine(g,_penBreakLine,_documentGenerator.bounds.Left,_documentGenerator.bounds.Right,0);
 			}
 			_x=_documentGenerator.StartElement(_verticalLine);

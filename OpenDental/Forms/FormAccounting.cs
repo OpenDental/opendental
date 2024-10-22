@@ -40,7 +40,9 @@ namespace OpenDental{
 			MenuItemOD menuItemSetup=new MenuItemOD("Setup");
 			menuMain.Add(menuItemSetup);
 			menuItemSetup.Add("Open Dental", menuItemOpenDental_Click);
-			menuItemSetup.Add("QuickBooks", menuItemQuickBooks_Click);
+			if(!ODEnvironment.IsCloudInstance) {
+				menuItemSetup.Add("QuickBooks", menuItemQuickBooks_Click);
+			}
 			menuItemSetup.Add("QuickBooks Online", menuItemQuickBooksOnline_Click);
 			//Lock-----------------------------------------------------------------------------------------------------------
 			menuMain.Add(new MenuItemOD("Lock",menuItemLock_Click));
@@ -59,10 +61,6 @@ namespace OpenDental{
 		}
 
 		private void menuItemQuickBooks_Click(Object sender, EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
-				MsgBox.Show(this,"QuickBooks is not available while viewing through the web.");
-				return;
-			}
 			using FormQuickBooksSetup formQuickBooksSetup=new FormQuickBooksSetup();
 			formQuickBooksSetup.ShowDialog();
 		}

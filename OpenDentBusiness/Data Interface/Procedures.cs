@@ -5559,7 +5559,7 @@ namespace OpenDentBusiness {
 			Result result=new Result() { IsSuccess=false };
 			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForProc(procedure.ProcNum);
 			OrthoProcLink orthoProcLink=OrthoProcLinks.GetByProcNum(procedure.ProcNum);
-			if(procedureOld.ProcStatus==ProcStat.TP || procedureOld.ProcStatus==ProcStat.TPi) {
+			if(procedureOld.ProcStatus==ProcStat.TP || procedureOld.ProcStatus==ProcStat.TPi || procedureOld.ProcStatus==ProcStat.C) {
 				ClaimProc claimProcPreAuth=listClaimProcs.Where(x=>x.ProcNum==procedureOld.ProcNum && x.ClaimNum!=0 && x.Status==ClaimProcStatus.Preauth).FirstOrDefault();
 				if(claimProcPreAuth!=null && ClaimProcs.RefreshForClaim(claimProcPreAuth.ClaimNum).GroupBy(x=>x.ProcNum).Count()==1) {
 					result.Msg="Not allowed to delete the last procedure from a preauthorization. The entire preauthorization would have to be deleted.";

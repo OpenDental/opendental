@@ -427,22 +427,31 @@ namespace OpenDental{
 				butOpenInvoice.Enabled=false;
 				return;
 			}
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.InitialDirectory=Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string importFilePath;
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+				importFilePath=ODCloudClient.ImportFileForCloud();
+				if(importFilePath.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
-			string path=openFileDialog.FileName;
-			if(!File.Exists(path)) {
-				MsgBox.Show(this,"File does not exist or cannot be read.");
-				return;
+			else {
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.InitialDirectory=Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				importFilePath=openFileDialog.FileName;
+				if(!File.Exists(importFilePath)) {
+					MsgBox.Show(this,"File does not exist or cannot be read.");
+					return;
+				}
 			}
 			TransactionInvoice transactionInvoice=new TransactionInvoice();
 			if(PrefC.GetBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase)) {
-				transactionInvoice.FileName=Path.GetFileName(openFileDialog.FileName);
+				transactionInvoice.FileName=Path.GetFileName(importFilePath);
 				byte[] byteArray;
 				try {
-					byteArray=File.ReadAllBytes(path);
+					byteArray=File.ReadAllBytes(importFilePath);
 					transactionInvoice.InvoiceData=Convert.ToBase64String(byteArray);
 					if(transactionInvoice.InvoiceData.Length>16777215) {
 						MsgBox.Show("Invoice cannot be greater than about 12MB.");
@@ -456,8 +465,8 @@ namespace OpenDental{
 				}
 			}
 			else {
-				transactionInvoice.FileName=Path.GetFileName(openFileDialog.FileName);
-				transactionInvoice.FilePath=path;
+				transactionInvoice.FileName=Path.GetFileName(importFilePath);
+				transactionInvoice.FilePath=importFilePath;
 				TransactionInvoices.Insert(transactionInvoice);
 			}
 			_transaction.TransactionInvoiceNum=transactionInvoice.TransactionInvoiceNum;
@@ -474,6 +483,11 @@ namespace OpenDental{
 				string prefix=transactionInvoice.FileName.Substring(0,transactionInvoice.FileName.Length-fileExt.Length);
 				string filePath=ODFileUtils.CreateRandomFile(PrefC.GetTempFolderPath(),fileExt,prefix);
 				byte[] byteArray=Convert.FromBase64String(transactionInvoice.InvoiceData);
+				if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+					//Use FileName instead of filePath here to preserve original file name.
+					CloudClientL.ExportForCloud(transactionInvoice.FileName,doPromptForName:false,byteArray);
+					return;
+				}
 				try {
 					ODFileUtils.WriteAllBytesThenStart(filePath,byteArray,null);
 				}
@@ -481,6 +495,10 @@ namespace OpenDental{
 					FriendlyException.Show(ex.Message,ex);
 					return;
 				}
+				return;
+			}
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+				CloudClientL.ExportForCloud(transactionInvoice.FilePath,doPromptForName:false);
 				return;
 			}
 			try {

@@ -10,7 +10,7 @@
              Text="Referrals" MinMaxBoxes="False" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:ComboClinic x:Name="comboClinicPicker" HorizontalAlignment="Right" Width="200" Height="21" Margin="0,13,14,0" IncludeAll="True" IncludeUnassigned="True" />
-		<ui:GroupBox x:Name="groupBox1" Width="450" Height="33" Margin="349,3,0,0" Text="Show" >
+		<ui:GroupBox x:Name="groupBox1" Width="450" Height="33" Margin="359,3,0,0" Text="Show" >
 			<ui:CheckBox x:Name="checkPreferred" Width="94" Height="16" Margin="261,13,0,0" Text="Preferred Only" CheckAlign="MiddleRight" Click="checkPreferred_Click" />
 			<ui:CheckBox x:Name="checkShowOther" Width="75" Height="16" Margin="177,13,0,0" Text="Other" CheckAlign="MiddleRight" Click="checkShowOther_Click" />
 			<ui:CheckBox x:Name="checkShowDoctor" Width="84" Height="16" Margin="89,13,0,0" Text="Doctor" CheckAlign="MiddleRight" Click="checkShowDoctor_Click" />

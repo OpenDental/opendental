@@ -2154,6 +2154,10 @@ namespace OpenDental.UI{
 					if(listApptLayoutInfos[i].DayOfWeek!=listOverlapsPrevious[k].DayOfWeek) {
 						continue;//if they aren't on the same day, they aren't overlapping, so skip 
 					}
+					if(listApptLayoutInfos[i].IdxOp!=listOverlapsPrevious[k].IdxOp) {
+						//The parent code already eliminates nearly all of these, but we found an edge case.
+						continue;//if they aren't in the same operatory then skip
+					}
 					//if(listApptLayoutInfos[i].idxInTableAppointments==idxApptOriginal){
 					//	continue;//We also don't want to compare it to the appointment that was originally placed, causing the moves.
 					//}//harmless and not faster

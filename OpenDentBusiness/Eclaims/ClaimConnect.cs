@@ -20,7 +20,6 @@ using System.ComponentModel;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using System.Net.Http;
-using static OpenDentBusiness.EB271;
 
 namespace OpenDentBusiness.Eclaims {
 	/// <summary>
@@ -1168,8 +1167,8 @@ namespace OpenDentBusiness.Eclaims {
 			return ((int)(results[0]));
 		}
 	}*/
-		public class XConnect {
-
+	public class XConnect {
+		internal static Patient _patient;
 		internal static List<Procedure> _listProceduresForPat;
 		internal static List<ClaimProc> _listClaimProcsForPat;
 		internal static List<ClaimProc> _listClaimProcsForClaim;
@@ -1203,11 +1202,13 @@ namespace OpenDentBusiness.Eclaims {
 
 		///<summary>Call before making any API call. This fills necessary fields to complete creation of objects for the call.</summary>
 		public static void SetData(Claim claim) {
+			_patient=Patients.GetPat(claim.PatNum);
 			_listProceduresForPat=Procedures.Refresh(claim.PatNum);
 			_listClaimProcsForPat=ClaimProcs.Refresh(claim.PatNum);
 			_listClaimProcsForClaim=ClaimProcs.GetForSendClaim(_listClaimProcsForPat,claim.ClaimNum);
 			_listPatPlans=PatPlans.Refresh(claim.PatNum);
 			_listInsSubs=InsSubs.GetMany(_listPatPlans.Select(x => x.InsSubNum).ToList());
+			_listInsPlans=InsPlans.GetPlans(_listInsSubs.Select(x => x.PlanNum).ToList());
 			_clearinghouseForClaim=ClaimConnect.GetClearingHouseForClaim(claim);
 			_insPlanForClaim=InsPlans.GetPlan(claim.PlanNum,new List<InsPlan>());
 			_carrierForClaim=Carriers.GetCarrier(_insPlanForClaim.CarrierNum);
@@ -1219,9 +1220,9 @@ namespace OpenDentBusiness.Eclaims {
 
 		////<summary>Throws exceptions. Generic API call to XConnect. Give a payload object structured the same as the JSON definition of the API call. Returns an object of the type specified, which must also be structured the same as the JSON definition of the response for the API call. The endpointURL given must be a relative URL. The endpointURL is automatically modified to point to the sandbox in Debug mode.</summary>
 		private static T CallAPI<T>(Clearinghouse clearinghouseClinic,string endpointURL,object payload,HttpMethod httpMethod,List<string> queryParameters=null) {
-			if(ODBuild.IsDebug()) {//Testing
-				endpointURL="/sandbox"+endpointURL;
-			}
+			//if(ODBuild.IsDebug()) {//Testing
+			//	endpointURL="/sandbox"+endpointURL;
+			//}
 			_httpClient.DefaultRequestHeaders.Clear();
 			_httpClient.DefaultRequestHeaders.Add("username",clearinghouseClinic.LoginID);
 			_httpClient.DefaultRequestHeaders.Add("password",clearinghouseClinic.Password);
@@ -1414,6 +1415,7 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			if(providerBill.IsNotPerson) {
 				xconnectAddress.entityType=POut.Int((int)EnumXConnectAddressEntityType.Organization);
+				xconnectAddress.organizationName=POut.String(providerBill.LName);
 			}
 			else {
 				xconnectAddress.entityType=POut.Int((int)EnumXConnectAddressEntityType.Individual);
@@ -1450,6 +1452,7 @@ namespace OpenDentBusiness.Eclaims {
 			xconnectAddress.entityType=POut.Int((int)EnumXConnectAddressEntityType.Individual);
 			if(providerBill.IsNotPerson) {
 				xconnectAddress.entityType=POut.Int((int)EnumXConnectAddressEntityType.Organization);
+				xconnectAddress.organizationName=POut.String(providerBill.LName);
 			}
 			xconnectAddress.type=POut.Int((int)EnumXConnectAddressType.PayToAddress);
 			return xconnectAddress;
@@ -1604,19 +1607,16 @@ namespace OpenDentBusiness.Eclaims {
 			XConnectProvider xConnectProviderRendering=XConnectProvider.FromProvider(providerRendering,clinic,carrier.ElectID,EnumXConnectProviderType.RENDERING);
 			xconnectClaim.providers=new XConnectProvider[] { xConnectProviderBill,xConnectProviderRendering };
 			PatPlan patPlan=XConnect._listPatPlans.FirstOrDefault(x => x.InsSubNum==insSub.InsSubNum);
-			xconnectClaim.patient=XConnectPatient.FromPatient(patient,claim.InsSubNum,patPlan,EnumXConnectPatientMemberType.PATIENT,claim.PatRelat);
-			xconnectClaim.subscriber=XConnectPatient.FromPatient(patient,claim.InsSubNum,patPlan,EnumXConnectPatientMemberType.SUBSCRIBER,claim.PatRelat);
+			xconnectClaim.patient=XConnectPatient.FromPatient(patient,patPlan,EnumXConnectPatientMemberType.PATIENT,patPlan.Relationship);
+			List<Patient> listSubscribers=Patients.GetMultPats(XConnect._listInsSubs.Select(x => x.Subscriber).ToList()).ToList();
+			Patient subscriber=listSubscribers.FirstOrDefault(x => x.PatNum==insSub.Subscriber);
+			xconnectClaim.subscriber=XConnectPatient.FromPatient(subscriber,patPlan,EnumXConnectPatientMemberType.SUBSCRIBER,patPlan.Relationship);
 			List<XConnectPatient> listXConnectPatientsAdditionalSubs=new List<XConnectPatient>();
-					List<long> listPatNums=new List<long>() { patient.PatNum };
-			List<InsSub> listInsSubsAdditional=InsSubs.GetListInsSubs(listPatNums);
-			List<InsPlan> listInsPlans=InsPlans.GetPlans(listInsSubsAdditional.Select(x => x.PlanNum).ToList());
-			listInsPlans.RemoveAll(x => x.CarrierNum==XConnect._insPlanForClaim.CarrierNum);
-			if(listInsPlans.Count>0) {
-				for(int i=0;i<listInsPlans.Count;i++) {
-					string carrierAdditional=Carriers.GetName(listInsPlans[i].CarrierNum);
-					InsSub insSubSuscriber=XConnect._listInsSubs.FirstOrDefault(x => x.Subscriber==patient.PatNum);
-					PatPlan patPlanAdditional=XConnect._listPatPlans.FirstOrDefault(x => x.InsSubNum==insSubSuscriber.InsSubNum);
-					XConnectPatient xConnectPatient=XConnectPatient.FromPatient(patient,insSubSuscriber.InsSubNum,patPlanAdditional,EnumXConnectPatientMemberType.ADDITIONAL_SUBSCRIBER,claim.PatRelat);
+			List<long> listPatNums=new List<long>() { patient.PatNum };
+			List<PatPlan> listOtherPatPlans=XConnect._listPatPlans.FindAll(x => x.PatPlanNum!=patPlan.PatPlanNum);
+			if(listOtherPatPlans.Count>0) {
+				for(int i=0;i<listOtherPatPlans.Count;i++) {
+					XConnectPatient xConnectPatient=XConnectPatient.FromPatient(patient,listOtherPatPlans[i],EnumXConnectPatientMemberType.ADDITIONAL_SUBSCRIBER,claim.PatRelat);
 					if(xConnectPatient.sequenceCode=="") {
 						//XConnect cannot handle beyond Tertiary claims.
 						continue;
@@ -1645,8 +1645,7 @@ namespace OpenDentBusiness.Eclaims {
 			//xconnectClaim.facilityIdType="XX";//NPI
 			List<XConnectClaimItem> listXConnectClaimItems=XConnectClaimItem.FromClaim(claim,xconnectClaim.facilityId);
 			xconnectClaim.items=listXConnectClaimItems.ToArray();
-			bool hasAdjustments=listXConnectClaimItems.Any(x => x.adjustments!=null);
-			xconnectClaim.payer=XConnectPayer.FromCarrier(XConnect._carrierForClaim,patient,hasAdjustments);
+			xconnectClaim.payer=XConnectPayer.FromPatPlan(patPlan);
 			if(claim.AccidentRelated=="A") {
 				xconnectClaim.accidentCode="AA";
 			}
@@ -1750,7 +1749,7 @@ namespace OpenDentBusiness.Eclaims {
 		public int[] diagnosisPointers;
 		///<summary>Optional.Adjustments based on payment from primary (From Email).
 		///DentalXChange says this is an array of Objects but their API says it is a singular object.</summary>
-		public XConnectClaimItemAdjustment adjustments;
+		public XConnectClaimItemAdjustment [] adjustments;
 
 		///<summary></summary>
 		public static List<XConnectClaimItem> FromClaim(Claim claim, string claimFacillityID) {
@@ -1758,16 +1757,8 @@ namespace OpenDentBusiness.Eclaims {
 			List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetAllCodes();
 			Patient patient=Patients.GetPat(claim.PatNum);
 			List<PatPlan> listPatPlans=PatPlans.GetPatientData(claim.PatNum);
-			InsPlan insPlan=insPlan=InsPlans.GetPlan(claim.PlanNum,new List<InsPlan>());
+			InsPlan insPlan=XConnect._listInsPlans.FirstOrDefault(x => x.PlanNum==claim.PlanNum);
 			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
-			double claimWriteoffAmt=0;
-			double claimDeductibleAmt=0;
-			double claimPaidOtherInsAmt=0;
-			List<long> listProcNums=XConnect._listClaimProcsForClaim.Select(x => x.ProcNum).Distinct().ToList();
-			List<long> listOtherClaimNums=XConnect._listClaimProcsForPat.FindAll(x => x.ClaimNum!=claim.ClaimNum 
-				&& x.Status.In(ClaimProcStatus.CapClaim, ClaimProcStatus.Received, ClaimProcStatus.Supplemental)
-				&& listProcNums.Contains(x.ProcNum)).Select(x => x.ClaimNum).Distinct().ToList();
-			List<ClaimProc> listClaimProcsOther=XConnect._listClaimProcsForPat.FindAll(x => listOtherClaimNums.Contains(x.ClaimNum) && x.ProcNum!=0);
 			for(int i=0;i<XConnect._listClaimProcsForClaim.Count;i++) {
 				Procedure proc=XConnect._listProceduresForPat.FirstOrDefault(x => x.ProcNum==XConnect._listClaimProcsForClaim[i].ProcNum);
 				XConnectClaimItem xconnectClaimItem=new XConnectClaimItem();
@@ -1813,11 +1804,6 @@ namespace OpenDentBusiness.Eclaims {
 				if(!proc.Note.IsNullOrEmpty()) {
 					xconnectClaimItem.comment=proc.Note;
 				}
-				List<ClaimProc> listOtherClaimProcsForItem=listClaimProcsOther.FindAll(x => x.ProcNum==proc.ProcNum);
-				if(listOtherClaimProcsForItem.Count>0) {
-					xconnectClaimItem.amountPaidByPayer=listOtherClaimProcsForItem.Sum(x => x.InsPayAmt);
-					xconnectClaimItem.dateOfPayment=listOtherClaimProcsForItem.Max(x => x.DateCP).ToString("yyyy-MM-dd");
-				}
 				xconnectClaimItem.tooth=XConnectTooth.FromProc(proc).ToArray();
 				List<int> listDiagnosisPointers=new List<int>();
 				for(int j=0;j<XConnect._listDiagnoses.Count;j++) {
@@ -1830,43 +1816,74 @@ namespace OpenDentBusiness.Eclaims {
 					}
 				}
 				xconnectClaimItem.diagnosisPointers=listDiagnosisPointers.ToArray();
-				double procWriteoffAmt=0;
-				double procDeductibleAmt=0;
-				double procPaidOtherInsAmt=0;
 				EclaimCobInsPaidBehavior cobBehavior=PrefC.GetEnum<EclaimCobInsPaidBehavior>(PrefName.ClaimCobInsPaidBehavior);
 				if(carrier.CobInsPaidBehaviorOverride!=EclaimCobInsPaidBehavior.Default) {
 					cobBehavior=carrier.CobInsPaidBehaviorOverride;
 				}
 				bool hasProcedureLevelCob=cobBehavior.In(EclaimCobInsPaidBehavior.ProcedureLevel,EclaimCobInsPaidBehavior.Both);
-				XConnectClaimItemAdjustment xConnectClaimItemAdjustment=new XConnectClaimItemAdjustment();
-				List<XConnectClaimItemAdjustmentDetail> listXConnectClaimItemAdjustmentDetails=new List<XConnectClaimItemAdjustmentDetail>();
-				for(int k=0;k<listOtherClaimProcsForItem.Count;k++) {//All claim procs for patient
-					if(ClaimProcs.IsValidClaimAdj(listOtherClaimProcsForItem[k],XConnect._listClaimProcsForClaim[i].ProcNum,XConnect._listClaimProcsForClaim[i].InsSubNum)) 
-					{//Adjustment due to other insurance plans.
-						XConnectClaimItemAdjustmentDetail xConnectClaimItemAdjustmentDetail=new XConnectClaimItemAdjustmentDetail();
-						xConnectClaimItemAdjustmentDetail.adjustmentAmount=listOtherClaimProcsForItem[k].InsPayAmt;
-						xConnectClaimItemAdjustmentDetail.quantity=proc.Quantity;
-						listXConnectClaimItemAdjustmentDetails.Add(xConnectClaimItemAdjustmentDetail);
-						if(hasProcedureLevelCob) {
-							double procPatientPortionAmt=Math.Max(0,XConnect._listClaimProcsForClaim[i].FeeBilled-listOtherClaimProcsForItem[k].WriteOff-listOtherClaimProcsForItem[k].DedApplied-procPaidOtherInsAmt);
-							//ClaimConnect sometimes expects zero value contractual obligations for line adjustments. Excluding them can cause an error on their end.
-							if(procWriteoffAmt>0 || claimWriteoffAmt>0) {
-								xConnectClaimItemAdjustmentDetail.reasonCode="45";//CAS02 1/5 Claim Adjustment Reason Code: 45=Charge exceeds fee schedule/maximum allowable or contracted/legislated fee arrangement.
-							}
-							if(procDeductibleAmt>0) {
-								xConnectClaimItemAdjustmentDetail.reasonCode="1";//CAS02 1/5 Claim Adjustment Reason Code: 1=Deductible.
-							}
-							if(procPatientPortionAmt>0) {
-								xConnectClaimItemAdjustmentDetail.reasonCode="3";//CAS02 or CAS05 1/5 Claim Adjustment Reason Code: 3=Co-payment Amount.
-							}
+				double procWriteoffAmt=0;
+				double procDeductibleAmt=0;
+				double procPaidOtherInsAmt=0;
+				DateTime maxDate=proc.ProcDate;
+				for(int k=0;k<XConnect._listClaimProcsForPat.Count;k++) {//All claim procs for patient
+					if(ClaimProcs.IsValidClaimAdj(XConnect._listClaimProcsForPat[k],XConnect._listClaimProcsForClaim[i].ProcNum,XConnect._listClaimProcsForClaim[i].InsSubNum)) {//Adjustment due to other insurance plans.
+						procWriteoffAmt+=XConnect._listClaimProcsForPat[k].WriteOff;
+						procDeductibleAmt+=XConnect._listClaimProcsForPat[k].DedApplied;
+						procPaidOtherInsAmt+=XConnect._listClaimProcsForPat[k].InsPayAmt;
+						if(XConnect._listClaimProcsForPat[k].DateCP>maxDate) {
+							maxDate=XConnect._listClaimProcsForPat[k].DateCP;
 						}
 					}
 				}
-				if(listXConnectClaimItemAdjustmentDetails.Count>0) {
-					xconnectClaimItem.adjustments=xConnectClaimItemAdjustment;
+				List<XConnectClaimItemAdjustment> listXConnectClaimItemAdjustments=new List<XConnectClaimItemAdjustment>();
+				if(procWriteoffAmt>0) {
+					XConnectClaimItemAdjustment xConnectClaimItemAdjustment=new XConnectClaimItemAdjustment();
+					xConnectClaimItemAdjustment.adjustmentGroupCode=EnumXConnectAdjustmentGroupCode.CO;//CAS01 1/2 Claim Adjustment Group Code: CO=Contractual Obligations.
+					XConnectClaimItemAdjustmentDetail xConnectClaimItemAdjustmentDetail=new XConnectClaimItemAdjustmentDetail();
+					xConnectClaimItemAdjustmentDetail.reasonCode="45";//CAS02 1/5 Claim Adjustment Reason Code: 45=Charge exceeds fee schedule/maximum allowable or contracted/legislated fee arrangement.
+					xConnectClaimItemAdjustmentDetail.adjustmentAmount=procWriteoffAmt;
+					xConnectClaimItemAdjustment.adjustmentDetails=new XConnectClaimItemAdjustmentDetail[] { xConnectClaimItemAdjustmentDetail };
+					listXConnectClaimItemAdjustments.Add(xConnectClaimItemAdjustment);
 				}
+				if(procDeductibleAmt>0) {
+					XConnectClaimItemAdjustment xConnectClaimItemAdjustment=new XConnectClaimItemAdjustment();
+					xConnectClaimItemAdjustment.adjustmentGroupCode=EnumXConnectAdjustmentGroupCode.PR;//CAS01 1/2 Claim Adjustment Group Code: PR=Patient Responsibility.
+					XConnectClaimItemAdjustmentDetail xConnectClaimItemAdjustmentDetail=new XConnectClaimItemAdjustmentDetail();
+					xConnectClaimItemAdjustmentDetail.reasonCode="1";//CAS02 1/5 Claim Adjustment Reason Code: 1=Deductible.
+					xConnectClaimItemAdjustmentDetail.adjustmentAmount=procDeductibleAmt;
+					xConnectClaimItemAdjustment.adjustmentDetails=new XConnectClaimItemAdjustmentDetail[] { xConnectClaimItemAdjustmentDetail };
+					listXConnectClaimItemAdjustments.Add(xConnectClaimItemAdjustment);
+				}
+				double procPatientPortionAmt=Math.Max(0,XConnect._listClaimProcsForClaim[i].FeeBilled-procWriteoffAmt-procDeductibleAmt-procPaidOtherInsAmt);
+				if(procPatientPortionAmt>0) {
+					XConnectClaimItemAdjustment xConnectClaimItemAdjustment=new XConnectClaimItemAdjustment();
+					xConnectClaimItemAdjustment.adjustmentGroupCode=EnumXConnectAdjustmentGroupCode.PR;//CAS01 1/2 Claim Adjustment Group Code: PR=Patient Responsibility.
+					XConnectClaimItemAdjustmentDetail xConnectClaimItemAdjustmentDetail=new XConnectClaimItemAdjustmentDetail();
+					xConnectClaimItemAdjustmentDetail.reasonCode="3";//CAS02 or CAS05 1/5 Claim Adjustment Reason Code: 3=Co-payment Amount.
+					xConnectClaimItemAdjustmentDetail.adjustmentAmount=procPatientPortionAmt;
+					xConnectClaimItemAdjustment.adjustmentDetails=new XConnectClaimItemAdjustmentDetail[] { xConnectClaimItemAdjustmentDetail };
+					listXConnectClaimItemAdjustments.Add(xConnectClaimItemAdjustment);
+				}
+				xconnectClaimItem.adjustments=listXConnectClaimItemAdjustments.ToArray();
+				xconnectClaimItem.amountPaidByPayer=procPaidOtherInsAmt;
+				xconnectClaimItem.dateOfPayment=maxDate.ToString("yyyy-MM-dd");
 				listXConnectClaimItems.Add(xconnectClaimItem);
-			}
+			}//End procedure loop
+			//double claimPatientPortionAmt=Math.Max(0,claim.ClaimFee-claimWriteoffAmt-claimDeductibleAmt-claimPaidOtherInsAmt);
+			//if(hasAdjForOtherPlans && hasClaimLevelCob) {
+			//	//2320 CAS: (medical,institutional,dental) Claim Level Adjustments. Situational. We use this to show patient responsibility, because the adjustments here plus AMT D below must equal claim amount in CLM02 for Emdeon.
+			//	//Claim Adjustment Reason Codes can be found on the Washington Publishing Company website at: http://www.wpc-edi.com/reference/codelists/healthcare/claim-adjustment-reason-codes/
+			//	if(claimWriteoffAmt>0) {
+						
+			//	}
+			//	if(claimDeductibleAmt>0 || claimPatientPortionAmt>0) {
+						
+			//	}
+			//}
+			//if(listXConnectClaimItemAdjustmentDetails.Count>0) {
+			//	xConnectClaimItemAdjustment.adjustmentDetails=listXConnectClaimItemAdjustmentDetails.ToArray();
+			//	xconnectClaimItem.adjustments=xConnectClaimItemAdjustment;
+			//}
 			return listXConnectClaimItems;
 		}
 
@@ -2026,13 +2043,16 @@ namespace OpenDentBusiness.Eclaims {
 		///<summary>Optional</summary>
 		public XConnectPayerCob coordinationOfBenefits;
 
-		public static XConnectPayer FromCarrier(Carrier carrier,Patient patient,bool hasAdjustments) {
+		public static XConnectPayer FromPatPlan(PatPlan patPlan) {
+			InsSub insSub=XConnect._listInsSubs.FirstOrDefault(x => x.InsSubNum==patPlan.InsSubNum);
+			InsPlan insPlan=XConnect._listInsPlans.FirstOrDefault(x => x.PlanNum==insSub.PlanNum);
+			Carrier carrier=Carriers.GetFirstOrDefault(x => x.CarrierNum==insPlan.CarrierNum);
 			XConnectPayer xconnectPayer=new XConnectPayer();
 			xconnectPayer.payerIdCode=carrier.ElectID;
 			xconnectPayer.address=XConnectAddress.FromCarrier(carrier);
-			xconnectPayer.employerName=Employers.GetName(patient.EmployerNum);
-			if(hasAdjustments) {
-				xconnectPayer.coordinationOfBenefits=XConnectPayerCob.FromClaim(XConnect._claim);
+			xconnectPayer.employerName=Employers.GetName(XConnect._patient.EmployerNum);
+			if(patPlan.InsSubNum!=XConnect._claim.InsSubNum) {
+				xconnectPayer.coordinationOfBenefits=XConnectPayerCob.FromPatPlan(patPlan);
 			}
 			return xconnectPayer;
 		}
@@ -2040,28 +2060,47 @@ namespace OpenDentBusiness.Eclaims {
 
 	///<summary></summary>
 	public class XConnectPayerCob {
-			///<summary>Required.</summary>
+		///<summary>Required.</summary>
 		public string datePaid;
-			///<summary>Required.</summary>
-		public double amountPaid;
-			///<summary>Optional.</summary>
-		public double amountPaidToPatient;
-			///<summary>Optional.</summary>
-		public double patientResponsibillity;
-			///<summary>Optional.</summary>
-		public double totalNonCoveredAmount;
+		///<summary>Required.</summary>
+		public double amountPaid; 
+		///<summary>Optional.</summary>
+		public double? amountPaidToPatient=null;
+		///<summary>Optional.</summary>
+		public double? patientResponsibillity=null;
+		///<summary>Optional.</summary>
+		public double? totalNonCoveredAmount=null;
 
-		public static XConnectPayerCob FromClaim(Claim claim) {
-			List<ClaimProc> listClaimProcsNotForClaim=XConnect._listClaimProcsForPat.FindAll(x => x.ClaimNum!=claim.ClaimNum &&
-			XConnect._listClaimProcsForClaim.Any(y => y.ProcNum==x.ProcNum));
-			DateTime datePaidOtherIns=listClaimProcsNotForClaim.Max(x => x.DateCP);
-			ClaimProc claimProc=listClaimProcsNotForClaim.FirstOrDefault(x => x.Status.In(ClaimProcStatus.Supplemental,ClaimProcStatus.CapClaim,ClaimProcStatus.CapComplete));
-			XConnectPayerCob xconnectPayerCob=new XConnectPayerCob();
-			Claim claimOther=Claims.GetClaim(claimProc.ClaimNum);
-			if(claimOther!=null) {
-				xconnectPayerCob.datePaid=datePaidOtherIns.ToString("yyyy-MM-dd");
-				xconnectPayerCob.amountPaid=claimOther.InsPayAmt;
+		public static XConnectPayerCob FromPatPlan(PatPlan patPlan) {
+			Carrier carrier=Carriers.GetCarrier(XConnect._insPlanForClaim.CarrierNum);
+			EclaimCobInsPaidBehavior cobBehavior=PrefC.GetEnum<EclaimCobInsPaidBehavior>(PrefName.ClaimCobInsPaidBehavior);
+			if(carrier.CobInsPaidBehaviorOverride!=EclaimCobInsPaidBehavior.Default) {
+				cobBehavior=carrier.CobInsPaidBehaviorOverride;
 			}
+			bool hasClaimLevelCob=cobBehavior.In(EclaimCobInsPaidBehavior.ClaimLevel,EclaimCobInsPaidBehavior.Both);
+			if(!hasClaimLevelCob) {
+				return null;
+			}
+			//In addition to the claimprocs attached to the procedures going out on this claim, we must also include amounts for Total Payments from other insurance.
+			//Total payments will go out at claim level and not procedure level.
+			List<long> listProcNums=XConnect._listClaimProcsForClaim.Select(x => x.ProcNum).Distinct().ToList();
+			List<long> listOtherClaimNums=XConnect._listClaimProcsForPat.FindAll(x => x.ClaimNum!=XConnect._claim.ClaimNum 
+				&& x.Status.In(ClaimProcStatus.CapClaim,ClaimProcStatus.Received,ClaimProcStatus.Supplemental)
+				&& listProcNums.Contains(x.ProcNum)).Select(x => x.ClaimNum).Distinct().ToList();
+			List<ClaimProc> listTotalPayments=XConnect._listClaimProcsForPat.FindAll(x => listOtherClaimNums.Contains(x.ClaimNum) && x.ProcNum==0);
+			List<ClaimProc> listByProcPayments=XConnect._listClaimProcsForPat.FindAll(x => x.InsSubNum==patPlan.InsSubNum
+				&& x.ProcNum.In(listProcNums.ToArray())
+				&& x.Status.In(ClaimProcStatus.CapClaim,ClaimProcStatus.Received,ClaimProcStatus.Supplemental));
+			List<ClaimProc> listPayments=new List<ClaimProc>(listTotalPayments);
+			listPayments.AddRange(listByProcPayments);
+			if(listPayments.Count==0) {
+				return null;
+			}
+			XConnectPayerCob xconnectPayerCob=new XConnectPayerCob();
+			xconnectPayerCob.amountPaid=listPayments.Sum(x => x.InsPayAmt);
+			xconnectPayerCob.datePaid=listPayments.Max(x => x.DateCP).ToString("yyyy-MM-dd");
+			//xconnectPayerCob.totalNonCoveredAmount
+			//xconnectPayerCob.amountPaidToPatient
 			return xconnectPayerCob;
 		}
 	}
@@ -2101,11 +2140,11 @@ namespace OpenDentBusiness.Eclaims {
 		public string schoolState;
 
 		///<summary></summary>
-		public static XConnectPatient FromPatient(Patient patient,long insSubNum,PatPlan patPlan,EnumXConnectPatientMemberType memberType,Relat relation) {
-			InsSub insSub=XConnect._listInsSubs.FirstOrDefault(x => x.InsSubNum==insSubNum);
+		public static XConnectPatient FromPatient(Patient patient,PatPlan patPlan,EnumXConnectPatientMemberType memberType,Relat relation) {
+			InsSub insSub=XConnect._listInsSubs.FirstOrDefault(x => x.InsSubNum==patPlan.InsSubNum);
 			XConnectPatient xconnectPatient=new XConnectPatient();
 			xconnectPatient.address=XConnectAddress.FromPatient(patient);
-			xconnectPatient.payer=XConnectPayer.FromCarrier(XConnect._carrierForClaim,patient,false);//TODO: When reporting the patient is this the plan of the carrier we are validating the claim for?
+			xconnectPatient.payer=XConnectPayer.FromPatPlan(patPlan);
 			xconnectPatient.memberType=memberType;
 			string genderAbbrev=patient.Gender.ToString().Substring(0,1);
 			EnumXConnectPatientGender gender=EnumXConnectPatientGender.U;
@@ -2136,10 +2175,9 @@ namespace OpenDentBusiness.Eclaims {
 			else if(patPlan.Ordinal==3) {
 				xconnectPatient.sequenceCode="T";
 			}
-			List<long> listInsPlanNums=XConnect._listInsSubs.Select(x => x.PlanNum).ToList();
-			List<InsPlan> listInsPlans=InsPlans.GetPlans(listInsPlanNums);
-			if(listInsPlans.Count>0) {
-				xconnectPatient.planName=Carriers.GetName(listInsPlans[0].CarrierNum);//not sure about this one might be another field I'm missing
+			InsPlan insPlan=XConnect._listInsPlans.FirstOrDefault(x => x.PlanNum==insSub.PlanNum);
+			if(insPlan!=null) {
+				xconnectPatient.planName=Carriers.GetName(insPlan.CarrierNum);//not sure about this one might be another field I'm missing
 			}
 			xconnectPatient.relationship=XConnect.GetXConnectPatientRelation(relation);//TODO: When reporting the patient is this the plan of the carrier we are validating the claim for?
 			xconnectPatient.studentCode=string.IsNullOrEmpty(patient.StudentStatus)?"N":patient.StudentStatus;

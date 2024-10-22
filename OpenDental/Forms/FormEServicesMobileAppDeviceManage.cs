@@ -33,8 +33,8 @@ namespace OpenDental {
 
 		private void FormEServicesMobileAppDeviceManage_Load(object sender,EventArgs e) {
 			//Needs to be called before FillGrid to determine which controls can be enabled and disabled.
-			_listMobileAppDevicesOld=MobileAppDevices.GetForUser(Security.CurUser);
-			_listMobileAppDevicesAll=MobileAppDevices.GetForUser(Security.CurUser);
+			_listMobileAppDevicesOld=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.EclipboardLastAttempt.Year>=1880 || x.ODTouchLastAttempt.Year>=1880);//removes devices that have been only used to access ODMobile.
+			_listMobileAppDevicesAll=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.EclipboardLastAttempt.Year>=1880 || x.ODTouchLastAttempt.Year>=1880);//removes devices that have been only used to access ODMobile.
 			SetUIEClipboardEnabled();
 		}
 

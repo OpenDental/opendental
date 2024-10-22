@@ -94,7 +94,8 @@ namespace OpenDental {
 			return false;
 		}
 
-		public static void ExportForCloud(string filePath,bool doPromptForName=true) {
+		///<summary>ExportForAppStream helper method. Defaults to prompting the user to input a file name to be used instead of the name from the path. Optionally accepts a byteArray to be used directly for export instead of reading from a filePath.</summary>
+		public static void ExportForCloud(string filePath,bool doPromptForName=true,Byte[] byteArray=null) {
 			string fileName=Path.GetFileName(filePath);
 			string origExt=Path.GetExtension(filePath);
 			if(doPromptForName) {
@@ -111,7 +112,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			ODCloudClient.ExportForAppStream(filePath,fileName);
+			ODCloudClient.ExportForAppStream(filePath,fileName,byteArray);
 		}
 
 		private enum PromptSelections {
