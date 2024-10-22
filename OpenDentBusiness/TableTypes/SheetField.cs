@@ -71,7 +71,7 @@ namespace OpenDentBusiness{
 		public HorizontalAlignment TextAlign;
 		/// <summary>If a sheet field is locked, it stops a user from editing the text when presented in a sheet.</summary>
 		public bool IsLocked;
-		///<summary>Text color, line color, rectangle color. 0 means Empty.</summary>
+		///<summary>Text color, line color, rectangle color. -16777216 is Black. 0 means Empty, which we attempt to treat as black if it happens.</summary>
 		[XmlIgnore]
 		public Color ItemColor;
 		///<summary>Used to store the key to display signature box when printing.  Not stored in DB.</summary>

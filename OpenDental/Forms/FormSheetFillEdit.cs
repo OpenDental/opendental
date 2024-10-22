@@ -1050,6 +1050,9 @@ namespace OpenDental {
 				if(SheetCur.SheetFields[i].FieldType==SheetFieldType.InputField){
 					colorText=Color.Black;
 				}
+				if(colorText==Color.FromArgb(0)) {
+					colorText=Color.Black;
+				}
 				StringFormat stringFormat=new StringFormat();
 				stringFormat.Alignment=StringAlignment.Near;
 				stringFormat.SetTabStops(0.0f, new float[] {50.0f});
