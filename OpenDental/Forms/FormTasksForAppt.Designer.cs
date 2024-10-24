@@ -52,7 +52,7 @@ namespace OpenDental {
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(416, 16);
 			this.label10.TabIndex = 183;
-			this.label10.Text = "Add new Appointment Tasks from within the Appt Edit window";
+			this.label10.Text = "Add new Appointment Tasks from within the Edit Appointment window";
 			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FormTasksForAppt

@@ -52,7 +52,7 @@ namespace OpenDental{
 			if(clinicNum<0) { //Shouldn't happen
 				return -1;
 			}
-			if(_listClinicPrefs.Any(x => x.ClinicNum==clinicNum && x.PrefName==prefName)) { //we've already loaded this item, just load it's checked value
+			if(_listClinicPrefs.Any(x => x.ClinicNum==clinicNum && x.PrefName==prefName)) { //we've already loaded this item, just load its checked value
 				return PIn.Int(_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==clinicNum && x.PrefName==prefName).ValueString);
 			}
 			return PIn.Int(_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==0 && x.PrefName==prefName).ValueString);
@@ -63,7 +63,7 @@ namespace OpenDental{
 			if(clinicNum<0) { //Shouldn't happen
 				return false;
 			}
-			if(_listClinicPrefs.Any(x => x.ClinicNum==clinicNum && x.PrefName==prefName)) { //we've already loaded this item, just load it's checked value
+			if(_listClinicPrefs.Any(x => x.ClinicNum==clinicNum && x.PrefName==prefName)) { //we've already loaded this item, just load its checked value
 				return PIn.Bool(_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==clinicNum && x.PrefName==prefName).ValueString);
 			}
 			return PIn.Bool(_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==0 && x.PrefName==prefName).ValueString);
@@ -74,7 +74,7 @@ namespace OpenDental{
 			if(clinicNum<0) { //Shouldn't happen
 				return "";
 			}
-			if(_listClinicPrefs.Any(x => x.ClinicNum==clinicNum && x.PrefName==prefName)) { //we've already loaded this item, just load it's checked value
+			if(_listClinicPrefs.Any(x => x.ClinicNum==clinicNum && x.PrefName==prefName)) { //we've already loaded this item, just load its checked value
 				return _listClinicPrefs.FirstOrDefault(x => x.ClinicNum==clinicNum && x.PrefName==prefName).ValueString;
 			}
 			return _listClinicPrefs.FirstOrDefault(x => x.ClinicNum==0 && x.PrefName==prefName).ValueString;

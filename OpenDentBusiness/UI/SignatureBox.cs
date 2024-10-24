@@ -13,7 +13,7 @@ using System.Linq;
 using CodeBase;
 
 namespace OpenDental.UI {
-	///<summary>This class is specifically designed to duplicate the functionality of the Topaz SigPlusNET control.  So even if I would have done it differenly, I didn't have a choice.  Size of box will always be 362,79, although that seems to be arbitrary.  We just don't want to be changing it.  But it can scale proportionally under the control of the LayoutManager to handle high dpi.</summary>
+	///<summary>This class is specifically designed to duplicate the functionality of the Topaz SigPlusNET control.  So even if I would have done it differenly, I didn't have a choice.  Size of box will always be 362,79 or scaled properly with scale and zoom while keeping the same proportions. Always test at different monitor scales.</summary>
 	public partial class SignatureBox:Control {
 		///<summary>Default 1. Typical value 1.5</summary>
 		private float _scaleMS = 1;
@@ -253,7 +253,8 @@ namespace OpenDental.UI {
 				return;
 			}
 			mouseIsDown=true;
-			listPoints.Add(new Point(Unscale(e.X),Unscale(e.Y)));
+			Point point=new Point(Unscale(e.X),Unscale(e.Y));
+			listPoints.Add(point);
 			//Invalidate();
 		}
 

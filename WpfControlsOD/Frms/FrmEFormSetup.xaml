@@ -14,7 +14,7 @@
 		<ui:Label Width="192" Height="18" Margin="5,22,0,0" Text="Default space below each field" HAlign="Right" VAlign="Center" />
 		<ui:Label Width="144" Height="18" Margin="255,22,0,0" Text="20 is a typical setting" VAlign="Center" />
 		<ui:TextVInt x:Name="textVIntSpaceToRightEachField" Width="49" Height="20" Margin="202,49,0,0" MaxVal="100"/>
-		<ui:Label Width="192" Height="18" Margin="5,51,0,0" Text="Default space to left of each field" HAlign="Right" VAlign="Center" />
+		<ui:Label Width="192" Height="18" Margin="5,51,0,0" Text="Default space to right of each field" HAlign="Right" VAlign="Center" />
 		<ui:Label Width="144" Height="18" Margin="255,51,0,0" Text="10 is a typical setting" VAlign="Center" />
 	</Grid>
 </local:FrmODBase>

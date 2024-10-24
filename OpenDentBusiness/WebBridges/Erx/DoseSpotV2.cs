@@ -1826,7 +1826,7 @@ namespace OpenDentBusiness {
 		///<summary>Returns the full URL according to the route/route id(s) given.  RouteIDs must be added in order left to right as they appear
 		///in the API call.</summary>
 		public static string GetApiUrl(ApiRoute apiRoute,params string[] arrayRouteIDs) {
-			string apiUrl=Introspection.GetOverride(Introspection.IntrospectionEntity.DoseSpotURL,"https://my.staging.dosespot.com/webapi/v2");
+			string apiUrl=Introspection.GetOverride(Introspection.IntrospectionEntity.DoseSpotURL,"https://my.dosespot.com/webapi/v2");
 			if(ODBuild.IsDebug()) {
 				apiUrl="https://my.staging.dosespot.com/webapi/v2";
 			}

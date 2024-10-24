@@ -27,7 +27,7 @@
 		<ui:GroupBox Height="80" Margin="31,549,0,0" Width="454" Text="Conditional Logic. This field will show...">
 			<ui:Label Width="128" Height="18" Margin="30,27,0,0" Text="... if the parent field" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondParent" Width="213" Height="20" Margin="159,25,0,0"/>
-			<ui:Label Width="143" Height="18" Margin="15,51,0,0" Text="... has the following value" HAlign="Right" VAlign="Center" />
+			<ui:Label Width="154" Height="18" Margin="4,51,0,0" Text="... has the following value(s)" HAlign="Right" VAlign="Center" />
 			<ui:TextBox x:Name="textCondValue" Width="213" Height="20" Margin="159,50,0,0"/>
 			<ui:Button x:Name="butPickParent" Width="66" Height="24" Margin="379,22,0,0" Text="Pick" Click="butPickParent_Click"/>
 			<ui:Button x:Name="butPickValue" Width="66" Height="24" Margin="379,48,0,0" Text="Pick" Click="butPickValue_Click"/>

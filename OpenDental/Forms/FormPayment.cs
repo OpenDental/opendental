@@ -1264,6 +1264,7 @@ namespace OpenDental {
 						if(integrationType=="1" || _payment.MerchantFee>0) {//surcharge
 							labelSurchargeFee.Visible=true;
 							textSurcharge.Visible=true;//needs to show no matter what any time MerchantFee has a non-zero value
+							SetSurchargeTextFieldReadOnly();
 						}
 						else {
 							labelSurchargeFee.Visible=false;
@@ -3202,6 +3203,13 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Sets the textSurcharge to a ReadOnly state when necessary.</summary>
+		private void SetSurchargeTextFieldReadOnly() {
+			if(_payment.PaymentSource!=CreditCardSource.None || _payment.PayNote.ToLower().Contains("void")) {
+				textSurcharge.ReadOnly=true;
+			}
+		}
+
 		private void TabControlCharges_SelectedIndexChanged(object sender,EventArgs e) {
 			//There is a weird timing issue where GridOD.vScroll.Visible is not being set to true between tab controls being first initialized and filling grid on load.
 			//Thus, on the first FillGridTreatPlan() during load, the vScroll is not taken into account when computing column widths, causing some visual differences.
@@ -3845,6 +3853,7 @@ namespace OpenDental {
 					_payment.PaymentSource=CreditCardSource.PayConnect;
 					_payment.ProcessStatus=ProcessStat.OfficeProcessed;
 					Payments.Update(_paymentOld,true);
+					SetSurchargeTextFieldReadOnly();
 				}
 				if(!string.IsNullOrEmpty(_payment.Receipt)) {
 					butPrintReceipt.Visible=true;

@@ -75,6 +75,7 @@ namespace OpenDental {
 			this.textRateThree2 = new System.Windows.Forms.TextBox();
 			this.labelRateThree = new System.Windows.Forms.Label();
 			this.textRateThree = new System.Windows.Forms.TextBox();
+			this.butBenefits = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupEmployee.SuspendLayout();
@@ -333,9 +334,9 @@ namespace OpenDental {
 			// 
 			this.butCalcDaily.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butCalcDaily.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butCalcDaily.Location = new System.Drawing.Point(139, 662);
+			this.butCalcDaily.Location = new System.Drawing.Point(139, 633);
 			this.butCalcDaily.Name = "butCalcDaily";
-			this.butCalcDaily.Size = new System.Drawing.Size(78, 24);
+			this.butCalcDaily.Size = new System.Drawing.Size(90, 24);
 			this.butCalcDaily.TabIndex = 23;
 			this.butCalcDaily.Text = "Calc Daily";
 			this.butCalcDaily.Click += new System.EventHandler(this.butCalcDaily_Click);
@@ -356,7 +357,7 @@ namespace OpenDental {
 			// 
 			this.butCalcWeekOT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butCalcWeekOT.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butCalcWeekOT.Location = new System.Drawing.Point(223, 662);
+			this.butCalcWeekOT.Location = new System.Drawing.Point(139, 662);
 			this.butCalcWeekOT.Name = "butCalcWeekOT";
 			this.butCalcWeekOT.Size = new System.Drawing.Size(90, 24);
 			this.butCalcWeekOT.TabIndex = 18;
@@ -503,10 +504,23 @@ namespace OpenDental {
 			this.textRateThree.TabIndex = 128;
 			this.textRateThree.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// butBenefits
+			// 
+			this.butBenefits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butBenefits.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butBenefits.Location = new System.Drawing.Point(235, 662);
+			this.butBenefits.Name = "butBenefits";
+			this.butBenefits.Size = new System.Drawing.Size(90, 24);
+			this.butBenefits.TabIndex = 131;
+			this.butBenefits.Text = "Benefits";
+			this.butBenefits.Visible = false;
+			this.butBenefits.Click += new System.EventHandler(this.butBenefits_Click);
+			// 
 			// FormTimeCard
 			// 
 			this.CancelButton = this.butSave;
 			this.ClientSize = new System.Drawing.Size(979, 696);
+			this.Controls.Add(this.butBenefits);
 			this.Controls.Add(this.textRateThree2);
 			this.Controls.Add(this.labelRateThree);
 			this.Controls.Add(this.textRateThree);
@@ -594,5 +608,6 @@ namespace OpenDental {
 		private TextBox textRateThree2;
 		private Label labelRateThree;
 		private TextBox textRateThree;
+		private UI.Button butBenefits;
 	}
 }

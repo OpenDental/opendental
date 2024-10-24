@@ -50,9 +50,9 @@ namespace OpenDental {
 			}
 			else{
 				textLanguage.Text=LanguageShowing;
-				string strLabels=EFormFieldCur.ValueLabel+","+EFormFieldCur.PickListVis;
+				string strLabels=EFormFieldCur.ValueLabel+"|"+EFormFieldCur.PickListVis;
 				string strTranslations=LanguagePats.TranslateEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,strLabels);
-				List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
+				List<string> listTranslations=strTranslations.Split('|').ToList();//Ex: [label|button1|button2]
 				textLabelTranslated.Text=listTranslations[0];
 				for(int i=1;i<listTranslations.Count; i++){//add the translated button labels to listPickLang to use when populating _listVisDbLangs.
 					listLangOrig.Add(listTranslations[i]);
@@ -148,10 +148,10 @@ namespace OpenDental {
 			List<string> listVisOrig=new List<string>();
 			List<string> listDbOrig=new List<string>();
 			if(!string.IsNullOrEmpty(EFormFieldCur.PickListVis)){
-				listVisOrig=EFormFieldCur.PickListVis.Split(',').ToList();
+				listVisOrig=EFormFieldCur.PickListVis.Split('|').ToList();
 			}
 			if(!string.IsNullOrEmpty(EFormFieldCur.PickListDb)){
-				listDbOrig=EFormFieldCur.PickListDb.Split(',').ToList();
+				listDbOrig=EFormFieldCur.PickListDb.Split('|').ToList();
 			}
 			for(int i=0;i<listVisOrig.Count;i++){
 				VisDbLang visDbLang=new VisDbLang();
@@ -527,7 +527,7 @@ Any or all items are allowed to have no label by leaving that value in the first
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			textCondValue.Text=EFormL.PickCondValue(ListEFormFields,textCondParent.Text,textCondValue.Text);
+			textCondValue.Text=EFormL.PickCondValues(ListEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void FrmEFormRadioButtonsEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
@@ -569,18 +569,18 @@ Any or all items are allowed to have no label by leaving that value in the first
 				MsgBox.Show("Must have at least two items in pick list.");
 				return;
 			}
-			if(textLabel.Text.Contains(",")
-				|| textLabelTranslated.Text.Contains(","))
+			if(textLabel.Text.Contains("|")
+				|| textLabelTranslated.Text.Contains("|"))
 			{
-				MsgBox.Show("Labels cannot contain commas.");
+				MsgBox.Show("Labels cannot contain |.");
 				return;
 			}
 			for(int i=0;i<_listVisDbLangs.Count;i++){
-				if(_listVisDbLangs[i].Db.Contains(",")
-					|| _listVisDbLangs[i].Vis.Contains(",")
-					|| LanguageShowing!="" && _listVisDbLangs[i].Lang.Contains(","))//Or, if translating a language and a translation contains a comma.
+				if(_listVisDbLangs[i].Db.Contains("|")
+					|| _listVisDbLangs[i].Vis.Contains("|")
+					|| LanguageShowing!="" && _listVisDbLangs[i].Lang.Contains("|"))//Or, if translating a language and a translation contains a pipe.
 				{
-					MsgBox.Show("Pick list items cannot contain commas.");
+					MsgBox.Show("Pick list items cannot contain |.");
 					return;
 				}
 			}
@@ -631,9 +631,9 @@ Any or all items are allowed to have no label by leaving that value in the first
 			string strTranslations=textLabelTranslated.Text+",";
 			for(int i=0;i<_listVisDbLangs.Count;i++){
 				if(i>0){
-					strTranslations+=",";
+					strTranslations+="|";
 				}
-				strTranslations+=_listVisDbLangs[i].Lang;//ex: "ValueLabel,Button1,Button2"
+				strTranslations+=_listVisDbLangs[i].Lang;//ex: "ValueLabel|Button1|Button2"
 			}
 			IsChangedLanCache=LanguagePats.SaveTranslationEFormField(EFormFieldCur.EFormFieldDefNum,LanguageShowing,strTranslations);
 			if(IsChangedLanCache){
@@ -693,8 +693,8 @@ Any or all items are allowed to have no label by leaving that value in the first
 			EFormFieldCur.PickListDb="";
 			for(int i=0;i<_listVisDbLangs.Count;i++){
 				if(i>0){
-					EFormFieldCur.PickListVis+=",";
-					EFormFieldCur.PickListDb+=",";
+					EFormFieldCur.PickListVis+="|";
+					EFormFieldCur.PickListDb+="|";
 				}
 				EFormFieldCur.PickListVis+=_listVisDbLangs[i].Vis;
 				EFormFieldCur.PickListDb+=_listVisDbLangs[i].Db;

@@ -35,24 +35,15 @@ namespace OpenDental {
 		///<summary></summary>
 		private void FrmModFormDefs_Load(object sender, EventArgs e) {
 			Lang.F(this);
-			InsertInternalToDb();
+			InsertInternalEFormsIfNeeded();
 			FillGrid();
 		}
 
-		///<summary>Whenever this form loads and there are no EFormDefs in the db, then this immediately copies all our internal forms into the db. This could have been done in the ConvertDb script, but it's easier here and we don't every run complex methods when updating versions. So users will never see internal forms after that unless they click the Add button.</summary>
-		private void InsertInternalToDb(){
-			List<EFormDef> listEFormDefsCustom=EFormDefs.GetDeepCopy();
-			if(listEFormDefsCustom.Count>0){
-				return;
-			}
-			List<EFormDef> listEFormDefsInternal=EFormInternal.GetAllInternal();
-			for(int i=0;i<listEFormDefsInternal.Count;i++){
-				listEFormDefsInternal[i].DateTCreated=DateTime.Now;
-				EFormDefs.Insert(listEFormDefsInternal[i]);
-				for(int f=0;f<listEFormDefsInternal[i].ListEFormFieldDefs.Count;f++){
-					listEFormDefsInternal[i].ListEFormFieldDefs[f].EFormDefNum=listEFormDefsInternal[i].EFormDefNum;
-					EFormFieldDefs.Insert(listEFormDefsInternal[i].ListEFormFieldDefs[f]);
-				}
+		///<summary>Whenever this form loads and there are no EFormDefs in the db, then this will copy all of the internal forms into the db. Users will never see internal forms after that unless they click the Add button. Also used in FormEServicesEClipboard</summary>
+		private void InsertInternalEFormsIfNeeded(){
+			bool didInsertInternal=EForms.InsertInternalToDb();
+			if(!didInsertInternal){
+				return;//Custom EForms already exist in the db.
 			}
 			EFormDefs.RefreshCache();
 			EFormFieldDefs.RefreshCache();

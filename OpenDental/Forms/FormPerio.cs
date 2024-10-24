@@ -406,10 +406,10 @@ namespace OpenDental{
 				return;
 			}
 			if(_isTenDown) {
-				contrPerio.ButtonPressed(10+number);
+				contrPerio.ButtonPressedNumber(10+number);
 			}
 			else {
-				contrPerio.ButtonPressed(number);
+				contrPerio.ButtonPressedNumber(number);
 			}
 			_isTenDown=false;
 			SetLabelFwdReverse();
@@ -932,7 +932,7 @@ namespace OpenDental{
 
 		private void butBleed_Click(object sender, System.EventArgs e) {
 			_isTenDown=false;
-			contrPerio.ButtonPressed("b");
+			contrPerio.ButtonPressedLetter("b");
 			contrPerio.Focus();
 		}
 
@@ -942,7 +942,7 @@ namespace OpenDental{
 
 		private void butCalculus_Click(object sender, System.EventArgs e) {
 			_isTenDown=false;
-			contrPerio.ButtonPressed("c");
+			contrPerio.ButtonPressedLetter("c");
 			contrPerio.Focus();
 		}
 
@@ -1215,17 +1215,17 @@ namespace OpenDental{
 
 		private void butPlaque_Click(object sender, System.EventArgs e) {
 			_isTenDown=false;
-			contrPerio.ButtonPressed("p");
+			contrPerio.ButtonPressedLetter("p");
 			contrPerio.Focus();
 		}
 
 		private void butPus_Click(object sender, System.EventArgs e) {
 			_isTenDown=false;
-			contrPerio.ButtonPressed("s");
+			contrPerio.ButtonPressedLetter("s");
 			contrPerio.Focus();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butSaveImage_Click(object sender,EventArgs e) {
 			if(this.gridODExam.GetSelectedIndex()<0){
 				MessageBox.Show(Lan.g(this,"Please select an exam first."));
 				return;
@@ -1233,7 +1233,7 @@ namespace OpenDental{
 			contrPerio.SaveCurExam(_perioExam);
 			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
 			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
-			ColRow colRowOriginal=contrPerio.ListColRowsSelected[0];//Preserve the currently selected ColRow so it can be set after Save is completed.
+			List<ColRow> listColRowsOriginal=new List<ColRow>(contrPerio.ListColRowsSelected);//Preserve the currently selected ColRow so it can be set after Save is completed.
 			FillGrid(!_isExamInUse);
 			contrPerio.ListColRowsSelected=new List<ColRow>();//Clear list so no cell is highlighted on saved image. JobNum:56018
 			//Document doc=new Document();
@@ -1299,7 +1299,7 @@ namespace OpenDental{
 				return;
 			}
 			MsgBox.Show(this,"Saved.");
-			contrPerio.SetNewCell(colRowOriginal.Col,colRowOriginal.Row);//Set the ColRow back to original selection
+			contrPerio.ListColRowsSelected=listColRowsOriginal;//Set the ColRow back to original selection
 			/*
 			string patImagePath=ImageStore.GetPatientFolder(PatCur);
 			string filePath="";
@@ -1580,10 +1580,10 @@ namespace OpenDental{
 					|| charArrayInputs[i]=='m'
 					|| charArrayInputs[i]=='.') 
 				{
-					contrPerio.ButtonPressed(charArrayInputs[i].ToString());
+					contrPerio.ButtonPressedLetter(charArrayInputs[i].ToString());
 				}
 				else if(charArrayInputs[i]==' ') {
-					contrPerio.ButtonPressed("b");
+					contrPerio.ButtonPressedLetter("b");
 				}
 			}
 			FormPerio_ChangeTitle();

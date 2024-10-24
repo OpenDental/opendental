@@ -79,6 +79,9 @@ namespace OpenDental{
 			if(Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)) {
 				groupEmployee.Visible=true;
 			}
+			if(PrefC.IsODHQ) {
+				butBenefits.Visible=true;
+			}
 		}
 
 		public void SortEmployeeList() {
@@ -803,6 +806,12 @@ namespace OpenDental{
 				MessageBox.Show(this,ex.Message);
 			}
 			FillMain(true);
+		}
+
+		private void butBenefits_Click(object sender,EventArgs e) {
+			using FormTimeCardBenefitRp formTimeCardBenefitRp=new FormTimeCardBenefitRp();
+			formTimeCardBenefitRp.EmployeeNum=EmployeeCur.EmployeeNum;
+			formTimeCardBenefitRp.ShowDialog();
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {

@@ -208,7 +208,14 @@ namespace UnitTests.Documentation{
 		ChartModules_GetProcDescriptPlanned_NoApptAttachedPlannedApptHasNoProcs=184,
 		Benefits_AgeLimits_CodeGroupOverlap=185,
 		ClaimProcs_ComputeBaseEst_MedicaidCOB=186,
-		PaymentEdit_BalanceAndIncomeTransfer_DynamicPayPlanInterestCharge=187
+		PaymentEdit_BalanceAndIncomeTransfer_DynamicPayPlanInterestCharge=187,
+		ClockEvents_GetTimeCardManage_SingleWeekRatesOneTwoThreeWithOT=188,
+		ClockEvents_GetTimeCardManage_TwoWeeksBothRatesOneTwoThreeWithOT=189,
+		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesOneTwoThreeNoOTSecondRatesOneWithOT=190,
+		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesThreeWithOTSecondRatesOneNoOT=191,
+		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesTwoThreeWithOTSecondRatesOneWithOT=192,
+		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesOneTwoThreeWithOTSecondRatesOneWithOT=193,
+		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesOneTwoThreeWithOTSecondRatesOneNoOT=194
 		//Add new items to enum here at end of list
 	}
 }

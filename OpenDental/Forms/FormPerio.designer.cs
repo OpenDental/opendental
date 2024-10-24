@@ -98,7 +98,7 @@ namespace OpenDental {
 			this.textInputBox = new System.Windows.Forms.TextBox();
 			this.butCopyPrevious = new OpenDental.UI.Button();
 			this.contrPerio = new OpenDental.ContrPerio();
-			this.butSave = new OpenDental.UI.Button();
+			this.butSaveImage = new OpenDental.UI.Button();
 			this.butGraphical = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
@@ -754,14 +754,14 @@ namespace OpenDental {
 			this.contrPerio.DirectionChangedRight += new System.EventHandler(this.gridP_DirectionChangedRight);
 			this.contrPerio.Click += new System.EventHandler(this.gridP_Click);
 			// 
-			// butSave
+			// butSaveImage
 			// 
-			this.butSave.Location = new System.Drawing.Point(1005, 627);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(88, 24);
-			this.butSave.TabIndex = 21;
-			this.butSave.Text = "Save to Images";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butSaveImage.Location = new System.Drawing.Point(1005, 627);
+			this.butSaveImage.Name = "butSave";
+			this.butSaveImage.Size = new System.Drawing.Size(88, 24);
+			this.butSaveImage.TabIndex = 21;
+			this.butSaveImage.Text = "Save to Images";
+			this.butSaveImage.Click += new System.EventHandler(this.butSaveImage_Click);
 			// 
 			// butGraphical
 			// 
@@ -1072,7 +1072,7 @@ namespace OpenDental {
 			this.Controls.Add(this.checkGingMarg);
 			this.Controls.Add(this.listPlaqueHistory);
 			this.Controls.Add(this.labelPlaqueHistory);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butSaveImage);
 			this.Controls.Add(this.butGraphical);
 			this.Controls.Add(this.butCalcIndex);
 			this.Controls.Add(this.textIndexCalculus);
@@ -1203,7 +1203,7 @@ namespace OpenDental {
 		private System.Windows.Forms.PrintDialog printDialog2;
 		private System.Windows.Forms.PrintPreviewDialog printPreviewDlg;
 		private OpenDental.UI.Button butGraphical;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butSaveImage;
 		private Label labelPlaqueHistory;
 		private OpenDental.UI.ListBox listPlaqueHistory;
 		private OpenDental.UI.CheckBox checkGingMarg;

@@ -64,40 +64,81 @@ namespace DocumentationBuilder {
 			string mysqlUser="";
 			string mysqlPass="";
 			string versionPrevious="";
-			if(cla.Length!=0) {
-				foreach(string arg in cla) {
-					if(arg.Contains("Version=")) {
-						version=arg.Substring("Version=".Length).Trim('"');
-					}
-					if(arg.Contains("ServerName=")) {
-						serverName=arg.Substring("ServerName=".Length).Trim('"');
-					}
-					if(arg.Contains("Database=")) {
-						database=arg.Substring("Database=".Length).Trim('"');
-					}
-					if(arg.Contains("MySQLUser=")) {
-						mysqlUser=arg.Substring("MySQLUser=".Length).Trim('"');
-					}
-					if(arg.Contains("MySQLPass=")) {
-						mysqlPass=arg.Substring("MySQLPass=".Length).Trim('"');
-					}
-					if(arg.Contains("VersionPrev=")) {
-						versionPrevious=arg.Substring("VersionPrev=".Length).Trim('"');
-					}
-					if(arg.Contains("PathPreviousDocumenationFile=")) {
-						_pathPreviousDocumentationFile=arg.Substring("PathPreviousDocumenationFile=".Length).Trim('"');
-					}
+			DocumentationTypes documentationType=DocumentationTypes.DatabaseSchema;
+			foreach(string arg in cla) {
+				if(arg.StartsWith("Version=")) {
+					version=arg.Substring("Version=".Length).Trim('"');
+					continue;
 				}
-				if(string.IsNullOrEmpty(version)
-					||string.IsNullOrEmpty(serverName)
-					|| string.IsNullOrEmpty(database)
-					|| string.IsNullOrEmpty(mysqlUser)
-					|| string.IsNullOrEmpty(mysqlPass))
-				{
-					Environment.Exit(103);//Missing required arguments from command line.
+				if(arg.StartsWith("ServerName=")) {
+					serverName=arg.Substring("ServerName=".Length).Trim('"');
+					continue;
+				}
+				if(arg.StartsWith("Database=")) {
+					database=arg.Substring("Database=".Length).Trim('"');
+					continue;
+				}
+				if(arg.StartsWith("MySQLUser=")) {
+					mysqlUser=arg.Substring("MySQLUser=".Length).Trim('"');
+					continue;
+				}
+				if(arg.StartsWith("MySQLPass=")) {
+					mysqlPass=arg.Substring("MySQLPass=".Length).Trim('"');
+					continue;
+				}
+				if(arg.StartsWith("VersionPrev=")) {
+					versionPrevious=arg.Substring("VersionPrev=".Length).Trim('"');
+					continue;
+				}
+				if(arg.StartsWith("PathPreviousDocumenationFile=")) {
+					_pathPreviousDocumentationFile=arg.Substring("PathPreviousDocumenationFile=".Length).Trim('"');
+					continue;
+				}
+				if(arg.StartsWith("DocumentationType=")) {
+					string strDocumentationType=arg.Substring("DocumentationType=".Length).Trim('"');
+					if(!Enum.TryParse(strDocumentationType,true,out documentationType)) {
+						Environment.Exit((int)ExitCodes.InvalidDocumentationType);
+						return;
+					}
+					continue;
+				}
+			}
+			if(cla.Length!=0) {
+				_isSilentMode=true;
+				//Verify that all required arguments were provided for this documentation type.
+				bool isMissingArgs=false;
+				switch(documentationType) {
+					case DocumentationTypes.UnitTest:
+						//Unit test documentation only requires the Version argument.
+						if(string.IsNullOrEmpty(version)) {
+							isMissingArgs=true;
+						}
+						break;
+					case DocumentationTypes.DatabaseSchema:
+						if(string.IsNullOrEmpty(version)
+							|| string.IsNullOrEmpty(serverName)
+							|| string.IsNullOrEmpty(database)
+							|| string.IsNullOrEmpty(mysqlUser)
+							|| string.IsNullOrEmpty(mysqlPass))
+						{
+							isMissingArgs=true;
+						}
+						break;
+					case DocumentationTypes.Preference:
+					default:
+						Environment.Exit((int)ExitCodes.InvalidDocumentationType);//Not supported yet.
+						return;
+				}
+				if(isMissingArgs) {
+					Environment.Exit((int)ExitCodes.MissingRequiredArguments);
 					return;
 				}
-				_isSilentMode=true;
+			}
+			if(_isSilentMode && documentationType==DocumentationTypes.UnitTest) {
+				textVersion.Text=version;
+				BuildUnitTestDocumentation();
+				Environment.Exit((int)ExitCodes.NoError);
+				return;
 			}
 			_listTableNames=GetTableNames();
 			if(_isSilentMode) {
@@ -115,16 +156,16 @@ namespace DocumentationBuilder {
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					Environment.Exit(112);//Could not build.
+					Environment.Exit((int)ExitCodes.BuildError);
 				}
 				try {
 					SchemaChanges();
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					Environment.Exit(113);//Could not generate schema changes.
+					Environment.Exit((int)ExitCodes.GeneratingSchema);
 				}
-				Environment.Exit(0);
+				Environment.Exit((int)ExitCodes.NoError);
 				return;
 			}
 			dcon=new DataConnection();
@@ -157,6 +198,11 @@ namespace DocumentationBuilder {
 		}
 
 		private void butBuildUnitTest_Click(object sender,EventArgs e) {
+			BuildUnitTestDocumentation();
+			MessageBox.Show("Done");
+		}
+
+		private void BuildUnitTestDocumentation() {
 			string pathOutputUnitTestsDocumentation=ODFileUtils.CombinePaths(new string[] {"..","..","UnitTestsDocumentation.xml"});
 			string stringFileNameUnitTests=Path.GetFileNameWithoutExtension(pathOutputUnitTestsDocumentation);
 			XmlWriterSettings xmlWriterSettings=new XmlWriterSettings();
@@ -347,13 +393,13 @@ namespace DocumentationBuilder {
 				}
 				MsgBoxCopyPaste msgbox=new MsgBoxCopyPaste(s);
 				msgbox.ShowDialog();
-				Environment.Exit(110);
+				Environment.Exit((int)ExitCodes.MissingTables);
 				return;
 			}
 			if(!string.IsNullOrEmpty(_errorMessage.ToString())) {
 				MsgBoxCopyPaste msgbox=new MsgBoxCopyPaste(_errorMessage.ToString());
 				msgbox.ShowDialog();
-				Environment.Exit(111);
+				Environment.Exit((int)ExitCodes.InvalidSummaries);
 				return;
 			}
 			//ProcessStartInfo startInfo=new ProcessStartInfo();
@@ -1089,8 +1135,22 @@ namespace DocumentationBuilder {
 			return ancestors;
 		}
 
-	
+		///<summary>Helper enumeration used when invoking DocumentationBuilder in silent mode (via command prompt) to know which documenation to generate.</summary>
+		private enum DocumentationTypes {
+			DatabaseSchema,
+			UnitTest,
+			Preference,
+		}
 
+		private enum ExitCodes {
+			NoError=0,
+			MissingRequiredArguments=103,
+			InvalidDocumentationType=104,
+			MissingTables=110,
+			InvalidSummaries=111,
+			BuildError=112,
+			GeneratingSchema=113,
+		}
 
 	}
 }

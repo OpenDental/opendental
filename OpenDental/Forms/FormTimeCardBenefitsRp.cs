@@ -17,6 +17,8 @@ using OpenDental.Thinfinity;
 namespace OpenDental{
 	/// <summary></summary>
 	public partial class FormTimeCardBenefitRp:FormODBase {
+		///<summary>When set by parent, the report will be ran for a single employee. When not set, the report will be ran for all employees.</summary>
+		public long EmployeeNum;
 		private DateTime _dateNow;
 		private DateTime _dateMonthT0;
 		private DateTime _dateMonthT1;
@@ -50,26 +52,34 @@ namespace OpenDental{
 			}
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Letter"),100));
 			gridMain.ListGridRows.Clear();
-			List<Employee> listEmployeesAll = Employees.GetDeepCopy(true).OrderBy(x => x.LName).ThenBy(x => x.FName).ToList();
-			List<ClockEvent> listClockEventsAll = ClockEvents.GetAllForPeriod(_dateMonthT2,_dateMonthT2.AddMonths(3));//get all three months of clock events
-			listClockEventsAll.RemoveAll(x => x.ClockStatus==TimeClockStatus.Break);//remove breaks, they have already been acounted for on the clock events.
-			listClockEventsAll.RemoveAll(x => x.TimeDisplayed2<=x.TimeDisplayed1);//Remove all mal-formed entries with stop time before start time. (also if user has not clocked out.)
-			listClockEventsAll.RemoveAll(x => x.TimeDisplayed1.Date!=x.TimeDisplayed2.Date);//No one works over midnight at ODHQ. If they do, they know to split clock events @ midnight
+			List<Employee> listEmployees=new List<Employee>();
+			List<ClockEvent> listClockEvents=new List<ClockEvent>();
+			if(EmployeeNum!=0) {//single employee
+				listEmployees.Add(Employees.GetEmp(EmployeeNum));
+				listClockEvents=ClockEvents.GetSimpleList(EmployeeNum,_dateMonthT2,_dateMonthT2.AddMonths(3));//get all three months of clock events
+			}
+			else {//all employees
+				listEmployees=Employees.GetDeepCopy(true).OrderBy(x => x.LName).ThenBy(x => x.FName).ToList();
+				listClockEvents=ClockEvents.GetAllForPeriod(_dateMonthT2,_dateMonthT2.AddMonths(3));//get all three months of clock events				
+			}
+			listClockEvents.RemoveAll(x => x.ClockStatus==TimeClockStatus.Break);//remove breaks, they have already been acounted for on the clock events.
+			listClockEvents.RemoveAll(x => x.TimeDisplayed2<=x.TimeDisplayed1);//Remove all mal-formed entries with stop time before start time. (also if user has not clocked out.)
+			listClockEvents.RemoveAll(x => x.TimeDisplayed1.Date!=x.TimeDisplayed2.Date);//No one works over midnight at ODHQ. If they do, they know to split clock events @ midnight
 			List<TimeAdjust> listTimeAdjustAll = TimeAdjusts.GetAllForPeriod(_dateMonthT2,_dateMonthT2.AddMonths(3));
-			for (int i=0;i<listEmployeesAll.Count;i++) {
+			for (int i=0;i<listEmployees.Count;i++) {
 				//Construct each row, then filter out if neccesary.
 				GridRow row = new GridRow();
 				//Name
-				row.Cells.Add(listEmployeesAll[i].LName);
-				row.Cells.Add(listEmployeesAll[i].FName);
+				row.Cells.Add(listEmployees[i].LName);
+				row.Cells.Add(listEmployees[i].FName);
 				//Month T-2 (current month -2 months)
-				TimeSpan timeSpan2 = TimeSpan.FromTicks(listClockEventsAll
-					.FindAll(x => x.EmployeeNum==listEmployeesAll[i].EmployeeNum
+				TimeSpan timeSpan2 = TimeSpan.FromTicks(listClockEvents
+					.FindAll(x => x.EmployeeNum==listEmployees[i].EmployeeNum
 						&& x.TimeDisplayed1.Year==_dateMonthT2.Year
 						&& x.TimeDisplayed1.Month==_dateMonthT2.Month)
 					.Select(x => (x.TimeDisplayed2-x.TimeDisplayed1)+(x.AdjustIsOverridden ? x.Adjust : x.AdjustAuto))
 					.Sum(x=>x.Ticks));
-				timeSpan2=timeSpan2.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==listEmployeesAll[i].EmployeeNum
+				timeSpan2=timeSpan2.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==listEmployees[i].EmployeeNum
 						&& x.TimeEntry.Year==_dateMonthT2.Year
 						&& x.TimeEntry.Month==_dateMonthT2.Month)
 						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks+x.OTimeHours.Ticks)));
@@ -80,13 +90,13 @@ namespace OpenDental{
 				}
 				row.Cells.Add(gridCell);
 				//Month T-1
-				TimeSpan timeSpan1 = TimeSpan.FromTicks(listClockEventsAll
-					.FindAll(x => x.EmployeeNum==listEmployeesAll[i].EmployeeNum
+				TimeSpan timeSpan1 = TimeSpan.FromTicks(listClockEvents
+					.FindAll(x => x.EmployeeNum==listEmployees[i].EmployeeNum
 						&& x.TimeDisplayed1.Year==_dateMonthT1.Year
 						&& x.TimeDisplayed1.Month==_dateMonthT1.Month)
 					.Select(x => (x.TimeDisplayed2-x.TimeDisplayed1)+(x.AdjustIsOverridden ? x.Adjust : x.AdjustAuto))
 					.Sum(x => x.Ticks));
-				timeSpan1=timeSpan1.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==listEmployeesAll[i].EmployeeNum
+				timeSpan1=timeSpan1.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==listEmployees[i].EmployeeNum
 						&& x.TimeEntry.Year==_dateMonthT1.Year
 						&& x.TimeEntry.Month==_dateMonthT1.Month)
 						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks+x.OTimeHours.Ticks)));
@@ -97,13 +107,13 @@ namespace OpenDental{
 				}
 				row.Cells.Add(gridCell);
 				//Month T-0
-				TimeSpan timeSpan0 = TimeSpan.FromTicks(listClockEventsAll
-					.FindAll(x => x.EmployeeNum==listEmployeesAll[i].EmployeeNum
+				TimeSpan timeSpan0 = TimeSpan.FromTicks(listClockEvents
+					.FindAll(x => x.EmployeeNum==listEmployees[i].EmployeeNum
 						&& x.TimeDisplayed1.Year==_dateMonthT0.Year
 						&& x.TimeDisplayed1.Month==_dateMonthT0.Month)
 					.Select(x => (x.TimeDisplayed2-x.TimeDisplayed1)+(x.AdjustIsOverridden ? x.Adjust : x.AdjustAuto))
 					.Sum(x => x.Ticks));
-				timeSpan0=timeSpan0.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==listEmployeesAll[i].EmployeeNum
+				timeSpan0=timeSpan0.Add(TimeSpan.FromTicks(listTimeAdjustAll.FindAll(x => x.EmployeeNum==listEmployees[i].EmployeeNum
 						&& x.TimeEntry.Year==_dateMonthT0.Year
 						&& x.TimeEntry.Month==_dateMonthT0.Month)
 						.Sum(x => x.RegHours.Ticks+x.PtoHours.Ticks+x.OTimeHours.Ticks)));

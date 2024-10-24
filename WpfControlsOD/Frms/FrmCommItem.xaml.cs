@@ -150,6 +150,8 @@ namespace OpenDental {
 			else{//Always hide the button since it's not HQ
 				butCommlogHist.Visible=false;
 			}
+			float scale=(float)VisualTreeHelper.GetDpi(this).DpiScaleX;
+			signatureBoxWrapper.SetScaleAndZoom(scale,GetZoom());
 		}
 
 		private bool SyncCommlogWithUI(bool showMsg) {

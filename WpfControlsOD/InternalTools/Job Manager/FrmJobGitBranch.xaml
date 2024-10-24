@@ -1,0 +1,23 @@
+<local:FrmODBase x:Class="OpenDental.FrmJobGitBranch"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:OpenDental"
+             xmlns:ui="clr-namespace:WpfControls.UI"
+             mc:Ignorable="d"
+             Width="401" Height="197" 
+             Text="Create Branch" >
+	<Grid Background="#FFFCFDFE" >
+		<ui:Label x:Name="labelPath_Copy" Width="359" Height="36" Margin="26,10,0,0" Text= "Clicking &quot;Create Branch&quot; will create a local branch, based on master, in the selected repository. It will then be pushed to the remote." HAlign="Left" />
+		<ui:Label x:Name="labelPath" Width="87" Height="18" Margin="27,54,0,0" Text="Path" HAlign="Right"/>
+		<ui:TextBox x:Name="textPath" Height="20" Margin="115,53,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" Width="250" />
+		<ui:TextBox x:Name="textBranchName" Height="20" Margin="115,78,24,0" ColorBack="#FFF0F0F0" ReadOnly="True" HorizontalAlignment="Stretch" />
+		<ui:Label x:Name="labelBranchName" Width="88" Height="18" Margin="26,79,0,0" Text="Branch Name" HAlign="Right" />
+		<ui:GroupBox x:Name="groupRepositories" Height="56" Margin="22,110,0,0" Text="Repositories" Width="119" >
+			<ui:RadioButton x:Name="radioVersioned" Height="20" Margin="7,16,0,0" Text="Versioned" CheckAlign="MiddleRight" Checked="True" Width="97" />
+			<ui:RadioButton x:Name="radioUnversioned" Width="97" Height="20" Margin="7,33,0,0" Text="Unversioned" CheckAlign="MiddleRight" />
+		</ui:GroupBox>
+		<ui:Button x:Name="butCreateBranch" HorizontalAlignment="Right" Width="92" Margin="0,0,10,10" Text="_Create Branch" Click="butCreateBranch_Click" VerticalAlignment="Bottom" Height="24" />
+	</Grid>
+</local:FrmODBase>

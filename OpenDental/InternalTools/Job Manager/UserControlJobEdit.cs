@@ -11,6 +11,7 @@ using OpenDental.UI;
 using OpenDentBusiness;
 using CodeBase;
 using System.Diagnostics;
+using OpenDentBusiness.Misc;
 using Newtonsoft.Json;
 
 namespace OpenDental.InternalTools.Job_Manager {
@@ -87,8 +88,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			Enum.GetNames(typeof(JobPhase)).ToList().ForEach(x => comboPhase.Items.Add(x));
 			Enum.GetNames(typeof(JobPatternReviewProject)).ToList().ForEach(x => comboProject.Items.Add(x));
 			Enum.GetNames(typeof(JobProposedVersion)).ToList().ForEach(x => comboProposedVersion.Items.Add(x));
+			//Can't use DesignMode bool because it is not initialized at this point because this control can be nested multiple times (e.g. FormJobManager).
+			bool isDesignMode=(LicenseManager.UsageMode==LicenseUsageMode.Designtime);
 			List<JobTeam> listJobTeams=new List<JobTeam>();
-			if(!this.DesignMode) {
+			if(!isDesignMode) {
 				listJobTeams=JobTeams.GetDeepCopy();
 			}
 			comboJobTeam.Items.Add("None", new JobTeam(){JobTeamNum=-1});
@@ -961,11 +964,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else {
 				textApprove.Text="No";
 			}
-			string gitBranchName=Jobs.GetGitBranchName(job);
-			if(gitBranchName.Length>50){
-				gitBranchName=gitBranchName.Substring(0,50);
-			}
-			textGitBranchName.Text=gitBranchName;
 			comboCategory.SelectedIndex=_listCategoryNamesFiltered.IndexOf(_jobCur.Category.ToString());
 			textDateEntry.Text=_jobCur.DateTimeEntry.Year>1880?_jobCur.DateTimeEntry.ToShortDateString():"";
 			textVersion.Text=_jobCur.JobVersion;
@@ -986,6 +984,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			textEstHours.Text=_jobCur.HoursEstimate.ToString();
 			textActualHours.Text=_jobCur.HoursActual.ToString();
 			butActions.Enabled=true;
+			butGitActions.Enabled=true;
 			butPopout.Enabled=true;
 			checkIsActive.Enabled=true;
 			SetHoursLeft();
@@ -1243,6 +1242,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				textTestingHours.Enabled=false;
 				checkNotTested.Enabled=false;
 				comboPriorityTesting.Enabled=false;
+				butGitActions.Enabled=false;
 				return;
 			}
 			if(JobPermissions.IsAuthorized(JobPerm.Quote,true) && _jobOld.PhaseCur!=JobPhase.Complete && _jobOld.PhaseCur!=JobPhase.Cancelled) {
@@ -4603,6 +4603,42 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(frmPatientSelect.IsDialogOK) {
 				Patient patientSelected=Patients.GetPat(frmPatientSelect.PatNumSelected);
 				GlobalFormOpenDental.PatientSelected(patientSelected,true);
+			}
+		}
+
+		private void butGitActions_Click(object sender,EventArgs e) {
+			ContextMenu gitActionsMenu=new ContextMenu();
+			MenuItem menuItemGetBranch=new MenuItem("Copy Branch Name to Clipboard",gitActionsMenu_GetBranchNameClick);
+			gitActionsMenu.MenuItems.Add(menuItemGetBranch);
+			MenuItem menuItemCreateBranch=new MenuItem("Create Branch",gitActionsMenu_CreateBranchClick);
+			gitActionsMenu.MenuItems.Add(menuItemCreateBranch);
+			butGitActions.ContextMenu=gitActionsMenu;
+			butGitActions.ContextMenu.Show(butGitActions,new Point(0,butGitActions.Height));
+		}
+
+		private void gitActionsMenu_GetBranchNameClick(object sender,EventArgs e) {
+			if(_jobCur==null) {
+				return;
+			}
+			string branchName=Jobs.GetGitBranchName(_jobCur);
+			try {
+				ODClipboard.SetClipboard(branchName);
+				MsgBox.Show(this,"Copied.");
+			}
+			catch(Exception) {
+				MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");
+			}
+		}
+
+		private void gitActionsMenu_CreateBranchClick(object sender,EventArgs e) {
+			if(_jobCur==null) {
+				return;
+			}
+			FrmJobGitBranch frmJobGitBranch=new FrmJobGitBranch();
+			frmJobGitBranch.BranchName=Jobs.GetGitBranchName(_jobCur);
+			frmJobGitBranch.ShowDialog();
+			if(frmJobGitBranch.IsDialogOK) {
+				MsgBox.Show(this,"Branch created.");
 			}
 		}
 	}//end class

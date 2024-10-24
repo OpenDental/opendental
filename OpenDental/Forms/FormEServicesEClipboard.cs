@@ -224,6 +224,7 @@ namespace OpenDental {
 		}
 		
 		private void butEFormAdd_Click(object sender,EventArgs e) {
+			InsertInternalEFormsIfNeeded();
 			long clinicNum=GetClinicNumEClipboardTab();
 			if(checkEClipboardUseDefaults.Checked) {
 				clinicNum=0;
@@ -550,6 +551,9 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled && GetClinicNumEClipboardTab()==0) {
 				isClinicSignedUp=Clinics.GetForUserod(Security.CurUser).Any(x => MobileAppDevices.IsClinicSignedUpForEClipboard(x.ClinicNum));
 			}
+			if(ODBuild.IsDebug() && Environment.MachineName.ToLower()=="jordanhome"){
+				isClinicSignedUp=true;
+			}
 			bool doUseDefaults=GetClinicNumEClipboardTab()!=0 && checkEClipboardUseDefaults.Checked;
 			bool enableSheets=checkEClipboardCreateMissingForms.Checked;
 			checkEClipboardUseDefaults.Enabled=GetClinicNumEClipboardTab()!=0 && isClinicSignedUp && _canEditEClipboard;
@@ -606,6 +610,18 @@ namespace OpenDental {
 				}
 			}
 		}
+
+		///<summary>If there are no EFormDefs in the db, then this will copy all of the internal forms into the db. This method allows eForms to work right out of the box in the event a user decides to add an eForm to the eClipboard without first opening and saving the eForm, although this behavior is not expected to be common. Also used in FrmEFormDefs.</summary>
+		private void InsertInternalEFormsIfNeeded(){
+			bool didInsertInternal=EForms.InsertInternalToDb();
+			if(!didInsertInternal){
+				return;//custom eForms existed in the db already.
+			}
+			EFormDefs.RefreshCache();
+			EFormFieldDefs.RefreshCache();
+			DataValid.SetInvalid(InvalidType.Sheets);
+		}
+
 		#endregion Methods - Private
 	}
 }

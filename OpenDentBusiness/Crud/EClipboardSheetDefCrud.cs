@@ -58,6 +58,7 @@ namespace OpenDentBusiness.Crud{
 				eClipboardSheetDef.IgnoreSheetDefNums   = PIn.String(row["IgnoreSheetDefNums"].ToString());
 				eClipboardSheetDef.PrefillStatusOverride= PIn.Long  (row["PrefillStatusOverride"].ToString());
 				eClipboardSheetDef.EFormDefNum          = PIn.Long  (row["EFormDefNum"].ToString());
+				eClipboardSheetDef.Frequency            = (OpenDentBusiness.EnumEClipFreq)PIn.Int(row["Frequency"].ToString());
 				retVal.Add(eClipboardSheetDef);
 			}
 			return retVal;
@@ -80,6 +81,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("IgnoreSheetDefNums");
 			table.Columns.Add("PrefillStatusOverride");
 			table.Columns.Add("EFormDefNum");
+			table.Columns.Add("Frequency");
 			foreach(EClipboardSheetDef eClipboardSheetDef in listEClipboardSheetDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eClipboardSheetDef.EClipboardSheetDefNum),
@@ -93,6 +95,7 @@ namespace OpenDentBusiness.Crud{
 					            eClipboardSheetDef.IgnoreSheetDefNums,
 					POut.Long  (eClipboardSheetDef.PrefillStatusOverride),
 					POut.Long  (eClipboardSheetDef.EFormDefNum),
+					POut.Int   ((int)eClipboardSheetDef.Frequency),
 				});
 			}
 			return table;
@@ -112,7 +115,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EClipboardSheetDefNum,";
 			}
-			command+="SheetDefNum,ClinicNum,ResubmitInterval,ItemOrder,PrefillStatus,MinAge,MaxAge,IgnoreSheetDefNums,PrefillStatusOverride,EFormDefNum) VALUES(";
+			command+="SheetDefNum,ClinicNum,ResubmitInterval,ItemOrder,PrefillStatus,MinAge,MaxAge,IgnoreSheetDefNums,PrefillStatusOverride,EFormDefNum,Frequency) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eClipboardSheetDef.EClipboardSheetDefNum)+",";
 			}
@@ -126,7 +129,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (eClipboardSheetDef.MaxAge)+","
 				+    DbHelper.ParamChar+"paramIgnoreSheetDefNums,"
 				+    POut.Long  (eClipboardSheetDef.PrefillStatusOverride)+","
-				+    POut.Long  (eClipboardSheetDef.EFormDefNum)+")";
+				+    POut.Long  (eClipboardSheetDef.EFormDefNum)+","
+				+    POut.Int   ((int)eClipboardSheetDef.Frequency)+")";
 			if(eClipboardSheetDef.IgnoreSheetDefNums==null) {
 				eClipboardSheetDef.IgnoreSheetDefNums="";
 			}
@@ -155,7 +159,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EClipboardSheetDefNum,";
 			}
-			command+="SheetDefNum,ClinicNum,ResubmitInterval,ItemOrder,PrefillStatus,MinAge,MaxAge,IgnoreSheetDefNums,PrefillStatusOverride,EFormDefNum) VALUES(";
+			command+="SheetDefNum,ClinicNum,ResubmitInterval,ItemOrder,PrefillStatus,MinAge,MaxAge,IgnoreSheetDefNums,PrefillStatusOverride,EFormDefNum,Frequency) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eClipboardSheetDef.EClipboardSheetDefNum)+",";
 			}
@@ -169,7 +173,8 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   (eClipboardSheetDef.MaxAge)+","
 				+    DbHelper.ParamChar+"paramIgnoreSheetDefNums,"
 				+    POut.Long  (eClipboardSheetDef.PrefillStatusOverride)+","
-				+    POut.Long  (eClipboardSheetDef.EFormDefNum)+")";
+				+    POut.Long  (eClipboardSheetDef.EFormDefNum)+","
+				+    POut.Int   ((int)eClipboardSheetDef.Frequency)+")";
 			if(eClipboardSheetDef.IgnoreSheetDefNums==null) {
 				eClipboardSheetDef.IgnoreSheetDefNums="";
 			}
@@ -195,7 +200,8 @@ namespace OpenDentBusiness.Crud{
 				+"MaxAge               =  "+POut.Int   (eClipboardSheetDef.MaxAge)+", "
 				+"IgnoreSheetDefNums   =  "+DbHelper.ParamChar+"paramIgnoreSheetDefNums, "
 				+"PrefillStatusOverride=  "+POut.Long  (eClipboardSheetDef.PrefillStatusOverride)+", "
-				+"EFormDefNum          =  "+POut.Long  (eClipboardSheetDef.EFormDefNum)+" "
+				+"EFormDefNum          =  "+POut.Long  (eClipboardSheetDef.EFormDefNum)+", "
+				+"Frequency            =  "+POut.Int   ((int)eClipboardSheetDef.Frequency)+" "
 				+"WHERE EClipboardSheetDefNum = "+POut.Long(eClipboardSheetDef.EClipboardSheetDefNum);
 			if(eClipboardSheetDef.IgnoreSheetDefNums==null) {
 				eClipboardSheetDef.IgnoreSheetDefNums="";
@@ -247,6 +253,10 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="EFormDefNum = "+POut.Long(eClipboardSheetDef.EFormDefNum)+"";
 			}
+			if(eClipboardSheetDef.Frequency != oldEClipboardSheetDef.Frequency) {
+				if(command!="") { command+=",";}
+				command+="Frequency = "+POut.Int   ((int)eClipboardSheetDef.Frequency)+"";
+			}
 			if(command=="") {
 				return false;
 			}
@@ -291,6 +301,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eClipboardSheetDef.EFormDefNum != oldEClipboardSheetDef.EFormDefNum) {
+				return true;
+			}
+			if(eClipboardSheetDef.Frequency != oldEClipboardSheetDef.Frequency) {
 				return true;
 			}
 			return false;

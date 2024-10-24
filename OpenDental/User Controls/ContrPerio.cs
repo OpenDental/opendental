@@ -212,20 +212,20 @@ namespace OpenDental
 
 		#region Methods - public
 		///<summary>Accepts button clicks from window rather than the usual keyboard entry.  All validation MUST be done before the value is sent here.  Only valid values are b,s,p,c,j,g,f,m,or period (.). Numbers entered using overload.</summary>
-		public void ButtonPressed(string keyValue){
+		public void ButtonPressedLetter(string letter){
 			if(!AllowPerioEdit) {
 				return;
 			}
 			if(ThreeAtATime){
 				for(int i=0;i<3;i++)
-					EnterValue(keyValue);
+					EnterValueLetter(letter);
 			}
 			else
-				EnterValue(keyValue);
+				EnterValueLetter(letter);
 		}
 
 		///<summary>Accepts button clicks from window rather than the usual keyboard entry.  All validation MUST be done before the value is sent here.  Only valid values are numbers 0 through 19, and 101 to 109.</summary>
-		public void ButtonPressed(int keyValue){
+		public void ButtonPressedNumber(int number){
 			if(ListColRowsSelected.IsNullOrEmpty()) {
 				return;
 			}
@@ -234,21 +234,21 @@ namespace OpenDental
 			}
 			if(GingMargPlus && _perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]==PerioSequenceType.GingMargin) {
 				//Possible values for keyValue are 0-19,101-109
-				if(keyValue<100) {
-					keyValue=keyValue%10;//in case the +10 was down when the number was pressed on the onscreen keypad.
-					if(keyValue!=0) {//add 100 to represent negative values unless they pressed 0
-						keyValue+=100;
+				if(number<100) {
+					number=number%10;//in case the +10 was down when the number was pressed on the onscreen keypad.
+					if(number!=0) {//add 100 to represent negative values unless they pressed 0
+						number+=100;
 					}
 				}
 				//Possible values for keyValue at this colrow are 0, 101-109.
 			}
 			if(ThreeAtATime) {
 				for(int i=0;i<3;i++) {
-					EnterValue(keyValue);
+					EnterValueNumber(number);
 				}
 			}
 			else {
-				EnterValue(keyValue);
+				EnterValueNumber(number);
 			}
 		}
 
@@ -749,6 +749,9 @@ namespace OpenDental
 
 		#region Methods - private
 		private void AdvanceCell(bool isReverse=false){
+			if(ListColRowsSelected.Count>1) {
+				return;//Don't advance when multiple ColRows are selected
+			}
 			ColRow colRowToSet=TryFindNextCell(ListColRowsSelected[0],isReverse);
 			if(colRowToSet==null) {
 				return;
@@ -842,86 +845,90 @@ namespace OpenDental
 		private void ClearValue(){
 			//MessageBox.Show(DataArray.GetLength(0).ToString());
 			//MessageBox.Show(DataArray.GetLength(1).ToString());
-			PerioCell perioCell=_perioCellArray[ListColRowsSelected[0].Col,ListColRowsSelected[0].Row];
-			perioCell.Text="";
-			_perioCellArray[ListColRowsSelected[0].Col,ListColRowsSelected[0].Row]=perioCell;
-			SetHasChanged(ListColRowsSelected[0].Col,ListColRowsSelected[0].Row);
-			Invalidate(Rectangle.Ceiling(GetBounds(ListColRowsSelected[0].Col,ListColRowsSelected[0].Row)));
-			if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]==PerioSequenceType.Probing){ 
-				CalculateCAL(ListColRowsSelected[0],alsoInvalidate:true);
-			}
-			else if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]==PerioSequenceType.GingMargin){
-				CalculateCAL(new ColRow(ListColRowsSelected[0].Col,GetTableRow
-					(_idxExamSelected,GetSection(ListColRowsSelected[0].Row),PerioSequenceType.Probing)),alsoInvalidate:true);
+			for(int i=0;i<ListColRowsSelected.Count;i++) {
+				PerioCell perioCell=_perioCellArray[ListColRowsSelected[i].Col,ListColRowsSelected[i].Row];
+				perioCell.Text="";
+				_perioCellArray[ListColRowsSelected[i].Col,ListColRowsSelected[i].Row]=perioCell;
+				SetHasChanged(ListColRowsSelected[i].Col,ListColRowsSelected[i].Row);
+				Invalidate(Rectangle.Ceiling(GetBounds(ListColRowsSelected[i].Col,ListColRowsSelected[i].Row)));
+				if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[i].Row)][GetSectionRow(ListColRowsSelected[i].Row)]==PerioSequenceType.Probing){ 
+					CalculateCAL(ListColRowsSelected[i],alsoInvalidate:true);
+				}
+				else if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[i].Row)][GetSectionRow(ListColRowsSelected[i].Row)]==PerioSequenceType.GingMargin){
+					CalculateCAL(new ColRow(ListColRowsSelected[i].Col,GetTableRow
+						(_idxExamSelected,GetSection(ListColRowsSelected[i].Row),PerioSequenceType.Probing)),alsoInvalidate:true);
+				}
 			}
 		}
 
 		///<summary>Only valid values are b,s,p,c,j,g,f,m,and period (.)</summary>
-		private void EnterValue(string keyValue){
-			if(ListColRowsSelected[0].Col==-1) {
+		private void EnterValueLetter(string letter){
+			if(ListColRowsSelected.IsNullOrEmpty()) {
 				return;
 			}
-			if(keyValue !="b" && keyValue !="s" && keyValue !="p" && keyValue !="c" && keyValue !="j" && keyValue !="g" && keyValue !="f" && keyValue !="m" && keyValue !="."){
+			if(letter !="b" && letter !="s" && letter !="p" && letter !="c" && letter !="j" && letter !="g" && letter !="f" && letter !="m" && letter !="."){
 				MessageBox.Show("Only b,s,p,c,j,g,f,m,and period (.) are allowed");//just for debugging
 				//Any changes here should also be changed in ContrPerio.OnKeyDown and FormPerio.FormPerio_ChangeTitle
 				return;
 			}
-			if(keyValue=="b" || keyValue=="s" || keyValue=="p" || keyValue=="c") {
-				PerioCell perioCell=GetPerioCell(ListColRowsSelected[0],false);
+			if(letter=="b" || letter=="s" || letter=="p" || letter=="c") {
 				bool hasText=false;
-				bool isSkippedTooth=_listSkippedTeeth.Contains(perioCell.ToothNum);
-				if(ThreeAtATime){
-					//don't backup
-				}
-				else if(perioCell.Text!=null && perioCell.Text!=""){
-					hasText=true;
-					//so enter value for current cell
-				}
-				else if(isSkippedTooth) {
-					//The only way to get to a skipped tooth is to click on it.
-					//This means there should be less automation.
-					//Always put bleeding points, etc., on the current position.
-					//Bleeding points don't cause advance anyway, whether on skipped tooth or not.
-					hasText=true;
-				}
-				else {
-					hasText=false;
-					AdvanceCell(isReverse:true);//so backup
-					perioCell=_perioCellArray[ListColRowsSelected[0].Col,ListColRowsSelected[0].Row];
-					if(perioCell.Text==null || perioCell.Text=="") {//the previous cell is also empty
-						hasText=true;//treat it like a cell with text
-						AdvanceCell();//go forward again
-						perioCell=_perioCellArray[ListColRowsSelected[0].Col,ListColRowsSelected[0].Row];
+				for(int k=0;k<ListColRowsSelected.Count;k++) {
+					PerioCell perioCell=GetPerioCell(ListColRowsSelected[k],false);
+					bool isSkippedTooth=_listSkippedTeeth.Contains(perioCell.ToothNum);
+					if(ThreeAtATime){
+						//don't backup
 					}
-					//enter value, then advance.
+					else if(perioCell.Text!=null && perioCell.Text!=""){
+						hasText=true;
+						//so enter value for current cell
+					}
+					else if(isSkippedTooth) {
+						//The only way to get to a skipped tooth is to click on it.
+						//This means there should be less automation.
+						//Always put bleeding points, etc., on the current position.
+						//Bleeding points don't cause advance anyway, whether on skipped tooth or not.
+						hasText=true;
+					}
+					else {
+						hasText=false;
+						AdvanceCell(isReverse:true);//so backup
+						perioCell=_perioCellArray[ListColRowsSelected[k].Col,ListColRowsSelected[k].Row];
+						if(perioCell.Text==null || perioCell.Text=="") {//the previous cell is also empty
+							hasText=true;//treat it like a cell with text
+							AdvanceCell();//go forward again
+							perioCell=_perioCellArray[ListColRowsSelected[k].Col,ListColRowsSelected[k].Row];
+						}
+						//enter value, then advance.
+					}
+					if(letter=="b"){
+						if((perioCell.Bleeding & BleedingFlags.Blood)==0)//if it was off
+							perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Blood;//turn it on
+						else//if it was on
+							perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Blood; //turn it off
+					}
+					if(letter=="s"){
+						if((perioCell.Bleeding & BleedingFlags.Suppuration)==0)
+							perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Suppuration;
+						else
+							perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Suppuration;
+					}
+					if(letter=="p"){
+						if((perioCell.Bleeding & BleedingFlags.Plaque)==0)
+							perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Plaque;
+						else
+							perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Plaque;
+					}
+					if(letter=="c"){
+						if((perioCell.Bleeding & BleedingFlags.Calculus)==0)
+							perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Calculus;
+						else
+							perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Calculus;
+					}
+					_perioCellArray[ListColRowsSelected[k].Col,ListColRowsSelected[k].Row]=perioCell;
+					Invalidate(Rectangle.Ceiling(GetBounds(ListColRowsSelected[k].Col,ListColRowsSelected[k].Row)));
+					SetHasChanged(ListColRowsSelected[k].Col,ListColRowsSelected[k].Row);
 				}
-				if(keyValue=="b"){
-					if((perioCell.Bleeding & BleedingFlags.Blood)==0)//if it was off
-						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Blood;//turn it on
-					else//if it was on
-						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Blood; //turn it off
-				}
-				if(keyValue=="s"){
-					if((perioCell.Bleeding & BleedingFlags.Suppuration)==0)
-						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Suppuration;
-					else
-						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Suppuration;
-				}
-				if(keyValue=="p"){
-					if((perioCell.Bleeding & BleedingFlags.Plaque)==0)
-						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Plaque;
-					else
-						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Plaque;
-				}
-				if(keyValue=="c"){
-					if((perioCell.Bleeding & BleedingFlags.Calculus)==0)
-						perioCell.Bleeding=perioCell.Bleeding | BleedingFlags.Calculus;
-					else
-						perioCell.Bleeding=perioCell.Bleeding & ~BleedingFlags.Calculus;
-				}
-				_perioCellArray[ListColRowsSelected[0].Col,ListColRowsSelected[0].Row]=perioCell;
-				Invalidate(Rectangle.Ceiling(GetBounds(ListColRowsSelected[0].Col,ListColRowsSelected[0].Row)));
-				SetHasChanged(ListColRowsSelected[0].Col,ListColRowsSelected[0].Row);
 				if(ThreeAtATime){
 					AdvanceCell();
 				}
@@ -930,34 +937,39 @@ namespace OpenDental
 				}
 				return;
 			}
+			if(ListColRowsSelected.Count>1) {
+				//Don't do anything beyond this point when there are multiple ColRows selected.
+				return;
+			}
+			//From here down, other row types besides probing depths
 			int section=GetSection(ListColRowsSelected[0].Row);
 			for(int i=0;i<_rowPosArray.Length;i++) {
 				int idxSectRow=GetSectionRow(i);
 				if(GetSection(i)!=section) {
 					continue;
 				}
-				if(keyValue=="j") {
+				if(letter=="j") {
 					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.MGJ) {
 						SetNewCell(ListColRowsSelected[0].Col,i);
 						Focus();
 						return;
 					}
 				}
-				if(keyValue=="g") {
+				if(letter=="g") {
 					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.GingMargin) {
 						SetNewCell(ListColRowsSelected[0].Col,i);
 						Focus();
 						return;
 					}
 				}
-				if(keyValue=="f") {
+				if(letter=="f") {
 					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.Furcation) {
 						SetNewCell(ListColRowsSelected[0].Col,i);
 						Focus();
 						return;
 					}
 				}
-				if(keyValue=="m") {
+				if(letter=="m") {
 					int colSelected=ListColRowsSelected[0].Col;
 					int colLeft=colSelected-1;
 					int colRight=colSelected+1;
@@ -973,7 +985,7 @@ namespace OpenDental
 						return;
 					}
 				}
-				if(keyValue==".") {
+				if(letter==".") {
 					if(_perioSequenceTypeArray[section][idxSectRow]==PerioSequenceType.Probing) {
 						if(_idxExamSelected-_offsetExam//correct for offset
 							+_perioSequenceTypeArray[section].Length-_rowsProbing6//plus non-probing rows
@@ -990,29 +1002,31 @@ namespace OpenDental
 		}
 
 		///<summary>Only valid values are numbers 0-19, and 101-109. Validation should be done before sending here.</summary>
-		private void EnterValue(int keyValue){
+		private void EnterValueNumber(int number){
 			if(ListColRowsSelected.IsNullOrEmpty()) {
 				return;
 			}
-			if((keyValue < 0 || keyValue > 19) 
-				&& _perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]!=PerioSequenceType.GingMargin){//large values are allowed for GingMargin to represent hyperplasia (e.g. 101 to 109 represent -1 to -9)
-				MessageBox.Show("Only values 0 through 19 allowed");//just for debugging
-				return;
-			}
-			PerioCell perioCell=GetPerioCell(ListColRowsSelected[0],setText:false);
-			//might be able to eliminate these two lines
-			perioCell.Text=keyValue.ToString();
-			_perioCellArray[ListColRowsSelected[0].Col,ListColRowsSelected[0].Row]=perioCell;
-			Invalidate(Rectangle.Ceiling(GetBounds(ListColRowsSelected[0].Col,ListColRowsSelected[0].Row)));
-			SetHasChanged(ListColRowsSelected[0].Col,ListColRowsSelected[0].Row);
-			PerioSequenceType perioSequenceType=_perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)];
-			if(perioSequenceType==PerioSequenceType.Probing){ 
-				CalculateCAL(ListColRowsSelected[0],alsoInvalidate:true);
-			}
-			else if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]==PerioSequenceType.GingMargin){
-				ColRow colRow=new ColRow(ListColRowsSelected[0].Col,GetTableRow
-					(_idxExamSelected,GetSection(ListColRowsSelected[0].Row),PerioSequenceType.Probing));
-				CalculateCAL(colRow,alsoInvalidate:true);
+			for(int i=0;i<ListColRowsSelected.Count;i++) {
+				if((number < 0 || number > 19) 
+					&& _perioSequenceTypeArray[GetSection(ListColRowsSelected[i].Row)][GetSectionRow(ListColRowsSelected[i].Row)]!=PerioSequenceType.GingMargin){//large values are allowed for GingMargin to represent hyperplasia (e.g. 101 to 109 represent -1 to -9)
+					MessageBox.Show("Only values 0 through 19 allowed");//just for debugging
+					return;
+				}
+				PerioCell perioCell=GetPerioCell(ListColRowsSelected[i],setText:false);
+				//might be able to eliminate these two lines
+				perioCell.Text=number.ToString();
+				_perioCellArray[ListColRowsSelected[i].Col,ListColRowsSelected[i].Row]=perioCell;
+				Invalidate(Rectangle.Ceiling(GetBounds(ListColRowsSelected[i].Col,ListColRowsSelected[i].Row)));
+				SetHasChanged(ListColRowsSelected[i].Col,ListColRowsSelected[i].Row);
+				PerioSequenceType perioSequenceType=_perioSequenceTypeArray[GetSection(ListColRowsSelected[i].Row)][GetSectionRow(ListColRowsSelected[i].Row)];
+				if(perioSequenceType==PerioSequenceType.Probing){ 
+					CalculateCAL(ListColRowsSelected[i],alsoInvalidate:true);
+				}
+				else if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[i].Row)][GetSectionRow(ListColRowsSelected[i].Row)]==PerioSequenceType.GingMargin){
+					ColRow colRow=new ColRow(ListColRowsSelected[i].Col,GetTableRow
+						(_idxExamSelected,GetSection(ListColRowsSelected[i].Row),PerioSequenceType.Probing));
+					CalculateCAL(colRow,alsoInvalidate:true);
+				}
 			}
 			AdvanceCell();
 		}
@@ -1357,8 +1371,8 @@ namespace OpenDental
 		}
 
 		///<summary></summary>
-		private void KeyDown_Clicked(ColRow colRowSelected) {
-			if(!AllowPerioEdit) {
+		private void KeyArrowDown_Clicked(ColRow colRowSelected) {
+			if(!AllowPerioEdit  || ListColRowsSelected.Count!=1) {
 				return;
 			}
 			int colSelected=colRowSelected.Col;
@@ -1403,8 +1417,8 @@ namespace OpenDental
 		}
 
 		///<summary></summary>
-		private void KeyUp_Clicked(ColRow colRowSelected) {
-			if(!AllowPerioEdit) {
+		private void KeyArrowUp_Clicked(ColRow colRowSelected) {
+			if(!AllowPerioEdit || ListColRowsSelected.Count!=1) {
 				return;
 			}
 			int colCol=colRowSelected.Col;
@@ -1513,7 +1527,7 @@ namespace OpenDental
 		///<summary></summary>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if(!AllowPerioEdit) {
+			if(!AllowPerioEdit || ListColRowsSelected.IsNullOrEmpty()) {
 				return;
 			}
 			if (_idxExamSelected == -1)
@@ -1529,59 +1543,59 @@ namespace OpenDental
 				if(e.Control){
 					if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]==PerioSequenceType.GingMargin) {
 						int val=(e.KeyValue-96);
-						ButtonPressed((val==0?0:val+100));//0 if val==0, val+100 if val != 0
+						ButtonPressedNumber((val==0?0:val+100));//0 if val==0, val+100 if val != 0
 					}
 					else { //general case
-						ButtonPressed(e.KeyValue-96+10);
+						ButtonPressedNumber(e.KeyValue-96+10);
 					}
 				}
 				else{
-					ButtonPressed(e.KeyValue-96);
+					ButtonPressedNumber(e.KeyValue-96);
 				}
 			}
 			else if(e.KeyValue>=48 && e.KeyValue<=57){//0 through 9
 				if(e.Control) {
 					if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]==PerioSequenceType.GingMargin) {//gm
 						int val=(e.KeyValue-48);
-						ButtonPressed((val==0?0:val+100));//0 if val==0, val+100 if val != 0
+						ButtonPressedNumber((val==0?0:val+100));//0 if val==0, val+100 if val != 0
 					}
 					else { //general case
-						ButtonPressed(e.KeyValue-48+10);
+						ButtonPressedNumber(e.KeyValue-48+10);
 					}
 				}
 				else{
-					ButtonPressed(e.KeyValue-48);
+					ButtonPressedNumber(e.KeyValue-48);
 				}
 			}
 			else if(e.KeyCode==Keys.B){
-				ButtonPressed("b");
+				ButtonPressedLetter("b");
 			}
 			else if(e.KeyCode==Keys.Space){
-				ButtonPressed("b");
+				ButtonPressedLetter("b");
 			}
 			else if(e.KeyCode==Keys.S){
-				ButtonPressed("s");
+				ButtonPressedLetter("s");
 			}
 			else if(e.KeyCode==Keys.P){
-				ButtonPressed("p");
+				ButtonPressedLetter("p");
 			}
 			else if(e.KeyCode==Keys.C){
-				ButtonPressed("c");
+				ButtonPressedLetter("c");
 			}
 			else if(e.KeyCode==Keys.J){
-				ButtonPressed("j");
+				ButtonPressedLetter("j");
 			}
 			else if(e.KeyCode==Keys.G){
-				ButtonPressed("g");
+				ButtonPressedLetter("g");
 			}
 			else if(e.KeyCode==Keys.F){
-				ButtonPressed("f");
+				ButtonPressedLetter("f");
 			}
 			else if(e.KeyCode==Keys.M){
-				ButtonPressed("m");
+				ButtonPressedLetter("m");
 			}
 			else if(e.KeyCode==Keys.OemPeriod){
-				ButtonPressed(".");
+				ButtonPressedLetter(".");
 			}
 			else if(e.KeyCode==Keys.Back){
 				if(ThreeAtATime){
@@ -1651,10 +1665,10 @@ namespace OpenDental
 				}
 			}
 			else if(e.KeyCode==Keys.Up) {
-				KeyUp_Clicked(ListColRowsSelected.Last());
+				KeyArrowUp_Clicked(ListColRowsSelected.Last());
 			}
 			else if(e.KeyCode==Keys.Down) {
-				KeyDown_Clicked(ListColRowsSelected.Last());
+				KeyArrowDown_Clicked(ListColRowsSelected.Last());
 			}
 			//else{
 			//	return;
@@ -1667,6 +1681,11 @@ namespace OpenDental
 				return;
 			}
 			base.OnMouseDown(e);
+			List<ColRow> listColRowsPrev=new List<ColRow>(ListColRowsSelected);
+			ListColRowsSelected.Clear();//Each new drag unselects previous drag.
+			for(int i=0;i<listColRowsPrev.Count;i++) {
+				Invalidate(Rectangle.Ceiling(GetBounds(listColRowsPrev[i].Col,listColRowsPrev[i].Row)));
+			}
 			_isMouseDown=true;
 		}
 
@@ -1675,12 +1694,33 @@ namespace OpenDental
 				return;
 			}
 			base.OnMouseMove(e);
-			if(_isMouseDown) {
-				//JobNum:55852
-				//Add cells we drag over to ListColRowsSelected
-				//Requirements:
-				//Each new drag unselects previous drag.
-				//Only allowed on dated probing rows.
+			if(!_isMouseDown) {
+				return;
+			}
+			//Add cells we drag over to ListColRowsSelected
+			ColRow colRowCellMovedOver=GetCellFromPixel(e.X,e.Y);
+			if(colRowCellMovedOver.Col==0){
+				return;//Left column only for dates
+			}
+			int section=GetSection(colRowCellMovedOver.Row);
+			int sectRowIdx=GetSectionRow(colRowCellMovedOver.Row);
+			if(sectRowIdx<0 || sectRowIdx>=_perioSequenceTypeArray[section].Length) {
+				//User clicked on a tooth row, not a section row.
+				return;
+			}
+			if(_perioSequenceTypeArray[section][sectRowIdx]==PerioSequenceType.Probing){
+				if(_idxExamSelected-_offsetExam//correct for offset
+					+_perioSequenceTypeArray[section].Length-_rowsProbing6//plus non-probing rows
+					!=sectRowIdx)
+				{
+					return;////multi-select only allowed on dated probing rows.
+				}
+				if(!ListColRowsSelected.Exists(x=>x.Col==colRowCellMovedOver.Col && x.Row==colRowCellMovedOver.Row) 
+					&& !_listSkippedTeeth.Contains(GetPerioCellFromColRow(colRowCellMovedOver).ToothNum))
+				{
+					ListColRowsSelected.Add(colRowCellMovedOver);
+					Invalidate(Rectangle.Ceiling(GetBounds(colRowCellMovedOver.Col,colRowCellMovedOver.Row)));
+				}
 			}
 		}
 
@@ -1690,6 +1730,9 @@ namespace OpenDental
 			}
 			base.OnMouseUp(e);
 			_isMouseDown=false;
+			if(!ListColRowsSelected.IsNullOrEmpty()) {
+				return;//ColRows already selected with drag in OnMouseMove
+			}
 			ColRow colRowNewCell=GetCellFromPixel(e.X,e.Y);
 			if(colRowNewCell.Col==0){
 				return;//Left column only for dates
@@ -1755,7 +1798,7 @@ namespace OpenDental
 			DrawBackground(e);
 			DrawSkippedTeeth(e);
 			DrawSelectedTeeth(e);
-			DrawCurCell(e);
+			DrawCurCells(e);
 			DrawGridlines(e);
 			DrawText(e);
 			//DrawTempDots(e);
@@ -1803,8 +1846,8 @@ namespace OpenDental
 			g.FillRectangle(new SolidBrush(_colorBackShort),0,top,_widthShowing,bottom-top);
 		}
 
-		///<summary>Draws the highlighted background for the current cell.</summary>
-		private void DrawCurCell(System.Windows.Forms.PaintEventArgs e){
+		///<summary>Draws the highlighted background for the current cells.</summary>
+		private void DrawCurCells(System.Windows.Forms.PaintEventArgs e){
 			if(ListColRowsSelected.IsNullOrEmpty()){
 				return;
 			}
@@ -1812,32 +1855,34 @@ namespace OpenDental
 				return;
 			}
 			Graphics g=e.Graphics;
-			RectangleF rectangleFBounds=GetBounds(ListColRowsSelected[0].Col,ListColRowsSelected[0].Row);
-			if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[0].Row)][GetSectionRow(ListColRowsSelected[0].Row)]==PerioSequenceType.Probing){
-				rectangleFBounds=new RectangleF(rectangleFBounds.X,rectangleFBounds.Y+_heightProb-_heightShort,
-					rectangleFBounds.Width,_heightShort);
-			}
-			int top=(int)rectangleFBounds.Top;
-			int bottom=(int)rectangleFBounds.Bottom;
-			int left=(int)rectangleFBounds.Left;
-			int right=(int)rectangleFBounds.Right;
-			if(e.ClipRectangle.Bottom>=rectangleFBounds.Top && e.ClipRectangle.Top<=rectangleFBounds.Bottom
-				&& e.ClipRectangle.Right>=rectangleFBounds.Left && e.ClipRectangle.Left<=rectangleFBounds.Right)
-			{//if the clipping rect includes any part of the CurCell
-				if(e.ClipRectangle.Bottom<=bottom){
-					bottom=e.ClipRectangle.Bottom;
+			for(int i=0;i<ListColRowsSelected.Count;i++) {
+				RectangleF rectangleFBounds=GetBounds(ListColRowsSelected[i].Col,ListColRowsSelected[i].Row);
+				if(_perioSequenceTypeArray[GetSection(ListColRowsSelected[i].Row)][GetSectionRow(ListColRowsSelected[i].Row)]==PerioSequenceType.Probing){
+					rectangleFBounds=new RectangleF(rectangleFBounds.X,rectangleFBounds.Y+_heightProb-_heightShort,
+						rectangleFBounds.Width,_heightShort);
 				}
-				if(e.ClipRectangle.Top>=top){
-					top=e.ClipRectangle.Top;
+				int top=(int)rectangleFBounds.Top;
+				int bottom=(int)rectangleFBounds.Bottom;
+				int left=(int)rectangleFBounds.Left;
+				int right=(int)rectangleFBounds.Right;
+				if(e.ClipRectangle.Bottom>=rectangleFBounds.Top && e.ClipRectangle.Top<=rectangleFBounds.Bottom
+					&& e.ClipRectangle.Right>=rectangleFBounds.Left && e.ClipRectangle.Left<=rectangleFBounds.Right)
+				{//if the clipping rect includes any part of the CurCell
+					if(e.ClipRectangle.Bottom<=bottom){
+						bottom=e.ClipRectangle.Bottom;
+					}
+					if(e.ClipRectangle.Top>=top){
+						top=e.ClipRectangle.Top;
+					}
+					if(e.ClipRectangle.Right<=right){
+						right=e.ClipRectangle.Right;
+					}
+					if(e.ClipRectangle.Left>=left){
+						left=e.ClipRectangle.Left;
+					}
+					g.FillRectangle(new SolidBrush(_colorHighlight),left,top
+						,right-left,bottom-top);
 				}
-				if(e.ClipRectangle.Right<=right){
-					right=e.ClipRectangle.Right;
-				}
-				if(e.ClipRectangle.Left>=left){
-					left=e.ClipRectangle.Left;
-				}
-				g.FillRectangle(new SolidBrush(_colorHighlight),left,top
-					,right-left,bottom-top);
 			}
 		}
 

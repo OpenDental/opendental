@@ -30,6 +30,7 @@ namespace OpenDental {
 		private ContextMenu _contextMenuUnassigned;
 		///<summary>Gets filled when a grid is right clicked on for the context menu options.</summary>
 		private long _childRoomNumClicked;
+		///<summary>Contains the child room grid that was clicked on, mainly used for context menu items. Tag will have what # child room was right clicked.</summary>
 		private Grid _gridChildRoomClick;
 		private int _idxCharsPrinted;
 		private int _pagesPrinted;
@@ -67,6 +68,7 @@ namespace OpenDental {
 			gridChildrenAbsent.ContextMenu=_contextMenuAbsent;
 			_contextMenuUnassigned=new ContextMenu(this);
 			_contextMenuUnassigned.Add(new MenuItem("Clock In",menuItemClockIn_Click));
+			_contextMenuUnassigned.Add(new MenuItem("Clock Out",menuItemClockOutUnassigned_Click));
 			gridTeachersUnassigned.ContextMenu=_contextMenuUnassigned;
 		}
 
@@ -383,6 +385,7 @@ namespace OpenDental {
 			grid.SetSelected(idx);
 		}
 
+		///<summary>Used for the 8 child grids. Fills _gridChildRoomClick with whatever grid had it's context menu opened.</summary>
 		private void ContextMenu_Opened(object sender,EventArgs e) {
 			ContextMenu contextMenu=(ContextMenu)sender;
 			Grid grid=(Grid)contextMenu.PlacementTarget;
@@ -450,25 +453,35 @@ namespace OpenDental {
 		}
 
 		private void menuItemClockOut_Click(object sender,EventArgs e) {
-			ClockOut(TimeClockStatus.Home);
+			ClockOut(_gridChildRoomClick,TimeClockStatus.Home);
+		}
+
+		private void menuItemClockOutUnassigned_Click(object sender,EventArgs e) {
+			ClockOut(gridTeachersUnassigned,TimeClockStatus.Home);
 		}
 
 		private void menuItemBreak_Click(object sender,EventArgs e) {
-			ClockOut(TimeClockStatus.Break);
+			ClockOut(_gridChildRoomClick,TimeClockStatus.Break);
 		}
 
-		private void ClockOut(TimeClockStatus timeClockStatus) {
-			int idxSelected=_gridChildRoomClick.GetSelectedIndex();
+		private void ClockOut(Grid grid,TimeClockStatus timeClockStatus) {
+			int idxSelected=grid.GetSelectedIndex();
 			if(idxSelected==-1) {
 				MsgBox.Show("Select a row first.");
 				return;
 			}
-			ChildRoomLog childRoomLogSelected=(ChildRoomLog)_gridChildRoomClick.ListGridRows[idxSelected].Tag;
-			if(childRoomLogSelected.EmployeeNum==0) {
-				MsgBox.Show("Only a teacher can be clocked out or on break.");
-				return;
+			Employee employee;
+			if(grid==gridTeachersUnassigned){
+				employee=(Employee)gridTeachersUnassigned.ListGridRows[idxSelected].Tag;
 			}
-			Employee employee=Employees.GetEmpFromDB(childRoomLogSelected.EmployeeNum);
+			else{
+				ChildRoomLog childRoomLogSelected=(ChildRoomLog)grid.ListGridRows[idxSelected].Tag;
+				if(childRoomLogSelected.EmployeeNum==0) {
+					MsgBox.Show("Only a teacher can be clocked out or on break.");
+					return;
+				}
+				employee=Employees.GetEmpFromDB(childRoomLogSelected.EmployeeNum);
+			}
 			if(employee.ClockStatus==timeClockStatus.GetDescription()) {
 				MsgBox.Show("This teacher is already clocked out or on break.");
 				return;
@@ -500,7 +513,9 @@ namespace OpenDental {
 			childRoomLog.ChildRoomNum=0;
 			ChildRoomLogs.Insert(childRoomLog);
 			//Refresh
-			FillGridSpecified(_gridChildRoomClick);
+			if(grid!=gridTeachersUnassigned){
+				FillGridSpecified(grid);
+			}
 			FillGridTeachersUnassigned();
 			Signalods.SetInvalid(InvalidType.Children);
 			//Reselect teacher after they have been moved

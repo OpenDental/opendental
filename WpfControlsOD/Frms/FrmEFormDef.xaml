@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OpenDental"
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
-             Width="560" Height="275" 
+             Width="630" Height="300" 
              Text="Module Form Def Edit" MinMaxBoxes="False">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
@@ -24,8 +24,8 @@
 		<ui:Label x:Name="labelSpaceBelowDefault" Height="18" Margin="179,153,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
 		<ui:Label x:Name="labelSpaceToRightDefault" Height="18" Margin="178,176,0,0" Text="leave blank to use the default value of" VAlign="Center" Width="265" />
 		<ui:Label x:Name="labelSpaceBelowDefault_Copy1" Height="18" Margin="179,129,0,0" Text="96 per inch" VAlign="Center" Width="265" />
-		<ui:ComboBox x:Name="comboImageCat" Width="131" Height="21" Margin="122,199,0,0" />
-		<ui:Label Width="120" Height="18" Margin="1,200,0,0" Text="Save to Image Cat" VAlign="Center" HAlign="Right" />
-		<ui:Label x:Name="labelSpaceToRightDefault_Copy" Height="18" Margin="255,200,0,0" Text="only saves during import or if manually saved" VAlign="Center" Width="265" />
+		<ui:ComboBox x:Name="comboImageCat" Width="131" Height="21" Margin="122,209,0,0" />
+		<ui:Label Width="120" Height="18" Margin="1,210,0,0" Text="Save to Image Cat" VAlign="Center" HAlign="Right" />
+		<ui:Label x:Name="labelSpaceToRightDefault_Copy" Height="35" Margin="255,201,0,0" Text="Not recommended because eForms already show in Chart module.&#10;Only saves during import or if manually saved." VAlign="Center" Width="395" />
 	</Grid>
 </local:FrmODBase>

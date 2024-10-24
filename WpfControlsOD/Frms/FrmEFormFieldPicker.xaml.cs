@@ -86,7 +86,7 @@ namespace OpenDental {
 				MsgBox.Show("Please select a parent at the left first.");
 				return;
 			}
-			textCondValue.Text=EFormL.PickCondValue(ListEFormFields,listBoxFieldLabels.SelectedItem.ToString(),textCondValue.Text);
+			textCondValue.Text=EFormL.PickCondValues(ListEFormFields,listBoxFieldLabels.SelectedItem.ToString(),textCondValue.Text);
 		}
 
 		/*

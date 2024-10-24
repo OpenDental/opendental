@@ -368,29 +368,8 @@ Here is the desired behavior:
 			}
 		}
 
-		public void formVideo_BitmapCaptured(object sender, Bitmap bitmap){
-			Document document = null;
-			long defNumCategory=GetCurrentCategory();
-			if(PrefC.GetLong(PrefName.VideoImageCategoryDefault)>0){
-				defNumCategory=PrefC.GetLong(PrefName.VideoImageCategoryDefault);
-			}
-			try {
-				//it seems to sometimes fire a second time, with bitmap null
-				if(bitmap is null){
-					return;
-				}
-				document=ImageStore.Import(bitmap,defNumCategory,ImageType.Photo,PatientCur);
-			}
-			catch(Exception ex) {
-				MessageBox.Show(Lan.g(this,"Unable to save")+": "+ex.Message);
-				return;
-			}
-			if(!IsMountShowing()){//single
-				EventFillTree?.Invoke(this,false);//Reload and keep new document selected.
-				EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
-				return;
-			}
-			//From here down is mount=================================================================================
+		///<summary></summary>
+		public void formVideo_BitmapCapturedMount(object sender, Bitmap bitmap, Document document){
 			if(IsMountItemSelected()){
 				//user must have clicked onto an occupied position in the middle of a series.
 				MessageBox.Show(Lan.g(this,"Please select an empty mount position first."));
@@ -1341,6 +1320,9 @@ Here is the desired behavior:
 		///<summary>This sets the zoom slider so that the middle tick will be at the "fit" zoom.  This is needed any time the image is rotate or cropped, or if the form size changes.</summary>
 		public void SetZoomSliderToFit(){
 			LayoutManager.MoveSize(panelMain,ClientSize);//LayoutManager didn't seem to be doing this in some cases.
+			if(_odWebView2!=null) {
+				LayoutManager.MoveSize(_odWebView2,ClientSize);
+			}
 			if(IsDocumentShowing()){
 				if(_bitmapRaw==null && _bitmapDicomRaw==null){
 					//pdf. It will be disabled anyway

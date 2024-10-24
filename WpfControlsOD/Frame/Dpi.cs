@@ -28,7 +28,9 @@ But these must all be tested in both dpi-aware and non-aware because of lots of 
 
 WPF works in DIPs.
 If directly setting a Window.Left or Top, you must convert to windows scale.
-See WindowComboPicker, ToolTip, and WindowImageFloatWindows for examples of how to do this.
+Full examples are in WindowComboPicker, ToolTip, and WindowImageFloatWindows.
+But I recommend this:
+		double scale=VisualTreeHelper.GetDpi(this).DpiScaleX;
 
 Do not use SetDesktopBounds to move a Form.
 It will erroneously use the upper left of the working area as 0,0.

@@ -29,6 +29,8 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		public bool IsDeleted;
 		 ///<summary>We don't fire off a signal to update the language cache on other computers until we hit Save in this window. So each edit window has a variable to keep track of whether there are any new translations. That bubbles up to this variable.</summary>
 		private bool _isChangedLanCache;
+		///<summary>This is used instead of the Windows clipboard for cut/copy/paste so that the Windows clipboard doesn't get altered by what we're doing here.</summary>
+		private List<EFormField> _listEFormFieldsClipboard;
 
 		#region Constructor
 		///<summary></summary>
@@ -577,7 +579,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				MsgBox.Show(this,"Please select at least 1 field.");
 				return;
 			}
-			List<EFormField> listEFormFields=new List<EFormField>();
+			_listEFormFieldsClipboard=new List<EFormField>();
 			for(int i=0;i<listSelectedIndices.Count;i++){
 				EFormField eFormField=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].Copy();
 				eFormField.TagOD=null;
@@ -585,16 +587,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				eFormField.EFormFieldNum=0;
 				eFormField.EFormNum=0;
 				eFormField.ItemOrder=0;
-				listEFormFields.Add(eFormField);
-			}
-			string str=JsonConvert.SerializeObject(listEFormFields);
-			DataObject dataObject=new DataObject();
-			dataObject.SetData("ListEFormFields",str);
-			try{
-				Clipboard.SetDataObject(dataObject);
-			}
-			catch(Exception ex){
-				MsgBox.Show("Failed: "+ex.Message);
+				_listEFormFieldsClipboard.Add(eFormField);
 			}
 			Cursor=Cursors.Wait;
 			ctrlEFormFill.Cursor=Cursors.Wait;
@@ -613,7 +606,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				MsgBox.Show(this,"Please select at least 1 field.");
 				return;
 			}
-			List<EFormField> listEFormFields=new List<EFormField>();
+			_listEFormFieldsClipboard=new List<EFormField>();
 			for(int i=0;i<listSelectedIndices.Count;i++){
 				EFormField eFormField=ctrlEFormFill.ListEFormFields[listSelectedIndices[i]].Copy();
 				eFormField.TagOD=null;
@@ -622,16 +615,7 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 				eFormField.EFormFieldDefNum=0;
 				eFormField.EFormNum=0;
 				eFormField.ItemOrder=0;
-				listEFormFields.Add(eFormField);
-			}
-			string str=JsonConvert.SerializeObject(listEFormFields);
-			DataObject dataObject=new DataObject();
-			dataObject.SetData("ListEFormFields",str);
-			try{
-				Clipboard.SetDataObject(dataObject);
-			}
-			catch(Exception ex){
-				MsgBox.Show("Failed: "+ex.Message);
+				_listEFormFieldsClipboard.Add(eFormField);
 			}
 			Cursor=Cursors.Wait;
 			ctrlEFormFill.Cursor=Cursors.Wait;
@@ -655,41 +639,31 @@ Like in that form, edits to the fields do not get saved to the db as they are ed
 		}
 
 		private void butPaste_Click(object sender,EventArgs e) {
-			IDataObject iDataObject=null;
-			try {
-				iDataObject=Clipboard.GetDataObject();
-			}
-			catch(Exception ex) {
-				MessageBox.Show(ex.Message);
-				return;
-			}
-			if(iDataObject==null){
+			if(_listEFormFieldsClipboard==null || _listEFormFieldsClipboard.Count==0){
 				MsgBox.Show(this,"Clipboard is empty.");
 				return;
 			}
-			string str=(string)iDataObject.GetData("ListEFormFields");
-			if(str is null){
-				MsgBox.Show(this,"There are no eForm Fields on the Clipboard.");
-				return;
-			}
-			List<EFormField> listEFormFields=JsonConvert.DeserializeObject<List<EFormField>>(str);
-			for(int i=0;i<listEFormFields.Count;i++){
+			List<EFormField> listEFormFieldsInsert=new List<EFormField>();
+			//We have to make copies. Otherwise, using paste twice reuses the objects.
+			for(int i=0;i<_listEFormFieldsClipboard.Count;i++){
 				//we must insert an eFormFieldDef in order to have a PK for languages.
 				//It can be completely empty except for the PK. Nothing else matters.
 				EFormFieldDef eFormFieldDef=new EFormFieldDef();
 				EFormFieldDefs.Insert(eFormFieldDef);
-				listEFormFields[i].EFormFieldDefNum=eFormFieldDef.EFormFieldDefNum;
-				listEFormFields[i].IsNew=true;
+				EFormField eFormField=_listEFormFieldsClipboard[i].Copy();
+				eFormField.EFormFieldDefNum=eFormFieldDef.EFormFieldDefNum;
+				eFormField.IsNew=true;
+				listEFormFieldsInsert.Add(eFormField);
 			}
 			int idx=ctrlEFormFill.GetSelectedIndex();
 			if(idx==-1){
 				idx=EFormFields.GetLastIdxThisPage(ctrlEFormFill.ListEFormFields,ctrlEFormFill.GetPageShowing());
 				//guaranteed to not be -1
 			}
-			ctrlEFormFill.ListEFormFields.InsertRange(idx,listEFormFields);
+			ctrlEFormFill.ListEFormFields.InsertRange(idx,listEFormFieldsInsert);
 			ctrlEFormFill.RefreshLayout();//This also fixes all stacking
 			//set the new fields selected
-			for(int i=0;i<listEFormFields.Count;i++){
+			for(int i=0;i<listEFormFieldsInsert.Count;i++){
 				ctrlEFormFill.SetSelected(idx+i);
 			}
 		}

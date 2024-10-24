@@ -287,6 +287,9 @@
     <Compile Include="Frms\FrmChildRooms.xaml.cs">
       <DependentUpon>FrmChildRooms.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Job Manager\FrmJobGitBranch.xaml.cs">
+      <DependentUpon>FrmJobGitBranch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\FrmParagraph.xaml.cs">
       <DependentUpon>FrmParagraph.xaml</DependentUpon>
     </Compile>
@@ -874,6 +877,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Frms\FrmChildRooms.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="InternalTools\Job Manager\FrmJobGitBranch.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1743,5 +1750,6 @@
   <ItemGroup>
     <Resource Include="Resources\PracticeBooster.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

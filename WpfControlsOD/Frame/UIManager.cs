@@ -44,9 +44,9 @@ namespace OpenDental{
 		#endregion Fields - Drawing, Border, Dpi
 
 		#region Constructor
-		public UIManager(FormFrame formODBase,FrmODBase frmODBase){
+		public UIManager(FormFrame formFrame,FrmODBase frmODBase){
 			//for FormMaker
-			FormFrame_=formODBase;
+			FormFrame_=formFrame;
 			FormFrame_.HasHelpButton=frmODBase.HasHelpButton;
 			FormFrame_.MinimizeBox=frmODBase.MinMaxBoxes;
 			FormFrame_.MaximizeBox=frmODBase.MinMaxBoxes;

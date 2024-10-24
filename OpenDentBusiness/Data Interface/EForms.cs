@@ -263,6 +263,26 @@ namespace OpenDentBusiness{
 				//still todo: medlist
 			}
 		}
+
+		///<summary>Used by both FrmEFormDefs and FormEServicesEClipboard. If there are no EFormDefs in the db when this method is called, then this immediately copies all our internal forms into the db. This could have been done in the ConvertDb script, but it's easier here and we don't every run complex methods when updating versions. Returns true if internal forms were inserted, and returns false if eFormDefs already exist in the db.</summary>
+		public static bool InsertInternalToDb(){
+			Meth.NoCheckMiddleTierRole();
+			List<EFormDef> listEFormDefsCustom=EFormDefs.GetDeepCopy();
+			if(listEFormDefsCustom.Count>0){
+				return false;//eFormDefs already exist in the db, no need to copy internal into db.
+			}
+			List<EFormDef> listEFormDefsInternal=EFormInternal.GetAllInternal();
+			for(int i=0;i<listEFormDefsInternal.Count;i++){
+				listEFormDefsInternal[i].DateTCreated=DateTime.Now;
+				EFormDefs.Insert(listEFormDefsInternal[i]);
+				for(int f=0;f<listEFormDefsInternal[i].ListEFormFieldDefs.Count;f++){
+					listEFormDefsInternal[i].ListEFormFieldDefs[f].EFormDefNum=listEFormDefsInternal[i].EFormDefNum;
+					EFormFieldDefs.Insert(listEFormDefsInternal[i].ListEFormFieldDefs[f]);
+				}
+			}
+			return true;
+		}
+
 	}
 
 	public class EFormValidation {

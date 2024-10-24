@@ -44,9 +44,9 @@ namespace OpenDental {
 			}
 			menuItemSetup.Add("Image Categories",menuItemImageCats_Click);
 			menuItemSetup.Add("Options",menuItemOptions_Click);
-			if(ODBuild.IsDebug() || PrefC.IsODHQ) {
-				menuItemSetup.Add("Import Rules",menuItemImportRules_Click);
-			}
+			//if(ODBuild.IsDebug() || PrefC.IsODHQ) {
+			//	menuItemSetup.Add("Import Rules",menuItemImportRules_Click);
+			//}
 			menuMain.EndUpdate();
 		}
 
@@ -176,15 +176,15 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void menuItemImportRules_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
-				return;
-			}
-			FrmEFormImportRules frmEFormImportRules=new FrmEFormImportRules();
-			frmEFormImportRules.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"EForm Import Rules");
-			FillGrid();
-		}
+		//private void menuItemImportRules_Click(object sender,EventArgs e) {
+		//	if(!Security.IsAuthorized(EnumPermType.Setup)) {
+		//		return;
+		//	}
+		//	FrmEFormImportRules frmEFormImportRules=new FrmEFormImportRules();
+		//	frmEFormImportRules.ShowDialog();
+		//	SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"EForm Import Rules");
+		//	FillGrid();
+		//}
 
 		private void butAddSheet_Click(object sender,EventArgs e) {
 			FrmSheetPicker frmSheetPicker=new FrmSheetPicker();

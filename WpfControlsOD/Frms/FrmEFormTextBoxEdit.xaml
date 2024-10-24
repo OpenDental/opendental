@@ -28,7 +28,7 @@
 		</ui:GroupBox>
 		<ui:GroupBox Height="204" Margin="31,170,0,0" Width="454" Text="Layout" TabIndexOD="2">
 			<ui:Label x:Name="labelWidth" Width="60" Height="18" Margin="59,41,0,0" Text="Width" HAlign="Right" VAlign="Center" />
-			<ui:Label Height="18" Margin="178,41,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
+			<ui:Label x:Name="labelWidthNote" Height="18" Margin="178,41,0,0" Text="leave blank for full width" VAlign="Center" Width="193" />
 			<ui:TextVInt x:Name="textVIntWidth" Width="54" Height="20" Margin="120,40,0,0" ShowZero="False"/>
 			<ui:CheckBox x:Name="checkBorder" Height="20" Margin="4,17,0,0" Width="129" Text="Show Border Box" CheckAlign="MiddleRight"/>
 			<ui:CheckBox x:Name="checkIsHorizStacking" Height="20" Margin="3,107,0,0" Width="130" Text="Horizontal Stacking" CheckAlign="MiddleRight"/>

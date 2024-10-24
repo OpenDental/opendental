@@ -163,8 +163,8 @@ namespace OpenDentBusiness{
 			if(eFormField.FieldType!=EnumEFormFieldType.RadioButtons) {//This only works with radiobutton fields.
 				return "";
 			}
-			List<string> listPickListDb=eFormField.PickListDb.Split(',').ToList();
-			List<string> listPickListVis=eFormField.PickListVis.Split(',').ToList();
+			List<string> listPickListDb=eFormField.PickListDb.Split('|').ToList();
+			List<string> listPickListVis=eFormField.PickListVis.Split('|').ToList();
 			int idxDb=listPickListDb.IndexOf(eFormField.ValueString);
 			if(idxDb!=-1){
 				//The value string was found in the PickListDb.
@@ -303,6 +303,7 @@ namespace OpenDentBusiness{
 			int paddingLeft=4;//The amount of padding on the left side of each field within its border box.
 			int paddingRight=4;//The amount of padding on the right side of each field within its border box.
 			int thicknessLRBorders=2;//This is the sum of the thickness of the left and right of the border box. It's 1+1=2
+			List<EFormField> listEFormFieldsInStack=EFormFields.GetSiblingsInStack(eFormField,listEFormFields,eFormField.IsHorizStacking,includeSelf:true);
 			if(!eFormField.IsWidthPercentage){//fixed width
 				double spaceRightOfField=PrefC.GetInt(PrefName.EformsSpaceToRightEachField);
 				if(spaceToRightEachField!=-1){
@@ -312,12 +313,24 @@ namespace OpenDentBusiness{
 					spaceRightOfField=eFormField.SpaceToRight;
 				}
 				widthAvail-=marginLeftOfPage+spaceRightOfField;
-				widthAvail-=thicknessLRBorders+paddingLeft+paddingRight;
+				if(eFormField.Border==EnumEFormBorder.None) {
+					widthAvail-=paddingLeft;
+					widthAvail-=1;//left border box thickness
+				}
+				else {//3D
+					widthAvail-=paddingLeft+paddingRight;
+					widthAvail-=thicknessLRBorders;
+				}
 				if(widthAvail<0) {
 					widthAvail=0;
 				}
 				if(eFormField.Width==0){//no width specified
-					return widthAvail;//so full width
+					if(listEFormFieldsInStack.Count>1){//stacking
+						return 100;//This gracefully handles missing widths.
+					}
+					else{//all alone
+						return widthAvail;//so full width
+					}
 				}
 				if(eFormField.Width<widthAvail){//will fit
 					return eFormField.Width;
@@ -328,13 +341,22 @@ namespace OpenDentBusiness{
 			//Only allowed for the stackable fields: text, label, date, and checkbox.
 			//We must always calculate the width of all fields within the same stack group
 			//Order does matter now.
-			List<EFormField> listEFormFieldsInStack=EFormFields.GetSiblingsInStack(eFormField,listEFormFields,eFormField.IsHorizStacking,includeSelf:true);
 			List<W> listWs=new List<W>();
 			W wOurs=null;
 			for(int i=0;i<listEFormFieldsInStack.Count;i++){
 				W w=new W();
 				w.EFormField_=listEFormFieldsInStack[i];
-				w.Percentage=listEFormFieldsInStack[i].Width;
+				if(listEFormFieldsInStack[i].Width==0){//not specified, so we must gracefully handle
+					if(listEFormFieldsInStack.Count>1){//stacking
+						w.Percentage=100;//an arbitrary default to gracefully handle
+					}
+					else{//all alone
+						w.Percentage=100;//fill entire width
+					}
+				}
+				else{
+					w.Percentage=listEFormFieldsInStack[i].Width;
+				}
 				if(eFormField==listEFormFieldsInStack[i]){
 					wOurs=w;
 				}

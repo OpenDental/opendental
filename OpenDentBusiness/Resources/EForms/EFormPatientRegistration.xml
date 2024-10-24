@@ -240,8 +240,8 @@
       <DbLink>Gender</DbLink>
       <ValueLabel>Gender</ValueLabel>
       <ItemOrder>8</ItemOrder>
-      <PickListVis>Male,Female,Other</PickListVis>
-      <PickListDb>Male,Female,Other</PickListDb>
+      <PickListVis>Male|Female|Other</PickListVis>
+      <PickListDb>Male|Female|Other</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>
@@ -267,8 +267,8 @@
       <DbLink>Position</DbLink>
       <ValueLabel>Position</ValueLabel>
       <ItemOrder>9</ItemOrder>
-      <PickListVis>Single,Married,Child,Widowed</PickListVis>
-      <PickListDb>Single,Married,Child,Widowed</PickListDb>
+      <PickListVis>Single|Married|Child|Widowed</PickListVis>
+      <PickListDb>Single|Married|Child|Widowed</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>
@@ -402,8 +402,8 @@
       <DbLink>PreferContactMethod</DbLink>
       <ValueLabel>Preferred Contact Method:</ValueLabel>
       <ItemOrder>14</ItemOrder>
-      <PickListVis>Home Phone,Work Phone,Wireless,eMail,Text</PickListVis>
-      <PickListDb>HmPhone,WkPhone,WirelessPh,Email,TextMessage</PickListDb>
+      <PickListVis>Home Phone|Work Phone|Wireless|eMail|Text</PickListVis>
+      <PickListDb>HmPhone|WkPhone|WirelessPh|Email|TextMessage</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>
@@ -429,8 +429,8 @@
       <DbLink>PreferConfirmMethod</DbLink>
       <ValueLabel>Preferred Contact Method for Confirmations:</ValueLabel>
       <ItemOrder>15</ItemOrder>
-      <PickListVis>Home Phone,Work Phone,Wireless,eMail,Text</PickListVis>
-      <PickListDb>HmPhone,WkPhone,WirelessPh,Email,TextMessage</PickListDb>
+      <PickListVis>Home Phone|Work Phone|Wireless|eMail|Text</PickListVis>
+      <PickListDb>HmPhone|WkPhone|WirelessPh|Email|TextMessage</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>
@@ -456,8 +456,8 @@
       <DbLink>PreferRecallMethod</DbLink>
       <ValueLabel>Preferred Contact Method for Recall:</ValueLabel>
       <ItemOrder>16</ItemOrder>
-      <PickListVis>Home Phone,Work Phone,Wireless,eMail,Text</PickListVis>
-      <PickListDb>HmPhone,WkPhone,WirelessPh,Email,TextMessage</PickListDb>
+      <PickListVis>Home Phone|Work Phone|Wireless|eMail|Text</PickListVis>
+      <PickListDb>HmPhone|WkPhone|WirelessPh|Email|TextMessage</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>
@@ -483,8 +483,8 @@
       <DbLink>StudentStatus</DbLink>
       <ValueLabel>Student status if dependent over 19 (for ins)</ValueLabel>
       <ItemOrder>17</ItemOrder>
-      <PickListVis>Non-student,Part-time,Full-time</PickListVis>
-      <PickListDb>N,P,F</PickListDb>
+      <PickListVis>Non-student|Part-time|Full-time</PickListVis>
+      <PickListDb>N|P|F</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>
@@ -867,8 +867,8 @@
       <DbLink>ins1Relat</DbLink>
       <ValueLabel>Your Relationship to Subscriber:</ValueLabel>
       <ItemOrder>31</ItemOrder>
-      <PickListVis>Self,Spouse,Child</PickListVis>
-      <PickListDb>Self,Spouse,Child</PickListDb>
+      <PickListVis>Self|Spouse|Child</PickListVis>
+      <PickListDb>Self|Spouse|Child</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>
@@ -1168,8 +1168,8 @@
       <DbLink>ins2Relat</DbLink>
       <ValueLabel>Your Relationship to Subscriber:</ValueLabel>
       <ItemOrder>42</ItemOrder>
-      <PickListVis>Self,Spouse,Child</PickListVis>
-      <PickListDb>Self,Spouse,Child</PickListDb>
+      <PickListVis>Self|Spouse|Child</PickListVis>
+      <PickListDb>Self|Spouse|Child</PickListDb>
       <IsHorizStacking>false</IsHorizStacking>
       <IsTextWrap>false</IsTextWrap>
       <Width>0</Width>

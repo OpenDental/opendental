@@ -140,9 +140,9 @@ namespace OpenDental {
 			// 
 			this.checkAutoSaveForm.Location = new System.Drawing.Point(8, 214);
 			this.checkAutoSaveForm.Name = "checkAutoSaveForm";
-			this.checkAutoSaveForm.Size = new System.Drawing.Size(183, 18);
+			this.checkAutoSaveForm.Size = new System.Drawing.Size(235, 18);
 			this.checkAutoSaveForm.TabIndex = 15;
-			this.checkAutoSaveForm.Text = "(U) Autosave Forms  (only one)";
+			this.checkAutoSaveForm.Text = "(U) Autosave Sheet Forms  (only one)";
 			this.checkAutoSaveForm.CheckedChanged += new System.EventHandler(this.checkAutoSaveForm_CheckedChanged);
 			// 
 			// checkLabCases

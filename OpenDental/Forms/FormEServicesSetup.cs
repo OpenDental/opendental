@@ -23,6 +23,10 @@ namespace OpenDental {
 		}
 
 		private void FormEServicesSetup_Load(object sender,EventArgs e) {
+			if(ODBuild.IsDebug() && Environment.MachineName.ToLower()=="jordanhome"){
+				_signupOut=new WebServiceMainHQProxy.EServiceSetup.SignupOut();
+				return;
+			}
 			try {
 				_signupOut=GetSignupOut();
 			}

@@ -90,11 +90,11 @@ namespace OpenDental {
 		}
 
 		protected override void Dispose(bool disposing) {
+			timer.Tick-=Timer_Tick;
 			if(disposing && (components != null)) {
 				components.Dispose();
 			}
 			base.Dispose(disposing);
-			timer.Tick-=Timer_Tick;
 		}
 
 		private void InitializeComponent() {

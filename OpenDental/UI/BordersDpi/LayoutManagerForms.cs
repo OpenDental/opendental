@@ -1076,7 +1076,7 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				return true;
 			}
 			if(control is SignatureBoxWrapper signatureBoxWrapper){
-				signatureBoxWrapper.SetScaleAndZoom(_scaleMS,_zoomLocal);//grids are over in OpenDentBusiness, so this is instead of a ref to LayoutManager.
+				signatureBoxWrapper.SetScaleAndZoom(_scaleMS,_zoomLocal);//Sig boxes are over in OpenDentBusiness, so this is instead of a ref to LayoutManager.
 				return true;//ignore the child SignatureBox and TopazWrapper
 			}
 			//if(control is UI.TextBox){

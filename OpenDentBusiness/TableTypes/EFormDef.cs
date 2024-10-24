@@ -10,8 +10,8 @@ namespace OpenDentBusiness {
 EForms is a complete replacement for the mobile version of sheets for patient forms. 
 It's also designed to be used on larger devices so that it can replace sheets being used for webforms.
 We will probably not be able to completely deprecate mobile sheets immediately, but we will try very hard for most customers.
-EForms are fillable from within OD, although this is not really intended for patients. 
-Patients will eventually be able to fill out EForms online in the web version of eClipboard and also on eClipboard in the office.
+EForms are fillable from within OD, although we do not really expect this to be used very much -- maybe for consent forms? 
+Patients will eventually be able to fill out EForms online in the web version of eClipboard and also on eClipboard in the office. And eventually on a Windows App.
 
 Relationship to Sheets:
 We did a good job on sheets, but we never should have tried to adapt sheets for mobile dynamic layout. We should have just started over. Now we are.
@@ -22,8 +22,8 @@ EForms are entirely dynamic
 Mobile sheets had no positional control but were instead just stacked vertical scrolling.
 EForms is still stacked vertical scrolling, but there are also horizontal stacking options mixed in.
 Internal EFormDefs are hard coded in C#, just like internal sheets.
-If a user makes a copy of in internal EFormDef, they will now have a custom EFormDef that is identical but stored in the database.
-A custom EFormDef is editable. User can add/remove/rearrange EFormFields.
+Whenever a user first starts using eForms, all the internal eForms are immediately converted to custom and stored in the db.
+An EFormDef is editable. User can add/remove/rearrange EFormFields.
 Sheets stored database link as FieldName. EForms uses DbLink.
 
 Comparison of field types:
@@ -98,7 +98,7 @@ They are allowed to change both the English and foreign translations in that gri
 		public int SpaceBelowEachField;
 		///<summary>The amount of space to the right of each field. Overrides the global default and can be overridden by field.SpaceToRight. -1 indicates to use default. That way, 0 means 0 space.</summary>
 		public int SpaceToRightEachField;
-		///<summary>FK to definition.DefNum. There is a global setting to save forms to the image category which has ItemVal set to "U". This global setting is only used to set this field for new forms. If this is 0, it will not save to images. Any other number is an override to a different category from global. Copied to EForm child.</summary>
+		///<summary>FK to definition.DefNum. There is a global setting to save forms to the image category which has ItemVal set to "U". We completely ignore that and it will only work for sheets. If this is 0, it will not save to images. Copied to EForm child.</summary>
 		public long SaveImageCategory;
 
 		///<Summary>This is needed for serialization/deserialization of internal EForms. We also leave this list attached to internal EForms for a while for convenience.</Summary>
@@ -122,18 +122,6 @@ Ours are similar.
 Jordan:
 So something about when a user tries to set a stacked field to be full width. Right now we silently set a width. Probably a msgbox instead.
 
-RyanH:
-Language translation for all other types, using textBox as example
-Dates should be single lines instead of rectangles when inside border boxes
-Default border=true for new text, date, checkbox, and radiobuttons 
-Refine the 3 built-in forms according to my interative instructions
-
-RyanR:
-Overhaul to follow layout strategy at top of CtrlEFormFill
-Figure out the details for font scaling and size scaling based on font, as described
-Show me screenshots about every day from now on so that we make sure we are both on the same page
-Implement IsLocked in eClipboard UI
-
 Enhance FormWebForms to include eForms. I don't think eForms get retrieved, but do they still show on that form?
 	For sheets, they show if DateTimeSheet is within search range and IsWebForm is true.
 	We could just mirror that for eForms. Or IsWebForm probably doesn't even matter.
@@ -144,7 +132,6 @@ Enhance FormWebForms to include eForms. I don't think eForms get retrieved, but 
 and .IsWebForm
 WebForms_Preference.ColorBorder
 Background color
-Conditional dates/ages
 Permission to edit complete EForm, use Sheet permission?
 
 Future Allergies, Problems, Medications:

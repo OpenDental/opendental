@@ -202,6 +202,7 @@ namespace OpenDental {
 		public double SpaceBelowEachField;
 		///<summary>Passed in from parent. Based on EFormDef or EForm SpaceToRightEachField.</summary>
 		public double SpaceToRightEachField;
+		public float Zoom;
 		#endregion Fields - public
 
 		#region Fields - private
@@ -386,8 +387,8 @@ namespace OpenDental {
 						wrapPanel=stackPanel.Children[0] as WrapPanel;
 					}
 					UIElementCollection uIElementCollection=wrapPanel.Children;
-					List<string> listPickDb=ListEFormFields[i].PickListDb.Split(',').ToList();
-					List<string> listPickVis=ListEFormFields[i].PickListVis.Split(',').ToList();
+					List<string> listPickDb=ListEFormFields[i].PickListDb.Split('|').ToList();
+					List<string> listPickVis=ListEFormFields[i].PickListVis.Split('|').ToList();
 					for(int c=0;c<uIElementCollection.Count;c++){
 						WpfControls.UI.RadioButton radioButton=uIElementCollection[c] as WpfControls.UI.RadioButton;
 						if(!radioButton.Checked){
@@ -846,6 +847,7 @@ namespace OpenDental {
 				else{
 					gridForField.Visibility=Visibility.Collapsed;
 					continue;//no need to check conditional logic. Always collapsed.
+					//and don't continue below to check conditional logic
 				}
 				//Then conditional logic, just for this page
 				if(IsSetupMode){
@@ -855,22 +857,44 @@ namespace OpenDental {
 					gridForField.Visibility=Visibility.Collapsed;
 				}
 			}
-			//This next loop is only for the drag location borders, which do not exist in the normal UI
+			//This next loop is only for the top drag location borders.
+			//These drag locations would not exist in the Flutter UI.
 			UIElementCollection uIElementCollection = stackPanel.Children;
 			for(int i = 0;i<uIElementCollection.Count;i++) {
-				if(!(uIElementCollection[i] is Border border)) {
+				if(!(uIElementCollection[i] is Border borderTopOfWrap)) {//or top of page
 					continue;
 				}
-				DragLocation dragLocation=border.Tag as DragLocation;
-				if(pgRequested==-1){
-					uIElementCollection[i].Visibility=Visibility.Visible;
-					continue;
-				}
-				if(dragLocation.Page!=_pageShowing) {
+				DragLocation dragLocation=borderTopOfWrap.Tag as DragLocation;
+				if(pgRequested!=-1//no request for all pages
+					&& dragLocation.Page!=_pageShowing) //and wrong page
+				{
 					uIElementCollection[i].Visibility=Visibility.Collapsed;
 					continue;
 				}
-				uIElementCollection[i].Visibility=Visibility.Visible;
+				//The dragLocation is on a page that is showing,
+				//but we might still want to hide it based on certain conditional logic.
+				if(i==uIElementCollection.Count-1){
+					uIElementCollection[i].Visibility=Visibility.Visible;
+					continue;//I don't think this is possible.
+				}
+				Grid gridWrap=uIElementCollection[i+1] as Grid;
+				WrapPanel wrapPanel=gridWrap.Children[1] as WrapPanel;
+				Grid gridForField=wrapPanel.Children[0] as Grid;
+				Border borderBox=gridForField.Children[1] as Border;
+				EFormField eFormField=ListEFormFields.Find(x=>x.TagOD==borderBox);
+				if(eFormField is null){
+					//shouldn't be possible.
+					continue;
+				}
+				List<EFormField> listEFormFieldsStack=EFormFields.GetSiblingsInStack(eFormField,ListEFormFields,eFormField.IsHorizStacking,includeSelf:true);
+				if(listEFormFieldsStack.All(x=>x.IsHiddenCondit)){
+					//All fields within the single wrap panel below are IsHiddenCondit.
+					//So we also need to hide this drag location or we'll have extra space.
+					uIElementCollection[i].Visibility=Visibility.Collapsed;
+				}
+				else{
+					uIElementCollection[i].Visibility=Visibility.Visible;
+				}
 			}
 		}
 		#endregion Methods - public
@@ -1729,6 +1753,9 @@ namespace OpenDental {
 			stackPanel2.Width=EFormFields.CalcFieldWidth(eFormField,ListEFormFields,stackPanel.ActualWidth,SpaceToRightEachField);
 			WpfControls.UI.Label label = new WpfControls.UI.Label();
 			label.Inlines.Clear();
+			if(eFormField.ValueLabel==""){
+				label.Height=0;
+			}
 			label.HorizontalAlignment=HorizontalAlignment.Stretch;
 			label.VerticalAlignment=VerticalAlignment.Stretch;
 			label.VAlign=VerticalAlignment.Bottom;
@@ -2109,8 +2136,8 @@ namespace OpenDental {
 		}
 
 		private void AddRadioButtons(Border borderBox,EFormField eFormField){
-			int numRadioBtns=eFormField.PickListVis.Split(',').ToList().Count();
-			string strLabels=eFormField.ValueLabel+","+eFormField.PickListVis;
+			int numRadioBtns=eFormField.PickListVis.Split('|').ToList().Count();
+			string strLabels=eFormField.ValueLabel+"|"+eFormField.PickListVis;
 			string strTranslations;
 			if(IsSetupMode){
 				strTranslations=LanguagePats.TranslateEFormField(eFormField.EFormFieldDefNum,LanguageShowing,strLabels);
@@ -2118,7 +2145,7 @@ namespace OpenDental {
 			else{
 				strTranslations=strLabels;
 			}
-			int numTranslations=strTranslations.Split(',').ToList().Count()-1;//subtract 1 because of the label at idx 0.
+			int numTranslations=strTranslations.Split('|').ToList().Count()-1;//subtract 1 because of the label at idx 0.
 			if(numTranslations!=numRadioBtns){
 				//ignore return bool. It will be caught again later
 				LanguagePats.SyncRadioButtonTranslations(eFormField);//Ensures translations are in sync with PickListVis. Only syncs here if translations don't match up with radio buttons.
@@ -2148,7 +2175,7 @@ namespace OpenDental {
 				label.FontSize=FontSize*eFormField.FontScale/100;
 			}
 			label.Padding=new Thickness(0,0,0,bottom:0);//default is 5
-			List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
+			List<string> listTranslations=strTranslations.Split('|').ToList();//Ex: [label,button1,button2]
 			label.Content=listTranslations[0];
 			if(eFormField.LabelAlign==EnumEFormLabelAlign.LeftLeft){
 				stackPanelLabel.Margin=new Thickness(0,0,right:10,0);
@@ -2234,8 +2261,8 @@ namespace OpenDental {
 			for(int i=1;i<listTranslations.Count;i++){//skip index 0, that's the translated eFormField.ValueLabel.
 				listPickLang.Add(listTranslations[i]);
 			}
-			List<string> listPickVis=eFormField.PickListVis.Split(',').ToList();
-			List<string> listPickDb=eFormField.PickListDb.Split(',').ToList();
+			List<string> listPickVis=eFormField.PickListVis.Split('|').ToList();
+			List<string> listPickDb=eFormField.PickListDb.Split('|').ToList();
 			for(int i=0;i<listPickVis.Count;i++){
 				//I decided to use the OD radiobutton because I have more control over the layout and behavior
 				WpfControls.UI.RadioButton radioButton=new WpfControls.UI.RadioButton();
@@ -2283,20 +2310,20 @@ namespace OpenDental {
 			if(SpaceToRightEachField!=-1){
 				spaceRight=SpaceToRightEachField;
 			}
+			//so spaceRight does not include any field component because we don't give that option to users
 			double widthAvail=stackPanel.ActualWidth-_marginLeftOfPage-spaceRight;
-			widthAvail-=_thicknessLRBorders+_paddingLeft+_paddingRight;
+			if(eFormField.Border==EnumEFormBorder.None) {
+				widthAvail-=_paddingLeft;
+				widthAvail-=1;//left border box thickness
+			}
+			else {//3D
+				widthAvail-=_paddingLeft+_paddingRight;
+				widthAvail-=_thicknessLRBorders;
+			}
 			if(widthAvail<0) {
 				widthAvail=0;
 			}
-			if(eFormField.Width==0){//not specified
-				stackPanel2.Width=widthAvail;//so full width
-			}
-			else if(eFormField.Width<widthAvail){
-				stackPanel2.Width=eFormField.Width;
-			}
-			else{
-				stackPanel2.Width=widthAvail;
-			}
+			stackPanel2.Width=widthAvail;//always full width
 			StackPanel stackPanelLabel=new StackPanel();
 			stackPanelLabel.Orientation=Orientation.Horizontal;
 			Label label = new Label();
@@ -2343,16 +2370,27 @@ namespace OpenDental {
 			if(IsSetupMode){
 				Rectangle rectangle=new Rectangle();
 				rectangle.HorizontalAlignment=HorizontalAlignment.Left;
-				rectangle.Width=362;
-				rectangle.Height=79;
+				//rectangle.Width=362;
+				//rectangle.Height=79;
+				rectangle.Width=stackPanel2.Width;
+				rectangle.Height=rectangle.Width/362*79;//must always maintain this ratio
 				rectangle.Stroke=Brushes.Silver;
 				rectangle.StrokeThickness=1;
 				stackPanel2.Children.Add(rectangle);
 			}
 			else{
 				WpfControls.UI.SignatureBoxWrapper signatureBoxWrapper=new WpfControls.UI.SignatureBoxWrapper();
-				signatureBoxWrapper.Width=362;
-				signatureBoxWrapper.Height=79;
+				//signatureBoxWrapper.Width=362;
+				//signatureBoxWrapper.Height=79;
+				//Height is based on width
+				signatureBoxWrapper.Width=stackPanel2.Width;
+				signatureBoxWrapper.Height=signatureBoxWrapper.Width/362*79;//must always maintain this ratio
+				//Scale and zoom need to be set manually for sigBoxes because they are based on WinForms
+				//But we also need to add in the scale for how we just changed the size from 362x79
+				//Example, if scale and zoom are both 1, but we are double width at 724
+				//Multiple scale by an additional 724/362
+				float scale=(float)(VisualTreeHelper.GetDpi(this).DpiScaleX*signatureBoxWrapper.Width/362);
+				signatureBoxWrapper.SetScaleAndZoom(scale,Zoom);
 				string keyData=EForms.GetSignatureKeyData(ListEFormFields);
 				bool isSigTopaz=false;
 				string signature=eFormField.ValueString;
@@ -2382,6 +2420,9 @@ namespace OpenDental {
 			//The red star does not have to look identical in other languages, as long as it's present.
 			WpfControls.UI.Label label = new WpfControls.UI.Label();
 			label.Inlines.Clear();
+			if(eFormField.ValueLabel==""){
+				label.Height=0;
+			}
 			label.HorizontalAlignment=HorizontalAlignment.Stretch;//these two lines are because we are using OD label
 			label.VerticalAlignment=VerticalAlignment.Stretch;
 			label.VAlign=VerticalAlignment.Bottom;//so that wrapping labels are aligned properly
@@ -2521,39 +2562,15 @@ namespace OpenDental {
 					ListEFormFields[i].IsHorizStacking=false;
 				}
 			}
-			//If a field is stacking or is before a stacking field, give it a set width
-			for(int i=0;i<ListEFormFields.Count;i++){
-				//too confusing to refactor this if to kick out
-				if(ListEFormFields[i].IsHorizStacking//if this field is stacking
-					|| (i<ListEFormFields.Count-1 && ListEFormFields[i+1].IsHorizStacking))//or the next field is stacking
-				{
-					if(ListEFormFields[i].Width>0){
-						continue;//a width is already set
-					}
-					if(ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
-						continue;//checkboxes don't have widths. Any width we added would just be ignored.
-					}
-					//Well, we don't really know what the available width is because it depends on the device.
-					//We will pick an arbitrary max.
-					//Remember that when laid out, this width will automatically shrink if not enough space
-					Graphics g=Graphics.MeasureBegin();
-					double width=g.MeasureString(ListEFormFields[i].ValueLabel).Width;
-					if(width>300){
-						width=300;
-					}
-					//double widthNew=width;
-					if(ListEFormFields[i].FieldType==EnumEFormFieldType.TextField
-						|| ListEFormFields[i].FieldType==EnumEFormFieldType.DateField)
-					{
-						width+=15;
-					}
-					if(ListEFormFields[i].FieldType==EnumEFormFieldType.CheckBox){
-						width+=25;
-					}
-					ListEFormFields[i].Width=(int)width;
-				}
-			}
-			//IF a field is not stacking, we will leave it alone.
+			//If a field is stacking or is before a stacking field, we used to give it a set width here.
+			//That was confusing users. Numbers would show up that they did not enter.
+			//New way of handling it:
+			//1. First, gracefully handle any that slip through the cracks. Treat empty as 100.
+			//2. Give user advice about how it works. Or maybe not.
+			//3. Only allowed blank when not stacked. Don't let them save any other value.
+			//4. Also warn them about the other blank fields when they close the field edit window.
+			//
+			//If a field is not stacking, we will leave it alone.
 			//It seems harmless to leave them at a fixed width..
 			//It gives users more control, and I can see how they would need to make some fields narrower.
 		}
@@ -2646,65 +2663,101 @@ namespace OpenDental {
 		private void SetIsHiddenConditFlags() {
 			for(int i=0;i<ListEFormFields.Count;i++) {
 				ListEFormFields[i].IsHiddenCondit=false;
+			}
+			for(int i=0;i<ListEFormFields.Count;i++) {
+				SetConditFlagChildren(ListEFormFields[i]);
+			}
+		}
+
+		///<summary>This recursively sets the IsHiddenConditFlag on all children, grandchildren, etc. Because of the way it's written, this will get hit twice for many fields, which is no problem.</summary>
+		private void SetConditFlagChildren(EFormField eFormFieldParent){
+			if(eFormFieldParent.ValueLabel==""){
+				//this field can't be used as a parent to hide anything right now because it has no value set.
+				return;
+			}
+			if(!eFormFieldParent.FieldType.In(EnumEFormFieldType.CheckBox,EnumEFormFieldType.RadioButtons,EnumEFormFieldType.DateField)){
+				//only the three types listed above can be parents
+				return;
+			}
+			//find all children
+			List<EFormField> listEFormFieldsChildren=new List<EFormField>();
+			for(int i=0;i<ListEFormFields.Count;i++) {
 				if(ListEFormFields[i].ConditionalParent=="") {
+					//This can't be a child because it has no parent.
 					continue;
 				}
-				EFormField eFormFieldParent=ListEFormFields.Find(x=>
-					x.ValueLabel!=""
-					&& x.ValueLabel.Substring(0,Math.Min(x.ValueLabel.Length,255))==ListEFormFields[i].ConditionalParent
-					&& x.FieldType.In(EnumEFormFieldType.CheckBox,EnumEFormFieldType.RadioButtons,EnumEFormFieldType.DateField));
-				if(eFormFieldParent is null) {
-					continue;//they might have set the ConditionalParent string wrong
+				if(eFormFieldParent.ValueLabel.Substring(0,Math.Min(eFormFieldParent.ValueLabel.Length,255))!=ListEFormFields[i].ConditionalParent){
+					continue;
 				}
-				bool isConditionMet=false;
-				if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons){
-					string valParent=EFormFields.GetValParent(eFormFieldParent);
-					if(valParent==ListEFormFields[i].ConditionalValue){
-						isConditionMet=true;
-					}
-				}
-				if(eFormFieldParent.FieldType==EnumEFormFieldType.CheckBox 
-					&& eFormFieldParent.ValueString==ListEFormFields[i].ConditionalValue)
-				{
+				listEFormFieldsChildren.Add(ListEFormFields[i]);
+			}
+			if(listEFormFieldsChildren.Count==0){
+				return;
+			}
+			for(int i=0;i<listEFormFieldsChildren.Count;i++) {
+				SetConditFlagChild(eFormFieldParent,listEFormFieldsChildren[i]);
+			}
+		}
+
+		private void SetConditFlagChild(EFormField eFormFieldParent,EFormField eFormFieldChild){
+			if(eFormFieldParent.IsHiddenCondit){//parent is already hidden
+				eFormFieldChild.IsHiddenCondit=true;//also hide all children
+				SetConditFlagChildren(eFormFieldChild);
+				return;
+				//We definitely don't want to do any more testing which might accidentally flip it.
+			}
+			bool isConditionMet=false;
+			if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons){
+				string valParent=EFormFields.GetValParent(eFormFieldParent);
+				List<string> listVals=eFormFieldChild.ConditionalValue.Split('|').ToList();
+				if(listVals.Contains(valParent)){
 					isConditionMet=true;
 				}
-				if(eFormFieldParent.FieldType==EnumEFormFieldType.DateField){
-					//We didn't bother to check the name of the field even though it was really only designed for Birthdate
-					isConditionMet=true;//this is our fallback if anything below goes wrong. We do NOT want it to fallback to false.
-					DateTime dateBirth=DateTime.MinValue;
-					try{
-						dateBirth=DateTime.Parse(eFormFieldParent.ValueString);
-					}
-					catch{}
-					if(dateBirth!=DateTime.MinValue){
-						int agePatient=Patients.DateToAge(dateBirth);
-						int ageCondition=-1;
-						if(ListEFormFields[i].ConditionalValue.StartsWith("<") || ListEFormFields[i].ConditionalValue.StartsWith(">")){
-							try{
-								ageCondition=int.Parse(ListEFormFields[i].ConditionalValue.Substring(1));
-							}
-							catch{ }
+			}
+			if(eFormFieldParent.FieldType==EnumEFormFieldType.CheckBox 
+				&& eFormFieldParent.ValueString==eFormFieldChild.ConditionalValue)
+			{
+				isConditionMet=true;
+			}
+			if(eFormFieldParent.FieldType==EnumEFormFieldType.DateField){
+				//We didn't bother to check the name of the field even though it was really only designed for Birthdate
+				isConditionMet=true;//this is our fallback if anything below goes wrong. We do NOT want it to fallback to false.
+				DateTime dateBirth=DateTime.MinValue;
+				try{
+					dateBirth=DateTime.Parse(eFormFieldParent.ValueString);
+				}
+				catch{}
+				if(dateBirth!=DateTime.MinValue){
+					int agePatient=Patients.DateToAge(dateBirth);
+					int ageCondition=-1;
+					if(eFormFieldChild.ConditionalValue.StartsWith("<") || eFormFieldChild.ConditionalValue.StartsWith(">")){
+						try{
+							ageCondition=int.Parse(eFormFieldChild.ConditionalValue.Substring(1));
 						}
-						if(ageCondition!=-1){
-							if(ListEFormFields[i].ConditionalValue.StartsWith("<")){
-								if(agePatient>=ageCondition){//flipped because we're setting to false
-									isConditionMet=false;
-								}
+						catch{ }
+					}
+					if(ageCondition!=-1){
+						if(eFormFieldChild.ConditionalValue.StartsWith("<")){
+							if(agePatient>=ageCondition){//flipped because we're setting to false
+								isConditionMet=false;
 							}
-							if(ListEFormFields[i].ConditionalValue.StartsWith(">")){
-								if(agePatient<=ageCondition){
-									isConditionMet=false;
-								}
+						}
+						if(eFormFieldChild.ConditionalValue.StartsWith(">")){
+							if(agePatient<=ageCondition){
+								isConditionMet=false;
 							}
 						}
 					}
 				}
-				if(isConditionMet){
-					ListEFormFields[i].IsHiddenCondit=false;
-				}
-				else{
-					ListEFormFields[i].IsHiddenCondit=true;
-				}
+			}
+			//These double negatives are annoying. Here are two ways of saying the same thing:
+			//If the condition is met, the child field will be visible (not hidden)
+			//If the condition is not met, the child field will be hidden.
+			if(!isConditionMet){
+				eFormFieldChild.IsHiddenCondit=true;
+				SetConditFlagChildren(eFormFieldChild);
+				//If we're not hiding this field, we don't have to worry about hiding children recursively.
+				//The children will still get checked separately.
 			}
 		}
 		#endregion Methods - private

@@ -317,14 +317,14 @@ namespace OpenDentBusiness{
 				return false;
 			}
 			List<string> listDisplayLanguages=GetLanguagesForCombo();//get all languages set up in pref.
-			List<string> listVisOrig=eFormField.PickListVis.Split(',').ToList();
+			List<string> listVisOrig=eFormField.PickListVis.Split('|').ToList();
 			bool isChangedLanCache=false;
 			for(int i=0;i<listDisplayLanguages.Count;i++){//iterate through each language.
 				string strTranslations=TranslateEFormField(eFormField.EFormFieldDefNum,listDisplayLanguages[i],"");//empty string will indicate no translation exists yet.
 				if(strTranslations==""){//nothing to change for a language that hasn't been translated yet.
 					continue;
 				}
-				List<string> listTranslations=strTranslations.Split(',').ToList();//Ex: [label,button1,button2]
+				List<string> listTranslations=strTranslations.Split('|').ToList();//Ex: [label|button1|button2]
 				List<string> listLangOrig=new List<string>();//only stores the language translations for the buttons, doesn't include the ValueLabel.
 				for(int j=1;j<listTranslations.Count;j++){//add the translated button labels to listLangOrig.
 					listLangOrig.Add(listTranslations[j]);
@@ -332,12 +332,12 @@ namespace OpenDentBusiness{
 				if(listLangOrig.Count==listVisOrig.Count){
 					continue;//no need to sync, number of elements already match
 				}
-				string strTranslationsNew=listTranslations[0]+",";//add the translated ValueLabel back to a string
+				string strTranslationsNew=listTranslations[0]+"|";//add the translated ValueLabel back to a string
 				for(int k=0;k<listVisOrig.Count;k++){//iterate through listVisOrig to sync listLangOrig
 					if(k>0){
-						strTranslationsNew+=",";
+						strTranslationsNew+="|";
 					}
-					if(k<listLangOrig.Count){//if listVisOrig has a greater count, the resulting string will have extra commas. ex: "Label,Button1,Button2,,,"
+					if(k<listLangOrig.Count){//if listVisOrig has a greater count, the resulting string will have extra pipes. ex: "Label|Button1|Button2|||"
 						strTranslationsNew+=listLangOrig[k];
 					}
 				}

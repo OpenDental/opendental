@@ -47,8 +47,8 @@ namespace OpenDental {
 			}
 			if(ProcNum!=0) {
 				Text=Lang.g(this,"Referrals");
-				butAddFrom.Visible=false;
-				butAddCustom.Visible=false;
+				butAddFrom.IsEnabled=false;
+				butAddCustom.IsEnabled=false;
 			}
 			else {//all for patient
 				checkShowAll.Visible=false;//we will always show all

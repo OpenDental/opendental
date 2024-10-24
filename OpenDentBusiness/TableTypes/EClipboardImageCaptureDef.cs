@@ -62,3 +62,47 @@ namespace OpenDentBusiness {
 		SecondaryInsBack
 	}
 }
+
+
+/*
+Jordan's notes.
+Please nobody take action on this stuff yet. 
+It's here for me to mull over and then to have a meeting about.
+I'll let you know before we actually implement any of this.
+
+Problems I have with this schema:
+DefNum is used for dual purpose: either to a patient picture or to an EClipboardImageCapture defcat.
+IsSelfPortrait is redundant
+If user changes Defs for patient picture by removing the P or moving it, then this points to a folder that is no longer the patient pics folder.
+If user changes any of the items in EClipboardImageCapture defcat, then this is now out of synch.
+
+Advantages of current schema:
+If multiple clinics are all linked to items in EClipboardImageCapture, then user could change the def to simultaneously update the text for all clinics.
+If multiple clinics are used, the user doesn't have to keep entering instructions for each clinic
+The EClipboardImageCapture items act as templates even if the user has not yet set up eClipboard
+	But the "templates" are not very good and all nearly identical
+	We can solve this by adding a way to copy from default for individual clinics.
+	And maybe also a way to copy from our internal defaults.
+If user removes P from Image Category in Defs, then the eClipboard might not know where to save the patient pic
+	This is not a problem. In this case, just save in first category.
+
+Proposed changes:
+DefNum: Deprecate.
+IsSelfPortrait: We will keep this. With DefNum column gone, this is no longer redundant.
+New columns:
+	ItemName, Example "Photo ID Front" or "Self Portrait"
+	Instructions: Example: "Please take a picture of the front side of your photo ID"
+I don't think those two columns should be available for self portrait unless the eClipboard is enhanced to support that text.
+We will need a conversion to fill those two fields based on the old DefNums
+EClipboardImageCapture gets deprected and hidden
+
+UI:
+Need a column to show OCR Capture Type
+Edit windows for both grids should come up after using buttons.
+
+
+
+
+
+
+*/

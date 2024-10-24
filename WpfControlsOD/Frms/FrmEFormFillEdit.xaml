@@ -21,7 +21,7 @@
 		<ui:Button x:Name="butEClipboard" Width="80" Height="24" Margin="0,615,30,0" Text="To eClipboard" HorizontalAlignment="Right" Click="butEClipboard_Click" />
 		<ui:Button x:Name="butChangePat" Width="80" Height="24" Margin="0,371,30,0" Text="Change Pat" HorizontalAlignment="Right" Click="butChangePat_Click" />
 		<ui:Label x:Name="labelRequired" Width="120" Height="53" Margin="465,97,0,0" Text="Required fields are not enforced here -- only in eClipboard" VAlign="Center" ColorText="Red" />
-		<ui:GroupBox x:Name="groupSaveImages" Height="95" Margin="464,430,0,0" Width="136" Text="Save to Images">
+		<ui:GroupBox x:Name="groupSaveImages" Height="95" Margin="0,430,5,0" Width="136" Text="Save to Images" HorizontalAlignment="Right">
 			<ui:ComboBox x:Name="comboImageCat" Width="130" Height="21" Margin="0,41,0,0" HorizontalAlignment="Center" />
 			<ui:Label Width="120" Height="18" Margin="0,21,0,0" Text="Category" VAlign="Center" />
 			<ui:Button x:Name="butSaveImage" Width="80" Height="24" Margin="30,66,0,0" Text="Save" Click="butSaveImage_Click"  />

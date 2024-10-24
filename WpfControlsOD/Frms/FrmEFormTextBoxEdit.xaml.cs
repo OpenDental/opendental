@@ -58,24 +58,10 @@ namespace OpenDental {
 			checkIsRequired.Checked=EFormFieldCur.IsRequired;
 			checkBorder.Checked=EFormFieldCur.Border==EnumEFormBorder.ThreeD;
 			textVIntWidth.Value=EFormFieldCur.Width;
-			if(EFormFieldCur.IsWidthPercentage){
-				labelWidth.Text="Width%";
-				checkIsWidthPercentage.Checked=true;
-				textVIntMinWidth.Value=EFormFieldCur.MinWidth;
-			}
-			else{
-				labelMinWidth.Visible=false;
-				textVIntMinWidth.Visible=false;
-			}
-			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,EFormFieldCur.IsHorizStacking);
-			//this is just for loading. It will recalc each time CheckIsHorizStacking_Click is raised.
-			//This is all siblings in a horizontal stack, not including the field passed in. If not in a h-stack, then this is an empty list.
-			//Even if the current field is not stacking, it can be part of a stack group if the next field is set as stacking.
-			//So this list gets recalculated each time the user checks or unchecks the stacking box.
-			if(listEFormFieldsSiblings.Count==0){
-				labelWidthIsPercentageNote.Visible=false;
-			}
+			checkIsWidthPercentage.Checked=EFormFieldCur.IsWidthPercentage;
+			textVIntMinWidth.Value=EFormFieldCur.MinWidth;//although it might get hidden
 			checkIsHorizStacking.Checked=EFormFieldCur.IsHorizStacking;
+			SetControlsForSituation();
 			bool isPreviousStackable=EFormFields.IsPreviousStackable(EFormFieldCur,ListEFormFields);
 			if(!isPreviousStackable){
 				labelStackable.Text="previous field is not stackable";
@@ -126,16 +112,27 @@ namespace OpenDental {
 		}
 
 		private void CheckIsHorizStacking_Click(object sender,EventArgs e) {
-			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
-			if(listEFormFieldsSiblings.Count>0){
-				labelWidthIsPercentageNote.Visible=true;
-			}
-			else{
-				labelWidthIsPercentageNote.Visible=false;
-			}
+			SetControlsForSituation();
 		}
 
 		private void CheckIsWidthPercentage_Click(object sender,EventArgs e) {
+			SetControlsForSituation();
+		}
+
+		///<summary>When checkIsWidthPercentage or checkIsHorizStacking changes, this sets some other related visiblities and values.</summary>
+		private void SetControlsForSituation(){
+			List<EFormField> listEFormFieldsSiblings=EFormFields.GetSiblingsInStack(EFormFieldCur,ListEFormFields,checkIsHorizStacking.Checked==true);
+			if(listEFormFieldsSiblings.Count>0){//stacked
+				labelWidthIsPercentageNote.Visible=true;
+				labelWidthNote.Visible=false;
+				textVIntWidth.ShowZero=true;//this will give them error if blank
+			}
+			else{
+				labelWidthIsPercentageNote.Visible=false;
+				labelWidthNote.Visible=true;//leave blank for full width
+				textVIntWidth.ShowZero=false;
+			}
+			textVIntWidth.Validate();//in case we changed ShowZero. Shows the !
 			if(checkIsWidthPercentage.Checked==true){
 				labelWidth.Text="Width%";
 				labelMinWidth.Visible=true;
@@ -161,7 +158,7 @@ namespace OpenDental {
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			textCondValue.Text=EFormL.PickCondValue(ListEFormFields,textCondParent.Text,textCondValue.Text);
+			textCondValue.Text=EFormL.PickCondValues(ListEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {

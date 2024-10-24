@@ -48,14 +48,7 @@ namespace OpenDental {
 				return;
 			}
 			EFormDefSelected=listMain.GetSelected<EFormDef>();
-			if(IsInternalPicker){
-				//all the fields will already be attached,
-				Def def=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true).Find(x => x.ItemValue.Contains("U"));
-				if(def!=null){
-					EFormDefSelected.SaveImageCategory=def.DefNum;
-				}
-			}
-			else{
+			if(!IsInternalPicker){
 				EFormDefSelected.ListEFormFieldDefs=EFormFieldDefs.GetDeepCopy().FindAll(x=>x.EFormDefNum==EFormDefSelected.EFormDefNum);
 			}
 			IsDialogOK=true;
@@ -71,10 +64,6 @@ namespace OpenDental {
 			EFormDefSelected.MaxWidth=450;
 			EFormDefSelected.SpaceBelowEachField=-1;
 			EFormDefSelected.SpaceToRightEachField=-1;
-			Def def=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true).Find(x => x.ItemValue.Contains("U"));
-			if(def!=null){
-				EFormDefSelected.SaveImageCategory=def.DefNum;
-			}
 			IsDialogOK=true;
 		}
 
@@ -90,14 +79,7 @@ namespace OpenDental {
 				return;
 			}
 			EFormDefSelected=listMain.GetSelected<EFormDef>();
-			if(IsInternalPicker){
-				//all the fields will already be attached,
-				Def def=Defs.GetDefsForCategory(DefCat.ImageCats,isShort:true).Find(x => x.ItemValue.Contains("U"));
-				if(def!=null){
-					EFormDefSelected.SaveImageCategory=def.DefNum;
-				}
-			}
-			else{
+			if(!IsInternalPicker){
 				EFormDefSelected.ListEFormFieldDefs=EFormFieldDefs.GetDeepCopy().FindAll(x=>x.EFormDefNum==EFormDefSelected.EFormDefNum);
 			}
 			IsDialogOK=true;

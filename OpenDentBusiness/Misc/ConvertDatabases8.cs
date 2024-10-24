@@ -2225,5 +2225,28 @@ namespace OpenDentBusiness {
 			//End S53050
 		}
 
+		private static void To24_3_10() {
+			//Start S53050
+			string command="UPDATE eformfield SET PickListVis=REPLACE(PickListVis, ',', '|')";
+			Db.NonQ(command);
+			command="UPDATE eformfield SET PickListDb=REPLACE(PickListDb, ',', '|')";
+			Db.NonQ(command);
+			command="UPDATE eformfielddef SET PickListVis=REPLACE(PickListVis, ',', '|')";
+			Db.NonQ(command);
+			command="UPDATE eformfielddef SET PickListDb=REPLACE(PickListDb, ',', '|')";
+			Db.NonQ(command);
+			//End S53050
+			//Start I56390
+			command="ALTER TABLE eclipboardimagecapturedef ADD Frequency tinyint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eclipboardimagecapturedef ADD ResubmitInterval bigint NOT NULL";
+			Db.NonQ(command);
+			command="ALTER TABLE eclipboardimagecapturedef ADD INDEX (ResubmitInterval)";
+			Db.NonQ(command);
+			command="ALTER TABLE eclipboardsheetdef ADD Frequency tinyint NOT NULL";
+			Db.NonQ(command);
+			//End I56390
+		}
+
 	}
 }

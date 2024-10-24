@@ -677,8 +677,12 @@ namespace OpenDentBusiness {
 					listStrippedTitle.Add(result);
 				}
 			}
-			//Format and return the GIT branch name
-			return job.Category.ToString().Substring(0,1)+job.JobNum+"_"+string.Join("_",listStrippedTitle);
+			//Format and return the GIT branch name. Branch names can only be so long, so return up to 50 characters.
+			string gitBranchName=job.Category.ToString().Substring(0,1)+job.JobNum+"_"+string.Join("_",listStrippedTitle);
+			if(gitBranchName.Length>50) {
+				gitBranchName=gitBranchName.Substring(0,50);
+			}
+			return gitBranchName;
 		}
 
 		///<summary>Generates a string formatted as "(<TopLevelParent>) - <CustomerPatNum> - JobTitle".

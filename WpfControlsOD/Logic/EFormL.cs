@@ -12,55 +12,70 @@ using CodeBase;
 namespace WpfControls {
 	public class EFormL {
 		/// <summary>Shows InputBox to user to let them pick a value. Pass in an existingValue to prefill.</summary>
-		public static string PickCondValue(List<EFormField> listEFormFields,string condParent,string existingValue) {
+		public static string PickCondValues(List<EFormField> listEFormFields,string condParent,string existingValues) {
 			if(condParent==""){
 				MsgBox.Show("Please enter a name in the Parent field first.");
-				return existingValue;
+				return existingValues;
 			}
 			List<EFormField> listEFormFieldsParent=listEFormFields.FindAll(x=>x.ValueLabel==condParent);
 			if(listEFormFieldsParent.Count==0){
 				MsgBox.Show("Parent field name could not be found.");
-				return existingValue;
+				return existingValues;
 			}
 			if(listEFormFieldsParent.Count>1){
 				MsgBox.Show("There are duplicate fields with that parent name.");
-				return existingValue;
+				return existingValues;
 			}
 			EFormField eFormFieldParent=listEFormFieldsParent[0];
 			if(eFormFieldParent.FieldType==EnumEFormFieldType.RadioButtons){
-				List<string> listPick=eFormFieldParent.PickListVis.Split(',').ToList();
+				List<string> listPick=eFormFieldParent.PickListVis.Split('|').ToList();
 				if(eFormFieldParent.DbLink!=""){
 					//parent has a db link, so we might need to use some of those values if the Vis items are empty
-					List<string> listPickDb=eFormFieldParent.PickListDb.Split(',').ToList();
+					List<string> listPickDb=eFormFieldParent.PickListDb.Split('|').ToList();
 					for(int i=0;i<listPick.Count;i++){
 						if(listPick[i]==""){
 							listPick[i]=listPickDb[i];
 						}
 					}
 				}
-				int idxSelected=listPick.IndexOf(existingValue);//can be -1
+				List<string> listExistingValues=existingValues.Split('|').ToList();
+				List<int> listIndicesSelected=new List<int>();
+				for(int i=0;i<listExistingValues.Count;i++){
+					int idxSelected=listPick.IndexOf(listExistingValues[i]);
+					if(idxSelected==-1){
+						continue;
+					}
+					listIndicesSelected.Add(idxSelected);
+				}
 				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.ListBox;
-				inputBoxParam.LabelText="";
+				inputBoxParam.InputBoxType_=InputBoxType.ListBoxMulti;
+				inputBoxParam.LabelText="To pick multiple values, hold down Ctrl key";
 				inputBoxParam.ListSelections=listPick;
-				inputBoxParam.SelectedIndex=idxSelected;
+				inputBoxParam.ListIndicesSelected=listIndicesSelected;
 				InputBox inputBox=new InputBox(inputBoxParam);
 				inputBox.ShowDialog();
 				if(inputBox.IsDialogCancel){
-					return existingValue;
+					return existingValues;
 				}
-				//yes, this works even if no selected index. inputBox forces selected index
-				return listPick[inputBox.SelectedIndex];
+				//yes, this works even if no selected index. ListBoxMulti forces at least one selection
+				string retVal="";
+				for(int i=0;i<inputBox.SelectedIndices.Count;i++){
+					if(i>0){
+						retVal+="|";
+					}
+					retVal+=listPick[inputBox.SelectedIndices[i]];
+				}
+				return retVal;
 			}
 			if(eFormFieldParent.FieldType==EnumEFormFieldType.CheckBox){
 				List<string> listStrCheck=new List<string>();
 				listStrCheck.Add("Checked");
 				listStrCheck.Add("Unchecked");
-				int idxSelected=listStrCheck.IndexOf(existingValue);//can be -1;
+				int idxSelected=listStrCheck.IndexOf(existingValues);//can be -1;
 				InputBox inputBox=new InputBox(prompt:"",listSelections:listStrCheck,selectedIndex:idxSelected);
 				inputBox.ShowDialog();
 				if(inputBox.IsDialogCancel) {
-					return existingValue;
+					return existingValues;
 				}
 				return listStrCheck[inputBox.SelectedIndex];
 			}
@@ -82,7 +97,7 @@ namespace WpfControls {
 				//inputBox.SizeInitial=new System.Windows.Size(200,200);
 				inputBox.ShowDialog();
 				if(inputBox.IsDialogCancel) {
-					return existingValue;
+					return existingValues;
 				}
 				RadioButton radioButtonYounger=(RadioButton)inputBox.ListControls[0];
 				RadioButton radioButtonOlder=(RadioButton)inputBox.ListControls[1];
@@ -97,7 +112,7 @@ namespace WpfControls {
 				retVal+=textAge.Text;
 				return retVal;
 			}
-			return existingValue;
+			return existingValues;
 		}
 
 		///<summary>This handles the problem of parent labels that are longer than 255. Also if the parent is a checkBox, then this converts "" or "X" to Checked or Unchecked to make it more user friendly for display. It doesn't alter other types.</summary>

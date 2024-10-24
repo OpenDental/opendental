@@ -235,6 +235,14 @@ Someday, I will eliminate all the ctor overloads.
 				MsgBox.Show(this,"Please make at least one selection.");
 				return;
 			}
+			if(ListControls.OfType<ListBox>().Any(x=>x.SelectionMode==SelectionMode.One && x.SelectedIndex==-1)) {
+				MsgBox.Show(this,"Please make a selection.");
+				return;
+			}
+			if(ListControls.OfType<ListBox>().Any(x=>x.SelectionMode==SelectionMode.MultiExtended && x.SelectedIndices.Count==0)) {
+				MsgBox.Show(this,"Please make at least one selection.");
+				return;
+			}
 			if(ListControls.OfType<CheckBox>().ToList().Count>1 && ListControls.OfType<CheckBox>().Where(x => x.Checked==true).Count()==0) {
 				MsgBox.Show(this,"Please make a selection.");
 				return;
@@ -474,8 +482,17 @@ Someday, I will eliminate all the ctor overloads.
 						listBoxMulti.Background=SystemColors.WindowBrush;
 						listBoxMulti.SelectionMode=SelectionMode.MultiExtended;
 						listBoxMulti.Items.AddList(_listInputBoxParams[i].ListSelections,x => x.ToString());
+						for(int j = 0;j<_listInputBoxParams[i].ListIndicesSelected.Count;j++) {
+							if(_listInputBoxParams[i].ListIndicesSelected[j].Between(0,listBoxMulti.Items.Count-1)) {
+								listBoxMulti.SetSelected(_listInputBoxParams[i].ListIndicesSelected[j]);//If there is a valid initial selection, select it.
+							}
+						}
 						listBoxMulti.Width=_widthBigControls;
-						listBoxMulti.Height=95; //Default height used in original Form
+						listBoxMulti.Height=95;
+						if(_listInputBoxParams[i].SizeParam.Width!=0 && _listInputBoxParams[i].SizeParam.Height!=0){
+							listBoxMulti.Width=_listInputBoxParams[i].SizeParam.Width;
+							listBoxMulti.Height=_listInputBoxParams[i].SizeParam.Height;
+						}
 						control=listBoxMulti;
 						break;
 					case InputBoxType.ListBox:
@@ -551,7 +568,7 @@ Someday, I will eliminate all the ctor overloads.
 		public InputBoxType InputBoxType_;
 		///<summary>Only works for textbox. Setting to true will set PasswordChar to '*'.</summary>
 		public bool IsPassswordCharStar;
-		///<summary>Only for ComboSelect and ComboMultiSelect. Also OK to use SelectedIndex for ComboSelect.</summary>
+		///<summary>Only for ListBoxMulit and ComboMultiSelect. Also used with ComboSelect, but it ignores all except one, so SelectedIndex is probably a better choice.</summary>
 		public List<int> ListIndicesSelected=new List<int>();
 		public List<string> ListSelections=new List<string>();
 		///<summary>This is the text on the label that's above the input item. Typically not used with a checkbox which has its text set with Text.</summary>
@@ -562,7 +579,7 @@ Someday, I will eliminate all the ctor overloads.
 		public Point PointPosition;
 		///<summary>Only for ComboSelect (not multi). Also OK to use a single entry in ListIndicesSelected for the same purpose.</summary>
 		public int SelectedIndex=-1;
-		///<summary>Normally Size.Empty, which is same as 0,0. Allows override of size of checkbox, listbox, or combobox.</summary>
+		///<summary>Normally Size.Empty, which is same as 0,0. Allows override of size of checkbox, listbox, listBoxMulti, or combobox.</summary>
 		public Size SizeParam;
 		///<summary>This is the text on a checkbox or radiobutton. It can also be used to prefill a textbox, textBoxMultiLine, validDate, or validPhone.</summary>
 		public string Text="";

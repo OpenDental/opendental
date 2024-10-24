@@ -55,6 +55,7 @@ namespace OpenDental {
 			ctrlEFormFill.ShowLabelsBold=EFormCur.ShowLabelsBold;
 			ctrlEFormFill.SpaceBelowEachField=EFormCur.SpaceBelowEachField;
 			ctrlEFormFill.SpaceToRightEachField=EFormCur.SpaceToRightEachField;
+			ctrlEFormFill.Zoom=GetZoom();
 			ctrlEFormFill.RefreshLayout();
 			_maskedSSNOld=EFormCur.ListEFormFields.Find(x=>x.DbLink=="SSN")?.ValueString;//null is ok
 			textDescription.Text=EFormCur.Description;
@@ -71,11 +72,6 @@ namespace OpenDental {
 				comboImageCat.Items.AddDefs(listDefs);
 				comboImageCat.SetSelectedDefNum(EFormCur.SaveImageCategory);
 			}
-
-
-
-
-			
 			bool isSigned=false;
 			for(int i=0;i<EFormCur.ListEFormFields.Count;i++) {
 				if(EFormCur.ListEFormFields[i].FieldType.In(EnumEFormFieldType.SigBox)

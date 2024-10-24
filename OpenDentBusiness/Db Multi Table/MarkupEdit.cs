@@ -301,13 +301,17 @@ namespace OpenDentBusiness {
 				matches=Regex.Matches(s,_odWikiFile);
 				foreach(Match match in matches) {
 					string fileName=match.Value.Replace("[[file:","").TrimEnd(']');
-					s=s.Replace(match.Value,"<a href=\"wikifile:"+fileName+"\">file:"+fileName+"</a>");
+					s=s.Replace(match.Value,"<a href=\"wikifile:"
+						+fileName.Replace("\\","/")//backslashes in a URL cause browser to get corrupted when clicking on a link. Ctrl-F would not work after that.
+						+"\">file:"+fileName+"</a>");
 				}
 				//[[folder:\\serverfiles\storage\]]------------------------------------------------------------------------------------------------
 				matches=Regex.Matches(s,_odWikiFolder);
 				foreach(Match match in matches) {
 					string folderName=match.Value.Replace("[[folder:","").TrimEnd(']');
-					s=s.Replace(match.Value,"<a href=\"folder:"+folderName+"\">folder:"+folderName+"</a>");
+					s=s.Replace(match.Value,"<a href=\"folder:"
+						+folderName.Replace("\\","/")//backslashes in a URL cause browser to get corrupted when clicking on a link. Ctrl-F would not work after that.
+						+"\">folder:"+folderName+"</a>");
 				}
 				//[[filecloud:AtoZ/SheetImages/happyclown.jpg]]------------------------------------------------------------------------------------------------
 				matches=Regex.Matches(s,_odWikiFilecloud);

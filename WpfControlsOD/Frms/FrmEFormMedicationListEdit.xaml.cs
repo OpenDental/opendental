@@ -139,7 +139,7 @@ namespace OpenDental {
 		}
 
 		private void butPickValue_Click(object sender,EventArgs e) {
-			textCondValue.Text=EFormL.PickCondValue(_listEFormFields,textCondParent.Text,textCondValue.Text);
+			textCondValue.Text=EFormL.PickCondValues(_listEFormFields,textCondParent.Text,textCondValue.Text);
 		}
 
 		private void butSave_Click(object sender, EventArgs e) {

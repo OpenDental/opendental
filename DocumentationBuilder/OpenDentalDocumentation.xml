@@ -4888,7 +4888,7 @@
       <summary>True if the rule pertains to the patient self portrait. False if the rule is for an 'Eclipboard images' defcat definition.</summary>
     </column>
     <column order="3" name="FrequencyDays" type="int(11)">
-      <summary>Frequency at which the patient should update the image, in days. If frequency is 0, patient will be prompted to submit image at each checkin.</summary>
+      <summary>Deprecated.</summary>
     </column>
     <column order="4" name="ClinicNum" type="bigint(20)" fk="clinic">
       <summary>FK to clinic.ClinicNum. Clinic the rule pertains to.</summary>
@@ -4917,13 +4917,13 @@
       <summary>FK to clinic.ClinicNum.  0 if no clinic or if default clinic.</summary>
     </column>
     <column order="3" name="ResubmitInterval" type="bigint(20)">
-      <summary>Indicates the acceptable amount of time that can pass since the last time the patient has filled this form out. Once this has elapsed, if the EClipboardCreateMissingFormsOnCheckIn pref is turned on, this form will automatically be added to the patient forms to fill out when the patient is checked in.</summary>
+      <summary>If Frequency is EnumEClipFreq.TimeSpan, this will indicate the acceptable amount of time (measured in Years and Months) that can pass since the last time the patient has filled this form out. Once this has elapsed, if the EClipboardCreateMissingFormsOnCheckIn pref is turned on, this form will automatically be added to the patient forms to fill out when the patient is checked in.</summary>
     </column>
     <column order="4" name="ItemOrder" type="int(11)">
       <summary>The order in which the patient will be asked to fill out this form.</summary>
     </column>
     <column order="5" name="PrefillStatus" type="tinyint(4)">
-      <summary>Determines how forms will be show in eClipboard, fresh copy or last available filled out version.</summary>
+      <summary>Determines how forms will be shown in eClipboard, fresh copy or last available filled out version.</summary>
     </column>
     <column order="6" name="MinAge" type="int(11)">
       <summary>Indicates the minimum age of the patient to be given the form to fill out. If their age is below the minimum limit, they will not be given the form to fill out. A value of -1 means ignore any age requirements.</summary>
@@ -5048,7 +5048,7 @@
       <summary>The date and time when the EFormDef was created. Not editable by the user in the UI.</summary>
     </column>
     <column order="4" name="IsInternalHidden" type="tinyint(4)">
-      <summary>This is set to true when a user "deletes" an internal form. That way, it won't show anymore. This is the only way to hide an internal form. It gets done automatically when a user "edits" an internal form so that only the custom form will show. The linkage to the internal form is done by matching the Description. So a row where this was set to true would have a description and nothing else. No EFormFieldDefs. Once the user hides an internal eForm in this manner, they can't ever get it back other than by using Add.</summary>
+      <summary>Deprecated.</summary>
     </column>
     <column order="5" name="MaxWidth" type="int(11)">
       <summary>Required. Can be any value between 50 and 1000. On wide screens, this limits the width of the form. This is needed on pretty much anything other than a phone. Makes it look consistent across devices and prevents useless white space. Default 450.</summary>

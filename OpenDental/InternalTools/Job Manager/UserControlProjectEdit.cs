@@ -4,6 +4,7 @@ using OpenDentalGraph.Extensions;
 using OpenDentBusiness;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -62,8 +63,13 @@ namespace OpenDental.InternalTools.Job_Manager {
 		public UserControlProjectEdit() {
 			InitializeComponent();
 			comboPhase.Items.AddListEnum(new List<JobPhase>() { JobPhase.Concept,JobPhase.Development,JobPhase.Complete,JobPhase.Cancelled });
-			FillPriorityList();
-			_listJobTeams=JobTeams.GetDeepCopy();
+			_listJobTeams=new List<JobTeam>();
+			//Can't use DesignMode bool because it is not initialized at this point because this control can be nested multiple times (e.g. FormJobManager).
+			bool isDesignMode=(LicenseManager.UsageMode==LicenseUsageMode.Designtime);
+			if(!isDesignMode) {
+				FillPriorityList();
+				_listJobTeams=JobTeams.GetDeepCopy();
+			}
 			comboJobTeam.Items.Add("None",new JobTeam(){JobTeamNum=-1});
 			comboJobTeam.Items.AddList(_listJobTeams,x => x.TeamName);
 			comboJobTeam.SelectedIndex=0;
@@ -133,11 +139,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 				_listPriorities.ForEach(x => comboPriority.Items.Add(x.ItemName));
 			}
 			comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
-			string gitBranchName=Jobs.GetGitBranchName(_jobCur);
-			if(gitBranchName.Length>50){
-				gitBranchName=gitBranchName.Substring(0,50);
-			}
-			textGitBranchName.Text=gitBranchName;
+			textGitBranchName.Text=Jobs.GetGitBranchName(_jobCur);
 			try {
 				textEditorProjectDescription.MainRtf=_jobCur.Requirements;//This is here to convert our old job descriptions to the new RTF descriptions.
 			}

@@ -10,7 +10,7 @@ namespace UnitTestsCore {
 		public static PayPeriod CreateTwoWeekPayPeriodIfNotExists(DateTime start){
 			PayPeriod ppNew=new PayPeriod();
 			ppNew.DateStart=start;
-			ppNew.DateStop=start.AddDays(13);
+			ppNew.DateStop=start.AddDays(14);
 			ppNew.DatePaycheck=start.AddDays(16);
 			//check for identical or overlapping pay periods
 			PayPeriods.RefreshCache();
@@ -33,6 +33,11 @@ namespace UnitTestsCore {
 			return ppNew;
 		}
 
+		///<summary>Deletes everything from the payperiod table. Does not truncate the table so that PKs are not reused on accident.</summary>
+		public static void ClearPayPeriodTable() {
+			string command="DELETE FROM payperiod";
+			DataCore.NonQ(command);
+		}
 
 	}
 }

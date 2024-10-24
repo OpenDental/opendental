@@ -49,6 +49,11 @@ Control nesting
 	For WPF, this control is wrapped in with a WindowsFormsHost container because Topaz does not have a WPF version, and wrapping is what they recommend.
 	This SignatureBoxWrapper also contains two buttons that we need. The buttons are ugly and need an overhaul.
 
+Size
+	The control was designed originally to always be exactly 362x79
+	It can be set larger if proportional and if scale and zoom match.
+	In other words, it's not yet designed to be set to arbitrary sizes other than as described above.
+
 Historical changes:
 	There have been a series of changes and bugs over the years, both from us and from Topaz. Examples:
 		We had a bug for a while where we were "encrypting" sigs with 16 zeros.

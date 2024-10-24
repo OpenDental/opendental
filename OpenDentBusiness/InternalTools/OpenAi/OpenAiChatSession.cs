@@ -73,7 +73,7 @@ namespace OpenDentBusiness.OpenAi {
 				ReportSendStatus(SendStatus.AwaitingResponse,"Waiting for response from AI");
 				if(await PollForRunCompletion(await OpenAiClient.Inst.CreateRun(_thread.Id,assistantId,_additionalInstructions))) {
 					var response=await OpenAiClient.Inst.GetListMessages(_thread.Id);
-					string aiResponse=response.Data.Last().Content.Last().Text.Value;
+					string aiResponse=response.Data.Last().Content.Last()?.Text?.Value ?? "";//FAQ assistant can return null when no answer is found.
 					if(isSavedToDb) {
 						InsertWebChatSessionMsg(aiResponse, WebChatMessageType.AI);
 					}

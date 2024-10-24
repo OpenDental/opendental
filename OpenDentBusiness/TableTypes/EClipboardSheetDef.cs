@@ -26,12 +26,12 @@ namespace OpenDentBusiness{
 		public int MinAge;
 		///<summary>Indicates the maximum age of the patient to be given the form to fill out. If their age is over or equal to this maximum limit, they will not be given the form to fill out. A value of -1 means ignore any age requirements.</summary>
 		public int MaxAge;
-		///<summary>Comma delimited list of sheetdef nums to ignore. This can only be set if the preFillStatus is set to Once. These sheetDefs are ignored until this sheet is filled out. For example, an office may have a sheet for new patients that is only filled out once. Once the new patient has filled out this sheet, these sheetDefs will no longer be ignored when the patient checks in again. Not used in eForms.</summary>//jordan I don't understand why this field is here.
+		///<summary>Comma delimited list of sheetdef nums to ignore. This can only be set if the preFillStatus is set to Once. These sheetDefs are ignored until this sheet is filled out. For example, an office may have a sheet for new patients that is only filled out once. Once the new patient has filled out this sheet, these sheetDefs will no longer be ignored when the patient checks in again. Not used in eForms because we have conditional fields, so a single form could be designed to be used for both new and existing patients.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string IgnoreSheetDefNums;
 		///<summary>For both Sheets and eForms. Holds the previous revision number that marks what def revision number we expect to have a submission for from the patient. This value can be incremented when changes are made to a linked sheet or eForm def, but it is not always updated. This should hold the last revision number that was updated for this eClipboardSheetDef. If a patient has a form filled out that has a revision ID that matches this or is greater (this field will be 0 by default, or they filled out a more up to date form manually in the office and not through eClipboard), then this form will be filtered out if set to PrefillStatuses.Once when we determine which forms load for the patient in eClipboard. If this value is higher than the RevID of the last form the patient filled out, we consider this eClipboardSheetDef to be updated and the patient will need to fill out the form again when set to PrefillStatuses.Once.</summary>
 		public long PrefillStatusOverride;
-		///<summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet. Only for custom eForms.</summary>
+		///<summary>FK to EFormDef.EFormDefNum. Can be zero if this row is for a sheet.</summary>
 		public long EFormDefNum;
 		///<summary>Enum:EnumEClipFreq 0=Once, 1=EachTime, 2=TimeSpan. The frequency that a form will be submitted by patients. ResubmitInterval can only be set if Frequency is TimeSpan.</summary>
 		public EnumEClipFreq Frequency;

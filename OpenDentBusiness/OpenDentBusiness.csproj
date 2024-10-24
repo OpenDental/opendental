@@ -637,6 +637,7 @@
     <Compile Include="Data Interface\Reactivations.cs" />
     <Compile Include="InternalTools\OpenAi\Models\OAIFaqResponseFunctionArgs.cs" />
     <Compile Include="InternalTools\OpenAi\Models\OAIToolOutput.cs" />
+    <Compile Include="InternalTools\Job Manager\Git.cs" />
     <Compile Include="SheetFramework\EnumStaticTextField.cs" />
     <Compile Include="Db Multi Table\ApptSearch.cs" />
     <Compile Include="Email\BasicEmailAddress.cs" />
