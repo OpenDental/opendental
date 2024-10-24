@@ -131,6 +131,12 @@ How to:
 			6. Sometimes, you will also do some math in the Load to further alter your variables used.
 			Example: _formFrame.Location=new System.Drawing.Point(PointLLStart.X,PointLLStart.Y-_formFrame.Height+ScaleFormValue(10));
 			Example: _formFrame.Width=ScaleFormValue(556);
+		Also, see Dpi.cs for notes about how to set a Window or Form position and using Bounds and DesktopBounds.
+-Scale and Zoom
+		Windows scale is handled automatically in WPF, so you won't normally need it, but if you do: 
+				double scale=VisualTreeHelper.GetDpi(this).DpiScaleX;
+		Open Dental zoom is largely handled automatically as well, but if you need it:
+				(FrmODBase).GetZoom(). Example within a Frm: this.GetZoom().
 -Maximum Window Size
 		FrmZoom specifies max window size as 1246x735, but that's for the entire form, including borders.
 		In WPF, we design without borders, so the max size is 1212x719
@@ -220,6 +226,7 @@ How to:
 		private string _text="Form";
 		///<summary>This is a reference to the Form that frames the Frm.</summary>
 		protected FormFrame _formFrame=null;
+		private float _zoomLocal=1;
 		#endregion Fields
 
 		#region Fields size/pos
@@ -239,6 +246,11 @@ How to:
 			PreviewKeyDown+=Frm_PreviewKeyDown;
 			//KeyboardNavigation.SetTabNavigation(this,KeyboardNavigationMode.Local);//See notes in FrmTestFocusTabbing.xaml.cs
 			//I don't think the above line makes sense here. We use it instead in specific controls like GroupBox.
+			Unloaded+=FrmODBase_Unloaded;
+		}
+
+		private void FrmODBase_Unloaded(object sender,RoutedEventArgs e) {
+			_formFrame=null;
 		}
 		#endregion Constructor
 
@@ -582,6 +594,36 @@ How to:
 		///<summary>Converts a float or int from 96dpi to current scale, including both MS scale and OD zoom. Always check with Jordan.</summary>
 		protected float ScaleF(float val96){
 			return _formFrame.UIManager_.ScaleF(val96);
+		}
+
+		///<summary>Example 1.2. This zoom is from ComputerPrefs.LocalComputer.Zoom/100. This method is largely copied from LayoutManagerForms.ScaleMyFont. This zoom number is available to all child frms. It's not needed for WPF because that's already handled. But if there is a WinForms control inside of a WindowsFormsHost, then this zoom needs to be used to ScaleTransform the contents. Only example so far is SignatureBoxWrapper.</summary>
+		protected float GetZoom(){
+			if(!Db.HasDatabaseConnection()){
+				//Cannot continue because ComputerPrefs.LocalComputer will be null and then it will get set to default instead of getting the computer prefs from the database.
+				//The symptom of this would be evident as the task dock y position would not be pulled from the database, so it would start in the wrong position.
+				return 1;
+			}
+			if(ComputerPrefs.IsLocalComputerNull()){
+				//This happens repeatedly during a conversion, as the progress bar redraws.
+				//If we were to continue, the computerpref table could have a different number of columns, so the query below would fail.
+				//This would drastically slow down the conversion.
+				//ComputerPrefs.LocalComputer will get set right after the conversion is done.
+				return 1;
+			}
+			float zoomLocal=_zoomLocal;//example 1.2
+			try{
+				zoomLocal=ComputerPrefs.LocalComputer.Zoom/100f;
+			}
+			catch{
+				//this fails during version update, for example
+			}
+			if(zoomLocal==0){
+				zoomLocal=1;
+			}
+			if(zoomLocal!=_zoomLocal){
+				_zoomLocal=zoomLocal;
+			}
+			return zoomLocal;
 		}
 
 		///<summary>Keyboard and logical focus. If it can't find anything, then it sets focus on the FrmODBase itself.</summary>

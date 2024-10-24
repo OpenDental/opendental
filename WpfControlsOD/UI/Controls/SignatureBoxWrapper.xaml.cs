@@ -22,8 +22,11 @@ namespace WpfControls.UI {
 Jordan is the only one allowed to edit this file.
 
 How to use the SignatureBoxWrapper control:
-	-Size must always 362,79 for now. We will work on having more flexibility soon.
+	-Size must always 362,79 or scaled proportionally and tested.
 	-Read instructions at the top of OpenDentBusiness\UI\SignatureBoxWrapper.cs
+	-You must have the following lines in your Frm Load event:
+			float scale=(float)VisualTreeHelper.GetDpi(this).DpiScaleX;
+			signatureBoxWrapper.SetScaleAndZoom(scale,GetZoom());
 */
 	///<summary>Read instructions at the top of OpenDentBusiness\UI\SignatureBoxWrapper.cs</summary>
 	public partial class SignatureBoxWrapper:UserControl {
@@ -99,6 +102,10 @@ How to use the SignatureBoxWrapper control:
 		///<summary>Set to 1 to activate it to start accepting signatures.  Set to 0 to no longer accept input.  Should be called with a state of '0' in FormClosing events.</summary>
 		public void SetTabletState(int v) {
 			signatureBoxWrapper.SetTabletState(v);
+		}
+
+		public void SetScaleAndZoom(float scaleMS,float zoomLocal){
+			signatureBoxWrapper.SetScaleAndZoom(scaleMS,zoomLocal);
 		}
 
 	}

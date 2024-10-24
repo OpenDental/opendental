@@ -10,7 +10,78 @@ using OpenDentBusiness;
 using CodeBase;
 
 namespace OpenDental.UI {
-	///<summary>Wraps the Topaz SigPlusNET control and the alternate SignatureBox control.  Also includes both needed buttons.  Should vastly simplify using signature boxes throughout the program. In WPF, this WinForms control is also used by wrapping it with a WindowsFormsHost container because Topaz does not have a WPF version, and wrapping is what they recommend.</summary>
+/*
+Jordan is the only one allowed to edit this file.
+
+How signature encryption works:
+	A signature starts as a collection of straight line segments that look like curved lines when chained together.
+	The OD signature format looks like this: 45,68;48,70;49,72;0,0;55,88;etc.  It's simply a sequence of points, separated by semicolons.  0,0 represents pen up.
+	We then need to encrypt this string with symmetric encryption using a key of some sort.
+	The key that we use for this symmetric encryption is a 16 char hash of the data that the signature is tied to.
+	For example, we might want to tie the signature to "This is a note", PriKeyNum=123, and ProvNum=7. 
+	Our key data then looks like this: "This is a note1237". 
+	Once we pick a signature data strategy, we cannot ever change it for that particular table, although we can for other tables.
+	The hash might then look like {4A 6F 68 6E 44 6F 65 44 6B 9A A6 27 D6 9E 61 6C}. We never see this. It's just stored in memory as 16 bytes while we manipulate the sig.
+	The hash is our symmetric key. The signature string gets encrypted and stored in the db.
+	To get the signature back out of the database as vectors, we must have the same hash.
+	We must recreate the hash at that time from the original key data.
+	If we can't unencrypt the signature, we can't draw it and must show "invalid sig" or something like that.
+	This strategy hides the sig from prying eyes in the db, and it also proves that the data has not changed since signing.
+
+Topaz hardware vs our SignatureBox:
+	Topaz is the 'tablet' hardware that a patient signs on with a stylus.
+	They also provide a SigPlusNET control that we can place on the screen to show a signature that was signed on their hardware.
+	We use their dll to perform the encryption and we don't get to see what format they use. Their .sig format is proprietary.
+	https://www.topazsystems.com/software/download/sigplusnet.pdf
+	We also have our own SignatureBox control built by us. Our strategy is the one discussed above.
+	KeyString and AutoKeyData are terms that originated with Topaz and which we have adopted for use in our SignatureBox.
+	KeyString: This is the hash of the key data. We use 16 bytes. Topaz likes to create their own, so we don't generally use this with Topaz.
+	AutoKeyData: This is the unhashed key data and can be quite long.
+	The idea is that we should use one or the other, depending on if we had already hashed the key data.
+	The way we know if a signature in the db is ours or Topaz, we typically have another db column along with Signature called SigIsTopaz.
+	Sometimes, like in Sheets, the first char is 1 or 0 to indicate Topaz or not. The remainder of the signature is the actual signature.
+	The OD sigs are not compressed, and the Topaz sigs are.  But there is very little difference in their sizes.  It would be very rare for a signature to be larger than 1000 bytes.
+
+Control nesting
+	This control is SignatureBoxWrapper.cs. It is a wrapper with two controls inside of it:
+	1. Topaz SigPlusNET control
+	2. SignatureBox control, our own internal control.
+	For WPF, this control is wrapped in with a WindowsFormsHost container because Topaz does not have a WPF version, and wrapping is what they recommend.
+	This SignatureBoxWrapper also contains two buttons that we need. The buttons are ugly and need an overhaul.
+
+Size
+	The control was designed originally to always be exactly 362x79
+	It can be set larger if proportional and if scale and zoom match.
+	In other words, it's not yet designed to be set to arbitrary sizes other than as described above.
+
+Historical changes:
+	There have been a series of changes and bugs over the years, both from us and from Topaz. Examples:
+		We had a bug for a while where we were "encrypting" sigs with 16 zeros.
+		There have been newline bugs due to RichTextBox and MiddleTier issues.
+		Around 2010, Topaz added an enumeration value in the middle of an enumeration, breaking our code.
+		Our internal SignatureBox sometimes uses the entire key string as the symmetric key instead of a hashed 16 byte version of the key string.
+	Each time we have a bug or a variation on the original strategy, we must forever be able to handle that unique situation without breaking others.
+	This leads to many "if" statements. We end up trying a chain of decryptions until we get one that works.
+	At some point in the future, we may decide to re-encrypt all of the signatures with one single known good strategy.
+	But because Topaz is still a black box, we can't ever really completely fix the complexity.
+
+Guideline for usage:
+
+In the load event handler or similar:
+	string keyData=str1+str2+long1.ToString(), etc.
+	signatureBoxWrapper.FillSignature(someTable.SigIsTopaz,keyData,someTable.Signature);
+
+In the save click:
+	if(sigBoxWrapper.GetSigChanged()){
+		string keyData=Procedures.GetSignatureKeyData(_procedure, textNotes.Text);
+		someTable.Signature=signatureBoxWrapper.GetSignature(keyData);
+		someTable.SigIsTopaz=signatureBoxWrapper.GetSigIsTopaz();
+	}
+
+In FormClosing:
+	signatureBoxWrapper?.SetTabletState(0);
+*/
+	///<summary>See the notes at the top of this file. Must always be exactly 362x79.</summary>
 	public partial class SignatureBoxWrapper:UserControl {
 		///<summary>Default 1. Typical value 1.5</summary>
 		private float _scaleMS = 1;

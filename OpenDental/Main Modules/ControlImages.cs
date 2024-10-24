@@ -1603,11 +1603,29 @@ namespace OpenDental{
 		}
 
 		private void formVideo_BitmapCaptured(object sender, Bitmap bitmap){
+			//Current selection could be empty, document, or mount.
+			Document document=new Document();
 			ControlImageDisplay controlImageDisplay=GetControlImageDisplaySelected();
-			if(controlImageDisplay is null){
+			//create doc
+			long defNumCategory=GetCurrentCategory();
+			if(PrefC.GetLong(PrefName.VideoImageCategoryDefault)>0) {
+				defNumCategory=PrefC.GetLong(PrefName.VideoImageCategoryDefault);
+			}
+			try {//Create corresponding image file.
+				document=ImageStore.Import(bitmap,defNumCategory,ImageType.Photo,_patient);
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Unable to save")+": "+ex.Message);
 				return;
 			}
-			controlImageDisplay.formVideo_BitmapCaptured(sender,bitmap);
+			//mount selected
+			if(controlImageDisplay!=null && controlImageDisplay.GetNodeTypeAndKey().NodeType==EnumImageNodeType.Mount) {
+				controlImageDisplay.formVideo_BitmapCapturedMount(sender,bitmap,document);
+				return;
+			}
+			//empty or don't have a mount selected
+			FillImageSelector(false);
+			SelectTreeNode1(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 		}
 
 		private void menuForms_Click(object sender,System.EventArgs e) {

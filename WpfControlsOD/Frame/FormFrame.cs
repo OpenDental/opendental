@@ -80,14 +80,15 @@ namespace OpenDental {
 		#endregion Fields - Private - Drawing, Border, Dpi
 
 		#region Designer
-		//InitializeComponent can't be in this base class because it causes changed in the inherited designer form, like center screen.
+		//InitializeComponent can't be in this base class because it causes changes in the inherited designer form, like center screen.
 
 		///<summary></summary>
-		protected override void Dispose(bool disposing){
-			if(disposing){
+		protected override void Dispose(bool disposing) {
+			if(disposing) {
 				_graphicsPathHelp?.Dispose();
 				_regionButHelp?.Dispose();
 				timerHoverSnap?.Dispose();
+				ElementHostUI?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -226,6 +227,7 @@ namespace OpenDental {
 			//(Jordan-This is worded wrong. Base.FormClosing will still fire before Derived.FormClosing. Maybe they meant FormClosed?)
 			//The advantage is that HasClosed will only be true if ALL FormClosing events have fired for this form.
 			this.FormClosed+=ODForm_FormClosed;
+			Dispose(true);
 		}
 
 		private void ODForm_FormClosed(object sender,FormClosedEventArgs e) {
@@ -657,6 +659,7 @@ namespace OpenDental {
 				//for some reason, I couldn't get form.Icon to work.
 				Icon icon=WpfControls.Properties.Resources.Icon;
 				g.DrawImage(icon.ToBitmap(),rectangleIcon);
+				icon?.Dispose();
 			}
 			//if(_fontTitle==null){
 			RectangleF rectangleText=new RectangleF(MaxInset()+ScaleF(30),MaxInset()+ScaleF(7),

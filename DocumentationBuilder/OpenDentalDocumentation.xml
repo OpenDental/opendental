@@ -16125,7 +16125,7 @@
       <summary>Text Alignment for text fields.</summary>
     </column>
     <column order="19" name="ItemColor" type="int(11)">
-      <summary>Text color, line color, rectangle color. 0 means Empty.</summary>
+      <summary>Text color, line color, rectangle color. -16777216 is Black. 0 means Empty, which we attempt to treat as black if it happens.</summary>
     </column>
     <column order="20" name="DateTimeSig" type="datetime">
       <summary>DateTime that a sheet was signed.</summary>
